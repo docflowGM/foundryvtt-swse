@@ -113,7 +113,6 @@ export function buildPhase3B() {
     let operation = clone(base.operation);
     let qualities = clone(base.qualities);
     let extra = {};
-    let gauntletAmbiguity = null;
 
     if (cfg) {
       const others = claims.filter((c) => c !== baseClaim);
@@ -134,13 +133,10 @@ export function buildPhase3B() {
       if (u.canonicalName === 'BlasTech 500 Riot Gun') { /* Rebellion Era claim is the base; Clone Wars values live on in sourceClaims */ }
       if (u.canonicalName === 'Stunning Gauntlet') {
         const ex = claims.find((c) => c.phase2 === '2E').p2.canonicalStats;
-        extra.variantExamples = [{ source: 'Clone Wars Campaign Guide p.60', wearer: 'Human', wearerSize: 'Medium', size: ex.size, costCredits: ex.costCredits, weightKg: ex.weightKg }];
-        const kv = (stats.variantsByWearerSize || []).find((v) => v.wearerSize === 'Medium');
-        if (kv && (kv.costCredits !== ex.costCredits || kv.weightKg !== ex.weightKg)) {
-          gauntletAmbiguity = { id: `${u.identityKey}-variant-discrepancy`, field: 'canonicalStats.variantsByWearerSize', status: 'CROSS_PUBLICATION_VARIANT_DISCREPANCY_FOR_PLANNER', value: null,
-            detail: `Knights of the Old Republic certifies Medium-wearer variant ${kv.costCredits} credits / ${kv.weightKg} kg, while the Clone Wars example for a Human (Medium) wearer is a ${ex.size} gauntlet at ${ex.costCredits} credits / ${ex.weightKg} kg (which equals the KOTOR Small-wearer line). Both claims are preserved; no value was chosen.`,
-            blocksProductionMutation: true };
-        }
+        // KOTOR table rows are WEAPON sizes; Clone Wars publishes the Tiny weapon row (Human -> Tiny). Wearer variants derive through sizeRule.
+        const tiny = { weaponSize: ex.size, costCredits: ex.costCredits, weightKg: ex.weightKg, source: 'Clone Wars Campaign Guide p.60' };
+        stats.variantsByWeaponSize = [tiny, ...stats.variantsByWeaponSize];
+        stats.variantsByWearerSize = [{ wearerSize: 'Medium', weaponSize: ex.size, costCredits: ex.costCredits, weightKg: ex.weightKg, derivedBy: stats.sizeRule, source: 'Clone Wars Campaign Guide p.60 (Human wears a Tiny gauntlet)' }, ...stats.variantsByWearerSize];
       }
     }
 
@@ -159,12 +155,6 @@ export function buildPhase3B() {
     if (stats.ammo && (stats.ammo.status === 'not-stated' || stats.ammo.status === 'partially-established')) {
       ambiguities.push({ id: `${u.identityKey}-ammo`, field: 'canonicalStats.ammo', status: stats.ammo.status === 'not-stated' ? 'AMMO_NOT_STATED_BY_SOURCE' : 'AMMO_PARTIALLY_STATED_BY_SOURCE', value: null, detail: stats.ammo.sourceStatus || 'Source does not fully state the ammunition.' });
     }
-    if (stats.ammo?.payloadDerived && stats.ammo.damageSource === 'loaded-ammo' && stats.baseDamage.mode === 'dice' && !stats.payloadProfiles.length) {
-      ambiguities.push({ id: `${u.identityKey}-delivery-damage-ownership`, field: 'canonicalStats.baseDamage', status: 'DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED', value: null,
-        detail: `The v2.9 ammo overlay marks ${u.canonicalName} as payload-derived (damageSource loaded-ammo), but the certified claim prints ${stats.baseDamage.formula} on the launcher row and no payload profile exists. Neither value was moved: the launcher keeps its certified base damage and the ownership question is recorded for the planner.`,
-        blocksProductionMutation: true });
-    }
-    if (gauntletAmbiguity) ambiguities.push(gauntletAmbiguity);
     ambiguities.sort((x, y) => cmp(x.id, y.id));
 
     // sourceClaims with immutable references to the certified Phase 2 claims

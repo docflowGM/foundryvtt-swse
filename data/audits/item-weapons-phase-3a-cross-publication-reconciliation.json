@@ -347,7 +347,7 @@
       "All six identities, their repo ids and their (book, page) provenance match the certified claims.",
       "Guard Shoto availability conflict confirmed: Force Unleashed illegal+Rare vs Jedi Academy common+Rare.",
       "BlasTech 500 Riot Gun conflicts confirmed: cost 1000/1200, weight 4.5/2.2, Inaccurate true/false, single-shot -2/-1; Rebellion-only +2 autofire equipment bonus and 50-shot power pack (Clone Wars is silent, not contradictory).",
-      "Lightsaber Pike, Flechette Launcher, Stunning Gauntlet and Long-Handle Lightsaber core facts agree across their claims; Stunning Gauntlet KOTOR size/cost/weight live in variantsByWearerSize."
+      "Lightsaber Pike, Flechette Launcher, Stunning Gauntlet and Long-Handle Lightsaber core facts agree across their claims; Stunning Gauntlet: KOTOR p.202 publishes WEAPON-size rows (Small 200/0.4, Medium 300/0.5); Clone Wars supplies the Tiny row, and the wearer variants derive through the two-sizes-smaller rule (Phase 3B correction)."
     ],
     "conflictGateCounts": {
       "identityLevel": 0,

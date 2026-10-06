@@ -960,7 +960,9 @@
         "integrated": null,
         "rechargeable": null,
         "acceptedPayloadFamily": "missile",
-        "acceptedAmmoIdentities": [],
+        "acceptedAmmoIdentities": [
+          "Standard Missile"
+        ],
         "damageSource": "loaded-ammo",
         "payloadDerived": true,
         "sourceStatus": null
@@ -2596,7 +2598,9 @@
         "integrated": null,
         "rechargeable": null,
         "acceptedPayloadFamily": "missile",
-        "acceptedAmmoIdentities": [],
+        "acceptedAmmoIdentities": [
+          "E-Web Missile"
+        ],
         "damageSource": "loaded-ammo",
         "payloadDerived": true,
         "sourceStatus": null
@@ -3996,7 +4000,9 @@
         "integrated": null,
         "rechargeable": null,
         "acceptedPayloadFamily": "missile",
-        "acceptedAmmoIdentities": [],
+        "acceptedAmmoIdentities": [
+          "Arakyd 3t3 Missile"
+        ],
         "damageSource": "loaded-ammo",
         "payloadDerived": true,
         "sourceStatus": null
@@ -4023,10 +4029,12 @@
         "integrated": null,
         "rechargeable": null,
         "acceptedPayloadFamily": "torpedo",
-        "acceptedAmmoIdentities": [],
-        "damageSource": "loaded-ammo",
+        "acceptedAmmoIdentities": [
+          "Miniature Proton Torpedo"
+        ],
+        "damageSource": "loaded-ammo-modified-by-weapon",
         "payloadDerived": true,
-        "sourceStatus": null
+        "sourceStatus": "Default area mode resolves the loaded torpedo payload; the launcher-specific single-target mode transforms the selected payload (no area, damage x2, -10 attack against targets smaller than Huge)."
       }
     },
     {
@@ -4616,6 +4624,19 @@
       "weaponGroup": "Simple Weapon",
       "hasRangedAttackProfile": false,
       "ammo": null
+    }
+  ],
+  "corrections": [
+    {
+      "id": "launcher-payload-ownership",
+      "phase": "3B-correction",
+      "entries": [
+        "Missile Launcher",
+        "E-Web Missile Launcher",
+        "Merr-Sonn PLX-2M Portable Missile Launcher",
+        "Miniature Proton Torpedo Launcher"
+      ],
+      "note": "acceptedAmmoIdentities filled; Miniature Proton Torpedo Launcher damageSource set to loaded-ammo-modified-by-weapon (single-target mode transforms the payload)."
     }
   ]
 }

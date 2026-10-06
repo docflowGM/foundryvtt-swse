@@ -13,7 +13,7 @@
     "twoClaimIdentities": 6,
     "repoPresentIdentities": 151,
     "repoMissingIdentities": 52,
-    "identitiesWithAmbiguities": 18,
+    "identitiesWithAmbiguities": 13,
     "sourceBooks": 12
   },
   "publicationPrecedencePolicy": "Field-local later-publication precedence for exact same-identity direct contradictions; silence never supersedes; earlier-only compatible mechanics survive; both claims stay preserved (planner ruling, Phase 3B).",
@@ -35,16 +35,16 @@
   "inputs": [
     {
       "id": "phase1-weapons-content",
-      "sha256": "57d6a27b462c8a177475dc40b8b107601c8378773a0f92459dbc806245bb52d9"
+      "sha256": "1cc37b41db8dba9579a025edc36d621e334ebc77ee742214a8b7d0d07d95be13"
     },
     {
       "id": "phase2a-core-records",
-      "sha256": "b7b18f7f04d8fe9f84deac7be8138944f3b3d6b90ffdf1d5cf1d7e2a77def34b"
+      "sha256": "7247582b27bfb268edd78cfe2bd3a8d25f2204ea003a113dc4cd93a315726ef3"
     },
     {
       "id": "phase2b",
       "file": "data/audits/item-weapons-phase-2b-kotor-standalone-authority.json",
-      "sha256": "65cbe9967e78fb4cb7c70a82323f8683cf338e9c2a780bbbed767516b971e2bc"
+      "sha256": "ebad2c9baddfc02f962387b792dcded38683806761ef5ba2e4a9bf34c429a337"
     },
     {
       "id": "phase2c",
@@ -54,7 +54,7 @@
     {
       "id": "phase2d",
       "file": "data/audits/item-weapons-phase-2d-force-unleashed-standalone-authority.json",
-      "sha256": "642aabb92880197a8c6f5a0084da738bcda8a69581aaa78b4c792c9b6a6e2c91"
+      "sha256": "99aa6303f674531097e7eaef4db91eaedbc959eb9a59185b4251c53a7909b127"
     },
     {
       "id": "phase2e",
@@ -79,7 +79,7 @@
     {
       "id": "phase2i",
       "file": "data/audits/item-weapons-phase-2i-rebellion-era-standalone-authority.json",
-      "sha256": "236b4a258bb6085f716769f7ecec53ac1f9b145b6968eda8d3fe4f50e63165d2"
+      "sha256": "3b498894872cc10002e92b91b1ee4083e63b54457599757996be0e59dc1045b5"
     },
     {
       "id": "phase2j",
@@ -99,12 +99,12 @@
     {
       "id": "ammo-overlay",
       "file": "data/audits/item-weapons-schema-v2.9-ammo-normalization.json",
-      "sha256": "30c704e5f69e21cf2653f0e71af5cf901fd1120fb59e7c8ffef5cb4de56a9728"
+      "sha256": "1f319a7df3ab2ee71043743bce033b75a4bbb600ec27553c7ecb9f8d48aba65c"
     },
     {
       "id": "phase3a",
       "file": "data/audits/item-weapons-phase-3a-cross-publication-reconciliation.json",
-      "sha256": "7f67ccab4ec829e96596a79a18135d10c729d4aef0c9cb52be5eeb5888483f00"
+      "sha256": "b4d021a041f5976b6415375f147f31e837e471ef4788ced62531d99c2dd22e78"
     }
   ],
   "identities": [
@@ -26527,7 +26527,7 @@
           "phase2Ref": {
             "file": "data/audits/item-weapons-phase-2d-force-unleashed-standalone-authority.json",
             "phase": "2D",
-            "sha256": "10fb1ddcf5b352174ff18483d51ca3ed11fa0496b35e6bcf4636a5b3033b8c9b"
+            "sha256": "5481f0a819ad56faff8da447970a6e1a4ee6d34691156b64b1b674e16ad52e8b"
           }
         }
       ],
@@ -26547,19 +26547,19 @@
         "size": "Huge",
         "costCredits": 9500,
         "baseDamage": {
-          "mode": "dice",
-          "diceCount": 6,
-          "dieSize": 6,
+          "mode": "ammunition",
+          "diceCount": null,
+          "dieSize": null,
           "flatBonus": 0,
-          "formula": "6d6"
+          "formula": "Loaded e-web missile payload"
         },
         "weightKg": 42,
         "damageType": {
-          "mode": "single",
-          "types": [
-            "slashing"
-          ],
-          "qualifiers": []
+          "mode": "varies",
+          "types": [],
+          "qualifiers": [
+            "payload-derived"
+          ]
         },
         "availability": {
           "restriction": "military",
@@ -26761,7 +26761,9 @@
               "reloadRequiredAfterEachShot": true
             },
             "preparedAttack": null,
-            "notes": [],
+            "notes": [
+              "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
+            ],
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
@@ -26773,7 +26775,46 @@
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
-        "payloadProfiles": [],
+        "payloadProfiles": [
+          {
+            "id": "e-web-missile",
+            "label": "E-Web Missile",
+            "damage": {
+              "mode": "dice",
+              "diceCount": 6,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "6d6"
+            },
+            "damageMultiplier": 1,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": true,
+              "shape": "rectangle",
+              "widthSquares": 2,
+              "heightSquares": 2,
+              "notes": "2-by-2-square area"
+            },
+            "specialEffects": [],
+            "notes": [
+              "Payload-owned damage, type and area (v2.9 launcher/payload separation). Per-missile price and weight are not published separately and are not derived here."
+            ]
+          }
+        ],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
@@ -26785,7 +26826,11 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null,
+        "deliveryMethod": {
+          "physicalMethod": "launcher-fired-missile",
+          "requiredAmmoFamily": "missile",
+          "rangeClassification": "heavy-weapons"
+        },
         "resourceProfiles": [],
         "ammo": {
           "mode": "single",
@@ -26800,7 +26845,9 @@
           "integrated": null,
           "rechargeable": null,
           "acceptedPayloadFamily": "missile",
-          "acceptedAmmoIdentities": [],
+          "acceptedAmmoIdentities": [
+            "E-Web Missile"
+          ],
           "damageSource": "loaded-ammo",
           "payloadDerived": true,
           "sourceStatus": null
@@ -26872,16 +26919,7 @@
           ]
         }
       },
-      "ambiguities": [
-        {
-          "id": "weapon-e-web-missile-launcher-delivery-damage-ownership",
-          "field": "canonicalStats.baseDamage",
-          "status": "DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED",
-          "value": null,
-          "detail": "The v2.9 ammo overlay marks E-Web Missile Launcher as payload-derived (damageSource loaded-ammo), but the certified claim prints 6d6 on the launcher row and no payload profile exists. Neither value was moved: the launcher keeps its certified base damage and the ownership question is recorded for the planner.",
-          "blocksProductionMutation": true
-        }
-      ],
+      "ambiguities": [],
       "mergeAudit": {
         "claimCount": 1,
         "baseClaim": "2D",
@@ -46439,7 +46477,7 @@
           "phase2Ref": {
             "file": "data/audits/item-weapons-phase-2i-rebellion-era-standalone-authority.json",
             "phase": "2I",
-            "sha256": "97e5872dc659bc42c8db525c526bf7ae93fd160ef5368b58e0eca062c3c93d88"
+            "sha256": "78effe20eb1971bdf8a03707ed23019189df9943a11c4e1621287748a298106d"
           }
         }
       ],
@@ -46459,19 +46497,19 @@
         "size": "Large",
         "costCredits": 2250,
         "baseDamage": {
-          "mode": "dice",
-          "diceCount": 8,
-          "dieSize": 6,
+          "mode": "ammunition",
+          "diceCount": null,
+          "dieSize": null,
           "flatBonus": 0,
-          "formula": "8d6"
+          "formula": "Loaded arakyd 3t3 missile payload"
         },
         "weightKg": 48,
         "damageType": {
-          "mode": "single",
-          "types": [
-            "energy"
-          ],
-          "qualifiers": []
+          "mode": "varies",
+          "types": [],
+          "qualifiers": [
+            "payload-derived"
+          ]
         },
         "availability": {
           "restriction": "military",
@@ -46677,7 +46715,9 @@
             "triggeredEffects": [],
             "criticalEffects": [],
             "modifierPolicy": null,
-            "notes": [],
+            "notes": [
+              "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
+            ],
             "damageMultiplier": 1,
             "conditionalRangeRules": []
           }
@@ -46730,7 +46770,45 @@
           }
         ],
         "defensiveInteractions": [],
-        "payloadProfiles": [],
+        "payloadProfiles": [
+          {
+            "id": "arakyd-3t3-missile",
+            "label": "Arakyd 3t3 Missile",
+            "damage": {
+              "mode": "dice",
+              "diceCount": 8,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "8d6"
+            },
+            "damageMultiplier": 1,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": true,
+              "shape": "burst",
+              "radiusSquares": 3,
+              "notes": "3-square burst"
+            },
+            "specialEffects": [],
+            "notes": [
+              "Payload-owned damage, type and area (v2.9 launcher/payload separation). Per-missile price and weight are not published separately and are not derived here."
+            ]
+          }
+        ],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
@@ -46742,7 +46820,11 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null,
+        "deliveryMethod": {
+          "physicalMethod": "launcher-fired-missile",
+          "requiredAmmoFamily": "missile",
+          "rangeClassification": "heavy-weapons"
+        },
         "ammo": {
           "mode": "single",
           "status": "established",
@@ -46756,7 +46838,9 @@
           "integrated": null,
           "rechargeable": null,
           "acceptedPayloadFamily": "missile",
-          "acceptedAmmoIdentities": [],
+          "acceptedAmmoIdentities": [
+            "Arakyd 3t3 Missile"
+          ],
           "damageSource": "loaded-ammo",
           "payloadDerived": true,
           "sourceStatus": null
@@ -46834,16 +46918,7 @@
           ]
         }
       },
-      "ambiguities": [
-        {
-          "id": "weapon-plx-2m-portable-missile-launcher-delivery-damage-ownership",
-          "field": "canonicalStats.baseDamage",
-          "status": "DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED",
-          "value": null,
-          "detail": "The v2.9 ammo overlay marks Merr-Sonn PLX-2M Portable Missile Launcher as payload-derived (damageSource loaded-ammo), but the certified claim prints 8d6 on the launcher row and no payload profile exists. Neither value was moved: the launcher keeps its certified base damage and the ownership question is recorded for the planner.",
-          "blocksProductionMutation": true
-        }
-      ],
+      "ambiguities": [],
       "mergeAudit": {
         "claimCount": 1,
         "baseClaim": "2I",
@@ -47350,7 +47425,7 @@
           "phase2Ref": {
             "file": "data/audits/item-weapons-phase-2i-rebellion-era-standalone-authority.json",
             "phase": "2I",
-            "sha256": "96c245b0b8df2ac4e0d41669de20389496a0bf9f45dd84053a90d97ed7af8f16"
+            "sha256": "a724fa5d7a0dc875e2b1968f2a20b864fbe89f8a17bedabaac3f51af6fe752d6"
           }
         }
       ],
@@ -47370,19 +47445,19 @@
         "size": "Large",
         "costCredits": 1500,
         "baseDamage": {
-          "mode": "dice",
-          "diceCount": 6,
-          "dieSize": 10,
+          "mode": "ammunition",
+          "diceCount": null,
+          "dieSize": null,
           "flatBonus": 0,
-          "formula": "6d10"
+          "formula": "Loaded miniature proton torpedo payload"
         },
         "weightKg": 8,
         "damageType": {
-          "mode": "single",
-          "types": [
-            "energy"
-          ],
-          "qualifiers": []
+          "mode": "varies",
+          "types": [],
+          "qualifiers": [
+            "payload-derived"
+          ]
         },
         "availability": {
           "restriction": "military",
@@ -47591,7 +47666,9 @@
             "triggeredEffects": [],
             "criticalEffects": [],
             "modifierPolicy": null,
-            "notes": [],
+            "notes": [
+              "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
+            ],
             "damageMultiplier": 1,
             "conditionalRangeRules": []
           },
@@ -47727,7 +47804,8 @@
             "criticalEffects": [],
             "modifierPolicy": null,
             "notes": [
-              "Published single-target damage is 6d10x2."
+              "Published single-target damage is 6d10x2.",
+              "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
             ],
             "damageMultiplier": 2,
             "conditionalRangeRules": []
@@ -47743,11 +47821,56 @@
             "id": "single-target",
             "label": "Single-target mode",
             "attackProfileId": "single-target",
-            "switchAction": "swift"
+            "switchAction": "swift",
+            "payloadTransform": {
+              "removeArea": true,
+              "damageMultiplier": 2,
+              "attackRollModifier": -10,
+              "appliesToTargetsSmallerThan": "Huge",
+              "owner": "launcher"
+            }
           }
         ],
         "defensiveInteractions": [],
-        "payloadProfiles": [],
+        "payloadProfiles": [
+          {
+            "id": "miniature-proton-torpedo",
+            "label": "Miniature Proton Torpedo",
+            "damage": {
+              "mode": "dice",
+              "diceCount": 6,
+              "dieSize": 10,
+              "flatBonus": 0,
+              "formula": "6d10"
+            },
+            "damageMultiplier": 1,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": true,
+              "shape": "blast",
+              "radiusSquares": 2,
+              "notes": "2-square blast area"
+            },
+            "specialEffects": [],
+            "notes": [
+              "Payload-owned damage, type and area (v2.9 launcher/payload separation). Per-missile price and weight are not published separately and are not derived here."
+            ]
+          }
+        ],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
@@ -47759,7 +47882,11 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null,
+        "deliveryMethod": {
+          "physicalMethod": "launcher-fired-torpedo",
+          "requiredAmmoFamily": "torpedo",
+          "rangeClassification": "heavy-weapons"
+        },
         "ammo": {
           "mode": "single",
           "status": "established",
@@ -47773,10 +47900,12 @@
           "integrated": null,
           "rechargeable": null,
           "acceptedPayloadFamily": "torpedo",
-          "acceptedAmmoIdentities": [],
-          "damageSource": "loaded-ammo",
+          "acceptedAmmoIdentities": [
+            "Miniature Proton Torpedo"
+          ],
+          "damageSource": "loaded-ammo-modified-by-weapon",
           "payloadDerived": true,
-          "sourceStatus": null
+          "sourceStatus": "Default area mode resolves the loaded torpedo payload; the launcher-specific single-target mode transforms the selected payload (no area, damage x2, -10 attack against targets smaller than Huge)."
         }
       },
       "qualities": {
@@ -47847,16 +47976,7 @@
           ]
         }
       },
-      "ambiguities": [
-        {
-          "id": "weapon-miniature-proton-torpedo-launcher-delivery-damage-ownership",
-          "field": "canonicalStats.baseDamage",
-          "status": "DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED",
-          "value": null,
-          "detail": "The v2.9 ammo overlay marks Miniature Proton Torpedo Launcher as payload-derived (damageSource loaded-ammo), but the certified claim prints 6d10 on the launcher row and no payload profile exists. Neither value was moved: the launcher keeps its certified base damage and the ownership question is recorded for the planner.",
-          "blocksProductionMutation": true
-        }
-      ],
+      "ambiguities": [],
       "mergeAudit": {
         "claimCount": 1,
         "baseClaim": "2I",
@@ -47884,7 +48004,7 @@
           "book": "Core Rulebook",
           "canonicalName": "Missile Launcher",
           "publishedName": null,
-          "descriptionPage": 129,
+          "descriptionPage": 130,
           "statTablePage": 126,
           "canonicalPlayerText": "A missile launcher fires explosive projectiles affecting a 2-square burst radius. Make one attack roll and compare it to the Reflex Defense of every target in the burst; a hit deals full damage and a miss deals half, with Evasion modifying this as normal. The launcher holds four missiles and reloads as a full-round action. Replacement magazines hold four missiles, cost 200 credits, and weigh 5 kg.",
           "summary": "Four-shot, 2-square-burst launcher using area-attack rules; reloads with four-missile magazines as a full-round action.",
@@ -47894,7 +48014,7 @@
           "phase2Ref": {
             "file": "data/audits/item-canonicalization-rolling-authority.json#phases.2-weapons-numeric-stat-schema.books[0]",
             "phase": "2A",
-            "sha256": "327e7f3a0e1c9acdbd67da08dbf30ad8b4c6db4b17577494c54982362ff44849"
+            "sha256": "2ed21edefc4bf0d9a7a0b8848b13d7424d9f067e6f8e64b0b7fd80b89123b853"
           }
         }
       ],
@@ -47914,19 +48034,19 @@
         "size": "Large",
         "costCredits": 1500,
         "baseDamage": {
-          "mode": "dice",
-          "diceCount": 6,
-          "dieSize": 6,
+          "mode": "ammunition",
+          "diceCount": null,
+          "dieSize": null,
           "flatBonus": 0,
-          "formula": "6d6"
+          "formula": "Loaded standard missile payload"
         },
         "weightKg": 10,
         "damageType": {
-          "mode": "single",
-          "types": [
-            "slashing"
-          ],
-          "qualifiers": []
+          "mode": "varies",
+          "types": [],
+          "qualifiers": [
+            "payload-derived"
+          ]
         },
         "availability": {
           "restriction": "military",
@@ -48108,18 +48228,20 @@
             },
             "area": {
               "enabled": true,
-              "shape": null,
-              "radiusSquares": null,
+              "shape": "burst",
+              "radiusSquares": 2,
               "lengthSquares": null,
               "widthAtEndSquares": null,
               "widthSquares": null,
               "heightSquares": null,
               "notes": [
-                "Area geometry and miss rule are not captured in the certified Core/KOTOR authority; the printed description governs until a source-backed backfill."
+                "2-square burst (Standard Missile payload); area miss rule is not captured in the certified Core/KOTOR authority."
               ]
             },
             "resourceConsumption": null,
-            "notes": [],
+            "notes": [
+              "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
+            ],
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
@@ -48134,7 +48256,45 @@
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
-        "payloadProfiles": [],
+        "payloadProfiles": [
+          {
+            "id": "standard-missile",
+            "label": "Standard Missile",
+            "damage": {
+              "mode": "dice",
+              "diceCount": 6,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "6d6"
+            },
+            "damageMultiplier": 1,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": true,
+              "shape": "burst",
+              "radiusSquares": 2,
+              "notes": "2-square burst"
+            },
+            "specialEffects": [],
+            "notes": [
+              "Payload-owned damage, type and area (v2.9 launcher/payload separation). Per-missile price and weight are not published separately and are not derived here."
+            ]
+          }
+        ],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
@@ -48146,7 +48306,11 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null,
+        "deliveryMethod": {
+          "physicalMethod": "launcher-fired-missile",
+          "requiredAmmoFamily": "missile",
+          "rangeClassification": "heavy-weapons"
+        },
         "resourceProfiles": [],
         "ammo": {
           "mode": "single",
@@ -48161,7 +48325,9 @@
           "integrated": null,
           "rechargeable": null,
           "acceptedPayloadFamily": "missile",
-          "acceptedAmmoIdentities": [],
+          "acceptedAmmoIdentities": [
+            "Standard Missile"
+          ],
           "damageSource": "loaded-ammo",
           "payloadDerived": true,
           "sourceStatus": null
@@ -48216,16 +48382,7 @@
           }
         ]
       },
-      "ambiguities": [
-        {
-          "id": "weapon-missile-launcher-delivery-damage-ownership",
-          "field": "canonicalStats.baseDamage",
-          "status": "DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED",
-          "value": null,
-          "detail": "The v2.9 ammo overlay marks Missile Launcher as payload-derived (damageSource loaded-ammo), but the certified claim prints 6d6 on the launcher row and no payload profile exists. Neither value was moved: the launcher keeps its certified base damage and the ownership question is recorded for the planner.",
-          "blocksProductionMutation": true
-        }
-      ],
+      "ambiguities": [],
       "mergeAudit": {
         "claimCount": 1,
         "baseClaim": "2A",
@@ -66974,7 +67131,7 @@
           "phase2Ref": {
             "file": "data/audits/item-weapons-phase-2b-kotor-standalone-authority.json",
             "phase": "2B",
-            "sha256": "7beb78ab7ff694307d67aae0c38323995c1d8cd75ebbb5ff5061bfd1e4d44c8d"
+            "sha256": "b4870c7c43e683088492917fc051d634b9875d5a7b52fd2575bcdb59055711a7"
           }
         },
         {
@@ -67086,18 +67243,6 @@
           "exceptions": []
         },
         "sizeRule": "two_sizes_smaller_than_wearer",
-        "variantsByWearerSize": [
-          {
-            "wearerSize": "Small",
-            "costCredits": 200,
-            "weightKg": 0.4
-          },
-          {
-            "wearerSize": "Medium",
-            "costCredits": 300,
-            "weightKg": 0.5
-          }
-        ],
         "attackProfiles": [
           {
             "id": "primary",
@@ -67214,7 +67359,53 @@
         },
         "deliveryMethod": null,
         "resourceProfiles": [],
-        "ammo": null
+        "ammo": null,
+        "variantsByWeaponSize": [
+          {
+            "weaponSize": "Tiny",
+            "costCredits": 200,
+            "weightKg": 0.4,
+            "source": "Clone Wars Campaign Guide p.60"
+          },
+          {
+            "weaponSize": "Small",
+            "costCredits": 200,
+            "weightKg": 0.4,
+            "source": "Knights of the Old Republic Campaign Guide p.202 table"
+          },
+          {
+            "weaponSize": "Medium",
+            "costCredits": 300,
+            "weightKg": 0.5,
+            "source": "Knights of the Old Republic Campaign Guide p.202 table"
+          }
+        ],
+        "variantsByWearerSize": [
+          {
+            "wearerSize": "Medium",
+            "weaponSize": "Tiny",
+            "costCredits": 200,
+            "weightKg": 0.4,
+            "derivedBy": "two_sizes_smaller_than_wearer",
+            "source": "Clone Wars Campaign Guide p.60 (Human wears a Tiny gauntlet)"
+          },
+          {
+            "wearerSize": "Large",
+            "weaponSize": "Small",
+            "costCredits": 200,
+            "weightKg": 0.4,
+            "derivedBy": "two_sizes_smaller_than_wearer",
+            "source": "KOTOR p.202"
+          },
+          {
+            "wearerSize": "Huge",
+            "weaponSize": "Medium",
+            "costCredits": 300,
+            "weightKg": 0.5,
+            "derivedBy": "two_sizes_smaller_than_wearer",
+            "source": "KOTOR p.202"
+          }
+        ]
       },
       "qualities": {
         "accurate": false,
@@ -67248,16 +67439,6 @@
         "arc": "not-established-by-KOTOR",
         "ignoresDR": "not-established-by-KOTOR"
       },
-      "variantExamples": [
-        {
-          "source": "Clone Wars Campaign Guide p.60",
-          "wearer": "Human",
-          "wearerSize": "Medium",
-          "size": "Tiny",
-          "costCredits": 200,
-          "weightKg": 0.4
-        }
-      ],
       "crossPublication": {
         "claimCount": 2,
         "status": "RESOLVED",
@@ -67286,16 +67467,7 @@
           ]
         }
       },
-      "ambiguities": [
-        {
-          "id": "unmapped::Stunning Gauntlet-variant-discrepancy",
-          "field": "canonicalStats.variantsByWearerSize",
-          "status": "CROSS_PUBLICATION_VARIANT_DISCREPANCY_FOR_PLANNER",
-          "value": null,
-          "detail": "Knights of the Old Republic certifies Medium-wearer variant 300 credits / 0.5 kg, while the Clone Wars example for a Human (Medium) wearer is a Tiny gauntlet at 200 credits / 0.4 kg (which equals the KOTOR Small-wearer line). Both claims are preserved; no value was chosen.",
-          "blocksProductionMutation": true
-        }
-      ],
+      "ambiguities": [],
       "mergeAudit": {
         "claimCount": 2,
         "baseClaim": "2B",

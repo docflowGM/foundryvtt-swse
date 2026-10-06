@@ -4036,19 +4036,19 @@
         "size": "Huge",
         "costCredits": 9500,
         "baseDamage": {
-          "mode": "dice",
-          "diceCount": 6,
-          "dieSize": 6,
+          "mode": "ammunition",
+          "diceCount": null,
+          "dieSize": null,
           "flatBonus": 0,
-          "formula": "6d6"
+          "formula": "Loaded e-web missile payload"
         },
         "weightKg": 42,
         "damageType": {
-          "mode": "single",
-          "types": [
-            "slashing"
-          ],
-          "qualifiers": []
+          "mode": "varies",
+          "types": [],
+          "qualifiers": [
+            "payload-derived"
+          ]
         },
         "availability": {
           "restriction": "military",
@@ -4250,7 +4250,9 @@
               "reloadRequiredAfterEachShot": true
             },
             "preparedAttack": null,
-            "notes": [],
+            "notes": [
+              "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
+            ],
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
@@ -4262,7 +4264,46 @@
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
-        "payloadProfiles": [],
+        "payloadProfiles": [
+          {
+            "id": "e-web-missile",
+            "label": "E-Web Missile",
+            "damage": {
+              "mode": "dice",
+              "diceCount": 6,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "6d6"
+            },
+            "damageMultiplier": 1,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": true,
+              "shape": "rectangle",
+              "widthSquares": 2,
+              "heightSquares": 2,
+              "notes": "2-by-2-square area"
+            },
+            "specialEffects": [],
+            "notes": [
+              "Payload-owned damage, type and area (v2.9 launcher/payload separation). Per-missile price and weight are not published separately and are not derived here."
+            ]
+          }
+        ],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
@@ -4274,7 +4315,11 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null,
+        "deliveryMethod": {
+          "physicalMethod": "launcher-fired-missile",
+          "requiredAmmoFamily": "missile",
+          "rangeClassification": "heavy-weapons"
+        },
         "resourceProfiles": [],
         "ammo": {
           "mode": "single",
@@ -4289,7 +4334,9 @@
           "integrated": null,
           "rechargeable": null,
           "acceptedPayloadFamily": "missile",
-          "acceptedAmmoIdentities": [],
+          "acceptedAmmoIdentities": [
+            "E-Web Missile"
+          ],
           "damageSource": "loaded-ammo",
           "payloadDerived": true,
           "sourceStatus": null
@@ -4352,7 +4399,14 @@
         ]
       },
       "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
-      "proficiencyRules": []
+      "proficiencyRules": [],
+      "auditCorrections": [
+        {
+          "id": "launcher-payload-ownership",
+          "phase": "3B-correction",
+          "change": "Launcher baseDamage moved from intrinsic dice to ammunition/payload-derived; the default payload profile now owns the printed damage, type and area."
+        }
+      ]
     },
     {
       "canonicalName": "Flechette Launcher",

@@ -19959,7 +19959,7 @@
               "weaponGroup": "Heavy Weapon",
               "source": {
                 "book": "Core Rulebook",
-                "descriptionPage": 129,
+                "descriptionPage": 130,
                 "statTablePage": 126,
                 "table": "Table 8-4: Ranged Weapons",
                 "verifiedBy": [
@@ -27028,7 +27028,7 @@
               "phase": "1A",
               "book": "Core Rulebook",
               "canonicalName": "Missile Launcher",
-              "descriptionPage": 129,
+              "descriptionPage": 130,
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
@@ -40913,7 +40913,7 @@
               "weaponGroup": "Heavy Weapon",
               "source": {
                 "book": "Core Rulebook",
-                "descriptionPage": 129,
+                "descriptionPage": 130,
                 "statTablePage": 126,
                 "table": "Table 8-4: Ranged Weapons",
                 "verifiedBy": [
@@ -40930,19 +40930,19 @@
                 "size": "Large",
                 "costCredits": 1500,
                 "baseDamage": {
-                  "mode": "dice",
-                  "diceCount": 6,
-                  "dieSize": 6,
+                  "mode": "ammunition",
+                  "diceCount": null,
+                  "dieSize": null,
                   "flatBonus": 0,
-                  "formula": "6d6"
+                  "formula": "Loaded standard missile payload"
                 },
                 "weightKg": 10,
                 "damageType": {
-                  "mode": "single",
-                  "types": [
-                    "slashing"
-                  ],
-                  "qualifiers": []
+                  "mode": "varies",
+                  "types": [],
+                  "qualifiers": [
+                    "payload-derived"
+                  ]
                 },
                 "availability": {
                   "restriction": "military",
@@ -41124,18 +41124,20 @@
                     },
                     "area": {
                       "enabled": true,
-                      "shape": null,
-                      "radiusSquares": null,
+                      "shape": "burst",
+                      "radiusSquares": 2,
                       "lengthSquares": null,
                       "widthAtEndSquares": null,
                       "widthSquares": null,
                       "heightSquares": null,
                       "notes": [
-                        "Area geometry and miss rule are not captured in the certified Core/KOTOR authority; the printed description governs until a source-backed backfill."
+                        "2-square burst (Standard Missile payload); area miss rule is not captured in the certified Core/KOTOR authority."
                       ]
                     },
                     "resourceConsumption": null,
-                    "notes": [],
+                    "notes": [
+                      "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
+                    ],
                     "damageComponents": [],
                     "firingConstraints": null,
                     "preparedAttack": null,
@@ -41150,7 +41152,45 @@
                 ],
                 "modeProfiles": [],
                 "defensiveInteractions": [],
-                "payloadProfiles": [],
+                "payloadProfiles": [
+                  {
+                    "id": "standard-missile",
+                    "label": "Standard Missile",
+                    "damage": {
+                      "mode": "dice",
+                      "diceCount": 6,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "6d6"
+                    },
+                    "damageMultiplier": 1,
+                    "stun": {
+                      "capability": "none",
+                      "hasStunSetting": false,
+                      "damageMode": "none",
+                      "damage": null,
+                      "activation": null,
+                      "rangeRule": null
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "slashing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "area": {
+                      "enabled": true,
+                      "shape": "burst",
+                      "radiusSquares": 2,
+                      "notes": "2-square burst"
+                    },
+                    "specialEffects": [],
+                    "notes": [
+                      "Payload-owned damage, type and area (v2.9 launcher/payload separation). Per-missile price and weight are not published separately and are not derived here."
+                    ]
+                  }
+                ],
                 "objectDurability": null,
                 "integratedAccessories": [],
                 "wieldingRules": [],
@@ -41162,7 +41202,11 @@
                   "tags": [],
                   "rules": []
                 },
-                "deliveryMethod": null,
+                "deliveryMethod": {
+                  "physicalMethod": "launcher-fired-missile",
+                  "requiredAmmoFamily": "missile",
+                  "rangeClassification": "heavy-weapons"
+                },
                 "resourceProfiles": [],
                 "ammo": {
                   "mode": "single",
@@ -41177,7 +41221,9 @@
                   "integrated": null,
                   "rechargeable": null,
                   "acceptedPayloadFamily": "missile",
-                  "acceptedAmmoIdentities": [],
+                  "acceptedAmmoIdentities": [
+                    "Standard Missile"
+                  ],
                   "damageSource": "loaded-ammo",
                   "payloadDerived": true,
                   "sourceStatus": null
@@ -41222,7 +41268,21 @@
                 "inaccurate": null,
                 "arc": null
               },
-              "proficiencyRules": []
+              "proficiencyRules": [],
+              "auditCorrections": [
+                {
+                  "id": "launcher-payload-ownership",
+                  "phase": "3B-correction",
+                  "change": "Launcher baseDamage moved from intrinsic dice to ammunition/payload-derived; the default payload profile now owns the printed damage, type and area."
+                },
+                {
+                  "id": "description-page",
+                  "phase": "3B-correction",
+                  "was": 129,
+                  "now": 130,
+                  "reason": "Printed Core p.130 verified visually by the planner; stat table stays p.126."
+                }
+              ]
             },
             {
               "canonicalName": "Net",
@@ -42892,7 +42952,7 @@
           "rollingMergeAuthorized": false,
           "mirrorProfiles": false,
           "specialRateOfFireAllowed": [],
-          "note": "Book-only authority by owner instruction. Introduces schema v2.7. BlasTech 500 Riot Gun stays conflict-gated against Clone Wars; Flechette Launcher is the same identity as Force Unleashed."
+          "note": "Book-only authority by owner instruction. Introduces schema v2.7. BlasTech 500 Riot Gun conflict resolved by the Phase 3B planner ruling (Rebellion Era controls the contradicting fields; Clone Wars kept as the superseded claim); Flechette Launcher is the same identity as Force Unleashed."
         },
         {
           "phase": "2J",
@@ -42984,14 +43044,25 @@
       "productionMutationAuthorized": false,
       "note": "Planner supplies the reconciliation; Claude folds and verifies it against the certified claims. Weapon tag archaeology starts only after 3D.",
       "openSourceAmbiguities": [
-        "Bowcaster range profile (SOURCE_NOT_EXPLICIT; blocks production range mutation, not Phase 3)",
-        "Stunning Gauntlet KOTOR Medium-wearer variant (300 cr / 0.5 kg) vs Clone Wars Human/Tiny example (200 cr / 0.4 kg): cross-publication variant discrepancy recorded for the planner"
+        "Bowcaster range profile (SOURCE_NOT_EXPLICIT; blocks production range mutation, not Phase 3)"
+      ],
+      "corrections": [
+        {
+          "id": "phase-3b-certification-correction",
+          "baseline": "3a749ada388fc97b34c2aad47c29c4acc815e72b",
+          "items": [
+            "Stunning Gauntlet: KOTOR table rows are WEAPON sizes (Small 200/0.4, Medium 300/0.5); with sizeRule two_sizes_smaller_than_wearer and Clone Wars Tiny 200/0.4 the wearer variants are Medium->Tiny, Large->Small, Huge->Medium; the cross-publication variant discrepancy is removed (complementary data).",
+            "Four launchers (Core Missile Launcher, E-Web Missile Launcher, Merr-Sonn PLX-2M, Miniature Proton Torpedo Launcher) normalized to ammunition/payload-derived baseDamage with default payload profiles; the unresolved-ownership exception is removed.",
+            "Core Missile Launcher description page 129 -> 130 (stat table stays p.126).",
+            "Stale \"Riot Gun conflict remains gated\" bookkeeping removed."
+          ]
+        }
       ]
     }
   },
   "pendingPhases": [
     "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
-    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy and 2K Galaxy of Intrigue and 2L Threats of the Galaxy DONE (standalone book authorities, schema v2.9; all 12 weapon books certified); Phase 3A cross-publication reconciliation and 3B 203-identity canonical build DONE (authority-only); next: 3C production disposition ledger, 3D global verification/freeze; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
+    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy and 2K Galaxy of Intrigue and 2L Threats of the Galaxy DONE (standalone book authorities, schema v2.9; all 12 weapon books certified); Phase 3A cross-publication reconciliation and 3B 203-identity canonical build DONE (authority-only); next: 3C production disposition ledger, 3D global verification/freeze; Bowcaster range remains source-unresolved",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

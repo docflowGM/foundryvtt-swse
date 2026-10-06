@@ -2073,19 +2073,19 @@
         "size": "Large",
         "costCredits": 2250,
         "baseDamage": {
-          "mode": "dice",
-          "diceCount": 8,
-          "dieSize": 6,
+          "mode": "ammunition",
+          "diceCount": null,
+          "dieSize": null,
           "flatBonus": 0,
-          "formula": "8d6"
+          "formula": "Loaded arakyd 3t3 missile payload"
         },
         "weightKg": 48,
         "damageType": {
-          "mode": "single",
-          "types": [
-            "energy"
-          ],
-          "qualifiers": []
+          "mode": "varies",
+          "types": [],
+          "qualifiers": [
+            "payload-derived"
+          ]
         },
         "availability": {
           "restriction": "military",
@@ -2291,7 +2291,9 @@
             "triggeredEffects": [],
             "criticalEffects": [],
             "modifierPolicy": null,
-            "notes": [],
+            "notes": [
+              "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
+            ],
             "damageMultiplier": 1,
             "conditionalRangeRules": []
           }
@@ -2344,7 +2346,45 @@
           }
         ],
         "defensiveInteractions": [],
-        "payloadProfiles": [],
+        "payloadProfiles": [
+          {
+            "id": "arakyd-3t3-missile",
+            "label": "Arakyd 3t3 Missile",
+            "damage": {
+              "mode": "dice",
+              "diceCount": 8,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "8d6"
+            },
+            "damageMultiplier": 1,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": true,
+              "shape": "burst",
+              "radiusSquares": 3,
+              "notes": "3-square burst"
+            },
+            "specialEffects": [],
+            "notes": [
+              "Payload-owned damage, type and area (v2.9 launcher/payload separation). Per-missile price and weight are not published separately and are not derived here."
+            ]
+          }
+        ],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
@@ -2356,7 +2396,11 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null,
+        "deliveryMethod": {
+          "physicalMethod": "launcher-fired-missile",
+          "requiredAmmoFamily": "missile",
+          "rangeClassification": "heavy-weapons"
+        },
         "ammo": {
           "mode": "single",
           "status": "established",
@@ -2370,7 +2414,9 @@
           "integrated": null,
           "rechargeable": null,
           "acceptedPayloadFamily": "missile",
-          "acceptedAmmoIdentities": [],
+          "acceptedAmmoIdentities": [
+            "Arakyd 3t3 Missile"
+          ],
           "damageSource": "loaded-ammo",
           "payloadDerived": true,
           "sourceStatus": null
@@ -2452,7 +2498,14 @@
         ]
       },
       "crossPublishedSources": [],
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "auditCorrections": [
+        {
+          "id": "launcher-payload-ownership",
+          "phase": "3B-correction",
+          "change": "Launcher baseDamage moved from intrinsic dice to ammunition/payload-derived; the default payload profile now owns the printed damage, type and area."
+        }
+      ]
     },
     {
       "canonicalName": "Miniature Proton Torpedo Launcher",
@@ -2477,19 +2530,19 @@
         "size": "Large",
         "costCredits": 1500,
         "baseDamage": {
-          "mode": "dice",
-          "diceCount": 6,
-          "dieSize": 10,
+          "mode": "ammunition",
+          "diceCount": null,
+          "dieSize": null,
           "flatBonus": 0,
-          "formula": "6d10"
+          "formula": "Loaded miniature proton torpedo payload"
         },
         "weightKg": 8,
         "damageType": {
-          "mode": "single",
-          "types": [
-            "energy"
-          ],
-          "qualifiers": []
+          "mode": "varies",
+          "types": [],
+          "qualifiers": [
+            "payload-derived"
+          ]
         },
         "availability": {
           "restriction": "military",
@@ -2698,7 +2751,9 @@
             "triggeredEffects": [],
             "criticalEffects": [],
             "modifierPolicy": null,
-            "notes": [],
+            "notes": [
+              "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
+            ],
             "damageMultiplier": 1,
             "conditionalRangeRules": []
           },
@@ -2834,7 +2889,8 @@
             "criticalEffects": [],
             "modifierPolicy": null,
             "notes": [
-              "Published single-target damage is 6d10x2."
+              "Published single-target damage is 6d10x2.",
+              "Resolved attack profile mirrors the loaded payload; the launcher does not own this damage (v2.9)."
             ],
             "damageMultiplier": 2,
             "conditionalRangeRules": []
@@ -2850,11 +2906,56 @@
             "id": "single-target",
             "label": "Single-target mode",
             "attackProfileId": "single-target",
-            "switchAction": "swift"
+            "switchAction": "swift",
+            "payloadTransform": {
+              "removeArea": true,
+              "damageMultiplier": 2,
+              "attackRollModifier": -10,
+              "appliesToTargetsSmallerThan": "Huge",
+              "owner": "launcher"
+            }
           }
         ],
         "defensiveInteractions": [],
-        "payloadProfiles": [],
+        "payloadProfiles": [
+          {
+            "id": "miniature-proton-torpedo",
+            "label": "Miniature Proton Torpedo",
+            "damage": {
+              "mode": "dice",
+              "diceCount": 6,
+              "dieSize": 10,
+              "flatBonus": 0,
+              "formula": "6d10"
+            },
+            "damageMultiplier": 1,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": true,
+              "shape": "blast",
+              "radiusSquares": 2,
+              "notes": "2-square blast area"
+            },
+            "specialEffects": [],
+            "notes": [
+              "Payload-owned damage, type and area (v2.9 launcher/payload separation). Per-missile price and weight are not published separately and are not derived here."
+            ]
+          }
+        ],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
@@ -2866,7 +2967,11 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null,
+        "deliveryMethod": {
+          "physicalMethod": "launcher-fired-torpedo",
+          "requiredAmmoFamily": "torpedo",
+          "rangeClassification": "heavy-weapons"
+        },
         "ammo": {
           "mode": "single",
           "status": "established",
@@ -2880,10 +2985,12 @@
           "integrated": null,
           "rechargeable": null,
           "acceptedPayloadFamily": "torpedo",
-          "acceptedAmmoIdentities": [],
-          "damageSource": "loaded-ammo",
+          "acceptedAmmoIdentities": [
+            "Miniature Proton Torpedo"
+          ],
+          "damageSource": "loaded-ammo-modified-by-weapon",
           "payloadDerived": true,
-          "sourceStatus": null
+          "sourceStatus": "Default area mode resolves the loaded torpedo payload; the launcher-specific single-target mode transforms the selected payload (no area, damage x2, -10 attack against targets smaller than Huge)."
         }
       },
       "qualities": {
@@ -2958,7 +3065,14 @@
         ]
       },
       "crossPublishedSources": [],
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "auditCorrections": [
+        {
+          "id": "launcher-payload-ownership",
+          "phase": "3B-correction",
+          "change": "Launcher baseDamage moved from intrinsic dice to ammunition/payload-derived; the default payload profile now owns the printed damage, type and area."
+        }
+      ]
     },
     {
       "canonicalName": "BlasTech 500 Riot Gun",

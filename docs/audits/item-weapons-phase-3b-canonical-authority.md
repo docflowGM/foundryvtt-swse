@@ -9,7 +9,7 @@ Generated deterministically by `tools/build-item-weapons-phase-3b-canonical-auth
 - Certified source claims: **209** across 12 books
 - Canonical production identities: **203** (197 single-claim, 6 two-claim)
 - Repo-present identities: 151; repo-missing: 52
-- Identities carrying explicit source ambiguities: 18
+- Identities carrying explicit source ambiguities: 13
 
 ## Cross-published identities (6)
 
@@ -107,7 +107,7 @@ Precedence policy: Field-local later-publication precedence for exact same-ident
 | Double Vibroblade | 1 | Advanced Melee Weapon | (missing) | none (null) |  |
 | Double-Bladed Sword | 1 | Simple Weapon | (missing) | none (null) |  |
 | Dueling Lightsaber | 1 | Lightsaber | lightsaber-chassis-dueling | none (null) |  |
-| E-Web Missile Launcher | 1 | Heavy Weapon | weapon-e-web-missile-launcher | established | DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED |
+| E-Web Missile Launcher | 1 | Heavy Weapon | weapon-e-web-missile-launcher | established |  |
 | E-Web Repeating Blaster | 1 | Heavy Weapon | weapon-e-web-repeating-blaster | established |  |
 | EMP Grenade | 1 | Simple Weapon | weapon-emp-grenade | self-contained |  |
 | Electronet | 1 | Heavy Weapon (Ammunition) | weapon-electronet | established | SOURCE_ASSIGNS_NO_RANGE_PROFILE |
@@ -161,10 +161,10 @@ Precedence policy: Field-local later-publication precedence for exact same-ident
 | Magna Caster | 1 | Exotic Weapon | weapon-magna-caster | established |  |
 | Massassi Lanvarok | 1 | Exotic Weapon | weapon-massassi-lanvarok | established |  |
 | Merr-Sonn Model 434 DeathHammer | 1 | Pistol | weapon-model-434-deathhammer | not-stated | AMMO_NOT_STATED_BY_SOURCE |
-| Merr-Sonn PLX-2M Portable Missile Launcher | 1 | Heavy Weapon | weapon-plx-2m-portable-missile-launcher | established | DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED |
+| Merr-Sonn PLX-2M Portable Missile Launcher | 1 | Heavy Weapon | weapon-plx-2m-portable-missile-launcher | established |  |
 | Micro Grenade Launcher | 1 | Rifle | weapon-micro-grenade-launcher | established |  |
-| Miniature Proton Torpedo Launcher | 1 | Heavy Weapon | weapon-miniature-proton-torpedo-launcher | established | DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED |
-| Missile Launcher | 1 | Heavy Weapon | weapon-missile-launcher | established | DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED |
+| Miniature Proton Torpedo Launcher | 1 | Heavy Weapon | weapon-miniature-proton-torpedo-launcher | established |  |
+| Missile Launcher | 1 | Heavy Weapon | weapon-missile-launcher | established |  |
 | Mortar Launcher | 1 | Heavy Weapon | weapon-mortar-launcher | established |  |
 | Mythosaur Axe | 1 | Simple Weapon | (missing) | none (null) |  |
 | Needler | 1 | Pistol | weapon-needler | established |  |
@@ -215,7 +215,7 @@ Precedence policy: Field-local later-publication precedence for exact same-ident
 | Stokhli Spray Stick | 1 | Rifle | weapon-stokhli-spray-stick | established |  |
 | Stun Baton | 1 | Simple Weapon | weapon-stun-baton | none (null) |  |
 | Stun Pistol | 1 | Pistol | weapon-stun-pistol | established |  |
-| Stunning Gauntlet | 2 | Simple Weapon | (missing) | none (null) | CROSS_PUBLICATION_VARIANT_DISCREPANCY_FOR_PLANNER |
+| Stunning Gauntlet | 2 | Simple Weapon | (missing) | none (null) |  |
 | Subrepeating Blaster | 1 | Pistol | weapon-subrepeating-blaster | established |  |
 | Survival Knife | 1 | Simple Weapon | (missing) | self-contained |  |
 | Tactical Tractor Beam | 1 | Heavy Weapon | weapon-tactical-tractor-beam | established |  |

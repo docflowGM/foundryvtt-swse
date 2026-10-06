@@ -9870,18 +9870,6 @@
           "exceptions": []
         },
         "sizeRule": "two_sizes_smaller_than_wearer",
-        "variantsByWearerSize": [
-          {
-            "wearerSize": "Small",
-            "costCredits": 200,
-            "weightKg": 0.4
-          },
-          {
-            "wearerSize": "Medium",
-            "costCredits": 300,
-            "weightKg": 0.5
-          }
-        ],
         "attackProfiles": [
           {
             "id": "primary",
@@ -9998,7 +9986,39 @@
         },
         "deliveryMethod": null,
         "resourceProfiles": [],
-        "ammo": null
+        "ammo": null,
+        "variantsByWeaponSize": [
+          {
+            "weaponSize": "Small",
+            "costCredits": 200,
+            "weightKg": 0.4,
+            "source": "Knights of the Old Republic Campaign Guide p.202 table"
+          },
+          {
+            "weaponSize": "Medium",
+            "costCredits": 300,
+            "weightKg": 0.5,
+            "source": "Knights of the Old Republic Campaign Guide p.202 table"
+          }
+        ],
+        "variantsByWearerSize": [
+          {
+            "wearerSize": "Large",
+            "weaponSize": "Small",
+            "costCredits": 200,
+            "weightKg": 0.4,
+            "derivedBy": "two_sizes_smaller_than_wearer",
+            "source": "KOTOR p.202"
+          },
+          {
+            "wearerSize": "Huge",
+            "weaponSize": "Medium",
+            "costCredits": 300,
+            "weightKg": 0.5,
+            "derivedBy": "two_sizes_smaller_than_wearer",
+            "source": "KOTOR p.202"
+          }
+        ]
       },
       "qualities": {
         "accurate": false,
@@ -10055,7 +10075,27 @@
         "inaccurate": null,
         "arc": null
       },
-      "proficiencyRules": []
+      "proficiencyRules": [],
+      "auditCorrections": [
+        {
+          "id": "gauntlet-variant-axis",
+          "phase": "3B-correction",
+          "was": [
+            {
+              "wearerSize": "Small",
+              "costCredits": 200,
+              "weightKg": 0.4
+            },
+            {
+              "wearerSize": "Medium",
+              "costCredits": 300,
+              "weightKg": 0.5
+            }
+          ],
+          "now": "variantsByWeaponSize (table rows are WEAPON sizes) plus variantsByWearerSize derived through sizeRule two_sizes_smaller_than_wearer",
+          "reason": "KOTOR p.202 headings Small/Medium are the gauntlet's own size; the text makes it two size categories smaller than its wearer (a Human wears a Tiny gauntlet). The Tiny row (200 cr / 0.4 kg) is published in Clone Wars p.60 and joins the combined identity."
+        }
+      ]
     },
     {
       "canonicalName": "Mythosaur Axe",

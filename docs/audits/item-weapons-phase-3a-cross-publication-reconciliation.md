@@ -240,7 +240,7 @@ Only after Phase 3D should weapon tag archaeology begin.
 
 - The six identities, repo ids and (book, page) provenance match the certified Phase 1/Phase 2 claims; every compatible/merged fact and every listed conflict is recomputed from those claims by the verifier. Planner rulings are recorded unchanged (4 resolved, 2 conflict-gated).
 - **Findings for the planner (not adjudicated):** the certified claims diverge on the *condition* of the lightsaber-DR resistance. Force Unleashed states it unconditionally for the Guard Shoto and the Lightsaber Pike; Jedi Academy limits it to a phrik-laced handle (Guard Shoto) and a phrik-alloy haft (Pike). The package treats it as additive on the Guard Shoto and lists no conflict on the Pike. This is the same issue as the previously parked "phrik DR" question. The verifier requires both findings to stay recorded.
-- Stunning Gauntlet: KOTOR size/cost/weight are stored as `variantsByWearerSize` in the certified KOTOR claim; the Clone Wars claim carries the Human/Tiny example.
+- Stunning Gauntlet: KOTOR p.202 publishes WEAPON-size rows (Small 200/0.4, Medium 300/0.5); the Clone Wars claim supplies the Tiny row (Human wears Tiny); wearer variants derive through the two-sizes-smaller rule (corrected in the Phase 3B certification pass).
 - No pack, runtime, schema or production record was changed.
 
 ---

@@ -684,7 +684,7 @@ if (s2) {
             if (!same(ap.map((x) => x.id), ['end1', 'end2']) || !same(ap.map((x) => x.damage), s.baseDamage.profiles)) fail(`${w} double weapon profiles must be end1/end2 matching baseDamage.profiles`);
           } else if (s.baseDamage.mode === 'alternate-profiles') {
             if (ap.length < 2) fail(`${w} alternate-profiles needs 2+ attack profiles`);
-          } else if (ap.length !== 1 || ap[0].id !== 'primary' || !(same(ap[0].damage, s.baseDamage) || ap[0].damage.mode === 'inherited') || !same(ap[0].damageType, s.damageType) || !same(ap[0].range, s.range)) fail(`${w} primary attack profile must mirror canonicalStats baseDamage/damageType/range`);
+          } else if (ap.length !== 1 || ap[0].id !== 'primary' || !(same(ap[0].damage, s.baseDamage) || ap[0].damage.mode === 'inherited' || (s.baseDamage.mode === 'ammunition' && s.payloadProfiles.length === 1 && same(ap[0].damage, s.payloadProfiles[0].damage) && same(ap[0].damageType, s.payloadProfiles[0].damageType))) || !(same(ap[0].damageType, s.damageType) || (s.baseDamage.mode === 'ammunition' && s.payloadProfiles.length === 1 && same(ap[0].damageType, s.payloadProfiles[0].damageType))) || !same(ap[0].range, s.range)) fail(`${w} primary attack profile must mirror canonicalStats baseDamage/damageType/range (or, for a payload-derived delivery system, the single loaded payload)`);
         }
         if (s.baseDamage.mode === 'alternate-profiles' && ap.length < 2) fail(`${w} alternate-profiles needs 2+ attack profiles`);
       }
@@ -823,7 +823,7 @@ if (s2) {
       if (!fl.crossPublishedSources.some((c) => /Force Unleashed/.test(c.book) && c.page === 199) || fl.canonicalStats.attackProfiles[0].area.radiusSquares !== 1 || !fl.canonicalStats.attackProfiles[0].firingConstraints?.prohibitsMultiShotAbilities || fl.canonicalStats.resource.capacityShots !== 4) fail('2I Flechette Launcher same identity as Force Unleashed, 1-square splash, 4-shot canister, no multi-shot');
       for (const n of ['Merr-Sonn PLX-2M Portable Missile Launcher', 'Miniature Proton Torpedo Launcher']) if (f(n).qualities.inaccurate || !f(n).qualities.areaEffect) fail(`2I ${n} is Area Attack and not Inaccurate`);
       const mp = f('Miniature Proton Torpedo Launcher').canonicalStats;
-      if (mp.baseDamage.formula !== '6d10' || pr('Miniature Proton Torpedo Launcher', 'area').damageMultiplier !== 1 || pr('Miniature Proton Torpedo Launcher', 'single-target').damageMultiplier !== 2 || pr('Miniature Proton Torpedo Launcher', 'single-target').damage.formula !== '6d10' || pr('Miniature Proton Torpedo Launcher', 'area').area.radiusSquares !== 2 || mp.resource.capacityShots !== 4) fail('2I Mini Proton Torpedo: persistent 6d10, single-target profile x2, 2-square area, 4 torpedoes');
+      if (mp.baseDamage.mode !== 'ammunition' || mp.payloadProfiles[0]?.damage.formula !== '6d10' || mp.payloadProfiles[0]?.damageMultiplier !== 1 || pr('Miniature Proton Torpedo Launcher', 'area').damageMultiplier !== 1 || pr('Miniature Proton Torpedo Launcher', 'single-target').damageMultiplier !== 2 || pr('Miniature Proton Torpedo Launcher', 'single-target').damage.formula !== '6d10' || pr('Miniature Proton Torpedo Launcher', 'area').area.radiusSquares !== 2 || mp.resource.capacityShots !== 4) fail('2I Mini Proton Torpedo: persistent 6d10, single-target profile x2, 2-square area, 4 torpedoes');
       if (!pr('Miniature Proton Torpedo Launcher', 'single-target').conditionalModifiers.some((m) => m.value === -10)) fail('2I Mini Proton Torpedo single-target -10 against targets smaller than Huge');
       const px = f('Merr-Sonn PLX-2M Portable Missile Launcher').canonicalStats;
       if (px.attackProfiles[0].area.radiusSquares !== 3 || px.resource.capacityShots !== 6 || px.modeProfiles.length !== 3 || f('Merr-Sonn PLX-2M Portable Missile Launcher').operation.encumbranceException?.ignoreWeaponWeight !== true) fail('2I PLX-2M 3-square burst, six missiles, three modes, encumbrance exception');
@@ -1043,7 +1043,7 @@ if (p3) {
   const gs = claims.get('Guard Shoto'); const gc = g('Guard Shoto').conflictHistory.find((c) => c.field === 'availability.restriction');
   if (gc.forceUnleashed !== gs.find((c) => c.ph === '2D').r.canonicalStats.availability.restriction || gc.jediAcademy.split(' ')[0] !== gs.find((c) => c.ph === '2F').r.canonicalStats.availability.restriction) fail('3A Guard Shoto availability conflict values');
   const gt = claims.get('Stunning Gauntlet').find((c) => c.ph === '2B').r;
-  if (!gt.canonicalStats.variantsByWearerSize) fail('3A Stunning Gauntlet KOTOR size variants must remain');
+  if (!gt.canonicalStats.variantsByWeaponSize?.length || !gt.canonicalStats.variantsByWearerSize?.length) fail('3A Stunning Gauntlet KOTOR weapon-size rows and derived wearer variants must remain');
   if (!claims.get('Long-Handle Lightsaber').some((c) => c.r.canonicalStats.attackProfiles.some((p) => p.id === 'haft-end')) || !claims.get('Lightsaber Pike').some((c) => c.r.canonicalStats.attackProfiles.some((p) => p.id === 'haft-end' && p.damageType.mode === 'unspecified' && !p.qualities.ignoresDR))) fail('3A Long Haft Form haft-end profile (1d6, unspecified type, no DR bypass) must exist in the certified claims');
   // Planner rulings (Phase 3B): the phrik divergence stays recorded as resolved
   for (const n of ['Guard Shoto', 'Lightsaber Pike']) if (!rec3.claudeReadback.findingsResolvedByPlannerRuling.some((f2) => f2.identity === n && /phrik/.test(f2.id) && f2.resolution)) fail(`3A ${n} phrik finding must stay recorded with its planner resolution`);
@@ -1118,7 +1118,10 @@ if (p3b && typeof p3b === 'object') {
     if ((am === null) === hasRanged) fail(`${w} ammo must be null exactly for pure melee identities`);
     if (am && am.capacityShots === 0) fail(`${w} ammo must never carry capacityShots 0`);
     if (am && am.status === 'not-stated' && (am.type !== null || am.capacityShots !== null)) fail(`${w} not-stated ammo must stay empty (never filled from repo data)`);
-    if (am?.payloadDerived && am.damageSource === 'loaded-ammo' && i.canonicalStats.baseDamage.mode === 'dice' && !i.canonicalStats.payloadProfiles.length && !i.ambiguities.some((a) => a.status === 'DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED')) fail(`${w} payload-derived delivery system that still prints launcher base damage must record the ownership ambiguity`);
+    if (am?.payloadDerived && ['loaded-ammo', 'loaded-ammo-modified-by-weapon'].includes(am.damageSource)) {
+      if (['dice', 'double', 'fixed'].includes(i.canonicalStats.baseDamage.mode)) fail(`${w} payload-derived delivery system must not own payload damage as intrinsic launcher baseDamage (v2.9 separation)`);
+      for (const q of i.canonicalStats.attackProfiles) if (q.damage.mode === 'dice' && !i.canonicalStats.payloadProfiles.some((pl) => pl.damage?.formula === q.damage.formula && same(pl.damageType, q.damageType))) fail(`${w} resolved attack profile ${q.id} damage must come from a loaded payload profile`);
+    }
     for (const k of AMMO_RUNTIME_KEYS) if (am && k in am) fail(`${w} ammo must not carry runtime state ${k}`);
     if (i.crossPublication.claimCount !== i.sourceClaims.length || i.mergeAudit.claimCount !== i.sourceClaims.length) fail(`${w} crossPublication/mergeAudit claim counts`);
   }
@@ -1144,13 +1147,26 @@ if (p3b && typeof p3b === 'object') {
   if (cg.sourceClaims[0].descriptionPage !== 48 || !same(cg.sourceClaims[0].descriptionPages, [48, 49])) fail('3B Concussion Grenade description must start on p.48 and continue on p.49');
   const xn = g('Xerrol Nightstinger');
   if (xn.weaponGroup !== 'Exotic Weapon' || xn.schemaFamily.proficiency !== 'exotic' || xn.canonicalStats.range.profileId !== 'rifles') fail('3B Xerrol Nightstinger must be Exotic proficiency with rifle range');
-  const sg = g('Stunning Gauntlet');
-  if (!sg.canonicalStats.variantsByWearerSize?.length || sg.canonicalStats.costCredits !== null || sg.canonicalStats.weightKg !== null || sg.canonicalStats.size !== null) fail('3B Stunning Gauntlet must keep its KOTOR size/cost/weight variants, not a single fixed line');
-  if (!sg.ambiguities.some((a) => a.status === 'CROSS_PUBLICATION_VARIANT_DISCREPANCY_FOR_PLANNER')) fail('3B Stunning Gauntlet KOTOR/Clone Wars variant discrepancy must stay recorded for the planner');
+  const sg = g('Stunning Gauntlet'), sgs = sg.canonicalStats;
+  const wv = (sz) => sgs.variantsByWearerSize?.find((v) => v.wearerSize === sz);
+  if (sgs.sizeRule !== 'two_sizes_smaller_than_wearer' || sgs.costCredits !== null || sgs.weightKg !== null || sgs.size !== null) fail('3B Stunning Gauntlet keeps the two-sizes-smaller sizeRule and no single fixed size/cost/weight line');
+  if (!same(sgs.variantsByWearerSize?.map((v) => v.wearerSize), ['Medium', 'Large', 'Huge']) || !(wv('Medium')?.weaponSize === 'Tiny' && wv('Medium').costCredits === 200 && wv('Medium').weightKg === 0.4) || !(wv('Large')?.weaponSize === 'Small' && wv('Large').costCredits === 200 && wv('Large').weightKg === 0.4) || !(wv('Huge')?.weaponSize === 'Medium' && wv('Huge').costCredits === 300 && wv('Huge').weightKg === 0.5)) fail('3B Stunning Gauntlet wearer variants: Medium -> Tiny 200/0.4, Large -> Small 200/0.4, Huge -> Medium 300/0.5');
+  if (!same(sgs.variantsByWeaponSize?.map((v) => [v.weaponSize, v.costCredits, v.weightKg]), [['Tiny', 200, 0.4], ['Small', 200, 0.4], ['Medium', 300, 0.5]])) fail('3B Stunning Gauntlet weapon-size rows (Tiny from Clone Wars, Small/Medium from KOTOR)');
+  if (sg.ambiguities.length) fail('3B Stunning Gauntlet variants are complementary published data, not an ambiguity');
   const lh = g('Long-Handle Lightsaber');
   if (!lh.canonicalStats.attackProfiles.some((q) => q.id === 'haft-end' && q.damage.formula === '1d6') || !lh.conditionalDamageProfiles.some((q) => q.damage?.formula === '2d10') || lh.canonicalStats.resource.kind !== 'energy-cell') fail('3B Long-Handle Lightsaber two-handed choice, haft end and energy cell');
-  const own = ids.filter((i) => i.ambiguities.some((a) => a.status === 'DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED')).map((i) => i.canonicalName).sort();
-  if (!same(own, ['E-Web Missile Launcher', 'Merr-Sonn PLX-2M Portable Missile Launcher', 'Miniature Proton Torpedo Launcher', 'Missile Launcher'].sort())) fail(`3B delivery-system damage-ownership ambiguities must be exactly the four launchers that print launcher damage while the overlay says payload-derived (found ${own})`);
+  if (ids.some((i) => i.ambiguities.some((a) => /OWNERSHIP_UNRESOLVED|VARIANT_DISCREPANCY/.test(a.status)))) fail('3B launcher damage ownership and Stunning Gauntlet variant questions must be resolved, not parked as ambiguities');
+  const LAUNCH = { 'Missile Launcher': ['standard-missile', '6d6', 'slashing', 130, 'burst', 2], 'E-Web Missile Launcher': ['e-web-missile', '6d6', 'slashing', 198, 'rectangle', null], 'Merr-Sonn PLX-2M Portable Missile Launcher': ['arakyd-3t3-missile', '8d6', 'energy', 49, 'burst', 3], 'Miniature Proton Torpedo Launcher': ['miniature-proton-torpedo', '6d10', 'energy', 49, 'blast', 2] };
+  for (const [n, [pid, fm, ty, pg, shape, rad]] of Object.entries(LAUNCH)) {
+    const l = g(n), ls = l.canonicalStats, pl = ls.payloadProfiles.find((q) => q.id === pid);
+    if (ls.baseDamage.mode !== 'ammunition' || ls.damageType.mode !== 'varies' || !pl || pl.damage.formula !== fm || pl.damageType.types.join() !== ty || pl.damageMultiplier !== 1 || pl.area.shape !== shape || (rad !== null && pl.area.radiusSquares !== rad) || ls.ammo.damageSource === 'weapon' || ls.ammo.payloadDerived !== true || l.sourceClaims[0].descriptionPage !== pg) fail(`3B ${n}: launcher baseDamage must be ammunition/payload-derived with the ${pid} payload owning ${fm} ${ty} (${shape}) and descriptionPage ${pg}`);
+    if (!ls.attackProfiles.every((q) => q.damage.mode !== 'dice' || q.damage.formula === fm)) fail(`3B ${n}: resolved attack profiles must mirror the payload`);
+    if (ls.payloadProfiles.some((q) => q.costCredits !== undefined || q.weightKg !== undefined)) fail(`3B ${n}: per-missile cost/weight must not be inferred from the published pack`);
+  }
+  if (g('E-Web Missile Launcher').canonicalStats.payloadProfiles[0].area.widthSquares !== 2 || g('E-Web Missile Launcher').canonicalStats.payloadProfiles[0].area.heightSquares !== 2 || g('Miniature Proton Torpedo Launcher').canonicalStats.ammo.damageSource !== 'loaded-ammo-modified-by-weapon') fail('3B E-Web 2x2 payload area; Mini Proton Torpedo single-target is a launcher transform of the payload');
+  const mpt = g('Miniature Proton Torpedo Launcher').canonicalStats, st = mpt.attackProfiles.find((q) => q.id === 'single-target');
+  if (st.damageMultiplier !== 2 || st.area.enabled !== false || !st.conditionalModifiers.some((q) => q.value === -10) || mpt.payloadProfiles[0].damageMultiplier !== 1 || mpt.modeProfiles.find((m) => m.id === 'single-target')?.payloadTransform?.owner !== 'launcher') fail('3B Mini Proton Torpedo single-target must stay a launcher-specific transform (x2, no area, -10 vs smaller than Huge) of the selected payload');
+  if (g('Merr-Sonn PLX-2M Portable Missile Launcher').canonicalStats.modeProfiles.length !== 3 || g('Merr-Sonn PLX-2M Portable Missile Launcher').canonicalStats.ammo.capacityShots !== 6) fail('3B PLX-2M keeps its targeting modes and six-missile capacity on the launcher');
   const lm = g('Light Concussion Missile Launcher');
   if (lm.canonicalStats.baseDamage.mode !== 'ammunition' || lm.canonicalStats.payloadProfiles[0]?.damageMultiplier !== 2) fail('3B launcher/payload separation (Light Concussion Missile Launcher) must survive the merge');
   if (errors.length === e3b) console.log(`Phase 3B canonical authority OK: ${ids.length} identities / ${nClaims} claims (197 single, 6 two-claim), ${ids.filter((i) => i.ambiguities.length).length} identities carry explicit ambiguities, builder byte-stable`);
