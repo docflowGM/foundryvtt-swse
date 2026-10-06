@@ -207,7 +207,8 @@
             "mediumAllowed": null,
             "longAllowed": null
           },
-          "penaltyApplication": null
+          "penaltyApplication": null,
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "none",
@@ -269,7 +270,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -302,7 +304,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "thrown",
@@ -375,7 +378,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -408,11 +412,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -484,7 +492,8 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Entrenching Tool",
@@ -548,7 +557,8 @@
             "mediumAllowed": null,
             "longAllowed": null
           },
-          "penaltyApplication": null
+          "penaltyApplication": null,
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "none",
@@ -610,7 +620,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -643,11 +654,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -699,7 +714,8 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Fire Blade",
@@ -763,14 +779,19 @@
             "mediumAllowed": null,
             "longAllowed": null
           },
-          "penaltyApplication": null
+          "penaltyApplication": null,
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
           "source": "energy cell",
           "requiredUnits": 1,
           "capacityShots": null,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -833,7 +854,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -866,11 +888,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -916,7 +942,8 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Shockboxing Gloves",
@@ -985,13 +1012,18 @@
             "mediumAllowed": null,
             "longAllowed": null
           },
-          "penaltyApplication": null
+          "penaltyApplication": null,
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
           "source": "embedded power system",
           "capacityShots": null,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "lethal",
@@ -1065,7 +1097,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -1098,7 +1131,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "unarmed-stun",
@@ -1148,7 +1182,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -1181,7 +1216,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [
@@ -1208,7 +1244,10 @@
             "mechanics": "source mentions setting but does not provide distinct numeric damage"
           }
         ],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -1256,7 +1295,8 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Shock Stick",
@@ -1325,14 +1365,19 @@
             "mediumAllowed": null,
             "longAllowed": null
           },
-          "penaltyApplication": null
+          "penaltyApplication": null,
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
           "source": "energy cell",
           "requiredUnits": 1,
           "capacityShots": null,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "stun",
@@ -1395,7 +1440,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -1430,11 +1476,15 @@
             ],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -1491,7 +1541,8 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Static Pike",
@@ -1564,14 +1615,19 @@
             "mediumAllowed": null,
             "longAllowed": null
           },
-          "penaltyApplication": null
+          "penaltyApplication": null,
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
           "source": "energy cell",
           "requiredUnits": 1,
           "capacityShots": null,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "lethal",
@@ -1640,7 +1696,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -1673,7 +1730,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "thrown",
@@ -1755,7 +1813,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -1788,7 +1847,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [
@@ -1807,7 +1867,10 @@
             "resourceConsumption": null
           }
         ],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -1854,7 +1917,8 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Vibrolance",
@@ -1919,14 +1983,19 @@
             "mediumAllowed": null,
             "longAllowed": null
           },
-          "penaltyApplication": null
+          "penaltyApplication": null,
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
           "source": "energy cell",
           "requiredUnits": 1,
           "capacityShots": null,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -1985,7 +2054,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -2018,11 +2088,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -2069,7 +2143,8 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Ascension Gun",
@@ -2162,7 +2237,8 @@
             "mediumAllowed": false,
             "longAllowed": false
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "mixed",
@@ -2178,7 +2254,11 @@
               "capacity": 2
             }
           ],
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -2265,7 +2345,8 @@
                 "mediumAllowed": false,
                 "longAllowed": false
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -2302,7 +2383,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "ascension",
@@ -2346,7 +2428,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -2385,7 +2468,8 @@
             ],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [
@@ -2410,7 +2494,10 @@
             }
           }
         ],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -2466,7 +2553,8 @@
           "Basic damage/cost/weight match, but repo lacks 50-shot power-pack capacity, two-use syntherope resource, ascension-mode profile, stun setting, and source-specific Inaccurate range behavior."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Blaster Pistol, Sidearm",
@@ -2561,13 +2649,18 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
           "source": "power pack",
           "capacityShots": 250,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -2656,7 +2749,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -2693,11 +2787,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -2743,7 +2841,8 @@
           "Repo basic numeric stats match, but ammo capacity, stun setting, and Rapid Shot trigger-reset rule are absent."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Blaster Rifle, Variable",
@@ -2839,7 +2938,8 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
@@ -2852,7 +2952,11 @@
               "medium": 5,
               "high": 10
             }
-          }
+          },
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "low",
@@ -2947,7 +3051,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -2984,7 +3089,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "medium",
@@ -3062,7 +3168,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -3099,7 +3206,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "high",
@@ -3177,7 +3285,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -3214,7 +3323,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [
@@ -3249,7 +3359,10 @@
             }
           }
         ],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -3292,7 +3405,8 @@
           "Repo stores damage as Special and lacks the canonical 3d4/3d6/3d8 structured power profiles, 1x/5x/10x ammunition multipliers, 500-shot capacity, and stun-setting authority."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Blaster Rifle, Heavy Variable",
@@ -3385,7 +3499,8 @@
             "mediumAllowed": false,
             "longAllowed": false
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "mixed",
@@ -3408,7 +3523,11 @@
               "medium": 10,
               "high": 20
             }
-          }
+          },
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "low",
@@ -3500,7 +3619,8 @@
                 "mediumAllowed": false,
                 "longAllowed": false
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -3537,7 +3657,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "medium",
@@ -3612,7 +3733,8 @@
                 "mediumAllowed": false,
                 "longAllowed": false
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -3649,7 +3771,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "high",
@@ -3724,7 +3847,8 @@
                 "mediumAllowed": false,
                 "longAllowed": false
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -3761,7 +3885,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "ascension",
@@ -3805,7 +3930,8 @@
                 "mediumAllowed": null,
                 "longAllowed": null
               },
-              "penaltyApplication": null
+              "penaltyApplication": null,
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -3842,7 +3968,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [
@@ -3887,7 +4014,10 @@
             }
           }
         ],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -3942,7 +4072,8 @@
           "Repo has correct cost/weight but lacks canonical 3d6/3d8/3d10 power profiles, 1x/10x/20x shot multipliers, 500-shot capacity, ascension mode, stun setting, and the book-specific Inaccurate range restriction."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Crossbow, Repeating",
@@ -4034,7 +4165,8 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "ammunition",
@@ -4043,7 +4175,11 @@
           "reloadAction": "move",
           "replacementCostCredits": 30,
           "replacementWeightKg": 1.2,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -4129,7 +4265,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -4166,11 +4303,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -4211,7 +4352,8 @@
           "Repo basic damage/cost/weight match, but the 10-quarrel magazine, 30-credit/1.2-kg magazine stats, and move-action reload are absent."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Flame Cannon",
@@ -4303,7 +4445,8 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "chemical",
@@ -4312,7 +4455,11 @@
           "reloadAction": "full-round",
           "replacementCostCredits": 600,
           "replacementWeightKg": 20,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -4398,7 +4545,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -4437,11 +4585,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -4486,7 +4638,8 @@
           "Repo weight is 15 kg but source table is 5 kg. Repo incorrectly tags the weapon Inaccurate. Repo also lacks the 12x8 cone, half-damage-on-miss area resolution, 20-use tank, full-round reload, replacement tank stats, and tripod size rule."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Grenade, Radiation",
@@ -4578,13 +4731,18 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "single-use",
           "source": "grenade",
           "capacityShots": 1,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -4670,7 +4828,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -4707,11 +4866,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -4756,7 +4919,8 @@
           "Repo basic damage/cost/weight/availability match, but it lacks the 2-square burst, Fortitude-defense attack resolution, half damage on miss, single-use resource, and Moderate-radiation rider."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Grenade, Smoke",
@@ -4846,13 +5010,18 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "single-use",
           "source": "grenade",
           "capacityShots": 1,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -4936,7 +5105,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -4975,11 +5145,15 @@
             ],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -5026,7 +5200,8 @@
           "Repo availability is Military but source table says Restricted. Repo also lacks the 2-square burst, 10-round duration, concealment/smoke-hazard behavior, and single-use structure."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Interchangeable Weapon System",
@@ -5122,7 +5297,8 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "mixed",
@@ -5140,7 +5316,11 @@
               "unitWeightKg": 1
             }
           ],
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "blaster-rifle",
@@ -5233,7 +5413,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -5270,7 +5451,8 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           },
           {
             "id": "sniper",
@@ -5344,7 +5526,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": true,
@@ -5383,7 +5566,14 @@
             ],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": [
+              {
+                "target": "attack",
+                "value": -2,
+                "condition": "target at unmodified point-blank range"
+              }
+            ]
           },
           {
             "id": "anti-armor",
@@ -5457,7 +5647,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -5496,7 +5687,8 @@
             ],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [
@@ -5519,7 +5711,10 @@
             "attackProfileId": "anti-armor"
           }
         ],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -5566,7 +5761,8 @@
           "Repo collapses the weapon to a generic Varies profile. Source requires separate blaster, sniper, and anti-armor configurations with profile-specific damage, ROF, proficiency family, Accurate quality, area geometry, and special ammunition."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Mortar Launcher",
@@ -5657,14 +5853,19 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "ammunition",
           "source": "mortar shell magazine",
           "capacityShots": 5,
           "autoFeeds": true,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -5749,7 +5950,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -5788,11 +5990,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -5842,7 +6048,8 @@
           "Repo stores damage as Varies instead of printed 4d6, incorrectly tags Inaccurate, omits Arc and Area qualities, and lacks the five-shell auto-feed magazine and 20-square elevated point-of-origin rule."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Rotary Blaster Cannon",
@@ -5934,14 +6141,19 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
           "source": "power pack",
           "capacityShots": 20,
           "alternateSource": "power generator",
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "autofire",
@@ -6027,7 +6239,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -6066,11 +6279,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -6121,7 +6338,8 @@
           "Repo basic numeric stats match and records Autofire, but lacks the 20-shot capacity/power-generator option, 2x4 braced autofire area, and additional -5 unbraced attack penalty."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Scatter Gun",
@@ -6211,7 +6429,8 @@
             "mediumAllowed": false,
             "longAllowed": false
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "ammunition",
@@ -6219,7 +6438,11 @@
           "capacityShots": 10,
           "unitCostCredits": 2,
           "unitWeightKg": 0.1,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -6303,7 +6526,8 @@
                 "mediumAllowed": false,
                 "longAllowed": false
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -6340,11 +6564,15 @@
             "notes": [],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -6449,7 +6677,8 @@
           "Repo stores a combined damage string instead of structured range-conditioned damage, omits the source Inaccurate quality, and lacks the 10-shell capacity with per-shell cost/weight."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Tactical Tractor Beam",
@@ -6541,13 +6770,18 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
           "source": "power generator",
           "capacityShots": null,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -6633,7 +6867,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -6672,11 +6907,15 @@
             ],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -6728,7 +6967,8 @@
           "Repo replaces printed 3d6* with Special, and lacks required power generator, Huge-or-smaller target cap, object movement/hurl rules, tripod size treatment, and second-crewman regulation penalty."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     },
     {
       "canonicalName": "Targeting Laser",
@@ -6821,14 +7061,19 @@
             "mediumAllowed": true,
             "longAllowed": true
           },
-          "penaltyApplication": "attack"
+          "penaltyApplication": "attack",
+          "hardMaxSquares": null
         },
         "resource": {
           "kind": "power",
           "source": "energy cell",
           "requiredUnits": 1,
           "capacityShots": null,
-          "consumption": null
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
         },
         "operatingModes": {
           "default": "normal",
@@ -6915,7 +7160,8 @@
                 "mediumAllowed": true,
                 "longAllowed": true
               },
-              "penaltyApplication": "attack"
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
             },
             "qualities": {
               "accurate": false,
@@ -6956,11 +7202,15 @@
             ],
             "damageComponents": [],
             "firingConstraints": null,
-            "preparedAttack": null
+            "preparedAttack": null,
+            "conditionalModifiers": []
           }
         ],
         "modeProfiles": [],
-        "defensiveInteractions": []
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": []
       },
       "qualities": {
         "accurate": false,
@@ -7011,13 +7261,15 @@
           "Repo basic cost/weight are correct, but the record lacks source-defined targeting resolution that ignores armor bonuses to Reflex, energy-cell requirement, persistent designation behavior, and +2 allied attack bonus."
         ]
       },
-      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "proficiencyRules": []
     }
   ],
   "schemaNormalization": {
     "version": "weapon-authority-schema-v2.2",
     "change": "resource.consumption: null added where the book publishes no special consumption rule (structural default; no published fact changed).",
     "recordsDefaulted": 19,
-    "v2.3": "weapon-authority-schema-v2.3 structural defaults: range.penaltyApplication (attack for ranged, null otherwise), profile preparedAttack/damageComponents/firingConstraints defaults, canonicalStats.defensiveInteractions []"
+    "v2.3": "weapon-authority-schema-v2.3 structural defaults: range.penaltyApplication (attack for ranged, null otherwise), profile preparedAttack/damageComponents/firingConstraints defaults, canonicalStats.defensiveInteractions []",
+    "v2.4": "weapon-authority-schema-v2.4 structural defaults: range.hardMaxSquares, resource lifecycle keys, profile conditionalModifiers, record proficiencyRules, canonicalStats payloadProfiles/objectDurability/integratedAccessories; qualityParameters.inaccurate.allowedBands where only longAllowed was stated."
   }
 }

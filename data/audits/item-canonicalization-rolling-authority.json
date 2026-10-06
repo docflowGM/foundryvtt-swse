@@ -28200,10 +28200,10 @@
       ]
     },
     "2-weapons-numeric-stat-schema": {
-      "status": "WEAPON_AUTHORITY_SCHEMA_V2_3_NORMALIZED_THROUGH_FORCE_UNLEASHED (2A Core in rolling; 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed standalone)",
+      "status": "WEAPON_AUTHORITY_SCHEMA_V2_4_NORMALIZED_THROUGH_CLONE_WARS (2A Core in rolling; 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars standalone)",
       "family": "weapons",
       "authorityType": "authority-only; no production mutation",
-      "schemaVersion": "weapon-authority-schema-v2.3",
+      "schemaVersion": "weapon-authority-schema-v2.4",
       "goldStandard": true,
       "sourcePolicy": [
         "Supplied published PDF tables, table footnotes, weapon-group rules, and weapon descriptions are final authority for Core weapon mechanics.",
@@ -28226,11 +28226,15 @@
             "conditional",
             "dice",
             "double",
+            "inherited",
             "modifier",
             "none",
-            "special"
+            "special",
+            "varies-by-payload"
           ],
-          "rule": "Runtime modifiers may add dice, change die size, or add bonuses without rewriting the persisted canonical base profile. Effective damage is never persisted back into baseDamage."
+          "rule": "Runtime modifiers may add dice, change die size, or add bonuses without rewriting the persisted canonical base profile. Effective damage is never persisted back into baseDamage.",
+          "modifierInherited": "modifier = flat bonus to an existing attack (appliesTo); inherited = the profile has no standalone dice and uses the wearer's existing attack (appliesTo/formula \"unarmed\"), e.g. Combat Gloves, Vibroknucklers, Stunning Gauntlet.",
+          "variesByPayload": "A launcher profile whose damage comes entirely from the selected payloadProfiles[] entry (Wrist Rocket Launcher); never assign it a fixed formula."
         },
         "stun": {
           "fields": [
@@ -28451,7 +28455,11 @@
               "special"
             ],
             "rule": "range.penaltyApplication states what the range-band penalty modifies. Ranged ranges default to \"attack\"; melee and unestablished ranges are null. CR-1 Blast Cannon applies penalties to damage rolls (\"damage\")."
-          }
+          },
+          "hardMaxSquares": {
+            "rule": "range.hardMaxSquares is an absolute cap inside the normal bands (Gee-Tech 12 Defender: 3 squares). null on every other range object."
+          },
+          "ranged without a printed profile": "range.mode \"ranged\" with profileId null (Wrist Rocket Launcher: the source assigns no range profile) must have null bands and allowedBands; never infer a profile from the repo."
         },
         "damageReductionInteraction": {
           "fields": [
@@ -28584,7 +28592,8 @@
             "notes",
             "damageComponents",
             "firingConstraints",
-            "preparedAttack"
+            "preparedAttack",
+            "conditionalModifiers"
           ],
           "kinds": [
             "attack",
@@ -28595,12 +28604,15 @@
           "attackResolution": {
             "modes": [
               "standard",
-              "override"
+              "override",
+              "area",
+              "grab"
             ],
             "onMiss": [
               "none",
               "half-damage",
-              "unspecified"
+              "unspecified",
+              "target-dependent-half-or-none"
             ],
             "note": "\"unspecified\" = the certified authority does not capture the miss rule (Core/KOTOR area weapons)."
           },
@@ -28618,14 +28630,15 @@
             "rule": "enabled=false for non-area profiles. Geometry is only filled from certified source facts."
           }
         },
-        "version": "weapon-authority-schema-v2.3",
+        "version": "weapon-authority-schema-v2.4",
         "qualityParameters": {
           "rule": "Source-specific parameters of a named quality. Core/KOTOR Inaccurate = cannot attack at Long range (allowedBands pointBlank, short, medium). Galaxy at War Inaccurate = cannot attack at Medium or Long range (allowedBands pointBlank, short). Never flatten one book definition into another; an Inaccurate record must state its allowedBands here.",
           "fields": [
             "accurate",
             "inaccurate",
             "arc"
-          ]
+          ],
+          "inaccurateShapes": "qualityParameters.inaccurate.allowedBands is canonical; a source-stated longAllowed:false is equivalent to allowedBands pointBlank/short/medium."
         },
         "modeProfiles": {
           "field": "canonicalStats.modeProfiles",
@@ -28703,7 +28716,73 @@
         },
         "inaccurateByBook": {
           "Core/KOTOR/Force Unleashed": "cannot attack at Long range",
-          "Galaxy at War": "cannot attack at Medium or Long range"
+          "Galaxy at War": "cannot attack at Medium or Long range",
+          "Clone Wars": "cannot attack at Long range"
+        },
+        "conditionalModifiers": {
+          "field": "attackProfiles[].conditionalModifiers",
+          "fields": [
+            "target",
+            "value",
+            "condition"
+          ],
+          "targets": [
+            "attack",
+            "damage"
+          ],
+          "rule": "Source-defined attack/damage modifiers tied to a mode or circumstance (Riot Gun -2 in single-shot mode; ICWS sniper -2 at unmodified point-blank; Power Hammer -2 with Double/Triple Attack or Rapid Strike; Arg'garok -5 below Strength 15). Modes may also carry conditionalModifiers."
+        },
+        "proficiencyRules": {
+          "field": "proficiencyRules",
+          "fields": [
+            "condition",
+            "classifications"
+          ],
+          "rule": "Record-level conditional/alternate/simultaneous proficiency or classification behavior (Vibroknucklers while worn; species-specific treat-as rules). [] by default."
+        },
+        "objectDurability": {
+          "field": "canonicalStats.objectDurability",
+          "fields": [
+            "strength",
+            "breakDC",
+            "damageReduction",
+            "damageReductionEquipmentBonus"
+          ],
+          "rule": "The weapon object as a target; distinct from wielder defenses, outgoing DR bypass and defensiveInteractions. null unless source-certified."
+        },
+        "integratedAccessories": {
+          "field": "canonicalStats.integratedAccessories",
+          "fields": [
+            "id",
+            "included",
+            "sourceRule"
+          ],
+          "rule": "Accessories the source says are part of the weapon (DLT-20A scope). [] by default; never add commonly mounted accessories."
+        },
+        "resourceLifecycle": {
+          "fields": [
+            "integrated",
+            "rechargeable",
+            "replaceable",
+            "disposableWhenDepleted"
+          ],
+          "rule": "Booleans only when source-established, otherwise null; required keys on every resource whose kind is not \"none\". Capacities and reload actions are never changed by these keys."
+        },
+        "payloadProfiles": {
+          "field": "canonicalStats.payloadProfiles",
+          "fields": [
+            "id",
+            "label",
+            "costCredits",
+            "weightKg",
+            "availability",
+            "damage",
+            "stun",
+            "damageType",
+            "area",
+            "specialEffects"
+          ],
+          "rule": "Launcher ammunition whose selection supplies its own damage/type/cost/effects (Wrist Rocket Launcher: 7 payloads). Payloads are subordinate to the parent weapon identity, never separate weapons. [] by default; Core Grenade Launcher and Galaxy at War Mortar Launcher may later reference a grenade payload family once that family is certified."
         }
       },
       "executorGuardrails": [
@@ -28734,7 +28813,7 @@
         {
           "phase": "2A",
           "book": "Core Rulebook",
-          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY (normalized to schema v2.3)",
+          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY (normalized to schema v2.4)",
           "counts": {
             "claims": 48,
             "uniqueIdentities": 48,
@@ -28847,7 +28926,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -28905,7 +28985,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -28938,11 +29019,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -28994,7 +29079,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Atlatl",
@@ -29055,7 +29141,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29115,7 +29202,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29148,11 +29236,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -29187,7 +29279,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Bayonet",
@@ -29247,7 +29340,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29306,7 +29400,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29339,11 +29434,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -29382,7 +29481,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Cesta",
@@ -29443,7 +29543,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29503,7 +29604,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29536,11 +29638,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -29576,7 +29682,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Club/Baton",
@@ -29636,7 +29743,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29695,7 +29803,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29728,11 +29837,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -29765,7 +29878,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Combat Gloves",
@@ -29839,7 +29953,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29899,7 +30014,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29932,11 +30048,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -29972,7 +30092,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Electrostaff",
@@ -30065,14 +30186,19 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
                   "source": "energy cell",
                   "requiredUnits": 2,
                   "capacityShots": null,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -30149,7 +30275,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30182,7 +30309,8 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   },
                   {
                     "id": "end2",
@@ -30245,7 +30373,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30278,7 +30407,8 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
@@ -30289,7 +30419,15 @@
                     "value": true,
                     "weaponDR": 20
                   }
-                ]
+                ],
+                "payloadProfiles": [],
+                "objectDurability": {
+                  "strength": null,
+                  "breakDC": null,
+                  "damageReduction": 20,
+                  "damageReductionEquipmentBonus": null
+                },
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -30325,7 +30463,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Force Pike",
@@ -30392,14 +30531,19 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
                   "source": "energy cell",
                   "requiredUnits": 2,
                   "capacityShots": null,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -30463,7 +30607,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30496,11 +30641,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -30533,7 +30682,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Knife",
@@ -30594,7 +30744,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -30654,7 +30805,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30687,11 +30839,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -30726,7 +30882,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Lightsaber",
@@ -30787,7 +30944,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
@@ -30795,7 +30953,11 @@
                   "requiredUnits": 1,
                   "capacityShots": null,
                   "note": "Costs ten times an ordinary energy cell and lasts almost indefinitely.",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -30853,7 +31015,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30886,11 +31049,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -30927,7 +31094,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Lightsaber, Double",
@@ -31001,7 +31169,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
@@ -31009,7 +31178,11 @@
                   "requiredUnits": 2,
                   "capacityShots": null,
                   "note": "Each costs ten times an ordinary energy cell and lasts almost indefinitely.",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -31067,7 +31240,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31100,7 +31274,8 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   },
                   {
                     "id": "end2",
@@ -31144,7 +31319,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31177,11 +31353,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -31216,7 +31396,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Lightsaber, Short",
@@ -31277,7 +31458,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
@@ -31285,7 +31467,11 @@
                   "requiredUnits": 1,
                   "capacityShots": null,
                   "note": "Costs ten times an ordinary energy cell and lasts almost indefinitely.",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -31343,7 +31529,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31376,11 +31563,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -31417,7 +31608,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Mace",
@@ -31477,7 +31669,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -31536,7 +31729,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31569,11 +31763,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -31606,7 +31804,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Quarterstaff",
@@ -31679,7 +31878,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -31738,7 +31938,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31771,7 +31972,8 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   },
                   {
                     "id": "end2",
@@ -31814,7 +32016,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31847,11 +32050,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -31884,7 +32091,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Spear",
@@ -31944,7 +32152,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -32003,7 +32212,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32036,11 +32246,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -32075,7 +32289,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Stun Baton",
@@ -32141,14 +32356,19 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
                   "source": "energy cell",
                   "requiredUnits": 1,
                   "capacityShots": null,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -32211,7 +32431,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32244,11 +32465,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -32281,7 +32506,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Vibro-Ax",
@@ -32341,14 +32567,19 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
                   "source": "energy cell",
                   "requiredUnits": 2,
                   "capacityShots": null,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -32403,7 +32634,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32436,11 +32668,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -32473,7 +32709,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Vibrobayonet",
@@ -32533,14 +32770,19 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
                   "source": "energy cell",
                   "requiredUnits": 1,
                   "capacityShots": null,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -32595,7 +32837,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32628,11 +32871,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -32671,7 +32918,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Vibroblade",
@@ -32732,14 +32980,19 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
                   "source": "energy cell",
                   "requiredUnits": 1,
                   "capacityShots": null,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -32795,7 +33048,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32828,11 +33082,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -32865,7 +33123,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Vibrodagger",
@@ -32926,14 +33185,19 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
                   "source": "energy cell",
                   "requiredUnits": 1,
                   "capacityShots": null,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "normal",
@@ -32989,7 +33253,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -33022,11 +33287,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -33061,7 +33330,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Cannon",
@@ -33152,14 +33422,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "power pack",
                   "capacityShots": 10,
                   "reloadAction": "replace pack",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -33245,7 +33520,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -33280,11 +33556,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -33319,7 +33599,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Carbine",
@@ -33421,14 +33702,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "power pack",
                   "capacityShots": 50,
                   "reloadAction": "replace pack",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -33528,7 +33814,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -33561,11 +33848,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -33602,7 +33893,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "E-Web Repeating Blaster",
@@ -33693,13 +33985,18 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "power",
                   "source": "power generator",
                   "capacityShots": null,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "autofire",
@@ -33785,7 +34082,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -33818,11 +34116,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -33862,7 +34164,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Heavy Repeating Blaster",
@@ -33953,7 +34256,8 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -33961,7 +34265,11 @@
                   "capacityShots": 20,
                   "reloadAction": "replace pack",
                   "alternateSource": "power generator",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "autofire",
@@ -34047,7 +34355,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -34080,11 +34389,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -34119,7 +34432,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Pistol",
@@ -34220,14 +34534,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "power pack",
                   "capacityShots": 100,
                   "reloadAction": "replace pack",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -34325,7 +34644,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -34358,11 +34678,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -34395,7 +34719,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Pistol, Heavy",
@@ -34496,14 +34821,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "power pack",
                   "capacityShots": 50,
                   "reloadAction": "replace pack",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -34601,7 +34931,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -34634,11 +34965,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -34671,7 +35006,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Pistol, Hold-Out",
@@ -34762,14 +35098,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "energy cell",
                   "capacityShots": 6,
                   "reloadAction": "replace cell",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -34855,7 +35196,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -34888,11 +35230,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -34927,7 +35273,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Pistol, Sporting",
@@ -35028,7 +35375,8 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -35037,7 +35385,11 @@
                   "reloadAction": "replace cell",
                   "alternateSource": "power pack",
                   "alternateCapacityShots": 100,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -35135,7 +35487,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -35168,11 +35521,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -35205,7 +35562,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Rifle",
@@ -35307,14 +35665,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "power pack",
                   "capacityShots": 50,
                   "reloadAction": "replace pack",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -35414,7 +35777,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -35447,11 +35811,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -35487,7 +35855,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Rifle, Heavy",
@@ -35589,14 +35958,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "power pack",
                   "capacityShots": 30,
                   "reloadAction": "replace pack",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -35696,7 +36070,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -35729,11 +36104,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -35766,7 +36145,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Rifle, Light Repeating",
@@ -35857,7 +36237,8 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -35865,7 +36246,11 @@
                   "capacityShots": 30,
                   "reloadAction": "replace pack",
                   "alternateSource": "power generator",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "autofire",
@@ -35951,7 +36336,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -35984,11 +36370,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -36021,7 +36411,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Blaster Rifle, Sporting",
@@ -36122,14 +36513,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "power pack",
                   "capacityShots": 50,
                   "reloadAction": "replace pack",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -36227,7 +36623,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -36260,11 +36657,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -36297,7 +36698,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Bow",
@@ -36388,7 +36790,8 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -36400,7 +36803,11 @@
                     "costCredits": 20,
                     "weightKg": 0.8
                   },
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -36486,7 +36893,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -36519,11 +36927,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -36558,7 +36970,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Bowcaster",
@@ -36622,7 +37035,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -36634,7 +37048,11 @@
                     "costCredits": 50,
                     "weightKg": 1
                   },
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -36693,7 +37111,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -36726,11 +37145,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -36767,7 +37190,17 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": [
+                {
+                  "condition": "wielder is a Wookiee with Weapon Proficiency (rifles)",
+                  "species": "Wookiee",
+                  "classifications": [
+                    "proficient with the weapon"
+                  ],
+                  "notes": "Migrated from operation.wookieeTreatsAsProficientWithWeaponProficiencyRifles; mechanics unchanged."
+                }
+              ]
             },
             {
               "canonicalName": "Flamethrower",
@@ -36830,7 +37263,8 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -36841,7 +37275,11 @@
                     "costCredits": 200,
                     "weightKg": 4
                   },
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -36899,7 +37337,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -36934,11 +37373,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -36979,7 +37422,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Energy Ball",
@@ -37064,13 +37508,18 @@
                     "shortPenaltyOverride": null,
                     "longAllowed": null
                   },
-                  "penaltyApplication": null
+                  "penaltyApplication": null,
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "consumable-projectile",
                   "source": "energy ball",
                   "capacityShots": 1,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -37150,7 +37599,8 @@
                         "shortPenaltyOverride": null,
                         "longAllowed": null
                       },
-                      "penaltyApplication": null
+                      "penaltyApplication": null,
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -37183,11 +37633,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -37243,7 +37697,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Grenade, Frag",
@@ -37334,12 +37789,17 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "consumable",
                   "capacityShots": 1,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -37425,7 +37885,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -37460,11 +37921,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -37504,7 +37969,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Grenade, Ion",
@@ -37597,12 +38063,17 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "consumable",
                   "capacityShots": 1,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -37690,7 +38161,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -37725,11 +38197,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -37770,7 +38246,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Grenade, Stun",
@@ -37870,12 +38347,17 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "consumable",
                   "capacityShots": 1,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "stun",
@@ -37970,7 +38452,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -38005,11 +38488,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -38050,7 +38537,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Grenade Launcher",
@@ -38141,14 +38629,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "grenade",
                   "capacityShots": 4,
                   "reloadAction": "full-round",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -38234,7 +38727,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -38267,11 +38761,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -38308,7 +38806,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Ion Pistol",
@@ -38401,14 +38900,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "power pack",
                   "capacityShots": 30,
                   "reloadAction": "replace pack",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -38496,7 +39000,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -38529,11 +39034,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -38568,7 +39077,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Ion Rifle",
@@ -38661,14 +39171,19 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "power pack",
                   "capacityShots": 20,
                   "reloadAction": "replace pack",
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -38756,7 +39271,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -38789,11 +39305,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -38828,7 +39348,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Missile Launcher",
@@ -38919,7 +39440,8 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -38931,7 +39453,11 @@
                     "costCredits": 200,
                     "weightKg": 5
                   },
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -39017,7 +39543,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -39052,11 +39579,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -39096,7 +39627,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Net",
@@ -39185,7 +39717,8 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "none",
@@ -39273,7 +39806,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -39306,11 +39840,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -39349,7 +39887,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Sling",
@@ -39440,13 +39979,18 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
                   "source": "bullet or stone",
                   "capacityShots": null,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -39532,7 +40076,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -39565,11 +40110,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -39604,7 +40153,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Slugthrower Pistol",
@@ -39695,7 +40245,8 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -39707,7 +40258,11 @@
                     "costCredits": 20,
                     "weightKg": 0.1
                   },
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -39793,7 +40348,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -39826,11 +40382,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -39863,7 +40423,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Slugthrower Rifle",
@@ -39955,7 +40516,8 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -39967,7 +40529,11 @@
                     "costCredits": 40,
                     "weightKg": 0.2
                   },
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -40056,7 +40622,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -40089,11 +40656,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -40126,7 +40697,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             },
             {
               "canonicalName": "Thermal Detonator",
@@ -40217,12 +40789,17 @@
                     "medium",
                     "long"
                   ],
-                  "penaltyApplication": "attack"
+                  "penaltyApplication": "attack",
+                  "hardMaxSquares": null
                 },
                 "resource": {
                   "kind": "consumable",
                   "capacityShots": 1,
-                  "consumption": null
+                  "consumption": null,
+                  "integrated": null,
+                  "rechargeable": null,
+                  "replaceable": null,
+                  "disposableWhenDepleted": null
                 },
                 "operatingModes": {
                   "default": "single",
@@ -40308,7 +40885,8 @@
                         "medium",
                         "long"
                       ],
-                      "penaltyApplication": "attack"
+                      "penaltyApplication": "attack",
+                      "hardMaxSquares": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -40343,11 +40921,15 @@
                     "notes": [],
                     "damageComponents": [],
                     "firingConstraints": null,
-                    "preparedAttack": null
+                    "preparedAttack": null,
+                    "conditionalModifiers": []
                   }
                 ],
                 "modeProfiles": [],
-                "defensiveInteractions": []
+                "defensiveInteractions": [],
+                "payloadProfiles": [],
+                "objectDurability": null,
+                "integratedAccessories": []
               },
               "qualities": {
                 "accurate": false,
@@ -40391,7 +40973,8 @@
                 "accurate": null,
                 "inaccurate": null,
                 "arc": null
-              }
+              },
+              "proficiencyRules": []
             }
           ]
         }
@@ -40405,7 +40988,8 @@
           "Schema v2.2 (weapon-authority-schema-v2.2) applied to Core and KOTOR as structural defaults derived from certified facts: profiles reshaped (damage, label, kind, schemaFamily, stun, rateOfFire, range, qualities, attackResolution, area, resourceConsumption); range.mode \"profile\" renamed \"ranged\"; range.allowedBands + qualityEffects.mediumAllowed; modeProfiles []; resource.consumption null; conditionalDamageProfiles []; qualityParameters (Core/KOTOR Inaccurate preserved as long-only exclusion = allowedBands pointBlank/short/medium; Galaxy at War Inaccurate = pointBlank/short).",
           "Core/KOTOR area-effect profiles: area.enabled true with null geometry and attackResolution.onMiss \"unspecified\" (the certified authority does not capture geometry or the miss rule); non-area profiles onMiss \"none\". Massassi Lanvarok melee profile has all qualities false (Inaccurate applies to the ranged disc).",
           "Not adopted: the earlier addendum reshaping (rateOfFire object, stun.available/mode/rangeOverride, operatingModes.available, ammunition object, range min/max).",
-          "Schema v2.3 (Force Unleashed): range.penaltyApplication, preparedAttack, damageComponents, firingConstraints, defensiveInteractions, add-dice/area-toggle conditional damage applied to Core, KOTOR and Galaxy at War as structural defaults; Sonic Disruptor specialRateOfFire expressed as firingConstraints (Special ROF and operation block preserved); Core Electrostaff and KOTOR Shockstaff lightsaber-vs-object-DR facts backfilled into defensiveInteractions from their existing operation data."
+          "Schema v2.3 (Force Unleashed): range.penaltyApplication, preparedAttack, damageComponents, firingConstraints, defensiveInteractions, add-dice/area-toggle conditional damage applied to Core, KOTOR and Galaxy at War as structural defaults; Sonic Disruptor specialRateOfFire expressed as firingConstraints (Special ROF and operation block preserved); Core Electrostaff and KOTOR Shockstaff lightsaber-vs-object-DR facts backfilled into defensiveInteractions from their existing operation data.",
+          "Schema v2.4 (Clone Wars): modifier/inherited damage, proficiencyRules, objectDurability, integratedAccessories, range.hardMaxSquares, resource lifecycle keys, payloadProfiles, conditionalModifiers applied to Core, KOTOR, Galaxy at War and Force Unleashed as structural defaults. Backfilled from existing certified data only: KOTOR Stunning Gauntlet profile damage inherited; Core Electrostaff objectDurability.damageReduction 20; proficiencyRules migrated from operation facts (KOTOR Arg'garok and Massassi Lanvarok, Force Unleashed Ryyk Blade, Core Bowcaster); conditionalModifiers for Galaxy at War ICWS sniper (-2 at unmodified point-blank), Force Unleashed Power Hammer (-2 with Double/Triple Attack, Rapid Strike) and KOTOR Arg'garok (-5 below Strength 15). Original operation keys are preserved. Grenade-payload references for Core Grenade Launcher / Mortar Launcher not made (family not yet certified)."
         ]
       },
       "standaloneBookAuthorities": [
@@ -40452,6 +41036,20 @@
           "mirrorProfiles": false,
           "specialRateOfFireAllowed": [],
           "note": "Book-only authority by owner instruction. Introduces schema v2.3."
+        },
+        {
+          "phase": "2E",
+          "book": "Clone Wars Campaign Guide",
+          "file": "data/audits/item-weapons-phase-2e-clone-wars-standalone-authority.json",
+          "doc": "docs/audits/item-weapons-phase-2e-clone-wars-standalone-authority.md",
+          "status": "CLONE_WARS_PHASE_2E_STANDALONE_CERTIFIED",
+          "claims": 16,
+          "repoPresent": 12,
+          "repoMissing": 4,
+          "rollingMergeAuthorized": false,
+          "mirrorProfiles": false,
+          "specialRateOfFireAllowed": [],
+          "note": "Book-only authority by owner instruction. Introduces schema v2.4. BlasTech 500 Riot Gun remains production-gated (Clone Wars p. 61 vs Rebellion Era p. 50)."
         }
       ],
       "pendingSchemaDecision": {
@@ -40462,7 +41060,7 @@
   },
   "pendingPhases": [
     "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
-    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War and 2D Force Unleashed DONE (standalone book authorities, schema v2.3); next books in order: Clone Wars (16), Jedi Academy (16), Legacy Era (14), Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
+    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed and 2E Clone Wars DONE (standalone book authorities, schema v2.4); next books in order: Jedi Academy (16), Legacy Era (14), Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

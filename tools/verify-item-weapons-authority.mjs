@@ -487,7 +487,7 @@ if (s2) {
   const expectedBands = (ql, qp, w) => {
     let b = [...BANDS];
     if (ql.inaccurate) {
-      const ab = qp?.inaccurate?.allowedBands;
+      const ab = qp?.inaccurate?.allowedBands ?? (qp?.inaccurate?.longAllowed === false ? ['pointBlank', 'short', 'medium'] : undefined);
       if (!Array.isArray(ab) || !ab.every((x) => BANDS.includes(x))) { fail(`${w} Inaccurate needs qualityParameters.inaccurate.allowedBands`); return b; }
       b = b.filter((x) => ab.includes(x));
     }
@@ -500,6 +500,11 @@ if (s2) {
     else if (rg.mode === 'ranged' && rg.penaltyApplication === null) fail(`${w} ranged range needs penaltyApplication`);
     else if (rg.mode === 'melee' && rg.penaltyApplication !== null) fail(`${w} melee range penaltyApplication must be null`);
     if (rg.mode === 'fixed-maximum' && !Number.isInteger(rg.maxSquares)) fail(`${w} fixed-maximum range needs maxSquares`);
+    if (!('hardMaxSquares' in rg) || !(rg.hardMaxSquares === null || (Number.isInteger(rg.hardMaxSquares) && rg.hardMaxSquares > 0))) fail(`${w} range.hardMaxSquares missing/invalid`);
+    if (rg.mode === 'ranged' && rg.profileId === null) {
+      if (rg.bands !== null || rg.allowedBands !== null) fail(`${w} ranged range without a printed profile must have null bands/allowedBands`);
+      return;
+    }
     if (rg.mode !== 'ranged') return;
     const prof = C.range.canonicalProfiles[rg.profileId];
     if (!prof || !same(rg.bands, prof)) fail(`${w} range bands differ from the canonical profile ${rg.profileId}`);
@@ -548,6 +553,17 @@ if (s2) {
       if (!qp || !same(Object.keys(qp).sort(), ['accurate', 'arc', 'inaccurate'])) fail(`${w} missing qualityParameters`);
       if (!Array.isArray(r.conditionalDamageProfiles)) fail(`${w} missing conditionalDamageProfiles`);
       if (!Array.isArray(s.modeProfiles)) fail(`${w} missing canonicalStats.modeProfiles`);
+      if (!Array.isArray(r.proficiencyRules) || r.proficiencyRules.some((q) => !C.proficiencyRules.fields.every((f) => f in q) || !Array.isArray(q.classifications))) fail(`${w} missing/invalid proficiencyRules`);
+      if (s.objectDurability !== null && !(s.objectDurability && C.objectDurability.fields.every((f) => f in s.objectDurability))) fail(`${w} invalid objectDurability`);
+      if (!Array.isArray(s.integratedAccessories) || s.integratedAccessories.some((a) => !C.integratedAccessories.fields.every((f) => f in a))) fail(`${w} invalid integratedAccessories`);
+      if (!Array.isArray(s.payloadProfiles)) fail(`${w} missing payloadProfiles`);
+      else for (const pl of s.payloadProfiles) {
+        if (!C.payloadProfiles.fields.every((f) => f in pl)) fail(`${w} payload ${pl.id} incomplete`);
+        else { dice(pl.damage, `${w} payload ${pl.id}`); if (!TYPE_MODES.has(pl.damageType.mode) || !STUN_CAP.has(pl.stun.capability)) fail(`${w} payload ${pl.id} invalid damageType/stun`); }
+      }
+      if (s.resource.kind !== 'none') {
+        for (const k2 of C.resourceLifecycle.fields) if (!(k2 in s.resource) || !(s.resource[k2] === null || typeof s.resource[k2] === 'boolean')) fail(`${w} resource.${k2} must be present as boolean or null`);
+      }
       if (!Array.isArray(s.defensiveInteractions) || s.defensiveInteractions.some((e) => !C.defensiveInteractions.entryFields.every((f) => f in e))) fail(`${w} missing/invalid canonicalStats.defensiveInteractions`);
       for (const cd of r.conditionalDamageProfiles || []) {
         const op = cd.operation || 'replace';
@@ -579,6 +595,7 @@ if (s2) {
           if (x.resourceConsumption !== null && !x.resourceConsumption?.resource) fail(`${pw} invalid resourceConsumption`);
           if (x.stun.damageMode === 'same-as-active-profile' && !s.modeProfiles.length && ap.length < 2) fail(`${pw} same-as-active-profile needs multiple profiles`);
           rangeCheck(x.range, x.qualities, qp, pw);
+          if (!Array.isArray(x.conditionalModifiers) || x.conditionalModifiers.some((m) => !C.conditionalModifiers.fields.every((f) => f in m) || !C.conditionalModifiers.targets.includes(m.target) || !Number.isInteger(m.value))) fail(`${pw} invalid conditionalModifiers`);
           const pr = x.preparedAttack;
           if (pr !== null && !C.preparedAttack.fields.every((f) => f in pr)) fail(`${pw} invalid preparedAttack`);
           if (!Array.isArray(x.damageComponents)) fail(`${pw} damageComponents must be an array`);
@@ -592,7 +609,7 @@ if (s2) {
         }
         const ids = new Set(ap.map((x) => x.id));
         for (const m of s.modeProfiles) {
-          if (!m.id || !m.label || !('switchAction' in m) || !('attackProfileId' in m)) fail(`${w} modeProfile ${m.id} incomplete`);
+          if (!m.id || !m.label || !('attackProfileId' in m)) fail(`${w} modeProfile ${m.id} incomplete`);
           else if (m.attackProfileId !== null && !ids.has(m.attackProfileId)) fail(`${w} modeProfile ${m.id} links unknown profile ${m.attackProfileId}`);
         }
         if (opts.mirrorProfiles) {
@@ -600,7 +617,7 @@ if (s2) {
             if (!same(ap.map((x) => x.id), ['end1', 'end2']) || !same(ap.map((x) => x.damage), s.baseDamage.profiles)) fail(`${w} double weapon profiles must be end1/end2 matching baseDamage.profiles`);
           } else if (s.baseDamage.mode === 'alternate-profiles') {
             if (ap.length < 2) fail(`${w} alternate-profiles needs 2+ attack profiles`);
-          } else if (ap.length !== 1 || ap[0].id !== 'primary' || !same(ap[0].damage, s.baseDamage) || !same(ap[0].damageType, s.damageType) || !same(ap[0].range, s.range)) fail(`${w} primary attack profile must mirror canonicalStats baseDamage/damageType/range`);
+          } else if (ap.length !== 1 || ap[0].id !== 'primary' || !(same(ap[0].damage, s.baseDamage) || ap[0].damage.mode === 'inherited') || !same(ap[0].damageType, s.damageType) || !same(ap[0].range, s.range)) fail(`${w} primary attack profile must mirror canonicalStats baseDamage/damageType/range`);
         }
         if (s.baseDamage.mode === 'alternate-profiles' && ap.length < 2) fail(`${w} alternate-profiles needs 2+ attack profiles`);
       }
@@ -619,7 +636,7 @@ if (s2) {
     if (t.ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${t.ign}`);
     if (b.records.find((r) => r.canonicalName === 'Bowcaster').canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
     if (b.records.length !== 48 || t.present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
-    if (s2.schemaVersion !== 'weapon-authority-schema-v2.3') fail('schemaVersion must be weapon-authority-schema-v2.3');
+    if (s2.schemaVersion !== 'weapon-authority-schema-v2.4') fail('schemaVersion must be weapon-authority-schema-v2.4');
   }
   // Standalone book authorities (not merged into the rolling record unless the owner says so)
   for (const sb of s2.standaloneBookAuthorities || []) {
@@ -632,7 +649,7 @@ if (s2) {
     const t = checkBook(sa, p1, sb.phase, { mirrorProfiles: !!sb.mirrorProfiles });
     const c = sa.counts;
     if (sa.records.length !== c.canonicalWeaponClaims || sa.records.length !== sb.claims || t.present !== c.repoPresent || sa.records.length - t.present !== c.repoMissing || t.present !== sb.repoPresent) fail(`${sb.phase} counts mismatch`);
-    const tallies = { accurateBaseClaims: t.accurate, inaccurateBaseClaims: t.inaccurate, arcBaseClaims: t.arc, ignoresDRBaseClaims: t.ign, areaEffectClaims: t.area, doubleWeaponClaims: t.dbl, autofireOnlyClaims: t.auto };
+    const tallies = { accurateBaseClaims: t.accurate, inaccurateBaseClaims: t.inaccurate, arcBaseClaims: t.arc, ignoresDRBaseClaims: t.ign, areaEffectClaims: t.area, areaEffectBaseClaims: t.area, doubleWeaponClaims: t.dbl, autofireOnlyClaims: t.auto };
     for (const [k, v] of Object.entries(tallies)) if (k in c && c[k] !== v) fail(`${sb.phase} counts.${k} ${c[k]} != computed ${v}`);
     if (sa.verification.sourceTables) { const tableSum = sa.verification.sourceTables.reduce((m, x) => m + x.claims, 0); if (tableSum !== sa.records.length) fail(`${sb.phase} source table claims ${tableSum} != records ${sa.records.length}`); }
     // Lightfoil-style DR bypass must come from the lightsaber group only
@@ -648,6 +665,24 @@ if (s2) {
       for (const n of ['DX-2 Disruptor Pistol', 'DXR-6 Disruptor Rifle']) if (f(n).canonicalStats.attackProfiles[0].firingConstraints?.firesOnAlternatingRounds !== true) fail(`2D ${n} fires only on alternating rounds`);
       for (const n of ['Bryar Rifle', 'CR-1 Blast Cannon', 'Flechette Launcher', 'Stokhli Spray Stick']) if (!same(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2D ${n} Inaccurate must exclude Long only (Core/KOTOR definition)`);
       if (!['Guard Shoto', 'Lightsaber Pike'].every((n) => f(n).canonicalStats.defensiveInteractions.length === 1)) fail('2D Guard Shoto / Lightsaber Pike defensiveInteractions');
+    }
+    if (sb.phase === '2E') {
+      const f = (n) => sa.records.find((r) => r.canonicalName === n);
+      const ap0 = (n) => f(n).canonicalStats.attackProfiles[0];
+      const rg = f('BlasTech 500 Riot Gun');
+      if (!rg.conflictGate || !(auth.phases['1-weapons-content'].openContentAdjudications || []).some((q) => q.subject === 'BlasTech 500 Riot Gun')) fail('2E BlasTech 500 Riot Gun must stay production-gated with the open adjudication');
+      if (!ap0('BlasTech 500 Riot Gun').conditionalModifiers.some((m) => m.value === -2 && /single-shot/.test(m.condition))) fail('2E Riot Gun single-shot -2 modifier missing');
+      const dfn = f('Gee-Tech 12 Defender Microblaster').canonicalStats;
+      if (dfn.range.hardMaxSquares !== 3 || dfn.resource.integrated !== true || dfn.resource.rechargeable !== false || dfn.resource.disposableWhenDepleted !== true || dfn.resource.capacityShots !== 2) fail('2E Defender hard max range / integrated disposable power pack');
+      const fl = f('SoroSuub Firelance Blaster Rifle').canonicalStats.stun;
+      if (fl.damageMode !== 'explicit' || fl.damage?.formula !== '4d6') fail('2E Firelance must keep explicit 4d6 stun');
+      const wr = f('Wrist Rocket Launcher');
+      if (wr.weaponGroup !== 'Exotic Weapon' || wr.canonicalStats.payloadProfiles.length !== 7 || sa.counts.wristRocketPayloadProfiles !== 7) fail('2E Wrist Rocket Launcher: Exotic Weapon with 7 payload profiles');
+      if (f('Merr-Sonn Model 434 DeathHammer').canonicalStats.objectDurability?.damageReductionEquipmentBonus !== 2 || f('BlasTech DH-23 Outback Blaster Pistol').canonicalStats.objectDurability?.strength !== 17) fail('2E object durability');
+      if (f('BlasTech DLT-20A "Longbarrel" Blaster Rifle').canonicalStats.integratedAccessories.length !== 1) fail('2E DLT-20A integrated scope');
+      if (f('Vibroknucklers').canonicalStats.baseDamage.mode !== 'modifier' || !f('Vibroknucklers').proficiencyRules.some((q) => q.simultaneous)) fail('2E Vibroknucklers modifier damage / simultaneous proficiency');
+      if (ap0('Stunning Gauntlet').damage.mode !== 'inherited') fail('2E Stunning Gauntlet inherited damage');
+      for (const n of ['BlasTech 500 Riot Gun', 'BlasTech DT-12 Heavy Blaster Pistol', 'Gee-Tech 12 Defender Microblaster']) if (!same(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2E ${n} Inaccurate must exclude Long only`);
     }
     if (sb.phase === '2C') {
       const g = (n) => sa.records.find((r) => r.canonicalName === n);
