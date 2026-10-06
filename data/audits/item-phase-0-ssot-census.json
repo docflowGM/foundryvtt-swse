@@ -1877,6 +1877,7 @@
     "tools/audit-nonheroic-profile-weapon-uuids.mjs",
     "tools/build-item-weapons-phase-3b-canonical-authority.mjs",
     "tools/build-item-weapons-phase-3c-production-disposition-ledger.mjs",
+    "tools/build-item-weapons-phase-3d-global-freeze.mjs",
     "tools/categorize-shields.js",
     "tools/compare-template-equipment.js",
     "tools/fix-armor-data.js",

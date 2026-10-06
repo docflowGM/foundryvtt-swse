@@ -43017,7 +43017,7 @@
       }
     },
     "3-weapons-canonical-authority": {
-      "status": "PHASE_3C_PRODUCTION_DISPOSITION_LEDGER_CERTIFIED_AUTHORITY_ONLY",
+      "status": "PHASE_3D_VERIFIED_FREEZE_PENDING_COMBAT_GLOVES_VISUAL_CONFIRMATION",
       "subphases": {
         "3A": {
           "file": "data/audits/item-weapons-phase-3a-cross-publication-reconciliation.json",
@@ -43045,10 +43045,18 @@
           "status": "WEAPON_PHASE_3C_PRODUCTION_DISPOSITION_LEDGER_CERTIFIED",
           "productionMutationAuthorized": false
         },
-        "3D": "global verification and freeze (PENDING; planner certification of 3C first)"
+        "3D": {
+          "file": "data/audits/item-weapons-phase-3d-global-freeze.json",
+          "doc": "docs/audits/item-weapons-phase-3d-global-freeze.md",
+          "builder": "tools/build-item-weapons-phase-3d-global-freeze.mjs",
+          "status": "WEAPON_PHASE_3D_VERIFIED_FREEZE_PENDING_COMBAT_GLOVES_VISUAL_CONFIRMATION",
+          "frozenStatusOnConfirmation": "WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN",
+          "combatGlovesVisualCheck": "UNVERIFIED_PRIMARY_SOURCE_PAGE_NOT_AVAILABLE",
+          "productionMutationAuthorized": false
+        }
       },
       "productionMutationAuthorized": false,
-      "note": "Planner supplies the reconciliation; Claude folds and verifies it against the certified claims. Weapon tag archaeology starts only after 3D.",
+      "note": "Planner supplies the reconciliation; Claude folds and verifies it against the certified claims. 3A COMPLETE/RESOLVED, 3B CERTIFIED, 3C CERTIFIED, 3D verified (all counts and traceability recomputed) but not frozen until the Combat Gloves Table 8-3 visual check is confirmed. Production mutation is NOT authorized. Once frozen, the weapon canonical authority may serve as the source for production migration and weapon tag archaeology without authorizing either.",
       "openSourceAmbiguities": [
         "Bowcaster range profile (SOURCE_NOT_EXPLICIT; blocks production range mutation, not Phase 3)"
       ],

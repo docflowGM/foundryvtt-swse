@@ -1282,5 +1282,73 @@ if (p3c && typeof p3c === 'object') {
   if (errors.length === e3c) console.log(`Phase 3C production disposition ledger OK: ${led.length} identities (${PRIM.map((p) => `${p} ${bd[p]}`).join(', ')}), ${ro.length} repo-only records (${ro.filter((r) => r.disposition === 'MERGE_INTO_CANONICAL').length} merge, ${ro.filter((r) => r.disposition === 'REMOVE_UNSUPPORTED').length} remove), ${L.counts.recordsWithDependencyGates} dependency-gated, ledger byte-stable`);
 }
 
+// Phase 3D: global freeze, recomputed independently from the committed 3B/3C artifacts, Phase 1/2 claims and the live pack
+const p3d = p3 && p3.subphases && p3.subphases['3D'];
+if (p3d && typeof p3d === 'object') {
+  const e3d = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const raw = fs.readFileSync(path.join(ROOT, p3d.file), 'utf8');
+  const F = JSON.parse(raw);
+  if (!fs.existsSync(path.join(ROOT, p3d.doc))) fail('3D missing doc');
+  const mod = await import('./build-item-weapons-phase-3d-global-freeze.mjs');
+  let d1 = null, d2 = null;
+  try { d1 = mod.buildPhase3D(); d2 = mod.buildPhase3D(); } catch (e) { fail(`3D freeze rebuild failed: ${e.message}`); }
+  if (d1) {
+    if (d1.json !== d2.json || d1.md !== d2.md) fail('3D freeze builder output is not deterministic');
+    if (raw !== d1.json) fail('3D committed freeze differs from the builder output (stale, hand-edited, or a 3B/3C/Phase 1-2/production input changed since it was generated)');
+    if (fs.readFileSync(path.join(ROOT, p3d.doc), 'utf8') !== d1.md) fail('3D committed markdown differs from the builder output');
+  }
+  // independent recomputation of the headline counts from first principles
+  const rawProd = fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8');
+  const liveAll = rawProd.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
+  const liveW = liveAll.filter((r) => r.type === 'weapon');
+  const B = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8'));
+  const C = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3c-production-disposition-ledger.json'), 'utf8'));
+  const claimIds = new Map();
+  for (const i of B.identities) for (const c of i.sourceClaims) { const k = `${String(c.book).replace(/^The /, '')}|${c.canonicalName}`; claimIds.set(k, (claimIds.get(k) || []).concat(i.identityKey)); }
+  const phase1Total = auth.phases['1-weapons-content'].books.reduce((m, b) => m + b.records.length, 0);
+  const phase2Total = auth.phases['2-weapons-numeric-stat-schema'].books[0].records.length + auth.phases['2-weapons-numeric-stat-schema'].standaloneBookAuthorities.reduce((m, sb) => m + JSON.parse(fs.readFileSync(path.join(ROOT, sb.file), 'utf8')).records.length, 0);
+  if (phase1Total !== 209) fail(`3D Phase 1 claim count ${phase1Total} != 209`);
+  if (phase2Total !== 209) fail(`3D Phase 2 claim count ${phase2Total} != 209`);
+  if (claimIds.size !== 209 || [...claimIds.values()].some((v) => v.length !== 1)) fail('3D every claim must map to exactly one 3B identity');
+  if (B.identities.length !== 203) fail(`3D canonical identity count ${B.identities.length} != 203`);
+  const per = new Map(); for (const v of claimIds.values()) per.set(v[0], (per.get(v[0]) || 0) + 1);
+  if ([...per.values()].filter((n) => n === 1).length !== 197 || [...per.values()].filter((n) => n === 2).length !== 6) fail('3D claim split must be 197 one-claim + 6 two-claim identities');
+  if (B.identities.filter((i) => i.repo.present).length !== 151 || B.identities.filter((i) => !i.repo.present).length !== 52) fail('3D repo present/missing must be 151/52');
+  const cb = {}; for (const c of C.canonical) cb[c.primaryDisposition] = (cb[c.primaryDisposition] || 0) + 1;
+  if (cb.CREATE !== 52 || cb.UPDATE !== 149 || cb.MERGE !== 2 || cb.KEEP || cb.RENAME || cb.REVIEW_PRECEDENCE) fail(`3D 3C dispositions drifted: ${JSON.stringify(cb)}`);
+  if (liveW.length !== 186 || liveAll.length - liveW.length !== 4) fail('3D live pack must hold 186 weapon + 4 out-of-scope records');
+  const cov = new Map();
+  for (const i of B.identities) if (i.repo.present) cov.set(i.repo.id, (cov.get(i.repo.id) || 0) + 1);
+  for (const r of C.repoOnlyRecords) cov.set(r.repoId, (cov.get(r.repoId) || 0) + 1);
+  for (const r of liveW) if (cov.get(r._id) !== 1) fail(`3D live weapon ${r._id} covered ${cov.get(r._id) || 0} times`);
+  if (cov.size !== 186) fail(`3D coverage references ${cov.size} records, not 186`);
+  const roM = C.repoOnlyRecords.filter((r) => r.disposition === 'MERGE_INTO_CANONICAL').length, roR = C.repoOnlyRecords.filter((r) => r.disposition === 'REMOVE_UNSUPPORTED').length;
+  if (C.repoOnlyRecords.length !== 35 || roM !== 2 || roR !== 33) fail('3D repo-only census must be 35 = 2 merge + 33 remove');
+  for (const r of C.repoOnlyRecords) {
+    if (r.dependencyGate?.status !== 'BLOCKED_PENDING_MIGRATION') fail(`3D cleanup ${r.repoId} lost its dependency gate`);
+    if (!liveW.some((w) => w._id === r.repoId)) fail(`3D cleanup ${r.repoId} was already removed from the pack`);
+    if (r.productionMutationAuthorized !== false) fail(`3D cleanup ${r.repoId} authorises mutation`);
+  }
+  const bf = C.canonical.flatMap((c) => c.blockedFields.map((f) => ({ c, f })));
+  if (bf.length !== 25 || new Set(bf.map((x) => x.c.identityKey)).size !== 21) fail('3D source-unresolved fields must be 25 across 21 identities');
+  for (const { c, f } of bf) if (f.status !== 'SOURCE_UNRESOLVED_NO_MUTATION' || f.productionValueMayNotBecomeCanonical !== true || !f.reason) fail(`3D blocked field ${c.identityKey} ${f.canonicalPath} lost its guard`);
+  if (!bf.some(({ c, f }) => c.canonicalName === 'Bowcaster' && /range/.test(f.canonicalPath))) fail('3D Bowcaster range must stay source-unresolved');
+  if (!bf.some(({ c, f }) => c.canonicalName === 'Retrosaber' && /cost|weight|availability/i.test(f.canonicalPath))) fail('3D Retrosaber cost/weight/availability must stay source-unresolved');
+  if (B.identities.some((i) => i.crossPublication?.unresolvedConflicts?.length)) fail('3D unresolved cross-publication contradiction');
+  // production files unchanged from the certified baseline
+  const sh = (t) => crypto.createHash('sha256').update(t).digest('hex');
+  if (sh(rawProd) !== B.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== B.productionBaseline['template.json']) fail('3D production file (packs/weapons.db or template.json) differs from the certified baseline');
+  // freeze flags and status
+  if (F.productionMutationAuthorized !== false || F.authorityOnly !== true || F.identityKeysUnchangedThrough3CAndFreeze !== true) fail('3D authority-only / mutation flags');
+  const g = F.combatGlovesVisualCheck?.status;
+  const wantStatus = g === 'CONFIRMED_WEARER_SIZE' ? 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN' : 'WEAPON_PHASE_3D_VERIFIED_FREEZE_PENDING_COMBAT_GLOVES_VISUAL_CONFIRMATION';
+  if (F.status !== wantStatus || p3d.status !== wantStatus) fail(`3D freeze status must be ${wantStatus} for the Combat Gloves check state ${g}`);
+  if (p3.productionMutationAuthorized !== false || p3d.productionMutationAuthorized !== false) fail('3D rolling authority must keep production mutation unauthorized');
+  if (p3.subphases['3B'].status !== 'WEAPON_PHASE_3B_203_IDENTITY_CANONICAL_AUTHORITY_CERTIFIED' || p3.subphases['3C'].status !== 'WEAPON_PHASE_3C_PRODUCTION_DISPOSITION_LEDGER_CERTIFIED' || p3.subphases['3A'].status !== 'PHASE_3A_COMPLETE_RESOLVED') fail('3D rolling authority must carry 3A/3B/3C certified statuses');
+  if (F.claimTrace.length !== 209 || F.identityTrace.length !== 203 || F.liveWeaponCoverage.length !== 186 || F.cleanupGates.length !== 35 || F.sourceUnresolvedFields.length !== 25) fail('3D freeze trace section sizes');
+  if (errors.length === e3d) console.log(`Phase 3D global freeze OK: 209 claims -> 203 identities (197/6), 151/52 repo, CREATE 52/UPDATE 149/MERGE 2, 186 live covered once, 35 cleanup gates, 25 unresolved fields, production unchanged, status ${F.status}`);
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
