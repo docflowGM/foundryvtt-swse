@@ -1,0 +1,1154 @@
+{
+  "schemaVersion": "weapon-semantic-tags-advanced-melee-rolling-v1",
+  "phase": "4E",
+  "family": "weapons",
+  "categoryBatch": "Advanced Melee Weapon",
+  "status": "WEAPON_TAG_PHASE_4E_ADVANCED_MELEE_ROUND_1_PLANNER_ADJUDICATED",
+  "authorityOnly": true,
+  "productionMutationAuthorized": false,
+  "baseline": {
+    "comparisonIdentityKey": "weapon-vibroblade",
+    "comparisonCanonicalName": "Vibroblade",
+    "repoPresent": true,
+    "damage": "2d6",
+    "damageType": "slashing or piercing",
+    "stun": "none",
+    "resource": "energy cell",
+    "semanticBaseline": [
+      "melee",
+      "offense_melee"
+    ]
+  },
+  "categoryCensus": {
+    "canonicalAdvancedMeleeIdentities": 22,
+    "repoPresent": 5,
+    "repoMissing": 17,
+    "phase3BBlobSha": "e1f19068526e773a700496976403628c24d34b51",
+    "repoPresentIdentities": [
+      "Electropole",
+      "Electrostaff",
+      "Vibroblade",
+      "Vibrodagger",
+      "Vibrosword"
+    ],
+    "repoMissingIdentities": [
+      "Dire Vibroblade",
+      "Double Vibroblade",
+      "Energy Lance",
+      "Force Pike",
+      "Power Hammer",
+      "Power Lance",
+      "San-Ni Staff",
+      "Shock Stick",
+      "Shock Whip",
+      "Shockstaff",
+      "Static Pike",
+      "Vibro-Ax",
+      "Vibrobayonet",
+      "Vibroblade, Double",
+      "Vibroknucklers",
+      "Vibrolance",
+      "Vibrorapier"
+    ]
+  },
+  "architecture": {
+    "semanticTags": "Build/mechanic recommendation meaning only; restricted to the frozen certified feat/talent-used tag union.",
+    "ruleSelectors": "Exact canonical identity, weapon family, group, proficiency, attack-profile, and named ability applicability.",
+    "comparisonProfile": "Damage, stun, hands, double-weapon behavior, reach, ranged secondary profiles, defensive utility, control utility, and mounted/mobility role relative to Vibroblade.",
+    "missingIdentityRule": "Phase 3B unmapped identities remain explicit canonical identities with repoIdentityKey=null. This pass does not invent or write production records.",
+    "weaponDeclarationPrinciple": "Weapons declare what they are; abilities declare what they apply to."
+  },
+  "vocabularyPolicy": {
+    "allowedSemanticTagCount": 183,
+    "weaponGroupIsSemanticTag": false,
+    "forbiddenExamples": [
+      "advanced_melee",
+      "thrown",
+      "condition_track",
+      "accuracy",
+      "area_damage"
+    ],
+    "rawDamageCreatesSemanticTag": false,
+    "structuralSelectorsAreSemanticTags": false
+  },
+  "rollingProgress": {
+    "round": 1,
+    "adjudicatedThisRound": 10,
+    "adjudicatedTotal": 10,
+    "remaining": 12,
+    "firstCanonicalName": "Dire Vibroblade",
+    "lastCanonicalName": "Shock Stick",
+    "nextCanonicalName": "Shock Whip",
+    "totalFinalTagAssignmentsThisRound": 54,
+    "distinctFinalTagsUsedThisRound": 19,
+    "finalTagsUsedThisRound": [
+      "battlefield_control",
+      "block",
+      "control",
+      "damage_bonus",
+      "damage_reduction",
+      "double_weapon",
+      "durability",
+      "full_attack",
+      "melee",
+      "mount",
+      "nonlethal",
+      "offense_melee",
+      "offense_ranged",
+      "ranged",
+      "ride",
+      "rider",
+      "stun",
+      "sustained_damage",
+      "vehicle"
+    ]
+  },
+  "implementationContract": {
+    "semanticAuthority": "planner",
+    "claudeMayChangeFinalTags": false,
+    "claudeMayChangeTradeoffTags": false,
+    "claudeMayChangeRuleSelectors": false,
+    "claudeMayCreateNewSemanticTags": false,
+    "runtimeCodeMutationAuthorized": false,
+    "productionMutationAuthorized": false,
+    "productionFilesMustRemainUnchanged": [
+      "packs/weapons.db",
+      "template.json"
+    ],
+    "requiredRepoTargets": [
+      "data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json",
+      "docs/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.md"
+    ]
+  },
+  "assignments": [
+    {
+      "canonicalName": "Dire Vibroblade",
+      "phase3BIdentityKey": "unmapped::Dire Vibroblade",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "Medium 2d6 vibroblade intended for two-handed use. A Medium wielder using it two-handed applies double the wielder's Strength bonus to damage. It requires an energy cell.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "damage_bonus"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "damage_bonus"
+      ],
+      "rationale": {
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It deals direct 2d6 slashing or piercing melee damage.",
+        "damage_bonus": "The source explicitly gives a Medium two-handed wielder double Strength bonus to damage."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:dire-vibroblade",
+        "phase3BIdentityKey": "unmapped::Dire Vibroblade",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibroblade",
+          "weapon-family:dire-vibroblade",
+          "weapon-family:two-handed-melee"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6 + explicit two-handed double-Strength scaling",
+          "relation": "SAME_DICE_BETTER_STRENGTH_SCALING"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "TWO_HANDED_ROLE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Strength-focused two-handed melee option for characters who want a conventional vibroblade profile with stronger ability-modifier scaling."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Two-handed Strength scaling is conditional on wielder/use state.",
+          "representationStatus": "STRUCTURED_WIELDING_RULE",
+          "note": "Keep exact hand/size condition structured."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Double Vibroblade",
+      "phase3BIdentityKey": "unmapped::Double Vibroblade",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "Large double weapon dealing 2d6 with each end. Attacking with both ends uses the normal full-round double-weapon attack rules and penalties. It requires two energy cells.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "double_weapon",
+        "full_attack"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack"
+      ],
+      "rationale": {
+        "melee": "Both attack profiles are melee.",
+        "offense_melee": "Each end deals direct 2d6 slashing melee damage.",
+        "double_weapon": "It is explicitly a double weapon.",
+        "full_attack": "Using both ends is performed through the double-weapon full-attack rules."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:double-vibroblade",
+        "phase3BIdentityKey": "unmapped::Double Vibroblade",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibroblade",
+          "weapon-family:double-vibroblade",
+          "weapon-family:double-weapon"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6 / 2d6",
+          "relation": "SAME_PER_END_MULTI_ATTACK_CAPABLE"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "LARGE_DOUBLE_WEAPON"
+        },
+        "doubleWeapon": {
+          "available": true,
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Dedicated double-weapon choice for full-attack builds. Prefer when the character invests in double-weapon penalty reduction and multiattack support."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Both attack rolls take the normal double-weapon penalty before feat/talent reductions.",
+          "representationStatus": "STRUCTURED_FULL_ATTACK_RULE",
+          "note": "Do not encode the base penalty as a negative semantic tag."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Electropole",
+      "phase3BIdentityKey": "weapon-gungan-electropole",
+      "repo": {
+        "present": true,
+        "id": "weapon-gungan-electropole",
+        "currentName": "Gungan Electropole",
+        "nameNormalizationPending": true
+      },
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 36,
+        "statTablePage": 37
+      },
+      "canonicalMechanicSummary": "Medium 2d8 bludgeoning/energy pole weapon with a same-as-base stun setting. It can be thrown like a javelin. Gungans proficient with simple weapons are also proficient with it. It requires two energy cells.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "melee": "Its primary profile is melee.",
+        "offense_melee": "It deals 2d8 bludgeoning/energy damage in melee.",
+        "ranged": "It has an explicit thrown ranged profile.",
+        "offense_ranged": "The thrown profile deals the same direct damage at range.",
+        "stun": "It has a same-as-base 2d8 stun setting.",
+        "nonlethal": "The stun setting provides a nonlethal option."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:electropole",
+        "phase3BIdentityKey": "weapon-gungan-electropole",
+        "repoIdentityKey": "weapon-gungan-electropole",
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:electropole",
+          "weapon-family:polearm",
+          "weapon-family:throwable-melee"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not add forbidden semantic tag `thrown`; thrown behavior is structural.",
+          "Gungan simple-weapon proficiency is an alternate proficiency rule, not a semantic tag."
+        ],
+        "profileSelectors": [
+          {
+            "profile": "melee",
+            "branch": "melee",
+            "proficiency": "weapon-proficiency:advanced-melee"
+          },
+          {
+            "profile": "thrown",
+            "branch": "ranged",
+            "proficiency": "weapon-proficiency:advanced-melee"
+          },
+          {
+            "profile": "gungan-alternate-proficiency",
+            "condition": "species:gungan AND weapon-proficiency:simple",
+            "effect": "treated-proficient"
+          }
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d8",
+          "relation": "HIGHER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d8",
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "hands": {
+          "relation": "BASELINE_ADVANCED_MELEE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": true,
+          "relation": "THROWN_OPTION"
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "NONLETHAL_OPTION"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Versatile melee/thrown weapon with strong base damage and stun. Especially attractive to Gungans because of the alternate proficiency rule."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Gungan proficiency substitution.",
+          "representationStatus": "STRUCTURED_PROFICIENCY_RULE",
+          "note": "Keep racial proficiency logic outside semantic tags."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Electrostaff",
+      "phase3BIdentityKey": "weapon-electrostaff",
+      "repo": {
+        "present": true,
+        "id": "weapon-electrostaff"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 121,
+        "statTablePage": 122
+      },
+      "canonicalMechanicSummary": "Large 2d6/2d6 double weapon. Either end can deal normal or 2d6 stun damage. Phrik construction gives the weapon itself DR 20, including against lightsaber attacks. It requires two energy cells.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "double_weapon",
+        "full_attack",
+        "stun",
+        "nonlethal",
+        "durability",
+        "damage_reduction"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack",
+        "stun",
+        "nonlethal",
+        "durability",
+        "damage_reduction"
+      ],
+      "rationale": {
+        "melee": "Both staff ends are melee profiles.",
+        "offense_melee": "Each end deals direct 2d6 bludgeoning/energy damage.",
+        "double_weapon": "It is explicitly a double weapon.",
+        "full_attack": "Both ends participate in double-weapon full attacks.",
+        "stun": "Either end can be set to 2d6 stun.",
+        "nonlethal": "Stun provides a nonlethal option.",
+        "durability": "The weapon itself has exceptional phrik durability.",
+        "damage_reduction": "The electrostaff explicitly has DR 20, even against lightsaber attacks."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:electrostaff",
+        "phase3BIdentityKey": "weapon-electrostaff",
+        "repoIdentityKey": "weapon-electrostaff",
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:electrostaff",
+          "weapon-family:staff",
+          "weapon-family:double-weapon",
+          "weapon-family:phrik-weapon"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6 / 2d6",
+          "relation": "SAME_PER_END_MULTI_ATTACK_CAPABLE"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d6 per end",
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "hands": {
+          "relation": "LARGE_DOUBLE_WEAPON"
+        },
+        "doubleWeapon": {
+          "available": true,
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "WEAPON_SELF_DR20_LIGHTSABER_RESISTANT"
+        },
+        "controlUtility": {
+          "relation": "NONLETHAL_OPTION"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Durable double-weapon platform for full-attack users who also want strong nonlethal flexibility and a weapon that resists lightsaber damage."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "DR 20 belongs to the weapon object, not the wielder.",
+          "representationStatus": "STRUCTURED_OBJECT_DURABILITY",
+          "note": "Recommendation semantics must not imply the character gains DR 20."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Energy Lance",
+      "phase3BIdentityKey": "unmapped::Energy Lance",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 48,
+        "statTablePage": 48
+      },
+      "canonicalMechanicSummary": "Large 2d8 piercing/energy mounted lance. A Ride-trained Medium rider can wield it one-handed while mounted; a Medium wielder using it unmounted takes -1 to attacks. It also fires a plasma bolt as a no-stun blaster carbine and both profiles function underwater.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "ranged",
+        "offense_ranged",
+        "sustained_damage",
+        "mount",
+        "ride",
+        "rider"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "sustained_damage",
+        "mount",
+        "ride",
+        "rider"
+      ],
+      "rationale": {
+        "melee": "Its lance thrust is a melee attack.",
+        "offense_melee": "The lance deals direct 2d8 piercing/energy melee damage.",
+        "ranged": "It has a separate plasma-bolt ranged profile.",
+        "offense_ranged": "The plasma profile functions as a damaging blaster carbine without stun.",
+        "sustained_damage": "The blaster-carbine profile inherits single/autofire functionality.",
+        "mount": "Its handling rules explicitly improve while mounted.",
+        "ride": "The one-handed mounted benefit requires training in Ride.",
+        "rider": "It is purpose-built for a mounted wielder."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:energy-lance",
+        "phase3BIdentityKey": "unmapped::Energy Lance",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:lance",
+          "weapon-family:energy-lance",
+          "weapon-family:mounted-weapon",
+          "weapon-family:hybrid-melee-ranged"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Underwater operation is structured environment metadata; do not invent an `aquatic` semantic tag.",
+          "Ranged plasma mode uses Rifle proficiency because it functions as a blaster carbine."
+        ],
+        "profileSelectors": [
+          {
+            "profile": "melee",
+            "branch": "melee",
+            "proficiency": "weapon-proficiency:advanced-melee",
+            "families": [
+              "weapon-family:lance",
+              "weapon-family:energy-lance"
+            ]
+          },
+          {
+            "profile": "plasma-bolt",
+            "branch": "ranged",
+            "proficiency": "weapon-proficiency:rifles",
+            "families": [
+              "weapon-family:blaster-carbine",
+              "weapon-family:energy-lance-plasma"
+            ]
+          }
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d8 melee / blaster-carbine plasma profile",
+          "relation": "HIGHER_AND_HYBRID"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "MOUNT_DEPENDENT_ONE_HAND"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE_BY_AUTHORITY"
+        },
+        "rangedProfile": {
+          "available": true,
+          "relation": "BLASTER_CARBINE_MODE"
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "MAJOR_MOUNTED_SYNERGY"
+        },
+        "recommendationFit": "Hybrid cavalry weapon for Ride-trained mounted characters who want both melee striking and rifle-class ranged fire from one platform."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Medium unmounted wielders take -1 to attacks; Ride-trained Medium mounted wielders can use it one-handed.",
+          "representationStatus": "STRUCTURED_WIELDING_RULES",
+          "note": "Exact conditions remain structural."
+        },
+        {
+          "mechanic": "Both melee and ranged profiles function underwater.",
+          "representationStatus": "STRUCTURED_ENVIRONMENT_RULE",
+          "note": "No aquatic semantic tag is introduced."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Force Pike",
+      "phase3BIdentityKey": "unmapped::Force Pike",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 121,
+        "statTablePage": 122
+      },
+      "canonicalMechanicSummary": "Medium 2d8 piercing/energy pole weapon with lethal and 2d8 stun settings. It requires two energy cells.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It deals direct 2d8 piercing/energy melee damage.",
+        "stun": "The power dial provides an explicit 2d8 stun setting.",
+        "nonlethal": "Stun provides a nonlethal option."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:force-pike",
+        "phase3BIdentityKey": "unmapped::Force Pike",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:polearm",
+          "weapon-family:force-pike",
+          "weapon-family:stun-melee"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d8",
+          "relation": "HIGHER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d8",
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "hands": {
+          "relation": "BASELINE_ADVANCED_MELEE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE_BY_AUTHORITY"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "NONLETHAL_OPTION"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Straightforward high-damage advanced melee weapon with a strong stun option; a broadly useful nonlethal alternative to the baseline Vibroblade."
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "canonicalName": "Power Hammer",
+      "phase3BIdentityKey": "unmapped::Power Hammer",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 97,
+        "statTablePage": 96
+      },
+      "canonicalMechanicSummary": "Large 2d12 gravity-assisted hammer. Power Attack extra damage applies to objects and vehicles when used with it. Double Attack, Triple Attack, and Rapid Strike each impose an additional -2 attack penalty. It requires two energy cells.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "vehicle"
+      ],
+      "tradeoffTags": [
+        "full_attack",
+        "precision",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "vehicle"
+      ],
+      "rationale": {
+        "melee": "Its canonical profile is melee.",
+        "offense_melee": "It deals very high direct 2d12 bludgeoning damage.",
+        "vehicle": "Its explicit Power Attack interaction extends extra damage to vehicles, making anti-vehicle use a real mechanical role."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:power-hammer",
+        "phase3BIdentityKey": "unmapped::Power Hammer",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:power-hammer",
+          "weapon-family:hammer",
+          "weapon-family:anti-object-melee",
+          "weapon-family:anti-vehicle-melee"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Power Attack",
+            "relation": "EXPLICIT_WEAPON_BENEFIT",
+            "effect": "Power Attack extra damage can apply to objects and vehicles when using the Power Hammer."
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Double Attack",
+            "relation": "EXTRA_ATTACK_PENALTY",
+            "effect": "Additional -2 attack penalty."
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Triple Attack",
+            "relation": "EXTRA_ATTACK_PENALTY",
+            "effect": "Additional -2 attack penalty."
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Rapid Strike",
+            "relation": "EXTRA_ATTACK_PENALTY",
+            "effect": "Additional -2 attack penalty."
+          }
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d12",
+          "relation": "MUCH_HIGHER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "LARGE_HEAVY_MELEE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Heavy single-hit and anti-object/anti-vehicle option. Excellent for Power Attack builds; deliberately poor for Double Attack, Triple Attack, and Rapid Strike users because of the extra -2 penalty."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Power Attack's extra damage is external ability synergy, not an intrinsic permanent damage bonus.",
+          "representationStatus": "ABILITY_JOIN",
+          "note": "Do not add `damage_bonus` solely from owning the weapon."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Power Lance",
+      "phase3BIdentityKey": "unmapped::Power Lance",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 48,
+        "statTablePage": 48
+      },
+      "canonicalMechanicSummary": "Large 2d8 bludgeoning/energy mounted lance. It retains the Energy Lance's Ride-trained one-handed mounted handling and the -1 Medium-unmounted penalty, but has no plasma-bolt firing mode.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "mount",
+        "ride",
+        "rider"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "mount",
+        "ride",
+        "rider"
+      ],
+      "rationale": {
+        "melee": "It is a melee-only lance.",
+        "offense_melee": "It deals direct 2d8 bludgeoning/energy damage.",
+        "mount": "Its wielding rules explicitly improve while mounted.",
+        "ride": "The one-handed mounted handling requires training in Ride.",
+        "rider": "It is designed for mounted cavalry and speeder-bike scouts."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:power-lance",
+        "phase3BIdentityKey": "unmapped::Power Lance",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:lance",
+          "weapon-family:power-lance",
+          "weapon-family:mounted-weapon"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d8",
+          "relation": "HIGHER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "MOUNT_DEPENDENT_ONE_HAND"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE_BY_AUTHORITY"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "MAJOR_MOUNTED_SYNERGY"
+        },
+        "recommendationFit": "Melee-only cavalry weapon for Ride-trained mounted characters who want the Energy Lance's mounted handling without paying for a ranged profile."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Medium unmounted wielder -1 attack; Ride-trained Medium mounted wielder can use it one-handed.",
+          "representationStatus": "STRUCTURED_WIELDING_RULES",
+          "note": "Exact mounted state remains structured."
+        }
+      ]
+    },
+    {
+      "canonicalName": "San-Ni Staff",
+      "phase3BIdentityKey": "unmapped::San-Ni Staff",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "Large 2d6 double staff. It can be used with Block as though it were a lightsaber. On each attack the wielder may choose to deal stun instead of lethal damage. It requires two energy cells.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "double_weapon",
+        "full_attack",
+        "stun",
+        "nonlethal",
+        "block"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack",
+        "stun",
+        "nonlethal",
+        "block"
+      ],
+      "rationale": {
+        "melee": "Both ends are melee attack profiles.",
+        "offense_melee": "The staff deals direct 2d6 energy/bludgeoning damage.",
+        "double_weapon": "It is explicitly a double weapon.",
+        "full_attack": "Its two ends support double-weapon full attacks.",
+        "stun": "The wielder may declare stun damage on each individual attack.",
+        "nonlethal": "The per-attack stun choice provides strong nonlethal flexibility.",
+        "block": "The source explicitly allows it to be used with Block as though it were a lightsaber."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:san-ni-staff",
+        "phase3BIdentityKey": "unmapped::San-Ni Staff",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:staff",
+          "weapon-family:san-ni-staff",
+          "weapon-family:double-weapon",
+          "weapon-family:block-compatible"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Block",
+            "relation": "EXPLICIT_WEAPON_COMPATIBILITY",
+            "effect": "May use Block with the San-Ni Staff as though it were a lightsaber."
+          }
+        ],
+        "selectorGuardrails": [
+          "Block compatibility does not make the weapon a lightsaber and does not imply other lightsaber-only abilities apply."
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6 per end",
+          "relation": "SAME_PER_END_MULTI_ATTACK_CAPABLE"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "same-as-base per chosen attack",
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "hands": {
+          "relation": "LARGE_DOUBLE_WEAPON"
+        },
+        "doubleWeapon": {
+          "available": true,
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BLOCK_COMPATIBLE"
+        },
+        "controlUtility": {
+          "relation": "NONLETHAL_OPTION"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Defensive double-weapon option for Block users who want full-attack capability and per-attack lethal/stun flexibility without using a lightsaber."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Stun choice is made per attack rather than as a persistent weapon setting.",
+          "representationStatus": "STRUCTURED_ATTACK_DECLARATION",
+          "note": "Preserve timing exactly."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Shock Stick",
+      "phase3BIdentityKey": "unmapped::Shock Stick",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 37,
+        "statTablePage": 36
+      },
+      "canonicalMechanicSummary": "Large melee weapon dealing native 3d6 stun only. If pre-halving stun damage equals or exceeds a susceptible target's current hit points, the target moves -5 condition-track steps and falls unconscious. It can mount as a rifle bayonet; proficiency with that rifle removes the advanced-melee nonproficiency penalty for the mounted shock stick.",
+      "sharedTags": [
+        "melee"
+      ],
+      "advantageTags": [
+        "offense_melee",
+        "stun",
+        "nonlethal",
+        "control",
+        "battlefield_control"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "stun",
+        "nonlethal",
+        "control",
+        "battlefield_control"
+      ],
+      "rationale": {
+        "melee": "Its attack profile is melee.",
+        "offense_melee": "It makes direct melee stun attacks.",
+        "stun": "It always deals native 3d6 stun damage.",
+        "nonlethal": "It is a dedicated nonlethal disabling weapon.",
+        "control": "A sufficiently strong hit can immediately force -5 condition-track steps and unconsciousness.",
+        "battlefield_control": "Its disabling effect can remove a vulnerable opponent from effective combat."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:shock-stick",
+        "phase3BIdentityKey": "unmapped::Shock Stick",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:shock-weapon",
+          "weapon-family:shock-stick",
+          "weapon-family:stun-melee",
+          "weapon-family:bayonet-compatible"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "The rifle-bayonet proficiency waiver is configuration-specific; it does not globally change the weapon's proficiency category.",
+          "Do not add forbidden semantic tag `condition_track`; use control/battlefield_control and preserve the exact track effect structurally."
+        ],
+        "profileSelectors": [
+          {
+            "profile": "handheld",
+            "proficiency": "weapon-proficiency:advanced-melee"
+          },
+          {
+            "profile": "mounted-bayonet",
+            "condition": "mounted on rifle AND wielder proficient with that rifle",
+            "effect": "waive advanced-melee nonproficiency penalty"
+          }
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "3d6 native stun only",
+          "relation": "NONLETHAL_SPECIALIST"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "3d6 native",
+          "relation": "MUCH_BETTER"
+        },
+        "hands": {
+          "relation": "LARGE_MELEE_OR_RIFLE_MOUNTED"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "MAJOR_DISABLE_EFFECT"
+        },
+        "mobilityMount": {
+          "relation": "WEAPON_MOUNT_NOT_RIDER_MOUNT"
+        },
+        "recommendationFit": "Dedicated stun/control weapon, especially attractive as a rifle-mounted bayonet or for characters who want to disable weakened targets rather than kill them."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "If pre-halving stun damage >= current HP, target moves -5 condition-track steps and becomes unconscious.",
+          "representationStatus": "STRUCTURED_OVERWHELMING_STUN_RULE",
+          "note": "Exact threshold and effect remain structured."
+        }
+      ]
+    }
+  ]
+}

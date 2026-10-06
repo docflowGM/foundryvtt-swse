@@ -1796,5 +1796,107 @@ if (fs.existsSync(path.join(ROOT, P4D))) {
   if (errors.length === e4d) console.log(`Phase 4D Rifle semantic tags OK: ${REQ}/38 adjudicated, ${tagTotal} assignments, ${tagsUsed.size} distinct tags, exact Riflemaster/Sport Hunter joins, mode-aware selectors, comparison data cross-checked against Phase 3B, next ${rp.nextCanonicalName}`);
 }
 
+// Phase 4E: Advanced Melee semantic tags + rule selectors + comparison data (rolling planner authority)
+const P4E = 'data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json';
+if (fs.existsSync(path.join(ROOT, P4E))) {
+  const e4e = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const J = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+  const sh = (t) => crypto.createHash('sha256').update(t).digest('hex');
+  const canon = (x) => (Array.isArray(x) ? x.map(canon) : x && typeof x === 'object' ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, canon(x[k])])) : x);
+  const S = J(P4E);
+  if (!fs.existsSync(path.join(ROOT, 'docs/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.md'))) fail('4E missing markdown companion');
+  const ic = S.implementationContract || {};
+  if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || ic.runtimeCodeMutationAuthorized !== false || ic.claudeMayCreateNewSemanticTags !== false || S.vocabularyPolicy?.weaponGroupIsSemanticTag !== false || S.vocabularyPolicy?.rawDamageCreatesSemanticTag !== false || S.vocabularyPolicy?.structuralSelectorsAreSemanticTags !== false) fail('4E authority-only / mutation / vocabulary flags');
+  const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
+  if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4E requires Phase 3D to remain frozen');
+  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4E production file changed (packs/weapons.db or template.json)');
+  const used = new Set();
+  for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
+  walk(J('data/audits/talent-phase-12-1-semantic-tag-authority.json').batches);
+  for (const a of J('data/audits/talent-phase-12-final-ontology-adjudication.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  if (used.size !== 183 || S.vocabularyPolicy.allowedSemanticTagCount !== 183) fail(`4E feat/talent-used vocabulary is ${used.size}, expected 183`);
+  const REJECT = ['advanced_melee', 'thrown', 'condition_track', 'accuracy', 'area_damage', 'rifle', 'autofire', 'explosives', 'grenade', 'ion', 'sonic', 'aquatic'];
+  const bl = S.baseline;
+  if (bl.comparisonIdentityKey !== 'weapon-vibroblade' || bl.damage !== '2d6' || bl.stun !== 'none') fail('4E baseline Vibroblade policy changed');
+  const adv = b3.identities.filter((i) => i.weaponGroup === 'Advanced Melee Weapon').sort((x, y) => (x.canonicalName.toLowerCase() < y.canonicalName.toLowerCase() ? -1 : 1));
+  const advPresent = adv.filter((i) => i.repo.present), advMissing = adv.filter((i) => !i.repo.present);
+  const cc = S.categoryCensus;
+  if (adv.length !== 22 || cc.canonicalAdvancedMeleeIdentities !== 22 || advPresent.length !== cc.repoPresent || advMissing.length !== cc.repoMissing || !same(advPresent.map((i) => i.canonicalName).sort(), [...cc.repoPresentIdentities].sort()) || !same(advMissing.map((i) => i.canonicalName).sort(), [...cc.repoMissingIdentities].sort())) fail('4E Advanced Melee census must match the 22 Phase 3B identities (5 present / 17 missing)');
+  if (!adv.find((i) => i.identityKey === bl.comparisonIdentityKey)?.repo.present) fail('4E baseline Vibroblade must be a repo-present Advanced Melee identity');
+  const lines = (f) => new Set(fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l).name));
+  const talentNames = lines('packs/talents.db'), featNames = lines('packs/feats.db');
+  const ENUM = /^[A-Z][A-Z0-9_]*$/;
+  const slug = (n) => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const asg = S.assignments, byKey = new Map(adv.map((i) => [i.identityKey, i])), seen = new Set();
+  const REQ = asg.length; let tagTotal = 0; const tagsUsed = new Set();
+  const bn = (b) => String(b).replace(/^The /, '');
+  asg.forEach((a) => {
+    const w = `4E ${a.canonicalName}`;
+    const key = a.phase3BIdentityKey;
+    if (seen.has(key)) fail(`${w} occurs more than once`); seen.add(key);
+    const i = byKey.get(key);
+    if (!i) { fail(`${w} (${key}) is not a Phase 3B Advanced Melee identity`); return; }
+    if (i.canonicalName !== a.canonicalName) fail(`${w} name differs from Phase 3B (${i.canonicalName})`);
+    if (a.repo.present !== i.repo.present || (a.repo.id || null) !== (i.repo.id || null)) fail(`${w} repo mapping differs from Phase 3B`);
+    const claim = i.sourceClaims.find((c) => bn(c.book) === bn(a.source.book));
+    if (!claim || ![claim.descriptionPage, claim.statTablePage].some((pg) => pg === a.source.descriptionPage || pg === a.source.statTablePage)) fail(`${w} source book/page matches no Phase 3B source claim`);
+    const fields = { sharedTags: a.sharedTags, advantageTags: a.advantageTags, tradeoffTags: a.tradeoffTags, finalTags: a.finalTags };
+    for (const [f, vals] of Object.entries(fields)) {
+      if (!Array.isArray(vals)) { fail(`${w} ${f} must be an array`); continue; }
+      for (const t of vals) { if (!used.has(t)) fail(`${w} ${f} value "${t}" is not used by any certified feat/talent`); if (REJECT.includes(t)) fail(`${w} ${f} uses rejected tag ${t}`); }
+    }
+    if (!a.sharedTags.includes('melee') || a.sharedTags.some((t) => !['melee', 'offense_melee'].includes(t))) fail(`${w} sharedTags must be melee (+ offense_melee)`);
+    if (!same(a.finalTags, [...a.sharedTags, ...a.advantageTags])) fail(`${w} finalTags must equal sharedTags plus advantageTags`);
+    if (!a.finalTags.includes('melee') || !a.finalTags.includes('offense_melee')) fail(`${w} every Advanced Melee weapon carries melee and offense_melee`);
+    for (const t of a.tradeoffTags) { if (a.finalTags.includes(t)) fail(`${w} tradeoff tag ${t} was promoted into finalTags`); if (a.advantageTags.includes(t)) fail(`${w} tag ${t} is both advantage and tradeoff`); }
+    if (new Set(a.finalTags).size !== a.finalTags.length) fail(`${w} duplicate finalTags`);
+    for (const t of a.finalTags) { tagTotal++; tagsUsed.add(t); if (typeof a.rationale?.[t] !== 'string' || !a.rationale[t].trim()) fail(`${w} tag ${t} has no rationale`); }
+    for (const t of Object.keys(a.rationale || {})) if (!a.finalTags.includes(t)) fail(`${w} rationale for ${t} has no tag`);
+    const q = a.ruleSelectors;
+    if (!q) fail(`${w} missing ruleSelectors`);
+    else {
+      if (q.exactCanonicalSelector !== `canonical-weapon:${slug(a.canonicalName)}`) fail(`${w} exactCanonicalSelector must be canonical-weapon:${slug(a.canonicalName)}`);
+      if (q.phase3BIdentityKey !== key || (q.repoIdentityKey || null) !== (i.repo.id || null)) fail(`${w} selector identity / repo keys must match Phase 3B (repoIdentityKey is null for missing production records)`);
+      if (q.weaponGroup !== 'weapon-group:advanced-melee' || q.proficiency !== 'weapon-proficiency:advanced-melee') fail(`${w} must retain weapon-group:advanced-melee and weapon-proficiency:advanced-melee`);
+      if (!Array.isArray(q.families) || !q.families.length || q.families.some((f) => !/^weapon-family:[a-z0-9-]+$/.test(f))) fail(`${w} families malformed`);
+      for (const l of q.explicitAbilityLinks || []) {
+        if (!['feat', 'talent', 'talent-family'].includes(l.abilityType) || !ENUM.test(l.relation || '') || !l.abilityName) fail(`${w} ability link shape (${l.abilityName})`);
+        else if (l.abilityType !== 'talent-family' && !(l.abilityType === 'talent' ? talentNames : featNames).has(l.abilityName)) fail(`${w} ${l.abilityType} "${l.abilityName}" does not exist in the production ${l.abilityType} pack`);
+      }
+      for (const p of q.profileSelectors || []) if (!p.profile) fail(`${w} profileSelector needs a profile`);
+      const selVals = [q.exactCanonicalSelector, q.weaponGroup, q.proficiency, ...q.families, ...(q.profileSelectors || []).flatMap((p) => [p.proficiency, ...(p.families || [])].filter(Boolean))];
+      if ([...a.sharedTags, ...a.advantageTags, ...a.tradeoffTags, ...a.finalTags].some((t) => selVals.includes(t) || /:/.test(t))) fail(`${w} a rule selector leaked into a semantic tag field`);
+    }
+    const c = a.relativeToVibroblade, cs = i.canonicalStats;
+    if (!c || !c.damage || !c.stun || !c.hands || !c.doubleWeapon || !c.rangedProfile || !c.recommendationFit) fail(`${w} relativeToVibroblade incomplete`);
+    else {
+      if (cs.baseDamage.mode === 'dice' && !String(c.damage.canonical).includes(cs.baseDamage.formula)) fail(`${w} comparison damage "${c.damage.canonical}" does not contain Phase 3B ${cs.baseDamage.formula}`);
+      if (cs.baseDamage.mode === 'none') { const sf = cs.stun?.damage?.formula; if (!sf || !String(c.damage.canonical).includes(sf)) fail(`${w} stun-only comparison damage must carry the Phase 3B stun formula ${sf}`); }
+      if (c.stun.available !== (cs.stun.capability !== 'none')) fail(`${w} stun availability differs from Phase 3B`);
+      if (!!c.doubleWeapon.available !== !!i.qualities?.doubleWeapon) fail(`${w} double-weapon availability differs from Phase 3B`);
+      if (!!c.rangedProfile.available !== (cs.attackProfiles || []).some((p) => p.schemaFamily?.branch === 'ranged')) fail(`${w} ranged-profile availability differs from Phase 3B attack profiles`);
+    }
+    for (const m of a.unrepresentedMechanics || []) if (!m.mechanic || !ENUM.test(m.representationStatus || '') || !m.note) fail(`${w} unrepresented mechanic shape`);
+  });
+  const bs = asg.find((a) => a.phase3BIdentityKey === 'weapon-vibroblade');
+  if (bs && (bs.tradeoffTags.length || bs.relativeToVibroblade.damage.canonical !== '2d6' || bs.relativeToVibroblade.stun.available)) fail('4E Vibroblade must remain the plain baseline');
+  const need = (name, keyName, test, msg) => { const a = asg.find((x) => x.canonicalName === name); if (a && !test(a)) fail(`4E ${name}: ${msg}`); };
+  need('San-Ni Staff', 'block', (a) => a.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === 'Block' && l.relation === 'EXPLICIT_WEAPON_COMPATIBILITY') && a.ruleSelectors.weaponGroup === 'weapon-group:advanced-melee' && !a.ruleSelectors.families.some((f) => /lightsaber/.test(f)), 'Block compatibility must be an explicit link and must not make it a lightsaber');
+  need('Power Hammer', 'pa', (a) => ['Double Attack', 'Triple Attack', 'Rapid Strike'].every((n) => a.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === n && l.relation === 'EXTRA_ATTACK_PENALTY')) && a.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === 'Power Attack' && l.relation === 'EXPLICIT_WEAPON_BENEFIT') && !a.finalTags.includes('damage_bonus'), 'Power Attack join, the three -2 penalties, and no intrinsic damage_bonus');
+  need('Energy Lance', 'profiles', (a) => a.ruleSelectors.profileSelectors?.some((p) => p.profile === 'plasma-bolt' && p.proficiency === 'weapon-proficiency:rifles') && a.ruleSelectors.profileSelectors.some((p) => p.profile === 'melee' && p.proficiency === 'weapon-proficiency:advanced-melee'), 'melee profile uses Advanced Melee, plasma profile uses Rifles');
+  need('Electropole', 'gungan', (a) => a.ruleSelectors.profileSelectors?.some((p) => p.profile === 'gungan-alternate-proficiency'), 'Gungan alternate proficiency stays a structural selector');
+  need('Shock Stick', 'bayonet', (a) => a.ruleSelectors.profileSelectors?.some((p) => p.profile === 'mounted-bayonet') && a.ruleSelectors.proficiency === 'weapon-proficiency:advanced-melee', 'bayonet proficiency waiver is configuration-specific');
+  if (!same(asg.map((a) => a.phase3BIdentityKey).sort(), adv.slice(0, REQ).map((i) => i.identityKey).sort())) fail('4E adjudicated identities must be exactly the first N alphabetical Phase 3B Advanced Melee identities');
+  const rp = S.rollingProgress, thisN = rp.adjudicatedThisRound;
+  if (rp.adjudicatedTotal !== REQ || rp.remaining !== 22 - REQ || rp.nextCanonicalName !== (adv[REQ] ? adv[REQ].canonicalName : null) || thisN < 1 || thisN > REQ) fail('4E rolling progress counts / next identity');
+  else if (asg[REQ - thisN].canonicalName !== rp.firstCanonicalName || asg[REQ - 1].canonicalName !== rp.lastCanonicalName) fail('4E this-round first/last identity');
+  const slice = asg.slice(Math.max(0, REQ - thisN)), sliceTags = new Set(slice.flatMap((a) => a.finalTags));
+  if (rp.totalFinalTagAssignmentsThisRound !== slice.reduce((m, a) => m + a.finalTags.length, 0) || rp.distinctFinalTagsUsedThisRound !== sliceTags.size || !same([...sliceTags].sort(), [...rp.finalTagsUsedThisRound].sort())) fail('4E rolling progress tag counts');
+  if (REQ >= 10 && sh(JSON.stringify(canon(asg.slice(0, 10)))) !== '9159f3758e098bf5614ed457a590db5a6b556c600dbf8c6c239cc72eccb6743b') fail('4E round 1 planner rulings changed after adjudication');
+  if (errors.length === e4e) console.log(`Phase 4E Advanced Melee semantic tags OK: ${REQ}/22 adjudicated (${asg.filter((a) => a.repo.present).length} repo-present / ${asg.filter((a) => !a.repo.present).length} repo-missing), ${tagTotal} assignments, ${tagsUsed.size} distinct tags, selectors + comparison data cross-checked against Phase 3B, baseline = Vibroblade, next ${rp.nextCanonicalName}`);
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
