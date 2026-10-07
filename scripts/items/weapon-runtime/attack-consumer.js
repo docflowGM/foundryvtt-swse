@@ -9,6 +9,7 @@ import { getSharedWeaponAuthorityRegistry, getWeaponAuthorityRegistryLoadFailure
 import { resolveCanonicalIdentity } from './canonical-identity.js';
 import { WeaponRuntimeResolver, getProfile } from './weapon-runtime-resolver.js';
 import { resolveProficiency } from './proficiency-resolver.js';
+import { resolveDamageProfile } from './damage-profile-resolver.js';
 
 const LEGACY = Object.freeze({ source: 'legacy' });
 const SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode'];
@@ -79,4 +80,111 @@ export function summarizeAttackRuntime(runtime, proficiency = null) {
     source: 'canonical', identityKey: runtime.identityKey, profileId: runtime.profile.id, branch: runtime.branch,
     proficiency: proficiency ? { proficient: proficiency.proficient, penalty: proficiency.penalty, route: proficiency.route, requiredGroup: proficiency.requiredGroup, exoticIdentity: proficiency.exoticIdentity } : null,
   };
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Phase 5D-C -- canonical damage consumption. The runtime says WHAT damage definition applies to the selected attack
+// form (dice / fixed / payload dice, damage types, stun definition); the existing damage composition
+// (combat-roll-math.js#resolveDamageComposition / buildDamageFormula) remains the only place damage is computed.
+// ---------------------------------------------------------------------------------------------------------------------
+
+/** The exact canonical attack form of a resolved attack, as plain serializable data (survives chat-card transport). */
+export function weaponFormRecord(runtime, damageMode = null) {
+  if (runtime?.source !== 'canonical') return null;
+  const sel = runtime.resolved.selection;
+  const rec = { identityKey: runtime.identityKey, profileId: sel.profileId, configurationId: sel.configurationId, modeId: sel.modeId, payloadId: sel.payloadId, damageMode: damageMode ?? sel.damageMode };
+  for (const k of Object.keys(rec)) if (rec[k] === null || rec[k] === undefined || rec[k] === '') delete rec[k];
+  return rec;
+}
+
+const FORM_SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId'];
+
+/** Selection ids for damage: the carried attack form, overridden only by ids the caller explicitly supplies. */
+function damageSelectionContext(context = {}) {
+  const form = context.weaponForm ?? context.workflowContext?.weaponForm ?? context.combatContext?.weaponForm ?? null;
+  const ctx = {};
+  if (form) for (const k of FORM_SELECTION_KEYS) if (form[k] != null) ctx[k] = form[k];
+  for (const k of FORM_SELECTION_KEYS) if (context[k] != null && context[k] !== '') ctx[k] = context[k];
+  return { form, ctx };
+}
+
+/** Attack-time check that the selected damage mode exists for the selected form, so nothing is spent on an attack whose damage would later be refused. */
+export function assertDamageSelectionResolvable(runtime, damageMode = null) {
+  if (runtime?.source !== 'canonical') return;
+  const mode = damageMode ?? runtime.resolved.selection.damageMode ?? 'normal';
+  resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode: mode });
+}
+
+const DICE_RE = /^\d+d\d+([+-]\d+)?$/;
+function baseFormulaOf(d) {
+  if (!d) return null;
+  if (d.mode === 'dice' || d.mode === 'conditional') {
+    if (typeof d.formula === 'string' && DICE_RE.test(d.formula.replace(/\s+/g, ''))) return d.formula.replace(/\s+/g, '');
+    if (Number.isFinite(d.diceCount) && Number.isFinite(d.dieSize) && d.diceCount > 0 && d.dieSize > 0) return `${d.diceCount}d${d.dieSize}${d.flatBonus ? (d.flatBonus > 0 ? '+' : '') + d.flatBonus : ''}`;
+    return null;
+  }
+  if (d.mode === 'fixed' && Number.isFinite(d.flatBonus)) return String(d.flatBonus);
+  return null;
+}
+
+/**
+ * Resolve the canonical damage definition for the attack form actually selected (carried through the workflow context)
+ * or explicitly supplied. Result.status:
+ *   'ordinary'  -> result.base is the damage formula the existing composition must start from
+ *   'no-damage' -> the selected form deals no ordinary damage (e.g. Amphistaff Pin/Trip, Venom Spit): refuse, never invent
+ *   'special'   -> payload/definition is effect-only ("Special"): refuse, effect subsystem is a later phase
+ *   'deferred'  -> damage depends on a later-phase subsystem (ammunition, host weapon, unarmed modifier): the Item-level
+ *                  projection remains the compatibility base (documented), canonical types/mode still apply
+ * Legacy item -> { source:'legacy' }. Invalid identity/selection/damage mode/payload -> throws (never the default form).
+ */
+export function resolveCanonicalDamage(weapon, context = {}) {
+  const { form, ctx } = damageSelectionContext(context);
+  const runtime0 = resolveAttackWeaponRuntime(weapon, ctx);
+  if (runtime0.source !== 'canonical') {
+    if (form?.identityKey) throw new WeaponRuntimeError(ERROR_CODES.FORM_IDENTITY_MISMATCH, `attack was made with canonical ${form.identityKey} but the weapon no longer resolves canonically`, { identityKey: form.identityKey });
+    return LEGACY;
+  }
+  if (form?.identityKey && form.identityKey !== runtime0.identityKey) {
+    throw new WeaponRuntimeError(ERROR_CODES.FORM_IDENTITY_MISMATCH, `attack form belongs to ${form.identityKey} but the weapon is ${runtime0.identityKey}`, { identityKey: runtime0.identityKey, formIdentityKey: form.identityKey });
+  }
+  const damageMode = context.damageMode ?? form?.damageMode ?? runtime0.resolved.selection.damageMode ?? 'normal';
+  let runtime = runtime0;
+  let dp = resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode, damageType: context.damageType ?? null });
+  // a form whose damage varies by payload with exactly one payload available has an unambiguous payload
+  if (dp.components[0]?.requiresPayload && !ctx.payloadId) {
+    const only = runtime.resolved.payloads;
+    if (only.length === 1) {
+      runtime = resolveAttackWeaponRuntime(weapon, { ...ctx, payloadId: only[0].id });
+      dp = resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode, damageType: context.damageType ?? null });
+    } else {
+      throw new WeaponRuntimeError(ERROR_CODES.PAYLOAD_REQUIRED, `${runtime.identityKey}/${runtime.profile.id} damage depends on a payload and none was selected`, { identityKey: runtime.identityKey, profileId: runtime.profile.id });
+    }
+  }
+  const primary = dp.components[0];
+  const dmg = primary?.damage ?? null;
+  const dmode = dmg?.mode ?? 'none';
+  const base = baseFormulaOf(dmg);
+  let status = 'ordinary', reason = null;
+  if (base === null) {
+    if (dmode === 'none') { status = 'no-damage'; reason = 'no-damage-definition'; }
+    else if (dmode === 'special') { status = 'special'; reason = 'special-effect-damage'; }
+    else { status = 'deferred'; reason = `damage-mode:${dmode}`; }
+  }
+  const types = [...(primary?.damageTypes ?? [])];
+  const selectedType = primary?.selectedDamageType ?? null;
+  return Object.freeze({
+    source: 'canonical', status, reason, base, damageMode: dp.damageMode,
+    runtime, selection: weaponFormRecord(runtime, dp.damageMode),
+    componentKind: primary?.kind ?? null, payloadId: dp.payloadId,
+    damageTypes: Object.freeze(types), damageTypeMode: primary?.damageTypeMode ?? 'none', selectedDamageType: selectedType,
+    requiresDamageTypeSelection: primary?.requiresDamageTypeSelection === true,
+    specialEffects: dp.specialEffects, area: dp.area,
+    // recorded, not applied: riders/multipliers/conditional modifiers belong to later phases (documented in the 5D-C audit)
+    deferred: Object.freeze({ extraComponents: dp.components.slice(1).map((c) => c.id), damageMultiplier: dp.damageMultiplier, conditionalModifiers: dp.conditionalModifiers?.length ?? 0, criticalEffects: dp.criticalEffects?.length ?? 0 }),
+  });
+}
+
+export function summarizeCanonicalDamage(cd) {
+  if (cd?.source !== 'canonical') return { source: cd?.source ?? 'legacy' };
+  return { source: 'canonical', status: cd.status, reason: cd.reason, base: cd.base, selection: cd.selection, damageMode: cd.damageMode, damageTypes: [...cd.damageTypes], selectedDamageType: cd.selectedDamageType, payloadId: cd.payloadId, deferred: cd.deferred };
 }

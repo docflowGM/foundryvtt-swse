@@ -24,6 +24,9 @@ export const ERROR_CODES = Object.freeze({
   EXOTIC_IDENTITY_UNRESOLVED: 'exotic-identity-unresolved',
   REGISTRY_INVALID: 'registry-invalid',
   REGISTRY_UNAVAILABLE: 'registry-unavailable',
+  NO_ORDINARY_DAMAGE: 'no-ordinary-damage',
+  PAYLOAD_REQUIRED: 'payload-required',
+  FORM_IDENTITY_MISMATCH: 'weapon-form-identity-mismatch',
 });
 
 /** GM-visible, non-silent reporting for runtime callers that cannot propagate a throw. */

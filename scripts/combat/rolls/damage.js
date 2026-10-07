@@ -31,6 +31,8 @@ import { resolveDamageComposition, buildDamageFormula } from "/systems/foundryvt
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 import { isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
+import { resolveCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 
 /**
  * Roll damage for a SWSE weapon/power.
@@ -44,7 +46,7 @@ import { isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/com
  * @param {Object} context - Optional context {target, isCritical, aimedThisTurn}
  */
 export async function rollDamage(actor, weapon, context = {}) {
-  const rollContext = mergeCombatWorkflowContextIntoRollOptions(context, context?.combatContext ?? context?.workflowContext ?? null);
+  let rollContext = mergeCombatWorkflowContextIntoRollOptions(context, context?.combatContext ?? context?.workflowContext ?? null);
   const workflowContext = summarizeCombatWorkflowContext(rollContext.combatContext ?? rollContext.workflowContext ?? rollContext, {
     actor,
     weapon,
@@ -99,7 +101,33 @@ export async function rollDamage(actor, weapon, context = {}) {
   // term itself. This is the actual fix for the confirmed live bug where
   // Deadeye/Burst Fire/Mighty Swing/Rapid Shot/Rapid Strike/unarmed
   // die-step contributions were silently dropped on this exact path.
-  const compositionContext = { ...rollContext, weapon, forceTwoHanded: rollContext.twoHanded || false };
+  // Phase 5D-C: resolve the canonical damage definition of the attack form actually selected (carried in the workflow
+  // context from the attack roll, or explicit ids) BEFORE composing anything. Invalid identity/selection/damage mode/
+  // payload fails closed here -- never the default profile; a form with no ordinary damage is refused, not invented.
+  let canonicalDamage;
+  try {
+    canonicalDamage = resolveCanonicalDamage(weapon, rollContext);
+  } catch (err) {
+    if (!(err instanceof WeaponRuntimeError)) throw err;
+    reportWeaponRuntimeError(err, { notify: false });
+    ui.notifications.error(`Damage could not be resolved: ${err.message}`);
+    return null;
+  }
+  if (canonicalDamage.source === 'canonical') {
+    if (canonicalDamage.status === 'no-damage' || canonicalDamage.status === 'special') {
+      ui.notifications.warn(`${weapon.name}: the selected attack form has no ordinary damage roll (${canonicalDamage.reason}).`);
+      return null;
+    }
+    // canonical structured damage types (never description text); an explicit caller-supplied type still wins
+    const types = canonicalDamage.damageTypes;
+    const explicitType = context.damageType ?? null;
+    rollContext = {
+      ...rollContext,
+      damageType: explicitType ?? canonicalDamage.selectedDamageType ?? (canonicalDamage.requiresDamageTypeSelection ? rollContext.damageType : (types[0] ?? rollContext.damageType)),
+      damageTypes: Array.isArray(context.damageTypes) && context.damageTypes.length ? context.damageTypes : (types.length ? [...types] : rollContext.damageTypes)
+    };
+  }
+  const compositionContext = { ...rollContext, weapon, canonicalDamage, forceTwoHanded: rollContext.twoHanded || false };
   const composition = resolveDamageComposition(actor, weapon, compositionContext);
 
   // Add Force Point bonus if present
