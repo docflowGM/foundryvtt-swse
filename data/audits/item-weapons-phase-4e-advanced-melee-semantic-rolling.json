@@ -3,7 +3,7 @@
   "phase": "4E",
   "family": "weapons",
   "categoryBatch": "Advanced Melee Weapon",
-  "status": "WEAPON_TAG_PHASE_4E_ADVANCED_MELEE_ROUND_1_PLANNER_ADJUDICATED",
+  "status": "WEAPON_TAG_PHASE_4E_ADVANCED_MELEE_COMPLETE_PLANNER_AUTHORITY",
   "authorityOnly": true,
   "productionMutationAuthorized": false,
   "baseline": {
@@ -72,16 +72,46 @@
     "structuralSelectorsAreSemanticTags": false
   },
   "rollingProgress": {
-    "round": 1,
-    "adjudicatedThisRound": 10,
-    "adjudicatedTotal": 10,
-    "remaining": 12,
-    "firstCanonicalName": "Dire Vibroblade",
-    "lastCanonicalName": "Shock Stick",
-    "nextCanonicalName": "Shock Whip",
-    "totalFinalTagAssignmentsThisRound": 54,
-    "distinctFinalTagsUsedThisRound": 19,
+    "round": 2,
+    "adjudicatedThisRound": 12,
+    "adjudicatedTotal": 22,
+    "remaining": 0,
+    "firstCanonicalName": "Shock Whip",
+    "lastCanonicalName": "Vibrosword",
+    "nextCanonicalName": null,
+    "categoryComplete": true,
+    "totalFinalTagAssignmentsThisRound": 55,
+    "distinctFinalTagsUsedThisRound": 23,
     "finalTagsUsedThisRound": [
+      "action_economy",
+      "attack_of_opportunity",
+      "battlefield_control",
+      "control",
+      "damage_bonus",
+      "damage_reduction",
+      "double_weapon",
+      "durability",
+      "full_attack",
+      "grab",
+      "infiltration",
+      "martial_arts",
+      "melee",
+      "nonlethal",
+      "offense_melee",
+      "offense_ranged",
+      "positioning",
+      "ranged",
+      "stealth",
+      "stun",
+      "sustained_damage",
+      "swift_action",
+      "unarmed"
+    ],
+    "totalFinalTagAssignmentsCumulative": 109,
+    "distinctFinalTagsUsedCumulative": 28,
+    "finalTagsUsedCumulative": [
+      "action_economy",
+      "attack_of_opportunity",
       "battlefield_control",
       "block",
       "control",
@@ -90,17 +120,29 @@
       "double_weapon",
       "durability",
       "full_attack",
+      "grab",
+      "infiltration",
+      "martial_arts",
       "melee",
       "mount",
       "nonlethal",
       "offense_melee",
       "offense_ranged",
+      "positioning",
       "ranged",
       "ride",
       "rider",
+      "stealth",
       "stun",
       "sustained_damage",
+      "swift_action",
+      "unarmed",
       "vehicle"
+    ],
+    "tradeoffTagsUsedCumulative": [
+      "full_attack",
+      "precision",
+      "sustained_damage"
     ]
   },
   "implementationContract": {
@@ -1149,6 +1191,1127 @@
           "note": "Exact threshold and effect remain structured."
         }
       ]
+    },
+    {
+      "canonicalName": "Shock Whip",
+      "phase3BIdentityKey": "unmapped::Shock Whip",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 62
+      },
+      "canonicalMechanicSummary": "Small reach-2 shock whip dealing 1d6 bludgeoning damage. After a hit it can make a free no-grab-penalty grab attack against a target no more than one size larger. Once per turn, a swift action automatically deals 2d6 energy damage to a target grabbed by the whip. With Trip, the wielder may knock the target prone instead of grabbing it.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "positioning",
+        "grab",
+        "control",
+        "battlefield_control",
+        "swift_action",
+        "action_economy",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "positioning",
+        "grab",
+        "control",
+        "battlefield_control",
+        "swift_action",
+        "action_economy",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "melee": "Its primary strike is melee.",
+        "offense_melee": "It deals direct melee damage.",
+        "positioning": "Reach 2 squares materially changes melee threat distance.",
+        "grab": "A successful hit can immediately trigger a no-penalty grab attack.",
+        "control": "The grab locks the weapon onto a target and restricts target handling.",
+        "battlefield_control": "Reach plus grab/trip options shape enemy positioning and options.",
+        "swift_action": "The grabbed-target shock is activated as a swift action.",
+        "action_economy": "The weapon adds both a free-action follow-up grab and a swift-action damage option.",
+        "sustained_damage": "A grabbed target can take automatic 2d6 energy damage once per turn without another attack roll."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:shock-whip",
+        "phase3BIdentityKey": "unmapped::Shock Whip",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:shock-weapon",
+          "weapon-family:shock-whip",
+          "weapon-family:reach-weapon",
+          "weapon-family:grab-weapon"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Trip",
+            "relation": "EXPLICIT_WEAPON_OPTION",
+            "effect": "After a hit, Trip may replace the whip's optional grab and knock the target prone."
+          }
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "1d6 hit + optional recurring 2d6 energy while grabbed",
+          "relation": "LOWER_INITIAL_CONTROL_SUSTAINED"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "BASELINE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BETTER",
+          "squares": 2
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "MUCH_BETTER"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Control-oriented reach weapon for characters built around grabs, Trip, positioning, and action-efficient sustained pressure rather than raw first-hit damage."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Free follow-up grab uses a second attack at normal bonus and ignores the normal -5 grab penalty; weapon cannot attack another target while maintaining the grab.",
+          "representationStatus": "STRUCTURED_GRAB_STATE",
+          "note": "Preserve target-size limit and weapon-lock state explicitly."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Shockstaff",
+      "phase3BIdentityKey": "unmapped::Shockstaff",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "Large 2d6/2d6 phrik double weapon. It can deal stun equal to normal damage and can be switched to stun as a swift action. Its phrik construction prevents lightsabers from ignoring the weapon's damage reduction, though this source does not state the DR value. It uses two energy cells.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "double_weapon",
+        "full_attack",
+        "stun",
+        "nonlethal",
+        "swift_action",
+        "action_economy",
+        "durability",
+        "damage_reduction"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack",
+        "stun",
+        "nonlethal",
+        "swift_action",
+        "action_economy",
+        "durability",
+        "damage_reduction"
+      ],
+      "rationale": {
+        "melee": "Both ends are melee profiles.",
+        "offense_melee": "Each end deals 2d6 bludgeoning/energy damage.",
+        "double_weapon": "It is explicitly a double weapon.",
+        "full_attack": "Both ends can be used in the normal double-weapon full attack.",
+        "stun": "It can deal stun equal to normal damage.",
+        "nonlethal": "The stun setting provides a nonlethal mode.",
+        "swift_action": "Changing to stun is explicitly a swift action.",
+        "action_economy": "Mode switching has a combat action cost.",
+        "durability": "Phrik construction gives special resistance against lightsaber damage.",
+        "damage_reduction": "The weapon's DR remains applicable against lightsabers rather than being bypassed."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:shockstaff",
+        "phase3BIdentityKey": "unmapped::Shockstaff",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:shock-weapon",
+          "weapon-family:shockstaff",
+          "weapon-family:staff",
+          "weapon-family:double-weapon",
+          "weapon-family:phrik-weapon"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not invent a numeric DR value; KOTOR establishes lightsaber resistance to its DR but does not state the number."
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6/2d6",
+          "relation": "SAME_PER_END_MULTI_ATTACK_CAPABLE"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "same as normal",
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "hands": {
+          "relation": "LARGE_DOUBLE_WEAPON"
+        },
+        "doubleWeapon": {
+          "available": true,
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "PHRIK_LIGHTSABER_RESISTANT"
+        },
+        "controlUtility": {
+          "relation": "NONLETHAL_OPTION"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Full-attack/stun double weapon for users who also care about the weapon surviving lightsaber contact."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "The source establishes that lightsabers do not ignore the shockstaff's DR but does not state its numeric DR.",
+          "representationStatus": "SOURCE_PARTIAL_OBJECT_DURABILITY",
+          "note": "Never borrow Electrostaff DR 20 without separate authority."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Static Pike",
+      "phase3BIdentityKey": "unmapped::Static Pike",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 37,
+        "statTablePage": 36
+      },
+      "canonicalMechanicSummary": "Large 2d6 piercing/energy reach pike with lethal and 2d6 stun settings. It can also be thrown like a spear and requires an energy cell.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "positioning",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "positioning",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "melee": "Its primary profile is melee.",
+        "offense_melee": "It deals direct 2d6 piercing/energy melee damage.",
+        "positioning": "It is explicitly a reach weapon.",
+        "ranged": "It can be thrown like a spear.",
+        "offense_ranged": "Thrown use provides direct weapon damage at range.",
+        "stun": "It has an explicit 2d6 stun setting.",
+        "nonlethal": "The stun setting provides a nonlethal attack mode."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:static-pike",
+        "phase3BIdentityKey": "unmapped::Static Pike",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:pike",
+          "weapon-family:static-pike",
+          "weapon-family:reach-weapon",
+          "weapon-family:throwable-melee"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not add forbidden semantic tag `thrown`; throwing is a structural quality/profile."
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6",
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d6",
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "hands": {
+          "relation": "LARGE_MELEE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BETTER"
+        },
+        "rangedProfile": {
+          "available": false,
+          "relation": "THROWN_QUALITY_WITHOUT_RANGED_SCHEMA_BRANCH"
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "POSITIONAL_AND_NONLETHAL"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Versatile reach/stun/thrown pike for characters who want control of melee distance plus a fallback ranged attack."
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "canonicalName": "Vibro-Ax",
+      "phase3BIdentityKey": "unmapped::Vibro-Ax",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 124,
+        "statTablePage": 122
+      },
+      "canonicalMechanicSummary": "Large 2d10 slashing vibro-ax powered by two energy cells. It has no special attack mode beyond its high base cutting damage.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "melee": "Its canonical profile is melee.",
+        "offense_melee": "It deals direct 2d10 slashing melee damage."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:vibro-ax",
+        "phase3BIdentityKey": "unmapped::Vibro-Ax",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibro-ax",
+          "weapon-family:axe"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d10",
+          "relation": "MUCH_HIGHER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "LARGE_HEAVY_MELEE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Straightforward high-damage melee option. Prefer when raw single-hit damage matters more than stun, reach, double-weapon, or utility features."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Higher raw 2d10 base damage.",
+          "representationStatus": "STRUCTURED_COMPARISON_DATA",
+          "note": "Raw larger dice alone do not justify `damage_bonus`."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Vibrobayonet",
+      "phase3BIdentityKey": "unmapped::Vibrobayonet",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 124,
+        "statTablePage": 122
+      },
+      "canonicalMechanicSummary": "Powered rifle bayonet dealing 2d6 piercing damage when mounted. Even after using the rifle for a ranged attack on the previous turn, the wielder still threatens adjacent squares and can make attacks of opportunity. Mounted use requires two hands and is incompatible with a folded stock. Detached, it functions as a Vibrodagger.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "attack_of_opportunity"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "attack_of_opportunity"
+      ],
+      "rationale": {
+        "melee": "The bayonet provides a melee attack profile.",
+        "offense_melee": "Mounted use deals 2d6 piercing melee damage.",
+        "attack_of_opportunity": "It explicitly preserves melee threat and attacks of opportunity even after the rifle was used for a ranged attack."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:vibrobayonet",
+        "phase3BIdentityKey": "unmapped::Vibrobayonet",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibrobayonet",
+          "weapon-family:bayonet",
+          "weapon-family:rifle-mounted-melee"
+        ],
+        "explicitAbilityLinks": [],
+        "profileSelectors": [
+          {
+            "profile": "mounted-on-rifle",
+            "condition": "rifle stock not folded; two-handed use",
+            "effect": "2d6 piercing melee; preserves threat/AoO after ranged fire"
+          },
+          {
+            "profile": "detached",
+            "effect": "functions as Vibrodagger"
+          }
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6 mounted; Vibrodagger profile detached",
+          "relation": "SAME_MOUNTED_LOWER_DETACHED"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "TWO_HANDS_WHEN_MOUNTED"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "AOO_THREAT_CONTINUITY"
+        },
+        "mobilityMount": {
+          "relation": "RIFLE_ATTACHMENT"
+        },
+        "recommendationFit": "Excellent rifle-sidearm integration for characters who need to preserve melee threat and opportunity attacks without switching away from their rifle."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Mounted/detached state changes its effective weapon identity and handling.",
+          "representationStatus": "STRUCTURED_CONFIGURATION_STATE",
+          "note": "Detached state should resolve as Vibrodagger behavior."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Vibroblade",
+      "phase3BIdentityKey": "weapon-vibroblade",
+      "repo": {
+        "present": true,
+        "id": "weapon-vibroblade"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 124,
+        "statTablePage": 122
+      },
+      "canonicalMechanicSummary": "Small 2d6 slashing-or-piercing powered melee weapon. It has no stun, reach, double-weapon, ranged, or other special combat profile and requires an energy cell.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "melee": "Canonical advanced melee baseline.",
+        "offense_melee": "Deals direct 2d6 slashing or piercing melee damage."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:vibroblade",
+        "phase3BIdentityKey": "weapon-vibroblade",
+        "repoIdentityKey": "weapon-vibroblade",
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibroblade",
+          "weapon-family:standard-vibroblade"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6",
+          "relation": "BASELINE"
+        },
+        "stun": {
+          "available": false,
+          "relation": "BASELINE_NONE"
+        },
+        "hands": {
+          "relation": "BASELINE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Default Advanced Melee choice when no specialized weapon aligns more closely with the character's build."
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "canonicalName": "Vibroblade, Double",
+      "phase3BIdentityKey": "unmapped::Vibroblade, Double",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 98,
+        "statTablePage": 96
+      },
+      "canonicalMechanicSummary": "Large 2d6/2d6 double vibroblade powered by two energy cells. Both ends can attack in a full-round action using the normal double-weapon penalties before feat/talent reductions.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "double_weapon",
+        "full_attack"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack"
+      ],
+      "rationale": {
+        "melee": "Both ends are melee.",
+        "offense_melee": "Each end deals 2d6 slashing damage.",
+        "double_weapon": "It is explicitly a double weapon.",
+        "full_attack": "Both ends are used through a full-round double-weapon attack."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:vibroblade-double",
+        "phase3BIdentityKey": "unmapped::Vibroblade, Double",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibroblade",
+          "weapon-family:double-vibroblade",
+          "weapon-family:double-weapon"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Keep this Phase 3B identity distinct from KOTOR's `Double Vibroblade` until identity normalization explicitly merges them."
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6/2d6",
+          "relation": "SAME_PER_END_MULTI_ATTACK_CAPABLE"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "LARGE_DOUBLE_WEAPON"
+        },
+        "doubleWeapon": {
+          "available": true,
+          "relation": "MAJOR_ADVANTAGE"
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Dedicated double-weapon full-attack platform. Mechanically similar to KOTOR's Double Vibroblade but retained as a separate canonical Phase 3B identity."
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "canonicalName": "Vibrodagger",
+      "phase3BIdentityKey": "weapon-vibrodagger",
+      "repo": {
+        "present": true,
+        "id": "weapon-vibrodagger"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 124,
+        "statTablePage": 122
+      },
+      "canonicalMechanicSummary": "Tiny 2d4 slashing-or-piercing vibro weapon that can be thrown and is lightly regulated because it is commonly treated as a tool. It requires an energy cell.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "ranged",
+        "offense_ranged"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged"
+      ],
+      "rationale": {
+        "melee": "Primary use is melee.",
+        "offense_melee": "Deals direct 2d4 melee damage.",
+        "ranged": "It is explicitly throwable.",
+        "offense_ranged": "Thrown use provides direct ranged offense."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:vibrodagger",
+        "phase3BIdentityKey": "weapon-vibrodagger",
+        "repoIdentityKey": "weapon-vibrodagger",
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibrodagger",
+          "weapon-family:throwable-melee"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not add `concealment` or `stealth` merely from Tiny size/light regulation; no source mechanical concealment benefit is stated.",
+          "Do not add forbidden `thrown` semantic tag."
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d4",
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "SMALL_COMPACT"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false,
+          "relation": "THROWN_QUALITY_WITHOUT_RANGED_SCHEMA_BRANCH"
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Compact throwable vibro option for characters who value portability and a melee/ranged fallback over raw damage."
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "canonicalName": "Vibroknucklers",
+      "phase3BIdentityKey": "unmapped::Vibroknucklers",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 60,
+        "statTablePage": 60
+      },
+      "canonicalMechanicSummary": "Worn vibro weapon that adds +3 damage to successful unarmed attacks. While worn, attacks count both as normal unarmed/simple-weapon attacks and as Advanced Melee attacks. The knucklers cannot be disarmed or dropped and require an energy cell.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "unarmed",
+        "martial_arts",
+        "damage_bonus"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "unarmed",
+        "martial_arts",
+        "damage_bonus"
+      ],
+      "rationale": {
+        "melee": "They modify melee unarmed attacks.",
+        "offense_melee": "They increase direct melee damage.",
+        "unarmed": "Their entire function is to enhance unarmed attacks.",
+        "martial_arts": "They directly support unarmed/martial-arts combat builds while preserving unarmed status.",
+        "damage_bonus": "They explicitly add +3 damage to a successful unarmed attack."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:vibroknucklers",
+        "phase3BIdentityKey": "unmapped::Vibroknucklers",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibroknucklers",
+          "weapon-family:unarmed-augment"
+        ],
+        "explicitAbilityLinks": [],
+        "profileSelectors": [
+          {
+            "profile": "worn-unarmed",
+            "classifications": [
+              "unarmed",
+              "simple-weapon",
+              "advanced-melee"
+            ],
+            "effect": "+3 damage; cannot be disarmed or dropped"
+          }
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "+3 to underlying unarmed attack",
+          "relation": "BUILD_DEPENDENT_ADDITIVE"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "WORN"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "CANNOT_BE_DISARMED_OR_DROPPED"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Premier Advanced Melee option for unarmed/Martial Arts builds because it adds damage without making the attack cease to count as unarmed."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Attacks simultaneously count as unarmed/simple and Advanced Melee; item cannot be disarmed or dropped.",
+          "representationStatus": "MULTI_CLASSIFICATION_WEARABLE_RULE",
+          "note": "Preserve all classifications structurally."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Vibrolance",
+      "phase3BIdentityKey": "unmapped::Vibrolance",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 37,
+        "statTablePage": 36
+      },
+      "canonicalMechanicSummary": "Large 2d10 piercing-or-slashing reach vibro polearm. It is explicitly too large and unwieldy to throw effectively and requires an energy cell.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "positioning"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "positioning"
+      ],
+      "rationale": {
+        "melee": "Its only combat profile is melee.",
+        "offense_melee": "Deals high 2d10 piercing or slashing melee damage.",
+        "positioning": "It is explicitly a reach weapon."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:vibrolance",
+        "phase3BIdentityKey": "unmapped::Vibrolance",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:lance",
+          "weapon-family:vibrolance",
+          "weapon-family:reach-weapon"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Source explicitly says it cannot be thrown effectively; do not infer a thrown profile from its lance form."
+        ]
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d10",
+          "relation": "MUCH_HIGHER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "LARGE_REACH_MELEE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BETTER"
+        },
+        "rangedProfile": {
+          "available": false,
+          "relation": "EXPLICITLY_NOT_THROWABLE"
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "POSITIONAL_REACH"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "High-damage reach weapon for front-line characters who want superior melee spacing without a thrown or stun option."
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "canonicalName": "Vibrorapier",
+      "phase3BIdentityKey": "unmapped::Vibrorapier",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 60,
+        "statTablePage": 60
+      },
+      "canonicalMechanicSummary": "Medium 2d6 slashing vibro weapon designed to suppress the ultrasonic noise of normal vibro weapons, making it completely silent in use. It requires two energy cells.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "stealth",
+        "infiltration"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "stealth",
+        "infiltration"
+      ],
+      "rationale": {
+        "melee": "Its canonical profile is melee.",
+        "offense_melee": "Deals direct 2d6 slashing damage.",
+        "stealth": "The source explicitly makes the weapon completely silent in use.",
+        "infiltration": "Silent operation materially supports covert use and avoids weapon-noise disclosure."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:vibrorapier",
+        "phase3BIdentityKey": "unmapped::Vibrorapier",
+        "repoIdentityKey": null,
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibrorapier",
+          "weapon-family:silent-melee"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d6",
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "BASELINE"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Covert melee alternative to the baseline Vibroblade: same damage role, but completely silent in operation."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Completely silent in use.",
+          "representationStatus": "STRUCTURED_SOUND_PROFILE_PLUS_SEMANTIC",
+          "note": "Stealth/infiltration describe recommendation relevance; exact silence remains a source rule."
+        }
+      ]
+    },
+    {
+      "canonicalName": "Vibrosword",
+      "phase3BIdentityKey": "weapon-vibrosword",
+      "repo": {
+        "present": true,
+        "id": "weapon-vibrosword"
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 98,
+        "statTablePage": 96
+      },
+      "canonicalMechanicSummary": "Large 2d8 slashing-or-piercing oversized vibroblade intended for two-handed use. It requires an energy cell.",
+      "sharedTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "melee": "Its canonical profile is melee.",
+        "offense_melee": "It deals direct 2d8 slashing or piercing damage."
+      },
+      "ruleSelectors": {
+        "exactCanonicalSelector": "canonical-weapon:vibrosword",
+        "phase3BIdentityKey": "weapon-vibrosword",
+        "repoIdentityKey": "weapon-vibrosword",
+        "weaponGroup": "weapon-group:advanced-melee",
+        "proficiency": "weapon-proficiency:advanced-melee",
+        "families": [
+          "weapon-family:vibro-weapon",
+          "weapon-family:vibroblade",
+          "weapon-family:vibrosword",
+          "weapon-family:two-handed-melee"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToVibroblade": {
+        "damage": {
+          "canonical": "2d8",
+          "relation": "HIGHER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "hands": {
+          "relation": "DESIGNED_TWO_HANDED"
+        },
+        "doubleWeapon": {
+          "available": false
+        },
+        "reach": {
+          "relation": "BASELINE"
+        },
+        "rangedProfile": {
+          "available": false
+        },
+        "defenseUtility": {
+          "relation": "BASELINE"
+        },
+        "controlUtility": {
+          "relation": "BASELINE"
+        },
+        "mobilityMount": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Straightforward two-handed damage upgrade over the standard Vibroblade, with no additional control, stun, reach, or defensive utility."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Source describes it as intended for two-handed use but grants no separate special damage multiplier beyond normal rules.",
+          "representationStatus": "STRUCTURED_WIELDING_ROLE",
+          "note": "Do not invent `damage_bonus`."
+        }
+      ]
+    }
+  ],
+  "completionCertification": {
+    "status": "ADVANCED_MELEE_SEMANTIC_SELECTOR_RECOMMENDATION_AUTHORITY_COMPLETE",
+    "canonicalIdentities": 22,
+    "adjudicatedIdentities": 22,
+    "identityReconciliation": "22 = 22",
+    "repoPresent": 5,
+    "repoMissing": 17,
+    "phase3BBlobSha": "e1f19068526e773a700496976403628c24d34b51",
+    "semanticVocabularyInvariantPreserved": true,
+    "structuralSelectorsSeparatedFromSemanticTags": true,
+    "missingRepoIdentitiesRemainExplicit": true,
+    "productionMutationAuthorized": false
+  },
+  "roundLedger": [
+    {
+      "round": 1,
+      "adjudicated": 10,
+      "firstCanonicalName": "Dire Vibroblade",
+      "lastCanonicalName": "Shock Stick"
+    },
+    {
+      "round": 2,
+      "adjudicated": 12,
+      "firstCanonicalName": "Shock Whip",
+      "lastCanonicalName": "Vibrosword",
+      "purpose": "Close full 22-identity Advanced Melee authority."
     }
   ]
 }
