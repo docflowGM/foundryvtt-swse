@@ -115,12 +115,15 @@ Static definition (canonical `ammo`/`resource`/`resourceProfiles`/`resourceConsu
 
 `matchesWeaponSelector(resolvedWeapon, selector, {profileId})` understands `weapon:<identityKey>`, `weapon-family:*`, `weapon-group:*`, `weapon-proficiency:*`, `profile:<id>`, `payload:<id>`, species/ability override selectors. Feats/talents declare what they apply to; weapons declare what they are. Semantic tags (final/tradeoff/conditional) feed **recommendation and applicability joins only**. Combat execution must not branch on tags (`ranged`→DEX, `stun`→stun mode, `control`→condition track); it uses the structured profile fields above. Existing code that conflates the two (`getAttackType`, Weapon Focus fuzzy matching in `scoped-combat-feat-resolver.js`, the stun inference in `roll-config.js`, text classifiers in the suggestion engines) is migrated in 5C–5E.
 
-## 9. Legacy fallback and failure behaviour
+## 9. Legacy fallback and failure behaviour (amended in 5B-0 — planner ruling A: canonical fails closed)
 
-* canonical identity resolvable ⇒ canonical adapter; otherwise ⇒ legacy compatibility adapter producing the same shape (`source:'legacy'`, with a `heuristics[]` list naming every inference used). Name/text heuristics are permitted **only** here.
-* Canonical weapons must not depend on heuristics once migrated; CI asserts `source==='canonical' && heuristics.length===0` for all 203.
-* Failure: attack rolls never hard-fail on an adapter problem. Registry missing/corrupt or unknown `profileId` ⇒ `degraded:true`, fall back to the legacy adapter (or the default profile), log once, show a GM-visible warning; **strict mode** (tests/CI) throws. Canonical identity stamped but registry entry absent is treated as a data error, not as "legacy".
-* Homebrew/old-world items keep rolling; they simply never get canonical-only features (profiles, alternate proficiency routes).
+* **No canonical identity** (no `flags.swse.canonicalWeapon.identityKey` stamp and no compendium source id in the production-id index) ⇒ legacy compatibility adapter (`source:'legacy'`, `heuristics[]` naming every inference). Name/text heuristics live **only** there.
+* **Canonical identity + valid registry entry** ⇒ canonical resolver. The legacy adapter is never invoked (CI proves it).
+* **Canonical identity + missing or corrupt registry entry** ⇒ **ERROR** (`canonical-registry-entry-missing` / `-corrupt`). Never "treated as legacy".
+* **Explicit valid `profileId`** ⇒ that profile. **No `profileId`** ⇒ the canonical default profile (`operatingModes.default` when it names a profile, else the first 3B attack profile).
+* **Explicit unknown `profileId` / `payloadId` / `configurationId`** ⇒ **ERROR**. A default is never substituted for an explicit request. A selector-only (unmatched 4H) mode named as `profileId` ⇒ `profile-not-executable` ERROR.
+* Canonical never silently falls back to heuristics. Runtime callers use `resolveSafe()`, which reports a GM-visible error (`ui.notifications`) and returns `{source:'error'}`; strict callers/tests use `resolve()`, which throws `WeaponRuntimeError`.
+* Homebrew/old-world items keep rolling through the legacy adapter; they never receive canonical-only features (profiles, alternate proficiency routes).
 
 ## 10. Integration points
 
@@ -136,9 +139,11 @@ Static definition (canonical `ammo`/`resource`/`resourceProfiles`/`resourceConsu
 | `CombatOptionResolver`, `WeaponsEngine`, planners, grapple, reactions | resolved qualities/wielding/size/exact selectors | replace text/name classifiers |
 | item sheet, store, suggestion | `ResolvedWeapon` read-only view | display / scoring |
 
-## 11. Caching
+## 11. Caching (amended in 5B-0 — planner ruling B: no actor-dependent caching)
 
-The resolved view is display/derivation data, never authoritative state. Cache `ResolvedWeapon` by `(item.uuid, registryHash, item revision)` where item revision covers `system`, `flags.swse`, upgrades and equipped state; cache the proficiency result by `(weapon view key, actor proficiency revision)`. Never cache permissions, current ammo/HP, rolls or turn economy.
+5B caches **only** registry/immutable records and two indexes built once: `identityKey → record` and `productionId → identityKey`. The registry is deep-frozen and never mutated.
+
+5B does **not** cache effective proficiency, actor entitlements, current ammo, equipped state, temporary configuration, turn state or target rules, and does **not** invent an "actor proficiency revision". Every `resolveProficiency` call re-reads the actor. A later phase may add display/derivation caching only with an explicit invalidation key.
 
 ## 12. Migration ordering (Phase 5B → 5H)
 
@@ -155,3 +160,11 @@ The resolved view is display/derivation data, never authoritative state. Cache `
 ## 13. Acceptance for Phase 5B (first implementation)
 
 Registry builds deterministically and verifies against 3B/4H; `resolve()` returns `source:'canonical'` with zero heuristics for all 203; every probe weapon resolves its profiles/proficiency routes as in the frozen authority; legacy items resolve through the compatibility adapter with unchanged results; no combat consumer is modified; the existing rolling-system tests (316) stay green.
+
+## 14. Planner corrections applied in Phase 5B (A–E)
+
+* **A — Canonical fails closed.** See §9.
+* **B — No actor-dependent caching.** See §11.
+* **C — Incomplete 3B↔4H profile reconciliation.** Seven identities (Amphistaff, Atlatl, Cesta, Shock Stick, Vibrobayonet, Gungan Electropole, PLX-2M) have 4H modes that cannot be matched to a 3B attack profile by explicit id, explicit branch evidence, or strict cardinality. Those 4H modes are exposed as `selectorOnlyMode:true, profileDefinitionIncomplete:true, executable:false` in `diagnostics.unmatchedPhase4HModes` / `diagnostics.selectorOnlyModes`. Mechanics are never synthesized and neither frozen authority is altered.
+* **D — Profile-specific branch.** Branch, proficiency group and exotic identity come from the selected 3B profile's `schemaFamily` (Massassi Lanvarok: `disc` ranged / `melee` melee; Siang Lance: `ranged` ranged / `bayonet-aao` melee; Electropole: `melee` melee / `thrown` ranged). The weapon-level branch is classification only.
+* **E — Damage-type representation.** AND = **one** damage component carrying all simultaneous types; OR = one selected type before application (`requiresDamageTypeSelection` until chosen); single = one component/one type; a separate component exists only where the authority models a separate damage event (e.g. Neuronic Whip `damageComponents`).
