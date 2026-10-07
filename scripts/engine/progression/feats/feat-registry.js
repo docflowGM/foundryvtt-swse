@@ -6,7 +6,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { toStableKey } from "/systems/foundryvtt-swse/scripts/utils/stable-key.js";
 import { loadFeatBucketsMapping, normalizeFeatRuntime, normalizeFeatTypeKey, resolveFeatBonusFeatFor } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js";
-import { FeatRegistry as CanonicalFeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { FeatRegistry as CanonicalFeatRegistry, AmbiguousCanonicalFeatNameError } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { isTalentOnlyFeatContaminant } from "/systems/foundryvtt-swse/scripts/data/feat-domain-guard.js";
 
 const CANONICAL_FEAT_DISPLAY_NAMES = new Map([
@@ -45,8 +45,11 @@ function applyCanonicalDisplayName(feat) {
   return displayName ? { ...feat, name: displayName } : feat;
 }
 
+// Phase 5C identity closeout: `feats` is keyed by CANONICAL ID. `_nameIndex` (normalized name -> ids) is a secondary multimap, so two
+// certified distinct same-name feats (the two Staggering Attack identities) both stay addressable and name lookups fail closed.
 export const FeatRegistry = {
   feats: new Map(),
+  _nameIndex: new Map(),
   _byKey: new Map(),
   isBuilt: false,
 
@@ -55,6 +58,7 @@ export const FeatRegistry = {
       await CanonicalFeatRegistry.initialize?.();
       const mapping = await loadFeatBucketsMapping();
       this.feats.clear();
+      this._nameIndex.clear();
       this._byKey.clear();
 
       let skippedTalentContaminants = 0;
@@ -78,8 +82,11 @@ export const FeatRegistry = {
         };
         const normalizedFeat = applyCanonicalDisplayName(normalizeFeatRuntime(docLike, { mapping }));
         const registryKey = normalizeFeatRegistryKey(normalizedFeat.name) || normalizedFeat.name.toLowerCase();
-        const preferredFeat = preferFeatEntry(this.feats.get(registryKey), normalizedFeat);
-        this.feats.set(registryKey, preferredFeat);
+        const id = normalizedFeat._id ?? normalizedFeat.id;
+        this.feats.set(id, preferFeatEntry(this.feats.get(id), normalizedFeat));
+        const ids = this._nameIndex.get(registryKey) ?? [];
+        if (!ids.includes(id)) ids.push(id);
+        this._nameIndex.set(registryKey, ids);
         const key = entry.system?.key ?? toStableKey(normalizedFeat.name);
         if (key) this._byKey.set(key, normalizedFeat);
       }
@@ -96,16 +103,24 @@ export const FeatRegistry = {
     }
   },
 
-  get(name) { return name ? this.feats.get(normalizeFeatRegistryKey(name) || String(name).toLowerCase()) ?? null : null; },
+  getById(id) { return id ? this.feats.get(id) ?? null : null; },
+  findByName(name) { return name ? (this._nameIndex.get(normalizeFeatRegistryKey(name) || String(name).toLowerCase()) ?? []).map((id) => this.feats.get(id)) : []; },
+  getUniqueByName(name) {
+    const hits = this.findByName(name);
+    if (hits.length > 1) throw new AmbiguousCanonicalFeatNameError(name, hits.map((h) => ({ id: h._id ?? h.id })));
+    return hits[0] ?? null;
+  },
+  /** Name lookup for callers without a canonical id: unique-or-null, fail closed on ambiguity. */
+  get(name) { return this.getUniqueByName(name); },
   byKey(key) { return key ? this._byKey.get(key) ?? null : null; },
-  has(name) { return !!name && this.feats.has(normalizeFeatRegistryKey(name) || String(name).toLowerCase()); },
+  has(name) { return this.findByName(name).length > 0; },
   list() { return Array.from(this.feats.values()); },
   count() { return this.feats.size; },
   getByType(featType) { const normalized = normalizeFeatTypeKey(featType); return this.list().filter((feat) => feat.featType === normalized); },
   getNames() { return this.list().map((feat) => feat.name); },
   getBonusFeats() { return this.list().filter((feat) => feat.bonusFeatFor.length > 0); },
   canBeBonusFeatFor(featDoc, className) { return resolveFeatBonusFeatFor(featDoc).includes(className); },
-  async rebuild() { this.feats.clear(); this._byKey.clear(); this.isBuilt = false; return this.build(); },
+  async rebuild() { this.feats.clear(); this._nameIndex.clear(); this._byKey.clear(); this.isBuilt = false; return this.build(); },
   getStatus() { return { isBuilt: this.isBuilt, count: this.feats.size, feats: this.getNames() }; }
 };
 

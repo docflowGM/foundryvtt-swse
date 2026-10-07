@@ -105,6 +105,11 @@
       "change": "Exact ability name corrected to canonical 'Two-Weapon Fighting'. Interaction unchanged."
     },
     {
+      "id": "4H-F1",
+      "scope": "Sith Lanvarok",
+      "change": "Planner ruling (Phase 5C identity closeout): removed the explicit ability interaction naming 'Two-Weapon Fighting' (supersedes 4H-A3). The published rule describes a combat mode, not a canonical feat; Phase 1B certified the repository feat of that name as noncanonical. The behavior is carried structurally by operation.eligibleAsSecondWeaponForTwoWeaponFighting, operation.handsRemainFree and operation.wornNotHeld; dual_wield tagging is unchanged. No schema-shape change."
+    },
+    {
       "id": "4H-A4",
       "scope": "Tehk'la Blade",
       "change": "Added Nagai alternate proficiency route (source-confirmed, Legacy Era Campaign Guide) and speciesOverrides selector. Alternate-case count 9 -> 10. No semantic tag changed."
@@ -189,6 +194,6 @@
     "data/audits/item-weapons-phase-4d-rifle-semantic-rolling.json": "099091431b40fda931725da28fd809caef699a24de4ecdaa5753d8bc0a5d7a57",
     "data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json": "88cc4fe20a3a86594e961676160682cbe3e902154ef9f0becdc368a2258feb58",
     "data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json": "fd484c64f0eb5472253f4f99f5e871a584ff482f6435aafe22d8a21454c073d5",
-    "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json": "c81c1a8ad285df1c902bb1f88411e3dbe26e4baddedd6cc0836acb98795ce09a"
+    "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json": "6ba0c3584cd7ce838726e7867750a54219c28c4310bd766b5fa3a9f7b8e0f191"
   }
 }

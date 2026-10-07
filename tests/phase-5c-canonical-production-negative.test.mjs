@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { verifyFeats, verifyWeapons, CANONICAL_FEATS, CANONICAL_WEAPONS } from '../tools/lib/canonical-production-verify.mjs';
-import { verifyClassification, scanRuntimeAuditImports } from '../tools/lib/canonical-authority-classification.mjs';
+import { verifyClassification, scanRuntimeAuditImports, domainClassGuardrailViolations } from '../tools/lib/canonical-authority-classification.mjs';
 import { scanDangling } from '../tools/migrate-phase-5c-feat-references.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -67,4 +67,24 @@ assert.equal(scanRuntimeAuditImports(['scripts/fake-runtime.js'], () => '// see 
 // 20 unclassified new feat/weapon data source
 assert.ok(verifyClassification(mk(), ['data/feat-new-hand-authored-source.json']).some((e) => /unclassified/.test(e)), 'new unclassified source must fail');
 assert.deepEqual(verifyClassification(mk()), [], 'real tree classification is complete');
+// 21-24 a parallel feat/weapon authority cannot hide under OTHER_DOMAIN_DATA / REFERENCE_BEARING_DOMAIN_DATA
+const featDef = { _id: 'abc', name: 'Fake Feat', type: 'feat', system: { benefit: 'x' } };
+assert.ok(domainClassGuardrailViolations('data/class-feats.json', JSON.stringify([featDef])).length, 'feat definitions under a domain class must fail');
+assert.ok(domainClassGuardrailViolations('data/vehicle-weapons.json', JSON.stringify({ weapons: [{ _id: 'w', type: 'weapon', system: { damage: '2d8' } }] })).length, 'weapon definitions under a domain class must fail');
+assert.ok(domainClassGuardrailViolations('data/x.json', JSON.stringify([{ identityKey: 'weapon::blaster', canonicalStats: {} }])).length, 'canonical-only fields must fail');
+assert.ok(domainClassGuardrailViolations('packs/x.db', JSON.stringify({ ...featDef, flags: { swse: { canonicalFeat: { canonicalId: 'abc' } } } })).length, 'a generated stamped document under a domain class must fail');
+assert.equal(domainClassGuardrailViolations('packs/npc.db', JSON.stringify({ _id: 'n', type: 'npc', items: [{ type: 'feat', system: {} }] })).length, 0, 'embedded references in actors are legitimate');
+assert.equal(domainClassGuardrailViolations('data/class-feat-list-bindings.json', JSON.stringify({ classes: { soldier: ['abc'] } })).length, 0);
+// 25-26 weapon-valued feat choices: a stale/unresolvable name and an ambiguous name both fail
+fails(F({ 'data/feat-choice-options.json': jsonPretty((j) => { j.exoticWeapons.melee.push('Blast Cannon'); }) }), /does not resolve to a canonical weapon identity/, 'stale weapon choice name');
+fails(verifyFeats(mk({ [CANONICAL_WEAPONS]: json((j) => { const ex = j.identities.filter((i) => i.weaponGroup === 'Exotic Weapon'); ex[1].canonicalName = ex[0].canonicalName; }) }), { skipLossless: true }).errors, /resolves to 2 canonical weapon identities/, 'ambiguous weapon choice name');
+fails(F({ 'data/feat-choice-options.json': jsonPretty((j) => { j.exoticWeapons.ranged.pop(); }) }), /missing from the feat exotic option list|differs/, 'exotic weapon missing from options');
+// 27 the noncanonical Two-Weapon Fighting is not an ability join anywhere in the weapon authority
+{
+  const w = JSON.parse(real(CANONICAL_WEAPONS));
+  const joins = w.identities.flatMap((i) => [...(i.abilityInteractions ?? []), ...(i.selectors?.abilityOverrides ?? [])]).filter((a) => /^two-weapon fighting$/i.test(a.ability ?? a.abilityName ?? ''));
+  assert.equal(joins.length, 0, 'exact ability joins to the noncanonical Two-Weapon Fighting must be 0');
+  const sl = w.identities.find((i) => i.canonicalName === 'Sith Lanvarok');
+  assert.ok(sl.operation.eligibleAsSecondWeaponForTwoWeaponFighting && sl.operation.handsRemainFree && sl.operation.wornNotHeld && sl.semantic.tags.finalTags.includes('dual_wield'), 'Sith Lanvarok keeps the structural second-weapon facts and dual_wield');
+}
 console.log('phase-5c-canonical-production-negative: ok');

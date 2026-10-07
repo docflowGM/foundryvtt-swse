@@ -51,7 +51,14 @@ export const FeatEngine = {
         }
 
         // Look up feat
-        const featDoc = FeatRegistry.get(featName);
+        let featDoc;
+        try {
+            featDoc = FeatRegistry.get(featName);
+        } catch (err) {
+            // Two canonical feats share this name (e.g. Staggering Attack): a name alone cannot select one.
+            if (err?.code === 'AMBIGUOUS_CANONICAL_FEAT_NAME') return { success: false, reason: err.message, code: err.code };
+            throw err;
+        }
         if (!featDoc) {
             return {
                 success: false,
@@ -180,7 +187,7 @@ export const FeatEngine = {
      */
     getBonusFeatsForClass(className) {
         return FeatRegistry.getBonusFeats().filter(feat =>
-            FeatRegistry.feats.get(feat.name.toLowerCase()).system?.bonus_feat_for
+            FeatRegistry.getById(feat._id ?? feat.id)?.system?.bonus_feat_for
                 ?.includes(className)
         );
     },
@@ -232,7 +239,13 @@ export const FeatEngine = {
      * Get unmet requirements for a feat
      */
     getUnmetRequirements(actor, featName) {
-        const featDoc = FeatRegistry.get(featName);
+        let featDoc;
+        try {
+            featDoc = FeatRegistry.get(featName);
+        } catch (err) {
+            if (err?.code === 'AMBIGUOUS_CANONICAL_FEAT_NAME') return [err.message];
+            throw err;
+        }
         if (!featDoc) {
             return ['Feat not found'];
         }

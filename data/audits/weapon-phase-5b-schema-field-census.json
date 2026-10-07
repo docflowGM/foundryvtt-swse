@@ -5,7 +5,7 @@
  "purpose": "Programmatic census of every field path present in the operational canonical weapons corpus (data/canonical/weapons.json). Paths normalise array indices to []; each path is attributed to its certified origin (Phase 3B / Phase 4H) or to the canonical-only wrapper (provenance/production). Audit-only roots not carried by the corpus are enumerated in auditOnlyRootsNotCarried.",
  "identities": 203,
  "inputs": {
-  "data/canonical/weapons.json": "5520eb71f1391b682a36742b8b08d8e698d767cf5210b2c1305ccc3ece87ac9b"
+  "data/canonical/weapons.json": "ed680edcf918b2f45839e96efef60d661cd495d698bbd690d33357bcf1aef236"
  },
  "auditOnlyRootsNotCarried": {
   "phase3B": [
@@ -23601,8 +23601,8 @@
    "fieldPath": "abilityInteractions[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "object"
    ],
@@ -23615,8 +23615,8 @@
    "fieldPath": "abilityInteractions[].ability",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "string"
    ],
@@ -23633,8 +23633,8 @@
    "fieldPath": "abilityInteractions[].abilityType",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "null",
     "string"
@@ -23652,8 +23652,8 @@
    "fieldPath": "abilityInteractions[].phase",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "string"
    ],
@@ -23670,8 +23670,8 @@
    "fieldPath": "abilityInteractions[].relation",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "null",
     "string"
@@ -23689,8 +23689,8 @@
    "fieldPath": "abilityInteractions[].via",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "string"
    ],
@@ -23749,8 +23749,8 @@
    "fieldPath": "authorities[].abilityInteractions[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "object"
    ],
@@ -23763,8 +23763,8 @@
    "fieldPath": "authorities[].abilityInteractions[].ability",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "string"
    ],
@@ -23781,8 +23781,8 @@
    "fieldPath": "authorities[].abilityInteractions[].abilityType",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "null",
     "string"
@@ -23800,8 +23800,8 @@
    "fieldPath": "authorities[].abilityInteractions[].relation",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "null",
     "string"
@@ -23819,8 +23819,8 @@
    "fieldPath": "authorities[].abilityInteractions[].via",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 66,
-   "identityCount": 35,
+   "occurrenceCount": 65,
+   "identityCount": 34,
    "valueTypes": [
     "string"
    ],
@@ -29358,8 +29358,8 @@
    "fieldPath": "authorities[].ruleSelectors.explicitAbilityInteractions[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 8,
+   "occurrenceCount": 11,
+   "identityCount": 7,
    "valueTypes": [
     "object"
    ],
@@ -29372,8 +29372,8 @@
    "fieldPath": "authorities[].ruleSelectors.explicitAbilityInteractions[].ability",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 8,
+   "occurrenceCount": 11,
+   "identityCount": 7,
    "valueTypes": [
     "string"
    ],
@@ -29390,15 +29390,15 @@
    "fieldPath": "authorities[].ruleSelectors.explicitAbilityInteractions[].interaction",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 8,
+   "occurrenceCount": 11,
+   "identityCount": 7,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
     "\"FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE\"",
-    "\"MAY_BE_FIRED_AS_SECOND_WEAPON_WHILE_WORN\"",
-    "\"NAMED_DISCBLADE_DAMAGE_SYNERGY\""
+    "\"NAMED_DISCBLADE_DAMAGE_SYNERGY\"",
+    "\"NAMED_FIRA_ATTACK_BONUS_SYNERGY\""
    ],
    "nullable": false,
    "conditional": true

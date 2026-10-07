@@ -10,7 +10,6 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { applyCompletenessAmendments } from './lib/item-weapons-phase-3b-amendments.mjs';
-import { ABILITY_NAMES_PENDING_PLANNER_RULING } from './lib/item-weapons-phase-4h.mjs';
 // Phase 5C: packs/weapons.db is now GENERATED from data/canonical/weapons.json. The Phase 3-4 certifications are frozen evidence over the
 // PRE-CUTOVER production state, preserved byte-for-byte here; the live pack is gated by tools/verify-canonical-production.mjs.
 const FROZEN_PRE_CUTOVER = { 'packs/weapons.db': 'data/audits/frozen/pre-cutover-weapons.db' };
@@ -2150,7 +2149,7 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
     for (const m of q.modes || []) if (!m.mode || !m.attackProfile) fail(`4G ${w} mode shape`);
     for (const l of q.explicitAbilityInteractions || []) {
       if (!ENUM.test(l.interaction || '')) fail(`4G ${w} ability interaction enum (${l.ability})`);
-      else if (!abilityNames.has(l.ability) && !ABILITY_NAMES_PENDING_PLANNER_RULING.includes(l.ability)) fail(`4G ${w} ability interaction "${l.ability}" is not an exact canonical ability name`);
+      else if (!abilityNames.has(l.ability)) fail(`4G ${w} ability interaction "${l.ability}" is not an exact canonical ability name`);
     }
     if (!a.proficiencyRoutes?.canonical?.length || !a.recommendation?.fit || !a.recommendation.eligibleWithoutPenaltyWhen?.length) fail(`4G ${w} proficiency/recommendation shape`);
     const hasAlt = a.proficiencyRoutes.alternate.length > 0;
@@ -2210,8 +2209,10 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
     const dl = by4('weapon-concealed-dart-launcher');
     if (!dl.finalTags.includes('stun') || !dl.finalTags.includes('nonlethal') || dl.finalTags.includes('poison') || dl.sharedTags.includes('poison') || dl.advantageTags.includes('poison') || !(dl.conditionalSynergyTags || []).some((x) => x.tag === 'poison' && /contact-poison/.test(x.condition)) || !(dl.ruleSelectors.payloadProfiles || []).some((p) => p.id === 'sedative' && p.default) || !(dl.ruleSelectors.payloadProfiles || []).some((p) => p.id === 'contact-poison' && !p.default)) fail('4H-E2 Concealed Dart Launcher: stun + nonlethal unconditional, poison conditional on the contact-poison payload, both payload profiles preserved');
     if (!['4H-E1', '4H-E2'].every((id) => (S.phase4hCorrections || []).some((x) => x.id === id))) fail('4H-E amendment ledger missing');
-    if (sl.ruleSelectors.explicitAbilityInteractions[0].ability !== 'Two-Weapon Fighting') fail('4H-A3 Sith Lanvarok must reference the exact ability name Two-Weapon Fighting');
-    if (!['4H-A2', '4H-A3', '4H-A4'].every((id) => (S.phase4hCorrections || []).some((x) => x.id === id))) fail('4H corrections ledger missing');
+    // 4H-F1 (Phase 5C closeout) supersedes 4H-A3: no explicit ability join to the noncanonical "Two-Weapon Fighting"; structural dual-wield facts instead
+    const slOp = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8')).identities.find((x) => x.canonicalName === 'Sith Lanvarok').operation;
+    if ((sl.ruleSelectors.explicitAbilityInteractions || []).length || !slOp.eligibleAsSecondWeaponForTwoWeaponFighting || !slOp.handsRemainFree || !slOp.wornNotHeld || !sl.finalTags.includes('dual_wield')) fail('4H-F1 Sith Lanvarok must carry no explicit ability join and the structural second-weapon/worn/hands-free facts plus dual_wield');
+    if (!['4H-A2', '4H-A3', '4H-A4', '4H-F1'].every((id) => (S.phase4hCorrections || []).some((x) => x.id === id))) fail('4H corrections ledger missing');
   }
   for (const [k, ok, msg] of r4) { const a = by4(k); if (a && !ok(a)) fail(`4G ${msg}`); }
   const cp = S.census || {};

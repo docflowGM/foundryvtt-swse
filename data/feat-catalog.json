@@ -42957,7 +42957,7 @@
     "system": {
       "description": "<p><strong>Prerequisites:</strong> Sneak Attack talent, Rapid Shot, or Rapid Strike.</p>\n<p><strong>Effect:</strong> Any time you would deal additional damage from a feat that grants one or more extra dice of damage, you may forgo the extra damage. For each extra die sacrificed, move the target 2 squares. This forced movement does not provoke attacks of opportunity. The printed prerequisite includes Sneak Attack (a talent) even though the Benefit is worded around extra dice granted by a feat; preserve this source tension rather than silently broadening the rule.</p>",
       "source": "Scum and Villainy",
-      "slug": "staggering-attack",
+      "slug": "staggering-attack-scum-and-villainy",
       "featType": "general",
       "subType": "STATE",
       "prerequisites": "Sneak Attack talent, Rapid Shot, or Rapid Strike.",

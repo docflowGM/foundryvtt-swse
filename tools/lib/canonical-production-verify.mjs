@@ -32,7 +32,7 @@ export function verifyFeats(io, opts = {}) {
   if (docs.length !== EXPECTED.feats) errs.push(`feat pack has ${docs.length} documents, expected ${EXPECTED.feats}`);
   const catalog = JSON.parse(io.read(FEAT_OUT.catalog));
   if (catalog.length !== docs.length || JSON.stringify(catalog) !== JSON.stringify(docs)) errs.push('feat catalog compatibility projection differs from the pack');
-  const expected = attempt(errs, 'feat generator', () => generateFeats(corpus), {});
+  const expected = attempt(errs, 'feat generator', () => generateFeats(corpus, JSON.parse(io.read(CANONICAL_WEAPONS))), {});
   for (const [f, t] of Object.entries(expected)) if (io.read(f) !== t) errs.push(`generated feat output ${f} differs from data/canonical/feats.json (hand-edited or stale)`);
   const byId = new Map(corpus.identities.map((x) => [x.canonicalId, x]));
   const vocab = new Set(JSON.parse(io.read('data/audits/talent-feat-phase3-final-semantic-authority.json')).vocabulary ?? []);
@@ -49,6 +49,24 @@ export function verifyFeats(io, opts = {}) {
     if (d.system?.source !== c.primaryPublication.source || d.system?.page !== c.primaryPublication.page) errs.push(`feat ${d.name}: source/page differ from certified provenance`);
     if (d.name !== c.displayName) errs.push(`feat ${d.name}: name differs from certified display name ${c.displayName}`);
   }
+  // weapon-valued feat options: every specific weapon option -> exactly one canonical weapon identity; no stale name lists
+  const wc = JSON.parse(io.read(CANONICAL_WEAPONS));
+  const nameMap = new Map();
+  for (const i of wc.identities) (nameMap.get(i.canonicalName) ?? nameMap.set(i.canonicalName, []).get(i.canonicalName)).push(i);
+  const choiceDoc = JSON.parse(io.read(FEAT_OUT.choiceOptions));
+  const ex = choiceDoc.exoticWeapons ?? {};
+  const optionLabels = [...(ex.melee ?? []), ...(ex.ranged ?? []), ...(ex.lightsaberLikeRepositoryEntries ?? [])];
+  let unresolved = 0, ambiguous = 0;
+  for (const label of optionLabels) {
+    const hits = nameMap.get(label) ?? [];
+    if (hits.length === 0) { unresolved++; errs.push(`feat choice option "${label}" does not resolve to a canonical weapon identity`); }
+    else if (hits.length > 1) { ambiguous++; errs.push(`feat choice option "${label}" resolves to ${hits.length} canonical weapon identities`); }
+    else if (ex.identities?.[label]?.identityKey !== hits[0].identityKey) errs.push(`feat choice option "${label}" carries the wrong identity mapping`);
+  }
+  const exoticIds = wc.identities.filter((i) => i.weaponGroup === 'Exotic Weapon').map((i) => i.canonicalName);
+  for (const n of exoticIds) if (![...(ex.melee ?? []), ...(ex.ranged ?? [])].includes(n)) errs.push(`canonical exotic weapon "${n}" is missing from the feat exotic option list`);
+  if (new Set(optionLabels).size !== optionLabels.length) errs.push('feat exotic option list contains a duplicate option');
+  for (const g of choiceDoc.weaponGroups ?? []) if (!g.proficiencyValue && !g.branch) errs.push(`weapon group option ${g.id} has no structural selector`);
   // aliases: complete, derivative -> canonical Weapon Proficiency + explicit choice, retired ids absent from the pack
   const aliases = JSON.parse(io.read(FEAT_OUT.aliases));
   const retired = new Set(corpus.retiredProductionRecords.map((r) => r.oldId));
@@ -67,7 +85,7 @@ export function verifyFeats(io, opts = {}) {
   const groups = new Set(aliases.aliases.filter((a) => a.choice).map((a) => a.choice.value));
   for (const g of groups) if (!compat.includes(`'${g}'`)) errs.push(`legacy weapon-proficiency compat table lacks choice ${g}`);
   if (!compat.includes(corpus.counts.weaponProficiencyCanonicalId)) errs.push('legacy weapon-proficiency compat table targets a different canonical id');
-  return { errors: errs, counts: { canonical: ids.length, production: docs.length, semanticMatched: semantic, retired: retired.size } };
+  return { errors: errs, counts: { canonical: ids.length, production: docs.length, semanticMatched: semantic, retired: retired.size, weaponChoiceOptions: optionLabels.length, unresolvedWeaponChoices: unresolved, ambiguousWeaponChoices: ambiguous } };
 }
 
 const slimWeaponTags = (r) => JSON.stringify({ c: r.semantic?.categories, t: r.semantic?.tags });

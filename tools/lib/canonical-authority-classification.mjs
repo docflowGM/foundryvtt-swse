@@ -39,6 +39,32 @@ export const RULES = [
   [/^data\/(actor-weapon-ranges|vehicle-weapon-ranges|vehicle-weapons)\.json$|^packs\/(vehicle-weapon-ranges|vehicle-weapons|vehicles-weapon-emplacements)\.db$|^data\/combat\/damage-profiles\.(vehicle-)?weapon\.json$|^data\/(upgrades\/weapon-upgrades|vehicle-modifications\/weapon-systems|prestige-layers\/weapon-master|class-features)\.json$/, 'OTHER_DOMAIN_DATA', 'Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus.'],
 ];
 
+export const OTHER_DOMAIN_DEFINITION = 'OTHER_DOMAIN_DATA: a file owned by another domain that neither defines nor projects feat/weapon canonical authority.';
+export const REFERENCE_BEARING_DEFINITION = 'REFERENCE_BEARING_DOMAIN_DATA: an operational file owned by another domain that legitimately contains references to canonical feats/weapons (class feat lists, actor/NPC packs, archetypes, vehicle/domain records).';
+
+/**
+ * Guardrail for the two non-authority classes: such a file may not define canonical feat/weapon identity, rules or mechanics, nor
+ * carry a second feat/weapon definition set. Returns violations (empty = legitimate other-domain / reference-bearing data).
+ * Heuristic, structural: top-level (or depth-1 collection) records that are feat/weapon definition documents, any canonical stamp,
+ * or any canonical-corpus-only key (identityKey feat::/weapon::, canonicalStats, canonicalRulesShape, certifiedPublications).
+ */
+export function domainClassGuardrailViolations(rel, text) {
+  const out = [];
+  const records = [];
+  const t = String(text);
+  if (/\.db$|\.ndjson$/.test(rel)) { for (const l of t.split('\n')) { if (!l.trim()) continue; try { records.push(JSON.parse(l)); } catch { /* not json */ } } }
+  else { try { const j = JSON.parse(t); if (Array.isArray(j)) records.push(...j); else if (j && typeof j === 'object') { records.push(j); for (const v of Object.values(j)) if (Array.isArray(v)) records.push(...v); } } catch { return out; } }
+  const BAD_KEYS = ['canonicalStats', 'canonicalRulesShape', 'certifiedPublications', 'canonicalPlayerText'];
+  for (const r of records) {
+    if (!r || typeof r !== 'object') continue;
+    if (typeof r.identityKey === 'string' && /^(feat|weapon)::/.test(r.identityKey)) out.push(`${rel}: carries a canonical identityKey (${r.identityKey})`);
+    if (BAD_KEYS.some((k) => k in r)) out.push(`${rel}: carries canonical-corpus-only fields (${BAD_KEYS.filter((k) => k in r).join(', ')})`);
+    if (r.flags?.swse?.canonicalFeat || r.flags?.swse?.canonicalWeapon) out.push(`${rel}: carries a canonical identity stamp (a generated feat/weapon document)`);
+    if ((r.type === 'feat' || r.type === 'weapon') && r.system && typeof r.system === 'object' && typeof r._id === 'string') out.push(`${rel}: defines a top-level ${r.type} item document (parallel feat/weapon definitions)`);
+  }
+  return [...new Set(out)];
+}
+
 export function classify(rel) { for (const [re, cls, note] of RULES) if (re.test(rel)) return { class: cls, note }; return null; }
 
 export function buildClassification(files = [...walk('data'), ...walk('packs')]) {
@@ -55,6 +81,7 @@ export function verifyClassification(io, extraFiles = []) {
   const have = new Map(cur.entries.map((e) => [e.path, e.class]));
   for (const e of now.entries) if (e.class && have.get(e.path) !== e.class) errs.push(`classification file out of date for ${e.path}`);
   for (const p of have.keys()) if (!fs.existsSync(path.join(ROOT, p))) errs.push(`classification lists a file that no longer exists: ${p}`);
+  for (const e of cur.entries) if (e.class === 'OTHER_DOMAIN_DATA' || e.class === 'REFERENCE_BEARING_DOMAIN_DATA') { try { errs.push(...domainClassGuardrailViolations(e.path, io.read(e.path)).map((v) => `${e.class} guardrail: ${v}`)); } catch { /* unreadable: caught by existence check */ } }
   const seen = new Set(); for (const e of cur.entries) { if (seen.has(e.path)) errs.push(`classified twice: ${e.path}`); seen.add(e.path); if (!CLASSES.includes(e.class)) errs.push(`invalid class for ${e.path}`); }
   return errs;
 }

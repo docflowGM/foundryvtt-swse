@@ -21,7 +21,7 @@
     "repoPresent": 151,
     "repoMissing": 52,
     "distinctSemanticTags": 80,
-    "exactAbilityLinks": 66,
+    "exactAbilityLinks": 65,
     "alternateRouteIdentities": 21,
     "exoticAlternateProficiencyCases": 12
   },
@@ -71,9 +71,9 @@
       "detail": "Yuuzhan Vong + simple-weapons alternate route added; native Exotic classification and tags unchanged (4H-E3)"
     },
     {
-      "id": "SITH_LANVAROK_EXACT_ABILITY_NAME",
+      "id": "SITH_LANVAROK_STRUCTURAL_SECOND_WEAPON",
       "result": "PASS",
-      "detail": "canonical ability casing"
+      "detail": "no explicit ability join to the noncanonical Two-Weapon Fighting (4H-F1); second-weapon/hands-free behavior is structural"
     },
     {
       "id": "VIBRO_SAW_DR_BYPASS_STRUCTURAL",
@@ -111,9 +111,9 @@
     }
   ],
   "chain": {
-    "4H-A": "435a74854b06c979c67041eb255ce925d5941f82fdd714bfd1c19859456ab72b",
-    "4H-B": "54eb241e3a018928c6020921e7e2f2a0fdb36010bc7400f1bd976dbbc78c2e6b",
-    "4H-C": "fb6670e42e38a4592888510e8453eee98237709a900c59f63603311471c150f7"
+    "4H-A": "40a8fdfdf94534031089c8cce159d7b45bb7abc7190a408eca56c717ed783a1c",
+    "4H-B": "f1dc7dae570c83d42879b48729f568206b37e4e2f04a62025e09b0999c2154a9",
+    "4H-C": "fa8dd05c978ad7843c7b5e19cb2be0d263fd417f9bcc88a16a3dbeaf6b6ee7d4"
   },
   "productionHashes": {
     "packs/weapons.db": "70bd1216ef5106b48aead731d5ab38a920c065e8c3016a40e31c262b26f7b073",

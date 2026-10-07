@@ -10,6 +10,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { ROOT, readText, sha, clone, cmp } from './lib/canonical-weapons-shared.mjs';
 import { CANONICAL_FEATS } from './build-canonical-feats.mjs';
+import { CANONICAL_WEAPONS } from './lib/canonical-weapons-shared.mjs';
 
 export const OUT = {
   pack: 'packs/feats.db', packSha: 'packs/feats.db.sha256', catalog: 'data/feat-catalog.json',
@@ -27,7 +28,8 @@ function newFeatSystem(r) {
   const prereq = c.canonicalPrerequisites || 'None';
   const rules = c.canonicalRulesShape ?? [];
   const benefit = rules.join(' ');
-  const slug = r.normalizedName;
+  // same-name distinct identities need distinct slugs (slug backs the swse.feat.<slug> canonical uuid)
+  const slug = r.sameNameCollisionType === 'DISTINCT_FEAT_IDENTITIES' ? `${r.normalizedName}-${r.phase1APrimaryPublication.sourceKey}` : r.normalizedName;
   const src = r.primaryPublication.source;
   const bucket = r.semantic.finalTags.includes('melee') || r.semantic.finalTags.includes('ranged') ? 'Combat' : 'Skills';
   return {
@@ -71,7 +73,25 @@ function bucketView(docs) {
 
 const j2 = (o) => JSON.stringify(o, null, 2);
 
-export function generate(corpus) {
+/**
+ * Weapon-valued feat options are DERIVED from data/canonical/weapons.json (one-way dependency feats -> weapons): every specific weapon
+ * option resolves to exactly one canonical weapon identity. Generic choices stay structural (weaponGroups).
+ */
+export function exoticWeaponOptions(corpus, weaponsCorpus) {
+  const overrides = corpus.companions.exoticCategoryOverrides?.overrides ?? {};
+  const lists = { melee: [], ranged: [] }, identities = {};
+  for (const i of weaponsCorpus.identities.filter((x) => x.weaponGroup === 'Exotic Weapon')) {
+    const cat = overrides[i.canonicalName] ?? i.canonicalStats.attackProfiles[0].schemaFamily.branch;
+    if (!lists[cat]) throw new Error(`exotic weapon ${i.canonicalName}: no option category for branch ${cat}`);
+    lists[cat].push(i.canonicalName);
+    identities[i.canonicalName] = { identityKey: i.identityKey, productionId: i.production.id };
+  }
+  const lightsaber = weaponsCorpus.identities.filter((x) => x.weaponGroup === 'Lightsaber');
+  for (const i of lightsaber) identities[i.canonicalName] = { identityKey: i.identityKey, productionId: i.production.id };
+  return { melee: lists.melee.sort(cmp), ranged: lists.ranged.sort(cmp), lightsaberLikeRepositoryEntries: lightsaber.map((i) => i.canonicalName).sort(cmp), identities: Object.fromEntries(Object.entries(identities).sort(([a], [b]) => cmp(a, b))) };
+}
+
+export function generate(corpus, weaponsCorpus = JSON.parse(readText(CANONICAL_WEAPONS))) {
   const ids = corpus.identities;
   const docs = ids.map((r) => projectFeatDoc(r, corpus.schemaVersion)).sort((a, b) => cmp(a._id, b._id));
   const packText = docs.map((d) => JSON.stringify(d)).join('\n') + '\n';
@@ -92,7 +112,7 @@ export function generate(corpus) {
     [OUT.packSha]: `${crypto.createHash('sha256').update(packText).digest('hex')}  packs/feats.db\n`,
     [OUT.catalog]: catalogText,
     [OUT.featEffects]: j2({ _meta: fxMeta, definitions: defs }) + '\n',
-    [OUT.choiceOptions]: j2(corpus.companions.choiceOptions) + '\n',
+    [OUT.choiceOptions]: j2(Object.fromEntries(Object.entries(corpus.companions.choiceOptions).flatMap(([k, v]) => (k === 'weaponGroups' ? [[k, v], ['exoticWeapons', exoticWeaponOptions(corpus, weaponsCorpus)]] : [[k, v]])))) + '\n',
     [OUT.featMetadata]: j2(corpus.companions.featMetadata) + '\n',
     [OUT.combatActions]: j2(corpus.companions.combatActions) + '\n',
     [OUT.validityRegistry]: j2(corpus.companions.validityRegistry) + '\n',

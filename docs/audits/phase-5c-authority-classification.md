@@ -16,7 +16,12 @@ Every feat/weapon data file under `data/` and `packs/` is classified exactly onc
 
 Dependency direction: audits (evidence) → canonical corpus → deterministic generators → Foundry packs, runtime registries, compatibility outputs. Nothing flows back.
 
-`OTHER_DOMAIN_DATA` and `REFERENCE_BEARING_DOMAIN_DATA` are two classes added beyond the planner's seven, for data owned by other domains (vehicle weapons, ranges, upgrades; class feat lists; the nonheroic damage-profile subsystem) that only names or references feats/weapons. They are reported as a deviation.
+The seven authority-role classes describe feat/weapon authority. Two further classes cover files OUTSIDE that ownership boundary (approved by the planner with guardrails):
+
+* **OTHER_DOMAIN_DATA: a file owned by another domain that neither defines nor projects feat/weapon canonical authority.**
+* **REFERENCE_BEARING_DOMAIN_DATA: an operational file owned by another domain that legitimately contains references to canonical feats/weapons (class feat lists, actor/NPC packs, archetypes, vehicle/domain records).**
+
+Guardrail (enforced by `tools/verify-canonical-production.mjs`): neither class may be used for a file that defines canonical feat/weapon identity, rules or mechanics, overrides canonical identity, keeps another feat/weapon description/stat copy as truth, or exempts a parallel authority from the Phase 5C gate. A file that does so must be classified under a canonical/generated/migration/audit class or rejected.
 
 ## Files (excluding `data/audits/*` evidence)
 

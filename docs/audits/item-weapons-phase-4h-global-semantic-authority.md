@@ -30,6 +30,6 @@
 - data/audits/item-weapons-phase-4d-rifle-semantic-rolling.json: `099091431b40fda931725da28fd809caef699a24de4ecdaa5753d8bc0a5d7a57`
 - data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json: `88cc4fe20a3a86594e961676160682cbe3e902154ef9f0becdc368a2258feb58`
 - data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json: `fd484c64f0eb5472253f4f99f5e871a584ff482f6435aafe22d8a21454c073d5`
-- data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json: `c81c1a8ad285df1c902bb1f88411e3dbe26e4baddedd6cc0836acb98795ce09a`
-- data/audits/item-weapons-phase-4h-authority-reconciliation.json: `435a74854b06c979c67041eb255ce925d5941f82fdd714bfd1c19859456ab72b`
-- data/audits/item-weapons-phase-4h-b-global-semantic-qa.json: `54eb241e3a018928c6020921e7e2f2a0fdb36010bc7400f1bd976dbbc78c2e6b`
+- data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json: `6ba0c3584cd7ce838726e7867750a54219c28c4310bd766b5fa3a9f7b8e0f191`
+- data/audits/item-weapons-phase-4h-authority-reconciliation.json: `40a8fdfdf94534031089c8cce159d7b45bb7abc7190a408eca56c717ed783a1c`
+- data/audits/item-weapons-phase-4h-b-global-semantic-qa.json: `f1dc7dae570c83d42879b48729f568206b37e4e2f04a62025e09b0999c2154a9`

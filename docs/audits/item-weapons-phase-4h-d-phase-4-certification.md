@@ -9,7 +9,7 @@
 | Repo-present / repo-missing | **151 / 52** |
 | Semantic vocabulary violations | **0** (80 tags within the 183-tag certified union) |
 | Forbidden pseudo-tag leaks | **0** |
-| Malformed exact ability joins | **0** (66 verified) |
+| Malformed exact ability joins | **0** (65 verified) |
 | Unresolved machine-readable alternate-route omissions | **0** (21 alternate-route identities) |
 | Accidental payload / hybrid flattening | **0 / 0** |
 | Production mutation | **none** |
@@ -28,7 +28,7 @@
 - **XERROL_PHASE3B_EXOTIC** — Phase 3B Exotic classification controls; no rifle tag
 - **TEHKLA_NAGAI_ROUTE_SCOPED** — Nagai simple route added; native Exotic tag/tags unchanged; census 9 -> 11 incl. 4H-E1
 - **AMPHISTAFF_YUUZHAN_VONG_ROUTE** — Yuuzhan Vong + simple-weapons alternate route added; native Exotic classification and tags unchanged (4H-E3)
-- **SITH_LANVAROK_EXACT_ABILITY_NAME** — canonical ability casing
+- **SITH_LANVAROK_STRUCTURAL_SECOND_WEAPON** — no explicit ability join to the noncanonical Two-Weapon Fighting (4H-F1); second-weapon/hands-free behavior is structural
 - **VIBRO_SAW_DR_BYPASS_STRUCTURAL** — DAMAGE_REDUCTION_BYPASS stays an ontology gap
 - **KISSAI_LANVAROK_FAMILY_ROUTE** — Kissai + simple weapons covers both lanvarok varieties; Massassi advanced-melee ruling and native classifications unchanged (4H-E1)
 - **CONCEALED_DART_DEFAULT_PAYLOAD_SPLIT** — stun/nonlethal unconditional; poison payload-conditional (4H-E2)

@@ -120,7 +120,9 @@ test('exit gate: every condition PASS; zero literal policy violations; counts co
 test('production boundary: packs/talents.db, packs/feats.db and data/feat-catalog.json are identical to main; hashes pinned', () => {
   for (const f of PRODUCTION_FILES) assert.match(close.productionFilesSha256[f], /^[0-9a-f]{64}$/);
   let main = null; try { main = execFileSync('git', ['rev-parse', 'origin/main'], { stdio: 'pipe' }).toString().trim(); } catch { /* origin/main unavailable: skip comparison */ }
-  if (main) for (const f of PRODUCTION_FILES) assert.equal(execFileSync('git', ['rev-parse', `HEAD:${f}`]).toString().trim(), execFileSync('git', ['rev-parse', `${main}:${f}`]).toString().trim(), f);
+  // Phase 5C regenerated the feat production files from data/canonical/feats.json, so only packs/talents.db is still required to equal main;
+  // the feat files are gated by tools/verify-canonical-production.mjs (the frozen pre-cutover hashes stay pinned in the closeout).
+  if (main) for (const f of PRODUCTION_FILES.filter((x) => x === 'packs/talents.db')) assert.equal(execFileSync('git', ['rev-parse', `HEAD:${f}`]).toString().trim(), execFileSync('git', ['rev-parse', `${main}:${f}`]).toString().trim(), f);
 });
 test('final outputs rebuild byte-identically', () => {
   execFileSync('node', ['tools/build-talent-feat-phase3-final-authority.mjs', '--check'], { stdio: 'pipe' });

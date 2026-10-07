@@ -46,15 +46,29 @@ import { CANONICAL_WEAPON_PROFICIENCY_ID, legacyWeaponProficiencyChoice, applyLe
  * @property {string} pack - Compendium pack origin
  */
 
+/**
+ * Phase 5C identity closeout: canonical id is the only authoritative feat key. Names (and slugs) are secondary multimap indexes;
+ * two certified distinct identities may share a name (e.g. the two Staggering Attack feats), so a single-record name lookup must
+ * fail closed instead of silently choosing one.
+ */
+export class AmbiguousCanonicalFeatNameError extends Error {
+    constructor(name, candidates) {
+        super(`AMBIGUOUS_CANONICAL_FEAT_NAME: "${name}" matches ${candidates.length} canonical feats (${candidates.map((c) => c.id).join(', ')}); resolve by canonical id`);
+        this.name = 'AmbiguousCanonicalFeatNameError';
+        this.code = 'AMBIGUOUS_CANONICAL_FEAT_NAME';
+        this.candidates = candidates;
+    }
+}
+
 export class FeatRegistry {
     // Static state - all methods are class methods
     static _initialized = false;
     static _entries = [];                    // Flat array of all entries
     static _byId = new Map();               // id -> entry
-    static _byName = new Map();             // lowercase name -> entry
+    static _byName = new Map();             // lowercase name -> entry[] (secondary multimap; canonical id is authoritative)
     static _byCategory = new Map();         // category -> entry[]
     static _byTag = new Map();              // tag -> entry[]
-    static _bySlug = new Map();             // lowercase slug -> entry
+    static _bySlug = new Map();             // lowercase slug -> entry[] (secondary multimap)
     static _fallbackDocsById = new Map();   // id -> JSONL-backed doc-like object
     static _sourcePackKey = null;           // resolved pack key or fallback source
 
@@ -188,6 +202,12 @@ export class FeatRegistry {
         this._sourcePackKey = null;
     }
 
+    static _pushIndex(map, key, entry) {
+        const list = map.get(key);
+        if (!list) map.set(key, [entry]);
+        else if (!list.some((e) => e.id === entry.id)) list.push(entry);
+    }
+
     static _indexDocuments(docs, { fallback = false } = {}) {
         let skippedTalentContaminants = 0;
         for (const doc of docs || []) {
@@ -200,11 +220,11 @@ export class FeatRegistry {
             const entry = this._normalizeEntry(doc);
             this._entries.push(entry);
             this._byId.set(entry.id, entry);
-            this._byName.set(entry.name.toLowerCase(), entry);
+            this._pushIndex(this._byName, entry.name.toLowerCase(), entry);
 
             const slug = doc.system?.slug || entry.system?.slug;
             if (slug) {
-                this._bySlug.set(String(slug).toLowerCase(), entry);
+                this._pushIndex(this._bySlug, String(slug).toLowerCase(), entry);
             }
 
             if (fallback) {
@@ -616,15 +636,32 @@ export class FeatRegistry {
     }
 
     /**
-     * Get feat entry by name (case-insensitive)
-     * @param {string} name - Feat name
+     * All canonical feats whose display name matches (case-insensitive): 0..N records.
+     * @param {string} name
+     * @returns {FeatRegistryEntry[]}
+     */
+    static findByName(name) {
+        if (!name) return [];
+        return [...(this._byName.get(String(name).toLowerCase()) || [])];
+    }
+
+    /**
+     * The one feat with this name. null on zero matches; throws AMBIGUOUS_CANONICAL_FEAT_NAME on several (fail closed).
+     * @param {string} name
      * @returns {FeatRegistryEntry|null}
      */
+    static getUniqueByName(name) {
+        const hits = this.findByName(name);
+        if (hits.length > 1) throw new AmbiguousCanonicalFeatNameError(name, hits);
+        return hits[0] || null;
+    }
+
+    /**
+     * Name lookup for callers that only have a display name: identical to getUniqueByName (never picks arbitrarily).
+     * Callers that hold a canonical id must use getById.
+     */
     static getByName(name) {
-        if (!name) {
-            return null;
-        }
-        return this._byName.get(String(name).toLowerCase()) || null;
+        return this.getUniqueByName(name);
     }
 
     /**
@@ -743,7 +780,9 @@ export class FeatRegistry {
      */
     static getBySlug(slug) {
         if (!slug) return null;
-        return this._bySlug.get(String(slug).toLowerCase()) || null;
+        const hits = this._bySlug.get(String(slug).toLowerCase()) || [];
+        if (hits.length > 1) throw new AmbiguousCanonicalFeatNameError(slug, hits);
+        return hits[0] || null;
     }
 
     /**

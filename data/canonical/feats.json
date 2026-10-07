@@ -3080,65 +3080,6 @@
      "requiresSpecificWeapon": true
     }
    ],
-   "exoticWeapons": {
-    "melee": [
-     "Amphistaff",
-     "Arg'garok",
-     "Atlatl",
-     "Blastsword",
-     "Cesta",
-     "Darkstick",
-     "Discblade",
-     "Fira",
-     "Felucian Skullblade",
-     "Garrote",
-     "Neuronic Whip",
-     "Ryyk Blade",
-     "Shyarn",
-     "Tehk'la Blade",
-     "Vibro-Saw",
-     "Zhaboka"
-    ],
-    "ranged": [
-     "Aurial Blaster",
-     "Blast Cannon",
-     "Bowcaster",
-     "Concealed Dart Launcher",
-     "CR-1 Blast Cannon",
-     "Deck Sweeper",
-     "Flamethrower",
-     "Magna Caster",
-     "Massassi Lanvarok",
-     "Neural Inhibitor",
-     "Pulse Rifle",
-     "Siang Lance",
-     "Sith Lanvarok",
-     "Squib Tensor Rifle",
-     "Verpine Shattergun",
-     "Wrist Rocket Launcher"
-    ],
-    "lightsaberLikeRepositoryEntries": [
-     "Archaic Lightfoil",
-     "Archaic Lightsaber",
-     "Crossguard Lightsaber",
-     "Double-Bladed Lightsaber",
-     "Dual-Phase Lightsaber",
-     "Dueling Lightsaber",
-     "Great Lightsaber",
-     "Guard Shoto",
-     "Jedi Training Saber",
-     "Lightfoil",
-     "Lightsaber",
-     "Lightsaber (Double-Bladed)",
-     "Lightsaber (Standard)",
-     "Lightsaber Pike",
-     "Lightwhip",
-     "Long-Handle Lightsaber",
-     "Modern Lightfoil",
-     "Retrosaber",
-     "Short Lightsaber"
-    ]
-   },
    "choiceSources": {
     "fixed": "Options come directly from feat metadata or this registry.",
     "prerequisiteDerived": "Options are computed from actor state provided by earlier feats.",
@@ -10329,6 +10270,12 @@
      "source": "scripts/data/feat-domain-guard.js"
     }
    ]
+  },
+  "exoticCategoryOverrides": {
+   "_note": "Exotic weapon option lists are GENERATED from data/canonical/weapons.json (group Exotic Weapon, category = default attack profile branch). Only exceptions to that rule live here; preserved from the pre-cutover hand-curated list.",
+   "overrides": {
+    "Discblade": "melee"
+   }
   }
  },
  "identities": [

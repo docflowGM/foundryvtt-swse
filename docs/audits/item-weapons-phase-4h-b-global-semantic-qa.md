@@ -5,7 +5,7 @@
 - Certified feat/talent-used vocabulary: **183** tags
 - Distinct weapon semantic tags used (all semantic-bearing fields, 4A–4G): **80**
 - Unknown weapon semantic tags: **0** · forbidden pseudo-tag leaks: **0** · structural-selector leaks: **0** (1890 tag-field entries checked)
-- Exact ability links verified against canonical feat/talent names: **66**, malformed: **0**
+- Exact ability links verified against canonical feat/talent names: **65**, malformed: **0**
 - Hybrid/profile-scoped records: **16** (no conditional tag promoted to a final tag)
 - Payload-bearing records: **4**, accidental flattening: **0**, default-payload rulings: **1**
 
@@ -17,7 +17,7 @@
 | 4D | Rifle | 38 | 36 | 13 |
 | 4E | Advanced Melee Weapon | 22 | 29 | 6 |
 | 4F | Heavy Weapon | 17 | 26 | 1 |
-| 4G | Exotic Weapon | 32 | 41 | 13 |
+| 4G | Exotic Weapon | 32 | 41 | 12 |
 
 ## Default-payload rulings (4H-E2)
 
