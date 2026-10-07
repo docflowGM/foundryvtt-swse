@@ -2202,5 +2202,18 @@ if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-authority-r
   } catch (e) { fail(`4H-A reconciliation: ${e.message}`); }
 }
 
+// ---- Phase 4H-B global semantic + selector QA (builder throws on any violation; outputs byte-stable) ----
+if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-b-global-semantic-qa.json'))) {
+  const e4hb = errors.length;
+  try {
+    const mod = await import('./build-item-weapons-phase-4h-semantic-qa.mjs');
+    const out = mod.buildPhase4HB();
+    if (fs.readFileSync(path.join(ROOT, mod.OUT_JSON), 'utf8') !== out.json || fs.readFileSync(path.join(ROOT, mod.OUT_MD), 'utf8') !== out.md) fail('4H-B QA outputs are stale or hand-edited (rebuild with tools/build-item-weapons-phase-4h-semantic-qa.mjs)');
+    const Q = JSON.parse(out.json);
+    if (Q.status !== mod.STATUS || Q.productionMutationAuthorized !== false || Q.vocabulary.unknownWeaponSemanticTags !== 0 || Q.vocabulary.forbiddenPseudoTagLeaks !== 0 || Q.vocabulary.structuralSelectorLeaks !== 0 || Q.exactAbilityLinks.malformed !== 0 || Q.payloadInventory.accidentalFlattening !== 0 || Q.hybridProfileInventory.promotedConditionalTags !== 0) fail('4H-B QA counters must all be zero');
+    if (errors.length === e4hb) console.log(`Phase 4H-B global semantic QA OK: ${Q.vocabulary.weaponSemanticTagsUsed} weapon tags ⊆ ${Q.vocabulary.certifiedUsedUnion}-tag certified union (${Q.vocabulary.tagFieldChecks} field entries), 0 pseudo-tag/selector leaks, ${Q.exactAbilityLinks.total} exact ability links verified, ${Q.hybridProfileInventory.records} hybrid/profile records, ${Q.payloadInventory.records} payload-bearing records (${Q.payloadInventory.exemptions.length} open planner exemption)`);
+  } catch (e) { fail(`4H-B QA: ${e.message}`); }
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
