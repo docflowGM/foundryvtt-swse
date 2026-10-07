@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "weapon-phase-4h-d-phase-4-certification-v1",
+  "phase": "4H-D",
+  "family": "weapons",
+  "status": "PHASE_4_WEAPON_SEMANTIC_SELECTOR_RECOMMENDATION_AUTHORITY_CERTIFIED_AND_FROZEN",
+  "authorityOnly": true,
+  "productionMutationAuthorized": false,
+  "headline": {
+    "phase3BCanonicalIdentities": 203,
+    "phase4IdentitiesRepresented": 203,
+    "categoryRecords": 204,
+    "semanticVocabularyViolations": 0,
+    "forbiddenPseudoTagLeaks": 0,
+    "malformedExactAbilityJoins": 0,
+    "unresolvedMachineReadableAlternateRouteOmissions": 0,
+    "accidentalPayloadFlattening": 0,
+    "accidentalHybridFlattening": 0,
+    "productionMutation": "none"
+  },
+  "counts": {
+    "repoPresent": 151,
+    "repoMissing": 52,
+    "distinctSemanticTags": 80,
+    "exactAbilityLinks": 66,
+    "alternateRouteIdentities": 19,
+    "exoticAlternateProficiencyCases": 10
+  },
+  "rulingChecks": [
+    {
+      "id": "SIANG_LANCE_PROFILE_SCOPED",
+      "result": "PASS",
+      "detail": "exotic_weapon conditional to the ranged lance profile; base tags unchanged"
+    },
+    {
+      "id": "WRIST_ROCKET_PAYLOAD_SCOPED",
+      "result": "PASS",
+      "detail": "no static payload semantics on the base launcher"
+    },
+    {
+      "id": "MASSASSI_LANVAROK_FROZEN_PHASE3B",
+      "result": "PASS",
+      "detail": "advanced-melee ruling preserved; source conflict visible"
+    },
+    {
+      "id": "XERROL_PHASE3B_EXOTIC",
+      "result": "PASS",
+      "detail": "Phase 3B Exotic classification controls; no rifle tag"
+    },
+    {
+      "id": "TEHKLA_NAGAI_ROUTE_SCOPED",
+      "result": "PASS",
+      "detail": "Nagai simple route added; native Exotic tag/tags unchanged; census 9 -> 10"
+    },
+    {
+      "id": "SITH_LANVAROK_EXACT_ABILITY_NAME",
+      "result": "PASS",
+      "detail": "canonical ability casing"
+    },
+    {
+      "id": "VIBRO_SAW_DR_BYPASS_STRUCTURAL",
+      "result": "PASS",
+      "detail": "DAMAGE_REDUCTION_BYPASS stays an ontology gap"
+    }
+  ],
+  "carriedOpenItems": [
+    {
+      "id": "DH23_DESCRIPTION_PAGE",
+      "status": "UNVERIFIED_PRIMARY_SOURCE_PDF_REQUIRED",
+      "identityKey": "weapon-dh-23-blaster-pistol"
+    },
+    {
+      "id": "PAYLOAD_FLATTENING_weapon-concealed-dart-launcher",
+      "status": "OPEN_PLANNER_QUESTION",
+      "identityKey": "weapon-concealed-dart-launcher"
+    },
+    {
+      "id": "SIMPLE_WEAPON_DERIVED_SELECTORS",
+      "status": "DERIVED_FROM_PHASE_3B",
+      "count": 49,
+      "note": "4A Simple records carry derived group/proficiency selectors and no families."
+    },
+    {
+      "id": "SITH_LANVAROK_KISSAI_FAMILIARITY",
+      "status": "OPEN_PLANNER_QUESTION",
+      "identityKey": "weapon-sith-lanvarok"
+    },
+    {
+      "id": "SITH_SWORD_LIGHTSABER_CLASSIFICATION_SELECTOR",
+      "status": "PHASE_3B_STRUCTURED_ONLY",
+      "identityKey": "weapon-sith-sword",
+      "note": "Phase 3B structured rule (lightsaber classification for Block/Deflect/Redirect Shot) has no planner selector because 4A Simple predates the selector layer; Phase 5A must consume the Phase 3B rule."
+    }
+  ],
+  "chain": {
+    "4H-A": "228d6903e96fde92f40abbf7370424609a9cdc6b83637e8a54ac381cb0a2ee15",
+    "4H-B": "60e22a742ecc1de8b2ab0b909f88671e89a29fd83ff7da1712b518ef60a59832",
+    "4H-C": "9dfa1b667aa6b535ee8f2e07272df986a6cf48f913622348a596212cbe38c5ba"
+  },
+  "productionHashes": {
+    "packs/weapons.db": "70bd1216ef5106b48aead731d5ab38a920c065e8c3016a40e31c262b26f7b073",
+    "template.json": "3ba287ec84f88f12a898ebbd943de3395071d6f32c22e5d4eefb7c79029a9f7f"
+  }
+}

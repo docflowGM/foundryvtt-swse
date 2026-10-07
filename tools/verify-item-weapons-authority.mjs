@@ -2241,5 +2241,20 @@ if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-global-sema
   } catch (e) { fail(`4H-C combined authority: ${e.message}`); }
 }
 
+// ---- Phase 4H-D final Phase 4 certification (all freeze invariants recomputed; builder byte-stable) ----
+if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-d-phase-4-certification.json'))) {
+  const e4hd = errors.length;
+  try {
+    const mod = await import('./build-item-weapons-phase-4h-phase-4-certification.mjs');
+    const out = mod.buildPhase4HD();
+    if (fs.readFileSync(path.join(ROOT, mod.OUT_JSON), 'utf8') !== out.json || fs.readFileSync(path.join(ROOT, mod.OUT_MD), 'utf8') !== out.md) fail('4H-D certification is stale or hand-edited (rebuild with tools/build-item-weapons-phase-4h-phase-4-certification.mjs)');
+    const D = JSON.parse(out.json), h = D.headline;
+    if (D.status !== mod.STATUS || D.productionMutationAuthorized !== false || h.productionMutation !== 'none') fail('4H-D status / production-mutation flags');
+    if (h.phase3BCanonicalIdentities !== 203 || h.phase4IdentitiesRepresented !== 203 || h.categoryRecords !== 204 || h.semanticVocabularyViolations !== 0 || h.forbiddenPseudoTagLeaks !== 0 || h.malformedExactAbilityJoins !== 0 || h.unresolvedMachineReadableAlternateRouteOmissions !== 0 || h.accidentalPayloadFlattening !== 0 || h.accidentalHybridFlattening !== 0) fail('4H-D headline invariants must be 203/203/204 and all violation counters 0');
+    if (D.rulingChecks.length !== 7 || D.rulingChecks.some((c) => c.result !== 'PASS')) fail('4H-D named rulings must all pass');
+    if (errors.length === e4hd) console.log(`Phase 4 weapon semantic authority CERTIFIED AND FROZEN: ${h.phase4IdentitiesRepresented}/${h.phase3BCanonicalIdentities} identities (${h.categoryRecords} category records), 0 vocabulary violations, 0 pseudo-tag leaks, 0 malformed ability joins, 0 alternate-route omissions, 0 accidental payload/hybrid flattening, ${D.carriedOpenItems.length} carried open items, production mutation none`);
+  } catch (e) { fail(`4H-D certification: ${e.message}`); }
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
