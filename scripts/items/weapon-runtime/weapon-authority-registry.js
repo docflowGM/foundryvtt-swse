@@ -41,12 +41,21 @@ export class WeaponAuthorityRegistry {
 }
 
 let shared = null;
-export function setSharedWeaponAuthorityRegistry(registry) { shared = registry; return registry; }
+let loadFailure = null;
+export function setSharedWeaponAuthorityRegistry(registry) { shared = registry; loadFailure = null; return registry; }
 export function getSharedWeaponAuthorityRegistry() { return shared; }
+/** Phase 5D-A: the error of the last failed startup load (null when loaded or never attempted). Consumers fail closed on it. */
+export function getWeaponAuthorityRegistryLoadFailure() { return loadFailure; }
+export function resetSharedWeaponAuthorityRegistry() { shared = null; loadFailure = null; }
 
-/** Foundry-side loader (not used by tests, which build from the JSON file directly). */
+/** Foundry-side loader (not used by tests, which build from the JSON file directly). Records a load failure so consumers cannot silently treat canonical weapons as legacy. */
 export async function loadWeaponAuthorityRegistry(url = 'systems/foundryvtt-swse/data/weapons/canonical-weapon-registry.json') {
-  const res = await fetch(url);
-  if (!res.ok) throw new WeaponRuntimeError(ERROR_CODES.REGISTRY_INVALID, `registry fetch failed (${res.status})`, { url });
-  return setSharedWeaponAuthorityRegistry(new WeaponAuthorityRegistry(await res.json()));
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new WeaponRuntimeError(ERROR_CODES.REGISTRY_INVALID, `registry fetch failed (${res.status})`, { url });
+    return setSharedWeaponAuthorityRegistry(new WeaponAuthorityRegistry(await res.json()));
+  } catch (err) {
+    loadFailure = err instanceof WeaponRuntimeError ? err : new WeaponRuntimeError(ERROR_CODES.REGISTRY_INVALID, `registry load failed: ${err?.message ?? err}`, { url });
+    throw loadFailure;
+  }
 }

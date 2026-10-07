@@ -326,10 +326,15 @@ export function isThrownMeleeWeapon(weapon) {
   return system.thrown === true || /thrown|grenade/.test(text);
 }
 
-export function getWeaponAttackAbility(actor, weapon) {
+export function getWeaponAttackAbility(actor, weapon, context = {}) {
   const system = weapon?.system ?? {};
   const explicit = String(system.attackAttribute ?? system.combat?.attack?.ability ?? '').toLowerCase();
-  const defaultAbility = isRangedWeapon(weapon) && !isMeleeWeapon(weapon) ? 'dex' : 'str';
+  // Phase 5D-A: a selected canonical profile's branch (context.weaponRuntime, from the weapon-runtime attack consumer)
+  // drives the DEFAULT ability only; an explicit player/data-owned attackAttribute above still wins.
+  const profileBranch = context?.weaponRuntime?.source === 'canonical' ? context.weaponRuntime.branch : null;
+  const defaultAbility = profileBranch === 'ranged' ? 'dex'
+    : profileBranch === 'melee' ? 'str'
+    : (isRangedWeapon(weapon) && !isMeleeWeapon(weapon) ? 'dex' : 'str');
   let resolved = defaultAbility;
 
   if (explicit) {

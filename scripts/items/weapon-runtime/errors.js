@@ -23,6 +23,7 @@ export const ERROR_CODES = Object.freeze({
   NO_EXECUTABLE_PROFILE: 'no-executable-profile',
   EXOTIC_IDENTITY_UNRESOLVED: 'exotic-identity-unresolved',
   REGISTRY_INVALID: 'registry-invalid',
+  REGISTRY_UNAVAILABLE: 'registry-unavailable',
 });
 
 /** GM-visible, non-silent reporting for runtime callers that cannot propagate a throw. */
