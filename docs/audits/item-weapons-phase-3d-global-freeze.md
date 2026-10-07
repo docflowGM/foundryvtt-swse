@@ -140,6 +140,6 @@ Canonical authority already carries every capability above (3B, schema v2.9); th
 - phase1WeaponsContent: `1cc37b41db8dba9579a025edc36d621e334ebc77ee742214a8b7d0d07d95be13`
 - ammoOverlay: `1f319a7df3ab2ee71043743bce033b75a4bbb600ec27553c7ecb9f8d48aba65c`
 - phase3a: `ed6adc356caa25371d5600ea6f104bfef9fb449dec7a015f9d2724cc32bd0222`
-- phase3b: `711c6c7a738a69d40ba2e1e4e3cebc6075de2eb6670827771d05f27d0a42978d`
-- phase3c: `8b73f45a54c3bd4373b2fa8d734b25165aea7a6d3a9aa838332b1ff6dc45ff9a`
+- phase3b: `6fbdeedddafdc2ab31990ef790345b2357ce4a2849dcd5935b4189b2c3ff4cab`
+- phase3c: `cae94be6f6435cec9bc3909339661cfa169619a96de08ac4e4b94580e84a5fce`
 - phase01Weapons: `8082703831caf7f6a1679cbd3f6df4b5e88eb776a0e85d4c941be4af93d39d6b`

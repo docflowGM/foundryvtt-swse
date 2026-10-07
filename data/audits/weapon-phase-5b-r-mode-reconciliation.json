@@ -125,8 +125,9 @@
    "futureConsumer": "configuration change action + profile availability by configuration (5E)",
    "reason": "matches a Phase 3B configuration state by explicit id",
    "mappedProfileIds": [
-    "whip",
-    "whip-pin-trip"
+    "whip-melee",
+    "whip-pin",
+    "whip-trip"
    ],
    "mappedConfigurationId": "whip",
    "mappedModeProfileId": null
@@ -320,8 +321,9 @@
    "futureConsumer": "configuration change action + profile availability by configuration (5E)",
    "reason": "matches a Phase 3B configuration state by explicit id",
    "mappedProfileIds": [
-    "whip",
-    "whip-pin-trip"
+    "whip-melee",
+    "whip-pin",
+    "whip-trip"
    ],
    "mappedConfigurationId": "whip"
   },

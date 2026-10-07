@@ -72,6 +72,29 @@ for (const k of ['unmapped::Atlatl', 'unmapped::Cesta']) {
 assert.equal(byKey['unmapped::Cesta'].canonicalStats.attackProfiles.find((p) => p.id === 'launcher').qualities.accurate, true);
 assert.equal(byKey['unmapped::Atlatl'].canonicalStats.attackProfiles.find((p) => p.id === 'launcher').qualities.accurate, false);
 
+// ---- Amphistaff: inherited profiles equal their certified source identities (drift guard) ----------------------------------
+{
+  const amp = Object.fromEntries(byKey['unmapped::Amphistaff'].canonicalStats.attackProfiles.map((p) => [p.id, p]));
+  assert.deepEqual(Object.keys(amp), ['quarterstaff-end1', 'quarterstaff-end2', 'spear-melee', 'spear-thrown', 'whip-melee', 'whip-pin', 'whip-trip', 'venom-spit']);
+  const qs = byKey['unmapped::Quarterstaff'].canonicalStats.attackProfiles, sp = byKey['unmapped::Spear'].canonicalStats.attackProfiles[0];
+  const same = (a, b) => assert.deepEqual([a.damage, a.damageType], [b.damage, b.damageType]);
+  same(amp['quarterstaff-end1'], qs[0]); same(amp['quarterstaff-end2'], qs[1]); same(amp['spear-melee'], sp); same(amp['spear-thrown'], sp);
+  assert.equal(amp['quarterstaff-end1'].qualities.doubleWeapon, true);
+  assert.equal(amp['whip-melee'].damage.formula, '1d4'); assert.deepEqual(amp['whip-melee'].damageType.types, ['piercing']); assert.equal(amp['whip-melee'].qualities.reach, true);
+  assert.equal(byKey['unmapped::Amphistaff'].operation.reachSquares, 2);
+  assert.equal(amp['spear-thrown'].range.profileId, 'thrown-weapons'); assert.equal(amp['spear-thrown'].schemaFamily.branch, 'ranged');
+  for (const id of ['whip-pin', 'whip-trip', 'venom-spit']) assert.equal(amp[id].kind, 'special', id);
+  assert.equal(amp['venom-spit'].damage.mode, 'none', 'no invented venom-spit damage');
+  assert.equal(amp['venom-spit'].range.maxSquares, 10);
+  assert.ok(amp['venom-spit'].activationRequirements.some((r) => r.type === 'usage-limit' && r.uses === 1 && r.per === '24-standard-hours'));
+  assert.deepEqual(amp['venom-spit'].triggeredEffects[0].defenses, ['reflex', 'fortitude']);
+  for (const id of ['spear-melee', 'spear-thrown', 'whip-melee']) assert.equal(amp[id].triggeredEffects[0].defense, 'fortitude');
+  assert.equal(amp['whip-pin'].triggeredEffects[0].effect, 'resolve-as-pin-feat-without-feat');
+  assert.equal(amp['whip-trip'].triggeredEffects[0].effect, 'resolve-as-trip-feat-without-feat');
+  assert.equal(byKey['unmapped::Amphistaff'].canonicalStats.configurationStates.every((c) => c.transitionAction === 'swift'), true);
+  assert.ok(amp['whip-pin'].activationRequirements.some((r) => r.condition === 'proficient-wielder'), 'pin/trip requires proficiency but not the feats');
+}
+
 // ---- hybrid condition policy -------------------------------------------------------------------------------------------
 assert.equal(conds.EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED, 0);
 assert.equal(conds.counts.UNSUPPORTED, 0);

@@ -2723,7 +2723,7 @@
             "statTablePage": 122
           }
         ],
-        "mechanicsRecordSha256": "f93f10ba8b55b34e614d1c2f918a45995aa667d1193eae7ac50ddc7cf915ef37",
+        "mechanicsRecordSha256": "1852c2b859e4049b42c23120c73222ac996d2aa4009995ed636de5456d5d4f6d",
         "mechanicsPointer": "data/audits/item-weapons-phase-3b-canonical-authority.json#identities[unmapped::Amphistaff].canonicalStats"
       },
       "categories": [
@@ -39080,7 +39080,7 @@
     }
   ],
   "inputs": {
-    "data/audits/item-weapons-phase-3b-canonical-authority.json": "711c6c7a738a69d40ba2e1e4e3cebc6075de2eb6670827771d05f27d0a42978d",
+    "data/audits/item-weapons-phase-3b-canonical-authority.json": "6fbdeedddafdc2ab31990ef790345b2357ce4a2849dcd5935b4189b2c3ff4cab",
     "data/audits/item-weapons-phase-4a-simple-semantic-rolling.json": "4cf3b12777a113de82b21dbe2ff8a388d6e39c5e0a220d1afbb0e32703c0acdd",
     "data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json": "0c2574d28129519fbc16433ff03469243d87eda38edc04ea09ce4984d0f8e226",
     "data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json": "144e5b04e76ad792b7c01e29b6039a4a313c41d6a8287a7a896f9738e557ccbd",
@@ -39088,7 +39088,7 @@
     "data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json": "88cc4fe20a3a86594e961676160682cbe3e902154ef9f0becdc368a2258feb58",
     "data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json": "fd484c64f0eb5472253f4f99f5e871a584ff482f6435aafe22d8a21454c073d5",
     "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json": "e0fc2e14d14f0227b9e84b904dd82e9b9c94df3fad5f8df121cbe2937b9f5005",
-    "data/audits/item-weapons-phase-4h-authority-reconciliation.json": "857f525328396df0f7d1d7ea4354f2b4ab88d9aaf71db59012019ec876082629",
+    "data/audits/item-weapons-phase-4h-authority-reconciliation.json": "91c1874b96b31491debcc923293f27805cd813dd876b995f300f69f4c33c0f05",
     "data/audits/item-weapons-phase-4h-b-global-semantic-qa.json": "7454d9cbd8ff83a15604b2af6533c30d8a7bd9b26d6e948af1e63a8241132f8e"
   }
 }

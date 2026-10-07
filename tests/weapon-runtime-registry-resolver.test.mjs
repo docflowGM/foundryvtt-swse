@@ -74,7 +74,7 @@ throwsCode(() => resolve('weapon-bowcaster', { profileId: 'nope' }), 'unknown-pr
 throwsCode(() => resolve('weapon-wrist-rocket-launcher', { payloadId: 'nope' }), 'unknown-payload-id');
 throwsCode(() => resolve('lightsaber-chassis-retrosaber', { configurationId: 'nope' }), 'unknown-configuration-id');
 // selector-only mode is never promoted to an executable profile
-throwsCode(() => resolve('unmapped::Amphistaff', { profileId: 'whip-pin-trip' }), 'profile-unavailable-in-configuration');
+throwsCode(() => resolve('unmapped::Amphistaff', { profileId: 'whip-pin' }), 'profile-unavailable-in-configuration');
 throwsCode(() => resolve('unmapped::Amphistaff', { profileId: 'spear' }), 'unknown-profile-id'); // 'spear' is a configuration, not a profile
 // explicit valid profile is selected; none -> default
 assert.equal(resolve('weapon-massassi-lanvarok', { profileId: 'melee' }).selection.profileId, 'melee');
@@ -113,7 +113,7 @@ assert.deepEqual(amp().profiles.filter((p) => !p.availableIn || p.availableIn.in
 assert.equal(amp().selection.configurationId, 'quarterstaff'); assert.equal(amp().selection.profileId, 'quarterstaff-end1');
 assert.equal(amp('spear').selection.profileId, 'spear-melee');
 assert.equal(resolve('unmapped::Amphistaff', { configurationId: 'spear', profileId: 'spear-thrown' }).profiles.find((p) => p.id === 'spear-thrown').branch, 'ranged');
-assert.equal(resolve('unmapped::Amphistaff', { configurationId: 'whip', profileId: 'whip-pin-trip' }).selection.profileId, 'whip-pin-trip');
+assert.equal(resolve('unmapped::Amphistaff', { configurationId: 'whip', profileId: 'whip-pin' }).selection.profileId, 'whip-pin');
 throwsCode(() => resolve('unmapped::Amphistaff', { configurationId: 'whip', profileId: 'spear-melee' }), 'profile-unavailable-in-configuration');
 assert.equal(resolve('unmapped::Amphistaff', { profileId: 'venom-spit' }).selection.profileId, 'venom-spit', 'special action available in any form');
 // Atlatl / Cesta: melee + launcher; launcher damage is payload-owned (never the melee 2d4)
@@ -150,7 +150,7 @@ throwsCode(() => resolve('weapon-plx-2m-portable-missile-launcher', { modeId: 'n
 const rc = reconcileProfiles({ attackProfiles: [{ id: 'a', kind: 'attack', schemaFamily: { branch: 'melee' } }], configurationStates: [{ id: 'c1' }], modeProfiles: [{ id: 'm1', attackProfileId: 'a' }] }, [{ mode: 'c1' }, { mode: 'm1' }, { mode: 'a' }, { mode: 'zzz' }, { mode: 'yyy' }]);
 assert.deepEqual(rc.modes.map((m) => `${m.mode}:${m.classification}`).sort(), ['a:ATTACK_PROFILE', 'c1:CONFIGURATION', 'm1:OPERATING_MODE', 'yyy:UNRESOLVED', 'zzz:UNRESOLVED']);
 assert.equal(rc.status, 'UNRESOLVED_MODES');
-assert.equal(registry.getByIdentityKey('unmapped::Amphistaff').canonicalStats.attackProfiles.length, 7);
+assert.equal(registry.getByIdentityKey('unmapped::Amphistaff').canonicalStats.attackProfiles.length, 8);
 
 // ---- profile family coverage (ordinary, hybrid, double, multi-profile, payload, stun) ---------------------------------
 const all = registry.getAll();

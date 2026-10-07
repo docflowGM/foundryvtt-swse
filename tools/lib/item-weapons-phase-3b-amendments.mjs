@@ -31,20 +31,21 @@ export function applyCompletenessAmendments(identities) {
     const spearHit = 'damage-dealt-and-attack-roll-equals-or-exceeds-defense';
     const e1 = clone(qs.canonicalStats.attackProfiles[0]), e2 = clone(qs.canonicalStats.attackProfiles[1]);
     const profiles = [
-      mk('quarterstaff-end1', 'Quarterstaff form (end 1)', 'melee', e1, { activationRequirements: cfgReq('quarterstaff'), notes: ['Quarterstaff form has all the qualities of a quarterstaff (source text).'] }),
-      mk('quarterstaff-end2', 'Quarterstaff form (end 2)', 'melee', e2, { activationRequirements: cfgReq('quarterstaff') }),
+      mk('quarterstaff-end1', 'Quarterstaff form (end 1)', 'melee', e1, { activationRequirements: cfgReq('quarterstaff'), notes: ['Quarterstaff form has all the qualities of a quarterstaff (source text).', 'Deterministically inherited at build time from certified identity unmapped::Quarterstaff profile end1 (damage, type, qualities); re-verified against it by verify-item-weapons-authority.'] }),
+      mk('quarterstaff-end2', 'Quarterstaff form (end 2)', 'melee', e2, { activationRequirements: cfgReq('quarterstaff'), notes: ['Deterministically inherited at build time from certified identity unmapped::Quarterstaff profile end2.'] }),
     ];
     const spearTrig = (id) => [conditionTrack(id, spearHit)];
-    const spearMelee = mk('spear-melee', 'Spear form (melee)', 'melee', sp.canonicalStats.attackProfiles[0], { activationRequirements: cfgReq('spear'), triggeredEffects: spearTrig('spear-poison-condition-track') });
+    const spearMelee = mk('spear-melee', 'Spear form (melee)', 'melee', sp.canonicalStats.attackProfiles[0], { activationRequirements: cfgReq('spear'), triggeredEffects: spearTrig('spear-poison-condition-track'), notes: ['Deterministically inherited at build time from certified identity unmapped::Spear profile primary (damage, type, qualities).'] });
     const thrownRange = clone(ep.canonicalStats.attackProfiles.find((p) => p.id === 'thrown').range);
     const spearThrownSrc = clone(sp.canonicalStats.attackProfiles[0]); spearThrownSrc.range = thrownRange; spearThrownSrc.qualities.thrown = true;
-    const spearThrown = mk('spear-thrown', 'Spear form (thrown)', 'ranged', spearThrownSrc, { activationRequirements: cfgReq('spear'), triggeredEffects: spearTrig('spear-thrown-poison-condition-track') });
+    const spearThrown = mk('spear-thrown', 'Spear form (thrown)', 'ranged', spearThrownSrc, { activationRequirements: cfgReq('spear'), triggeredEffects: spearTrig('spear-thrown-poison-condition-track'), notes: ['Spear damage inherited from unmapped::Spear; range is the global thrown-weapons table (copied from the certified Electropole thrown profile), not a weapon-specific table.'] });
     const whipSrc = { damage: { mode: 'dice', diceCount: 1, dieSize: 4, flatBonus: 0, formula: '1d4' }, damageType: { mode: 'single', types: ['piercing'], qualifiers: [] }, range: clone(base.range), qualities: { ...clone(base.qualities), reach: true } };
-    const whip = mk('whip', 'Whip form (tail)', 'melee', whipSrc, { activationRequirements: cfgReq('whip'), triggeredEffects: [conditionTrack('whip-poison-condition-track', spearHit)], notes: ['Tail deals 1d4 piercing plus the wielder\'s Strength modifier; reach 2 squares (source text).'] });
-    const pinTrip = mk('whip-pin-trip', 'Whip form (Pin or Trip instead of damage)', 'melee', { damage: { mode: 'none', diceCount: 0, dieSize: null, flatBonus: 0, formula: '-' }, damageType: { mode: 'none', types: [], qualifiers: [] }, range: clone(base.range), qualities: { ...clone(base.qualities), reach: true } }, {
+    const whip = mk('whip-melee', 'Whip form (tail)', 'melee', whipSrc, { activationRequirements: cfgReq('whip'), triggeredEffects: [conditionTrack('whip-poison-condition-track', spearHit)], notes: ['Tail deals 1d4 piercing plus the wielder\'s Strength modifier; reach 2 squares (source text).'] });
+    const pinTripSrc = () => ({ damage: { mode: 'none', diceCount: 0, dieSize: null, flatBonus: 0, formula: '-' }, damageType: { mode: 'none', types: [], qualifiers: [] }, range: clone(base.range), qualities: { ...clone(base.qualities), reach: true } });
+    const pinTrip = (which) => mk(`whip-${which}`, `Whip form (${which === 'pin' ? 'Pin' : 'Trip'} instead of damage)`, 'melee', pinTripSrc(), {
       kind: 'special', activationRequirements: [...cfgReq('whip'), { type: 'proficiency', condition: 'proficient-wielder' }],
-      triggeredEffects: [{ id: 'pin-or-trip-substitution', trigger: 'in-place-of-whip-damage', effect: 'resolve-as-pin-or-trip-feat-without-feat', choices: ['pin', 'trip'] }],
-      notes: ['Instead of dealing whip damage, a proficient wielder may pin or trip as though using the Pin or Trip feat without needing that feat (source text).'],
+      triggeredEffects: [{ id: `${which}-without-feat`, trigger: 'in-place-of-whip-damage', effect: `resolve-as-${which}-feat-without-feat` }],
+      notes: [`Instead of dealing whip damage, a proficient wielder may ${which} the target as though using the ${which === 'pin' ? 'Pin' : 'Trip'} feat without needing the feat (source text).`],
     });
     const venom = mk('venom-spit', 'Venom spit (any form)', 'ranged', { damage: { mode: 'none', diceCount: 0, dieSize: null, flatBonus: 0, formula: '-' }, damageType: { mode: 'none', types: [], qualifiers: [] }, range: { ...clone(base.range), mode: 'fixed-maximum', maxSquares: 10 }, qualities: clone(base.qualities) }, {
       kind: 'special',
@@ -52,7 +53,7 @@ export function applyCompletenessAmendments(identities) {
       triggeredEffects: [{ id: 'venom-spit-condition-track', trigger: 'attack-roll-equals-or-exceeds-both-defenses', defenses: ['reflex', 'fortitude'], effect: 'move-target-condition-track', steps: -1, persistent: true }],
       notes: ['In any form the wielder can coax it to spit venom up to 10 squares as a standard action; usable once every 24 standard hours (source text).'],
     });
-    profiles.push(spearMelee, spearThrown, whip, pinTrip, venom);
+    profiles.push(spearMelee, spearThrown, whip, pinTrip('pin'), pinTrip('trip'), venom);
     a.canonicalStats.attackProfiles = profiles;
     a.canonicalStats.configurationStates = [
       { id: 'quarterstaff', label: 'Quarterstaff form', default: true, attackUsable: true, transitionAction: 'swift' },
@@ -62,7 +63,7 @@ export function applyCompletenessAmendments(identities) {
     a.canonicalStats.modeProfiles = [{ id: 'double-weapon-full-round', label: 'Attack with both ends (quarterstaff form)', attackProfileIds: ['quarterstaff-end1', 'quarterstaff-end2'], attackRollModifierEach: -10, notes: ['Quarterstaff qualities: attack with both ends as a full-round action; certain feats and talents reduce these penalties.'], attackProfileId: null, switchAction: 'full-round' }];
     a.canonicalStats.triggeredEffects = profiles.flatMap((p) => p.triggeredEffects.map(clone));
     for (const q of a.conditionalQualities) q.when = { ...q.when, configurationId: /quarterstaff/.test(q.when.description) ? 'quarterstaff' : /spear/.test(q.when.description) ? 'spear' : 'whip' };
-    a.operation = { ...(a.operation || {}), switchFormAction: 'swift', reachSquares: 2, reachProfileIds: ['whip'], allowedGrappleFeats: ['Pin', 'Trip'], pinTripSubstitution: { profileId: 'whip-pin-trip', requiresProficientWielder: true, feat: 'none-required' }, venomSpit: { profileId: 'venom-spit', rangeSquares: 10, action: 'standard', usage: { uses: 1, per: '24-standard-hours' } } };
+    a.operation = { ...(a.operation || {}), switchFormAction: 'swift', reachSquares: 2, reachProfileIds: ['whip'], allowedGrappleFeats: ['Pin', 'Trip'], pinTripSubstitution: { profileIds: ['whip-pin', 'whip-trip'], requiresProficientWielder: true, feat: 'none-required' }, venomSpit: { profileId: 'venom-spit', rangeSquares: 10, action: 'standard', usage: { uses: 1, per: '24-standard-hours' } } };
     note('amphistaff-forms-and-special-attacks', a.identityKey, ['canonicalStats.attackProfiles', 'canonicalStats.configurationStates', 'canonicalStats.modeProfiles', 'canonicalStats.triggeredEffects', 'conditionalQualities[].when.configurationId', 'operation.*'], 'Amphistaff canonicalPlayerText (three forms, spear wielded/thrown, whip reach 2 + Pin/Trip, venom spit 10 squares once/24h); damage/qualities cloned from certified Quarterstaff, Spear and Electropole-thrown range');
   }
 

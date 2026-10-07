@@ -8,7 +8,7 @@
   "inputs": {
     "phase3b": {
       "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
-      "sha256": "711c6c7a738a69d40ba2e1e4e3cebc6075de2eb6670827771d05f27d0a42978d"
+      "sha256": "6fbdeedddafdc2ab31990ef790345b2357ce4a2849dcd5935b4189b2c3ff4cab"
     },
     "phase01Weapons": {
       "sha256": "8082703831caf7f6a1679cbd3f6df4b5e88eb776a0e85d4c941be4af93d39d6b"
@@ -1021,7 +1021,7 @@
         "phase3bRef": {
           "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
           "identityKey": "unmapped::Amphistaff",
-          "sha256": "9d179aad336cc276d04a1b0c18b74b3241bacd09e1ab9a2760ced4eaea6035a2"
+          "sha256": "f3e0a6e2cff66a2ba4bc1fcb39dc892a35a482d0c871a43cfe2d76b7a69f76ae"
         }
       },
       "repo": {

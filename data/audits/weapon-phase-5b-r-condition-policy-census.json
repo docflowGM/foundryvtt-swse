@@ -499,9 +499,12 @@
    "identityCount": 1,
    "policy": "AUTO",
    "predicate": {
-    "op": "eq",
+    "op": "in",
     "key": "profileId",
-    "value": "whip-pin-trip"
+    "values": [
+     "whip-pin",
+     "whip-trip"
+    ]
    }
   },
   {

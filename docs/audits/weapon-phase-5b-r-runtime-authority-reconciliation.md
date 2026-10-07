@@ -19,7 +19,7 @@ Amendments are code (`tools/lib/item-weapons-phase-3b-amendments.mjs`, applied b
 | Unresolved modes | **0** |
 | Previously “incomplete” seven identities / 13 modes | all typed and executable-in-data (table §3) |
 | Executable canonical conditions with policy UNSUPPORTED | **0** (98 AUTO / 11 PROMPT distinct values; 3 activation-requirement types registered) |
-| Orphan certified field paths | **0** (2,190 paths: 1,507 3B + 683 4H) |
+| Orphan certified field paths | **0** (2,187 paths: 1,504 3B + 683 4H) |
 
 ## 2. Three concepts (planner ruling 1)
 
@@ -37,7 +37,7 @@ Reconciliation evidence order (pure, deterministic, no names): explicit configur
 
 | Identity | Ruling | What the records showed | Action |
 |---|---|---|---|
-| **Amphistaff** | correct data | 3B had one placeholder profile with prose-only forms | **Amended:** 3 `configurationStates` (quarterstaff default / spear / whip, swift to change); 7 profiles gated by `activationRequirements{type:configuration}`: `quarterstaff-end1/-end2` (cloned from certified Quarterstaff), `spear-melee`, `spear-thrown` (spear damage; thrown range copied from Electropole’s thrown profile), `whip` (1d4 piercing, reach), `whip-pin-trip` (special; Pin/Trip without feat), `venom-spit` (special, 10 sq, standard, 1/24 h, hits both defenses → −1 persistent CT); `modeProfiles` both-ends −10; poison condition-track `triggeredEffects`; `conditionalQualities[].when.configurationId` added beside the prose |
+| **Amphistaff** | correct data | 3B had one placeholder profile with prose-only forms | **Amended:** 3 `configurationStates` (quarterstaff default / spear / whip, swift to change); 8 profiles gated by `activationRequirements{type:configuration}`: `quarterstaff-end1/-end2` and `spear-melee`/`spear-thrown` (damage/type/qualities deterministically inherited at build time from certified Quarterstaff/Spear, drift-guarded by test; thrown range = global thrown-weapons table), `whip-melee` (1d4 piercing, reach 2), `whip-pin` and `whip-trip` (special; require a proficient wielder, not the feats), `venom-spit` (special, 10 sq, standard, 1/24 h, hits both defenses → −1 persistent CT); `modeProfiles` both-ends −10; poison condition-track `triggeredEffects`; `conditionalQualities[].when.configurationId` added beside the prose |
 | **Atlatl** | correct data | only melee `primary` | **Amended:** `launcher` profile (ranged, simple-weapons range, damage `varies-by-payload`), `payloadProfiles[energy-ball]` copied programmatically from certified `weapon-energy-ball` (2d8 energy), `ammo` scoped to `launcher`. Melee 2d4 stays on `primary`; Gungan route preserved |
 | **Cesta** | correct data | only melee `primary` (reach) | Same as Atlatl; launcher profile `Accurate` per the Energy Ball cesta rule; staff melee unchanged |
 | **Electropole** | verify first | **melee + thrown profiles already existed**; only the Gungan route was prose (`condition`) | **Amended:** `proficiencyRules[0].species = "Gungan"` (existing key used by other rules). Resolver now treats a structured Phase 3B alternate route with `species` + `classifications` as a species route |
@@ -70,3 +70,19 @@ Census (`weapon-phase-5b-r-condition-policy-census.json`): 109 distinct conditio
 1. `PROFICIENCY_ROUTE` as a fifth typed value (alternative: move the Electropole descriptor out of the 4H `modes` list in a 4H amendment).
 2. 20 identities carry `alternateRoutesPhase3B` entries with no `species` (condition-only, e.g. Sith Sword). They are not auto-applied; each needs a structured predicate or an explicit PROMPT policy before 5C proficiency migration.
 3. The AUTO context vocabulary (§5) is a contract for the 5C/5D attack workflow to produce.
+
+## 8. Planner-supplied source authority (applied)
+
+The planner's per-weapon source ruling was applied on top of §3. Differences resolved by *proving against the certified records*:
+
+| Planner point | Outcome |
+|---|---|
+| Amphistaff quarterstaff/spear forms should inherit canonical mechanics, not duplicate | Inherited **deterministically at build time** (programmatic copy of damage/type/qualities from certified Quarterstaff/Spear; each profile note names its source; `tests/weapon-runtime-5br-reconciliation.test.mjs` fails if they ever diverge). Runtime configuration delegation (Vibrobayonet → Vibrodagger) is generic (`operation.configurationResolution`), not name-based; extending it to multi-profile inheritance would need a new overlay structure, so it was not done |
+| Whip Pin and Trip are separate alternatives | Split into `whip-pin` and `whip-trip` special profiles (previously one `whip-pin-trip`) |
+| Spear-thrown / Electropole-thrown use global thrown rules | `thrown-weapons` global range profile; no weapon-specific table |
+| **Persistent wording** | Planner text says “−1 step” for whip and venom spit; the certified Phase 1/2 text says “−1 persistent step” (spear) and “the same poison condition-track effect” (whip, venom). Certified wording kept (`persistent:true`) — **planner to confirm** |
+| Amphistaff Yuuzhan Vong familiarity “where applicable” | Not present in the certified Amphistaff proficiency authority (`proficiencyRules` empty; only the exact Exotic feat) — nothing invented. Planner to supply it as structured data if wanted |
+| Vibrobayonet “Core double-weapon interaction for a rifle with a mounted bayonet” | No certified 3B/4H record carries that interaction (no identity text/operation mentions it); not invented. Candidate planner data item |
+| Atlatl `melee`/`energy-ball-launcher`, Cesta `staff-melee`/`energy-ball-launcher`, Shock Stick `rifle-mounted`, Amphistaff `whip-melee` | Conceptual names; repo ids kept to match the 4H selector ids the reconciler joins on (`primary`+`launcher`, `mounted-bayonet`, …). Energy Ball range = `simple-weapons` global table, Accurate only for Cesta |
+| PLX-2M, Electropole | Already complete in 3B (modeProfiles with −2 Reflex by target category; melee+thrown profiles, 2d8 stun, energy-cell resource, microrepulsorlift encumbrance exception); no data change beyond the Electropole structured Gungan route |
+| The 52 repo-missing weapons | Untouched; their canonical data is already in the registry for the production-convergence phase |

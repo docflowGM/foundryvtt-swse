@@ -31,7 +31,7 @@ addAll(['critical-hit', 'successful-hit', 'on-hit', 'after-hit', 'successful-wea
   'beginning-of-wielder-turn', 'start-of-grabbed-target-turn-before-actions', 'target-ends-turn-grabbed-or-grappled-by-lightwhip', 'while-target-grabbed-by-this-weapon',
   'while-snared', 'successful-ranged-grab-or-grapple', 'weapon-takes-any-damage', 'weapon-fired', 'swift-action-dial-up', 'end-of-wielder-next-turn', 'after-one-round',
   'proficient-wielder-swift-action-activation', 'attack-of-opportunity'], (v) => event(v));
-add('in-place-of-whip-damage', eq('profileId', 'whip-pin-trip'));
+add('in-place-of-whip-damage', anyOf('profileId', ['whip-pin', 'whip-trip']));
 add('darter successfully deals damage', all(event('successful-hit'), eq('payloadId', 'poison')));
 add('attack roll beats target Reflex Defense', event('attack-roll-equals-or-exceeds-reflex'));
 add('successful hit then secondary attack vs Fortitude Defense succeeds', event('secondary-attack-vs-fortitude-succeeds'));

@@ -35,19 +35,19 @@
   "adapterExposureGaps": 0
  },
  "summary": {
-  "fieldPaths": 2190,
+  "fieldPaths": 2187,
   "byImplementationState": {
    "ADAPTER_REQUIRED": 66,
    "DISPLAY_ONLY": 29,
    "EXISTING_CONSUMER_WRONG_INPUT": 539,
-   "NEW_CONSUMER_REQUIRED": 1102,
+   "NEW_CONSUMER_REQUIRED": 1099,
    "RECOMMENDATION_ONLY": 248,
    "STORE_ONLY": 25,
    "VALIDATION_ONLY": 181
   },
   "byClassification": {
    "DISPLAY": 433,
-   "EXECUTION": 1540,
+   "EXECUTION": 1537,
    "INVENTORY": 121,
    "PLAYER_CHOICE": 401,
    "PLAYER_STATE": 289,
@@ -67,8 +67,8 @@
    "5C/5E": 16,
    "5D": 294,
    "5D/5E": 140,
-   "5E": 535,
-   "5E/5F": 99,
+   "5E": 531,
+   "5E/5F": 100,
    "5E/5H": 162,
    "5F": 104,
    "5G": 52,
@@ -79,7 +79,7 @@
   "alreadyConsumedCorrectly": 0,
   "existingConsumerWrongInput": 539,
   "adapterRequired": 66,
-  "newConsumerRequired": 1102,
+  "newConsumerRequired": 1099,
   "nonRuntimeDisposition": 483
  },
  "entries": [
@@ -5808,42 +5808,6 @@
   },
   {
    "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].bonusSource",
-   "classification": [
-    "EXECUTION"
-   ],
-   "consumers": [
-    "critical damage composition",
-    "post-hit effect/rider executor"
-   ],
-   "implementationState": "NEW_CONSUMER_REQUIRED",
-   "migrationPhase": "5E",
-   "ruleId": "3b.profile.effects",
-   "mechanicFamily": null,
-   "registryField": "canonicalStats",
-   "resolvedProperty": "canonicalStats",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].choices",
-   "classification": [
-    "EXECUTION"
-   ],
-   "consumers": [
-    "critical damage composition",
-    "post-hit effect/rider executor"
-   ],
-   "implementationState": "NEW_CONSUMER_REQUIRED",
-   "migrationPhase": "5E",
-   "ruleId": "3b.profile.effects",
-   "mechanicFamily": null,
-   "registryField": "canonicalStats",
-   "resolvedProperty": "canonicalStats",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].choices[]",
    "classification": [
     "EXECUTION"
    ],
@@ -15519,40 +15483,6 @@
    "note": null
   },
   {
-   "path": "3B:canonicalStats.triggeredEffects[].choices",
-   "classification": [
-    "EXECUTION"
-   ],
-   "consumers": [
-    "post-hit effect/rider executor"
-   ],
-   "implementationState": "NEW_CONSUMER_REQUIRED",
-   "migrationPhase": "5E",
-   "ruleId": "3b.triggered",
-   "mechanicFamily": null,
-   "registryField": "canonicalStats",
-   "resolvedProperty": "canonicalStats",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:canonicalStats.triggeredEffects[].choices[]",
-   "classification": [
-    "EXECUTION"
-   ],
-   "consumers": [
-    "post-hit effect/rider executor"
-   ],
-   "implementationState": "NEW_CONSUMER_REQUIRED",
-   "migrationPhase": "5E",
-   "ruleId": "3b.triggered",
-   "mechanicFamily": null,
-   "registryField": "canonicalStats",
-   "resolvedProperty": "canonicalStats",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
    "path": "3B:canonicalStats.triggeredEffects[].condition",
    "classification": [
     "EXECUTION"
@@ -24646,7 +24576,25 @@
    "note": null
   },
   {
-   "path": "3B:operation.pinTripSubstitution.profileId",
+   "path": "3B:operation.pinTripSubstitution.profileIds",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.pinTripSubstitution.profileIds[]",
    "classification": [
     "EXECUTION"
    ],
