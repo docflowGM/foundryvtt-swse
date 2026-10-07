@@ -1,0 +1,493 @@
+{
+  "schemaVersion": "swse-weapon-semantic-authority-v1",
+  "title": "Phase 4G — Exotic Weapons Semantic / Selector / Recommendation Rolling Planner Authority",
+  "status": "WEAPON_TAG_PHASE_4G_EXOTIC_ROUND_1_PLANNER_ADJUDICATED",
+  "phase": "4G",
+  "category": "Exotic Weapons",
+  "productionMutationAuthorized": false,
+  "repositoryImplementationCertified": false,
+  "sourcePolicy": {
+    "primaryNormalizedAuthority": "Phase 3B frozen canonical weapon authority",
+    "searchableSourceLayer": "Uploaded SWSE TXT sourcebooks",
+    "visualEscalationAuthority": "Uploaded PDFs when wording, layout, or identity is ambiguous",
+    "productionRecordsAreSemanticAuthority": false
+  },
+  "vocabularyRule": {
+    "semanticTags": "Only tags already used by at least one certified feat or talent may be used.",
+    "structuralSelectorsAreNotSemanticTags": true,
+    "exoticWeaponRuling": "Use exotic_weapon as an unconditional semantic tag when the canonical weapon identity genuinely requires weapon-specific Exotic Weapon Proficiency. Species or ancestry rules that provide an alternate legal proficiency route do not erase the weapon's Exotic identity. Hybrid items with only an Exotic mode/profile must be adjudicated conditionally later."
+  },
+  "census": {
+    "canonicalExoticProficiencyIdentities": 32,
+    "repoPresent": 18,
+    "repoMissing": 14,
+    "meleeProfile": 15,
+    "rangedProfile": 15,
+    "hybridProfile": 2,
+    "alternateProficiencyOrHandlingCases": 9,
+    "adjudicated": 5,
+    "remaining": 27,
+    "nextIdentity": "Bowcaster"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "range": "Amphistaff → Blastsword",
+      "identityCount": 5,
+      "repoPresent": 1,
+      "repoMissing": 4
+    }
+  ],
+  "assignments": [
+    {
+      "index": 1,
+      "identityKey": "unmapped::Amphistaff",
+      "canonicalName": "Amphistaff",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 121,
+        "statTablePage": 122
+      },
+      "canonicalMechanic": "Living Yuuzhan Vong weapon with quarterstaff, spear, and whip forms. Changing forms is a swift action. Spear form can be thrown and applies a poison condition-track rider. Whip form has 2-square reach, applies the same poison rider, and a proficient wielder can use it to Pin or Trip without possessing those feats. In any form it can spit venom up to 10 squares as a standard action once per 24 hours.",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "poison",
+        "control",
+        "battlefield_control",
+        "grapple",
+        "restrain",
+        "positioning",
+        "swift_action",
+        "standard_action",
+        "action_economy",
+        "biotech"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "poison",
+        "control",
+        "battlefield_control",
+        "grapple",
+        "restrain",
+        "positioning",
+        "swift_action",
+        "standard_action",
+        "action_economy",
+        "biotech"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Amphistaff"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:amphistaff"
+        ],
+        "families": [
+          "weapon-family:amphistaff",
+          "weapon-family:yuuzhan-vong-biotech",
+          "weapon-family:multi-form-melee"
+        ],
+        "modes": [
+          {
+            "mode": "quarterstaff",
+            "attackProfile": "melee"
+          },
+          {
+            "mode": "spear",
+            "attackProfile": "melee-or-thrown-ranged"
+          },
+          {
+            "mode": "whip",
+            "attackProfile": "melee-reach"
+          },
+          {
+            "mode": "venom-spit",
+            "attackProfile": "ranged",
+            "action": "standard",
+            "usage": "once-per-24-hours"
+          }
+        ],
+        "explicitAbilityInteractions": [
+          {
+            "ability": "Pin",
+            "interaction": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM"
+          },
+          {
+            "ability": "Trip",
+            "interaction": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM"
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Amphistaff)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character is proficient with the Amphistaff through Exotic Weapon Proficiency (Amphistaff)."
+        ],
+        "fit": "High-complexity control weapon for characters who can exploit reach, poison, thrown/ranged options, and Pin/Trip utility. Strongest when the build values flexible mode switching and battlefield control."
+      },
+      "guardrails": [
+        "Do not create a thrown semantic tag; thrown capability remains structural.",
+        "Do not create a reach semantic tag; positioning expresses the semantic consequence while exact reach remains structured.",
+        "Pin/Trip feat emulation is exact rule-selector authority and must not be generalized to unrelated grapple abilities."
+      ]
+    },
+    {
+      "index": 2,
+      "identityKey": "unmapped::Arggarok",
+      "canonicalName": "Arggarok",
+      "publishedName": "Arg'garok",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 64,
+        "statTablePage": 64
+      },
+      "canonicalMechanic": "Large Gamorrean exotic melee axe dealing 2d12 slashing damage. A wielder with Strength below 15 takes a -5 penalty on attack rolls with it. Gamorreans treat the Arg'garok as an advanced melee weapon instead of an exotic weapon.",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Arggarok"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:arggarok"
+        ],
+        "families": [
+          "weapon-family:arggarok",
+          "weapon-family:axe"
+        ],
+        "attributeRequirements": [
+          {
+            "attribute": "strength",
+            "minimum": 15,
+            "failureEffect": "-5 attack penalty with the weapon"
+          }
+        ],
+        "speciesOverrides": [
+          {
+            "species": "Gamorrean",
+            "treatAsGroup": "advanced-melee",
+            "effect": "Treat the Arg'garok as an advanced melee weapon instead of an exotic weapon."
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Arg'garok)"
+          }
+        ],
+        "alternate": [
+          {
+            "condition": "Species is Gamorrean",
+            "requirement": "Weapon Proficiency (advanced melee weapons) or another valid source of Advanced Melee proficiency",
+            "result": "Proficient without needing Exotic Weapon Proficiency (Arg'garok)."
+          }
+        ]
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character has Exotic Weapon Proficiency (Arg'garok).",
+          "Character is Gamorrean and proficient with Advanced Melee Weapons."
+        ],
+        "fit": "Raw-damage melee exotic for Strength-focused characters. Do not recommend normally to Strength-below-15 characters even if proficient because the weapon imposes its own separate -5 attack penalty."
+      },
+      "guardrails": [
+        "Do not convert 2d12 base damage into damage_bonus; raw weapon dice remain structured comparison data.",
+        "The Strength 15 rule is separate from proficiency and must be checked independently.",
+        "Gamorrean alternate handling changes the legal proficiency route, not the canonical Exotic identity."
+      ]
+    },
+    {
+      "index": 3,
+      "identityKey": "unmapped::Atlatl",
+      "canonicalName": "Atlatl",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 121,
+        "statTablePage": 122
+      },
+      "canonicalMechanic": "Gungan exotic weapon used to hurl energy balls farther than an unaided throw and usable as a club-like melee weapon in close combat. Although Exotic, a Gungan is treated as proficient with it if the Gungan has Weapon Proficiency (simple weapons).",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Atlatl"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:atlatl"
+        ],
+        "families": [
+          "weapon-family:atlatl",
+          "weapon-family:gungan-weapon",
+          "weapon-family:energy-ball-launcher"
+        ],
+        "payloads": [
+          "payload:energy-ball"
+        ],
+        "modes": [
+          {
+            "mode": "launcher",
+            "attackProfile": "ranged",
+            "payload": "energy-ball"
+          },
+          {
+            "mode": "club",
+            "attackProfile": "melee"
+          }
+        ],
+        "speciesOverrides": [
+          {
+            "species": "Gungan",
+            "requiresProficiency": "simple-weapons",
+            "effect": "Treated as proficient with the Atlatl."
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Atlatl)"
+          }
+        ],
+        "alternate": [
+          {
+            "condition": "Species is Gungan",
+            "requirement": "Weapon Proficiency (simple weapons)",
+            "result": "Proficient with the Atlatl without Exotic Weapon Proficiency (Atlatl)."
+          }
+        ]
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character has Exotic Weapon Proficiency (Atlatl).",
+          "Character is Gungan and has Weapon Proficiency (simple weapons)."
+        ],
+        "fit": "Hybrid Gungan weapon for characters who want energy-ball ranged attacks while retaining an emergency melee profile. Species-aware recommendation should strongly avoid suggesting a redundant Exotic Weapon Proficiency feat to qualifying Gungans."
+      },
+      "guardrails": [
+        "Energy Ball is a payload/ammunition relationship, not a second Exotic weapon identity.",
+        "Do not give the Atlatl precision merely because the Cesta makes Energy Balls Accurate; that benefit belongs to Cesta delivery.",
+        "Gungan Simple Weapon proficiency is an alternate route, not a reclassification of the weapon for non-Gungans."
+      ]
+    },
+    {
+      "index": 4,
+      "identityKey": "weapon-aurial-blaster",
+      "canonicalName": "Aurial Blaster",
+      "repo": {
+        "present": true,
+        "id": "weapon-aurial-blaster"
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 67,
+        "statTablePage": 68
+      },
+      "canonicalMechanic": "Exotic sonic blaster dealing 3d6 energy (sonic) damage. On a hit, if the attack roll also beats the target's Fortitude Defense, the target takes -5 on Perception checks until the end of the attacker's next turn. It uses pistol range and has a 50-shot power pack.",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "ranged",
+        "offense_ranged",
+        "control",
+        "perception"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "control",
+        "perception"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-aurial-blaster"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:aurial-blaster"
+        ],
+        "families": [
+          "weapon-family:aurial-blaster",
+          "weapon-family:sonic-blaster"
+        ],
+        "rangeProfile": "pistol",
+        "defenseRider": {
+          "trigger": "successful hit",
+          "secondaryDefense": "Fortitude Defense",
+          "onSuccess": "-5 Perception until end of attacker's next turn"
+        }
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Aurial Blaster)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character has Exotic Weapon Proficiency (Aurial Blaster)."
+        ],
+        "fit": "Ranged exotic sidearm for builds that value short-duration sensory/perception suppression in addition to direct damage."
+      },
+      "guardrails": [
+        "Pistol range does not make the weapon a Pistol-group weapon and does not grant pistol proficiency.",
+        "Do not add pistol as an unconditional semantic tag from range treatment alone.",
+        "The Perception penalty is a control rider; exact duration and -5 value remain structured."
+      ]
+    },
+    {
+      "index": 5,
+      "identityKey": "unmapped::Blastsword",
+      "canonicalName": "Blastsword",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 36,
+        "statTablePage": 37
+      },
+      "canonicalMechanic": "Adumari exotic melee weapon combining a vibroblade with blaster components, dealing 3d6 damage. On a successful stab the blaster energy discharges. It may be treated as a light weapon for the purpose of using Weapon Finesse and requires a power pack.",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee"
+      ],
+      "conditionalSynergyTags": [],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Blastsword"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:blastsword"
+        ],
+        "families": [
+          "weapon-family:blastsword",
+          "weapon-family:sword",
+          "weapon-family:powered-melee"
+        ],
+        "explicitAbilityInteractions": [
+          {
+            "ability": "Weapon Finesse",
+            "interaction": "TREAT_AS_LIGHT_WEAPON_FOR_THIS_FEAT"
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Blastsword)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character has Exotic Weapon Proficiency (Blastsword)."
+        ],
+        "fit": "Exotic melee option with a direct Weapon Finesse compatibility hook. Particularly relevant to Dexterity-oriented melee builds that already possess or are pursuing Weapon Finesse."
+      },
+      "guardrails": [
+        "Weapon Finesse compatibility is an exact named-ability interaction and must not be generalized to every light-weapon talent automatically.",
+        "Do not invent a finesse semantic tag.",
+        "Do not convert 3d6 base damage into damage_bonus."
+      ]
+    }
+  ],
+  "rollingGuardrails": [
+    "Do not mutate production weapon records from this planner authority.",
+    "Do not flatten species-specific proficiency alternatives into global weapon-group changes.",
+    "Do not recommend Exotic Weapon Proficiency when an already-owned species/proficiency route makes the character proficient.",
+    "Do not treat range-profile equivalence as proficiency-group equivalence.",
+    "Hybrids with only one Exotic attack mode must use conditional/profile-scoped Exotic semantics rather than globally misclassifying every mode."
+  ]
+}

@@ -2064,5 +2064,70 @@ if (fs.existsSync(path.join(ROOT, P4G))) {
   if (errors.length === e4g) console.log(`Phase 4G Exotic census OK: ${ids.length} identities (${want.repoPresent} present / ${want.repoMissing} missing; ${want.meleeProfileIdentities} melee / ${want.rangedProfileIdentities} ranged / ${want.hybridProfileIdentities} hybrid), ${want.identitiesWithAlternateProficiencyOrHandling} alternate-proficiency cases, no semantic rulings, matches Phase 3B Exotic Weapon group`);
 }
 
+// ---- Phase 4G Exotic semantic rolling authority (planner-owned tags; verified only) ----
+const P4GR = 'data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json';
+if (fs.existsSync(path.join(ROOT, P4GR))) {
+  const e4r = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const J = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+  const sh = (t) => crypto.createHash('sha256').update(t).digest('hex');
+  const S = J(P4GR), C = J('data/audits/item-weapons-phase-4g-exotic-census.json'), b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
+  if (!fs.existsSync(path.join(ROOT, 'docs/audits/item-weapons-phase-4g-exotic-semantic-rolling.md'))) fail('4G rolling missing markdown companion');
+  if (S.productionMutationAuthorized !== false || S.repositoryImplementationCertified !== false) fail('4G rolling authority-only flags');
+  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4G rolling production file changed');
+  const used = new Set();
+  for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
+  walk(J('data/audits/talent-phase-12-1-semantic-tag-authority.json').batches);
+  for (const a of J('data/audits/talent-phase-12-final-ontology-adjudication.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  if (used.size !== 183) fail(`4G feat/talent vocabulary is ${used.size}, expected 183`);
+  const REJECT = ['grenade', 'explosives', 'area_damage', 'accuracy', 'autofire', 'rifle', 'thrown', 'reach', 'pistol', 'finesse', 'condition_track', 'ion', 'sonic', 'telekinesis', 'teamwork_crew'];
+  const lines = (f) => new Set(fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l).name));
+  const abilityNames = new Set([...lines('packs/feats.db'), ...lines('packs/talents.db')]);
+  const ENUM = /^[A-Z][A-Z0-9_]*$/;
+  const cen = C.identities, byKey = new Map(b3.identities.map((i) => [i.identityKey, i]));
+  const asg = S.assignments, N = asg.length;
+  if (!same(asg.map((a) => a.identityKey), cen.slice(0, N).map((i) => i.identityKey))) fail('4G rolling must adjudicate the census in order, without gaps');
+  let tagTotal = 0; const tagsUsed = new Set();
+  asg.forEach((a, idx) => {
+    const w = a.canonicalName, c = cen[idx];
+    if (a.index !== idx + 1) fail(`4G ${w} index`);
+    if (!c || a.identityKey !== c.identityKey || a.canonicalName !== c.canonicalName || a.repo?.present !== c.repo.present || a.repo?.id !== c.repo.id || !same({ ...a.source, book: String(a.source?.book).replace(/^The /, '') }, { ...c.source, book: String(c.source?.book).replace(/^The /, '') })) fail(`4G ${w} identity/repo/source differs from the frozen census`);
+    const i = byKey.get(a.identityKey);
+    if (!i || i.weaponGroup !== 'Exotic Weapon') fail(`4G ${w} is not an Exotic Weapon identity in Phase 3B`);
+    if (!same(a.finalTags, [...a.sharedTags, ...a.advantageTags])) fail(`4G ${w} finalTags must equal sharedTags + advantageTags`);
+    if (new Set(a.finalTags).size !== a.finalTags.length) fail(`4G ${w} duplicate tags`);
+    if (!a.finalTags.includes('exotic_weapon') || !a.sharedTags.includes('exotic_weapon')) fail(`4G ${w} must carry exotic_weapon (unconditional ruling)`);
+    if (a.tradeoffTags.some((t) => a.finalTags.includes(t))) fail(`4G ${w} tradeoff tag promoted to final`);
+    for (const t of [...a.finalTags, ...a.tradeoffTags, ...(a.conditionalSynergyTags || []).map((x) => x.tag || x)]) {
+      if (!used.has(t)) fail(`4G ${w} tag "${t}" is not in the certified feat/talent vocabulary`);
+      if (REJECT.includes(t) || /[:\s]/.test(t)) fail(`4G ${w} rejected/structural tag "${t}"`);
+    }
+    a.finalTags.forEach((t) => tagsUsed.add(t)); tagTotal += a.finalTags.length;
+    const q = a.ruleSelectors;
+    if (!q) { fail(`4G ${w} missing ruleSelectors`); return; }
+    if (!same(q.exact, [`weapon:${a.identityKey}`])) fail(`4G ${w} exact selector`);
+    if (!same(q.group, ['weapon-group:exotic'])) fail(`4G ${w} group selector`);
+    if (!q.proficiency?.length || q.proficiency.some((x) => !/^weapon-proficiency:[a-z0-9-]+$/.test(x))) fail(`4G ${w} proficiency selector`);
+    if (!q.families?.length || q.families.some((x) => !/^weapon-family:[a-z0-9-]+$/.test(x))) fail(`4G ${w} families malformed`);
+    for (const m of q.modes || []) if (!m.mode || !m.attackProfile) fail(`4G ${w} mode shape`);
+    for (const l of q.explicitAbilityInteractions || []) if (!ENUM.test(l.interaction || '') || !abilityNames.has(l.ability)) fail(`4G ${w} ability interaction (${l.ability})`);
+    if (!a.proficiencyRoutes?.canonical?.length || !a.recommendation?.fit || !a.recommendation.eligibleWithoutPenaltyWhen?.length) fail(`4G ${w} proficiency/recommendation shape`);
+    const hasAlt = a.proficiencyRoutes.alternate.length > 0;
+    if (hasAlt !== !!c.alternateProficiencyOrHandling) fail(`4G ${w} alternate proficiency route must match the census (${!!c.alternateProficiencyOrHandling})`);
+    if (hasAlt && !(q.speciesOverrides || []).length) fail(`4G ${w} alternate route needs a speciesOverride selector`);
+    // profile-kind sanity vs census
+    const melee = a.finalTags.includes('offense_melee'), ranged = a.finalTags.includes('offense_ranged');
+    if (c.profileKind === 'melee' && ranged && !(q.modes || []).some((m) => /ranged|thrown/.test(m.attackProfile))) fail(`4G ${w} ranged tag without a ranged/thrown mode`);
+    if (c.profileKind === 'ranged' && melee) fail(`4G ${w} melee tag on a ranged-profile census identity`);
+  });
+  const cp = S.census || {};
+  if (cp.adjudicated !== N || cp.remaining !== 32 - N || cp.nextIdentity !== (cen[N]?.canonicalName ?? null)) fail('4G rolling progress counters');
+  if (cp.canonicalExoticProficiencyIdentities !== 32 || cp.repoPresent !== 18 || cp.repoMissing !== 14 || cp.meleeProfile !== 15 || cp.rangedProfile !== 15 || cp.hybridProfile !== 2 || cp.alternateProficiencyOrHandlingCases !== 9) fail('4G rolling census totals differ from the frozen census');
+  const rr = (S.rounds || []).reduce((n, r) => n + r.identityCount, 0);
+  if (rr !== N) fail('4G rolling round ledger does not sum to the adjudicated count');
+  if (errors.length === e4r) console.log(`Phase 4G Exotic semantic tags OK: ${N}/32 adjudicated in ${S.rounds.length} round(s), ${tagTotal} assignments, ${tagsUsed.size} distinct tags from the 183-tag vocabulary, exotic_weapon unconditional, selectors/routes cross-checked against the census and Phase 3B, next ${cp.nextIdentity}`);
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
