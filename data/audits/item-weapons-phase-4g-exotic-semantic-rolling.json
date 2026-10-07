@@ -1,7 +1,7 @@
 {
   "schemaVersion": "swse-weapon-semantic-authority-v1",
   "title": "Phase 4G — Exotic Weapons Semantic / Selector / Recommendation Rolling Planner Authority",
-  "status": "WEAPON_TAG_PHASE_4G_EXOTIC_ROUND_1_PLANNER_ADJUDICATED",
+  "status": "WEAPON_TAG_PHASE_4G_EXOTIC_ROUND_2_PLANNER_ADJUDICATED",
   "phase": "4G",
   "category": "Exotic Weapons",
   "productionMutationAuthorized": false,
@@ -25,9 +25,9 @@
     "rangedProfile": 15,
     "hybridProfile": 2,
     "alternateProficiencyOrHandlingCases": 9,
-    "adjudicated": 5,
-    "remaining": 27,
-    "nextIdentity": "Bowcaster"
+    "adjudicated": 10,
+    "remaining": 22,
+    "nextIdentity": "Deck Sweeper"
   },
   "rounds": [
     {
@@ -36,6 +36,13 @@
       "identityCount": 5,
       "repoPresent": 1,
       "repoMissing": 4
+    },
+    {
+      "round": 2,
+      "range": "Bowcaster → Darkstick",
+      "identityCount": 5,
+      "repoPresent": 3,
+      "repoMissing": 2
     }
   ],
   "assignments": [
@@ -480,6 +487,468 @@
         "Weapon Finesse compatibility is an exact named-ability interaction and must not be generalized to every light-weapon talent automatically.",
         "Do not invent a finesse semantic tag.",
         "Do not convert 3d6 base damage into damage_bonus."
+      ]
+    },
+    {
+      "index": 6,
+      "identityKey": "weapon-bowcaster",
+      "canonicalName": "Bowcaster",
+      "repo": {
+        "present": true,
+        "id": "weapon-bowcaster"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 127,
+        "statTablePage": 126
+      },
+      "canonicalMechanic": "Wookiee-crafted exotic ranged weapon dealing 3d10 damage with explosive energy quarrels. Although the bowcaster is an exotic weapon, Wookiees with Weapon Proficiency (rifles) are treated as proficient. A quiver holds 10 quarrels. Phase 3B leaves canonical range unresolved; rifle proficiency familiarity must not be used to infer rifle range.",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "ranged",
+        "offense_ranged"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-bowcaster"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:bowcaster"
+        ],
+        "families": [
+          "weapon-family:bowcaster",
+          "weapon-family:wookiee-weapon"
+        ],
+        "speciesOverrides": [
+          {
+            "species": "Wookiee",
+            "requiresProficiency": "rifles",
+            "effect": "Treated as proficient with the Bowcaster."
+          }
+        ],
+        "rangeAuthority": "SOURCE_UNRESOLVED"
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Bowcaster)"
+          }
+        ],
+        "alternate": [
+          {
+            "condition": "Species is Wookiee",
+            "requirement": "Weapon Proficiency (rifles)",
+            "result": "Proficient with the Bowcaster without Exotic Weapon Proficiency (Bowcaster)."
+          }
+        ]
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character has Exotic Weapon Proficiency (Bowcaster).",
+          "Character is Wookiee and has Weapon Proficiency (rifles)."
+        ],
+        "fit": "High-damage exotic ranged weapon with a major Wookiee proficiency shortcut. Species-aware recommendation must not suggest redundant Exotic Weapon Proficiency to qualifying Wookiees."
+      },
+      "guardrails": [
+        "Do not infer rifle range from the Wookiee rifle-proficiency familiarity rule; Phase 3B explicitly leaves Bowcaster range unresolved.",
+        "Do not add burst_damage from the descriptive phrase 'explosive energy quarrel' without a separate mechanical burst/splash rule.",
+        "Wookiee familiarity supplies an alternate proficiency route but does not erase the Bowcaster's canonical Exotic identity."
+      ]
+    },
+    {
+      "index": 7,
+      "identityKey": "weapon-cr-1-blast-cannon",
+      "canonicalName": "CR-1 Blast Cannon",
+      "repo": {
+        "present": true,
+        "id": "weapon-cr-1-blast-cannon"
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 198,
+        "statTablePage": 199
+      },
+      "canonicalMechanic": "Exotic 3d8 ranged blast cannon using pistol range. It does not take normal range penalties on attack rolls; those penalties apply to damage rolls instead. Against adjacent targets it deals +1d8 damage. Against nonadjacent targets it becomes a splash weapon with a 1-square splash radius. It is Inaccurate and cannot attack at long range.",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "damage_bonus",
+        "positioning"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "damage_bonus",
+        "positioning"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-cr-1-blast-cannon"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:cr-1-blast-cannon"
+        ],
+        "families": [
+          "weapon-family:cr-1-blast-cannon",
+          "weapon-family:blast-cannon"
+        ],
+        "rangeProfile": "pistol",
+        "rangeRule": {
+          "attackPenalty": "NONE_FROM_RANGE",
+          "damagePenalty": "APPLY_NORMAL_RANGE_PENALTIES_TO_DAMAGE",
+          "longRange": "PROHIBITED_INACCURATE"
+        },
+        "distanceModes": [
+          {
+            "condition": "target is adjacent",
+            "effect": "+1d8 damage"
+          },
+          {
+            "condition": "target is nonadjacent",
+            "effect": "1-square splash radius"
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (CR-1 Blast Cannon)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character has Exotic Weapon Proficiency (CR-1 Blast Cannon)."
+        ],
+        "fit": "Close/medium-range exotic for characters who value reliable hit chance across its legal range and gain different benefits by distance: extra adjacent damage or nonadjacent splash."
+      },
+      "guardrails": [
+        "Pistol range does not make the CR-1 a Pistol-group weapon and does not grant pistol proficiency.",
+        "Phase 3B explicitly requires base areaEffect to remain false; nonadjacent splash is a structured conditional mode.",
+        "Do not invent area_damage or inaccurate semantic tags.",
+        "The +1d8 adjacent rider justifies damage_bonus; raw 3d8 base damage alone does not."
+      ]
+    },
+    {
+      "index": 8,
+      "identityKey": "unmapped::Cesta",
+      "canonicalName": "Cesta",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 121,
+        "statTablePage": 122
+      },
+      "canonicalMechanic": "Gungan exotic flexible pole used to hurl energy balls and usable as a stafflike melee weapon. Although Exotic, Gungans with Weapon Proficiency (simple weapons) are treated as proficient. The Core energy-ball rules state that an energy ball hurled by a cesta uses simple-weapon range and is Accurate.",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "precision"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "precision"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Cesta"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:cesta"
+        ],
+        "families": [
+          "weapon-family:cesta",
+          "weapon-family:gungan-weapon",
+          "weapon-family:energy-ball-launcher"
+        ],
+        "payloads": [
+          "payload:energy-ball"
+        ],
+        "modes": [
+          {
+            "mode": "launcher",
+            "attackProfile": "ranged",
+            "payload": "energy-ball",
+            "rangeProfile": "simple",
+            "accurate": true
+          },
+          {
+            "mode": "staff",
+            "attackProfile": "melee"
+          }
+        ],
+        "speciesOverrides": [
+          {
+            "species": "Gungan",
+            "requiresProficiency": "simple-weapons",
+            "effect": "Treated as proficient with the Cesta."
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Cesta)"
+          }
+        ],
+        "alternate": [
+          {
+            "condition": "Species is Gungan",
+            "requirement": "Weapon Proficiency (simple weapons)",
+            "result": "Proficient with the Cesta without Exotic Weapon Proficiency (Cesta)."
+          }
+        ]
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character has Exotic Weapon Proficiency (Cesta).",
+          "Character is Gungan and has Weapon Proficiency (simple weapons)."
+        ],
+        "fit": "Hybrid Gungan melee/ranged weapon with an especially strong energy-ball delivery profile because cesta-fired energy balls are Accurate. Species-aware recommendation should avoid redundant Exotic Weapon Proficiency for qualifying Gungans."
+      },
+      "guardrails": [
+        "Energy Ball is a payload/ammunition relationship, not a separate Exotic proficiency identity.",
+        "precision is justified by the explicit Accurate rule for energy balls hurled by a Cesta.",
+        "Gungan Simple Weapon proficiency is an alternate route, not a global reclassification of the Cesta."
+      ]
+    },
+    {
+      "index": 9,
+      "identityKey": "weapon-concealed-dart-launcher",
+      "canonicalName": "Concealed Dart Launcher",
+      "repo": {
+        "present": true,
+        "id": "weapon-concealed-dart-launcher"
+      },
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "canonicalMechanic": "Wrist-mounted exotic launcher firing darts. The default sedative payload deals 3d8 stun damage and can affect targets beyond the normal 6-square stun limit. Darts may instead carry contact poison. The launcher uses pistol range, grants +5 equipment bonus to Stealth checks made to conceal it, and holds 6 darts per bundle.",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "poison",
+        "concealment",
+        "stealth"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "poison",
+        "concealment",
+        "stealth"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-concealed-dart-launcher"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:concealed-dart-launcher"
+        ],
+        "families": [
+          "weapon-family:concealed-dart-launcher",
+          "weapon-family:wrist-launcher"
+        ],
+        "rangeProfile": "pistol",
+        "payloadProfiles": [
+          {
+            "id": "sedative",
+            "effect": "3d8 stun damage",
+            "default": true,
+            "extendedStunRange": true
+          },
+          {
+            "id": "contact-poison",
+            "effect": "delivers loaded contact poison",
+            "default": false
+          }
+        ],
+        "capacity": 6
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Concealed Dart Launcher)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character has Exotic Weapon Proficiency (Concealed Dart Launcher)."
+        ],
+        "fit": "Concealable capture/infiltration exotic with long-reach stun capability and optional contact-poison payloads. Strong for stealthy bounty-hunter or nonlethal-control builds."
+      },
+      "guardrails": [
+        "Pistol range does not make this a Pistol-group weapon and does not grant pistol proficiency.",
+        "Sedative and contact-poison darts are structural payload profiles, not separate Exotic weapon identities.",
+        "Do not flatten poison into every shot; poison applies when the dart is loaded with a contact poison.",
+        "The +5 concealment bonus supports concealment and stealth semantics; the exact numeric bonus remains structured."
+      ]
+    },
+    {
+      "index": 10,
+      "identityKey": "unmapped::Darkstick",
+      "canonicalName": "Darkstick",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 36,
+        "statTablePage": 36
+      },
+      "canonicalMechanic": "Kerestian exotic melee blade dealing 1d6 slashing damage and throwable as a ranged attack. A proficient wielder can hold multiple darksticks in one hand while still being treated as wielding one weapon; two or more increase the damage dice to 2d8. A thrown darkstick immediately returns to the wielder's hand if the attack exceeds Reflex Defense by 5 or more. Later light-absorbing versions give total concealment against adjacent enemies unless they have darkvision, but the wielder must also be able to see in darkness.",
+      "sharedTags": [
+        "exotic_weapon"
+      ],
+      "advantageTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "damage_bonus"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "damage_bonus"
+      ],
+      "conditionalSynergyTags": [
+        {
+          "tag": "concealment",
+          "condition": "light-absorbing-cell darkstick version is used and adjacent observer lacks darkvision",
+          "reason": "Later versions explicitly shroud the wielder so adjacent enemies treat the wielder as having total concealment."
+        },
+        {
+          "tag": "defense",
+          "condition": "light-absorbing-cell darkstick version is used and adjacent observer lacks darkvision",
+          "reason": "The conditional total-concealment effect directly protects the wielder from adjacent attacks."
+        }
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Darkstick"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:darkstick"
+        ],
+        "families": [
+          "weapon-family:darkstick",
+          "weapon-family:kerestian-weapon",
+          "weapon-family:throwable-melee"
+        ],
+        "modes": [
+          {
+            "mode": "melee",
+            "attackProfile": "melee"
+          },
+          {
+            "mode": "thrown",
+            "attackProfile": "ranged",
+            "returnTrigger": "attack exceeds target Reflex Defense by 5 or more"
+          }
+        ],
+        "configurationRules": [
+          {
+            "condition": "proficient wielder holds two or more darksticks in one hand",
+            "treatedAsWeaponCount": 1,
+            "damage": "2d8",
+            "baseDamage": "1d6"
+          }
+        ],
+        "variantRules": [
+          {
+            "variant": "light-absorbing-cell later version",
+            "effect": "adjacent enemies treat wielder as having total concealment unless they have darkvision",
+            "selfRequirement": "wielder must be able to see in darkness or suffers the concealment penalty as well"
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Darkstick)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character has Exotic Weapon Proficiency (Darkstick)."
+        ],
+        "fit": "Flexible melee/thrown exotic for characters who can exploit its multi-blade damage configuration. Later light-absorbing versions add a specialized adjacent-defense niche for characters able to see in darkness."
+      },
+      "guardrails": [
+        "Do not add dual_wield: multiple Darksticks held in one hand are explicitly treated as one weapon.",
+        "Do not add a thrown semantic tag; thrown capability remains structural.",
+        "damage_bonus is justified by the explicit 1d6-to-2d8 configuration rule, not by high raw damage alone.",
+        "Concealment/defense are conditional to the later light-absorbing version and must not be promoted into unconditional finalTags."
       ]
     }
   ],

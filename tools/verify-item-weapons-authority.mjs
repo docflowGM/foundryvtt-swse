@@ -2099,6 +2099,8 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
     if (new Set(a.finalTags).size !== a.finalTags.length) fail(`4G ${w} duplicate tags`);
     if (!a.finalTags.includes('exotic_weapon') || !a.sharedTags.includes('exotic_weapon')) fail(`4G ${w} must carry exotic_weapon (unconditional ruling)`);
     if (a.tradeoffTags.some((t) => a.finalTags.includes(t))) fail(`4G ${w} tradeoff tag promoted to final`);
+    for (const ct of a.conditionalSynergyTags || []) if (!ct.tag || !ct.condition || !ct.reason || a.finalTags.includes(ct.tag)) fail(`4G ${w} conditional tag shape / promoted into finalTags (${ct.tag})`);
+    if (a.finalTags.includes('dual_wield') && a.identityKey === 'unmapped::Darkstick') fail('4G Darkstick must not carry dual_wield (multiple darksticks count as one weapon)');
     for (const t of [...a.finalTags, ...a.tradeoffTags, ...(a.conditionalSynergyTags || []).map((x) => x.tag || x)]) {
       if (!used.has(t)) fail(`4G ${w} tag "${t}" is not in the certified feat/talent vocabulary`);
       if (REJECT.includes(t) || /[:\s]/.test(t)) fail(`4G ${w} rejected/structural tag "${t}"`);
@@ -2121,6 +2123,15 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
     if (c.profileKind === 'melee' && ranged && !(q.modes || []).some((m) => /ranged|thrown/.test(m.attackProfile))) fail(`4G ${w} ranged tag without a ranged/thrown mode`);
     if (c.profileKind === 'ranged' && melee) fail(`4G ${w} melee tag on a ranged-profile census identity`);
   });
+  // Round 1 is frozen; Round 2 named rulings
+  if (N >= 5 && sh(JSON.stringify(asg.slice(0, 5))) !== 'b565ac4c92bf19a058a7f6933d2a537690c42f7b5881c5ce2188fff31febd320') fail('4G Round 1 assignments changed after planner certification');
+  const g4 = (k) => asg.find((a) => a.identityKey === k);
+  const bw = g4('weapon-bowcaster'), cr = g4('weapon-cr-1-blast-cannon'), ce = g4('unmapped::Cesta'), at = g4('unmapped::Atlatl'), dk = g4('unmapped::Darkstick');
+  if (bw && (bw.finalTags.includes('burst_damage') || bw.ruleSelectors.rangeAuthority !== 'SOURCE_UNRESOLVED')) fail('4G Bowcaster: no burst_damage from flavor text; range stays SOURCE_UNRESOLVED');
+  if (cr && (cr.finalTags.includes('area_damage') || cr.finalTags.includes('inaccurate') || !cr.finalTags.includes('damage_bonus'))) fail('4G CR-1: damage_bonus (adjacent rider) yes; area_damage/inaccurate no');
+  if (ce && !ce.finalTags.includes('precision')) fail('4G Cesta must carry precision (Accurate energy balls)');
+  if (at && at.finalTags.includes('precision')) fail('4G Atlatl must not borrow Cesta precision');
+  if (dk && (!dk.finalTags.includes('damage_bonus') || dk.finalTags.includes('concealment') || dk.finalTags.includes('defense') || !['concealment', 'defense'].every((t) => (dk.conditionalSynergyTags || []).some((c) => c.tag === t)))) fail('4G Darkstick: damage_bonus global; concealment/defense conditional only');
   const cp = S.census || {};
   if (cp.adjudicated !== N || cp.remaining !== 32 - N || cp.nextIdentity !== (cen[N]?.canonicalName ?? null)) fail('4G rolling progress counters');
   if (cp.canonicalExoticProficiencyIdentities !== 32 || cp.repoPresent !== 18 || cp.repoMissing !== 14 || cp.meleeProfile !== 15 || cp.rangedProfile !== 15 || cp.hybridProfile !== 2 || cp.alternateProficiencyOrHandlingCases !== 9) fail('4G rolling census totals differ from the frozen census');
