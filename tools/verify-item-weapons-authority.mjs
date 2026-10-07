@@ -2215,5 +2215,31 @@ if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-b-global-se
   } catch (e) { fail(`4H-B QA: ${e.message}`); }
 }
 
+// ---- Phase 4H-C combined 203-identity authority (builder byte-stable; one record per Phase 3B identity) ----
+if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-global-semantic-authority.json'))) {
+  const e4hc = errors.length;
+  try {
+    const mod = await import('./build-item-weapons-phase-4h-global-authority.mjs');
+    const out = mod.buildPhase4HC();
+    if (fs.readFileSync(path.join(ROOT, mod.OUT_JSON), 'utf8') !== out.json || fs.readFileSync(path.join(ROOT, mod.OUT_MD), 'utf8') !== out.md) fail('4H-C combined authority is stale or hand-edited (rebuild with tools/build-item-weapons-phase-4h-global-authority.mjs)');
+    const G = JSON.parse(out.json);
+    const b3x = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8'));
+    if (G.status !== mod.STATUS || G.productionMutationAuthorized !== false) fail('4H-C status / authority-only flags');
+    if (G.records.length !== 203 || new Set(G.records.map((r) => r.identityKey)).size !== 203) fail('4H-C must hold exactly 203 unique records');
+    if (JSON.stringify(G.records.map((r) => r.identityKey).sort()) !== JSON.stringify(b3x.identities.map((i) => i.identityKey).sort())) fail('4H-C identity set must equal Phase 3B');
+    if (G.counts.categoryRecords !== 204 || G.counts.crossCategoryIdentities.join() !== 'weapon-interchangeable-weapon-system') fail('4H-C category-record / cross-category counts');
+    for (const r of G.records) {
+      const t3 = b3x.identities.find((i) => i.identityKey === r.identityKey);
+      if (r.repo.present !== t3.repo.present || r.repo.id !== t3.repo.id) fail(`4H-C ${r.canonicalName} repo mapping differs from Phase 3B`);
+      if (!r.authorities.length || r.authorities.filter((a) => a.primary).length !== 1) fail(`4H-C ${r.canonicalName} must have exactly one primary authority`);
+      if (!r.selectors.exact || !r.selectors.group || !r.selectors.proficiency.length) fail(`4H-C ${r.canonicalName} missing exact/group/proficiency selectors`);
+      if (r.selectors.exact !== `weapon:${r.identityKey}`) fail(`4H-C ${r.canonicalName} exact selector must be weapon:<Phase 3B identityKey> (got ${r.selectors.exact})`);
+      if (r.authorities.length > 1 && r.categories.length !== r.authorities.length) fail(`4H-C ${r.canonicalName} cross-category nesting`);
+    }
+    if (G.counts.phase3BStructuredOnlyRouteIdentities.join() !== 'weapon-sith-sword') fail('4H-C alternate-route reconciliation set changed');
+    if (errors.length === e4hc) console.log(`Phase 4H-C combined authority OK: ${G.records.length} records from ${G.counts.categoryRecords} category records, ${G.counts.repoPresent}/${G.counts.repoMissing} present/missing, ${G.counts.distinctSemanticTags} tags, ${G.counts.alternateRouteIdentities} alternate-route identities, ${G.counts.derivedSelectorRecords} derived-selector records, builder byte-stable`);
+  } catch (e) { fail(`4H-C combined authority: ${e.message}`); }
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
