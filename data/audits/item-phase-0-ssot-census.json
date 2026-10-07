@@ -1725,7 +1725,8 @@
     },
     "data/store/*-store-descriptions.json": [
       "scripts/apps/store/store-description-resolver.js",
-      "scripts/dev/audit-implant-store-catalog.mjs"
+      "scripts/dev/audit-implant-store-catalog.mjs",
+      "tools/census-phase-5c-precutover.mjs"
     ],
     "data/upgrades/*.json": [],
     "data/armor/{light,medium,heavy}.json": [],
@@ -1880,6 +1881,7 @@
     "tools/build-item-weapons-phase-3d-global-freeze.mjs",
     "tools/build-item-weapons-phase-4h-phase-4-certification.mjs",
     "tools/categorize-shields.js",
+    "tools/census-phase-5c-precutover.mjs",
     "tools/compare-template-equipment.js",
     "tools/fix-armor-data.js",
     "tools/fix-db-schemas.js",
