@@ -114,3 +114,11 @@ export const RULES_4H = [
   R('4h.auth.ruleSelectors', /^authorities\[\]\.ruleSelectors(\.|\[\]|$)/, ['SELECTOR'], ['ability applicability joins (normalized into top-level selectors)', AUDIT], 'EXISTING_CONSUMER_WRONG_INPUT', '5H', { resolvedAt: 'recommendation.authorities' }),
   R('4h.auth', /^authorities(\[\])?$/, ['VALIDATION', 'RECOMMENDATION'], ['per-category authority trail'], 'VALIDATION_ONLY', 'n/a', { resolvedAt: 'recommendation.authorities' }),
 ];
+
+// ---- Canonical-corpus-only namespace (Phase 5C): fields that exist only in data/canonical/weapons.json -------------------------
+export const RULES_CANON = [
+  R('canon.provenance', /^provenance(\.|$)/, ['VALIDATION', 'PROVENANCE'], ['ResolvedWeapon.provenance (hash pointers to the audit evidence)', 'canonical-weapons lossless verifier'], 'VALIDATION_ONLY', 'n/a', { resolvedAt: 'provenance' }),
+  R('canon.production.id', /^production\.id$/, ['SELECTOR', 'INVENTORY'], ['weapon production generator (_id)', 'WeaponAuthorityRegistry.productionIdIndex', 'flags.swse.canonicalWeapon identity stamp'], 'ALREADY_CONSUMED_CORRECTLY', '5C', { resolvedAt: 'identity.productionId' }),
+  R('canon.production.container', /^production$/, ['VALIDATION'], ['weapon production generator'], 'ALREADY_CONSUMED_CORRECTLY', '5C', { resolvedAt: 'identity.productionId' }),
+  R('canon.production.rest', /^production\./, ['VALIDATION'], ['weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)'], 'LEGACY_COMPATIBILITY_ONLY', '5C (retire with legacy projections)', { runtimeCarried: false }),
+];

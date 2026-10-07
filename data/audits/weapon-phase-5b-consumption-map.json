@@ -35,33 +35,35 @@
   "adapterExposureGaps": 0
  },
  "summary": {
-  "fieldPaths": 2202,
+  "fieldPaths": 2215,
   "byImplementationState": {
-   "ADAPTER_REQUIRED": 66,
-   "DISPLAY_ONLY": 29,
+   "ADAPTER_REQUIRED": 58,
+   "ALREADY_CONSUMED_CORRECTLY": 2,
+   "DISPLAY_ONLY": 23,
    "EXISTING_CONSUMER_WRONG_INPUT": 539,
+   "LEGACY_COMPATIBILITY_ONLY": 79,
    "NEW_CONSUMER_REQUIRED": 1114,
    "RECOMMENDATION_ONLY": 248,
    "STORE_ONLY": 25,
-   "VALIDATION_ONLY": 181
+   "VALIDATION_ONLY": 127
   },
   "byClassification": {
-   "DISPLAY": 433,
+   "DISPLAY": 425,
    "EXECUTION": 1552,
-   "INVENTORY": 121,
+   "INVENTORY": 122,
    "PLAYER_CHOICE": 416,
    "PLAYER_STATE": 304,
-   "PROVENANCE": 153,
+   "PROVENANCE": 95,
    "RECOMMENDATION": 253,
-   "SELECTOR": 527,
+   "SELECTOR": 520,
    "STORE": 49,
-   "VALIDATION": 187
+   "VALIDATION": 207
   },
   "byMigrationPhase": {
-   "5B foundation": 3,
-   "5B foundation / 5G": 6,
+   "5B foundation": 1,
    "5B foundation / 5G stamp": 2,
-   "5C": 140,
+   "5C": 142,
+   "5C (retire with legacy projections)": 79,
    "5C-5E": 82,
    "5C/5D": 5,
    "5C/5E": 16,
@@ -71,16 +73,16 @@
    "5E/5F": 115,
    "5E/5H": 162,
    "5F": 104,
-   "5G": 52,
+   "5G": 46,
    "5G/5H": 3,
    "5H": 366,
-   "n/a": 181
+   "n/a": 127
   },
-  "alreadyConsumedCorrectly": 0,
+  "alreadyConsumedCorrectly": 2,
   "existingConsumerWrongInput": 539,
-  "adapterRequired": 66,
+  "adapterRequired": 58,
   "newConsumerRequired": 1114,
-  "nonRuntimeDisposition": 483
+  "nonRuntimeDisposition": 423
  },
  "entries": [
   {
@@ -18738,366 +18740,6 @@
    "note": null
   },
   {
-   "path": "3B:crossPublication",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.claimCount",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[]",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].cloneWars",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].controllingSource",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].disposition",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].field",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].forceUnleashed",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].jediAcademy",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].note",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].rebellionEra",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].resolvedValue",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].resolvedValue.rare",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].resolvedValue.restriction",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.conflictHistory[].supersededClaimPreserved",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.phase3aStatus",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.rulingsApplied",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.rulingsApplied[]",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:crossPublication.status",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
    "path": "3B:firstPublication",
    "classification": [
     "DISPLAY",
@@ -19177,150 +18819,6 @@
    "registryField": "identityKey",
    "resolvedProperty": "identity",
    "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:mergeAudit",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:mergeAudit.baseClaim",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:mergeAudit.claimCount",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:mergeAudit.mergedClaims",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:mergeAudit.mergedClaims[]",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:mergeAudit.supersededFieldCount",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:mergeAudit.textPolicy",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:mergeAudit.weaponGroupPhase1",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
    "note": null
   },
   {
@@ -28731,493 +28229,6 @@
    "registryField": "qualityParameters",
    "resolvedProperty": "qualityParameters",
    "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:repo",
-   "classification": [
-    "SELECTOR",
-    "VALIDATION"
-   ],
-   "consumers": [
-    "WeaponAuthorityRegistry.productionIdIndex",
-    "production migration (5G)"
-   ],
-   "implementationState": "ADAPTER_REQUIRED",
-   "migrationPhase": "5B foundation / 5G",
-   "ruleId": "3b.repo.link",
-   "mechanicFamily": null,
-   "registryField": "repo",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:repo.currentName",
-   "classification": [
-    "VALIDATION"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.repo.audit",
-   "mechanicFamily": null,
-   "registryField": "repo",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:repo.id",
-   "classification": [
-    "SELECTOR",
-    "VALIDATION"
-   ],
-   "consumers": [
-    "WeaponAuthorityRegistry.productionIdIndex",
-    "production migration (5G)"
-   ],
-   "implementationState": "ADAPTER_REQUIRED",
-   "migrationPhase": "5B foundation / 5G",
-   "ruleId": "3b.repo.link",
-   "mechanicFamily": null,
-   "registryField": "repo",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:repo.phase0NameNormalizationPending",
-   "classification": [
-    "VALIDATION"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.repo.audit",
-   "mechanicFamily": null,
-   "registryField": "repo",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:repo.present",
-   "classification": [
-    "SELECTOR",
-    "VALIDATION"
-   ],
-   "consumers": [
-    "WeaponAuthorityRegistry.productionIdIndex",
-    "production migration (5G)"
-   ],
-   "implementationState": "ADAPTER_REQUIRED",
-   "migrationPhase": "5B foundation / 5G",
-   "ruleId": "3b.repo.link",
-   "mechanicFamily": null,
-   "registryField": "repo",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase1",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase1[]",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase1[].action",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase1[].book",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase1[].discrepancy",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current.costCredits",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current.damage",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current.damageType",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current.proficiency",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current.range",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current.rangeProfile",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current.traits",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current.traits[]",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.current.weightKg",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.findings",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.findings[]",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.phase1ContentStatus",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.severity",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
-   "note": null
-  },
-  {
-   "path": "3B:repoComparison.phase2.status",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "3b.audit.only",
-   "mechanicFamily": null,
-   "registryField": null,
-   "resolvedProperty": null,
-   "runtimeCarried": false,
    "note": null
   },
   {
@@ -39619,24 +38630,6 @@
    "note": null
   },
   {
-   "path": "4H:canonicalName",
-   "classification": [
-    "SELECTOR",
-    "DISPLAY"
-   ],
-   "consumers": [
-    "WeaponAuthorityRegistry"
-   ],
-   "implementationState": "ADAPTER_REQUIRED",
-   "migrationPhase": "5B foundation",
-   "ruleId": "4h.identity",
-   "mechanicFamily": null,
-   "registryField": "canonicalName",
-   "resolvedProperty": "display",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
    "path": "4H:categories",
    "classification": [
     "RECOMMENDATION",
@@ -39733,24 +38726,6 @@
    "mechanicFamily": null,
    "registryField": "semantic",
    "resolvedProperty": "recommendation",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:identityKey",
-   "classification": [
-    "SELECTOR",
-    "DISPLAY"
-   ],
-   "consumers": [
-    "WeaponAuthorityRegistry"
-   ],
-   "implementationState": "ADAPTER_REQUIRED",
-   "migrationPhase": "5B foundation",
-   "ruleId": "4h.identity",
-   "mechanicFamily": null,
-   "registryField": "identityKey",
-   "resolvedProperty": "identity",
    "runtimeCarried": true,
    "note": null
   },
@@ -39941,304 +38916,6 @@
    "mechanicFamily": null,
    "registryField": "ontologyGapsAndUnrepresentedMechanics",
    "resolvedProperty": "ontologyGaps",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.mechanicsPointer",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.mechanicsRecordSha256",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.schemaFamily",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.schemaFamily.branch",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.schemaFamily.deliveryContext",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.schemaFamily.exoticWeaponIdentity",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.schemaFamily.proficiency",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.schemaFamily.subcategory",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.sourceClaims",
-   "classification": [
-    "DISPLAY",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "item sheet source panel"
-   ],
-   "implementationState": "DISPLAY_ONLY",
-   "migrationPhase": "5G",
-   "ruleId": "4h.phase3B.sourceDisplay",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.sourceClaims[]",
-   "classification": [
-    "DISPLAY",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "item sheet source panel"
-   ],
-   "implementationState": "DISPLAY_ONLY",
-   "migrationPhase": "5G",
-   "ruleId": "4h.phase3B.sourceDisplay",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.sourceClaims[].book",
-   "classification": [
-    "DISPLAY",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "item sheet source panel"
-   ],
-   "implementationState": "DISPLAY_ONLY",
-   "migrationPhase": "5G",
-   "ruleId": "4h.phase3B.sourceDisplay",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.sourceClaims[].descriptionPage",
-   "classification": [
-    "DISPLAY",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "item sheet source panel"
-   ],
-   "implementationState": "DISPLAY_ONLY",
-   "migrationPhase": "5G",
-   "ruleId": "4h.phase3B.sourceDisplay",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.sourceClaims[].publishedName",
-   "classification": [
-    "DISPLAY",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "item sheet source panel"
-   ],
-   "implementationState": "DISPLAY_ONLY",
-   "migrationPhase": "5G",
-   "ruleId": "4h.phase3B.sourceDisplay",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.sourceClaims[].statTablePage",
-   "classification": [
-    "DISPLAY",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "item sheet source panel"
-   ],
-   "implementationState": "DISPLAY_ONLY",
-   "migrationPhase": "5G",
-   "ruleId": "4h.phase3B.sourceDisplay",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:phase3B.weaponGroup",
-   "classification": [
-    "VALIDATION",
-    "PROVENANCE"
-   ],
-   "consumers": [
-    "registry provenance hashes",
-    "tools/verify-item-weapons-authority.mjs, 3C/3D builders (audit-only; intentionally not loaded at runtime)"
-   ],
-   "implementationState": "VALIDATION_ONLY",
-   "migrationPhase": "n/a",
-   "ruleId": "4h.phase3B",
-   "mechanicFamily": null,
-   "registryField": "provenance",
-   "resolvedProperty": "provenance",
    "runtimeCarried": true,
    "note": null
   },
@@ -41244,60 +39921,6 @@
    "mechanicFamily": null,
    "registryField": "proficiency",
    "resolvedProperty": "proficiency",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:repo",
-   "classification": [
-    "SELECTOR",
-    "VALIDATION"
-   ],
-   "consumers": [
-    "WeaponAuthorityRegistry.productionIdIndex"
-   ],
-   "implementationState": "ADAPTER_REQUIRED",
-   "migrationPhase": "5B foundation / 5G",
-   "ruleId": "4h.repo",
-   "mechanicFamily": null,
-   "registryField": "repo",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:repo.id",
-   "classification": [
-    "SELECTOR",
-    "VALIDATION"
-   ],
-   "consumers": [
-    "WeaponAuthorityRegistry.productionIdIndex"
-   ],
-   "implementationState": "ADAPTER_REQUIRED",
-   "migrationPhase": "5B foundation / 5G",
-   "ruleId": "4h.repo",
-   "mechanicFamily": null,
-   "registryField": "repo",
-   "resolvedProperty": "provenance",
-   "runtimeCarried": true,
-   "note": null
-  },
-  {
-   "path": "4H:repo.present",
-   "classification": [
-    "SELECTOR",
-    "VALIDATION"
-   ],
-   "consumers": [
-    "WeaponAuthorityRegistry.productionIdIndex"
-   ],
-   "implementationState": "ADAPTER_REQUIRED",
-   "migrationPhase": "5B foundation / 5G",
-   "ruleId": "4h.repo",
-   "mechanicFamily": null,
-   "registryField": "repo",
-   "resolvedProperty": "provenance",
    "runtimeCarried": true,
    "note": null
   },
@@ -42640,6 +41263,1538 @@
    "resolvedProperty": "recommendation",
    "runtimeCarried": true,
    "note": "tags never become combat mechanics"
+  },
+  {
+   "path": "CANON:production",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator"
+   ],
+   "implementationState": "ALREADY_CONSUMED_CORRECTLY",
+   "migrationPhase": "5C",
+   "ruleId": "canon.production.container",
+   "mechanicFamily": null,
+   "registryField": "repo",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:production.categoryPack",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.effects",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.flags",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.flags.swse",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.flags.swse.attunedBy",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.flags.swse.builtAt",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.flags.swse.builtBy",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.folder",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.id",
+   "classification": [
+    "SELECTOR",
+    "INVENTORY"
+   ],
+   "consumers": [
+    "weapon production generator (_id)",
+    "WeaponAuthorityRegistry.productionIdIndex",
+    "flags.swse.canonicalWeapon identity stamp"
+   ],
+   "implementationState": "ALREADY_CONSUMED_CORRECTLY",
+   "migrationPhase": "5C",
+   "ruleId": "canon.production.id",
+   "mechanicFamily": null,
+   "registryField": "repo",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:production.img",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.ammunition",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.ammunition.current",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.ammunition.max",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.ammunition.type",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.attackAttribute",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.attackBonus",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.baseBuildDc",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.baseCost",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.category",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.chassisId",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.combat",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.combat.attack",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.combat.attack.ability",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.combat.attack.bonus",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.combat.damage",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.combat.damage.ability",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.combat.damage.bonus",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.combat.damage.dice",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.combat.damage.type",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.constructible",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.cost",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.costNumeric",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.damage",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.damageType",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.description",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.economics",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.economics.cost",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.economics.weight",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.equippable",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.equippable.equipped",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.equippable.slot",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.equipped",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.installedUpgrades",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.proficiency",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.properties",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.properties[]",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.range",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.rangeProfile",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.schemaVersion",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.subcategory",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.subtype",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.traits",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.traits[]",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.upgradeSlots",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.weaponCategory",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.weaponType",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.legacySystemCapture.weight",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[]",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].flags",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].flags.swse",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].flags.swse.attunedBy",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].flags.swse.builtAt",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].flags.swse.builtBy",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].id",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].name",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].systemOverlay",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].systemOverlay.baseBuildDc",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].systemOverlay.baseCost",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].systemOverlay.chassisId",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].systemOverlay.constructible",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].systemOverlay.installedUpgrades",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].systemOverlay.subtype",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.mergedFrom[].systemOverlay.upgradeSlots",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.ownershipDefault",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.phase3CDisposition",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.presentBeforeCutover",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.previousName",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:production.sort",
+   "classification": [
+    "VALIDATION"
+   ],
+   "consumers": [
+    "weapon production generator (Foundry document metadata, merged-record chassis overlay, legacy system carry-over projection)"
+   ],
+   "implementationState": "LEGACY_COMPATIBILITY_ONLY",
+   "migrationPhase": "5C (retire with legacy projections)",
+   "ruleId": "canon.production.rest",
+   "mechanicFamily": null,
+   "registryField": null,
+   "resolvedProperty": null,
+   "runtimeCarried": false,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance.phase3B",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance.phase3B.mechanicsRecordSha256",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance.phase3B.pointer",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance.phase3B.recordSha256",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance.phase4H",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance.phase4H.pointer",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance.phase4H.recordSha256",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
   }
  ]
 }

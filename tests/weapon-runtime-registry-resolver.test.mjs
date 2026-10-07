@@ -11,8 +11,9 @@ const throwsCode = (fn, code) => assert.throws(fn, (e) => e instanceof WeaponRun
 
 // ---- registry / builder -------------------------------------------------------------------------------------------
 assert.equal(registry.size, 203);
-assert.equal(registryData.counts.repoPresent, 151);
-assert.equal(registryData.counts.repoMissing, 52);
+assert.equal(registryData.counts.presentBeforeCutover, 151);
+assert.equal(registryData.counts.createdByCutover, 52);
+assert.equal(registryData.counts.productionIds, 203);
 assert.equal(new Set(registryData.identities.map((i) => i.identityKey)).size, 203, 'no duplicate identities');
 const b3 = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8'));
 const h4 = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-global-semantic-authority.json'), 'utf8'));
@@ -62,7 +63,7 @@ assert.equal(resolver.resolve(viaSource).identity.via, 'source-id');
 const byNameOnly = { name: 'Bowcaster', flags: {}, system: { description: 'Bowcaster', weaponGroup: 'Exotic' } };
 assert.equal(resolver.resolve(byNameOnly).source, 'legacy');
 // synthetic stamps cover the 52 repo-missing identities
-const missing = registry.getAll().filter((r) => !r.repo.present);
+const missing = registry.getAll().filter((r) => !r.repo.presentBeforeCutover);
 assert.equal(missing.length, 52);
 for (const r of missing) assert.equal(resolver.resolve(stamped(r.identityKey)).identity.identityKey, r.identityKey);
 

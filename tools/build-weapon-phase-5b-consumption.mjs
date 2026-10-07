@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { RULES_3B, RULES_4H, STATES, CLASSES, classifyOperationKey } from './lib/weapon-phase-5b-rules.mjs';
+import { RULES_3B, RULES_4H, RULES_CANON, STATES, CLASSES, classifyOperationKey } from './lib/weapon-phase-5b-rules.mjs';
 import { buildRegistry } from './build-weapon-runtime-registry.mjs';
 import { WeaponAuthorityRegistry, WeaponRuntimeResolver } from '../scripts/items/weapon-runtime/index.js';
 
@@ -21,7 +21,21 @@ const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
 const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 const sortedSet = (s) => [...s].sort(cmp);
 
-function census(records, ns) {
+const ROOTS_4H = new Set(['selectors', 'proficiency', 'abilityInteractions', 'authorityDiscrepancies', 'ontologyGapsAndUnrepresentedMechanics', 'authorities']);
+/** canonical-corpus path -> {namespace, rulePath}: the rule tables keep their original Phase 3B / 4H path vocabulary. */
+export function mapCanonicalPath(p) {
+  const root = p.split(/[.[]/)[0];
+  if (root === 'production' || root === 'provenance') return { namespace: 'CANON', rulePath: p };
+  if (root === 'semantic') {
+    if (p === 'semantic') return { namespace: '4H', rulePath: 'semantic' };
+    if (p === 'semantic.categories' || p.startsWith('semantic.categories[')) return { namespace: '4H', rulePath: p.replace(/^semantic\.categories/, 'categories') };
+    if (p === 'semantic.tags') return { namespace: '4H', rulePath: 'semantic' };
+    return { namespace: '4H', rulePath: p.replace(/^semantic\.tags/, 'semantic') };
+  }
+  return { namespace: ROOTS_4H.has(root) ? '4H' : '3B', rulePath: p };
+}
+
+function census(records) {
   const m = new Map();
   const walk = (v, p, id) => {
     const t = v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v;
@@ -34,15 +48,20 @@ function census(records, ns) {
   };
   for (const r of records) walk(r, '', r.identityKey);
   m.delete('');
-  return [...m.entries()].sort((a, b) => cmp(a[0], b[0])).map(([p, e]) => ({
-    fieldPath: p, namespace: ns, sourceAuthority: ns === '3B' ? 'Phase 3B canonical mechanics' : 'Phase 4H semantic/selector/proficiency',
-    occurrenceCount: e.n, identityCount: e.ids.size, valueTypes: sortedSet(e.types),
-    sampleValues: sortedSet(e.samples).slice(0, 3), nullable: e.types.has('null'), conditional: e.ids.size < records.length,
-  }));
+  const byRule = new Map();
+  for (const [p, e] of [...m.entries()].sort((a, b) => cmp(a[0], b[0]))) {
+    const { namespace, rulePath } = mapCanonicalPath(p);
+    const key = `${namespace}\u0000${rulePath}`;
+    const prev = byRule.get(key);
+    const row = { canonicalPath: p, fieldPath: rulePath, namespace, sourceAuthority: namespace === '3B' ? 'Phase 3B canonical mechanics' : namespace === '4H' ? 'Phase 4H semantic/selector/proficiency' : 'Phase 5C canonical corpus (provenance/production)', occurrenceCount: e.n, identityCount: e.ids.size, valueTypes: sortedSet(e.types), sampleValues: sortedSet(e.samples).slice(0, 3), nullable: e.types.has('null'), conditional: e.ids.size < records.length };
+    if (prev) { prev.occurrenceCount += row.occurrenceCount; prev.identityCount = Math.max(prev.identityCount, row.identityCount); prev.valueTypes = sortedSet(new Set([...prev.valueTypes, ...row.valueTypes])); }
+    else byRule.set(key, row);
+  }
+  return [...byRule.values()].sort((a, b) => cmp(a.namespace + a.fieldPath, b.namespace + b.fieldPath));
 }
 
 function classify(entry) {
-  const rules = entry.namespace === '3B' ? RULES_3B : RULES_4H;
+  const rules = entry.namespace === '3B' ? RULES_3B : entry.namespace === '4H' ? RULES_4H : RULES_CANON;
   const p = entry.fieldPath;
   const op = /^operation\.([^.[]+)/.exec(p);
   if (entry.namespace === '3B' && (p === 'operation' || op)) {
@@ -56,16 +75,22 @@ function classify(entry) {
 }
 
 // registry key that carries each root, and the ResolvedWeapon property that exposes it (challenge to the adapter design)
-const REG_ROOT_3B = { identityKey: 'identityKey', canonicalName: 'canonicalName', repo: 'repo', sourceClaims: 'sourceClaims', firstPublication: 'firstPublication', canonicalPlayerText: 'canonicalPlayerText', summary: 'summary', weaponGroup: 'weaponGroup', schemaFamily: 'schemaFamily', canonicalStats: 'canonicalStats', qualities: 'qualities', conditionalQualities: 'conditionalQualities', conditionalDamageProfiles: 'conditionalDamageProfiles', proficiencyRules: 'proficiencyRules', operation: 'operation', sourceFootnotes: 'sourceFootnotes', qualityParameters: 'qualityParameters', qualityAuthority: 'qualityAuthority', ambiguities: 'ambiguities' };
+const REG_ROOT_3B = { provenance: 'provenance', production: 'repo', identityKey: 'identityKey', canonicalName: 'canonicalName', repo: 'repo', sourceClaims: 'sourceClaims', firstPublication: 'firstPublication', canonicalPlayerText: 'canonicalPlayerText', summary: 'summary', weaponGroup: 'weaponGroup', schemaFamily: 'schemaFamily', canonicalStats: 'canonicalStats', qualities: 'qualities', conditionalQualities: 'conditionalQualities', conditionalDamageProfiles: 'conditionalDamageProfiles', proficiencyRules: 'proficiencyRules', operation: 'operation', sourceFootnotes: 'sourceFootnotes', qualityParameters: 'qualityParameters', qualityAuthority: 'qualityAuthority', ambiguities: 'ambiguities' };
 const REG_ROOT_4H = { identityKey: 'identityKey', canonicalName: 'canonicalName', repo: 'repo', phase3B: 'provenance', categories: 'semantic', semantic: 'semantic', selectors: 'selectors', proficiency: 'proficiency', abilityInteractions: 'abilityInteractions', ontologyGapsAndUnrepresentedMechanics: 'ontologyGapsAndUnrepresentedMechanics', authorityDiscrepancies: 'authorityDiscrepancies', authorities: 'authorities' };
-const RESOLVED_FOR_REG = { identityKey: 'identity', canonicalName: 'display', repo: 'provenance', sourceClaims: 'provenance', firstPublication: 'provenance', canonicalPlayerText: 'display', summary: 'display', weaponGroup: 'weaponGroup', schemaFamily: 'schemaFamily', canonicalStats: 'canonicalStats', qualities: 'qualities', conditionalQualities: 'conditionalQualities', conditionalDamageProfiles: 'conditionalDamageProfiles', proficiencyRules: 'proficiencyRules', operation: 'operation', sourceFootnotes: 'display', qualityParameters: 'qualityParameters', qualityAuthority: 'provenance', ambiguities: 'provenance', provenance: 'provenance', semantic: 'recommendation', selectors: 'selectors', proficiency: 'proficiency', abilityInteractions: 'abilityInteractions', ontologyGapsAndUnrepresentedMechanics: 'ontologyGaps', authorityDiscrepancies: 'authorityDiscrepancies', authorities: 'recommendation' };
+const RESOLVED_FOR_REG = { repo: 'provenance', identityKey: 'identity', canonicalName: 'display', repo: 'provenance', sourceClaims: 'provenance', firstPublication: 'provenance', canonicalPlayerText: 'display', summary: 'display', weaponGroup: 'weaponGroup', schemaFamily: 'schemaFamily', canonicalStats: 'canonicalStats', qualities: 'qualities', conditionalQualities: 'conditionalQualities', conditionalDamageProfiles: 'conditionalDamageProfiles', proficiencyRules: 'proficiencyRules', operation: 'operation', sourceFootnotes: 'display', qualityParameters: 'qualityParameters', qualityAuthority: 'provenance', ambiguities: 'provenance', provenance: 'provenance', semantic: 'recommendation', selectors: 'selectors', proficiency: 'proficiency', abilityInteractions: 'abilityInteractions', ontologyGapsAndUnrepresentedMechanics: 'ontologyGaps', authorityDiscrepancies: 'authorityDiscrepancies', authorities: 'recommendation' };
 
 export function buildAll() {
+  const corpus = readJson('data/canonical/weapons.json');
   const b = readJson(P3B), h = readJson(P4H);
-  const c3 = census(b.identities, '3B'), c4 = census(h.records, '4H');
+  const all = census(corpus.identities);
+  const c3 = all.filter((e) => e.namespace === '3B'), c4 = all.filter((e) => e.namespace === '4H'), cc = all.filter((e) => e.namespace === 'CANON');
+  // roots intentionally NOT carried by the canonical corpus (audit-only evidence); every other audit root must be present
+  const canonRoots = new Set(corpus.identities.flatMap((x) => Object.keys(x)));
+  const AUDIT_ONLY_3B = new Set(['crossPublication', 'repoComparison', 'mergeAudit', 'repo']), AUDIT_ONLY_4H = new Set(['repo', 'phase3B', 'categories']);
+  const omitted = [...new Set([...b.identities.flatMap((x) => Object.keys(x)).filter((k) => !canonRoots.has(k) && !AUDIT_ONLY_3B.has(k)), ...h.records.flatMap((x) => Object.keys(x)).filter((k) => !canonRoots.has(k) && !AUDIT_ONLY_4H.has(k))])];
   const entries = [];
   const unclassified = [];
-  for (const e of [...c3, ...c4]) {
+  for (const e of all) {
     const k = classify(e);
     if (!k) { unclassified.push(`${e.namespace}:${e.fieldPath}`); continue; }
     entries.push({ ...e, ruleId: k.ruleId, classification: k.classes, consumers: k.consumers, implementationState: k.state, migrationPhase: k.phase, resolvedAt: k.resolvedAt, mechanicFamily: k.mechanicFamily ?? null, runtimeCarried: k.runtimeCarried === false ? false : true, note: k.note ?? null });
@@ -78,14 +103,14 @@ export function buildAll() {
   const exposure = [];
   for (const e of entries) {
     const root = e.fieldPath.split(/[.[]/)[0];
-    const regKey = e.namespace === '3B' ? REG_ROOT_3B[root] : REG_ROOT_4H[root];
+    const regKey = e.namespace === '4H' ? REG_ROOT_4H[root] : REG_ROOT_3B[root];
     const resolvedKey = regKey ? RESOLVED_FOR_REG[regKey] : null;
     e.registryField = e.runtimeCarried ? (regKey ?? null) : null;
     e.resolvedProperty = e.runtimeCarried ? (resolvedKey ?? null) : null;
     if (e.runtimeCarried) {
       if (!regKey || !regKeys.has(regKey)) exposure.push(`${e.namespace}:${e.fieldPath} not carried by registry (${regKey})`);
       else if (!resolvedKey || !(resolvedKey in sample)) exposure.push(`${e.namespace}:${e.fieldPath} not exposed by ResolvedWeapon (${resolvedKey})`);
-    } else if (!['VALIDATION_ONLY'].includes(e.implementationState)) exposure.push(`${e.namespace}:${e.fieldPath} deliberately not carried but not VALIDATION_ONLY`);
+    } else if (!['VALIDATION_ONLY', 'LEGACY_COMPATIBILITY_ONLY'].includes(e.implementationState)) exposure.push(`${e.namespace}:${e.fieldPath} deliberately not carried but not VALIDATION_ONLY/LEGACY_COMPATIBILITY_ONLY`);
   }
   const invariants = {
     unclassifiedCertifiedFields: unclassified.length,
@@ -93,11 +118,11 @@ export function buildAll() {
     unexplainedCertifiedFields: entries.filter((e) => !STATES.includes(e.implementationState) || !e.classification.every((c) => CLASSES.includes(c)) || (e.implementationState === 'VALIDATION_ONLY' && !e.consumers.length)).length,
     adapterExposureGaps: exposure.length,
   };
-  const failures = [...unclassified.map((x) => `unclassified ${x}`), ...exposure];
+  const failures = [...unclassified.map((x) => `unclassified ${x}`), ...exposure, ...omitted.map((k) => `audit root ${k} is neither carried by the canonical corpus nor a declared audit-only root`)];
 
   const count = (f) => entries.reduce((m, e) => { for (const v of [].concat(f(e))) m[v] = (m[v] ?? 0) + 1; return m; }, {});
   const sortObj = (o) => Object.fromEntries(Object.entries(o).sort((a, b) => cmp(a[0], b[0])));
-  const census3 = { schemaVersion: '5B.1', phase: '5B', family: 'weapons', purpose: 'Programmatic census of every field path present in the frozen Phase 3B and Phase 4H authorities. Paths normalise array indices to [].', identities: b.identities.length, inputs: { [P3B]: sha(fs.readFileSync(path.join(ROOT, P3B), 'utf8')), [P4H]: sha(fs.readFileSync(path.join(ROOT, P4H), 'utf8')) }, counts: { phase3BFieldPaths: c3.length, phase4HFieldPaths: c4.length, totalFieldPaths: c3.length + c4.length }, fields: [...c3, ...c4] };
+  const census3 = { schemaVersion: '5B.1', phase: '5B', family: 'weapons', purpose: 'Programmatic census of every field path present in the operational canonical weapons corpus (data/canonical/weapons.json). Paths normalise array indices to []; each path is attributed to its certified origin (Phase 3B / Phase 4H) or to the canonical-only wrapper (provenance/production). Audit-only roots not carried by the corpus are enumerated in auditOnlyRootsNotCarried.', identities: corpus.identities.length, inputs: { 'data/canonical/weapons.json': sha(fs.readFileSync(path.join(ROOT, 'data/canonical/weapons.json'), 'utf8')) }, auditOnlyRootsNotCarried: { phase3B: [...AUDIT_ONLY_3B].sort(), phase4H: [...AUDIT_ONLY_4H].sort() }, counts: { phase3BFieldPaths: c3.length, phase4HFieldPaths: c4.length, canonicalOnlyFieldPaths: cc.length, totalFieldPaths: c3.length + c4.length + cc.length }, fields: all };
   const map = {
     schemaVersion: '5B.1', phase: '5B', family: 'weapons',
     purpose: 'Every certified field path -> classification, concrete consumers, implementation state, migration phase, registry carrier and ResolvedWeapon exposure. EVERY FIELD IS USED (not: every field affects damage).',
@@ -114,7 +139,7 @@ export function buildAll() {
     if (!key) continue;
     const f = fam.get(e.mechanicFamily) ?? { keys: new Set(), ids: new Set() };
     f.keys.add(key);
-    const ids = new Set(); for (const i of b.identities) if (i.operation && Object.prototype.hasOwnProperty.call(i.operation, key)) ids.add(i.identityKey);
+    const ids = new Set(); for (const i of corpus.identities) if (i.operation && Object.prototype.hasOwnProperty.call(i.operation, key)) ids.add(i.identityKey);
     ids.forEach((x) => f.ids.add(x)); fam.set(e.mechanicFamily, f);
   }
   const opFamilies = [...fam.entries()].sort((a, c) => cmp(a[0], c[0])).map(([family, f]) => {
@@ -122,7 +147,7 @@ export function buildAll() {
     return { mechanic: family, source: 'canonicalStats-adjacent operation.* (Phase 3B)', operationKeys: sortedSet(f.keys), identityCount: f.ids.size, identities: sortedSet(f.ids), currentRuntimeSupport: rule.support, futureConsumer: rule.consumers, implementationState: rule.state, migrationPhase: rule.phase };
   });
   const profileMech = (name, test, consumers, phase, support) => {
-    const ids = new Set(); for (const i of b.identities) if (i.canonicalStats.attackProfiles.some(test) || test(i.canonicalStats)) ids.add(i.identityKey);
+    const ids = new Set(); for (const i of corpus.identities) if (i.canonicalStats.attackProfiles.some(test) || test(i.canonicalStats)) ids.add(i.identityKey);
     return { mechanic: name, source: 'structured attack-profile / canonicalStats field', identityCount: ids.size, identities: sortedSet(ids), currentRuntimeSupport: support, futureConsumer: consumers, implementationState: 'NEW_CONSUMER_REQUIRED', migrationPhase: phase };
   };
   const has = (v) => Array.isArray(v) ? v.length > 0 : !!v && typeof v === 'object' && Object.keys(v).length > 0;

@@ -23,7 +23,7 @@ for (const e of map.entries) {
   assert.ok(STATES.includes(e.implementationState), e.path);
   assert.ok(!/TODO|future|maybe/i.test(e.implementationState));
   if (e.runtimeCarried) { assert.ok(e.registryField && e.resolvedProperty, `${e.path} carried by registry and exposed by ResolvedWeapon`); }
-  else assert.equal(e.implementationState, 'VALIDATION_ONLY');
+  else assert.ok(['VALIDATION_ONLY', 'LEGACY_COMPATIBILITY_ONLY'].includes(e.implementationState), e.path);
 }
 for (const f of census.fields) assert.ok(seen.has(`${f.namespace}:${f.fieldPath}`), `census path ${f.fieldPath} mapped`);
 // every operation.* key resolves to a mechanic family

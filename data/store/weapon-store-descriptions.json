@@ -2,1117 +2,1219 @@
   {
     "slug": "archaic-lightfoil",
     "id": "lightsaber-chassis-archaic-lightfoil",
-    "name": "Archaic Lightfoil",
-    "description": "Archaic Lightfoil, delicately balanced Lightfoil favored by Makashi practitioners, 2d8, melee. Still the preferred accessory for people with destiny issues."
+    "name": "Lightfoil, Archaic",
+    "description": "Delicately balanced one-handed lightfoil that can count as Small when beneficial."
   },
   {
     "slug": "archaic-lightsaber",
     "id": "lightsaber-chassis-archaic-lightsaber",
-    "name": "Archaic Lightsaber",
-    "description": "Archaic Lightsaber, ancient lightsaber with an external belt-mounted power pack connected by cord, 2d6, melee. Still the preferred accessory for people with destiny issues."
+    "name": "Lightsaber, Archaic",
+    "description": "Ancient corded lightsaber powered by a special 600-credit external pack."
   },
   {
     "slug": "crossguard",
     "id": "lightsaber-chassis-crossguard",
     "name": "Crossguard Lightsaber",
-    "description": "Crossguard Lightsaber, rare duelist's lightsaber with three blades: one primary and two secondary crossguards at 45-135 degree angles, 2d8, melee. Elegant hardware for buyers who want every room to become a moral debate."
-  },
-  {
-    "slug": "double",
-    "id": "lightsaber-chassis-double",
-    "name": "Lightsaber (Double-Bladed)",
-    "description": "Lightsaber (Double-Bladed), double-bladed lightsaber with blades on both ends, 2d8, melee. For customers who think subtlety should glow a little more."
+    "description": "Crossguard saber improves repeated Block checks to cumulative -2 but imposes -2 on Deflect."
   },
   {
     "slug": "dual-phase",
     "id": "lightsaber-chassis-dual-phase",
-    "name": "Dual-Phase Lightsaber",
-    "description": "Dual-Phase Lightsaber, sophisticated lightsaber with multiple crystals allowing blade length adjustment, 2d8, melee. For customers who think subtlety should glow a little more."
+    "name": "Lightsaber, Dual-Phase",
+    "description": "Swift-switch lightsaber with an extended mode granting +1 reach but -2 Reflex against adjacent attackers."
   },
   {
     "slug": "dueling",
     "id": "lightsaber-chassis-dueling",
     "name": "Dueling Lightsaber",
-    "description": "Dueling Lightsaber, curved-hilt lightsaber favored for one-handed finesse fighting, 2d8, melee. For customers who think subtlety should glow a little more."
+    "description": "Curved-hilt dueling saber granting +1 equipment bonus on one-handed attacks of opportunity."
   },
   {
     "slug": "great",
     "id": "lightsaber-chassis-great",
-    "name": "Great Lightsaber",
-    "description": "Great Lightsaber, oversized lightsaber favored by Large creatures, 2d10, melee. For customers who think subtlety should glow a little more."
+    "name": "Lightsaber, Great",
+    "description": "Oversized lightsaber; only Large+ wielders can combine it with feats meant for light weapons/lightsabers."
   },
   {
     "slug": "guard-shoto",
     "id": "lightsaber-chassis-guard-shoto",
     "name": "Guard Shoto",
-    "description": "Guard Shoto, guard-style shoto with a second handle at 90 degrees for defensive positioning, 2d4, melee. For customers who think subtlety should glow a little more."
+    "description": "Defensive lightsaber tonfa granting +2 equipment bonus to Block/Deflect; phrik-laced handles resist lightsaber DR bypass."
   },
   {
     "slug": "lightwhip",
     "id": "lightsaber-chassis-lightwhip",
     "name": "Lightwhip",
-    "description": "Lightwhip, flexible energy whip with 2-square reach, 2d4, melee. Elegant hardware for buyers who want every room to become a moral debate."
+    "description": "Reach-2 lightsaber whip that can grab/grapple; held targets take unmodified base damage at end of turn."
   },
   {
     "slug": "longhandle",
     "id": "lightsaber-chassis-longhandle",
     "name": "Long-Handle Lightsaber",
-    "description": "Long-Handle Lightsaber, lightsaber with oversized grip for two-handed leverage, 2d8, melee. A classic for anyone convinced good posture and plasma solve most problems."
+    "description": "Two-handed saber that can trade doubled Strength damage for 2d10 base damage; Long Haft Form enables a 1d6 haft attack."
   },
   {
     "slug": "modern-lightfoil",
     "id": "lightsaber-chassis-modern-lightfoil",
-    "name": "Modern Lightfoil",
-    "description": "Modern Lightfoil, modern recreation of the archaic lightfoil, built without Force training, 2d6, melee. Elegant hardware for buyers who want every room to become a moral debate."
+    "name": "Lightfoil, Modern",
+    "description": "Modern one-handed lightfoil that can count as Small when beneficial."
   },
   {
     "slug": "pike",
     "id": "lightsaber-chassis-pike",
     "name": "Lightsaber Pike",
-    "description": "Lightsaber Pike, polearm with lightsaber blade, favored by Emperor's Shadow Guard, 2d8, melee. Still the preferred accessory for people with destiny issues."
+    "description": "Reach lightsaber pike with phrik haft; +1 reach, -2 Block/Deflect, and Long Haft Form can enable a 1d6 haft end."
   },
   {
     "slug": "retrosaber",
     "id": "lightsaber-chassis-retrosaber",
     "name": "Retrosaber",
-    "description": "Retrosaber, modern reconstruction of archaic lightsaber technology, 2d8, melee. A classic for anyone convinced good posture and plasma solve most problems."
+    "description": "Corded modernized lightsaber that can overcharge to 2d10, then drops to 2d4 for one recovery round."
   },
   {
     "slug": "short",
     "id": "lightsaber-chassis-short",
-    "name": "Short Lightsaber",
-    "description": "Short Lightsaber, favored by Small Jedi and as an off-hand weapon, 2d6, melee. Still the preferred accessory for people with destiny issues."
-  },
-  {
-    "slug": "standard",
-    "id": "lightsaber-chassis-standard",
-    "name": "Lightsaber (Standard)",
-    "description": "Lightsaber (Standard), standard lightsaber with a single blade, 2d8, melee. Elegant hardware for buyers who want every room to become a moral debate."
+    "name": "Lightsaber, Short",
+    "description": "Small shoto lightsaber commonly used by Small Jedi or as an off-hand weapon."
   },
   {
     "slug": "adhesive-grenade",
     "id": "weapon-adhesive-grenade",
     "name": "Adhesive Grenade",
-    "description": "Adhesive Grenade, releases a powerful adhesive that immobilizes targets in the blast radius, 6 squares. Single-use confidence for people who dislike follow-up conversations."
+    "description": "Riot-control grenade that can hold targets in place for up to 3 rounds until they win the opposed grapple check."
   },
   {
-    "slug": "adjudicator-slugthrower",
+    "slug": "czerka-adjudicator",
     "id": "weapon-adjudicator-slugthrower",
-    "name": "Adjudicator Slugthrower",
-    "description": "Adjudicator Slugthrower, compact slugthrower pistol, 2d4, 8 squares. Not standard issue, which is often how you know it will be interesting."
+    "name": "Czerka Adjudicator",
+    "description": "Concealable slugthrower backup pistol with four shots and a full-round reload."
   },
   {
-    "slug": "adventurer-slugthrower",
+    "slug": "czerka-adventurer",
     "id": "weapon-adventurer-slugthrower",
-    "name": "Adventurer Slugthrower",
-    "description": "Adventurer Slugthrower, rugged civilian slugthrower rifle, 2d10, 30 squares. A niche purchase, but then so is whatever situation this was built for."
+    "name": "Czerka Adventurer",
+    "description": "Accurate long-range slugthrower that can be disassembled or reassembled as a move action."
   },
   {
-    "slug": "arc-9965-blaster",
+    "slug": "amphistaff",
+    "id": "weapon-amphistaff",
+    "name": "Amphistaff",
+    "description": "Living Yuuzhan Vong weapon with quarterstaff, poisoned spear, reach/Pin/Trip whip, and once-per-day venom-spit forms."
+  },
+  {
+    "slug": "arc-9965-blaster-rifle",
     "id": "weapon-arc-9965-blaster",
-    "name": "ARC-9965 Blaster",
-    "description": "ARC-9965 Blaster, advanced military blaster rifle, 3d8, 35 squares. Specialty hardware for buyers with very specific grudges."
+    "name": "ARC-9965 Blaster Rifle",
+    "description": "Accurate Imperial rifle with a retractable stock and 40-shot pack; each autofire attack consumes 10 shots."
+  },
+  {
+    "slug": "arggarok",
+    "id": "weapon-arggarok",
+    "name": "Arggarok",
+    "description": "Huge Gamorrean axe; Str 15+ avoids a -5 attack penalty, and Gamorreans treat it as an advanced melee weapon."
   },
   {
     "slug": "ascension-gun",
     "id": "weapon-ascension-gun",
     "name": "Ascension Gun",
-    "description": "Ascension Gun, grappling gun with blaster capability, 3d8, 15 squares. Not standard issue, which is often how you know it will be interesting."
+    "description": "Heavy blaster/grappling system; swift-switch to a 30-square tether that lifts or creates a zipline."
   },
   {
-    "slug": "assault-blaster-rifle",
+    "slug": "blaster-rifle-assault",
     "id": "weapon-assault-blaster-rifle",
-    "name": "Assault Blaster Rifle",
-    "description": "Assault Blaster Rifle, military assault rifle with automatic capability, 3d8, 35 squares. A respectable long arm for anyone who mistakes overprepared for professional."
+    "name": "Blaster Rifle, Assault",
+    "description": "Accurate military rifle with single-shot/autofire capability and a 50-shot power pack."
+  },
+  {
+    "slug": "atlatl",
+    "id": "weapon-atlatl",
+    "name": "Atlatl",
+    "description": "Gungan energy-ball launcher that can also serve as a club; Gungans with simple-weapon proficiency are treated as proficient."
   },
   {
     "slug": "aurial-blaster",
     "id": "weapon-aurial-blaster",
     "name": "Aurial Blaster",
-    "description": "Aurial Blaster, exotic sonic weapon used by the Aurial species, 3d6, 15 squares. Specialty hardware for buyers with very specific grudges."
+    "description": "Sonic exotic pistol that can deafen a hit target for -5 Perception; 50 shots per power pack."
   },
   {
-    "slug": "battering-ram",
+    "slug": "axe",
+    "id": "weapon-axe",
+    "name": "Axe",
+    "description": "Simple legal chopping weapon that can also be thrown."
+  },
+  {
+    "slug": "squib-battering-ram",
     "id": "weapon-battering-ram",
-    "name": "Battering Ram",
-    "description": "Battering Ram, portable energy battering ram, 5d10, 5 squares. Specialty hardware for buyers with very specific grudges."
+    "name": "Squib Battering Ram",
+    "description": "Two-person powered breaching ram for stationary unattended objects; uses four power packs."
+  },
+  {
+    "slug": "bayonet",
+    "id": "weapon-bayonet",
+    "name": "Bayonet",
+    "description": "Rifle-mounted spear-like blade that preserves melee threat/AoO after ranged fire; detached it functions as a knife."
   },
   {
     "slug": "black-powder-pistol",
     "id": "weapon-black-powder-pistol",
     "name": "Black-Powder Pistol",
-    "description": "Black-Powder Pistol, primitive black powder firearm, 2d4, 10 squares. Easy to conceal, easier to regret at conversational distance."
-  },
-  {
-    "slug": "blast-cannon",
-    "id": "weapon-blast-cannon",
-    "name": "Blast Cannon",
-    "description": "Blast Cannon, powerful portable blast cannon, 3d8, 30 squares. Built for operators who believe every problem improves with recoil."
+    "description": "Single-shot inaccurate pistol with a full-round reload; trained characters can forage and manufacture ammunition in the field."
   },
   {
     "slug": "blaster-cannon",
     "id": "weapon-blaster-cannon",
     "name": "Blaster Cannon",
-    "description": "Blaster Cannon, powerful portable cannon, 3d12, 50 squares. A premium choice for anyone who wants subtlety removed at the factory."
+    "description": "Shoulder-fired area blaster: full/half damage to the target and splash damage to adjacent creatures/objects; 10 shots per power pack."
   },
   {
     "slug": "blaster-carbine",
     "id": "weapon-blaster-carbine",
     "name": "Blaster Carbine",
-    "description": "Blaster Carbine, compact rifle suitable for close-quarters combat, 3d8, 30 squares. For buyers who want rifle energy without committing to the full silhouette."
+    "description": "Compact rifle that can always make attacks of opportunity; 50 shots per power pack."
   },
   {
     "slug": "blaster-pistol",
     "id": "weapon-blaster-pistol",
     "name": "Blaster Pistol",
-    "description": "Blaster Pistol, standard sidearm used throughout the galaxy, 3d6, 20 squares. Compact, fashionable, and built for conversations that suddenly matter."
+    "description": "Standard blaster sidearm with 100 shots per power pack."
   },
   {
     "slug": "blaster-rifle",
     "id": "weapon-blaster-rifle",
     "name": "Blaster Rifle",
-    "description": "Blaster Rifle, standard military rifle used by armed forces across the galaxy, 3d10, 40 squares. For customers who like their opinions delivered from further away."
+    "description": "Standard military rifle; 50 shots per power pack and optional retractable-stock configuration."
   },
   {
-    "slug": "bluebolt-blaster-pistol",
+    "slug": "blastsword",
+    "id": "weapon-blastsword",
+    "name": "Blastsword",
+    "description": "Adumari dueling weapon that qualifies as a light weapon for Weapon Finesse; uses a power pack."
+  },
+  {
+    "slug": "blaster-pistol-bluebolt",
     "id": "weapon-bluebolt-blaster-pistol",
-    "name": "Bluebolt Blaster Pistol",
-    "description": "Bluebolt Blaster Pistol, military-issue blaster pistol, 3d8, 18 squares. Compact, fashionable, and built for conversations that suddenly matter."
+    "name": "Blaster Pistol, Bluebolt",
+    "description": "Inaccurate 50-shot pistol with an 8-square stun range; stun attacks consume an extra shot."
   },
   {
     "slug": "bow",
     "id": "weapon-bow",
     "name": "Bow",
-    "description": "Bow, traditional bow and arrow, 1d6, 15 squares. Field-ready hardware for buyers who prefer their trouble downrange."
+    "description": "Bow adds Strength to damage, holds one arrow, reloads as a free action, and uses purchasable arrow quivers."
   },
   {
     "slug": "bowcaster",
     "id": "weapon-bowcaster",
     "name": "Bowcaster",
-    "description": "Bowcaster, traditional weapon of the Wookiees, 3d10, 20 squares. A respectable long arm for anyone who mistakes overprepared for professional."
+    "description": "Wookiee exotic ranged weapon; Wookiees with rifle proficiency are treated as proficient; uses quarrel quivers."
   },
   {
     "slug": "bryar-pistol",
     "id": "weapon-bryar-pistol",
     "name": "Bryar Pistol",
-    "description": "Bryar Pistol, reliable civilian pistol, 3d4, 15 squares. The sort of purchase made by people who call this a precaution."
+    "description": "Can be primed with a swift action for +1 weapon die on the next qualifying shot at a cost of 5 shots."
   },
   {
     "slug": "bryar-rifle",
     "id": "weapon-bryar-rifle",
     "name": "Bryar Rifle",
-    "description": "Bryar Rifle, reliable civilian rifle design, 3d8, 30 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
+    "description": "Rifle that can prime a +1 weapon-die shot for 5 shots; 50-shot rechargeable pack."
   },
   {
     "slug": "carbonite-rifle",
     "id": "weapon-carbonite-rifle",
     "name": "Carbonite Rifle",
-    "description": "Carbonite Rifle, freezes targets in carbonite, 3d10, 20 squares. For customers who like their opinions delivered from further away."
+    "description": "Stun rifle that also immobilizes targets it moves down the condition track; 20-shot carbonite cartridges."
   },
   {
-    "slug": "charric",
-    "id": "weapon-charric",
-    "name": "Charric",
-    "description": "Charric, sophisticated energy weapon used by the Chiss Ascendancy, 3d10, 30 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
+    "slug": "cesta",
+    "id": "weapon-cesta",
+    "name": "Cesta",
+    "description": "Gungan stafflike launcher for energy balls; Gungans with simple-weapon proficiency are treated as proficient."
   },
   {
-    "slug": "clone-dc15a-blaster-rifle",
-    "id": "weapon-clone-dc15a-blaster-rifle",
-    "name": "Clone DC-15A Blaster Rifle",
-    "description": "Clone DC-15A Blaster Rifle, long-range variant of the DC-15 series used by Clone Troopers during the Clone Wars, 3d12, 40 squares. Field-ready hardware for buyers who prefer their trouble downrange."
+    "slug": "club-baton",
+    "id": "weapon-club-baton",
+    "name": "Club/Baton",
+    "description": "Basic bludgeoning club or police baton with no special weapon rule beyond its listed statistics."
   },
   {
-    "slug": "clone-dc15s-blaster-carbine",
-    "id": "weapon-clone-dc15s-blaster-carbine",
-    "name": "Clone DC-15S Blaster Carbine",
-    "description": "Clone DC-15S Blaster Carbine, carbine version of the DC-15 series, 3d8, 30 squares. Ideal for hallways, boarding actions, and other poor life choices."
+    "slug": "combat-gloves",
+    "id": "weapon-combat-gloves",
+    "name": "Combat Gloves",
+    "description": "Worn gloves add +1 unarmed damage and cannot be disarmed or dropped."
   },
   {
     "slug": "commando-special-rifle",
     "id": "weapon-commando-special-rifle",
     "name": "Commando Special Rifle",
-    "description": "Commando Special Rifle, specialized commando weapon, 3d10, 30 squares. For customers who like their opinions delivered from further away."
+    "description": "Compact Republic commando rifle with single/autofire capability and only 25 shots per power pack."
   },
   {
     "slug": "concealed-dart-launcher",
     "id": "weapon-concealed-dart-launcher",
     "name": "Concealed Dart Launcher",
-    "description": "Concealed Dart Launcher, concealed weapon that fires tranquilizer darts, 8 squares. A serious purchase for anyone tired of aiming small."
+    "description": "Wrist dart launcher with poison-capable or sedative darts, pistol ranges, unrestricted stun range, +5 to conceal, and a 6-dart bundle."
   },
   {
     "slug": "concussion-grenade",
     "id": "weapon-concussion-grenade",
     "name": "Concussion Grenade",
-    "description": "Concussion Grenade, powerful grenade that delivers devastating concussive force, 8d6, 6 squares. Single-use confidence for people who dislike follow-up conversations."
-  },
-  {
-    "slug": "concussion-missile-launcher",
-    "id": "weapon-concussion-missile-launcher",
-    "name": "Concussion Missile Launcher",
-    "description": "Concussion Missile Launcher, fires concussion missiles that create devastating explosive blasts, varies, 60 squares. For the buyer who likes their solutions arcing in from off-camera."
+    "description": "Contact-detonated 2-square burst grenade using standard full/half area-attack rules."
   },
   {
     "slug": "concussion-rifle",
     "id": "weapon-concussion-rifle",
     "name": "Concussion Rifle",
-    "description": "Concussion Rifle, sonic rifle that delivers concussive force, 2d10, 25 squares. A respectable long arm for anyone who mistakes overprepared for professional."
+    "description": "Sonic rifle that attacks Fortitude Defense and knocks a hit target prone; 25-shot power pack."
   },
   {
-    "slug": "cortosis-sword",
-    "id": "weapon-cortosis-sword",
-    "name": "Cortosis Sword",
-    "description": "Cortosis Sword, blade forged from cortosis, a rare mineral that can resist lightsaber blades, 2d8, melee. For customers who believe personal space is a negotiable concept."
+    "slug": "contact-stunner",
+    "id": "weapon-contact-stunner",
+    "name": "Contact Stunner",
+    "description": "Compact contact weapon granting +5 to Stealth checks to conceal it; uses an energy cell."
   },
   {
     "slug": "cr-1-blast-cannon",
     "id": "weapon-cr-1-blast-cannon",
     "name": "CR-1 Blast Cannon",
-    "description": "CR-1 Blast Cannon, portable blast cannon with special targeting properties, 3d8, 30 squares. For customers who hear \"excessive\" and assume it means effective."
+    "description": "Blast cannon with pistol ranges: range penalties reduce damage, adjacent targets take +1d8, and distant shots splash."
   },
   {
     "slug": "crossbow",
     "id": "weapon-crossbow",
     "name": "Crossbow",
-    "description": "Crossbow, traditional crossbow, 1d8, 18 squares. A respectable long arm for anyone who mistakes overprepared for professional."
+    "description": "Single-bolt inaccurate crossbow requiring a move action to reload."
   },
   {
     "slug": "cryoban-grenade",
     "id": "weapon-cryoban-grenade",
     "name": "CryoBan Grenade",
-    "description": "CryoBan Grenade, grenade that releases cryogenic chemicals, freezing everything in the blast area, 4d6, 6 squares. A tidy purchase for buyers who prefer their plans loud and brief."
+    "description": "Cryogenic grenade that reduces a target's speed to 2 squares when the attack also beats Fortitude Defense."
+  },
+  {
+    "slug": "darkstick",
+    "id": "weapon-darkstick",
+    "name": "Darkstick",
+    "description": "Kerestian thrown blade that can return on a strong hit; multiple blades increase damage and some versions cloak the wielder from adjacent foes."
   },
   {
     "slug": "darter",
     "id": "weapon-darter",
     "name": "Darter",
-    "description": "Darter, simple dart launcher, 1, 15 squares. Not standard issue, which is often how you know it will be interesting."
+    "description": "Short-range dart launcher that can deliver poison on damage or fire surveillance taggers."
+  },
+  {
+    "slug": "datadagger",
+    "id": "weapon-datadagger",
+    "name": "Datadagger",
+    "description": "Concealed code-cylinder dagger; +5 to Stealth checks to hide it and unusually difficult to detect by touch."
   },
   {
     "slug": "deck-sweeper",
     "id": "weapon-deck-sweeper",
     "name": "Deck Sweeper",
-    "description": "Deck Sweeper, non-lethal area weapon used for crowd control, 3d6, 10 squares. Not standard issue, which is often how you know it will be interesting."
+    "description": "Prime with a swift action, then fire a 6-square stun cone for full/half stun damage; 5 shots per pack."
   },
   {
-    "slug": "defender-microblaster",
+    "slug": "gee-tech-12-defender-microblaster",
     "id": "weapon-defender-microblaster",
-    "name": "Defender MicroBlaster",
-    "description": "Defender MicroBlaster, tiny concealed blaster, 3d4, 8 squares. For the customer who read the catalog and chose escalation with style."
+    "name": "Gee-Tech 12 Defender Microblaster",
+    "description": "Disposable two-shot microblaster; +5 to conceal it and maximum range 3 squares."
   },
   {
-    "slug": "dh-23-blaster-pistol",
+    "slug": "blastech-dh-23-outback-blaster-pistol",
     "id": "weapon-dh-23-blaster-pistol",
-    "name": "DH-23 Blaster Pistol",
-    "description": "DH-23 Blaster Pistol, blasTech security blaster, 3d6, 15 squares. The sort of purchase made by people who call this a precaution."
+    "name": "BlasTech DH-23 Outback Blaster Pistol",
+    "description": "Durable blaster pistol with Strength 17 and Break DC 20."
+  },
+  {
+    "slug": "dire-sword",
+    "id": "weapon-dire-sword",
+    "name": "Dire Sword",
+    "description": "Large archaic simple sword with no additional special rule."
+  },
+  {
+    "slug": "dire-vibroblade",
+    "id": "weapon-dire-vibroblade",
+    "name": "Dire Vibroblade",
+    "description": "Large two-handed vibroblade that lets a Medium wielder apply double Strength bonus to damage; uses an energy cell."
   },
   {
     "slug": "discblade",
     "id": "weapon-discblade",
     "name": "Discblade",
-    "description": "Discblade, thrown disc weapon that returns to the wielder, 2d8, 10 squares. Not standard issue, which is often how you know it will be interesting."
+    "description": "Zeison Sha thrown blade that trained Force-users can call back after throwing."
   },
   {
-    "slug": "disruptor-pistol",
+    "slug": "dx-2-disruptor-pistol",
     "id": "weapon-disruptor-pistol",
-    "name": "Disruptor Pistol",
-    "description": "Disruptor Pistol, illegal weapon that disrupts matter at the molecular level, 3d6, 10 squares. The sort of purchase made by people who call this a precaution."
+    "name": "DX-2 Disruptor Pistol",
+    "description": "Disruptor pistol lowers effective damage threshold by 5, disintegrates destroyed targets, and fires only every other round."
   },
   {
-    "slug": "disruptor-rifle",
+    "slug": "dxr-6-disruptor-rifle",
     "id": "weapon-disruptor-rifle",
-    "name": "Disruptor Rifle",
-    "description": "Disruptor Rifle, highly illegal weapon that completely disrupts matter, 4d6, 30 squares. A respectable long arm for anyone who mistakes overprepared for professional."
+    "name": "DXR-6 Disruptor Rifle",
+    "description": "Disruptor rifle lowers effective damage threshold by 5, disintegrates destroyed targets, and fires only every other round."
   },
   {
-    "slug": "dlt-20a-longblaster",
+    "slug": "blastech-dlt-20a-longbarrel-blaster-rifle",
     "id": "weapon-dlt-20a-longblaster",
-    "name": "DLT-20A Longblaster",
-    "description": "DLT-20A Longblaster, blasTech long-range rifle, 3d10, 40 squares. A niche purchase, but then so is whatever situation this was built for."
+    "name": "BlasTech DLT-20A \"Longbarrel\" Blaster Rifle",
+    "description": "Long-range rifle with a built-in standard targeting scope and +1 equipment bonus to Reflex Defense against disarm attacks."
   },
   {
-    "slug": "double-barreled-blaster-carbine",
+    "slug": "blaster-carbine-double-barreled",
     "id": "weapon-double-barreled-blaster-carbine",
-    "name": "Double-Barreled Blaster Carbine",
-    "description": "Double-Barreled Blaster Carbine, double-barreled carbine that can fire both barrels, 3d8, 25 squares. Compact enough for close work and bad manners."
+    "name": "Blaster Carbine, Double-Barreled",
+    "description": "Inaccurate 50-shot carbine with a swift-action double-shot mode that attacks a 2x2 area, consumes 2 shots, and blocks multi-shot effects."
   },
   {
-    "slug": "double-bladed-lightsaber",
+    "slug": "lightsaber-double",
     "id": "weapon-double-bladed-lightsaber",
-    "name": "Double-Bladed Lightsaber",
-    "description": "Double-Bladed Lightsaber, lightsaber with blades on both ends, 2d8, melee. Elegant hardware for buyers who want every room to become a moral debate."
+    "name": "Lightsaber, Double",
+    "description": "Two-ended lightsaber; with both blades active it is a double weapon and needs two special energy cells."
   },
   {
-    "slug": "dt-12-heavy-blaster",
+    "slug": "double-bladed-sword",
+    "id": "weapon-double-bladed-sword",
+    "name": "Double-Bladed Sword",
+    "description": "Simple double sword; attack with both ends as a full-round action at the normal double-weapon penalties."
+  },
+  {
+    "slug": "double-vibroblade",
+    "id": "weapon-double-vibroblade",
+    "name": "Double Vibroblade",
+    "description": "Double vibro weapon using two energy cells and the normal full-round double-weapon attack rules."
+  },
+  {
+    "slug": "blastech-dt-12-heavy-blaster-pistol",
     "id": "weapon-dt-12-heavy-blaster",
-    "name": "DT-12 Heavy Blaster",
-    "description": "DT-12 Heavy Blaster, very powerful heavy blaster pistol, 4d6, 18 squares. For the customer who read the catalog and chose escalation with style."
+    "name": "BlasTech DT-12 Heavy Blaster Pistol",
+    "description": "Heavy blaster with an enlarged trigger grip; powerful but inaccurate at long range."
   },
   {
     "slug": "e-web-missile-launcher",
     "id": "weapon-e-web-missile-launcher",
     "name": "E-Web Missile Launcher",
-    "description": "E-Web Missile Launcher, tripod-mounted missile launcher, 6d6, 60 squares. For the buyer who likes their solutions arcing in from off-camera."
+    "description": "Tripod single-shot area missile launcher; usually crew-served, reloads each round, and can spend two swift actions to improve effective range."
   },
   {
     "slug": "e-web-repeating-blaster",
     "id": "weapon-e-web-repeating-blaster",
     "name": "E-Web Repeating Blaster",
-    "description": "E-Web Repeating Blaster, tripod-mounted heavy repeating blaster, 3d12, 50 squares. Built for operators who believe every problem improves with recoil."
-  },
-  {
-    "slug": "electro-net",
-    "id": "weapon-electro-net",
-    "name": "Electro-net",
-    "description": "Electro-net, weighted net that delivers an electrical shock to ensnare and disable targets, Special, 5 squares. A niche purchase, but then so is whatever situation this was built for."
-  },
-  {
-    "slug": "electro-whip",
-    "id": "weapon-electro-whip",
-    "name": "Electro-whip",
-    "description": "Electro-whip, flexible whip that delivers electrical shocks, 1d6, 2 squares. The kind of weapon purchased by people who intend to be memorable up close."
+    "description": "Tripod-mounted, autofire-only heavy blaster powered by a generator and normally requiring a second crewman to regulate power."
   },
   {
     "slug": "electronet",
     "id": "weapon-electronet",
     "name": "Electronet",
-    "description": "Electronet, fires an electrified capture net, 3d8, 10 squares. A niche purchase, but then so is whatever situation this was built for."
+    "description": "Grenade-launcher capture net affecting a 2x2 area; hits stun and grab, and trapped targets take repeated stun damage."
   },
   {
     "slug": "electrostaff",
     "id": "weapon-electrostaff",
     "name": "Electrostaff",
-    "description": "Electrostaff, staff weapon that generates an electrical field, 2d6, melee. Close-quarters honesty for buyers who dislike pretense."
+    "description": "Double staff whose ends can deal normal or stun damage; DR 20 applies even against lightsabers; uses two energy cells."
   },
   {
     "slug": "emp-grenade",
     "id": "weapon-emp-grenade",
     "name": "EMP Grenade",
-    "description": "EMP Grenade, electromagnetic pulse grenade that disables electronics and droids, 3d6, 6 squares. A tidy purchase for buyers who prefer their plans loud and brief."
+    "description": "Two-square ion burst that can completely disable weak electronic or cybernetic targets."
   },
   {
     "slug": "energy-ball",
     "id": "weapon-energy-ball",
     "name": "Energy Ball",
-    "description": "Energy Ball, thrown energy weapon popular in certain sports, 2d8, 10 squares. Specialty hardware for buyers with very specific grudges."
+    "description": "Gungan thrown ammunition whose range category changes when hurled by hand, atlatl, or cesta."
   },
   {
-    "slug": "espo-500-riot-gun",
+    "slug": "energy-lance",
+    "id": "weapon-energy-lance",
+    "name": "Energy Lance",
+    "description": "Mounted energy lance usable one-handed by Ride-trained Medium riders; also fires as a no-stun blaster carbine and works underwater."
+  },
+  {
+    "slug": "entrenching-tool",
+    "id": "weapon-entrenching-tool",
+    "name": "Entrenching Tool",
+    "description": "Multipurpose field tool usable as an improvised weapon at only -2, with piercing or slashing damage."
+  },
+  {
+    "slug": "blastech-500-riot-gun",
     "id": "weapon-espo-500-riot-gun",
-    "name": "ESPO 500 Riot Gun",
-    "description": "ESPO 500 Riot Gun, law enforcement riot control weapon, 3d8, 28 squares. For the customer who read the catalog and chose escalation with style."
+    "name": "BlasTech 500 Riot Gun",
+    "description": "Riot carbine favoring autofire: -1 single-shot, +2 equipment bonus to autofire, 50 shots."
   },
   {
-    "slug": "firelance-blaster-rifle",
+    "slug": "felucian-skullblade",
+    "id": "weapon-felucian-skullblade",
+    "name": "Felucian Skullblade",
+    "description": "Force-reactive Felucian bone blade that can withstand lightsaber strikes when empowered."
+  },
+  {
+    "slug": "fira",
+    "id": "weapon-fira",
+    "name": "Fira",
+    "description": "Cortosis Selkath blade that inflicts half its damage again next round when the attack also beats Fortitude Defense."
+  },
+  {
+    "slug": "fire-blade",
+    "id": "weapon-fire-blade",
+    "name": "Fire Blade",
+    "description": "Powered cutting blade that ignores unattended-object DR."
+  },
+  {
+    "slug": "sorosuub-firelance-blaster-rifle",
     "id": "weapon-firelance-blaster-rifle",
-    "name": "Firelance Blaster Rifle",
-    "description": "Firelance Blaster Rifle, blaster rifle with enhanced stun capability, 3d8, 30 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
+    "name": "SoroSuub Firelance Blaster Rifle",
+    "description": "Light blaster rifle built around an unusually strong stun setting."
   },
   {
     "slug": "flame-cannon",
     "id": "weapon-flame-cannon",
     "name": "Flame Cannon",
-    "description": "Flame Cannon, heavy flamethrower weapon, 5d6, 20 squares. For customers who hear \"excessive\" and assume it means effective."
+    "description": "Large cone flamethrower with full/half area damage, 20-use fuel tank, and full-round reload."
   },
   {
     "slug": "flamethrower",
     "id": "weapon-flamethrower",
     "name": "Flamethrower",
-    "description": "Flamethrower, weapon that projects a cone of flame, 2d10, 6 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Six-square cone area weapon; one attack roll vs. all targets, five uses per cartridge, full-round reload."
   },
   {
-    "slug": "flash-canister",
+    "slug": "r-9-flash-canister",
     "id": "weapon-flash-canister",
-    "name": "Flash Canister",
-    "description": "Flash Canister, flash-bang grenade that blinds and disorients targets, Special, 6 squares. Portable closure for crowded disagreements."
+    "name": "R-9 Flash Canister",
+    "description": "Three-square flash burst that temporarily prevents affected creatures from seeing other targets; no damage."
   },
   {
     "slug": "flechette-launcher",
     "id": "weapon-flechette-launcher",
     "name": "Flechette Launcher",
-    "description": "Flechette Launcher, fires a spray of razor-sharp flechettes, 3d8, 20 squares. Ideal for customers who think one projectile should make a point for everyone nearby."
+    "description": "Single-shot 1-square-splash launcher; no Rapid Shot or multi-shot abilities, using four-shot canisters."
   },
   {
-    "slug": "frag-grenade",
+    "slug": "force-pike",
+    "id": "weapon-force-pike",
+    "name": "Force Pike",
+    "description": "Piercing/energy polearm with lethal and stun settings; uses two energy cells."
+  },
+  {
+    "slug": "grenade-frag",
     "id": "weapon-frag-grenade",
-    "name": "Frag Grenade",
-    "description": "Frag Grenade, standard fragmentation grenade, 4d6, 6 squares. The galaxy keeps inventing diplomacy, and this keeps ignoring it."
+    "name": "Grenade, Frag",
+    "description": "Contact-detonated 2-square burst grenade using one area attack roll; full damage on hit, half on miss."
+  },
+  {
+    "slug": "garrote",
+    "id": "weapon-garrote",
+    "name": "Garrote",
+    "description": "Two-handed strangling weapon used through grab attacks; a held target takes damage and moves -1 condition step at the start of its turn."
   },
   {
     "slug": "gas-grenade",
     "id": "weapon-gas-grenade",
     "name": "Gas Grenade",
-    "description": "Gas Grenade, releases toxic or sleep-inducing gas in the blast radius, 6 squares. Portable closure for crowded disagreements."
+    "description": "Four-square gas blast attacking Fortitude; moves affected targets down the condition track and creates brief concealment."
   },
   {
     "slug": "grenade-launcher",
     "id": "weapon-grenade-launcher",
     "name": "Grenade Launcher",
-    "description": "Grenade Launcher, launches grenades at range, Special, 25 squares. A tidy purchase for buyers who prefer their plans loud and brief."
+    "description": "Four-round launcher that fires ordinary grenades on impact; full-round reload and can be rifle-mounted with Mechanics."
   },
   {
-    "slug": "gungan-electropole",
+    "slug": "electropole",
     "id": "weapon-gungan-electropole",
-    "name": "Gungan Electropole",
-    "description": "Gungan Electropole, traditional weapon of Gungan warriors, 2d6, melee. Close-quarters honesty for buyers who dislike pretense."
+    "name": "Electropole",
+    "description": "Throwable electrified pike; Gungans with simple-weapon proficiency are proficient with it; uses two energy cells."
   },
   {
-    "slug": "heavy-assault-blaster",
+    "slug": "blaster-rifle-heavy-assault",
     "id": "weapon-heavy-assault-blaster",
-    "name": "Heavy Assault Blaster",
-    "description": "Heavy Assault Blaster, heavy automatic assault weapon, 3d10, 35 squares. For the customer who read the catalog and chose escalation with style."
+    "name": "Blaster Rifle, Heavy Assault",
+    "description": "Inaccurate 50-shot heavy assault rifle whose critical hits upgrade its damage dice from d10s to d12s."
   },
   {
     "slug": "heavy-blaster-cannon",
     "id": "weapon-heavy-blaster-cannon",
     "name": "Heavy Blaster Cannon",
-    "description": "Heavy Blaster Cannon, extremely powerful heavy cannon, 4d12, 60 squares. Crew-served attitude in a portable inconvenience."
+    "description": "Huge inaccurate area cannon: brace with two swift actions so a Medium user can fire it; hits splash half damage to adjacent targets; 10 shots."
   },
   {
-    "slug": "heavy-blaster-pistol",
+    "slug": "blaster-pistol-heavy",
     "id": "weapon-heavy-blaster-pistol",
-    "name": "Heavy Blaster Pistol",
-    "description": "Heavy Blaster Pistol, more powerful variant of the standard blaster pistol, delivering higher damage at the cost of increased weight and power consumption, 3d8, 20 squares. Compact, fashionable, and built for conversations that suddenly matter."
+    "name": "Blaster Pistol, Heavy",
+    "description": "High-powered blaster sidearm with 50 shots per power pack."
   },
   {
-    "slug": "heavy-blaster-rifle",
+    "slug": "blaster-rifle-heavy",
     "id": "weapon-heavy-blaster-rifle",
-    "name": "Heavy Blaster Rifle",
-    "description": "Heavy Blaster Rifle, powerful rifle that sacrifices range for increased damage output, 3d12, 30 squares. Field-ready hardware for buyers who prefer their trouble downrange."
-  },
-  {
-    "slug": "heavy-laser-cannon",
-    "id": "weapon-heavy-laser-cannon",
-    "name": "Heavy Laser Cannon",
-    "description": "Heavy Laser Cannon, crew-served heavy weapon typically mounted on vehicles or emplacements, 4d10, 50 squares. A premium choice for anyone who wants subtlety removed at the factory."
+    "name": "Blaster Rifle, Heavy",
+    "description": "Larger high-powered blaster rifle with 30 shots per power pack."
   },
   {
     "slug": "heavy-repeating-blaster",
     "id": "weapon-heavy-repeating-blaster",
     "name": "Heavy Repeating Blaster",
-    "description": "Heavy Repeating Blaster, heavy automatic blaster, 3d10, 40 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Autofire-only heavy blaster; cannot brace without a mount; 20 shots per pack or generator-powered."
   },
   {
     "slug": "heavy-slugthrower-pistol",
     "id": "weapon-heavy-slugthrower-pistol",
     "name": "Heavy Slugthrower Pistol",
-    "description": "Heavy Slugthrower Pistol, powerful slugthrower sidearm, 2d8, 12 squares. Easy to conceal, easier to regret at conversational distance."
+    "description": "Eight-shot heavy slugthrower that imposes an extra -1 attack penalty with Double Attack, Triple Attack, or Rapid Shot."
   },
   {
     "slug": "heavy-sonic-pistol",
     "id": "weapon-heavy-sonic-pistol",
     "name": "Heavy Sonic Pistol",
-    "description": "Heavy Sonic Pistol, powerful sonic pistol, 2d8, 15 squares. Easy to conceal, easier to regret at conversational distance."
+    "description": "More powerful 50-shot sonic pistol whose attacks cannot be negated by Deflect."
   },
   {
-    "slug": "heavy-variable-blaster",
+    "slug": "blaster-rifle-heavy-variable",
     "id": "weapon-heavy-variable-blaster",
-    "name": "Heavy Variable Blaster",
-    "description": "Heavy Variable Blaster, heavy blaster with variable power settings, Special, 35 squares. For the customer who read the catalog and chose escalation with style."
+    "name": "Blaster Rifle, Heavy Variable",
+    "description": "Heavy variable-power rifle with high-consumption damage settings plus an integrated ascension tether."
   },
   {
-    "slug": "hh-15-projectile-launcher",
-    "id": "weapon-hh-15-projectile-launcher",
-    "name": "HH-15 Projectile Launcher",
-    "description": "HH-15 Projectile Launcher, military projectile launcher, 6d6, 40 squares. For the buyer who likes their solutions arcing in from off-camera."
-  },
-  {
-    "slug": "hold-out-blaster",
-    "id": "weapon-hold-out-blaster",
-    "name": "Hold-out Blaster",
-    "description": "Hold-out Blaster, small, easily concealed blaster pistol, 2d4, 8 squares. Compact, fashionable, and built for conversations that suddenly matter."
-  },
-  {
-    "slug": "hold-out-blaster-pistol",
+    "slug": "blaster-pistol-hold-out",
     "id": "weapon-hold-out-blaster-pistol",
-    "name": "Hold-Out Blaster Pistol",
-    "description": "Hold-Out Blaster Pistol, small, easily concealed blaster pistol, 3d4, 8 squares. Sidearm of choice for buyers who keep negotiations personal."
+    "name": "Blaster Pistol, Hold-Out",
+    "description": "Concealable palm-sized blaster granting +5 equipment bonus to Stealth checks to conceal it; 6 shots per energy cell."
   },
   {
-    "slug": "hunting-blaster-carbine",
+    "slug": "blaster-carbine-hunting",
     "id": "weapon-hunting-blaster-carbine",
-    "name": "Hunting Blaster Carbine",
-    "description": "Hunting Blaster Carbine, civilian hunting carbine, 3d8, 28 squares. Ideal for hallways, boarding actions, and other poor life choices."
+    "name": "Blaster Carbine, Hunting",
+    "description": "Inaccurate 50-shot hunting carbine with no autofire; critical hits upgrade its damage dice from d8s to d10s."
   },
   {
     "slug": "incinerator-rifle",
     "id": "weapon-incinerator-rifle",
     "name": "Incinerator Rifle",
-    "description": "Incinerator Rifle, weapon that incinerates targets, 3d6, 25 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
+    "description": "Twenty-shot rifle that disintegrates any target it kills or destroys."
   },
   {
     "slug": "interchangeable-weapon-system",
     "id": "weapon-interchangeable-weapon-system",
     "name": "Interchangeable Weapon System",
-    "description": "Interchangeable Weapon System, modular weapon system with interchangeable components, Varies, 30 squares. For the customer who read the catalog and chose escalation with style."
-  },
-  {
-    "slug": "ion-blaster",
-    "id": "weapon-ion-blaster",
-    "name": "Ion Blaster",
-    "description": "Ion Blaster, fires ionized bolts that are particularly effective against droids and electronic systems, 3d6, 10 squares. A niche purchase, but then so is whatever situation this was built for."
+    "description": "Clone commando modular rifle switching as a standard action among rifle, scoped sniper, and anti-armor grenade modes."
   },
   {
     "slug": "ion-carbine",
     "id": "weapon-ion-carbine",
     "name": "Ion Carbine",
-    "description": "Ion Carbine, shorter ion weapon with automatic capability, 3d8, 25 squares. Ideal for hallways, boarding actions, and other poor life choices."
+    "description": "Autofire-capable ion carbine; inaccurate at long range and 30 shots per pack."
   },
   {
-    "slug": "ion-grenade",
+    "slug": "grenade-ion",
     "id": "weapon-ion-grenade",
-    "name": "Ion Grenade",
-    "description": "Ion Grenade, grenade that releases an ion pulse, particularly effective against droids and electronic systems, 4d6, 6 squares. Portable closure for crowded disagreements."
+    "name": "Grenade, Ion",
+    "description": "Two-square ion burst especially effective against droids, vehicles, electronics, and cybernetic targets."
   },
   {
     "slug": "ion-pistol",
     "id": "weapon-ion-pistol",
     "name": "Ion Pistol",
-    "description": "Ion Pistol, pistol that fires ion bolts effective against droids, 3d6, 10 squares. Sidearm of choice for buyers who keep negotiations personal."
+    "description": "Ion sidearm dealing full ion effects to electronic/cybernetic targets and half damage to ordinary creatures; 30 shots per pack."
   },
   {
     "slug": "ion-rifle",
     "id": "weapon-ion-rifle",
     "name": "Ion Rifle",
-    "description": "Ion Rifle, fires ionized bolts particularly effective against droids and vehicles, 3d8, 30 squares. Field-ready hardware for buyers who prefer their trouble downrange."
+    "description": "Larger ion weapon using ion-pistol effects; 20 shots per power pack."
   },
   {
-    "slug": "jedi-training-saber",
-    "id": "weapon-jedi-training-saber",
-    "name": "Jedi Training Saber",
-    "description": "Jedi Training Saber, modified lightsaber used for Jedi training, 2d4, melee. Close-quarters honesty for buyers who dislike pretense."
-  },
-  {
-    "slug": "laser-cannon",
-    "id": "weapon-laser-cannon",
-    "name": "Laser Cannon",
-    "description": "Laser Cannon, portable heavy weapon used by infantry for anti-vehicle and heavy fire support roles, 3d10, 40 squares. For customers who hear \"excessive\" and assume it means effective."
+    "slug": "knife",
+    "id": "weapon-knife",
+    "name": "Knife",
+    "description": "Silent simple melee blade."
   },
   {
     "slug": "light-concussion-missile-launcher",
     "id": "weapon-light-concussion-missile-launcher",
     "name": "Light Concussion Missile Launcher",
-    "description": "Light Concussion Missile Launcher, fires powerful concussion missiles, 4d10x2, 60 squares. Ideal for customers who think one projectile should make a point for everyone nearby."
+    "description": "Single-shot antivehicle launcher with 2-square splash; -10 against targets smaller than Huge and incompatible with Rapid Shot."
   },
   {
-    "slug": "light-repeating-blaster",
+    "slug": "blaster-rifle-light-repeating",
     "id": "weapon-light-repeating-blaster",
-    "name": "Light Repeating Blaster",
-    "description": "Light Repeating Blaster, light automatic blaster weapon, 3d8, 40 squares. A niche purchase, but then so is whatever situation this was built for."
+    "name": "Blaster Rifle, Light Repeating",
+    "description": "Autofire-only rifle with 30 shots per pack or generator power."
   },
   {
     "slug": "lightfoil",
     "id": "weapon-lightfoil",
     "name": "Lightfoil",
-    "description": "Lightfoil, refined lightsaber variant designed for finesse and dueling, 2d6, melee. For customers who think subtlety should glow a little more."
+    "description": "One-handed dueling lightsaber that can count as Small when beneficial."
   },
   {
     "slug": "lightsaber",
     "id": "weapon-lightsaber",
     "name": "Lightsaber",
-    "description": "Lightsaber, elegant weapon of the Jedi and Sith, 2d8, melee. A classic for anyone convinced good posture and plasma solve most problems."
+    "description": "Standard Jedi lightsaber; energy blade can cut most materials given time and uses a long-lasting special energy cell."
+  },
+  {
+    "slug": "mace",
+    "id": "weapon-mace",
+    "name": "Mace",
+    "description": "Basic metal bludgeoning weapon."
   },
   {
     "slug": "magna-caster",
     "id": "weapon-magna-caster",
     "name": "Magna Caster",
-    "description": "Magna Caster, magnetic projectile weapon, 3d8, 25 squares. Specialty hardware for buyers with very specific grudges."
-  },
-  {
-    "slug": "mandalorian-ripper",
-    "id": "weapon-mandalorian-ripper",
-    "name": "Mandalorian Ripper",
-    "description": "Mandalorian Ripper, wrist-mounted weapon that fires magnetically-accelerated projectiles, 3d6, 10 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Quiet accurate magnetic launcher granting +5 to Stealth checks to snipe; uses 10-bolt cases."
   },
   {
     "slug": "massassi-lanvarok",
     "id": "weapon-massassi-lanvarok",
     "name": "Massassi Lanvarok",
-    "description": "Massassi Lanvarok, ancient Massassi throwing disc launcher, 3d4, 6 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Polearm that throws one disc, then functions as a two-handed slashing weapon; Massassi treat it as advanced melee."
   },
   {
     "slug": "micro-grenade-launcher",
     "id": "weapon-micro-grenade-launcher",
     "name": "Micro Grenade Launcher",
-    "description": "Micro Grenade Launcher, compact grenade launcher, Special, 25 squares. Portable closure for crowded disagreements."
-  },
-  {
-    "slug": "miniature-missile-launcher",
-    "id": "weapon-miniature-missile-launcher",
-    "name": "Miniature Missile Launcher",
-    "description": "Miniature Missile Launcher, compact launcher system integrated into armor or weapons platforms, varies, 40 squares. A serious purchase for anyone tired of aiming small."
+    "description": "Four-shot rifle-class launcher for miniature grenades; normal grenade effects but -2 damage dice, with full-round reload."
   },
   {
     "slug": "miniature-proton-torpedo-launcher",
     "id": "weapon-miniature-proton-torpedo-launcher",
     "name": "Miniature Proton Torpedo Launcher",
-    "description": "Miniature Proton Torpedo Launcher, man-portable proton torpedo launcher, 6d10, 40 squares. A serious purchase for anyone tired of aiming small."
+    "description": "Four-shot proton-torpedo launcher; standard reset after each shot and optional focused 6d10x2 mode against large targets."
   },
   {
     "slug": "missile-launcher",
     "id": "weapon-missile-launcher",
     "name": "Missile Launcher",
-    "description": "Missile Launcher, fires explosive missiles, 6d6, 40 squares. A serious purchase for anyone tired of aiming small."
+    "description": "Four-shot, 2-square-burst launcher using area-attack rules; reloads with four-missile magazines as a full-round action."
   },
   {
-    "slug": "model-434-deathhammer",
+    "slug": "merr-sonn-model-434-deathhammer",
     "id": "weapon-model-434-deathhammer",
-    "name": "Model 434 DeathHammer",
-    "description": "Model 434 DeathHammer, popular bounty hunter sidearm, 3d8, 15 squares. Not standard issue, which is often how you know it will be interesting."
-  },
-  {
-    "slug": "monomolecular-knife",
-    "id": "weapon-monomolecular-knife",
-    "name": "Monomolecular Knife",
-    "description": "Monomolecular Knife, knife with an incredibly sharp monomolecular edge, 1d4, melee. Close-quarters honesty for buyers who dislike pretense."
+    "name": "Merr-Sonn Model 434 DeathHammer",
+    "description": "Rugged bounty-hunter sidearm whose reinforced construction gives the weapon +2 equipment bonus to DR."
   },
   {
     "slug": "mortar-launcher",
     "id": "weapon-mortar-launcher",
     "name": "Mortar Launcher",
-    "description": "Mortar Launcher, indirect fire mortar system, Varies, 100 squares. Because some conversations deserve a larger delivery system."
+    "description": "Indirect-fire launcher: no point-blank attacks, elevated LOS/cover origin, and five-shell grenade-equivalent magazine."
+  },
+  {
+    "slug": "mythosaur-axe",
+    "id": "weapon-mythosaur-axe",
+    "name": "Mythosaur Axe",
+    "description": "Ceremonial Mythosaur-bone axe; Mandalore the Ultimate has a special powered staff-mounted double-damage variant."
   },
   {
     "slug": "needler",
     "id": "weapon-needler",
     "name": "Needler",
-    "description": "Needler, fires poisoned needles, 2d4, 10 squares. Specialty hardware for buyers with very specific grudges."
+    "description": "Ten-shot dart pistol whose ammunition may be poison-laced; inaccurate at long range."
   },
   {
     "slug": "net",
     "id": "weapon-net",
     "name": "Net",
-    "description": "Net, weighted net for entangling opponents, 6 squares. Not standard issue, which is often how you know it will be interesting."
+    "description": "Ranged grab/grapple weapon; target can escape with Acrobatics or Strength, and the wielder can Pin or Trip."
   },
   {
     "slug": "neural-inhibitor",
     "id": "weapon-neural-inhibitor",
     "name": "Neural Inhibitor",
-    "description": "Neural Inhibitor, illegal weapon that disrupts neural function, 1d6, 15 squares. Specialty hardware for buyers with very specific grudges."
+    "description": "Poison-dart exotic weapon that repeatedly attacks Fortitude and drives the target down the condition track until cured or unconscious."
   },
   {
-    "slug": "plx-2m-portable-missile-launcher",
+    "slug": "neuronic-whip",
+    "id": "weapon-neuronic-whip",
+    "name": "Neuronic Whip",
+    "description": "Reach whip that combines stun damage with 1d4 slashing damage."
+  },
+  {
+    "slug": "merr-sonn-plx-2m-portable-missile-launcher",
     "id": "weapon-plx-2m-portable-missile-launcher",
-    "name": "PLX-2M Portable Missile Launcher",
-    "description": "PLX-2M Portable Missile Launcher, powerful portable missile system, 8d6, 50 squares. For the buyer who likes their solutions arcing in from off-camera."
+    "name": "Merr-Sonn PLX-2M Portable Missile Launcher",
+    "description": "Six-shot 3-square-burst missile launcher with specialized targeting modes, full-round reload, and a carry-assist microrepulsorlift."
   },
   {
-    "slug": "proton-torpedo-launcher",
-    "id": "weapon-proton-torpedo-launcher",
-    "name": "Proton Torpedo Launcher",
-    "description": "Proton Torpedo Launcher, fires proton torpedoes - high-yield explosives typically used against vehicles and fortifications, varies, 60 squares. For the buyer who likes their solutions arcing in from off-camera."
+    "slug": "power-hammer",
+    "id": "weapon-power-hammer",
+    "name": "Power Hammer",
+    "description": "Gravity-assisted hammer: Power Attack extra damage applies to objects/vehicles; multiattack/Rapid Strike carries an extra -2."
+  },
+  {
+    "slug": "power-lance",
+    "id": "weapon-power-lance",
+    "name": "Power Lance",
+    "description": "Cheaper melee-only version of the energy lance, intended for mounted cavalry and speeder-bike scouts."
   },
   {
     "slug": "pulse-rifle",
     "id": "weapon-pulse-rifle",
     "name": "Pulse Rifle",
-    "description": "Pulse Rifle, illegal pulse weapon with devastating effects, 2d8, 20 squares. Field-ready hardware for buyers who prefer their trouble downrange."
+    "description": "Five-shot exotic rifle firing a 6-square cone for full damage on a hit and half on a miss."
   },
   {
     "slug": "pulse-wave-pistol",
     "id": "weapon-pulse-wave-pistol",
     "name": "Pulse-Wave Pistol",
-    "description": "Pulse-Wave Pistol, early energy pistol design, 2d6, 12 squares. Compact, fashionable, and built for conversations that suddenly matter."
+    "description": "Primitive energy pistol that gains +4 damage at point-blank range; 100 shots and no long-range attacks."
   },
   {
     "slug": "pulse-wave-rifle",
     "id": "weapon-pulse-wave-rifle",
     "name": "Pulse-Wave Rifle",
-    "description": "Pulse-Wave Rifle, early energy rifle design, 2d8, 25 squares. Field-ready hardware for buyers who prefer their trouble downrange."
+    "description": "Pulse-wave rifle gaining +5 damage at point-blank range; 50 shots and no long-range attacks."
   },
   {
-    "slug": "radiation-grenade",
+    "slug": "quarterstaff",
+    "id": "weapon-quarterstaff",
+    "name": "Quarterstaff",
+    "description": "Simple double weapon; both ends can be used in a full-round two-weapon attack."
+  },
+  {
+    "slug": "grenade-radiation",
     "id": "weapon-radiation-grenade",
-    "name": "Radiation Grenade",
-    "description": "Radiation Grenade, illegal weapon that spreads deadly radiation, 3d8, 6 squares. A tidy purchase for buyers who prefer their plans loud and brief."
+    "name": "Grenade, Radiation",
+    "description": "Two-square grenade that attacks Fortitude and also exposes targets to Moderate radiation."
   },
   {
     "slug": "rail-detonator-gun",
     "id": "weapon-rail-detonator-gun",
     "name": "Rail Detonator Gun",
-    "description": "Rail Detonator Gun, rail gun that fires explosive projectiles, 3d8, 30 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Ten-shot explosive-canister rifle with a 1-square splash radius."
   },
   {
     "slug": "razor-bug",
     "id": "weapon-razor-bug",
     "name": "Razor Bug",
-    "description": "Razor Bug, bioengineered throwing weapon, 2d8, 12 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Accurate Yuuzhan Vong bio-weapon thrown by hand but using simple-weapon ranges rather than thrown-weapon ranges."
   },
   {
     "slug": "remote-grenade",
     "id": "weapon-remote-grenade",
     "name": "Remote Grenade",
-    "description": "Remote Grenade, grenade that can be remotely detonated via comlink or timer, 4d6, 6 squares. A tidy purchase for buyers who prefer their plans loud and brief."
+    "description": "Programmable grenade detonated by a dedicated handheld transmitter; safety interlock prevents remote detonation within 100 meters."
   },
   {
-    "slug": "repeating-blaster",
-    "id": "weapon-repeating-blaster",
-    "name": "Repeating Blaster",
-    "description": "Repeating Blaster, heavy automatic blaster capable of laying down suppressive fire, 3d12, 20 squares. A niche purchase, but then so is whatever situation this was built for."
-  },
-  {
-    "slug": "repeating-blaster-carbine",
+    "slug": "blaster-carbine-repeating",
     "id": "weapon-repeating-blaster-carbine",
-    "name": "Repeating Blaster Carbine",
-    "description": "Repeating Blaster Carbine, heavy automatic carbine, 3d10, 30 squares. Ideal for hallways, boarding actions, and other poor life choices."
+    "name": "Blaster Carbine, Repeating",
+    "description": "Autofire-only repeating carbine; inaccurate at range and limited to 30 shots per pack."
   },
   {
-    "slug": "repeating-crossbow",
+    "slug": "crossbow-repeating",
     "id": "weapon-repeating-crossbow",
-    "name": "Repeating Crossbow",
-    "description": "Repeating Crossbow, crossbow with a repeating mechanism, 1d8, 18 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
+    "name": "Crossbow, Repeating",
+    "description": "Self-recocking crossbow with a 10-quarrel magazine replaced as a move action."
   },
   {
     "slug": "ripper",
     "id": "weapon-ripper",
     "name": "Ripper",
-    "description": "Ripper, pistol that fires razor discs, 2d4, 10 squares. Not standard issue, which is often how you know it will be interesting."
+    "description": "Shrapnel pistol that deals +1d4 extra damage when it beats damage threshold and moves the target down the condition track."
   },
   {
     "slug": "rotary-blaster-cannon",
     "id": "weapon-rotary-blaster-cannon",
     "name": "Rotary Blaster Cannon",
-    "description": "Rotary Blaster Cannon, multi-barrel rotary cannon, 3d10, 45 squares. For customers who hear \"excessive\" and assume it means effective."
+    "description": "Autofire heavy weapon: bracing expands the area to 2x4; unbraced fire suffers an extra -5."
   },
   {
-    "slug": "s-5-heavy-blaster-pistol",
-    "id": "weapon-s-5-heavy-blaster-pistol",
-    "name": "S-5 Heavy Blaster Pistol",
-    "description": "S-5 Heavy Blaster Pistol, rare military pistol with dual firing modes, 3d8 or 1d2, 18 squares. Compact, fashionable, and built for conversations that suddenly matter."
+    "slug": "san-ni-staff",
+    "id": "weapon-san-ni-staff",
+    "name": "San-Ni Staff",
+    "description": "Double staff that can use Block like a lightsaber and can switch individual attacks to stun damage."
   },
   {
-    "slug": "saberdart-launcher",
-    "id": "weapon-saberdart-launcher",
-    "name": "Saberdart Launcher",
-    "description": "Saberdart Launcher, small launcher for poisoned saberdarts, 1d4, 8 squares. A serious purchase for anyone tired of aiming small."
-  },
-  {
-    "slug": "scattergun",
+    "slug": "scatter-gun",
     "id": "weapon-scattergun",
-    "name": "Scattergun",
-    "description": "Scattergun, shotgun-style scatter weapon, 3d8 or 2d8, 15 squares. For the customer who read the catalog and chose escalation with style."
+    "name": "Scatter Gun",
+    "description": "Ten-shell scatter weapon effective only at point-blank and short range."
   },
   {
     "slug": "sg-4-blaster-rifle",
     "id": "weapon-sg-4-blaster-rifle",
     "name": "SG-4 Blaster Rifle",
-    "description": "SG-4 Blaster Rifle, dual-mode rifle that can fire blaster bolts or slugs, 3d8 or 2d6, 30 squares. Field-ready hardware for buyers who prefer their trouble downrange."
+    "description": "Amphibious combination rifle: blaster above water, harpoon underwater, with halved range when modes are used in the wrong environment."
+  },
+  {
+    "slug": "shock-stick",
+    "id": "weapon-shock-stick",
+    "name": "Shock Stick",
+    "description": "Stun-only melee weapon that can instantly disable weak targets and can mount as a rifle bayonet."
+  },
+  {
+    "slug": "shock-whip",
+    "id": "weapon-shock-whip",
+    "name": "Shock Whip",
+    "description": "Reach-2 shock whip that can make a no-penalty free grab after a hit, shock a grabbed target for 2d6 as a swift action, or trip with the Trip feat."
+  },
+  {
+    "slug": "shockboxing-gloves",
+    "id": "weapon-shockboxing-gloves",
+    "name": "Shockboxing Gloves",
+    "description": "Worn powered gloves add +1 unarmed damage and can switch to stun as a swift action."
+  },
+  {
+    "slug": "shockstaff",
+    "id": "weapon-shockstaff",
+    "name": "Shockstaff",
+    "description": "Phrik double staff with lethal/stun modes; resists lightsaber DR bypass and uses two energy cells."
+  },
+  {
+    "slug": "short-sword",
+    "id": "weapon-short-sword",
+    "name": "Short Sword",
+    "description": "Compact simple sword commonly used in two-weapon fighting; no additional printed mechanical bonus."
+  },
+  {
+    "slug": "shyarn",
+    "id": "weapon-shyarn",
+    "name": "Shyarn",
+    "description": "Cerean magnetic blade that removes Rapid Strike's attack penalty."
   },
   {
     "slug": "siang-lance",
     "id": "weapon-siang-lance",
     "name": "Siang Lance",
-    "description": "Siang Lance, rare energy lance weapon, 3d8, 20 squares. Specialty hardware for buyers with very specific grudges."
+    "description": "One-handed blaster/bayonet weapon that can make attacks of opportunity with either its ranged shot or bayonet."
   },
   {
-    "slug": "sidearm-blaster-pistol",
+    "slug": "blaster-pistol-sidearm",
     "id": "weapon-sidearm-blaster-pistol",
-    "name": "Sidearm Blaster Pistol",
-    "description": "Sidearm Blaster Pistol, standard military sidearm, 3d6, 15 squares. Sidearm of choice for buyers who keep negotiations personal."
+    "name": "Blaster Pistol, Sidearm",
+    "description": "Efficient 250-shot sidearm whose trigger needs a swift reset after Rapid Shot-style use."
   },
   {
     "slug": "sith-lanvarok",
     "id": "weapon-sith-lanvarok",
     "name": "Sith Lanvarok",
-    "description": "Sith Lanvarok, ancient Sith weapon that fires razor-sharp discs, 2d6, 6 squares. Not standard issue, which is often how you know it will be interesting."
+    "description": "Wrist-mounted five-disc launcher that leaves both hands free and can serve as the second weapon in two-weapon fighting."
   },
   {
     "slug": "sith-sword",
     "id": "weapon-sith-sword",
     "name": "Sith Sword",
-    "description": "Sith Sword, blade forged through Sith alchemy, 2d8, melee. A straightforward tool for anyone comfortable standing inside the consequences."
-  },
-  {
-    "slug": "sith-tremor-sword",
-    "id": "weapon-sith-tremor-sword",
-    "name": "Sith Tremor Sword",
-    "description": "Sith Tremor Sword, sith weapon that generates powerful sonic vibrations, 2d6, melee. Close-quarters honesty for buyers who dislike pretense."
+    "description": "Alchemical blade that resists lightsabers, supports Block/Deflect/Redirect Shot, and can spend a Force Point for Dark Side Score bonus damage."
   },
   {
     "slug": "sling",
     "id": "weapon-sling",
     "name": "Sling",
-    "description": "Sling, simple sling for hurling stones, 1d4, 12 squares. A niche purchase, but then so is whatever situation this was built for."
+    "description": "Primitive ranged weapon that adds Strength to damage."
   },
   {
     "slug": "slugthrower-pistol",
     "id": "weapon-slugthrower-pistol",
     "name": "Slugthrower Pistol",
-    "description": "Slugthrower Pistol, primitive ballistic weapon that fires solid projectiles, 2d6, 10 squares. Sidearm of choice for buyers who keep negotiations personal."
+    "description": "Ballistic pistol using 10-round slug clips instead of power packs."
   },
   {
     "slug": "slugthrower-rifle",
     "id": "weapon-slugthrower-rifle",
     "name": "Slugthrower Rifle",
-    "description": "Slugthrower Rifle, simple ballistic rifle, 2d8, 50 squares. For customers who like their opinions delivered from further away."
+    "description": "Ballistic rifle using 20-round slug clips instead of power packs."
   },
   {
-    "slug": "smoke-grenade",
+    "slug": "grenade-smoke",
     "id": "weapon-smoke-grenade",
-    "name": "Smoke Grenade",
-    "description": "Smoke Grenade, creates a thick smoke screen that provides concealment, 6 squares. Portable closure for crowded disagreements."
+    "name": "Grenade, Smoke",
+    "description": "Two-square concealment/smoke-hazard cloud lasting 10 rounds."
   },
   {
     "slug": "snap-baton",
     "id": "weapon-snap-baton",
     "name": "Snap Baton",
-    "description": "Snap Baton, compact melee weapon used extensively throughout the Clone Wars, 2d4, melee. Close-quarters honesty for buyers who dislike pretense."
+    "description": "Collapsible baton that expands or collapses as a swift action."
   },
   {
-    "slug": "snap-shot-blaster-pistol",
+    "slug": "blaster-pistol-snap-shot",
     "id": "weapon-snap-shot-blaster-pistol",
-    "name": "Snap-Shot Blaster Pistol",
-    "description": "Snap-Shot Blaster Pistol, quick-draw concealed blaster, 3d6, 10 squares. Easy to conceal, easier to regret at conversational distance."
+    "name": "Blaster Pistol, Snap Shot",
+    "description": "Single-shot concealed pistol granting +5 to Stealth checks to conceal it."
   },
   {
     "slug": "snare-pistol",
     "id": "weapon-snare-pistol",
     "name": "Snare Pistol",
-    "description": "Snare Pistol, non-lethal capture weapon, 1d4, 10 squares. Easy to conceal, easier to regret at conversational distance."
+    "description": "Two-shot capture pistol that grabs/grapples at Short range and supports Pin/Trip."
   },
   {
     "slug": "snare-rifle",
     "id": "weapon-snare-rifle",
     "name": "Snare Rifle",
-    "description": "Snare Rifle, non-lethal capture weapon, 20 squares. Field-ready hardware for buyers who prefer their trouble downrange."
+    "description": "Five-shot capture rifle that grabs/grapples at short range, deals stun on a successful snare, and supports Pin/Trip."
   },
   {
-    "slug": "sniper-blaster-rifle",
+    "slug": "blaster-rifle-sniper",
     "id": "weapon-sniper-blaster-rifle",
-    "name": "Sniper Blaster Rifle",
-    "description": "Sniper Blaster Rifle, precision long-range blaster rifle, 3d10, 80 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
-  },
-  {
-    "slug": "sniper-rifle",
-    "id": "weapon-sniper-rifle",
-    "name": "Sniper Rifle",
-    "description": "Sniper Rifle, precision long-range rifle with an integrated scope, 3d8, 80 squares. Field-ready hardware for buyers who prefer their trouble downrange."
+    "name": "Blaster Rifle, Sniper",
+    "description": "Accurate precision rifle with built-in bipod/scope; attacks take -5 unless preceded by Aim, and its pack holds 10 shots."
   },
   {
     "slug": "sonic-disruptor",
     "id": "weapon-sonic-disruptor",
     "name": "Sonic Disruptor",
-    "description": "Sonic Disruptor, illegal sonic weapon, 2d6, 12 squares. Not standard issue, which is often how you know it will be interesting."
+    "description": "Illegal sonic disruptor: -5 effective damage threshold, disintegration on destruction, and only one shot every other round."
   },
   {
     "slug": "sonic-pistol",
     "id": "weapon-sonic-pistol",
     "name": "Sonic Pistol",
-    "description": "Sonic Pistol, emits concentrated sonic waves that can damage targets, 2d6, 10 squares. Sidearm of choice for buyers who keep negotiations personal."
+    "description": "One-hundred-shot sonic pistol whose attacks cannot be negated by Deflect."
   },
   {
     "slug": "sonic-rifle",
     "id": "weapon-sonic-rifle",
     "name": "Sonic Rifle",
-    "description": "Sonic Rifle, fires concentrated sonic energy that ignores most physical armor, 2d8, 30 squares. A respectable long arm for anyone who mistakes overprepared for professional."
+    "description": "Fifty-shot sonic rifle whose attacks cannot be negated by Deflect."
   },
   {
     "slug": "sonic-stunner",
     "id": "weapon-sonic-stunner",
     "name": "Sonic Stunner",
-    "description": "Sonic Stunner, compact sonic stun weapon, 3d6, 8 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Silent-to-bystanders sonic stun pistol that still affects deaf targets."
   },
   {
-    "slug": "sporting-blaster-carbine",
+    "slug": "spear",
+    "id": "weapon-spear",
+    "name": "Spear",
+    "description": "Simple piercing polearm that can also be thrown."
+  },
+  {
+    "slug": "blaster-carbine-sporting",
     "id": "weapon-sporting-blaster-carbine",
-    "name": "Sporting Blaster Carbine",
-    "description": "Sporting Blaster Carbine, sporting carbine for recreational shooting, 3d8, 25 squares. Ideal for hallways, boarding actions, and other poor life choices."
+    "name": "Blaster Carbine, Sporting",
+    "description": "100-shot sporting carbine that loses its inaccurate limitation when wielded two-handed and can make attacks of opportunity."
   },
   {
-    "slug": "sporting-blaster-pistol",
+    "slug": "blaster-pistol-sporting",
     "id": "weapon-sporting-blaster-pistol",
-    "name": "Sporting Blaster Pistol",
-    "description": "Sporting Blaster Pistol, civilian-grade blaster pistol designed for sport shooting and personal defense, 2d6, 20 squares. Easy to conceal, easier to regret at conversational distance."
+    "name": "Blaster Pistol, Sporting",
+    "description": "Civilian sporting sidearm using either a 6-shot energy cell or a 100-shot power pack."
   },
   {
-    "slug": "sporting-blaster-rifle",
+    "slug": "blaster-rifle-sporting",
     "id": "weapon-sporting-blaster-rifle",
-    "name": "Sporting Blaster Rifle",
-    "description": "Sporting Blaster Rifle, civilian sporting rifle designed for hunting and recreation, 3d6, 30 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
+    "name": "Blaster Rifle, Sporting",
+    "description": "Sporting/hunting rifle; commonly scoped but scope is not included; 50 shots per power pack."
   },
   {
     "slug": "squib-tensor-rifle",
     "id": "weapon-squib-tensor-rifle",
     "name": "Squib Tensor Rifle",
-    "description": "Squib Tensor Rifle, sophisticated Squib energy weapon, 3d8, 30 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
+    "description": "Tractor-beam rifle that attacks Fortitude and moves a hit target -1 condition step regardless of damage; Squibs treat it as a rifle."
   },
   {
-    "slug": "stealth-blaster-carbine",
-    "id": "weapon-stealth-blaster-carbine",
-    "name": "Stealth Blaster Carbine",
-    "description": "Stealth Blaster Carbine, carbine designed for stealth operations, 3d8, 25 squares. For buyers who want rifle energy without committing to the full silhouette."
-  },
-  {
-    "slug": "stealth-carbine",
-    "id": "weapon-stealth-carbine",
-    "name": "Stealth Carbine",
-    "description": "Stealth Carbine, specialized carbine designed for covert operations, 3d8, 20 squares. For buyers who want rifle energy without committing to the full silhouette."
+    "slug": "static-pike",
+    "id": "weapon-static-pike",
+    "name": "Static Pike",
+    "description": "Reach pike with lethal/stun settings that can also be thrown."
   },
   {
     "slug": "stokhli-spray-stick",
     "id": "weapon-stokhli-spray-stick",
     "name": "Stokhli Spray Stick",
-    "description": "Stokhli Spray Stick, specialized capture weapon that fires energy nets, 3d8, 15 squares. A niche purchase, but then so is whatever situation this was built for."
+    "description": "Long-range stun/capture weapon whose webbing also functions as a net for grab or grapple."
   },
   {
     "slug": "stun-baton",
     "id": "weapon-stun-baton",
     "name": "Stun Baton",
-    "description": "Stun Baton, non-lethal weapon that delivers an electrical shock to stun targets, 1d6, melee. A straightforward tool for anyone comfortable standing inside the consequences."
+    "description": "Club that can deliver stun damage; requires an energy cell."
   },
   {
-    "slug": "stun-grenade",
+    "slug": "grenade-stun",
     "id": "weapon-stun-grenade",
-    "name": "Stun Grenade",
-    "description": "Stun Grenade, non-lethal grenade that releases a burst of stunning energy, 4d6, 6 squares. Portable closure for crowded disagreements."
+    "name": "Grenade, Stun",
+    "description": "Two-square stun burst; full/half stun damage by area attack, with condition-track effects; droids, vehicles, and objects are immune."
   },
   {
     "slug": "stun-pistol",
     "id": "weapon-stun-pistol",
     "name": "Stun Pistol",
-    "description": "Stun Pistol, non-lethal stun weapon, 3d6, 10 squares. The sort of purchase made by people who call this a precaution."
+    "description": "Dedicated stun pistol with a 20-square stun range and a 50-shot power pack."
+  },
+  {
+    "slug": "stunning-gauntlet",
+    "id": "weapon-stunning-gauntlet",
+    "name": "Stunning Gauntlet",
+    "description": "Worn gauntlet converts unarmed attacks to stun damage, adds +1 stun damage, and cannot be disarmed or dropped."
   },
   {
     "slug": "subrepeating-blaster",
     "id": "weapon-subrepeating-blaster",
     "name": "Subrepeating Blaster",
-    "description": "Subrepeating Blaster, automatic blaster pistol, 3d6, 15 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Autofire-only compact blaster; extend its stock to brace it, with 50 shots per pack."
+  },
+  {
+    "slug": "survival-knife",
+    "id": "weapon-survival-knife",
+    "name": "Survival Knife",
+    "description": "Survival knife with tiny internal storage and a compass that always identifies north; throwable but inaccurate."
   },
   {
     "slug": "tactical-tractor-beam",
     "id": "weapon-tactical-tractor-beam",
     "name": "Tactical Tractor Beam",
-    "description": "Tactical Tractor Beam, portable tractor beam projector, Special, 30 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Huge-or-smaller tractor weapon that moves or hurls grabbed objects; normally crew-served and generator-powered."
   },
   {
     "slug": "targeting-blaster-rifle",
     "id": "weapon-targeting-blaster-rifle",
     "name": "Targeting Blaster Rifle",
-    "description": "Targeting Blaster Rifle, blaster rifle with advanced targeting systems, 3d6 or 3d8, 30 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
+    "description": "Accurate 50-shot rifle whose damage dice improve from d6s to d8s after aiming; assembles or disassembles as a full-round action."
   },
   {
     "slug": "targeting-laser",
     "id": "weapon-targeting-laser",
     "name": "Targeting Laser",
-    "description": "Targeting Laser, that provides bonuses to aim, 30 squares. For the customer who read the catalog and chose escalation with style."
+    "description": "Paints a target for allied heavy fire: repeated designation grants allies +2 with launchers or vehicle weapons."
+  },
+  {
+    "slug": "tehkla-blade",
+    "id": "weapon-tehkla-blade",
+    "name": "Tehkla Blade",
+    "description": "Nagai vibroblade that causes 1d6 bleeding damage next turn when the attack also meets the target's Fortitude Defense."
   },
   {
     "slug": "thermal-detonator",
     "id": "weapon-thermal-detonator",
     "name": "Thermal Detonator",
-    "description": "Thermal Detonator, extremely powerful explosive device, 8d6, 6 squares. Not standard issue, which is often how you know it will be interesting."
+    "description": "Illegal high-power explosive with a 1-3 round timer and 4-square burst using normal area-attack full/half damage rules."
   },
   {
     "slug": "thud-bug",
     "id": "weapon-thud-bug",
     "name": "Thud Bug",
-    "description": "Thud Bug, bioengineered impact weapon, 2d8, 12 squares. A niche purchase, but then so is whatever situation this was built for."
+    "description": "Yuuzhan Vong bio-weapon using simple-weapon ranges; can deal stun instead of normal damage at point-blank or short range."
   },
   {
-    "slug": "trandoshan-repeater-rifle",
-    "id": "weapon-trandoshan-repeater-rifle",
-    "name": "Trandoshan Repeater Rifle",
-    "description": "Trandoshan Repeater Rifle, heavy repeating blaster favored by Trandoshan hunters, 3d10, 20 squares. Exactly the sort of rifle sold with the phrase \"reliable under pressure.\""
-  },
-  {
-    "slug": "tusken-cycler-rifle",
-    "id": "weapon-tusken-cycler-rifle",
-    "name": "Tusken Cycler Rifle",
-    "description": "Tusken Cycler Rifle, primitive projectile rifle used by Tusken Raiders, 2d8, 40 squares. Field-ready hardware for buyers who prefer their trouble downrange."
-  },
-  {
-    "slug": "tusken-gaderffii-stick",
+    "slug": "gaderffii",
     "id": "weapon-tusken-gaderffii-stick",
-    "name": "Tusken Gaderffii Stick",
-    "description": "Tusken Gaderffii Stick, traditional weapon of the Tusken Raiders, 1d6, melee. A straightforward tool for anyone comfortable standing inside the consequences."
+    "name": "Gaderffii",
+    "description": "Tusken double weapon with bludgeoning and cutting ends; both ends can attack in a full-round action."
   },
   {
-    "slug": "variable-blaster",
+    "slug": "blaster-rifle-variable",
     "id": "weapon-variable-blaster",
-    "name": "Variable Blaster",
-    "description": "Variable Blaster, blaster with variable power settings, Special, 30 squares. For the customer who read the catalog and chose escalation with style."
+    "name": "Blaster Rifle, Variable",
+    "description": "Five-hundred-shot rifle whose damage can be increased with a swift action at sharply increased ammunition consumption."
   },
   {
-    "slug": "verpine-shatter-pistol",
-    "id": "weapon-verpine-shatter-pistol",
-    "name": "Verpine Shatter Pistol",
-    "description": "Verpine Shatter Pistol, magnetically-accelerated projectile weapon created by the Verpine, 3d6, 10 squares. Compact, fashionable, and built for conversations that suddenly matter."
-  },
-  {
-    "slug": "verpine-shatter-rifle",
-    "id": "weapon-verpine-shatter-rifle",
-    "name": "Verpine Shatter Rifle",
-    "description": "Verpine Shatter Rifle, magnetically-accelerated rifle created by the Verpine, 4d6, 30 squares. For customers who like their opinions delivered from further away."
-  },
-  {
-    "slug": "verpine-shattergun",
+    "slug": "verpine-shatter-gun",
     "id": "weapon-verpine-shattergun",
-    "name": "Verpine Shattergun",
-    "description": "Verpine Shattergun, silent and deadly Verpine projectile weapon, 3d10, 25 squares. Not standard issue, which is often how you know it will be interesting."
+    "name": "Verpine Shatter Gun",
+    "description": "Accurate fragile Verpine handgun: +1d10 damage after critical multiplication, disabled by any weapon damage, and treated as a pistol by Verpines."
   },
   {
-    "slug": "verpine-sniper-rifle",
-    "id": "weapon-verpine-sniper-rifle",
-    "name": "Verpine Sniper Rifle",
-    "description": "Verpine Sniper Rifle, elite long-range variant of Verpine shatter weapons, 4d8, 60 squares. A respectable long arm for anyone who mistakes overprepared for professional."
+    "slug": "vibro-ax",
+    "id": "weapon-vibro-ax",
+    "name": "Vibro-Ax",
+    "description": "Heavy vibro axe powered by two energy cells."
+  },
+  {
+    "slug": "vibro-saw",
+    "id": "weapon-vibro-saw",
+    "name": "Vibro-Saw",
+    "description": "Large vibro tool/weapon that ignores Damage Reduction; uses two energy cells."
+  },
+  {
+    "slug": "vibrobayonet",
+    "id": "weapon-vibrobayonet",
+    "name": "Vibrobayonet",
+    "description": "Powered rifle bayonet that preserves melee threat/AoO after ranged fire; detached it functions as a vibrodagger."
   },
   {
     "slug": "vibroblade",
     "id": "weapon-vibroblade",
     "name": "Vibroblade",
-    "description": "Vibroblade, blade weapon enhanced with ultrasonic vibrations that increase its cutting power, 2d6, melee. A straightforward tool for anyone comfortable standing inside the consequences."
+    "description": "Powered vibro sword; usually illegal in urban areas and requires an energy cell."
+  },
+  {
+    "slug": "vibroblade-double",
+    "id": "weapon-vibroblade-double",
+    "name": "Vibroblade, Double",
+    "description": "Double vibro weapon powered by two cells; both ends can attack in a full-round action."
   },
   {
     "slug": "vibrodagger",
     "id": "weapon-vibrodagger",
     "name": "Vibrodagger",
-    "description": "Vibrodagger, small vibroweapon easily concealed, 2d4, melee. Close-quarters honesty for buyers who dislike pretense."
+    "description": "Small, lightly regulated vibro weapon powered by an energy cell."
+  },
+  {
+    "slug": "vibroknucklers",
+    "id": "weapon-vibroknucklers",
+    "name": "Vibroknucklers",
+    "description": "Worn vibro weapon adds +3 unarmed damage, counts as both unarmed/simple and advanced melee, and cannot be disarmed."
+  },
+  {
+    "slug": "vibrolance",
+    "id": "weapon-vibrolance",
+    "name": "Vibrolance",
+    "description": "Large reach vibro polearm dealing piercing or slashing damage."
+  },
+  {
+    "slug": "vibrorapier",
+    "id": "weapon-vibrorapier",
+    "name": "Vibrorapier",
+    "description": "Silent, finely balanced vibro blade powered by two energy cells."
   },
   {
     "slug": "vibrosword",
     "id": "weapon-vibrosword",
     "name": "Vibrosword",
-    "description": "Vibrosword, full-length sword enhanced with ultrasonic vibrations, 2d8, melee. A straightforward tool for anyone comfortable standing inside the consequences."
+    "description": "Large two-handed vibroblade powered by an energy cell."
   },
   {
-    "slug": "wookiee-ryyk-blade",
+    "slug": "wan-shen",
+    "id": "weapon-wan-shen",
+    "name": "Wan-Shen",
+    "description": "Matukai double polearm with +1 reach that packs into four Small pieces as a full-round action."
+  },
+  {
+    "slug": "war-sword",
+    "id": "weapon-war-sword",
+    "name": "War Sword",
+    "description": "Heavy simple longsword with no additional special rule."
+  },
+  {
+    "slug": "ryyk-blade",
     "id": "weapon-wookiee-ryyk-blade",
-    "name": "Wookiee Ryyk Blade",
-    "description": "Wookiee Ryyk Blade, curved Wookiee blade with an elegant yet brutal design, 2d8, melee. The kind of weapon purchased by people who intend to be memorable up close."
+    "name": "Ryyk Blade",
+    "description": "Traditional Wookiee blade; advanced-melee-proficient Wookiees are proficient and carriers gain +2 forest/jungle survival."
   },
   {
-    "slug": "wrist-blaster",
+    "slug": "blaster-wrist",
     "id": "weapon-wrist-blaster",
-    "name": "Wrist Blaster",
-    "description": "Wrist Blaster, concealed wrist-mounted blaster, 3d4, 8 squares. Specialty hardware for buyers with very specific grudges."
-  },
-  {
-    "slug": "wrist-laser",
-    "id": "weapon-wrist-laser",
-    "name": "Wrist Laser",
-    "description": "Wrist Laser, concealed wrist-mounted laser weapon, 2d6, 10 squares. Not standard issue, which is often how you know it will be interesting."
+    "name": "Blaster, Wrist",
+    "description": "Single-shot concealed wrist blaster that requires DC 25 Use Computer to detect with weapon sensors."
   },
   {
     "slug": "wrist-rocket-launcher",
     "id": "weapon-wrist-rocket-launcher",
     "name": "Wrist Rocket Launcher",
-    "description": "Wrist Rocket Launcher, small wrist-mounted launcher system often used by Mandalorians, varies, 10 squares. Ideal for customers who think one projectile should make a point for everyone nearby."
+    "description": "Forearm-mounted single-shot launcher using several specialized rocket payloads."
   },
   {
     "slug": "xerrol-nightstinger",
     "id": "weapon-xerrol-nightstinger",
     "name": "Xerrol Nightstinger",
-    "description": "Xerrol Nightstinger, sniper rifle used by assassins, 3d6, 30 squares. A niche purchase, but then so is whatever situation this was built for."
+    "description": "Sniper rifle firing visually invisible shots from five-shot exotic-gas canisters."
   },
   {
-    "slug": "zabrak-combat-staff",
-    "id": "weapon-zabrak-combat-staff",
-    "name": "Zabrak Combat Staff",
-    "description": "Zabrak Combat Staff, traditional Zabrak quarterstaff used in combat training and martial arts, 1d8, melee. A straightforward tool for anyone comfortable standing inside the consequences."
-  },
-  {
-    "slug": "zeltron-neural-whip",
-    "id": "weapon-zeltron-neural-whip",
-    "name": "Zeltron Neural Whip",
-    "description": "Zeltron Neural Whip, specialized whip that targets the nervous system, 1d6, 2 squares. A straightforward tool for anyone comfortable standing inside the consequences."
+    "slug": "zhaboka",
+    "id": "weapon-zhaboka",
+    "name": "Zhaboka",
+    "description": "Zabrak double pike that removes Rapid Strike's attack penalty."
   }
 ]

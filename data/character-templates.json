@@ -939,11 +939,11 @@
         },
         {
           "pack": "foundryvtt-swse.weapons-pistols",
-          "id": "weapon-hold-out-blaster",
-          "name": "Hold-out Blaster",
+          "id": "weapon-hold-out-blaster-pistol",
+          "name": "Blaster Pistol, Hold-Out",
           "type": "weapon",
           "quantity": 1,
-          "displayName": "Hold-out Blaster"
+          "displayName": "Blaster Pistol, Hold-Out"
         },
         {
           "pack": "foundryvtt-swse.equipment",
@@ -1677,11 +1677,11 @@
         },
         {
           "pack": "foundryvtt-swse.weapons-pistols",
-          "id": "weapon-hold-out-blaster",
-          "name": "Hold-out Blaster",
+          "id": "weapon-hold-out-blaster-pistol",
+          "name": "Blaster Pistol, Hold-Out",
           "type": "weapon",
           "quantity": 1,
-          "displayName": "Hold-out Blaster"
+          "displayName": "Blaster Pistol, Hold-Out"
         },
         {
           "pack": "foundryvtt-swse.equipment",
@@ -2646,11 +2646,11 @@
       "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
-          "id": "weapon-hold-out-blaster",
-          "name": "Hold-out Blaster",
+          "id": "weapon-hold-out-blaster-pistol",
+          "name": "Blaster Pistol, Hold-Out",
           "type": "weapon",
           "quantity": 1,
-          "displayName": "Hold-out Blaster"
+          "displayName": "Blaster Pistol, Hold-Out"
         },
         {
           "pack": "foundryvtt-swse.weapons-pistols",
@@ -3819,11 +3819,11 @@
       "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
-          "id": "weapon-hold-out-blaster",
-          "name": "Hold-out Blaster",
+          "id": "weapon-hold-out-blaster-pistol",
+          "name": "Blaster Pistol, Hold-Out",
           "type": "weapon",
           "quantity": 1,
-          "displayName": "Hold-out Blaster"
+          "displayName": "Blaster Pistol, Hold-Out"
         },
         {
           "pack": "foundryvtt-swse.equipment",

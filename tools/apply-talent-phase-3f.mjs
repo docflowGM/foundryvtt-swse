@@ -136,7 +136,8 @@ export function verifyApplied({ exact = false } = {}) {
   if (!later) check('the other talents are unchanged', sortedFp(talents.filter(t => !tIds.has(t._id))) === report.talentOthersFingerprint);
   check('the other trees are unchanged', sortedFp(trees.filter(t => !nIds.has(t._id))) === report.treeOthersFingerprint);
   check('runtime registries equal a fresh generation from the packs', REGISTRY_PATHS.every(rel => gitBlobSha(read(rel)) === report.postState.registryGenerated));
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
+  // Phase 5C owns actor-pack reference migration (embedded sourceId remaps)
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!['packs/heroic.db','packs/nonheroic.db','packs/npc.db','packs/droids.db','packs/beasts.db'].includes(rel)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
   const rec = reconcile(loadInput());
   check('reconciler: STALE_TREE_ID_SLUG 0, TREE_DISPLAY_NAME_DRIFT 0, zero blocking findings', rec.findingCounts.STALE_TREE_ID_SLUG === 0 && rec.findingCounts.TREE_DISPLAY_NAME_DRIFT === 0 && rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
   if (exact) { if (!later) check('packs/talents.db equals the certified blob', gitBlobSha(read(P.talents)) === report.postState.talents); check('packs/talent_trees.db equals the certified blob', gitBlobSha(read(P.trees)) === report.postState.trees); }

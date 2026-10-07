@@ -750,9 +750,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1027,9 +1027,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1082,9 +1082,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1192,9 +1192,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1247,9 +1247,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1467,9 +1467,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1522,9 +1522,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1577,9 +1577,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1799,9 +1799,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1854,9 +1854,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1909,9 +1909,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -1964,9 +1964,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2019,9 +2019,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2074,9 +2074,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2129,9 +2129,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2349,9 +2349,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2679,9 +2679,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2734,9 +2734,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2789,9 +2789,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2844,9 +2844,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2899,9 +2899,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -2954,9 +2954,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3009,9 +3009,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3064,9 +3064,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3119,9 +3119,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3174,9 +3174,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3229,9 +3229,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3284,9 +3284,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3339,9 +3339,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3394,9 +3394,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3449,9 +3449,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3504,9 +3504,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3673,9 +3673,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3728,9 +3728,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3783,9 +3783,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -3838,9 +3838,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -4278,9 +4278,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -4333,9 +4333,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -4608,9 +4608,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -4663,9 +4663,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -4718,9 +4718,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -4828,9 +4828,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5048,9 +5048,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5103,9 +5103,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5213,9 +5213,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5268,9 +5268,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5323,9 +5323,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5598,9 +5598,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5653,9 +5653,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5708,9 +5708,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5763,9 +5763,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5818,9 +5818,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -5873,9 +5873,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -6822,9 +6822,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -6877,9 +6877,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -7482,9 +7482,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -7537,9 +7537,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -7647,9 +7647,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -7702,9 +7702,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -7756,13 +7756,7 @@
       },
       "weapon": {
         "printedName": "Sith Tremor Sword",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-sith-tremor-sword",
-        "baseSlug": "weapon-sith-tremor-sword",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "sonic",
-        "baseFormulaPolicy": "uuid"
+        "rowKind": "melee"
       },
       "printedAttack": {
         "text": "+14",
@@ -7812,9 +7806,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -7867,9 +7861,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -7922,9 +7916,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -7977,9 +7971,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8032,9 +8026,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8142,9 +8136,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8197,9 +8191,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8252,9 +8246,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8307,9 +8301,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8362,9 +8356,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8417,9 +8411,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8472,9 +8466,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8527,9 +8521,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8582,9 +8576,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8637,9 +8631,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8692,9 +8686,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8747,9 +8741,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8802,9 +8796,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8857,9 +8851,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -8967,9 +8961,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9022,9 +9016,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9299,9 +9293,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9354,9 +9348,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9409,9 +9403,9 @@
       "weapon": {
         "printedName": "Double-Bladed Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-double-bladed-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-double-bladed-lightsaber",
         "baseSlug": "weapon-double-bladed-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9464,9 +9458,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9519,9 +9513,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9574,9 +9568,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9629,9 +9623,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9684,9 +9678,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9904,9 +9898,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -9959,9 +9953,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10014,9 +10008,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10069,9 +10063,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10124,9 +10118,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10179,9 +10173,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10234,9 +10228,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10289,9 +10283,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10344,9 +10338,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10399,9 +10393,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10454,9 +10448,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10509,9 +10503,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10564,9 +10558,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10619,9 +10613,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10674,9 +10668,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10729,9 +10723,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10841,9 +10835,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -10896,9 +10890,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11061,9 +11055,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11116,9 +11110,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11171,9 +11165,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11226,9 +11220,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11281,9 +11275,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11336,9 +11330,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11391,9 +11385,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11446,9 +11440,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11501,9 +11495,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11556,9 +11550,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11611,9 +11605,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11941,9 +11935,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -11996,9 +11990,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -12161,9 +12155,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -12216,9 +12210,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -12326,9 +12320,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -12546,9 +12540,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -12601,9 +12595,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -12656,9 +12650,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -12876,9 +12870,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -12931,9 +12925,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13098,9 +13092,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13153,9 +13147,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13208,9 +13202,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13263,9 +13257,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13318,9 +13312,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13373,9 +13367,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13817,9 +13811,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13872,9 +13866,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13927,9 +13921,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -13982,9 +13976,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -14204,9 +14198,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -14259,9 +14253,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -14479,9 +14473,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -14589,9 +14583,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -14809,9 +14803,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -14978,9 +14972,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15033,9 +15027,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15088,9 +15082,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15143,9 +15137,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15198,9 +15192,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15253,9 +15247,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15308,9 +15302,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15363,9 +15357,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15583,9 +15577,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15638,9 +15632,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15693,9 +15687,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15915,9 +15909,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -15970,9 +15964,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -16245,9 +16239,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -16579,9 +16573,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -16634,9 +16628,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -16689,9 +16683,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -16744,9 +16738,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17131,9 +17125,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17186,9 +17180,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17241,9 +17235,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17296,9 +17290,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17351,9 +17345,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17406,9 +17400,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17516,9 +17510,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17571,9 +17565,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17681,9 +17675,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17736,9 +17730,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17846,9 +17840,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17901,9 +17895,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -17956,9 +17950,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -18011,9 +18005,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -18066,9 +18060,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -18121,9 +18115,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -18176,9 +18170,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -18341,9 +18335,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -18506,9 +18500,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -18561,9 +18555,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -18671,9 +18665,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -18726,9 +18720,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -19333,9 +19327,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -19388,9 +19382,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -19553,9 +19547,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -19608,9 +19602,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -19993,9 +19987,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -20048,9 +20042,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -20103,9 +20097,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -20158,9 +20152,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -20213,9 +20207,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -20267,13 +20261,7 @@
       },
       "weapon": {
         "printedName": "Stealth Blaster Carbine",
-        "rowKind": "ranged",
-        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-stealth-blaster-carbine",
-        "baseSlug": "weapon-stealth-blaster-carbine",
-        "basePack": "weapons-rifles",
-        "baseFormula": "3d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
+        "rowKind": "ranged"
       },
       "printedAttack": {
         "text": "+5",
@@ -20323,9 +20311,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -20602,9 +20590,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -20657,9 +20645,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -20767,9 +20755,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -21154,9 +21142,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -21209,9 +21197,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"
@@ -21264,9 +21252,9 @@
       "weapon": {
         "printedName": "Lightsaber",
         "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
+        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.weapon-lightsaber",
         "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
+        "basePack": "weapons-lightsabers",
         "baseFormula": "2d8",
         "baseType": "energy",
         "baseFormulaPolicy": "uuid"

@@ -3038,7 +3038,7 @@ export class ProgressionFinalizer {
     const packCandidates = [
       { pack: 'foundryvtt-swse.weapons', ids: ['weapon-lightsaber'], names: ['Lightsaber'] },
       { pack: 'foundryvtt-swse.weapons-simple', ids: ['weapon-lightsaber'], names: ['Lightsaber'] },
-      { pack: 'foundryvtt-swse.weapons-lightsabers', ids: ['lightsaber-chassis-standard'], names: ['Lightsaber (Standard)'] },
+      { pack: 'foundryvtt-swse.weapons-lightsabers', ids: ['weapon-lightsaber'], names: ['Lightsaber'] },
     ];
 
     for (const candidate of packCandidates) {
