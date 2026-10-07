@@ -1914,5 +1914,112 @@ if (fs.existsSync(path.join(ROOT, P4E))) {
   if (errors.length === e4e) console.log(`Phase 4E Advanced Melee semantic tags OK: ${REQ}/22 adjudicated (${asg.filter((a) => a.repo.present).length} repo-present / ${asg.filter((a) => !a.repo.present).length} repo-missing), ${tagTotal} assignments, ${tagsUsed.size} distinct tags, selectors + comparison data cross-checked against Phase 3B, baseline = Vibroblade, next ${rp.nextCanonicalName}`);
 }
 
+// Phase 4F: Heavy Weapons semantic tags + rule selectors (planner authority; payload- and mode-aware)
+const P4F = 'data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json';
+if (fs.existsSync(path.join(ROOT, P4F))) {
+  const e4f = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const J = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+  const sh = (t) => crypto.createHash('sha256').update(t).digest('hex');
+  const S = J(P4F);
+  if (!fs.existsSync(path.join(ROOT, 'docs/audits/item-weapons-phase-4f-heavy-semantic-rolling.md'))) fail('4F missing markdown companion');
+  const ic = S.implementationContract || {};
+  if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || S.completionCertification?.productionMutationAuthorized !== false) fail('4F authority-only / mutation flags');
+  const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
+  if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4F requires Phase 3D to remain frozen');
+  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4F production file changed (packs/weapons.db or template.json)');
+  const used = new Set();
+  for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
+  walk(J('data/audits/talent-phase-12-1-semantic-tag-authority.json').batches);
+  for (const a of J('data/audits/talent-phase-12-final-ontology-adjudication.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  if (used.size !== 183) fail(`4F feat/talent-used vocabulary is ${used.size}, expected 183`);
+  const REJECT = ['grenade', 'explosives', 'area_damage', 'accuracy', 'autofire', 'rifle', 'thrown', 'condition_track', 'telekinesis', 'teamwork_crew'];
+  // Heavy Weapons proficiency surface: Phase 3B groups Heavy Weapon (15) + Heavy Weapon (Ammunition) + the Rifle (Special) hybrid
+  const surface = b3.identities.filter((i) => i.weaponGroup === 'Heavy Weapon' || i.weaponGroup === 'Heavy Weapon (Ammunition)' || i.identityKey === 'weapon-interchangeable-weapon-system');
+  const primary = surface.filter((i) => i.weaponGroup === 'Heavy Weapon');
+  const sc = S.scope;
+  if (surface.length !== 17 || primary.length !== 15 || sc.totalHeavyProficiencySurface !== 17 || sc.primaryHeavyWeaponGroupIdentities !== 15 || sc.heavyProficiencyAdjunctIdentities !== 2 || !same([...sc.adjunctIdentities].sort(), ['Electronet', 'Interchangeable Weapon System']) || surface.filter((i) => i.repo.present).length !== sc.repoPresent || sc.repoMissing !== 0) fail('4F Heavy Weapons surface must match Phase 3B (15 primary + 2 adjunct = 17, all repo-present)');
+  const lines = (f) => new Set(fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l).name));
+  const talentNames = lines('packs/talents.db'), featNames = lines('packs/feats.db');
+  const ENUM = /^[A-Z][A-Z0-9_]*$/;
+  const asg = S.assignments, byKey = new Map(surface.map((i) => [i.identityKey, i])), seen = new Set();
+  let tagTotal = 0, condTotal = 0; const tagsUsed = new Set();
+  const bn = (b) => String(b).replace(/^The /, '');
+  const HYBRID = 'weapon-interchangeable-weapon-system';
+  asg.forEach((a) => {
+    const w = `4F ${a.canonicalName}`;
+    if (seen.has(a.identityKey)) fail(`${w} occurs more than once`); seen.add(a.identityKey);
+    const i = byKey.get(a.identityKey);
+    if (!i) { fail(`${w} (${a.identityKey}) is not a Phase 3B Heavy Weapons proficiency identity`); return; }
+    if (i.canonicalName !== a.canonicalName) fail(`${w} name differs from Phase 3B (${i.canonicalName})`);
+    const claim = i.sourceClaims.find((c) => bn(c.book) === bn(a.source.book));
+    if (!claim || ![claim.descriptionPage, claim.statTablePage].some((pg) => pg !== null && (pg === a.source.descriptionPage || pg === a.source.statTablePage))) fail(`${w} source book/page matches no Phase 3B source claim`);
+    const cond = (a.conditionalSemanticTags || []);
+    for (const [f, vals] of Object.entries({ finalTags: a.finalTags, tradeoffTags: a.tradeoffTags, 'conditionalSemanticTags[].tag': cond.map((c) => c.tag) })) {
+      if (!Array.isArray(vals)) { fail(`${w} ${f} must be an array`); continue; }
+      for (const t of vals) { if (!used.has(t)) fail(`${w} ${f} value "${t}" is not used by any certified feat/talent`); if (REJECT.includes(t)) fail(`${w} ${f} uses rejected tag ${t}`); }
+    }
+    if (new Set(a.finalTags).size !== a.finalTags.length) fail(`${w} duplicate finalTags`);
+    for (const t of a.tradeoffTags) if (a.finalTags.includes(t)) fail(`${w} tradeoff tag ${t} was promoted into finalTags`);
+    for (const c of cond) { if (a.finalTags.includes(c.tag)) fail(`${w} conditional tag ${c.tag} was promoted into finalTags`); if (!c.condition || !c.reason) fail(`${w} conditional tag needs a condition and reason`); condTotal++; }
+    if (!a.finalTags.includes('ranged') && a.identityKey !== HYBRID) fail(`${w} must carry ranged`);
+    a.finalTags.forEach((t) => { tagTotal++; tagsUsed.add(t); });
+    // rationale is optional in the compact shape; when present it must be in exact parity with finalTags
+    if (a.rationale) {
+      for (const t of a.finalTags) if (typeof a.rationale[t] !== 'string' || !a.rationale[t].trim()) fail(`${w} tag ${t} has no rationale`);
+      for (const t of Object.keys(a.rationale)) if (!a.finalTags.includes(t)) fail(`${w} rationale for ${t} has no tag`);
+    }
+    // heavy_weapon semantics: global for Heavy Weapon group, payload-contextual for ammunition, conditional (anti-armor) for the hybrid
+    if (a.identityKey === HYBRID) {
+      if (a.finalTags.includes('heavy_weapon') || !cond.some((c) => c.tag === 'heavy_weapon' && /anti-armor/.test(c.condition))) fail(`${w} heavy_weapon must be conditional on anti-armor mode only`);
+    } else if (!a.finalTags.includes('heavy_weapon')) fail(`${w} must carry heavy_weapon`);
+    const q = a.ruleSelectors;
+    if (!q) fail(`${w} missing ruleSelectors`);
+    else {
+      if (q.exactIdentity !== `weapon:${a.identityKey}`) fail(`${w} exactIdentity must be weapon:${a.identityKey}`);
+      const wantG = a.identityKey === HYBRID ? ['weapon-group:rifle', 'weapon-proficiency:rifles'] : ['weapon-group:heavy-weapon', 'weapon-proficiency:heavy-weapons'];
+      if (q.weaponGroup !== wantG[0] || q.proficiency !== wantG[1]) fail(`${w} selector group/proficiency must be ${wantG.join(' / ')}`);
+      if (!Array.isArray(q.families) || !q.families.length || q.families.some((f) => !/^weapon-family:[a-z0-9-]+$/.test(f))) fail(`${w} families malformed`);
+      for (const l of q.explicitAbilityLinks || []) {
+        if (!['feat', 'talent', 'talent-family'].includes(l.abilityType) || !ENUM.test(l.relation || '') || !l.abilityName) fail(`${w} ability link shape (${l.abilityName})`);
+        else if (l.abilityType !== 'talent-family' && !(l.abilityType === 'talent' ? talentNames : featNames).has(l.abilityName)) fail(`${w} ${l.abilityType} "${l.abilityName}" does not exist in the production pack`);
+      }
+      for (const m of q.modeSelectors || []) if (!m.mode) fail(`${w} modeSelector needs a mode`);
+      const selVals = [q.exactIdentity, q.weaponGroup, q.proficiency, ...q.families, ...(q.modeSelectors || []).flatMap((m) => [m.weaponGroup, m.proficiency, ...(m.families || [])].filter(Boolean))];
+      if ([...a.finalTags, ...a.tradeoffTags, ...cond.map((c) => c.tag)].some((t) => selVals.includes(t) || /:/.test(t))) fail(`${w} a rule selector leaked into a semantic tag field`);
+    }
+    // optional comparison data cross-checked against Phase 3B
+    const c = a.relativeToBlasterCannon, am = i.canonicalStats.ammo || {};
+    if (c) {
+      const sv = c.capacity?.shots;
+      if (typeof sv === 'number' && am.mode === 'single' && sv !== am.capacityShots) fail(`${w} comparison capacity ${sv} != Phase 3B ${am.capacityShots}`);
+      if (sv === null && am.mode === 'single' && am.status === 'established' && am.capacityShots !== null) fail(`${w} capacity is null although Phase 3B establishes ${am.capacityShots}`);
+    }
+    for (const m of a.unrepresentedMechanics || []) if (typeof m !== 'string' && (!m.mechanic || !ENUM.test(m.representationStatus || '') || !m.note)) fail(`${w} unrepresented mechanic shape`);
+  });
+  // named rulings
+  const by = (k) => asg.find((a) => a.identityKey === k);
+  const bc = by('weapon-blaster-cannon');
+  if (!bc || !same(bc.finalTags, ['heavy_weapon', 'ranged', 'offense_ranged', 'burst_damage']) || bc.tradeoffTags.length) fail('4F Blaster Cannon must remain the Heavy Weapon baseline');
+  if (S.baseline.comparisonIdentityKey !== 'weapon-blaster-cannon') fail('4F baseline identity changed');
+  const el = by('weapon-electronet');
+  if (el && (el.ruleSelectors.weaponGroup !== 'weapon-group:heavy-weapon' || !el.ruleSelectors.families.includes('weapon-family:grenade-launcher-ammunition'))) fail('4F Electronet is Heavy Weapon ammunition for a grenade launcher');
+  const gl = by('weapon-grenade-launcher');
+  if (gl && gl.finalTags.some((t) => ['stun', 'nonlethal', 'control', 'grab', 'restrain'].includes(t))) fail('4F Grenade Launcher must inherit payload semantics dynamically, not statically');
+  const mo = by('weapon-mortar-launcher');
+  if (mo && !['cover', 'positioning'].every((t) => mo.finalTags.includes(t))) fail('4F Mortar Launcher must carry cover + positioning');
+  const tb = by('weapon-tactical-tractor-beam');
+  if (tb && (tb.finalTags.includes('telekinesis') || !['grab', 'control', 'positioning'].every((t) => tb.finalTags.includes(t)))) fail('4F Tactical Tractor Beam is technological grab/control, not telekinesis');
+  if (!same(asg.map((a) => a.identityKey).sort(), surface.map((i) => i.identityKey).sort())) fail('4F must adjudicate exactly the 17 Heavy Weapons proficiency identities');
+  // progress counters
+  const rp = S.rollingProgress;
+  if (rp.adjudicatedTotal !== asg.length || rp.remaining !== 17 - asg.length || rp.categoryComplete !== (asg.length === 17) || rp.totalFinalTagAssignmentsCumulative !== tagTotal || rp.conditionalSemanticTagAssignmentsCumulative !== condTotal) fail('4F rolling progress counts');
+  const cumTags = new Set([...tagsUsed, ...asg.flatMap((a) => (a.conditionalSemanticTags || []).map((c) => c.tag))]);
+  if (rp.distinctSemanticTagsUsedCumulative !== cumTags.size || !same([...cumTags].sort(), [...rp.semanticTagsUsedCumulative].sort())) fail('4F distinct semantic tag counts');
+  if (asg.length === 17 && (tagTotal !== 105 || condTotal !== 1 || cumTags.size !== 25 || S.status !== 'WEAPON_TAG_PHASE_4F_HEAVY_COMPLETE_PLANNER_AUTHORITY')) fail('4F final totals must be 105 final-tag assignments, 1 conditional assignment and 25 distinct tags');
+  if (errors.length === e4f) console.log(`Phase 4F Heavy Weapons semantic tags OK: ${asg.length}/17 adjudicated (15 primary + 2 adjunct), ${tagTotal} assignments + ${condTotal} conditional, ${cumTags.size} distinct tags, payload-/mode-aware heavy_weapon semantics, selectors cross-checked against Phase 3B`);
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
