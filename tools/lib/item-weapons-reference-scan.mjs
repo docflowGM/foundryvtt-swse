@@ -7,7 +7,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 export const SCAN_EXCLUDE_PREFIXES = ['data/audits/', 'docs/', 'assets/', 'styles/', 'design-docs/', '.github/', 'tools/lib/item-weapons-reference-scan.mjs'];
-export const SCAN_EXCLUDE_PATTERNS = [/^tools\/(build|verify)-item-weapons/, /^tools\/census-item-ssot/, /^tools\/lib\/item-weapons-phase-4h/];
+export const SCAN_EXCLUDE_PATTERNS = [/^tools\/(build|verify)-item-weapons/, /^tools\/census-item-ssot/, /^tools\/lib\/item-weapons-phase-4h/, /^tools\/audit-weapon-phase-5a/];
 const TEXT_EXT = new Set(['.db', '.json', '.js', '.mjs', '.hbs', '.html', '.csv', '.py', '.yml', '.yaml', '.txt']);
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
