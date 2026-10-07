@@ -21,6 +21,8 @@ const SRC = {
   baseline: 'data/audits/talent-feat-pass3b-mechanic-baseline.json', auth3b: 'data/audits/talent-feat-pass3b-semantic-authority.json', gaps: 'data/audits/talent-feat-pass3b-policy-gaps.json',
   overlay: 'data/audits/talent-feat-pass3b-owner-adjudication.json', packet: 'data/audits/talent-feat-phase3-final-owner-policy-packet.json', ont3d: 'data/audits/talent-feat-phase3d-ontology-authority.json'
 };
+// frozen: the certified pre-Phase-5C state (Phase 5C regenerates the feat files from data/canonical/feats.json)
+export const PRE_CUTOVER_PRODUCTION_SHA256 = { 'packs/talents.db': '832937d451c2353da9afbd6b1f34366b293b659f24b3d09808d44ad767ee8288', 'packs/feats.db': '9c67242a67b209a2c3d359201beb03e512962998e6bacee6d8c3eedd4787d3e8', 'data/feat-catalog.json': 'e7907810f492e036517822a19f45ac1242fe2ec0044e7b2ad241f858f9925eef' };
 export const PRODUCTION_FILES = ['packs/talents.db', 'packs/feats.db', 'data/feat-catalog.json'];
 export const SOURCE_FINDING = 'PHASE3_FINAL_OWNER_POLICY_DERIVED';
 export const SOURCE_REMOVE = 'PHASE3_FINAL_OWNER_POLICY_DERIVED_REMOVE';
@@ -254,7 +256,7 @@ export function buildOutputs() {
   const pass = Object.values(gate).every(Boolean);
   const closeObj = { schemaVersion: '1.0', kind: 'TALENT_FEAT_PHASE3_CLOSEOUT', status: pass ? 'PHASE3_EXIT_GATE_PASSED' : 'PHASE3_EXIT_GATE_FAILED', productionMutated: false, exitGate: gate, exitGatePassed: pass, counts, retiredTagUse: retiredUse,
     policyViolations: viol, newTagPopulations: Object.fromEntries(NEW_TAGS.map(t => [t, u[t].feats + u[t].talents])),
-    productionFilesSha256: Object.fromEntries(PRODUCTION_FILES.map(f => [f, sha256(f)])), productionBoundaryNote: 'No production file is modified by this pass; the test suite compares these files with main.' };
+    productionFilesSha256: PRE_CUTOVER_PRODUCTION_SHA256, productionBoundaryNote: 'No production file is modified by this pass; the test suite compares these files with main.' };
   // ---- markdown ----
   const gateRows = Object.entries(gate).map(([n, v]) => `| ${n} | ${v ? 'PASS' : 'FAIL'} |`);
   const L = {};

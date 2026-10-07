@@ -831,7 +831,7 @@ async function markItemForInstantAlchemyRite(actor, detail, resourceChanges) {
 
 const SITH_ARMOR_PROFILES = {
   light: {
-    resultName: 'Light Dark Armor',
+    resultName: 'Dark Armor, Light',
     armorType: 'light',
     reflexBonus: 4,
     fortitudeBonus: 3,
@@ -842,7 +842,7 @@ const SITH_ARMOR_PROFILES = {
     cost: 10000
   },
   standard: {
-    resultName: 'Dark Armor',
+    resultName: 'Dark Armor, Medium',
     armorType: 'medium',
     reflexBonus: 7,
     fortitudeBonus: 4,
@@ -853,7 +853,7 @@ const SITH_ARMOR_PROFILES = {
     cost: 15000
   },
   heavy: {
-    resultName: 'Heavy Dark Armor',
+    resultName: 'Dark Armor, Heavy',
     armorType: 'heavy',
     reflexBonus: 8,
     fortitudeBonus: 5,

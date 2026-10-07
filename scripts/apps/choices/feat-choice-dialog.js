@@ -289,7 +289,8 @@ export class FeatChoiceDialog {
         label: name,
         group: 'exotic',
         category: category.value,
-        weapon: name
+        weapon: name,
+        weaponIdentity: registry.exoticWeapons?.identities?.[name]?.identityKey ?? null // canonical weapon identity; the label is display only
       }));
       const weapon = await promptOption('Choose Exotic Weapon', `Choose the specific ${category.label}.`, weaponOptions);
       if (!weapon) return null;

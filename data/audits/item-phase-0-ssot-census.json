@@ -1,0 +1,1897 @@
+{
+  "schemaVersion": 1,
+  "authorityType": "item-phase-0-ssot-census",
+  "scope": "weapons, armor, equipment, upgrades/modifications, lightsaber parts, implants, vehicle weapons (identified, not yet claimed)",
+  "semanticDecisionsMade": 0,
+  "generatedBy": "tools/census-item-ssot-phase-0.mjs",
+  "packs": {
+    "weapons": {
+      "pack": "weapons",
+      "registeredInSystemJson": true,
+      "records": 190,
+      "types": {
+        "weapon": 186,
+        "weaponUpgrade": 4
+      },
+      "schemaVersion": {
+        "2": 171,
+        "unstamped": 19
+      },
+      "uniqueIds": 190,
+      "uniqueNames": 190,
+      "provenanceFieldCoverage": {
+        "system.source": 4,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Core Rulebook": 4
+      },
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 178,
+        "system.properties": 176,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "cost",
+        "description"
+      ]
+    },
+    "weapons-exotic": {
+      "pack": "weapons-exotic",
+      "registeredInSystemJson": true,
+      "records": 19,
+      "types": {
+        "weapon": 19
+      },
+      "schemaVersion": {
+        "unstamped": 19
+      },
+      "uniqueIds": 19,
+      "uniqueNames": 19,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {},
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 19,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "ammunition",
+        "attackAttribute",
+        "attackBonus",
+        "category",
+        "cost",
+        "costNumeric",
+        "damage",
+        "damageType",
+        "description",
+        "equipped",
+        "proficiency",
+        "properties",
+        "range",
+        "subcategory",
+        "weaponCategory",
+        "weight"
+      ]
+    },
+    "weapons-grenades": {
+      "pack": "weapons-grenades",
+      "registeredInSystemJson": true,
+      "records": 12,
+      "types": {
+        "weapon": 12
+      },
+      "schemaVersion": {
+        "unstamped": 12
+      },
+      "uniqueIds": 12,
+      "uniqueNames": 12,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {},
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 12,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "ammunition",
+        "attackAttribute",
+        "attackBonus",
+        "category",
+        "cost",
+        "costNumeric",
+        "damage",
+        "damageType",
+        "description",
+        "equipped",
+        "proficiency",
+        "properties",
+        "range",
+        "subcategory",
+        "weaponCategory",
+        "weight"
+      ]
+    },
+    "weapons-heavy": {
+      "pack": "weapons-heavy",
+      "registeredInSystemJson": true,
+      "records": 24,
+      "types": {
+        "weapon": 24
+      },
+      "schemaVersion": {
+        "unstamped": 24
+      },
+      "uniqueIds": 24,
+      "uniqueNames": 24,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {},
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 24,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "ammunition",
+        "attackAttribute",
+        "attackBonus",
+        "category",
+        "cost",
+        "costNumeric",
+        "damage",
+        "damageType",
+        "description",
+        "equipped",
+        "proficiency",
+        "properties",
+        "range",
+        "subcategory",
+        "weaponCategory",
+        "weight"
+      ]
+    },
+    "weapons-lightsabers": {
+      "pack": "weapons-lightsabers",
+      "registeredInSystemJson": true,
+      "records": 15,
+      "types": {
+        "weapon": 15
+      },
+      "schemaVersion": {
+        "unstamped": 15
+      },
+      "uniqueIds": 15,
+      "uniqueNames": 15,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {},
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 15,
+        "system.properties": 13,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "ammunition",
+        "attackAttribute",
+        "attackBonus",
+        "baseBuildDc",
+        "baseCost",
+        "chassisId",
+        "combat",
+        "constructible",
+        "cost",
+        "damage",
+        "damageType",
+        "description",
+        "equippable",
+        "equipped",
+        "installedUpgrades",
+        "proficiency",
+        "properties",
+        "range",
+        "rangeProfile",
+        "subtype",
+        "traits",
+        "upgradeSlots",
+        "weaponCategory",
+        "weaponType",
+        "weight"
+      ]
+    },
+    "weapons-pistols": {
+      "pack": "weapons-pistols",
+      "registeredInSystemJson": true,
+      "records": 36,
+      "types": {
+        "weapon": 36
+      },
+      "schemaVersion": {
+        "unstamped": 36
+      },
+      "uniqueIds": 36,
+      "uniqueNames": 36,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {},
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 34,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "ammunition",
+        "attackAttribute",
+        "attackBonus",
+        "category",
+        "cost",
+        "costNumeric",
+        "damage",
+        "damageType",
+        "description",
+        "equipped",
+        "proficiency",
+        "properties",
+        "range",
+        "subcategory",
+        "weaponCategory",
+        "weight"
+      ]
+    },
+    "weapons-rifles": {
+      "pack": "weapons-rifles",
+      "registeredInSystemJson": true,
+      "records": 50,
+      "types": {
+        "weapon": 50
+      },
+      "schemaVersion": {
+        "unstamped": 50
+      },
+      "uniqueIds": 50,
+      "uniqueNames": 50,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {},
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 47,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "ammunition",
+        "attackAttribute",
+        "attackBonus",
+        "category",
+        "cost",
+        "costNumeric",
+        "damage",
+        "damageType",
+        "description",
+        "equipped",
+        "proficiency",
+        "properties",
+        "range",
+        "subcategory",
+        "weaponCategory",
+        "weight"
+      ]
+    },
+    "weapons-simple": {
+      "pack": "weapons-simple",
+      "registeredInSystemJson": true,
+      "records": 30,
+      "types": {
+        "weapon": 30
+      },
+      "schemaVersion": {
+        "unstamped": 30
+      },
+      "uniqueIds": 30,
+      "uniqueNames": 30,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {},
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 27,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "ammunition",
+        "attackAttribute",
+        "attackBonus",
+        "category",
+        "cost",
+        "costNumeric",
+        "damage",
+        "damageType",
+        "description",
+        "equipped",
+        "proficiency",
+        "properties",
+        "range",
+        "subcategory",
+        "weaponCategory",
+        "weight"
+      ]
+    },
+    "armor": {
+      "pack": "armor",
+      "registeredInSystemJson": true,
+      "records": 70,
+      "types": {
+        "armor": 70
+      },
+      "schemaVersion": {
+        "2": 70
+      },
+      "uniqueIds": 70,
+      "uniqueNames": 70,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 70,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 4,
+        "Core Rulebook": 11,
+        "Galaxy at War": 7,
+        "Jedi Academy Training Manual": 7,
+        "Knights of the Old Republic Campaign Guide": 21,
+        "Legacy Era Campaign Guide": 5,
+        "Rebellion Era Campaign Guide": 4,
+        "Scum and Villainy": 8,
+        "Web Enhancements": 3
+      },
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "armorCheckPenalty",
+        "armorProficiency",
+        "armorType",
+        "availability",
+        "category",
+        "cost",
+        "costNumeric",
+        "damageReduction",
+        "defense",
+        "defenseBonus",
+        "description",
+        "economics",
+        "equipmentPerceptionBonus",
+        "equippable",
+        "equipped",
+        "features",
+        "fortBonus",
+        "fortitudeBonus",
+        "limits",
+        "maxDex",
+        "maxDexBonus",
+        "reflexBonus",
+        "schemaVersion",
+        "sourcebook",
+        "speedPenalty",
+        "traits",
+        "weight"
+      ]
+    },
+    "armor-heavy": {
+      "pack": "armor-heavy",
+      "registeredInSystemJson": true,
+      "records": 14,
+      "types": {
+        "armor": 14
+      },
+      "schemaVersion": {
+        "unstamped": 14
+      },
+      "uniqueIds": 14,
+      "uniqueNames": 14,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 14,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 1,
+        "Core Rulebook": 2,
+        "Jedi Academy Training Manual": 2,
+        "Knights of the Old Republic Campaign Guide": 4,
+        "Legacy Era Campaign Guide": 1,
+        "Rebellion Era Campaign Guide": 1,
+        "Scum and Villainy": 2,
+        "Web Enhancements": 1
+      },
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "armorCheckPenalty",
+        "armorProficiency",
+        "armorType",
+        "availability",
+        "cost",
+        "costNumeric",
+        "defenseBonus",
+        "description",
+        "equipmentPerceptionBonus",
+        "equipped",
+        "features",
+        "fortBonus",
+        "fortitudeBonus",
+        "maxDex",
+        "maxDexBonus",
+        "reflexBonus",
+        "sourcebook",
+        "speedPenalty",
+        "weight"
+      ]
+    },
+    "armor-light": {
+      "pack": "armor-light",
+      "registeredInSystemJson": true,
+      "records": 27,
+      "types": {
+        "armor": 27
+      },
+      "schemaVersion": {
+        "unstamped": 27
+      },
+      "uniqueIds": 27,
+      "uniqueNames": 27,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 27,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 2,
+        "Core Rulebook": 6,
+        "Galaxy at War": 3,
+        "Jedi Academy Training Manual": 3,
+        "Knights of the Old Republic Campaign Guide": 6,
+        "Legacy Era Campaign Guide": 1,
+        "Rebellion Era Campaign Guide": 2,
+        "Scum and Villainy": 3,
+        "Web Enhancements": 1
+      },
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "armorCheckPenalty",
+        "armorProficiency",
+        "armorType",
+        "availability",
+        "cost",
+        "costNumeric",
+        "defenseBonus",
+        "description",
+        "equipmentPerceptionBonus",
+        "equipped",
+        "features",
+        "fortBonus",
+        "fortitudeBonus",
+        "maxDex",
+        "maxDexBonus",
+        "reflexBonus",
+        "sourcebook",
+        "speedPenalty",
+        "weight"
+      ]
+    },
+    "armor-medium": {
+      "pack": "armor-medium",
+      "registeredInSystemJson": true,
+      "records": 22,
+      "types": {
+        "armor": 22
+      },
+      "schemaVersion": {
+        "unstamped": 22
+      },
+      "uniqueIds": 22,
+      "uniqueNames": 22,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 22,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 1,
+        "Core Rulebook": 3,
+        "Galaxy at War": 4,
+        "Jedi Academy Training Manual": 2,
+        "Knights of the Old Republic Campaign Guide": 5,
+        "Legacy Era Campaign Guide": 3,
+        "Scum and Villainy": 3,
+        "Web Enhancements": 1
+      },
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "armorCheckPenalty",
+        "armorProficiency",
+        "armorType",
+        "availability",
+        "cost",
+        "costNumeric",
+        "defenseBonus",
+        "description",
+        "equipmentPerceptionBonus",
+        "equipped",
+        "features",
+        "fortBonus",
+        "fortitudeBonus",
+        "maxDex",
+        "maxDexBonus",
+        "reflexBonus",
+        "sourcebook",
+        "speedPenalty",
+        "weight"
+      ]
+    },
+    "armor-shields": {
+      "pack": "armor-shields",
+      "registeredInSystemJson": true,
+      "records": 7,
+      "types": {
+        "armor": 7
+      },
+      "schemaVersion": {
+        "unstamped": 7
+      },
+      "uniqueIds": 7,
+      "uniqueNames": 7,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 7,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Knights of the Old Republic Campaign Guide": 6,
+        "Rebellion Era Campaign Guide": 1
+      },
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "activated",
+        "armorCheckPenalty",
+        "armorProficiency",
+        "armorType",
+        "availability",
+        "charges",
+        "cost",
+        "costNumeric",
+        "currentSR",
+        "defenseBonus",
+        "description",
+        "equipmentPerceptionBonus",
+        "equipped",
+        "features",
+        "fortBonus",
+        "fortitudeBonus",
+        "maxDex",
+        "maxDexBonus",
+        "reflexBonus",
+        "sourcebook",
+        "speedPenalty",
+        "weight"
+      ]
+    },
+    "equipment": {
+      "pack": "equipment",
+      "registeredInSystemJson": true,
+      "records": 142,
+      "types": {
+        "equipment": 142
+      },
+      "schemaVersion": {
+        "3": 42,
+        "4": 100
+      },
+      "uniqueIds": 142,
+      "uniqueNames": 141,
+      "provenanceFieldCoverage": {
+        "system.source": 142,
+        "system.sourcebook": 142,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 4,
+        "Core Rulebook": 55,
+        "Force Unleashed Campaign Guide": 4,
+        "Galaxy at War": 12,
+        "Galaxy of Intrigue": 9,
+        "Jedi Academy Training Manual": 3,
+        "Knights of the Old Republic Campaign Guide": 16,
+        "Legacy Era Campaign Guide": 4,
+        "Rebellion Era Campaign Guide": 3,
+        "Scum and Villainy": 16,
+        "Threats of the Galaxy": 7,
+        "Unknown Regions": 9
+      },
+      "tagFieldCoverage": {
+        "system.tags": 142,
+        "system.traits": 142,
+        "system.properties": 8,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "availability",
+        "capabilities",
+        "category",
+        "container",
+        "cost",
+        "costNumeric",
+        "description",
+        "economics",
+        "equipmentBucket",
+        "equipmentBucketLabel",
+        "equipmentType",
+        "equipmentTypeLabel",
+        "equippable",
+        "equipped",
+        "integrated",
+        "itemRole",
+        "itemRoleLabel",
+        "modifiers",
+        "normalizationStatus",
+        "notes",
+        "page",
+        "properties",
+        "quantity",
+        "restriction",
+        "schemaVersion",
+        "size",
+        "skillHooks",
+        "source",
+        "sourcebook",
+        "tags",
+        "traits",
+        "usage",
+        "value",
+        "weight",
+        "weightLabel"
+      ]
+    },
+    "equipment-comlinks": {
+      "pack": "equipment-comlinks",
+      "registeredInSystemJson": true,
+      "records": 13,
+      "types": {
+        "equipment": 13
+      },
+      "schemaVersion": {
+        "3": 13
+      },
+      "uniqueIds": 13,
+      "uniqueNames": 13,
+      "provenanceFieldCoverage": {
+        "system.source": 13,
+        "system.sourcebook": 13,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 1,
+        "Core Rulebook": 4,
+        "Galaxy at War": 3,
+        "Galaxy of Intrigue": 3,
+        "Legacy Era Campaign Guide": 1,
+        "Unknown Regions": 1
+      },
+      "tagFieldCoverage": {
+        "system.tags": 13,
+        "system.traits": 13,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "availability",
+        "capabilities",
+        "category",
+        "container",
+        "cost",
+        "costNumeric",
+        "description",
+        "economics",
+        "equipmentBucket",
+        "equipmentBucketLabel",
+        "equipmentType",
+        "equipmentTypeLabel",
+        "equippable",
+        "equipped",
+        "flags",
+        "integrated",
+        "itemRole",
+        "itemRoleLabel",
+        "modifiers",
+        "normalizationStatus",
+        "notes",
+        "page",
+        "properties",
+        "quantity",
+        "restriction",
+        "schemaVersion",
+        "size",
+        "skillHooks",
+        "source",
+        "sourceStatus",
+        "sourcebook",
+        "tags",
+        "traits",
+        "usage",
+        "value",
+        "weight",
+        "weightLabel"
+      ]
+    },
+    "equipment-medical": {
+      "pack": "equipment-medical",
+      "registeredInSystemJson": true,
+      "records": 16,
+      "types": {
+        "equipment": 16
+      },
+      "schemaVersion": {
+        "4": 16
+      },
+      "uniqueIds": 16,
+      "uniqueNames": 16,
+      "provenanceFieldCoverage": {
+        "system.source": 16,
+        "system.sourcebook": 16,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 1,
+        "Core Rulebook": 5,
+        "Galaxy at War": 2,
+        "Galaxy of Intrigue": 2,
+        "Jedi Academy Training Manual": 1,
+        "Knights of the Old Republic Campaign Guide": 1,
+        "Threats of the Galaxy": 2,
+        "Unknown Regions": 2
+      },
+      "tagFieldCoverage": {
+        "system.tags": 16,
+        "system.traits": 16,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "availability",
+        "capabilities",
+        "category",
+        "container",
+        "cost",
+        "costNumeric",
+        "description",
+        "economics",
+        "equipmentBucket",
+        "equipmentBucketLabel",
+        "equipmentType",
+        "equipmentTypeLabel",
+        "equippable",
+        "equipped",
+        "integrated",
+        "itemRole",
+        "itemRoleLabel",
+        "modifiers",
+        "normalizationStatus",
+        "notes",
+        "page",
+        "properties",
+        "quantity",
+        "restriction",
+        "schemaVersion",
+        "size",
+        "skillHooks",
+        "source",
+        "sourcebook",
+        "tags",
+        "traits",
+        "usage",
+        "value",
+        "weight",
+        "weightLabel"
+      ]
+    },
+    "equipment-other": {
+      "pack": "equipment-other",
+      "registeredInSystemJson": true,
+      "records": 6,
+      "types": {
+        "equipment": 6
+      },
+      "schemaVersion": {
+        "3": 6
+      },
+      "uniqueIds": 6,
+      "uniqueNames": 6,
+      "provenanceFieldCoverage": {
+        "system.source": 6,
+        "system.sourcebook": 6,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Core Rulebook": 6
+      },
+      "tagFieldCoverage": {
+        "system.tags": 6,
+        "system.traits": 6,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "availability",
+        "capabilities",
+        "category",
+        "container",
+        "cost",
+        "costNumeric",
+        "description",
+        "economics",
+        "equipmentBucket",
+        "equipmentBucketLabel",
+        "equipmentType",
+        "equipmentTypeLabel",
+        "equippable",
+        "equipped",
+        "integrated",
+        "itemRole",
+        "itemRoleLabel",
+        "modifiers",
+        "normalizationStatus",
+        "notes",
+        "page",
+        "properties",
+        "quantity",
+        "restriction",
+        "schemaVersion",
+        "size",
+        "skillHooks",
+        "source",
+        "sourcebook",
+        "tags",
+        "traits",
+        "usage",
+        "value",
+        "weight",
+        "weightLabel"
+      ]
+    },
+    "equipment-security": {
+      "pack": "equipment-security",
+      "registeredInSystemJson": true,
+      "records": 33,
+      "types": {
+        "equipment": 33
+      },
+      "schemaVersion": {
+        "4": 33
+      },
+      "uniqueIds": 33,
+      "uniqueNames": 33,
+      "provenanceFieldCoverage": {
+        "system.source": 33,
+        "system.sourcebook": 33,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 1,
+        "Core Rulebook": 10,
+        "Force Unleashed Campaign Guide": 4,
+        "Galaxy at War": 4,
+        "Galaxy of Intrigue": 4,
+        "Knights of the Old Republic Campaign Guide": 5,
+        "Legacy Era Campaign Guide": 1,
+        "Rebellion Era Campaign Guide": 2,
+        "Threats of the Galaxy": 1,
+        "Unknown Regions": 1
+      },
+      "tagFieldCoverage": {
+        "system.tags": 33,
+        "system.traits": 33,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "availability",
+        "capabilities",
+        "category",
+        "container",
+        "cost",
+        "costNumeric",
+        "description",
+        "economics",
+        "equipmentBucket",
+        "equipmentBucketLabel",
+        "equipmentType",
+        "equipmentTypeLabel",
+        "equippable",
+        "equipped",
+        "integrated",
+        "itemRole",
+        "itemRoleLabel",
+        "modifiers",
+        "normalizationStatus",
+        "notes",
+        "page",
+        "properties",
+        "quantity",
+        "restriction",
+        "schemaVersion",
+        "size",
+        "skillHooks",
+        "source",
+        "sourcebook",
+        "tags",
+        "traits",
+        "usage",
+        "value",
+        "weight",
+        "weightLabel"
+      ]
+    },
+    "equipment-survival": {
+      "pack": "equipment-survival",
+      "registeredInSystemJson": true,
+      "records": 23,
+      "types": {
+        "equipment": 23
+      },
+      "schemaVersion": {
+        "3": 23
+      },
+      "uniqueIds": 23,
+      "uniqueNames": 23,
+      "provenanceFieldCoverage": {
+        "system.source": 23,
+        "system.sourcebook": 23,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Core Rulebook": 14,
+        "Galaxy at War": 2,
+        "Knights of the Old Republic Campaign Guide": 1,
+        "Rebellion Era Campaign Guide": 1,
+        "Unknown Regions": 5
+      },
+      "tagFieldCoverage": {
+        "system.tags": 23,
+        "system.traits": 23,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "availability",
+        "capabilities",
+        "category",
+        "container",
+        "cost",
+        "costNumeric",
+        "description",
+        "economics",
+        "equipmentBucket",
+        "equipmentBucketLabel",
+        "equipmentType",
+        "equipmentTypeLabel",
+        "equippable",
+        "equipped",
+        "integrated",
+        "itemRole",
+        "itemRoleLabel",
+        "modifiers",
+        "normalizationStatus",
+        "notes",
+        "page",
+        "properties",
+        "quantity",
+        "restriction",
+        "schemaVersion",
+        "size",
+        "skillHooks",
+        "source",
+        "sourcebook",
+        "tags",
+        "traits",
+        "usage",
+        "value",
+        "weight",
+        "weightLabel"
+      ]
+    },
+    "equipment-tech": {
+      "pack": "equipment-tech",
+      "registeredInSystemJson": true,
+      "records": 32,
+      "types": {
+        "equipment": 32
+      },
+      "schemaVersion": {
+        "4": 32
+      },
+      "uniqueIds": 32,
+      "uniqueNames": 31,
+      "provenanceFieldCoverage": {
+        "system.source": 32,
+        "system.sourcebook": 32,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 1,
+        "Core Rulebook": 8,
+        "Galaxy at War": 1,
+        "Jedi Academy Training Manual": 2,
+        "Knights of the Old Republic Campaign Guide": 9,
+        "Legacy Era Campaign Guide": 2,
+        "Scum and Villainy": 5,
+        "Threats of the Galaxy": 4
+      },
+      "tagFieldCoverage": {
+        "system.tags": 32,
+        "system.traits": 32,
+        "system.properties": 8,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "availability",
+        "capabilities",
+        "category",
+        "container",
+        "cost",
+        "costNumeric",
+        "description",
+        "economics",
+        "equipmentBucket",
+        "equipmentBucketLabel",
+        "equipmentType",
+        "equipmentTypeLabel",
+        "equippable",
+        "equipped",
+        "integrated",
+        "itemRole",
+        "itemRoleLabel",
+        "modifiers",
+        "normalizationStatus",
+        "notes",
+        "page",
+        "properties",
+        "quantity",
+        "restriction",
+        "schemaVersion",
+        "size",
+        "skillHooks",
+        "source",
+        "sourcebook",
+        "tags",
+        "traits",
+        "usage",
+        "value",
+        "weight",
+        "weightLabel"
+      ]
+    },
+    "equipment-tools": {
+      "pack": "equipment-tools",
+      "registeredInSystemJson": true,
+      "records": 19,
+      "types": {
+        "equipment": 19
+      },
+      "schemaVersion": {
+        "4": 19
+      },
+      "uniqueIds": 19,
+      "uniqueNames": 19,
+      "provenanceFieldCoverage": {
+        "system.source": 19,
+        "system.sourcebook": 19,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Core Rulebook": 8,
+        "Scum and Villainy": 11
+      },
+      "tagFieldCoverage": {
+        "system.tags": 19,
+        "system.traits": 19,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "availability",
+        "capabilities",
+        "category",
+        "container",
+        "cost",
+        "costNumeric",
+        "description",
+        "economics",
+        "equipmentBucket",
+        "equipmentBucketLabel",
+        "equipmentType",
+        "equipmentTypeLabel",
+        "equippable",
+        "equipped",
+        "integrated",
+        "itemRole",
+        "itemRoleLabel",
+        "modifiers",
+        "normalizationStatus",
+        "notes",
+        "page",
+        "properties",
+        "quantity",
+        "restriction",
+        "schemaVersion",
+        "size",
+        "skillHooks",
+        "source",
+        "sourcebook",
+        "tags",
+        "traits",
+        "usage",
+        "value",
+        "weight",
+        "weightLabel"
+      ]
+    },
+    "lightsaber-accessories": {
+      "pack": "lightsaber-accessories",
+      "registeredInSystemJson": true,
+      "records": 10,
+      "types": {
+        "weaponUpgrade": 10
+      },
+      "schemaVersion": {
+        "unstamped": 10
+      },
+      "uniqueIds": 10,
+      "uniqueNames": 10,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {},
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "cost",
+        "description",
+        "lightsaber",
+        "modifiers",
+        "upgradeSlots",
+        "weight"
+      ]
+    },
+    "lightsaber-crystals": {
+      "pack": "lightsaber-crystals",
+      "registeredInSystemJson": true,
+      "records": 28,
+      "types": {
+        "weaponUpgrade": 28
+      },
+      "schemaVersion": {
+        "unstamped": 28
+      },
+      "uniqueIds": 28,
+      "uniqueNames": 28,
+      "provenanceFieldCoverage": {
+        "system.source": 0,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {},
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "category",
+        "cost",
+        "description",
+        "lightsaber",
+        "modifiers",
+        "rarity",
+        "upgradeSlots",
+        "weight"
+      ]
+    },
+    "vehicle-weapons": {
+      "pack": "vehicle-weapons",
+      "registeredInSystemJson": true,
+      "records": 64,
+      "types": {
+        "vehicleWeapon": 64
+      },
+      "schemaVersion": {
+        "unstamped": 64
+      },
+      "uniqueIds": 64,
+      "uniqueNames": 63,
+      "provenanceFieldCoverage": {
+        "system.source": 64,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Clone Wars Campaign Guide": 10,
+        "Galaxy at War": 3,
+        "Legacy Era Campaign Guide": 3,
+        "Rebellion Era Campaign Guide": 1,
+        "Saga Edition Core Rulebook": 1,
+        "Starships of the Galaxy": 44,
+        "Threats of the Galaxy": 2
+      },
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "availability",
+        "cost",
+        "damage",
+        "description",
+        "mountRestriction",
+        "placementPoints",
+        "slug",
+        "source"
+      ]
+    },
+    "vehicle-weapon-ranges": {
+      "pack": "vehicle-weapon-ranges",
+      "registeredInSystemJson": true,
+      "records": 9,
+      "types": {
+        "vehicleWeaponRange": 9
+      },
+      "schemaVersion": {
+        "unstamped": 9
+      },
+      "uniqueIds": 9,
+      "uniqueNames": 9,
+      "provenanceFieldCoverage": {
+        "system.source": 9,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Starships of the Galaxy": 9
+      },
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "character",
+        "description",
+        "notes",
+        "slug",
+        "source",
+        "starship"
+      ]
+    },
+    "poisons": {
+      "pack": "poisons",
+      "registeredInSystemJson": true,
+      "records": 17,
+      "types": {
+        "poison": 17
+      },
+      "schemaVersion": {
+        "unstamped": 17
+      },
+      "uniqueIds": 17,
+      "uniqueNames": 17,
+      "provenanceFieldCoverage": {
+        "system.source": 17,
+        "system.sourcebook": 0,
+        "system.page": 0
+      },
+      "sourcebookValues": {
+        "Malkite Poisoner Talent Tree": 1,
+        "Saga Edition Core Rulebook": 3,
+        "Species Trait": 1,
+        "Star Wars Saga Edition Dawn of Defiance": 1,
+        "Star Wars Saga Edition Galaxy at War": 3,
+        "Star Wars Saga Edition Galaxy of Intrigue": 7,
+        "Star Wars Saga Edition Jedi Academy Training Manual": 1
+      },
+      "tagFieldCoverage": {
+        "system.tags": 0,
+        "system.traits": 0,
+        "system.properties": 0,
+        "metadata.tags(any)": 0
+      },
+      "systemKeysUniversal": [
+        "attack",
+        "challengeLevel",
+        "damage",
+        "delivery",
+        "description",
+        "key",
+        "keywords",
+        "recurrence",
+        "source",
+        "special",
+        "talentHooks",
+        "treatment",
+        "trigger"
+      ]
+    }
+  },
+  "families": {
+    "weapons": {
+      "aggregatePack": "weapons",
+      "subpacks": [
+        "weapons-exotic",
+        "weapons-grenades",
+        "weapons-heavy",
+        "weapons-lightsabers",
+        "weapons-pistols",
+        "weapons-rifles",
+        "weapons-simple"
+      ],
+      "aggregateRecords": 190,
+      "subpackUnionRecords": 186,
+      "duplicateIdAcrossSubpacks": 0,
+      "onlyInAggregate": [
+        {
+          "_id": "lightsaber-accessory-blade-lock",
+          "name": "Blade Lock",
+          "type": "weaponUpgrade"
+        },
+        {
+          "_id": "lightsaber-crystal-barab-ingot",
+          "name": "Barab Ingot",
+          "type": "weaponUpgrade"
+        },
+        {
+          "_id": "lightsaber-crystal-ilum",
+          "name": "Ilum Crystal",
+          "type": "weaponUpgrade"
+        },
+        {
+          "_id": "lightsaber-crystal-synthetic",
+          "name": "Synthetic Crystal",
+          "type": "weaponUpgrade"
+        }
+      ],
+      "onlyInSubpacks": 0,
+      "sharedIds": 186,
+      "sharedIdsWithIdenticalFullRecord": 15,
+      "sharedIdsWithDifferentSystem": 171,
+      "systemKeysPresentOnlyInAggregate": {
+        "combat": 171,
+        "economics": 171,
+        "equippable": 171,
+        "rangeProfile": 171,
+        "schemaVersion": 171,
+        "traits": 171,
+        "weaponType": 171
+      },
+      "systemValueDiffsOnSharedKeys": {
+        "category": 171,
+        "cost": 3
+      },
+      "systemValueDiffExamples": {
+        "category": [
+          {
+            "name": "Aurial Blaster",
+            "subpack": "exotic",
+            "aggregate": "weapon"
+          },
+          {
+            "name": "Blast Cannon",
+            "subpack": "exotic",
+            "aggregate": "weapon"
+          },
+          {
+            "name": "Concealed Dart Launcher",
+            "subpack": "exotic",
+            "aggregate": "weapon"
+          },
+          {
+            "name": "CR-1 Blast Cannon",
+            "subpack": "exotic",
+            "aggregate": "weapon"
+          }
+        ],
+        "cost": [
+          {
+            "name": "Double-Bladed Lightsaber",
+            "subpack": 24000,
+            "aggregate": 7000
+          },
+          {
+            "name": "Lightfoil",
+            "subpack": 10000,
+            "aggregate": 4500
+          },
+          {
+            "name": "Lightsaber",
+            "subpack": 12000,
+            "aggregate": 3000
+          }
+        ]
+      },
+      "sameNameWithinSubpackUnion": []
+    },
+    "armor": {
+      "aggregatePack": "armor",
+      "subpacks": [
+        "armor-heavy",
+        "armor-light",
+        "armor-medium",
+        "armor-shields"
+      ],
+      "aggregateRecords": 70,
+      "subpackUnionRecords": 70,
+      "duplicateIdAcrossSubpacks": 0,
+      "onlyInAggregate": [],
+      "onlyInSubpacks": 0,
+      "sharedIds": 70,
+      "sharedIdsWithIdenticalFullRecord": 0,
+      "sharedIdsWithDifferentSystem": 70,
+      "systemKeysPresentOnlyInAggregate": {
+        "category": 70,
+        "damageReduction": 70,
+        "defense": 70,
+        "economics": 70,
+        "equippable": 70,
+        "limits": 70,
+        "schemaVersion": 70,
+        "traits": 70
+      },
+      "systemValueDiffsOnSharedKeys": {},
+      "systemValueDiffExamples": {},
+      "sameNameWithinSubpackUnion": []
+    },
+    "equipment": {
+      "aggregatePack": "equipment",
+      "subpacks": [
+        "equipment-comlinks",
+        "equipment-medical",
+        "equipment-other",
+        "equipment-security",
+        "equipment-survival",
+        "equipment-tech",
+        "equipment-tools"
+      ],
+      "aggregateRecords": 142,
+      "subpackUnionRecords": 142,
+      "duplicateIdAcrossSubpacks": 0,
+      "onlyInAggregate": [],
+      "onlyInSubpacks": 0,
+      "sharedIds": 142,
+      "sharedIdsWithIdenticalFullRecord": 142,
+      "sharedIdsWithDifferentSystem": 0,
+      "systemKeysPresentOnlyInAggregate": {},
+      "systemValueDiffsOnSharedKeys": {},
+      "systemValueDiffExamples": {},
+      "sameNameWithinSubpackUnion": [
+        "Subelectronic Converter"
+      ]
+    }
+  },
+  "auxiliaryDataLayers": {
+    "storeDescriptions": {
+      "data/store/weapon-store-descriptions.json": {
+        "records": 186,
+        "idMatchesAggregatePack": 186,
+        "nameMatchesAggregatePack": 186,
+        "aggregatePackRecordsWithoutStoreDescription": [
+          "Barab Ingot",
+          "Blade Lock",
+          "Ilum Crystal",
+          "Synthetic Crystal"
+        ]
+      },
+      "data/store/armor-store-descriptions.json": {
+        "records": 70,
+        "idMatchesAggregatePack": 70,
+        "nameMatchesAggregatePack": 70,
+        "aggregatePackRecordsWithoutStoreDescription": []
+      },
+      "data/store/equipment-store-descriptions.json": {
+        "records": 134,
+        "idMatchesAggregatePack": 134,
+        "nameMatchesAggregatePack": 134,
+        "aggregatePackRecordsWithoutStoreDescription": [
+          "Bio-Stabilizer Implant",
+          "Cardio Implant",
+          "Combat Implant",
+          "Memory Implant",
+          "Nerve Reinforcement Implant",
+          "Regenerative Implant",
+          "Sensory Implant",
+          "Subelectronic Converter"
+        ]
+      },
+      "data/store/modification-store-descriptions.json": {
+        "records": 263,
+        "note": "out of Phase 0 family scope unless a later phase claims it"
+      },
+      "data/store/implant-store-descriptions.json": {
+        "records": 8,
+        "note": "out of Phase 0 family scope unless a later phase claims it"
+      },
+      "data/store/droid-store-descriptions.json": {
+        "records": 388,
+        "note": "out of Phase 0 family scope unless a later phase claims it"
+      },
+      "data/store/vehicle-store-descriptions.json": {
+        "records": 357,
+        "note": "out of Phase 0 family scope unless a later phase claims it"
+      }
+    },
+    "legacyArmorJson": {
+      "data/armor/light.json": {
+        "records": 21,
+        "namesPresentInArmorSubpacks": 7,
+        "namesAbsentFromArmorSubpacks": [
+          "Armored Flight Suit",
+          "Blast Vest",
+          "Blinding Helmet",
+          "Clone Trooper Armor",
+          "Energy Shields, Light",
+          "Jedi Robes",
+          "KZZ Riot Armor",
+          "Light Battle Armor",
+          "Light Beskar'gam",
+          "Light Dark Armor",
+          "Light Jedi Battle Armor",
+          "Light Powered Battle Armor",
+          "Mandalorian Light Armor",
+          "Microbe Armor"
+        ]
+      },
+      "data/armor/medium.json": {
+        "records": 17,
+        "namesPresentInArmorSubpacks": 10,
+        "namesAbsentFromArmorSubpacks": [
+          "AV-1S Scout Armor",
+          "Dark Armor",
+          "Energy Shields, Medium",
+          "Jedi Battle Armor",
+          "M1-10 Stalker Armor",
+          "Medium Beskar'gam",
+          "Powered Battle Armor"
+        ]
+      },
+      "data/armor/heavy.json": {
+        "records": 15,
+        "namesPresentInArmorSubpacks": 8,
+        "namesAbsentFromArmorSubpacks": [
+          "AV-1C Combat Armor",
+          "Armored Space Suit",
+          "Energy Shields, Heavy",
+          "Heavy Battle Armor",
+          "Heavy Beskar'gam",
+          "Heavy Dark Armor",
+          "Heavy Powered Battle Armor"
+        ]
+      }
+    },
+    "upgradeJson": {
+      "data/upgrades/armor-upgrades.json": {
+        "records": 29,
+        "namesInWeaponUpgradePacks": 0
+      },
+      "data/upgrades/universal-upgrades.json": {
+        "records": 19,
+        "namesInWeaponUpgradePacks": 0
+      },
+      "data/upgrades/weapon-upgrades.json": {
+        "records": 23,
+        "namesInWeaponUpgradePacks": 0
+      }
+    },
+    "jsCatalogs": {
+      "scripts/data/armor-upgrades.js": {
+        "export": "ARMOR_UPGRADES",
+        "entries": 10
+      },
+      "scripts/data/blaster-upgrades.js": {
+        "export": "BLASTER_UPGRADES",
+        "entries": 4
+      },
+      "scripts/data/melee-upgrades.js": {
+        "export": "MELEE_UPGRADES",
+        "entries": 8
+      },
+      "scripts/data/gear-mods.js": {
+        "export": "GEAR_MODS",
+        "entries": 8
+      },
+      "scripts/engine/customization/upgrade-catalog.js": {
+        "export": "UPGRADE_CATALOG",
+        "entries": 71,
+        "note": "counted by def( call sites"
+      }
+    }
+  },
+  "consumers": {
+    "weapons": {
+      "referencesAggregatePack": [
+        "scripts/apps/chargen/chargen-templates.js",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "scripts/apps/template-character-creator.js",
+        "scripts/engine/progression/engine/template-engine.js",
+        "scripts/engine/store/index.js",
+        "scripts/engine/store/store-constants.js",
+        "scripts/governance/sentinel/sentinel-mall-cop.js",
+        "scripts/utils/template-id-mapper.js"
+      ],
+      "referencesSubpacks": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "scripts/engine/crafting/lightsaber-construction-engine.js",
+        "scripts/engine/store/store-constants.js"
+      ]
+    },
+    "armor": {
+      "referencesAggregatePack": [
+        "scripts/apps/chargen/chargen-templates.js",
+        "scripts/apps/template-character-creator.js",
+        "scripts/engine/progression/engine/template-engine.js",
+        "scripts/engine/store/index.js",
+        "scripts/engine/store/store-constants.js",
+        "scripts/governance/sentinel/sentinel-mall-cop.js",
+        "scripts/utils/template-id-mapper.js"
+      ],
+      "referencesSubpacks": [
+        "scripts/engine/store/store-constants.js"
+      ]
+    },
+    "equipment": {
+      "referencesAggregatePack": [
+        "scripts/apps/chargen/chargen-templates.js",
+        "scripts/apps/template-character-creator.js",
+        "scripts/engine/abilities/progression/progression-adapter.js",
+        "scripts/engine/progression/engine/template-engine.js",
+        "scripts/engine/store/index.js",
+        "scripts/engine/store/store-constants.js",
+        "scripts/governance/sentinel/sentinel-mall-cop.js",
+        "scripts/migration/template-schema-migrator.js",
+        "scripts/utils/template-id-mapper.js"
+      ],
+      "referencesSubpacks": [
+        "scripts/engine/store/store-constants.js"
+      ]
+    },
+    "data/store/*-store-descriptions.json": [
+      "scripts/apps/store/store-description-resolver.js",
+      "scripts/dev/audit-implant-store-catalog.mjs",
+      "tools/census-phase-5c-precutover.mjs"
+    ],
+    "data/upgrades/*.json": [],
+    "data/armor/{light,medium,heavy}.json": [],
+    "data/gear-templates.json (file path)": [],
+    "scripts/data/gear-templates.js (module)": [
+      "scripts/apps/gear-templates-engine.js"
+    ],
+    "data/vehicle-weapons.json": [],
+    "data/vehicle-modifications/*.json": [
+      "scripts/apps/vehicle-modification-manager.js"
+    ],
+    "data/implants/*": [
+      "scripts/dev/audit-implant-content-readiness.mjs",
+      "scripts/dev/audit-implant-effects.mjs",
+      "scripts/dev/audit-implant-store-catalog.mjs"
+    ],
+    "WorldDataLoader.loadWeapons|loadArmor|loadEquipment": [
+      "index.js",
+      "scripts/core/swse-data.js",
+      "scripts/core/world-data-loader.js"
+    ],
+    "schemaVersion-aware item readers (system.combat / system.economics / system.defense)": [
+      "scripts/actors/vehicle/swse-vehicle-core.js",
+      "scripts/apps/customization/item-customization-workbench.js",
+      "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+      "scripts/data/prerequisite-checker.js",
+      "scripts/domain/vehicles/vehicle-system-definitions.js",
+      "scripts/engine/abilities/active/active-adapter.js",
+      "scripts/engine/combat/CombatEngine.js",
+      "scripts/engine/combat/combat-executor.js",
+      "scripts/engine/combat/combat-roll-math.js",
+      "scripts/engine/combat/combat-stat-rules.js",
+      "scripts/engine/combat/combined-full-attack-planner.js",
+      "scripts/engine/combat/effective-weapon-quality-resolver.js",
+      "scripts/engine/combat/grapple-legality-engine.js",
+      "scripts/engine/combat/weapons-engine.js",
+      "scripts/engine/customization/tech-specialist-modification-service.js",
+      "scripts/engine/customization/vehicle-customization-engine.js",
+      "scripts/engine/feats/area-explosives-runtime-patches.js",
+      "scripts/engine/feats/mobility-positioning-runtime-patches.js",
+      "scripts/engine/poison/poison-engine.js",
+      "scripts/engine/progression/engine/autocalc/derived-stats.js",
+      "scripts/engine/progression/prerequisites/actor-prerequisite-snapshot.js",
+      "scripts/engine/progression/utils/class-suggestion-utilities.js",
+      "scripts/engine/suggestion/equipment/scoring/category-normalization-engine.js",
+      "scripts/engine/suggestion/equipment/shared-scoring-utils.js",
+      "scripts/engine/talent/sentinel-talent-actions.js",
+      "scripts/engine/talent/sith-talent-actions.js",
+      "scripts/engine/talent/talents.js",
+      "scripts/rolls/roll-config.js",
+      "scripts/sheets/v2/character-sheet/force-roll-dialog.js",
+      "scripts/ui/shell/AlliesSurfaceService.js",
+      "scripts/utils/schema-adapters.js",
+      "tools/build-item-weapons-phase-3c-production-disposition-ledger.mjs"
+    ]
+  },
+  "legacyLoader": {
+    "file": "scripts/core/world-data-loader.js",
+    "fetchTargets": [
+      {
+        "target": "data/weapons.json",
+        "referenced": true,
+        "existsOnDisk": false
+      },
+      {
+        "target": "data/armor.json",
+        "referenced": true,
+        "existsOnDisk": false
+      },
+      {
+        "target": "data/equipment.json",
+        "referenced": true,
+        "existsOnDisk": false
+      }
+    ],
+    "autoLoadCallsLoadAll": false,
+    "note": "autoLoad() has loadAll() commented out; loadWeapons/loadArmor/loadEquipment fetch files that do not exist."
+  },
+  "sourceMaterial": {
+    "sourcebookTxt": [
+      {
+        "file": "reference/sourcebooks/Clone Wars Campaign Guide_djvu.txt",
+        "bytes": 759420
+      },
+      {
+        "file": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "bytes": 976342
+      },
+      {
+        "file": "reference/sourcebooks/Force Unleashed Campaign Guide_djvu.txt",
+        "bytes": 863750
+      },
+      {
+        "file": "reference/sourcebooks/Galaxy At War_djvu.txt",
+        "bytes": 867903
+      },
+      {
+        "file": "reference/sourcebooks/Galaxy of Intrigue_djvu.txt",
+        "bytes": 898397
+      },
+      {
+        "file": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "bytes": 594506
+      },
+      {
+        "file": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "bytes": 836061
+      },
+      {
+        "file": "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt",
+        "bytes": 793776
+      },
+      {
+        "file": "reference/sourcebooks/Rebellion Era Campaign Guide_djvu.txt",
+        "bytes": 577344
+      },
+      {
+        "file": "reference/sourcebooks/Scavenger's Guide to Droids_djvu.txt",
+        "bytes": 637507
+      },
+      {
+        "file": "reference/sourcebooks/Scum and Villainy_djvu.txt",
+        "bytes": 468714
+      },
+      {
+        "file": "reference/sourcebooks/Starships of the Galaxy_djvu.txt",
+        "bytes": 567600
+      },
+      {
+        "file": "reference/sourcebooks/Threats of the Galaxy_djvu.txt",
+        "bytes": 564775
+      },
+      {
+        "file": "reference/sourcebooks/Unknown Regions_djvu.txt",
+        "bytes": 924365
+      }
+    ],
+    "pdfsInRepo": [
+      "assets/pdf/swse-character-sheet-fillable.pdf"
+    ]
+  },
+  "toolsReferencingFamilyDbFiles": [
+    "tools/add-current-sr.js",
+    "tools/add-shield-charges.js",
+    "tools/add-swse-weapons.js",
+    "tools/add-weapon-categories.js",
+    "tools/audit-damage-profiles.mjs",
+    "tools/audit-nonheroic-lane-b-remainder.mjs",
+    "tools/audit-nonheroic-profile-weapon-uuids.mjs",
+    "tools/build-item-weapons-phase-3b-canonical-authority.mjs",
+    "tools/build-item-weapons-phase-3c-production-disposition-ledger.mjs",
+    "tools/build-item-weapons-phase-3d-global-freeze.mjs",
+    "tools/build-item-weapons-phase-4h-phase-4-certification.mjs",
+    "tools/categorize-shields.js",
+    "tools/census-phase-5c-precutover.mjs",
+    "tools/compare-template-equipment.js",
+    "tools/fix-armor-data.js",
+    "tools/fix-db-schemas.js",
+    "tools/fix-equipment-data.js",
+    "tools/fix-weapon-proficiencies.js",
+    "tools/fix-weapons-data.js",
+    "tools/normalize-compendiums.js",
+    "tools/organize-compendiums.js",
+    "tools/update-shield-proficiencies.js",
+    "tools/verify-item-weapons-authority.mjs"
+  ],
+  "packageJsonPresent": false
+}

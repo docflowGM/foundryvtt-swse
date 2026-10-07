@@ -108,7 +108,7 @@ export class CompendiumResolver {
     const registryEntry = (() => {
       switch (domain) {
         case 'feat':
-          return FeatRegistry.getByName?.(name);
+          try { return FeatRegistry.getByName?.(name); } catch (err) { if (err?.code === 'AMBIGUOUS_CANONICAL_FEAT_NAME') return null; throw err; } // ambiguous same-name feats: fail closed
         case 'talent':
           return TalentRegistry.getByName?.(name);
         case 'forcepowers':

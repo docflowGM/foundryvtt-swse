@@ -133,6 +133,9 @@ const seenIds = new Map();
 const seenNames = new Map();
 const duplicateIds = [];
 const duplicateNames = [];
+// Phase 5C: certified same-name DISTINCT_FEAT_IDENTITIES (Phase 1A) are not duplicates
+const certifiedSameName = new Set();
+try { for (const i of JSON.parse(fs.readFileSync(path.join(repoRoot, 'data/canonical/feats.json'), 'utf8')).identities) if (i.sameNameCollisionType === 'DISTINCT_FEAT_IDENTITIES') certifiedSameName.add(normalizeContentName(i.displayName)); } catch { /* no exemptions */ }
 const nonFeatRecords = [];
 
 for (const [index, doc] of catalogDocs.entries()) {
@@ -143,7 +146,7 @@ for (const [index, doc] of catalogDocs.entries()) {
   }
   const normalizedName = normalizeContentName(doc?.name);
   if (normalizedName) {
-    if (seenNames.has(normalizedName)) duplicateNames.push(doc.name);
+    if (seenNames.has(normalizedName)) { if (!certifiedSameName.has(normalizedName)) duplicateNames.push(doc.name); }
     else seenNames.set(normalizedName, index);
   }
 }

@@ -7,7 +7,7 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // wiring) -- FIRST deliverable per explicit reviewer instruction: prove
 // the groundwork ActionAvailabilityEngine can truthfully reproduce the
 // live CombatOptionResolver's presentation decision for every one of the
-// 136 real ATTACK_OPTION records (packs/feats.db + packs/talents.db)
+// 134 real ATTACK_OPTION records (packs/feats.db + packs/talents.db) -- was 136 until Phase 5C removed two certified-noncanonical feat records (Saber Throw, Improved Grapple)
 // BEFORE any production replacement is attempted -- so a silent drop or
 // behavior change would be caught here, not discovered live.
 //
@@ -71,7 +71,20 @@ function collectRecords(relPath, itemType) {
 }
 
 const records = [...collectRecords('packs/feats.db', 'feat'), ...collectRecords('packs/talents.db', 'talent')];
-assert.equal(records.length, 136, `expected the certified 136 real ATTACK_OPTION records (feats.db + talents.db); found ${records.length} -- pack content changed since this reconciliation was written`);
+assert.equal(records.length, 134, `expected the certified 134 real ATTACK_OPTION records (feats.db + talents.db); found ${records.length} -- pack content changed since this reconciliation was written`);
+
+// Phase 5C identity closeout: the 136 -> 134 change is legitimate only if both lost ATTACK_OPTION records came solely from certified
+// noncanonical feat records that were removed from production (verified against the pre-cutover pack: the ONLY two records whose
+// ATTACK_OPTION rule count changed were Saber Throw 08dbd76457db101f and Improved Grapple 5824e2360feb505a). No replacement records were invented.
+{
+  const corpus = JSON.parse(readFileSync(new URL('../data/canonical/feats.json', import.meta.url), 'utf8'));
+  const retired = new Map(corpus.retiredProductionRecords.map((r) => [r.oldId, r]));
+  for (const id of ['08dbd76457db101f', '5824e2360feb505a']) {
+    assert.equal(retired.get(id)?.disposition, 'REMOVED_NONCANONICAL', `${id} must be a certified-noncanonical removal`);
+  }
+  assert.equal(records.filter((r) => retired.has(r.sourceItem._id)).length, 0, 'no production ATTACK_OPTION definition may originate from a removed noncanonical feat record');
+  assert.equal(records.length, 134);
+}
 
 function asArray(v) { return v === undefined || v === null ? [] : Array.isArray(v) ? v : [v]; }
 function camelize(value) {
@@ -157,7 +170,7 @@ function hasField(rule, fields) { return fields.some((f) => rule[f] !== undefine
 // re-verifying the new/changed record's classification, never to loosen
 // the assertion back to a count.
 const EXPECTED_EXTERNAL_WORKFLOW_IDS = new Set([
-  'opportunisticShooter', 'improvedGrapple', 'knifeTrick', 'hijkataCounterattack',
+  'opportunisticShooter', 'knifeTrick', 'hijkataCounterattack',
   'halt', 'opportunisticTrickery', 'improvedOpportunisticTrickery', 'improvedDisarm',
   'expertGrappler', 'opportunity-fire-rifle'
 ]);

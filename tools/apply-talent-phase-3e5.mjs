@@ -121,6 +121,8 @@ function renderDoc(r) {
 }
 
 // Files a LATER certified phase (3F) legitimately rewrote: their verification belongs to that phase.
+// Phase 5C owns actor-pack weapon/feat reference migration (embedded sourceId remaps)
+const PHASE_5C_OWNED = new Set(['data/class-archetypes.json', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db', 'packs/droids.db', 'packs/beasts.db']);
 const LATER_OWNED = new Set(['packs/talents.db', 'packs/talent_trees.db', 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json']);
 const afterLater = () => ['talent-phase-3f-dry-run-report.json', 'talent-phase-3g-dry-run-report.json', 'talent-phase-11-2a-dry-run-report.json', 'talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json'].some(f => { const p = path.join(ROOT, 'data/audits', f); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(fs.readFileSync(path.join(ROOT, TALENTS), 'utf8')); });
 export function detect3E5State(root = ROOT) {
@@ -146,7 +148,7 @@ export function verifyApplied({ exact = false } = {}) {
     check(`${r.name}: no known defect string remains`, !!t && !RESIDUALS.some(x => allText(t).includes(x)));
   }
   if (!later) check(`the other ${talents.length - ids.size} records are unchanged`, sortedFpOf(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!later || !LATER_OWNED.has(rel)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!PHASE_5C_OWNED.has(rel) && (!later || !LATER_OWNED.has(rel))) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
   const rec = reconcile(loadInput());
   check('publication reconciliation: zero blocking findings incl. TEXT_DRIFT', rec.blockingFindings.length === 0, rec.blockingFindings.slice(0, 3).map(f => `${f.code} ${f.identity}`).join('; '));
   if (exact && !later) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);

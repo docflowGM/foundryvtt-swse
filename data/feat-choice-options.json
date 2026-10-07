@@ -918,28 +918,27 @@
   "exoticWeapons": {
     "melee": [
       "Amphistaff",
-      "Arg'garok",
+      "Arggarok",
       "Atlatl",
       "Blastsword",
       "Cesta",
       "Darkstick",
       "Discblade",
-      "Fira",
       "Felucian Skullblade",
+      "Fira",
       "Garrote",
       "Neuronic Whip",
       "Ryyk Blade",
       "Shyarn",
-      "Tehk'la Blade",
+      "Tehkla Blade",
       "Vibro-Saw",
       "Zhaboka"
     ],
     "ranged": [
       "Aurial Blaster",
-      "Blast Cannon",
       "Bowcaster",
-      "Concealed Dart Launcher",
       "CR-1 Blast Cannon",
+      "Concealed Dart Launcher",
       "Deck Sweeper",
       "Flamethrower",
       "Magna Caster",
@@ -949,30 +948,222 @@
       "Siang Lance",
       "Sith Lanvarok",
       "Squib Tensor Rifle",
-      "Verpine Shattergun",
-      "Wrist Rocket Launcher"
+      "Verpine Shatter Gun",
+      "Wrist Rocket Launcher",
+      "Xerrol Nightstinger"
     ],
     "lightsaberLikeRepositoryEntries": [
-      "Archaic Lightfoil",
-      "Archaic Lightsaber",
       "Crossguard Lightsaber",
-      "Double-Bladed Lightsaber",
-      "Dual-Phase Lightsaber",
       "Dueling Lightsaber",
-      "Great Lightsaber",
       "Guard Shoto",
-      "Jedi Training Saber",
       "Lightfoil",
+      "Lightfoil, Archaic",
+      "Lightfoil, Modern",
       "Lightsaber",
-      "Lightsaber (Double-Bladed)",
-      "Lightsaber (Standard)",
       "Lightsaber Pike",
+      "Lightsaber, Archaic",
+      "Lightsaber, Double",
+      "Lightsaber, Dual-Phase",
+      "Lightsaber, Great",
+      "Lightsaber, Short",
       "Lightwhip",
       "Long-Handle Lightsaber",
-      "Modern Lightfoil",
-      "Retrosaber",
-      "Short Lightsaber"
-    ]
+      "Retrosaber"
+    ],
+    "identities": {
+      "Amphistaff": {
+        "identityKey": "unmapped::Amphistaff",
+        "productionId": "weapon-amphistaff"
+      },
+      "Arggarok": {
+        "identityKey": "unmapped::Arggarok",
+        "productionId": "weapon-arggarok"
+      },
+      "Atlatl": {
+        "identityKey": "unmapped::Atlatl",
+        "productionId": "weapon-atlatl"
+      },
+      "Aurial Blaster": {
+        "identityKey": "weapon-aurial-blaster",
+        "productionId": "weapon-aurial-blaster"
+      },
+      "Blastsword": {
+        "identityKey": "unmapped::Blastsword",
+        "productionId": "weapon-blastsword"
+      },
+      "Bowcaster": {
+        "identityKey": "weapon-bowcaster",
+        "productionId": "weapon-bowcaster"
+      },
+      "CR-1 Blast Cannon": {
+        "identityKey": "weapon-cr-1-blast-cannon",
+        "productionId": "weapon-cr-1-blast-cannon"
+      },
+      "Cesta": {
+        "identityKey": "unmapped::Cesta",
+        "productionId": "weapon-cesta"
+      },
+      "Concealed Dart Launcher": {
+        "identityKey": "weapon-concealed-dart-launcher",
+        "productionId": "weapon-concealed-dart-launcher"
+      },
+      "Crossguard Lightsaber": {
+        "identityKey": "lightsaber-chassis-crossguard",
+        "productionId": "lightsaber-chassis-crossguard"
+      },
+      "Darkstick": {
+        "identityKey": "unmapped::Darkstick",
+        "productionId": "weapon-darkstick"
+      },
+      "Deck Sweeper": {
+        "identityKey": "weapon-deck-sweeper",
+        "productionId": "weapon-deck-sweeper"
+      },
+      "Discblade": {
+        "identityKey": "weapon-discblade",
+        "productionId": "weapon-discblade"
+      },
+      "Dueling Lightsaber": {
+        "identityKey": "lightsaber-chassis-dueling",
+        "productionId": "lightsaber-chassis-dueling"
+      },
+      "Felucian Skullblade": {
+        "identityKey": "unmapped::Felucian Skullblade",
+        "productionId": "weapon-felucian-skullblade"
+      },
+      "Fira": {
+        "identityKey": "unmapped::Fira",
+        "productionId": "weapon-fira"
+      },
+      "Flamethrower": {
+        "identityKey": "weapon-flamethrower",
+        "productionId": "weapon-flamethrower"
+      },
+      "Garrote": {
+        "identityKey": "unmapped::Garrote",
+        "productionId": "weapon-garrote"
+      },
+      "Guard Shoto": {
+        "identityKey": "lightsaber-chassis-guard-shoto",
+        "productionId": "lightsaber-chassis-guard-shoto"
+      },
+      "Lightfoil": {
+        "identityKey": "weapon-lightfoil",
+        "productionId": "weapon-lightfoil"
+      },
+      "Lightfoil, Archaic": {
+        "identityKey": "lightsaber-chassis-archaic-lightfoil",
+        "productionId": "lightsaber-chassis-archaic-lightfoil"
+      },
+      "Lightfoil, Modern": {
+        "identityKey": "lightsaber-chassis-modern-lightfoil",
+        "productionId": "lightsaber-chassis-modern-lightfoil"
+      },
+      "Lightsaber": {
+        "identityKey": "weapon-lightsaber",
+        "productionId": "weapon-lightsaber"
+      },
+      "Lightsaber Pike": {
+        "identityKey": "lightsaber-chassis-pike",
+        "productionId": "lightsaber-chassis-pike"
+      },
+      "Lightsaber, Archaic": {
+        "identityKey": "lightsaber-chassis-archaic-lightsaber",
+        "productionId": "lightsaber-chassis-archaic-lightsaber"
+      },
+      "Lightsaber, Double": {
+        "identityKey": "weapon-double-bladed-lightsaber",
+        "productionId": "weapon-double-bladed-lightsaber"
+      },
+      "Lightsaber, Dual-Phase": {
+        "identityKey": "lightsaber-chassis-dual-phase",
+        "productionId": "lightsaber-chassis-dual-phase"
+      },
+      "Lightsaber, Great": {
+        "identityKey": "lightsaber-chassis-great",
+        "productionId": "lightsaber-chassis-great"
+      },
+      "Lightsaber, Short": {
+        "identityKey": "lightsaber-chassis-short",
+        "productionId": "lightsaber-chassis-short"
+      },
+      "Lightwhip": {
+        "identityKey": "lightsaber-chassis-lightwhip",
+        "productionId": "lightsaber-chassis-lightwhip"
+      },
+      "Long-Handle Lightsaber": {
+        "identityKey": "lightsaber-chassis-longhandle",
+        "productionId": "lightsaber-chassis-longhandle"
+      },
+      "Magna Caster": {
+        "identityKey": "weapon-magna-caster",
+        "productionId": "weapon-magna-caster"
+      },
+      "Massassi Lanvarok": {
+        "identityKey": "weapon-massassi-lanvarok",
+        "productionId": "weapon-massassi-lanvarok"
+      },
+      "Neural Inhibitor": {
+        "identityKey": "weapon-neural-inhibitor",
+        "productionId": "weapon-neural-inhibitor"
+      },
+      "Neuronic Whip": {
+        "identityKey": "unmapped::Neuronic Whip",
+        "productionId": "weapon-neuronic-whip"
+      },
+      "Pulse Rifle": {
+        "identityKey": "weapon-pulse-rifle",
+        "productionId": "weapon-pulse-rifle"
+      },
+      "Retrosaber": {
+        "identityKey": "lightsaber-chassis-retrosaber",
+        "productionId": "lightsaber-chassis-retrosaber"
+      },
+      "Ryyk Blade": {
+        "identityKey": "weapon-wookiee-ryyk-blade",
+        "productionId": "weapon-wookiee-ryyk-blade"
+      },
+      "Shyarn": {
+        "identityKey": "unmapped::Shyarn",
+        "productionId": "weapon-shyarn"
+      },
+      "Siang Lance": {
+        "identityKey": "weapon-siang-lance",
+        "productionId": "weapon-siang-lance"
+      },
+      "Sith Lanvarok": {
+        "identityKey": "weapon-sith-lanvarok",
+        "productionId": "weapon-sith-lanvarok"
+      },
+      "Squib Tensor Rifle": {
+        "identityKey": "weapon-squib-tensor-rifle",
+        "productionId": "weapon-squib-tensor-rifle"
+      },
+      "Tehkla Blade": {
+        "identityKey": "unmapped::Tehkla Blade",
+        "productionId": "weapon-tehkla-blade"
+      },
+      "Verpine Shatter Gun": {
+        "identityKey": "weapon-verpine-shattergun",
+        "productionId": "weapon-verpine-shattergun"
+      },
+      "Vibro-Saw": {
+        "identityKey": "unmapped::Vibro-Saw",
+        "productionId": "weapon-vibro-saw"
+      },
+      "Wrist Rocket Launcher": {
+        "identityKey": "weapon-wrist-rocket-launcher",
+        "productionId": "weapon-wrist-rocket-launcher"
+      },
+      "Xerrol Nightstinger": {
+        "identityKey": "weapon-xerrol-nightstinger",
+        "productionId": "weapon-xerrol-nightstinger"
+      },
+      "Zhaboka": {
+        "identityKey": "unmapped::Zhaboka",
+        "productionId": "weapon-zhaboka"
+      }
+    }
   },
   "choiceSources": {
     "fixed": "Options come directly from feat metadata or this registry.",

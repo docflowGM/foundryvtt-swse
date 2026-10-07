@@ -100,7 +100,7 @@ export class FeatEffectRegistry {
      */
     static _resolveViaFeatRegistry(nameOrId) {
         try {
-            const entry = FeatRegistry?.getById?.(nameOrId) || FeatRegistry?.getByName?.(nameOrId);
+            const entry = FeatRegistry?.getById?.(nameOrId) || FeatRegistry?.getByName?.(nameOrId) /* throws AMBIGUOUS_CANONICAL_FEAT_NAME: caught below, fail closed */;
             if (!entry) return null;
             return this._byFeatId.get(entry.id)
                 || (entry.name && this._byName.get(String(entry.name).toLowerCase()))

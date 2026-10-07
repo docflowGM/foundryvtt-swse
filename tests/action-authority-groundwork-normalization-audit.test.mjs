@@ -48,15 +48,15 @@ const { all, feats, talents, failures, gateCounts, perFieldCounts } = scanAttack
   gateFieldDisposition: ATTACK_OPTION_GATE_FIELD_DISPOSITION
 });
 
-assert.equal(all.length, 136, `expected exactly 136 real ATTACK_OPTION records (88 feats + 48 talents) as of this audit; found ${all.length} -- if this legitimately changed (new content shipped), update this expectation deliberately rather than silently loosening it`);
-ok(`extractor discovers exactly 136 real ATTACK_OPTION records (${feats.length} feats, ${talents.length} talents)`);
+assert.equal(all.length, 134, `expected exactly 134 real ATTACK_OPTION records (86 feats + 48 talents; Phase 5C removed the noncanonical Saber Throw and Improved Grapple) as of this audit; found ${all.length} -- if this legitimately changed (new content shipped), update this expectation deliberately rather than silently loosening it`);
+ok(`extractor discovers exactly 134 real ATTACK_OPTION records (${feats.length} feats, ${talents.length} talents)`);
 
 if (failures.length) {
   console.error('Normalization audit failures:');
   for (const f of failures) console.error(`  [${f.itemType}] ${f.itemName} (${f.option}): ${f.error}`);
 }
-assert.equal(failures.length, 0, `${failures.length} of 136 real ATTACK_OPTION record(s) failed lossless normalization -- see logged detail above; zero silent drops is required, not optional`);
-ok('all 136 real records normalize to schemaVersion 1 with zero validateAttackOptionNormalization() failures -- every requires*/excludes* gate field present is either translated into a requirement predicate (with a value that reconciles against the raw rule) or explicitly marked external-workflow/unsupported, none silently dropped or silently altered');
+assert.equal(failures.length, 0, `${failures.length} of 134 real ATTACK_OPTION record(s) failed lossless normalization -- see logged detail above; zero silent drops is required, not optional`);
+ok('all 134 real records normalize to schemaVersion 1 with zero validateAttackOptionNormalization() failures -- every requires*/excludes* gate field present is either translated into a requirement predicate (with a value that reconciles against the raw rule) or explicitly marked external-workflow/unsupported, none silently dropped or silently altered');
 
 // Cross-check: every record also independently confirms schemaVersion,
 // since scanAttackOptionNormalization() only proves normalization didn't
@@ -73,7 +73,7 @@ ok('every normalized definition carries the current schema version');
 for (const field of Object.keys(perFieldCounts)) {
   assert.ok(['normalized', 'external-workflow', 'unsupported'].includes(ATTACK_OPTION_GATE_FIELD_DISPOSITION[field]), `gate field "${field}" observed in real data must have a recognized disposition`);
 }
-ok('every requires*/excludes* gate field actually observed in the real 136-record dataset has a recognized disposition (normalized / external-workflow / unsupported)');
+ok('every requires*/excludes* gate field actually observed in the real 134-record dataset has a recognized disposition (normalized / external-workflow / unsupported)');
 
 // ─── mutation test: an unrecognized future gate field must be caught ──────
 

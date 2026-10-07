@@ -1,0 +1,305 @@
+{
+  "schemaVersion": "5C.1",
+  "role": "MIGRATION_ALIAS_ONLY",
+  "purpose": "Maps retired pre-cutover feat ids to their canonical feat (plus, for implementation derivatives, the explicit choice). Contains no feat definitions; nothing may read it to define a feat.",
+  "canonicalWeaponProficiencyId": "ecc2471ac96ec2d4",
+  "aliases": [
+    {
+      "oldId": "02ac414f546a539a",
+      "oldName": "Forceful Strike",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "058de949e909d9ae",
+      "oldName": "Low Profile",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "08dbd76457db101f",
+      "oldName": "Saber Throw",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "0c53cb8b7c29d865",
+      "oldName": "Stealthy",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "10a017a020aa4a9c",
+      "oldName": "Forceful Throw",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "17e317292814e13e",
+      "oldName": "Forceful Will",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "17f4a0850e94dc7d",
+      "oldName": "Reactive Awareness",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "2d680cc46a7972da",
+      "oldName": "Weapon Proficiency (Simple Weapons)",
+      "disposition": "IMPLEMENTATION_DERIVATIVE_MIGRATED_TO_CHOICE",
+      "canonicalFeatId": "ecc2471ac96ec2d4",
+      "choice": {
+        "key": "weaponProficiency",
+        "storagePath": "flags.swse.choices.weaponProficiency",
+        "value": "simple"
+      }
+    },
+    {
+      "oldId": "2f2fa438a6fb54a0",
+      "oldName": "Triple Crit Specialist",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "37cb4455a70876ad",
+      "oldName": "Forceful Saber Throw",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "3cd647b126f1d171",
+      "oldName": "Reactive Stealth",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "41a9ce755ecffb5b",
+      "oldName": "Heavy Weapon Proficiency",
+      "disposition": "IMPLEMENTATION_DERIVATIVE_MIGRATED_TO_CHOICE",
+      "canonicalFeatId": "ecc2471ac96ec2d4",
+      "choice": {
+        "key": "weaponProficiency",
+        "storagePath": "flags.swse.choices.weaponProficiency",
+        "value": "heavy-weapons"
+      }
+    },
+    {
+      "oldId": "465434fb7b44aee1",
+      "oldName": "Forceful Grip",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "54d6201340a6757f",
+      "oldName": "Headstrong",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "5824e2360feb505a",
+      "oldName": "Improved Grapple",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "647d77a8f5ab9af3",
+      "oldName": "Keen Force Mind",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "6673cd53493a9d6c",
+      "oldName": "Forceful Slam",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "6d8ce2807c579289",
+      "oldName": "Trustworthy",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "765ff8a34e58acac",
+      "oldName": "Weapon Proficiency (Rifles)",
+      "disposition": "IMPLEMENTATION_DERIVATIVE_MIGRATED_TO_CHOICE",
+      "canonicalFeatId": "ecc2471ac96ec2d4",
+      "choice": {
+        "key": "weaponProficiency",
+        "storagePath": "flags.swse.choices.weaponProficiency",
+        "value": "rifles"
+      }
+    },
+    {
+      "oldId": "8329a353aa3899be",
+      "oldName": "Weapon Proficiency (Heavy Weapons)",
+      "disposition": "IMPLEMENTATION_DERIVATIVE_MIGRATED_TO_CHOICE",
+      "canonicalFeatId": "ecc2471ac96ec2d4",
+      "choice": {
+        "key": "weaponProficiency",
+        "storagePath": "flags.swse.choices.weaponProficiency",
+        "value": "heavy-weapons"
+      }
+    },
+    {
+      "oldId": "83abd1c384b58c3c",
+      "oldName": "Intimidating Presence",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "8566edcae3a2f18c",
+      "oldName": "Forceful Telekinesis",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "88cdedff38b610c0",
+      "oldName": "Two-Weapon Fighting",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "9768963c7a36237d",
+      "oldName": "Fast Talk",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "9a89576b3cc1347e",
+      "oldName": "Great Fortitude",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "ae5c34d352d6dff7",
+      "oldName": "Intuitive Initiative",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "b2296a4d5cef8a61",
+      "oldName": "Frightful Presence",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "bee76d01da40677d",
+      "oldName": "Lightning Reflexes",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "cf28ec45cabaff59",
+      "oldName": "Advanced Melee Weapon Proficiency",
+      "disposition": "IMPLEMENTATION_DERIVATIVE_MIGRATED_TO_CHOICE",
+      "canonicalFeatId": "ecc2471ac96ec2d4",
+      "choice": {
+        "key": "weaponProficiency",
+        "storagePath": "flags.swse.choices.weaponProficiency",
+        "value": "advanced-melee"
+      }
+    },
+    {
+      "oldId": "d612e7a708edf75b",
+      "oldName": "Frightening Presence",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "db564cc6f9879ec8",
+      "oldName": "Forceful Weapon",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "e5ab9392378400ec",
+      "oldName": "Resilient Reflexes",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "e5d361d01d1b44e4",
+      "oldName": "Weapon Proficiency (Pistols)",
+      "disposition": "IMPLEMENTATION_DERIVATIVE_MIGRATED_TO_CHOICE",
+      "canonicalFeatId": "ecc2471ac96ec2d4",
+      "choice": {
+        "key": "weaponProficiency",
+        "storagePath": "flags.swse.choices.weaponProficiency",
+        "value": "pistols"
+      }
+    },
+    {
+      "oldId": "e99d9284a73cf505",
+      "oldName": "Conditioned",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "eb33f5e4b5f6318c",
+      "oldName": "Surgical Precision",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "f82323ee06f59735",
+      "oldName": "Resilient Will",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "fda012e3b2b1e55f",
+      "oldName": "Resilient Talent",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "ff76bea42641ca5b",
+      "oldName": "Forceful Stun",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    },
+    {
+      "oldId": "ffd5fecab0550bb6",
+      "oldName": "Forceful Vitality",
+      "disposition": "REMOVED_NONCANONICAL",
+      "canonicalFeatId": null,
+      "choice": null
+    }
+  ]
+}

@@ -302,7 +302,8 @@ export async function verifyApplied({ exact = false } = {}) {
   check('the four false structured prerequisites are gone (no structured container)', manifest.removals.every(r => !('prerequisitesStructured' in ta.get(r.ownerId).system)));
   check('the four printed prerequisite lines are restored', manifest.textCorrections.every(c => ta.get(c.productionId).system.prerequisites === c.after.prerequisites));
   if (!later) check('the other talents are unchanged', sortedFp(talents.filter(t => !ownerIds.has(t._id))) === report.othersFingerprint);
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
+  // Phase 5C owns actor-pack reference migration (embedded sourceId remaps)
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!['data/class-archetypes.json','packs/heroic.db','packs/nonheroic.db','packs/npc.db','packs/droids.db','packs/beasts.db'].includes(rel)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
   const rec = reconcile(loadInput());
   check('reconciler: zero blocking findings (3E corpus/text incl. the 3G correction layer, 3F tree identity)', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
   const eff = await runtimeEffectiveness(manifest, talents, parse(read('packs/talent_trees.db')));

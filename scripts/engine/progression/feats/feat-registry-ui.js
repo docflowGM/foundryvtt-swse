@@ -34,6 +34,18 @@ export const FeatRegistry = {
     return BaseFeatRegistry.get?.(name) || null;
   },
 
+  getById(id) {
+    return BaseFeatRegistry.getById?.(id) || null;
+  },
+
+  findByName(name) {
+    return BaseFeatRegistry.findByName?.(name) || [];
+  },
+
+  getUniqueByName(name) {
+    return BaseFeatRegistry.getUniqueByName?.(name) || null;
+  },
+
   list() {
     return BaseFeatRegistry.list?.() || [];
   },
@@ -49,6 +61,7 @@ export const FeatRegistry = {
 
   clear() {
     BaseFeatRegistry.feats?.clear?.();
+    BaseFeatRegistry._nameIndex?.clear?.();
     BaseFeatRegistry._byKey?.clear?.();
     BaseFeatRegistry.isBuilt = false;
   }

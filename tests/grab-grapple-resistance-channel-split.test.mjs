@@ -75,7 +75,8 @@ function findFeatRecord(path, name) {
   throw new Error(`"${name}" not found in ${path}`);
 }
 
-for (const packPath of ['packs/feats.db', 'packs/feat-catalog.db']) {
+// packs/feat-catalog.db was an orphan pre-cleanup copy; retired in Phase 5C (DEAD_REMOVE)
+for (const packPath of ['packs/feats.db']) {
   const grappleResistance = findFeatRecord(packPath, 'Grapple Resistance');
   const grabBack = findFeatRecord(packPath, 'Grab Back');
 

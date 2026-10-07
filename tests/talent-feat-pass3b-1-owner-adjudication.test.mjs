@@ -78,7 +78,9 @@ test('owner-approved action tags land exactly as ruled (spot checks across the b
 test('authority is exactly 353 feats + 1,187 talents = 1,540 and production files are unchanged', () => {
   assert.equal(auth.counts.feats, 353); assert.equal(auth.counts.talents, 1187); assert.equal(auth.counts.combined, 1540); assert.equal(auth.counts.productionMutated, false);
   for (const [f, h] of Object.entries(baseline.sourceSha256)) assert.equal(sha(f), h, f);
-  const pins = { 'packs/talents.db': '832937d451c2353da9afbd6b1f34366b293b659f24b3d09808d44ad767ee8288', 'packs/feats.db': '9c67242a67b209a2c3d359201beb03e512962998e6bacee6d8c3eedd4787d3e8', 'data/feat-catalog.json': 'e7907810f492e036517822a19f45ac1242fe2ec0044e7b2ad241f858f9925eef' };
+  // Phase 5C regenerated packs/feats.db and data/feat-catalog.json from data/canonical/feats.json; the live feat files are gated by
+  // tools/verify-canonical-production.mjs (these report-only phases pinned the pre-cutover hashes).
+  const pins = { 'packs/talents.db': '832937d451c2353da9afbd6b1f34366b293b659f24b3d09808d44ad767ee8288', };
   for (const [f, h] of Object.entries(pins)) assert.equal(sha(f), h, f);
 });
 test('rebuild is byte-stable (authority, overlay documentation)', () => {

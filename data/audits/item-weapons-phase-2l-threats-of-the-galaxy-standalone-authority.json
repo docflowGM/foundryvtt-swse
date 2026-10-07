@@ -1,0 +1,1496 @@
+{
+  "schemaVersion": "2L-threats-of-the-galaxy-standalone-gold-v1",
+  "authorityType": "standalone-book-only",
+  "book": "Threats of the Galaxy",
+  "phase": "2L",
+  "status": "THREATS_OF_THE_GALAXY_PHASE_2L_STANDALONE_CERTIFIED",
+  "scope": "4 Threats of the Galaxy character-scale weapon claims only. No rolling authority mutation. No production mutation authorization.",
+  "inherits": [
+    "Core Rulebook Phase 2A gold schema",
+    "KOTOR Phase 2B standalone schema extensions",
+    "Galaxy at War Phase 2C schema extensions",
+    "Force Unleashed Phase 2D schema extensions",
+    "Clone Wars Phase 2E schema extensions",
+    "Jedi Academy Phase 2F schema extensions",
+    "Legacy Era Phase 2G schema v2.6 normalization",
+    "Unknown Regions Phase 2H v2.6 authority",
+    "Rebellion Era Phase 2I schema v2.7 extensions",
+    "Scum and Villainy Phase 2J v2.7 authority",
+    "Galaxy of Intrigue Phase 2K schema v2.8 fixed-damage extension"
+  ],
+  "sourcePolicy": {
+    "searchLayer": "Threats of the Galaxy_djvu.txt",
+    "visualAuthority": "SAGA EDITION - Threats of the Galaxy.pdf",
+    "repoRole": "comparison-only",
+    "ammoRule": "Ammunition type and capacity are certified primarily from weapon descriptions and explicit ammo stat blocks, not from table omission or repo defaults."
+  },
+  "schemaDelta": {
+    "contractVersion": "weapon-authority-schema-v2.9-ammo-payload-separation",
+    "schemaDecision": "SCHEMA_BUMP_REQUIRED",
+    "principle": "Threats closes the weapon pass by making ammunition and shot capacity first-class ranged-weapon authority and by separating delivery-system attack mechanics from loaded-munition payload mechanics.",
+    "requiredEdits": [
+      {
+        "id": "first-class-ammo",
+        "path": "canonicalStats.ammo",
+        "change": "Add ranged-weapon ammo authority with type, capacityShots, consumption/reload facts, and source-status. Pure melee weapons use ammo:null; hybrid weapons may carry ammo only for explicit ranged firing profiles.",
+        "requiredBy": [
+          "Light Concussion Missile Launcher",
+          "all prior ranged weapons during v2.9 normalization"
+        ]
+      },
+      {
+        "id": "delivery-system-vs-payload",
+        "path": "canonicalStats.ammo.damageSource / payloadDerived / acceptedPayloadFamily",
+        "change": "Separate launcher attack mechanics from damage/effects supplied by loaded ammunition. Launchers must not persist payload damage as intrinsic launcher base damage unless the source says the launcher itself supplies or modifies that damage.",
+        "requiredBy": [
+          "Light Concussion Missile Launcher",
+          "Core Grenade Launcher",
+          "Clone Wars Wrist Rocket Launcher",
+          "Scum and Villainy Micro Grenade Launcher and Electronet relationships"
+        ]
+      },
+      {
+        "id": "payload-multiplier",
+        "path": "canonicalStats.payloadProfiles[].damageMultiplier",
+        "change": "Permit payload profiles to carry a post-dice numeric multiplier, parallel to attackProfiles[].damageMultiplier.",
+        "requiredBy": [
+          "Light Concussion Missile 4d10x2"
+        ]
+      }
+    ],
+    "backwardNormalization": "Add canonicalStats.ammo to all 209 Phase 2 source claims using certified description/resource facts. Do not infer ammunition or capacity merely from a weapon family. Preserve existing resource/resourceProfiles during transition; ammo becomes the first-class ranged ammunition view.",
+    "runtimeBoundary": "Canonical authority stores accepted ammunition family/type and published capacity. Actor-owned weapon instances later store currentShots and loadedAmmoRef/current payload; those are mutable runtime state, not source authority."
+  },
+  "counts": {
+    "canonicalWeaponClaims": 4,
+    "repoPresent": 3,
+    "repoMissing": 1,
+    "meleeClaims": 2,
+    "rangedClaims": 2,
+    "deliverySystemClaims": 1,
+    "nativeStunClaims": 1
+  },
+  "verification": {
+    "Datadagger": "p.13 visually verified",
+    "Light Concussion Missile Launcher": "p.134 visually verified",
+    "Sonic Stunner": "p.146 visually verified",
+    "Sith Sword": "p.159 visually verified",
+    "hardReconciliation": "2 melee + 2 ranged = 4",
+    "repoReconciliation": "3 present + 1 missing = 4"
+  },
+  "bookLocalGuardrails": [
+    "Do not update a rolling/master weapon authority from this package.",
+    "Do not mutate production packs, runtime/template schema, actors, feats, talents, or equipment records during certification.",
+    "Do not create Datadagger during this phase.",
+    "Repo fields are comparison evidence only.",
+    "Do not treat Light Concussion Missile Launcher 4d10x2 as intrinsic launcher damage; the Light Concussion Missile owns the payload damage.",
+    "Do not invent launcher loaded capacity; Threats only states one missile is fired per attack.",
+    "Do not flatten Sonic Stunner native 3d6 stun into lethal base damage.",
+    "Do not infer Sonic Stunner ammo type or capacity; this entry does not publish them.",
+    "Do not preserve repo Sith Sword 2d8/6000/kinetic/Critical 19-20 against the published Threats entry.",
+    "Lightwhip is already certified under Jedi Academy and is not a new Threats identity here.",
+    "Saberdart Launcher appears as NPC possession without an independent published weapon entry and remains excluded from the character-scale weapon census."
+  ],
+  "records": [
+    {
+      "canonicalName": "Datadagger",
+      "publishedName": "Datadagger",
+      "weaponGroup": "Simple Weapon",
+      "source": {
+        "book": "Threats of the Galaxy",
+        "descriptionPage": 13,
+        "statTablePage": null,
+        "table": "inline weapon stat block",
+        "verifiedBy": [
+          "Threats of the Galaxy_djvu.txt",
+          "SAGA EDITION - Threats of the Galaxy.pdf visual verification p.13"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "simple",
+        "proficiency": "simple"
+      },
+      "canonicalStats": {
+        "size": "Tiny",
+        "costCredits": 500,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 1,
+          "dieSize": 4,
+          "flatBonus": 0,
+          "formula": "1d4"
+        },
+        "weightKg": 0.1,
+        "damageType": {
+          "mode": "single",
+          "types": [
+            "piercing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "illegal",
+          "rare": false
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "none",
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
+        },
+        "resourceProfiles": [],
+        "ammo": null,
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "melee",
+            "label": "Needle blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 4,
+              "flatBonus": 0,
+              "formula": "1d4"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "piercing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "criticalEffects": [],
+            "modifierPolicy": null,
+            "notes": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "concealment": {
+          "skill": "Stealth",
+          "equipmentBonus": 5,
+          "scope": "checks to conceal the datadagger",
+          "touchExaminerCircumstanceBonusDenied": true
+        }
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": false,
+        "id": null,
+        "currentName": null,
+        "phase0NameNormalizationPending": false,
+        "currentStats": null,
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE"
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Threats-of-the-Galaxy",
+        "inaccurate": "not-established-by-Threats-of-the-Galaxy",
+        "arc": "not-established-by-Threats-of-the-Galaxy",
+        "ignoresDR": "not-established-by-Threats-of-the-Galaxy"
+      },
+      "repoComparison": {
+        "status": "MISSING_RECORD",
+        "severity": "material",
+        "current": null,
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Missing production record.",
+          "Published weapon is Tiny, 500 credits, 1d4 Piercing, 0.1 kg, Illegal.",
+          "Grants +5 equipment bonus to Stealth checks to conceal it; examiner touching the wielder receives no normal circumstance bonus for the search."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Light Concussion Missile Launcher",
+      "publishedName": "Light Concussion Missile Launcher",
+      "weaponGroup": "Heavy Weapon",
+      "source": {
+        "book": "Threats of the Galaxy",
+        "descriptionPage": 134,
+        "statTablePage": null,
+        "table": "inline launcher and missile stat blocks",
+        "verifiedBy": [
+          "Threats of the Galaxy_djvu.txt",
+          "SAGA EDITION - Threats of the Galaxy.pdf visual verification p.134"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "ranged",
+        "subcategory": "heavy",
+        "proficiency": "heavy-weapons"
+      },
+      "canonicalStats": {
+        "size": "Large",
+        "costCredits": 4000,
+        "baseDamage": {
+          "mode": "ammunition",
+          "diceCount": null,
+          "dieSize": null,
+          "flatBonus": 0,
+          "formula": "Loaded light concussion missile payload"
+        },
+        "weightKg": 18,
+        "damageType": {
+          "mode": "varies",
+          "types": [],
+          "qualifiers": [
+            "payload-derived"
+          ]
+        },
+        "availability": {
+          "restriction": "military",
+          "rare": false
+        },
+        "rateOfFire": [
+          "S"
+        ],
+        "stun": {
+          "capability": "ammunition-dependent",
+          "hasStunSetting": false,
+          "damageMode": "ammunition",
+          "damage": null,
+          "activation": {
+            "timing": "ammunition-dependent",
+            "action": null
+          },
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "ranged",
+          "profileId": "heavy-weapons",
+          "bands": {
+            "pointBlank": [
+              0,
+              50
+            ],
+            "short": [
+              51,
+              100
+            ],
+            "medium": [
+              101,
+              250
+            ],
+            "long": [
+              251,
+              500
+            ]
+          },
+          "basePenalties": {
+            "pointBlank": 0,
+            "short": -2,
+            "medium": -5,
+            "long": -10
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ],
+          "hardMaxSquares": null,
+          "penaltyApplication": "attack",
+          "qualityEffects": {
+            "pointBlankAllowed": true,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": true,
+            "longAllowed": true
+          }
+        },
+        "resource": {
+          "kind": "ammunition",
+          "source": "light concussion missile",
+          "capacityShots": null,
+          "replaceable": true,
+          "reloadAction": null,
+          "consumption": "one missile per attack",
+          "integrated": false,
+          "rechargeable": false,
+          "disposableWhenDepleted": false
+        },
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "light-concussion-missile",
+          "capacityShots": null,
+          "capacityUnit": "missiles",
+          "consumesPerAttack": 1,
+          "reloadAction": null,
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": false,
+          "acceptedPayloadFamily": "light-concussion-missile",
+          "acceptedAmmoIdentities": [
+            "Light Concussion Missile"
+          ],
+          "damageSource": "loaded-ammo",
+          "payloadDerived": true,
+          "sourceStatus": "Threats p.134 establishes one missile consumed per attack and the missile stat line, but does not state launcher loaded capacity or reload action."
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "light-concussion-missile",
+            "label": "Loaded light concussion missile",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "heavy",
+              "proficiency": "heavy-weapons"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 4,
+              "dieSize": 10,
+              "flatBonus": 0,
+              "formula": "4d10"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "heavy-weapons",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  50
+                ],
+                "short": [
+                  51,
+                  100
+                ],
+                "medium": [
+                  101,
+                  250
+                ],
+                "long": [
+                  251,
+                  500
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ],
+              "hardMaxSquares": null,
+              "penaltyApplication": "attack",
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": true,
+                "longAllowed": true
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": true,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "area",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "half-damage"
+            },
+            "area": {
+              "enabled": true,
+              "shape": "splash",
+              "radiusSquares": 2,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": [
+                "Missile has a 2-square splash."
+              ]
+            },
+            "resourceConsumption": {
+              "resource": "light-concussion-missile",
+              "baseUnits": 1,
+              "multiplier": 1
+            },
+            "damageComponents": [],
+            "firingConstraints": {
+              "cooldownRounds": 0,
+              "firesOnAlternatingRounds": false,
+              "maxShotsPerRound": 1,
+              "prohibitsMultiShotAbilities": true,
+              "reloadRequiredAfterEachShot": false
+            },
+            "preparedAttack": null,
+            "conditionalModifiers": [
+              {
+                "target": "attackRoll",
+                "value": -10,
+                "condition": {
+                  "targetSize": "smaller-than-Huge"
+                },
+                "scope": "this attack"
+              }
+            ],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "criticalEffects": [],
+            "modifierPolicy": null,
+            "notes": [
+              "Launcher fires one light concussion missile per attack.",
+              "Rapid Shot cannot be used with this launcher."
+            ],
+            "damageMultiplier": 2,
+            "conditionalRangeRules": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [
+          {
+            "id": "light-concussion-missile",
+            "label": "Light Concussion Missile",
+            "costCredits": 800,
+            "weightKg": 10,
+            "availability": {
+              "restriction": "military",
+              "rare": false
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "damage": {
+              "mode": "dice",
+              "diceCount": 4,
+              "dieSize": 10,
+              "flatBonus": 0,
+              "formula": "4d10"
+            },
+            "damageMultiplier": 2,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": true,
+              "shape": "splash",
+              "radiusSquares": 2,
+              "notes": "2-square splash"
+            },
+            "specialEffects": [
+              {
+                "effect": "attack-penalty-by-target-size",
+                "condition": "target smaller than Huge",
+                "value": -10
+              },
+              {
+                "effect": "prohibit-feat",
+                "feat": "Rapid Shot"
+              }
+            ]
+          }
+        ],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": {
+          "physicalMethod": "launcher-fired-missile",
+          "requiredAmmoFamily": "light-concussion-missile",
+          "rangeClassification": "heavy-weapons"
+        }
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": true,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "rapidShotAllowed": false,
+        "targetSizeAttackPenalty": {
+          "condition": "target smaller than Huge",
+          "value": -10
+        },
+        "splashSquares": 2
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "weapon-light-concussion-missile-launcher",
+        "currentName": "Light Concussion Missile Launcher",
+        "phase0NameNormalizationPending": false,
+        "currentStats": {
+          "damage": "4d10x2",
+          "damageType": "kinetic",
+          "costCredits": 4000,
+          "weightKg": 18,
+          "traits": [
+            "Military",
+            "Inaccurate"
+          ],
+          "rangeProfile": "heavy-weapons"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE"
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Threats-of-the-Galaxy",
+        "inaccurate": "not-established-by-Threats-of-the-Galaxy",
+        "arc": "not-established-by-Threats-of-the-Galaxy",
+        "ignoresDR": "not-established-by-Threats-of-the-Galaxy"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "4d10x2",
+          "damageType": "kinetic",
+          "costCredits": 4000,
+          "weightKg": 18,
+          "traits": [
+            "Military",
+            "Inaccurate"
+          ],
+          "rangeProfile": "heavy-weapons"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Launcher cost/weight/availability match.",
+          "Repo incorrectly persists the missile payload damage as intrinsic launcher damage; source publishes launcher and Light Concussion Missile separately.",
+          "Missile damage is 4d10x2 Slashing with 2-square splash.",
+          "Repo kinetic type is wrong for the missile; source prints Slashing.",
+          "Repo Inaccurate is not established by this Threats entry.",
+          "Source establishes one missile consumed per attack and prohibits Rapid Shot; it does not publish a launcher magazine capacity."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Sonic Stunner",
+      "publishedName": "Sonic Stunner",
+      "weaponGroup": "Pistol",
+      "source": {
+        "book": "Threats of the Galaxy",
+        "descriptionPage": 146,
+        "statTablePage": null,
+        "table": "inline weapon stat block",
+        "verifiedBy": [
+          "Threats of the Galaxy_djvu.txt",
+          "SAGA EDITION - Threats of the Galaxy.pdf visual verification p.146"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "ranged",
+        "subcategory": "pistol",
+        "proficiency": "pistols"
+      },
+      "canonicalStats": {
+        "size": "Tiny",
+        "costCredits": 450,
+        "baseDamage": {
+          "mode": "none",
+          "diceCount": 0,
+          "dieSize": null,
+          "flatBonus": 0,
+          "formula": "-"
+        },
+        "weightKg": 1,
+        "damageType": {
+          "mode": "single",
+          "types": [
+            "energy"
+          ],
+          "qualifiers": [
+            "sonic"
+          ]
+        },
+        "availability": {
+          "restriction": "illegal",
+          "rare": false
+        },
+        "rateOfFire": [
+          "S"
+        ],
+        "stun": {
+          "capability": "native-stun",
+          "hasStunSetting": false,
+          "damageMode": "explicit",
+          "damage": {
+            "mode": "dice",
+            "diceCount": 3,
+            "dieSize": 6,
+            "flatBonus": 0,
+            "formula": "3d6"
+          },
+          "activation": {
+            "timing": "native",
+            "action": null
+          },
+          "rangeRule": {
+            "mode": "same-as-weapon-range"
+          }
+        },
+        "range": {
+          "mode": "ranged",
+          "profileId": "pistols",
+          "bands": {
+            "pointBlank": [
+              0,
+              20
+            ],
+            "short": [
+              21,
+              40
+            ],
+            "medium": [
+              41,
+              60
+            ],
+            "long": [
+              61,
+              80
+            ]
+          },
+          "basePenalties": {
+            "pointBlank": 0,
+            "short": -2,
+            "medium": -5,
+            "long": -10
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ],
+          "hardMaxSquares": null,
+          "penaltyApplication": "attack",
+          "qualityEffects": {
+            "pointBlankAllowed": true,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": true,
+            "longAllowed": true
+          }
+        },
+        "resource": {
+          "kind": "unspecified",
+          "sourceStatus": "ammunition/power source and capacity are not stated by this book",
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null,
+          "consumption": null
+        },
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "unknown",
+          "status": "not-stated",
+          "required": null,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Threats p.146 publishes no ammunition type, power source, shot capacity, or reload procedure for the Sonic Stunner."
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "primary",
+            "label": "Sonic stun burst",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "pistol",
+              "proficiency": "pistols"
+            },
+            "damage": {
+              "mode": "none",
+              "diceCount": 0,
+              "dieSize": null,
+              "flatBonus": 0,
+              "formula": "-"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": [
+                "sonic"
+              ]
+            },
+            "stun": {
+              "capability": "native-stun",
+              "hasStunSetting": false,
+              "damageMode": "explicit",
+              "damage": {
+                "mode": "dice",
+                "diceCount": 3,
+                "dieSize": 6,
+                "flatBonus": 0,
+                "formula": "3d6"
+              },
+              "activation": {
+                "timing": "native",
+                "action": null
+              },
+              "rangeRule": {
+                "mode": "same-as-weapon-range"
+              }
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "pistols",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  20
+                ],
+                "short": [
+                  21,
+                  40
+                ],
+                "medium": [
+                  41,
+                  60
+                ],
+                "long": [
+                  61,
+                  80
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ],
+              "hardMaxSquares": null,
+              "penaltyApplication": "attack",
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": true,
+                "longAllowed": true
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "criticalEffects": [],
+            "modifierPolicy": null,
+            "notes": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "audibility": {
+          "onlyTargetHearsAttack": true,
+          "otherwiseSilent": true
+        },
+        "targeting": {
+          "deafTargetsCanBeHarmed": true,
+          "reason": "high-frequency vibrations penetrate the brain"
+        }
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "weapon-sonic-stunner",
+        "currentName": "Sonic Stunner",
+        "phase0NameNormalizationPending": false,
+        "currentStats": {
+          "damage": "3d6",
+          "damageType": "stun",
+          "costCredits": 450,
+          "weightKg": 1,
+          "traits": [
+            "Illegal"
+          ],
+          "rangeProfile": "pistols"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE"
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Threats-of-the-Galaxy",
+        "inaccurate": "not-established-by-Threats-of-the-Galaxy",
+        "arc": "not-established-by-Threats-of-the-Galaxy",
+        "ignoresDR": "not-established-by-Threats-of-the-Galaxy"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "3d6",
+          "damageType": "stun",
+          "costCredits": 450,
+          "weightKg": 1,
+          "traits": [
+            "Illegal"
+          ],
+          "rangeProfile": "pistols"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Repo flattens native 3d6 stun into the ordinary damage field; source normal damage is dash/none.",
+          "Source damage type is Energy with sonic behavior.",
+          "Only the target hears the attack; deaf creatures are still affected.",
+          "Threats does not state ammo type or shot capacity; do not infer one from generic blaster equipment."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Sith Sword",
+      "publishedName": "Sith Sword",
+      "weaponGroup": "Simple Weapon",
+      "source": {
+        "book": "Threats of the Galaxy",
+        "descriptionPage": 159,
+        "statTablePage": null,
+        "table": "inline weapon stat block",
+        "verifiedBy": [
+          "Threats of the Galaxy_djvu.txt",
+          "SAGA EDITION - Threats of the Galaxy.pdf visual verification p.159"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "simple",
+        "proficiency": "simple"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 3000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 1,
+          "dieSize": 8,
+          "flatBonus": 0,
+          "formula": "1d8"
+        },
+        "weightKg": 3,
+        "damageType": {
+          "mode": "or",
+          "types": [
+            "slashing",
+            "piercing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "illegal",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "none",
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
+        },
+        "resourceProfiles": [],
+        "ammo": null,
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "melee",
+            "label": "Sith sword strike",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "1d8"
+            },
+            "damageType": {
+              "mode": "or",
+              "types": [
+                "slashing",
+                "piercing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [
+              {
+                "id": "dark-side-empowerment",
+                "trigger": "proficient-wielder-swift-action-activation",
+                "effect": "next-sith-sword-damage-roll-bonus-equals-wielder-dark-side-score",
+                "cost": {
+                  "ForcePoint": 1
+                },
+                "action": "swift",
+                "expires": "after-next-attack-or-end-of-encounter",
+                "sideEffect": {
+                  "darkSideScoreIncrease": 1
+                },
+                "bonusSource": "wielder.darkSideScore",
+                "attackRollRequired": false
+              }
+            ],
+            "criticalEffects": [],
+            "modifierPolicy": null,
+            "notes": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [
+          {
+            "id": "lightsaber-does-not-ignore-sith-sword-dr",
+            "trigger": "weapon object is struck by lightsaber",
+            "effect": "lightsaber does not ignore Sith sword Damage Reduction"
+          }
+        ],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [
+          {
+            "id": "dark-side-empowerment",
+            "trigger": "proficient-wielder-swift-action-activation",
+            "effect": "next-sith-sword-damage-roll-bonus-equals-wielder-dark-side-score",
+            "cost": {
+              "ForcePoint": 1
+            },
+            "action": "swift",
+            "expires": "after-next-attack-or-end-of-encounter",
+            "sideEffect": {
+              "darkSideScoreIncrease": 1
+            },
+            "bonusSource": "wielder.darkSideScore",
+            "attackRollRequired": false
+          }
+        ],
+        "technologyClassification": {
+          "tags": [
+            "sith-alchemy"
+          ],
+          "rules": [
+            "Source-created Sith alchemical weapon."
+          ]
+        },
+        "deliveryMethod": null
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [
+        {
+          "condition": "wielder proficient with Sith sword",
+          "classificationForRules": "lightsaber",
+          "scope": [
+            "Block",
+            "Deflect",
+            "Redirect Shot",
+            "talents with those Jedi talents as prerequisites"
+          ],
+          "doesNotChangeBaseWeaponGroup": true,
+          "classifications": [
+            "lightsaber"
+          ]
+        }
+      ],
+      "operation": {
+        "lightsaberTalentCompatibility": {
+          "requiresProficiency": true,
+          "treatAsLightsaberFor": [
+            "Block",
+            "Deflect",
+            "Redirect Shot",
+            "talents requiring those Jedi talents"
+          ]
+        },
+        "darkSideEmpowerment": {
+          "requiresProficiency": true,
+          "activationAction": "swift",
+          "cost": {
+            "ForcePoint": 1
+          },
+          "effect": "bonus to next Sith sword damage roll equal to wielder Dark Side Score",
+          "expires": "after next attack or end of encounter",
+          "darkSideScoreIncrease": 1
+        }
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "weapon-sith-sword",
+        "currentName": "Sith Sword",
+        "phase0NameNormalizationPending": false,
+        "currentStats": {
+          "damage": "2d8",
+          "damageType": "kinetic",
+          "costCredits": 6000,
+          "weightKg": 3,
+          "traits": [
+            "Sith Alchemy",
+            "Lightsaber Resistant",
+            "Critical 19-20"
+          ],
+          "rangeProfile": "simple-weapons"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCORRECT"
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Threats-of-the-Galaxy",
+        "inaccurate": "not-established-by-Threats-of-the-Galaxy",
+        "arc": "not-established-by-Threats-of-the-Galaxy",
+        "ignoresDR": "not-established-by-Threats-of-the-Galaxy"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "critical",
+        "current": {
+          "damage": "2d8",
+          "damageType": "kinetic",
+          "costCredits": 6000,
+          "weightKg": 3,
+          "traits": [
+            "Sith Alchemy",
+            "Lightsaber Resistant",
+            "Critical 19-20"
+          ]
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCORRECT",
+        "findings": [
+          "Published damage is 1d8, not 2d8.",
+          "Published cost is 3,000 credits, not 6,000.",
+          "Published type is Slashing OR Piercing, not kinetic.",
+          "Threats does not publish a 19-20 critical range.",
+          "A lightsaber does not ignore the Sith sword object DR.",
+          "A proficient wielder may treat it as a lightsaber for Block/Deflect/Redirect Shot talent use and prerequisites.",
+          "A proficient wielder may spend 1 Force Point as a swift action to add Dark Side Score to the next damage roll before encounter end; activating increases Dark Side Score by 1."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    }
+  ],
+  "schemaNormalization": {
+    "version": "weapon-authority-schema-v2.9",
+    "change": "Introduces v2.9 (canonicalStats.ammo, payloadProfiles[].damageMultiplier, delivery-system vs payload separation). Structure-only aliases, no published fact changed: statTablePage null on all four records (inline stat blocks, no printed table; matches the certified Phase 1 records, which carry description pages only); Light Concussion Missile Launcher stun.activation.timing payload-selection -> ammunition-dependent; Sonic Stunner resource lifecycle keys defaulted to null (kind stays unspecified); Sith Sword dark-side empowerment moved from a string-valued conditionalModifier (modifier values must be integers) to a triggeredEffect mirrored at record level; operation.darkSideEmpowerment unchanged; proficiencyRules classifications [lightsaber]."
+  }
+}

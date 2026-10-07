@@ -1,0 +1,1050 @@
+{
+  "schemaVersion": "weapon-phase-4h-b-global-semantic-qa-v1",
+  "phase": "4H-B",
+  "family": "weapons",
+  "status": "WEAPON_PHASE_4H_B_GLOBAL_SEMANTIC_SELECTOR_QA_PASSED",
+  "authorityOnly": true,
+  "productionMutationAuthorized": false,
+  "vocabulary": {
+    "certifiedUsedUnion": 183,
+    "weaponSemanticTagsUsed": 80,
+    "weaponTags": [
+      "acrobatics",
+      "action_economy",
+      "ally_support",
+      "anti-force",
+      "attack_of_opportunity",
+      "battlefield_control",
+      "biotech",
+      "block",
+      "burst_damage",
+      "concealment",
+      "control",
+      "cover",
+      "crafting",
+      "critical_hit",
+      "damage",
+      "damage_bonus",
+      "damage_reduction",
+      "damage_threshold",
+      "dark_side",
+      "dark_side_score",
+      "defense",
+      "deflect",
+      "double_weapon",
+      "droid",
+      "dual_wield",
+      "durability",
+      "equipment",
+      "exotic_weapon",
+      "exploration",
+      "force",
+      "force_point_spend",
+      "full_attack",
+      "grab",
+      "grapple",
+      "heavy_weapon",
+      "improvised_weapon",
+      "infiltration",
+      "lightsaber",
+      "lightsaber_polearm",
+      "martial_arts",
+      "mechanics",
+      "melee",
+      "melee_defense",
+      "mobility",
+      "mount",
+      "move_action",
+      "movement",
+      "nonlethal",
+      "offense_melee",
+      "offense_ranged",
+      "opposed_check",
+      "perception",
+      "pistol",
+      "poison",
+      "positioning",
+      "precision",
+      "ranged",
+      "recon",
+      "resource_spend",
+      "restrain",
+      "ride",
+      "rider",
+      "setup",
+      "sniper",
+      "standard_action",
+      "stealth",
+      "stun",
+      "support",
+      "survival",
+      "sustained_damage",
+      "swift_action",
+      "target-designation",
+      "targeting",
+      "teamwork",
+      "tech",
+      "tracking",
+      "trap",
+      "treat_injury",
+      "unarmed",
+      "vehicle"
+    ],
+    "unknownWeaponSemanticTags": 0,
+    "forbiddenPseudoTagLeaks": 0,
+    "forbiddenPseudoTags": [
+      "accuracy",
+      "area_damage",
+      "condition_track",
+      "explosives",
+      "full_round_action",
+      "grenade",
+      "ion",
+      "rifle",
+      "sonic",
+      "thrown"
+    ],
+    "structuralSelectorLeaks": 0,
+    "tagFieldChecks": 1890
+  },
+  "byCategory": [
+    {
+      "phase": "4A",
+      "category": "Simple Weapon",
+      "records": 49,
+      "distinctSemanticTags": 57,
+      "semanticFields": [
+        "finalTags"
+      ],
+      "exactAbilityLinks": 0
+    },
+    {
+      "phase": "4B",
+      "category": "Lightsaber",
+      "records": 16,
+      "distinctSemanticTags": 24,
+      "semanticFields": [
+        "advantageTags",
+        "conditionalSynergyTags.tag",
+        "finalTags",
+        "sharedTags",
+        "tradeoffTags"
+      ],
+      "exactAbilityLinks": 16
+    },
+    {
+      "phase": "4C",
+      "category": "Pistol",
+      "records": 30,
+      "distinctSemanticTags": 35,
+      "semanticFields": [
+        "advantageTags",
+        "finalTags",
+        "sharedTags",
+        "tradeoffTags"
+      ],
+      "exactAbilityLinks": 17
+    },
+    {
+      "phase": "4D",
+      "category": "Rifle",
+      "records": 38,
+      "distinctSemanticTags": 36,
+      "semanticFields": [
+        "advantageTags",
+        "conditionalSynergyTags.tag",
+        "finalTags",
+        "sharedTags",
+        "tradeoffTags"
+      ],
+      "exactAbilityLinks": 13
+    },
+    {
+      "phase": "4E",
+      "category": "Advanced Melee Weapon",
+      "records": 22,
+      "distinctSemanticTags": 29,
+      "semanticFields": [
+        "advantageTags",
+        "finalTags",
+        "sharedTags",
+        "tradeoffTags"
+      ],
+      "exactAbilityLinks": 6
+    },
+    {
+      "phase": "4F",
+      "category": "Heavy Weapon",
+      "records": 17,
+      "distinctSemanticTags": 26,
+      "semanticFields": [
+        "conditionalSemanticTags.tag",
+        "finalTags",
+        "tradeoffTags"
+      ],
+      "exactAbilityLinks": 1
+    },
+    {
+      "phase": "4G",
+      "category": "Exotic Weapon",
+      "records": 32,
+      "distinctSemanticTags": 41,
+      "semanticFields": [
+        "advantageTags",
+        "conditionalSynergyTags.tag",
+        "finalTags",
+        "sharedTags",
+        "tradeoffTags"
+      ],
+      "exactAbilityLinks": 12
+    }
+  ],
+  "exactAbilityLinks": {
+    "total": 65,
+    "malformed": 0,
+    "rows": [
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-crossguard",
+        "ability": "Block",
+        "abilityType": "talent",
+        "relation": "POSITIVE_WEAPON_MODIFIER",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-crossguard",
+        "ability": "Deflect",
+        "abilityType": "talent",
+        "relation": "NEGATIVE_WEAPON_MODIFIER",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-guard-shoto",
+        "ability": "Block",
+        "abilityType": "talent",
+        "relation": "POSITIVE_WEAPON_MODIFIER",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-guard-shoto",
+        "ability": "Deflect",
+        "abilityType": "talent",
+        "relation": "POSITIVE_WEAPON_MODIFIER",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-guard-shoto",
+        "ability": "Shoto Focus",
+        "abilityType": "talent",
+        "relation": "EXPLICIT_WEAPON_FAMILY_MATCH",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-guard-shoto",
+        "ability": "Shoto Master",
+        "abilityType": "talent",
+        "relation": "EXPLICIT_WEAPON_FAMILY_MATCH",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-lightwhip",
+        "ability": "Crush",
+        "abilityType": "feat",
+        "relation": "PROHIBITED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-lightwhip",
+        "ability": "Pin",
+        "abilityType": "feat",
+        "relation": "SUPPORTED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-lightwhip",
+        "ability": "Throw",
+        "abilityType": "feat",
+        "relation": "PROHIBITED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-lightwhip",
+        "ability": "Trip",
+        "abilityType": "feat",
+        "relation": "SUPPORTED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-longhandle",
+        "ability": "Long Haft Strike",
+        "abilityType": "feat",
+        "relation": "UNLOCKS_DOUBLE_WEAPON_MODE",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-pike",
+        "ability": "Block",
+        "abilityType": "talent",
+        "relation": "NEGATIVE_WEAPON_MODIFIER",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-pike",
+        "ability": "Deflect",
+        "abilityType": "talent",
+        "relation": "NEGATIVE_WEAPON_MODIFIER",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-pike",
+        "ability": "Long Haft Strike",
+        "abilityType": "feat",
+        "relation": "UNLOCKS_DOUBLE_WEAPON_MODE",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-short",
+        "ability": "Shoto Focus",
+        "abilityType": "talent",
+        "relation": "EXPLICIT_WEAPON_FAMILY_MATCH",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-short",
+        "ability": "Shoto Master",
+        "abilityType": "talent",
+        "relation": "EXPLICIT_WEAPON_FAMILY_MATCH",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Amphistaff",
+        "ability": "Pin",
+        "abilityType": null,
+        "relation": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Amphistaff",
+        "ability": "Trip",
+        "abilityType": null,
+        "relation": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Blastsword",
+        "ability": "Weapon Finesse",
+        "abilityType": null,
+        "relation": "TREAT_AS_LIGHT_WEAPON_FOR_THIS_FEAT",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Fira",
+        "ability": "Greater Weapon Focus (Fira)",
+        "abilityType": null,
+        "relation": "NAMED_FIRA_ATTACK_BONUS_SYNERGY",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4E",
+        "identityKey": "unmapped::Power Hammer",
+        "ability": "Double Attack",
+        "abilityType": "feat",
+        "relation": "EXTRA_ATTACK_PENALTY",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4E",
+        "identityKey": "unmapped::Power Hammer",
+        "ability": "Power Attack",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4E",
+        "identityKey": "unmapped::Power Hammer",
+        "ability": "Rapid Strike",
+        "abilityType": "feat",
+        "relation": "EXTRA_ATTACK_PENALTY",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4E",
+        "identityKey": "unmapped::Power Hammer",
+        "ability": "Triple Attack",
+        "abilityType": "feat",
+        "relation": "EXTRA_ATTACK_PENALTY",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4E",
+        "identityKey": "unmapped::San-Ni Staff",
+        "ability": "Block",
+        "abilityType": "talent",
+        "relation": "EXPLICIT_WEAPON_COMPATIBILITY",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4E",
+        "identityKey": "unmapped::Shock Whip",
+        "ability": "Trip",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_OPTION",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Shyarn",
+        "ability": "Rapid Strike",
+        "abilityType": null,
+        "relation": "REMOVE_RAPID_STRIKE_ATTACK_PENALTY",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Zhaboka",
+        "ability": "Rapid Strike",
+        "abilityType": null,
+        "relation": "REMOVE_RAPID_STRIKE_ATTACK_PENALTY",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-blaster-carbine",
+        "ability": "Riflemaster",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-blaster-rifle",
+        "ability": "Riflemaster",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-discblade",
+        "ability": "Discblade Arc",
+        "abilityType": null,
+        "relation": "FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-discblade",
+        "ability": "Distant Discblade Throw",
+        "abilityType": null,
+        "relation": "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-discblade",
+        "ability": "Recall Discblade",
+        "abilityType": null,
+        "relation": "USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-discblade",
+        "ability": "Weapon Specialization (discblade)",
+        "abilityType": null,
+        "relation": "NAMED_DISCBLADE_DAMAGE_SYNERGY",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-flechette-launcher",
+        "ability": "Rapid Shot",
+        "abilityType": "feat",
+        "relation": "PROHIBITED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-heavy-blaster-rifle",
+        "ability": "Riflemaster",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-heavy-slugthrower-pistol",
+        "ability": "Double Attack",
+        "abilityType": "feat",
+        "relation": "EXTRA_ATTACK_PENALTY",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-heavy-slugthrower-pistol",
+        "ability": "Rapid Shot",
+        "abilityType": "feat",
+        "relation": "EXTRA_ATTACK_PENALTY",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-heavy-slugthrower-pistol",
+        "ability": "Triple Attack",
+        "abilityType": "feat",
+        "relation": "EXTRA_ATTACK_PENALTY",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-heavy-sonic-pistol",
+        "ability": "Deflect",
+        "abilityType": "talent",
+        "relation": "CANNOT_NEGATE_ATTACK",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-heavy-sonic-pistol",
+        "ability": "Talents with Deflect as prerequisite",
+        "abilityType": "talent-family",
+        "relation": "CANNOT_NEGATE_ATTACK",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent-family (not a single ability)"
+      },
+      {
+        "phase": "4F",
+        "identityKey": "weapon-light-concussion-missile-launcher",
+        "ability": "Rapid Shot",
+        "abilityType": "feat",
+        "relation": "PROHIBITED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-light-repeating-blaster",
+        "ability": "Riflemaster",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-siang-lance",
+        "ability": "Siang Lance Mastery",
+        "abilityType": null,
+        "relation": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
+        "via": "explicitAbilityInteractions",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-siang-lance",
+        "ability": "Siang Lance Mastery",
+        "abilityType": "talent",
+        "relation": null,
+        "via": "abilityOverrides",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-sidearm-blaster-pistol",
+        "ability": "Rapid Shot",
+        "abilityType": "feat",
+        "relation": "TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-slugthrower-pistol",
+        "ability": "Sport Hunter",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-slugthrower-rifle",
+        "ability": "Sport Hunter",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-snare-pistol",
+        "ability": "Bone Crusher",
+        "abilityType": "feat",
+        "relation": "PROHIBITED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-snare-pistol",
+        "ability": "Crush",
+        "abilityType": "feat",
+        "relation": "PROHIBITED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-snare-pistol",
+        "ability": "Pin",
+        "abilityType": "feat",
+        "relation": "SUPPORTED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-snare-pistol",
+        "ability": "Throw",
+        "abilityType": "feat",
+        "relation": "PROHIBITED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-snare-pistol",
+        "ability": "Trip",
+        "abilityType": "feat",
+        "relation": "SUPPORTED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-snare-rifle",
+        "ability": "Crush",
+        "abilityType": "feat",
+        "relation": "PROHIBITED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-snare-rifle",
+        "ability": "Pin",
+        "abilityType": "feat",
+        "relation": "SUPPORTED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-snare-rifle",
+        "ability": "Throw",
+        "abilityType": "feat",
+        "relation": "PROHIBITED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-snare-rifle",
+        "ability": "Trip",
+        "abilityType": "feat",
+        "relation": "SUPPORTED",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-sonic-disruptor",
+        "ability": "Deflect",
+        "abilityType": "talent",
+        "relation": "CANNOT_NEGATE_ATTACK",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-sonic-disruptor",
+        "ability": "Talents with Deflect as prerequisite",
+        "abilityType": "talent-family",
+        "relation": "CANNOT_NEGATE_ATTACK",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent-family (not a single ability)"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-sonic-pistol",
+        "ability": "Deflect",
+        "abilityType": "talent",
+        "relation": "CANNOT_NEGATE_ATTACK",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-sonic-pistol",
+        "ability": "Talents with Deflect as prerequisite",
+        "abilityType": "talent-family",
+        "relation": "CANNOT_NEGATE_ATTACK",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent-family (not a single ability)"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-sonic-rifle",
+        "ability": "Deflect",
+        "abilityType": "talent",
+        "relation": "CANNOT_NEGATE_ATTACK",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-sonic-rifle",
+        "ability": "Talents with Deflect as prerequisite",
+        "abilityType": "talent-family",
+        "relation": "CANNOT_NEGATE_ATTACK",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "talent-family (not a single ability)"
+      },
+      {
+        "phase": "4C",
+        "identityKey": "weapon-sporting-blaster-pistol",
+        "ability": "Sport Hunter",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-sporting-blaster-rifle",
+        "ability": "Sport Hunter",
+        "abilityType": "feat",
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "via": "explicitAbilityLinks",
+        "verifiedAgainst": "feat"
+      }
+    ]
+  },
+  "hybridProfileInventory": {
+    "records": 16,
+    "promotedConditionalTags": 0,
+    "rows": [
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-longhandle",
+        "canonicalName": "Long-Handle Lightsaber",
+        "conditionalTags": [
+          "double_weapon"
+        ],
+        "modes": []
+      },
+      {
+        "phase": "4B",
+        "identityKey": "lightsaber-chassis-pike",
+        "canonicalName": "Lightsaber Pike",
+        "conditionalTags": [
+          "double_weapon"
+        ],
+        "modes": []
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Amphistaff",
+        "canonicalName": "Amphistaff",
+        "conditionalTags": [],
+        "modes": [
+          "quarterstaff",
+          "spear",
+          "venom-spit",
+          "whip"
+        ]
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Atlatl",
+        "canonicalName": "Atlatl",
+        "conditionalTags": [],
+        "modes": [
+          "club",
+          "launcher"
+        ]
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Cesta",
+        "canonicalName": "Cesta",
+        "conditionalTags": [],
+        "modes": [
+          "launcher",
+          "staff"
+        ]
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Darkstick",
+        "canonicalName": "Darkstick",
+        "conditionalTags": [
+          "concealment",
+          "defense"
+        ],
+        "modes": [
+          "melee",
+          "thrown"
+        ]
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Felucian Skullblade",
+        "canonicalName": "Felucian Skullblade",
+        "conditionalTags": [
+          "block",
+          "defense",
+          "force",
+          "lightsaber",
+          "melee_defense"
+        ],
+        "modes": []
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-concealed-dart-launcher",
+        "canonicalName": "Concealed Dart Launcher",
+        "conditionalTags": [
+          "poison"
+        ],
+        "modes": []
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-interchangeable-weapon-system",
+        "canonicalName": "Interchangeable Weapon System",
+        "conditionalTags": [],
+        "modes": [
+          "anti-armor",
+          "blaster-rifle",
+          "sniper"
+        ]
+      },
+      {
+        "phase": "4F",
+        "identityKey": "weapon-interchangeable-weapon-system",
+        "canonicalName": "Interchangeable Weapon System",
+        "conditionalTags": [
+          "heavy_weapon"
+        ],
+        "modes": [
+          "anti-armor",
+          "blaster-rifle",
+          "sniper"
+        ]
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-massassi-lanvarok",
+        "canonicalName": "Massassi Lanvarok",
+        "conditionalTags": [],
+        "modes": [
+          "disc",
+          "polearm"
+        ]
+      },
+      {
+        "phase": "4F",
+        "identityKey": "weapon-miniature-proton-torpedo-launcher",
+        "canonicalName": "Miniature Proton Torpedo Launcher",
+        "conditionalTags": [],
+        "modes": [
+          "area",
+          "single-target"
+        ]
+      },
+      {
+        "phase": "4F",
+        "identityKey": "weapon-plx-2m-portable-missile-launcher",
+        "canonicalName": "Merr-Sonn PLX-2M Portable Missile Launcher",
+        "conditionalTags": [],
+        "modes": [
+          "direct",
+          "gravity-activated",
+          "heat-seeking"
+        ]
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-sg-4-blaster-rifle",
+        "canonicalName": "SG-4 Blaster Rifle",
+        "conditionalTags": [],
+        "modes": [
+          "blaster",
+          "harpoon"
+        ]
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-siang-lance",
+        "canonicalName": "Siang Lance",
+        "conditionalTags": [
+          "exotic_weapon"
+        ],
+        "modes": [
+          "bayonet",
+          "lance-shot"
+        ]
+      },
+      {
+        "phase": "4D",
+        "identityKey": "weapon-sporting-blaster-carbine",
+        "canonicalName": "Blaster Carbine, Sporting",
+        "conditionalTags": [
+          "precision"
+        ],
+        "modes": []
+      }
+    ]
+  },
+  "payloadInventory": {
+    "records": 4,
+    "accidentalFlattening": 0,
+    "defaultPayloadRulings": [
+      {
+        "identityKey": "weapon-concealed-dart-launcher",
+        "defaultPayload": "sedative",
+        "unconditionalTags": [
+          "stun",
+          "nonlethal"
+        ],
+        "conditionalPayloadTags": [
+          {
+            "payload": "contact-poison",
+            "tag": "poison"
+          }
+        ],
+        "status": "PLANNER_RULED_4H_E2",
+        "note": "The sedative dart is the published default and the weapon table lists native stun damage, so stun/nonlethal stay unconditional; contact poison is an optional payload, so poison is payload-conditional."
+      }
+    ],
+    "rows": [
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Atlatl",
+        "canonicalName": "Atlatl",
+        "payloadIds": [
+          "payload:energy-ball"
+        ],
+        "basePayloadSemanticTags": []
+      },
+      {
+        "phase": "4G",
+        "identityKey": "unmapped::Cesta",
+        "canonicalName": "Cesta",
+        "payloadIds": [
+          "payload:energy-ball"
+        ],
+        "basePayloadSemanticTags": []
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-concealed-dart-launcher",
+        "canonicalName": "Concealed Dart Launcher",
+        "payloadIds": [
+          "contact-poison",
+          "sedative"
+        ],
+        "basePayloadSemanticTags": [
+          "nonlethal",
+          "stun"
+        ]
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-wrist-rocket-launcher",
+        "canonicalName": "Wrist Rocket Launcher",
+        "payloadIds": [
+          "antipersonnel-rocket",
+          "antivehicle-rocket",
+          "flash-rocket",
+          "hollow-tip-empty",
+          "hollow-tip-nerve-toxin",
+          "hollow-tip-stun-gas",
+          "ion-blast-rocket"
+        ],
+        "basePayloadSemanticTags": []
+      }
+    ]
+  },
+  "inputs": {
+    "data/audits/item-weapons-phase-4a-simple-semantic-rolling.json": "4cf3b12777a113de82b21dbe2ff8a388d6e39c5e0a220d1afbb0e32703c0acdd",
+    "data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json": "0c2574d28129519fbc16433ff03469243d87eda38edc04ea09ce4984d0f8e226",
+    "data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json": "144e5b04e76ad792b7c01e29b6039a4a313c41d6a8287a7a896f9738e557ccbd",
+    "data/audits/item-weapons-phase-4d-rifle-semantic-rolling.json": "099091431b40fda931725da28fd809caef699a24de4ecdaa5753d8bc0a5d7a57",
+    "data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json": "88cc4fe20a3a86594e961676160682cbe3e902154ef9f0becdc368a2258feb58",
+    "data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json": "fd484c64f0eb5472253f4f99f5e871a584ff482f6435aafe22d8a21454c073d5",
+    "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json": "6ba0c3584cd7ce838726e7867750a54219c28c4310bd766b5fa3a9f7b8e0f191"
+  },
+  "phase3BIdentities": 203
+}

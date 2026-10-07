@@ -1,0 +1,1308 @@
+{
+ "schemaVersion": "5B.1",
+ "phase": "5B",
+ "family": "weapons",
+ "purpose": "Every distinct structured mechanic family in the frozen authority that needs runtime capability beyond ordinary attack/damage, with the identities that use it, current runtime support, future consumer and migration phase. Drives Phase 5E/5F.",
+ "counts": {
+  "operationFamilies": 17,
+  "profileMechanicFamilies": 21
+ },
+ "families": [
+  {
+   "mechanic": "ability-compatibility",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "allowedFeats",
+    "cannotUseAbilitiesConsumingMoreThanOneShotPerRound",
+    "darkSideEmpowerment",
+    "disallowedFeats",
+    "eligibleAsSecondWeaponForTwoWeaponFighting",
+    "lightsaberTalentCompatibility",
+    "multiShotAbilitiesProhibited",
+    "ordinaryCommercialAvailability",
+    "prohibitsMultiShotAbilities",
+    "rapidShotAllowed",
+    "rapidShotReset",
+    "redirectionCrystalCompatibility",
+    "sourceInternalNote",
+    "surveillanceTaggerCompatibility",
+    "surveillanceTaggerCompatible",
+    "upgradeRestrictions",
+    "weaponFinesseCountsAsLight"
+   ],
+   "identityCount": 15,
+   "identities": [
+    "unmapped::Blastsword",
+    "unmapped::Felucian Skullblade",
+    "unmapped::Vibrolance",
+    "weapon-black-powder-pistol",
+    "weapon-darter",
+    "weapon-flechette-launcher",
+    "weapon-light-concussion-missile-launcher",
+    "weapon-sidearm-blaster-pistol",
+    "weapon-sith-lanvarok",
+    "weapon-sith-sword",
+    "weapon-snare-pistol",
+    "weapon-snare-rifle",
+    "weapon-sniper-blaster-rifle",
+    "weapon-sonic-disruptor",
+    "weapon-xerrol-nightstinger"
+   ],
+   "currentRuntimeSupport": "applicability is name-based today",
+   "futureConsumer": [
+    "feat/talent applicability joins (selectors)",
+    "CombatOptionResolver",
+    "customization workbench restrictions"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5H"
+  },
+  {
+   "mechanic": "ammo-resource-reload",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "autofireAllowed",
+    "autofireOnly",
+    "bayonetMount",
+    "canMountOnRifle",
+    "canSingleLoadShell",
+    "canUseStandalone",
+    "cannotFireThermalDetonators",
+    "capacityGrenades",
+    "externalPowerPackCostCredits",
+    "firingConstraints",
+    "hasFoldingStock",
+    "maxShotsPerRound",
+    "mountMechanicsDC",
+    "mountTimeMinutes",
+    "mountableOnMinimumWeaponSize",
+    "mountedOnRifle",
+    "mustReloadAfterEachShot",
+    "mustReloadAfterEveryShot",
+    "oneShotCapacity",
+    "powerCordDisconnectRule",
+    "powerLevelSwitchAction",
+    "reloadAction",
+    "requiresEnergyCell",
+    "requiresEnergyCells",
+    "requiresGrenadeLauncher",
+    "requiresPowerPack",
+    "requiresPowerPacks",
+    "retractableStockOptional",
+    "rifleMountable",
+    "secondCrewReloadAction",
+    "shellsStatisticallyIdenticalToGrenades",
+    "singleShot",
+    "specialRateOfFire"
+   ],
+   "identityCount": 37,
+   "identities": [
+    "lightsaber-chassis-archaic-lightfoil",
+    "lightsaber-chassis-archaic-lightsaber",
+    "lightsaber-chassis-guard-shoto",
+    "lightsaber-chassis-longhandle",
+    "lightsaber-chassis-modern-lightfoil",
+    "unmapped::Bayonet",
+    "unmapped::Blastsword",
+    "unmapped::Contact Stunner",
+    "unmapped::San-Ni Staff",
+    "unmapped::Shock Stick",
+    "unmapped::Shock Whip",
+    "unmapped::Tehkla Blade",
+    "unmapped::Vibro-Saw",
+    "unmapped::Vibrobayonet",
+    "weapon-battering-ram",
+    "weapon-black-powder-pistol",
+    "weapon-blaster-carbine",
+    "weapon-blaster-rifle",
+    "weapon-disruptor-pistol",
+    "weapon-disruptor-rifle",
+    "weapon-double-barreled-blaster-carbine",
+    "weapon-e-web-missile-launcher",
+    "weapon-electronet",
+    "weapon-flechette-launcher",
+    "weapon-grenade-launcher",
+    "weapon-gungan-electropole",
+    "weapon-heavy-variable-blaster",
+    "weapon-hunting-blaster-carbine",
+    "weapon-micro-grenade-launcher",
+    "weapon-mortar-launcher",
+    "weapon-sonic-disruptor",
+    "weapon-subrepeating-blaster",
+    "weapon-targeting-blaster-rifle",
+    "weapon-targeting-laser",
+    "weapon-variable-blaster",
+    "weapon-wrist-blaster",
+    "weapon-wrist-rocket-launcher"
+   ],
+   "currentRuntimeSupport": "AmmoSystem cost is 1/5/10 hard-coded; no per-weapon reload rules",
+   "futureConsumer": [
+    "AmmoSystem",
+    "attack legality",
+    "reload UI",
+    "customization workbench (mounting)"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5D/5E"
+  },
+  {
+   "mechanic": "area-splash-burst",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "area",
+    "areaAttack",
+    "blastEffect",
+    "bracedAutofireAreaSquares",
+    "burstRadiusSquares",
+    "coneLengthSquares",
+    "contactDetonation",
+    "defaultAutofireAreaSquares",
+    "detonation",
+    "embeddedShrapnel",
+    "nonadjacentSplashRadiusSquares",
+    "remoteDetonationSafetyRule",
+    "remoteDetonatorCostCredits",
+    "splashRadiusSquares",
+    "splashSquares",
+    "timerRounds"
+   ],
+   "identityCount": 19,
+   "identities": [
+    "weapon-adhesive-grenade",
+    "weapon-concussion-grenade",
+    "weapon-cr-1-blast-cannon",
+    "weapon-deck-sweeper",
+    "weapon-electronet",
+    "weapon-flamethrower",
+    "weapon-flash-canister",
+    "weapon-flechette-launcher",
+    "weapon-frag-grenade",
+    "weapon-ion-grenade",
+    "weapon-light-concussion-missile-launcher",
+    "weapon-missile-launcher",
+    "weapon-pulse-rifle",
+    "weapon-rail-detonator-gun",
+    "weapon-remote-grenade",
+    "weapon-ripper",
+    "weapon-rotary-blaster-cannon",
+    "weapon-stun-grenade",
+    "weapon-thermal-detonator"
+   ],
+   "currentRuntimeSupport": "area attacks currently via grenade/heavy heuristics",
+   "futureConsumer": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "attack-modifiers-and-penalties",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "additionalAttackPenalty",
+    "additionalAttackPenaltyWith",
+    "allyAttackBonus",
+    "allyEligibleWeapons",
+    "attackOfOpportunityChoices",
+    "attackPenalty",
+    "attackPenaltyBelowMinimumStrength",
+    "attackTreatedAs",
+    "autofireEquipmentBonus",
+    "braceRequiresExtendedStock",
+    "canMakeAttackOfOpportunityEvenWithStockExtended",
+    "canMakeAttacksOfOpportunity",
+    "canMakeAttacksOfOpportunityWithoutFoldedStock",
+    "cannotBeThrownEffectively",
+    "cannotBraceWithoutTripodOrMount",
+    "conditionalAttackBonus",
+    "detachedTreatAs",
+    "improvisedWeaponPenaltyReplacement",
+    "lineOfSightOriginHeightSquares",
+    "longHaftFormDoubleWeapon",
+    "maximumRangeIncrement",
+    "maximumRangeSquares",
+    "minimumStrengthWithoutPenalty",
+    "modeEnvironmentRule",
+    "mustAimImmediatelyBeforeAttackToAvoidPenalty",
+    "postShotResetAction",
+    "preferredMode",
+    "primeAction",
+    "primeTiming",
+    "rangePenaltyApplication",
+    "rangeStepReductionPreparation",
+    "rangeTreatedAs",
+    "rangedModeFunctionsAs",
+    "repeatAttackEachRoundToMaintainDesignation",
+    "singleShotAttackPenalty",
+    "sniperPointBlankAttackPenalty",
+    "targetRule",
+    "targetRules",
+    "targetSizeAttackPenalty",
+    "targeting",
+    "unAimedAttackPenalty",
+    "unbracedAdditionalAttackPenalty",
+    "underwaterUsableProfiles",
+    "unregulatedAttackPenalty"
+   ],
+   "identityCount": 38,
+   "identities": [
+    "lightsaber-chassis-dueling",
+    "lightsaber-chassis-longhandle",
+    "lightsaber-chassis-pike",
+    "unmapped::Arggarok",
+    "unmapped::Bayonet",
+    "unmapped::Energy Lance",
+    "unmapped::Entrenching Tool",
+    "unmapped::Garrote",
+    "unmapped::Power Hammer",
+    "unmapped::Vibrobayonet",
+    "unmapped::Vibrolance",
+    "weapon-aurial-blaster",
+    "weapon-battering-ram",
+    "weapon-blaster-carbine",
+    "weapon-cr-1-blast-cannon",
+    "weapon-darter",
+    "weapon-deck-sweeper",
+    "weapon-double-barreled-blaster-carbine",
+    "weapon-e-web-missile-launcher",
+    "weapon-e-web-repeating-blaster",
+    "weapon-emp-grenade",
+    "weapon-espo-500-riot-gun",
+    "weapon-heavy-repeating-blaster",
+    "weapon-hunting-blaster-carbine",
+    "weapon-interchangeable-weapon-system",
+    "weapon-light-concussion-missile-launcher",
+    "weapon-miniature-proton-torpedo-launcher",
+    "weapon-mortar-launcher",
+    "weapon-rotary-blaster-cannon",
+    "weapon-sg-4-blaster-rifle",
+    "weapon-siang-lance",
+    "weapon-sith-lanvarok",
+    "weapon-sniper-blaster-rifle",
+    "weapon-sonic-stunner",
+    "weapon-sporting-blaster-carbine",
+    "weapon-stun-pistol",
+    "weapon-subrepeating-blaster",
+    "weapon-targeting-laser"
+   ],
+   "currentRuntimeSupport": "per-weapon penalties/bonuses are not data-driven today",
+   "futureConsumer": [
+    "attack bonus composition",
+    "resolveRange",
+    "roll-config",
+    "AoO logic"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5C-5E"
+  },
+  {
+   "mechanic": "concealment-stealth-sensing",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "alwaysDetermineNorth",
+    "audibility",
+    "blindCreaturesImmune",
+    "builtInDigitalCompass",
+    "concealment",
+    "concealmentContext",
+    "concealmentDesign",
+    "concealmentEquipmentBonus",
+    "concealmentSkill",
+    "concealmentStealthBonus",
+    "concealmentStealthPenalty",
+    "createsSmokeHazard",
+    "durationRounds",
+    "firingDoesNotRevealShooterPosition",
+    "gasConcealmentDuration",
+    "laterVersionConcealment",
+    "protectedAtmosphereImmune",
+    "providesConcealment",
+    "radiationExposure",
+    "sensorDetection",
+    "shotVisibility",
+    "silentInUse",
+    "snipingSkill",
+    "snipingStealthEquipmentBonus"
+   ],
+   "identityCount": 19,
+   "identities": [
+    "unmapped::Contact Stunner",
+    "unmapped::Darkstick",
+    "unmapped::Datadagger",
+    "unmapped::Survival Knife",
+    "unmapped::Vibrorapier",
+    "weapon-adjudicator-slugthrower",
+    "weapon-ascension-gun",
+    "weapon-concealed-dart-launcher",
+    "weapon-defender-microblaster",
+    "weapon-flash-canister",
+    "weapon-gas-grenade",
+    "weapon-hold-out-blaster-pistol",
+    "weapon-magna-caster",
+    "weapon-radiation-grenade",
+    "weapon-smoke-grenade",
+    "weapon-snap-shot-blaster-pistol",
+    "weapon-sonic-stunner",
+    "weapon-wrist-blaster",
+    "weapon-xerrol-nightstinger"
+   ],
+   "currentRuntimeSupport": "no weapon-driven concealment/stealth consumer",
+   "futureConsumer": [
+    "skill/stealth modifier integration",
+    "environment hazard engine",
+    "sensor/detection rules"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5F"
+  },
+  {
+   "mechanic": "condition-and-persistent-effects",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "ammunitionMayCarryContactPoison",
+    "conditionTrackOnHit",
+    "conditionTrackRider",
+    "conditionTrackWithEvasion",
+    "fortitudeRider",
+    "grievousWound",
+    "ongoingEffect",
+    "persistentUntilCured",
+    "poisonDeliveryRequiresDamage",
+    "returnOnAttackExceedsReflexBy",
+    "secondaryPoisonAttackBaseBonus",
+    "secondaryPoisonDefense",
+    "survivalBasicForestJungleBonusWhenProficientAndCarried",
+    "treatInjuryCureDC",
+    "venomSpit"
+   ],
+   "identityCount": 12,
+   "identities": [
+    "unmapped::Amphistaff",
+    "unmapped::Darkstick",
+    "unmapped::Fira",
+    "unmapped::Garrote",
+    "weapon-aurial-blaster",
+    "weapon-carbonite-rifle",
+    "weapon-cryoban-grenade",
+    "weapon-darter",
+    "weapon-gas-grenade",
+    "weapon-needler",
+    "weapon-neural-inhibitor",
+    "weapon-wookiee-ryyk-blade"
+   ],
+   "currentRuntimeSupport": "no weapon-driven rider executor",
+   "futureConsumer": [
+    "post-hit effect/rider executor",
+    "poison engine",
+    "condition track engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F"
+  },
+  {
+   "mechanic": "configuration-and-wielding",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "assemblyAction",
+    "cannotBeWieldedTwoHanded",
+    "cannotWieldTwoHanded",
+    "collapsedForm",
+    "configurationResolution",
+    "configurationSwitchAction",
+    "configurations",
+    "costWithoutRetractableStockCredits",
+    "designedForTwoHandedUse",
+    "dialUpAction",
+    "disassembleAction",
+    "disassembledComponentSize",
+    "disassembledComponents",
+    "disassemblyAction",
+    "disintegratesOnKillOrDestruction",
+    "doubleWeapon",
+    "doubleWeaponFullRoundAttack",
+    "doubleWeaponFullRoundAttackPenaltyPerEnd",
+    "encumbranceException",
+    "expandCollapseAction",
+    "forearmMounted",
+    "fragile",
+    "handsRemainFree",
+    "hostWeaponAugmentation",
+    "lacksEnergyLancePlasmaMode",
+    "mayCountAsSmallWhenBeneficial",
+    "mayTreatAsSizeWhenBeneficial",
+    "multipleHeldOneHandCountsAsOneWeapon",
+    "reassembleAction",
+    "requiresTwoHands",
+    "retractableStockCostCredits",
+    "sizeGate",
+    "sizeRule",
+    "switchAction",
+    "switchFormAction",
+    "tripodTreatsAsOneSizeSmallerForWielding",
+    "twoHandedStrengthRuleExplicitlyHighlighted",
+    "wornAs",
+    "wornNotHeld",
+    "wornOnWrist"
+   ],
+   "identityCount": 39,
+   "identities": [
+    "lightsaber-chassis-archaic-lightfoil",
+    "lightsaber-chassis-dual-phase",
+    "lightsaber-chassis-great",
+    "lightsaber-chassis-modern-lightfoil",
+    "lightsaber-chassis-retrosaber",
+    "unmapped::Amphistaff",
+    "unmapped::Darkstick",
+    "unmapped::Dire Vibroblade",
+    "unmapped::Entrenching Tool",
+    "unmapped::Garrote",
+    "unmapped::Power Lance",
+    "unmapped::San-Ni Staff",
+    "unmapped::Stunning Gauntlet",
+    "unmapped::Vibrobayonet",
+    "unmapped::Vibroblade, Double",
+    "unmapped::Vibroknucklers",
+    "unmapped::Wan-Shen",
+    "weapon-adventurer-slugthrower",
+    "weapon-blaster-carbine",
+    "weapon-blaster-rifle",
+    "weapon-concealed-dart-launcher",
+    "weapon-disruptor-pistol",
+    "weapon-disruptor-rifle",
+    "weapon-e-web-missile-launcher",
+    "weapon-flame-cannon",
+    "weapon-incinerator-rifle",
+    "weapon-interchangeable-weapon-system",
+    "weapon-lightfoil",
+    "weapon-plx-2m-portable-missile-launcher",
+    "weapon-sith-lanvarok",
+    "weapon-snap-baton",
+    "weapon-sonic-disruptor",
+    "weapon-tactical-tractor-beam",
+    "weapon-targeting-blaster-rifle",
+    "weapon-tusken-gaderffii-stick",
+    "weapon-verpine-shattergun",
+    "weapon-vibrosword",
+    "weapon-wrist-blaster",
+    "weapon-wrist-rocket-launcher"
+   ],
+   "currentRuntimeSupport": "double weapon detected by name; configuration is not modelled",
+   "futureConsumer": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F"
+  },
+  {
+   "mechanic": "crew-and-emplacement",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "crewRegulation",
+    "normallyRequiresTripod",
+    "operatorRoles",
+    "operatorsRequired",
+    "requiresSecondCrewRegulation",
+    "tripodEffectiveSize"
+   ],
+   "identityCount": 3,
+   "identities": [
+    "weapon-battering-ram",
+    "weapon-e-web-repeating-blaster",
+    "weapon-tactical-tractor-beam"
+   ],
+   "currentRuntimeSupport": "heavy weapon crew rules not modelled",
+   "futureConsumer": [
+    "crew/operator rules",
+    "EncumbranceEngine",
+    "wielding"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5F"
+  },
+  {
+   "mechanic": "damage-modifiers",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "adjacentBonusDamage",
+    "cannotBeNegatedByDeflect",
+    "damageThresholdAdjustment",
+    "hurledObjectDamageRule",
+    "ignoresDRCondition",
+    "pointBlankDamageEquipmentBonus",
+    "powerAttackExtraDamageAppliesToObjectsAndVehicles",
+    "shieldRatingStillApplies",
+    "strengthModifierAppliesToDamage",
+    "twoHandedDamageChoice",
+    "weaponDR",
+    "weaponDRAppliesAgainstLightsabers",
+    "weaponDRValue"
+   ],
+   "identityCount": 22,
+   "identities": [
+    "lightsaber-chassis-longhandle",
+    "lightsaber-chassis-short",
+    "unmapped::Fire Blade",
+    "unmapped::Power Hammer",
+    "unmapped::Shockstaff",
+    "weapon-aurial-blaster",
+    "weapon-bow",
+    "weapon-cr-1-blast-cannon",
+    "weapon-disruptor-pistol",
+    "weapon-disruptor-rifle",
+    "weapon-double-bladed-lightsaber",
+    "weapon-electrostaff",
+    "weapon-heavy-sonic-pistol",
+    "weapon-lightfoil",
+    "weapon-lightsaber",
+    "weapon-pulse-wave-pistol",
+    "weapon-pulse-wave-rifle",
+    "weapon-sling",
+    "weapon-sonic-disruptor",
+    "weapon-sonic-pistol",
+    "weapon-sonic-rifle",
+    "weapon-tactical-tractor-beam"
+   ],
+   "currentRuntimeSupport": "bespoke per-weapon rules; no data-driven consumer",
+   "futureConsumer": [
+    "combat-roll-math damage composition",
+    "damage-reduction-resolver"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5D/5E"
+  },
+  {
+   "mechanic": "defense-and-reaction-interactions",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "BlockCumulativePenalty",
+    "BlockPenalty",
+    "DeflectPenalty",
+    "adjacentReflexPenalty",
+    "blockDeflectUseTheForceEquipmentBonus",
+    "blockDeflectUseTheForcePenalty",
+    "cannotBeDisarmed",
+    "cannotBeDropped",
+    "disarmDefense",
+    "disarmDefenseEquipmentBonus",
+    "evasion",
+    "flavorMentionsDeflectingMeleeAttacks",
+    "forceImbuedLightsaberBlockEligible",
+    "mayUseBlockAsLightsaber",
+    "rapidStrikeAttackPenaltyWaived",
+    "returnToHand",
+    "standaloneDefenseBonus"
+   ],
+   "identityCount": 16,
+   "identities": [
+    "lightsaber-chassis-crossguard",
+    "lightsaber-chassis-dual-phase",
+    "lightsaber-chassis-guard-shoto",
+    "lightsaber-chassis-pike",
+    "unmapped::Combat Gloves",
+    "unmapped::Felucian Skullblade",
+    "unmapped::San-Ni Staff",
+    "unmapped::Shockboxing Gloves",
+    "unmapped::Short Sword",
+    "unmapped::Shyarn",
+    "unmapped::Stunning Gauntlet",
+    "unmapped::Vibroknucklers",
+    "unmapped::Zhaboka",
+    "weapon-discblade",
+    "weapon-dlt-20a-longblaster",
+    "weapon-emp-grenade"
+   ],
+   "currentRuntimeSupport": "reaction eligibility is name/text-based today",
+   "futureConsumer": [
+    "reaction-registry Block/Deflect eligibility",
+    "defense calculation"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "economics-and-variants",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "commonAccessoriesNotIncludedInListedCost",
+    "constructionDC",
+    "gearTemplate",
+    "namedCharacterVariant",
+    "optionalCommercialVariants",
+    "variantPricing"
+   ],
+   "identityCount": 5,
+   "identities": [
+    "lightsaber-chassis-retrosaber",
+    "unmapped::Fira",
+    "unmapped::Mythosaur Axe",
+    "weapon-snap-baton",
+    "weapon-sniper-blaster-rifle"
+   ],
+   "currentRuntimeSupport": "no store consumer of structured variants",
+   "futureConsumer": [
+    "store variants/accessory pricing",
+    "crafting DC",
+    "item sheet"
+   ],
+   "implementationState": "STORE_ONLY",
+   "migrationPhase": "5G"
+  },
+  {
+   "mechanic": "grab-grapple-restrain",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "allowedGrappleFeats",
+    "breakStrengthDC",
+    "canInitiateGrabOrGrappleAtRange",
+    "crushAndThrowDisallowed",
+    "escapeAcrobaticsDC",
+    "featTalentBonusesTreatGrabAsGarroteAttack",
+    "hurlGrabbedObjectRangeSquares",
+    "maxTargetSize",
+    "maximumGrabRangeIncrement",
+    "moveGrabbedObjectSquares",
+    "pinAndTripAllowed",
+    "pinTripSubstitution",
+    "prohibitedGrappleFeats",
+    "rangedGrabOrGrapple",
+    "webbingFunctionsAsNet"
+   ],
+   "identityCount": 8,
+   "identities": [
+    "lightsaber-chassis-lightwhip",
+    "unmapped::Amphistaff",
+    "unmapped::Garrote",
+    "weapon-net",
+    "weapon-snare-pistol",
+    "weapon-snare-rifle",
+    "weapon-stokhli-spray-stick",
+    "weapon-tactical-tractor-beam"
+   ],
+   "currentRuntimeSupport": "grapple weapon classification is name-based today",
+   "futureConsumer": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F"
+  },
+  {
+   "mechanic": "prepared-attacks",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "preparedAttack"
+   ],
+   "identityCount": 2,
+   "identities": [
+    "weapon-bryar-pistol",
+    "weapon-bryar-rifle"
+   ],
+   "currentRuntimeSupport": "no prepared-attack state",
+   "futureConsumer": [
+    "prepared-attack workflow (prime/aim before attack; expiry; consumption)"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "proficiency-routes",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "alternateProficiency",
+    "wookieeAdvancedMeleeProficiencyCounts",
+    "wookieeTreatsAsProficientWithWeaponProficiencyRifles"
+   ],
+   "identityCount": 4,
+   "identities": [
+    "unmapped::Arggarok",
+    "weapon-bowcaster",
+    "weapon-massassi-lanvarok",
+    "weapon-wookiee-ryyk-blade"
+   ],
+   "currentRuntimeSupport": "actorIsProficientForAttack reads system.proficient only",
+   "futureConsumer": [
+    "resolveProficiency (species/ability routes)"
+   ],
+   "implementationState": "EXISTING_CONSUMER_WRONG_INPUT",
+   "migrationPhase": "5C"
+  },
+  {
+   "mechanic": "reach-and-threat",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "extendedReachBonusSquares",
+    "reachBonusSquares",
+    "reachIncreaseSquares",
+    "reachProfileIds",
+    "reachSquares"
+   ],
+   "identityCount": 7,
+   "identities": [
+    "lightsaber-chassis-dual-phase",
+    "lightsaber-chassis-lightwhip",
+    "lightsaber-chassis-pike",
+    "unmapped::Amphistaff",
+    "unmapped::Neuronic Whip",
+    "unmapped::Shock Whip",
+    "unmapped::Wan-Shen"
+   ],
+   "currentRuntimeSupport": "reach read from legacy system.reachBonus",
+   "futureConsumer": [
+    "melee targeting",
+    "threatened squares / AoO"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "stun-ion-damage-modes",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "alwaysStun",
+    "burnoutDamage",
+    "convertsUnarmedMeleeAttackToStunDamage",
+    "damageTypeAndBurstDeterminedByGrenade",
+    "dealsNoDamage",
+    "ionDamage",
+    "ionDamageRulesApply",
+    "nativeStunDamage",
+    "nativeStunOnly",
+    "ongoingStunWhileTrapped",
+    "overchargeDamage",
+    "overwhelmingStunRule",
+    "simultaneousDamageComponents",
+    "sonicDamageIsEnergy",
+    "stunChoiceTiming",
+    "stunOnly",
+    "stunShotsPerAttack",
+    "stunSwitchAction"
+   ],
+   "identityCount": 24,
+   "identities": [
+    "lightsaber-chassis-retrosaber",
+    "unmapped::Neuronic Whip",
+    "unmapped::San-Ni Staff",
+    "unmapped::Shock Stick",
+    "unmapped::Shockboxing Gloves",
+    "unmapped::Stunning Gauntlet",
+    "weapon-aurial-blaster",
+    "weapon-bluebolt-blaster-pistol",
+    "weapon-deck-sweeper",
+    "weapon-electronet",
+    "weapon-emp-grenade",
+    "weapon-grenade-launcher",
+    "weapon-heavy-sonic-pistol",
+    "weapon-ion-carbine",
+    "weapon-ion-grenade",
+    "weapon-ion-pistol",
+    "weapon-ion-rifle",
+    "weapon-sonic-disruptor",
+    "weapon-sonic-pistol",
+    "weapon-sonic-rifle",
+    "weapon-stokhli-spray-stick",
+    "weapon-stun-grenade",
+    "weapon-stun-pistol",
+    "weapon-targeting-laser"
+   ],
+   "currentRuntimeSupport": "stun is a roll-config checkbox; ion/overwhelming/native-stun rules are not driven by weapon data",
+   "futureConsumer": [
+    "resolveDamageProfile damageMode",
+    "damage-packet-builder stun/ion",
+    "roll-config"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5D/5E"
+  },
+  {
+   "mechanic": "utility-and-movement",
+   "source": "canonicalStats-adjacent operation.* (Phase 3B)",
+   "operationKeys": [
+    "ascensionMode"
+   ],
+   "identityCount": 2,
+   "identities": [
+    "weapon-ascension-gun",
+    "weapon-heavy-variable-blaster"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "movement/utility action handler (grappling-line lift/zipline)"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5F"
+  },
+  {
+   "mechanic": "alternate-defense-attack-resolution",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 7,
+   "identities": [
+    "unmapped::Garrote",
+    "weapon-concussion-rifle",
+    "weapon-gas-grenade",
+    "weapon-radiation-grenade",
+    "weapon-snare-pistol",
+    "weapon-snare-rifle",
+    "weapon-squib-tensor-rifle"
+   ],
+   "currentRuntimeSupport": "attack path always targets Reflex",
+   "futureConsumer": [
+    "attack target-defense selection"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "attack-resolution-on-miss",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 23,
+   "identities": [
+    "weapon-adhesive-grenade",
+    "weapon-blaster-cannon",
+    "weapon-concussion-grenade",
+    "weapon-cryoban-grenade",
+    "weapon-deck-sweeper",
+    "weapon-double-barreled-blaster-carbine",
+    "weapon-emp-grenade",
+    "weapon-flame-cannon",
+    "weapon-flamethrower",
+    "weapon-flash-canister",
+    "weapon-frag-grenade",
+    "weapon-heavy-blaster-cannon",
+    "weapon-ion-grenade",
+    "weapon-light-concussion-missile-launcher",
+    "weapon-miniature-proton-torpedo-launcher",
+    "weapon-missile-launcher",
+    "weapon-plx-2m-portable-missile-launcher",
+    "weapon-pulse-rifle",
+    "weapon-radiation-grenade",
+    "weapon-remote-grenade",
+    "weapon-repeating-blaster-carbine",
+    "weapon-stun-grenade",
+    "weapon-thermal-detonator"
+   ],
+   "currentRuntimeSupport": "no weapon-driven onMiss",
+   "futureConsumer": [
+    "attack outcome resolver"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "ignored-defense-components",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 1,
+   "identities": [
+    "weapon-targeting-laser"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "defense calculation"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "profile-area-geometry",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 33,
+   "identities": [
+    "weapon-adhesive-grenade",
+    "weapon-blaster-cannon",
+    "weapon-concussion-grenade",
+    "weapon-cr-1-blast-cannon",
+    "weapon-cryoban-grenade",
+    "weapon-deck-sweeper",
+    "weapon-double-barreled-blaster-carbine",
+    "weapon-e-web-missile-launcher",
+    "weapon-electronet",
+    "weapon-emp-grenade",
+    "weapon-flame-cannon",
+    "weapon-flamethrower",
+    "weapon-flash-canister",
+    "weapon-flechette-launcher",
+    "weapon-frag-grenade",
+    "weapon-gas-grenade",
+    "weapon-heavy-blaster-cannon",
+    "weapon-interchangeable-weapon-system",
+    "weapon-ion-grenade",
+    "weapon-light-concussion-missile-launcher",
+    "weapon-miniature-proton-torpedo-launcher",
+    "weapon-missile-launcher",
+    "weapon-mortar-launcher",
+    "weapon-plx-2m-portable-missile-launcher",
+    "weapon-pulse-rifle",
+    "weapon-radiation-grenade",
+    "weapon-rail-detonator-gun",
+    "weapon-remote-grenade",
+    "weapon-repeating-blaster-carbine",
+    "weapon-rotary-blaster-cannon",
+    "weapon-smoke-grenade",
+    "weapon-stun-grenade",
+    "weapon-thermal-detonator"
+   ],
+   "currentRuntimeSupport": "area only via grenade/heavy heuristics",
+   "futureConsumer": [
+    "area targeting"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "critical-effects",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 3,
+   "identities": [
+    "weapon-heavy-assault-blaster",
+    "weapon-hunting-blaster-carbine",
+    "weapon-verpine-shattergun"
+   ],
+   "currentRuntimeSupport": "critRange ignored; no weapon critical effects",
+   "futureConsumer": [
+    "critical damage composition"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "triggered-effects",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 17,
+   "identities": [
+    "lightsaber-chassis-lightwhip",
+    "unmapped::Amphistaff",
+    "unmapped::Garrote",
+    "unmapped::Shock Whip",
+    "unmapped::Tehkla Blade",
+    "weapon-concussion-rifle",
+    "weapon-darter",
+    "weapon-electronet",
+    "weapon-flash-canister",
+    "weapon-gas-grenade",
+    "weapon-neural-inhibitor",
+    "weapon-sith-sword",
+    "weapon-snare-pistol",
+    "weapon-snare-rifle",
+    "weapon-squib-tensor-rifle",
+    "weapon-verpine-shattergun",
+    "weapon-xerrol-nightstinger"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "post-hit effect executor"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "conditional-modifiers",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 13,
+   "identities": [
+    "lightsaber-chassis-crossguard",
+    "lightsaber-chassis-dual-phase",
+    "lightsaber-chassis-dueling",
+    "lightsaber-chassis-pike",
+    "unmapped::Arggarok",
+    "unmapped::Energy Lance",
+    "unmapped::Power Hammer",
+    "unmapped::Power Lance",
+    "weapon-heavy-slugthrower-pistol",
+    "weapon-interchangeable-weapon-system",
+    "weapon-light-concussion-missile-launcher",
+    "weapon-miniature-proton-torpedo-launcher",
+    "weapon-sniper-blaster-rifle"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "condition evaluator"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "activation-requirements",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 10,
+   "identities": [
+    "lightsaber-chassis-dual-phase",
+    "lightsaber-chassis-longhandle",
+    "lightsaber-chassis-pike",
+    "lightsaber-chassis-retrosaber",
+    "unmapped::Amphistaff",
+    "unmapped::Vibrobayonet",
+    "weapon-battering-ram",
+    "weapon-siang-lance",
+    "weapon-snare-pistol",
+    "weapon-snare-rifle"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "attack legality"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "profile-prepared-attacks",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 4,
+   "identities": [
+    "weapon-bryar-pistol",
+    "weapon-bryar-rifle",
+    "weapon-deck-sweeper",
+    "weapon-heavy-blaster-cannon"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "prepared-attack workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "firing-constraints",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 13,
+   "identities": [
+    "weapon-black-powder-pistol",
+    "weapon-crossbow",
+    "weapon-disruptor-pistol",
+    "weapon-disruptor-rifle",
+    "weapon-double-barreled-blaster-carbine",
+    "weapon-e-web-missile-launcher",
+    "weapon-flechette-launcher",
+    "weapon-light-concussion-missile-launcher",
+    "weapon-miniature-proton-torpedo-launcher",
+    "weapon-sg-4-blaster-rifle",
+    "weapon-sonic-disruptor",
+    "weapon-subrepeating-blaster",
+    "weapon-wrist-rocket-launcher"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "attack legality"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "profile-owned-damage-components",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 1,
+   "identities": [
+    "unmapped::Neuronic Whip"
+   ],
+   "currentRuntimeSupport": "single damage component only",
+   "futureConsumer": [
+    "damage packet components"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5D"
+  },
+  {
+   "mechanic": "conditional-range-rules",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 1,
+   "identities": [
+    "weapon-sg-4-blaster-rifle"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "range resolver conditions"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "modifier-policy",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 0,
+   "identities": [],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "attack modifier policy"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "payload-profiles",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 11,
+   "identities": [
+    "unmapped::Atlatl",
+    "unmapped::Cesta",
+    "weapon-concealed-dart-launcher",
+    "weapon-darter",
+    "weapon-e-web-missile-launcher",
+    "weapon-light-concussion-missile-launcher",
+    "weapon-micro-grenade-launcher",
+    "weapon-miniature-proton-torpedo-launcher",
+    "weapon-missile-launcher",
+    "weapon-plx-2m-portable-missile-launcher",
+    "weapon-wrist-rocket-launcher"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "payload selection + resolveDamageProfile"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5D/5E"
+  },
+  {
+   "mechanic": "configuration-states-and-state-machines",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 10,
+   "identities": [
+    "lightsaber-chassis-archaic-lightsaber",
+    "lightsaber-chassis-retrosaber",
+    "unmapped::Amphistaff",
+    "unmapped::Shock Stick",
+    "unmapped::Vibrobayonet",
+    "unmapped::Wan-Shen",
+    "weapon-adventurer-slugthrower",
+    "weapon-micro-grenade-launcher",
+    "weapon-snap-baton",
+    "weapon-targeting-blaster-rifle"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "configuration engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "wielding-rules",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 15,
+   "identities": [
+    "lightsaber-chassis-archaic-lightfoil",
+    "lightsaber-chassis-dueling",
+    "lightsaber-chassis-great",
+    "lightsaber-chassis-longhandle",
+    "lightsaber-chassis-modern-lightfoil",
+    "unmapped::Bayonet",
+    "unmapped::Blastsword",
+    "unmapped::Energy Lance",
+    "unmapped::Garrote",
+    "unmapped::Power Lance",
+    "unmapped::Vibrobayonet",
+    "weapon-battering-ram",
+    "weapon-heavy-blaster-cannon",
+    "weapon-lightfoil",
+    "weapon-vibrosword"
+   ],
+   "currentRuntimeSupport": "wieldedTwoHanded flag only",
+   "futureConsumer": [
+    "wield validation"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "defensive-interactions",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 7,
+   "identities": [
+    "lightsaber-chassis-crossguard",
+    "lightsaber-chassis-guard-shoto",
+    "lightsaber-chassis-pike",
+    "unmapped::San-Ni Staff",
+    "unmapped::Shockstaff",
+    "weapon-electrostaff",
+    "weapon-sith-sword"
+   ],
+   "currentRuntimeSupport": "name/text based",
+   "futureConsumer": [
+    "reaction eligibility"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  },
+  {
+   "mechanic": "construction-rules",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 3,
+   "identities": [
+    "lightsaber-chassis-dual-phase",
+    "lightsaber-chassis-retrosaber",
+    "weapon-black-powder-pistol"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "crafting engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5F"
+  },
+  {
+   "mechanic": "integrated-accessories",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 4,
+   "identities": [
+    "weapon-arc-9965-blaster",
+    "weapon-dlt-20a-longblaster",
+    "weapon-hunting-blaster-carbine",
+    "weapon-subrepeating-blaster"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "customization workbench"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5F"
+  },
+  {
+   "mechanic": "object-durability",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 3,
+   "identities": [
+    "weapon-dh-23-blaster-pistol",
+    "weapon-electrostaff",
+    "weapon-model-434-deathhammer"
+   ],
+   "currentRuntimeSupport": "none",
+   "futureConsumer": [
+    "object damage rules"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5F"
+  },
+  {
+   "mechanic": "damage-reduction-interaction",
+   "source": "structured attack-profile / canonicalStats field",
+   "identityCount": 18,
+   "identities": [
+    "lightsaber-chassis-archaic-lightfoil",
+    "lightsaber-chassis-archaic-lightsaber",
+    "lightsaber-chassis-crossguard",
+    "lightsaber-chassis-dual-phase",
+    "lightsaber-chassis-dueling",
+    "lightsaber-chassis-great",
+    "lightsaber-chassis-guard-shoto",
+    "lightsaber-chassis-lightwhip",
+    "lightsaber-chassis-longhandle",
+    "lightsaber-chassis-modern-lightfoil",
+    "lightsaber-chassis-pike",
+    "lightsaber-chassis-retrosaber",
+    "lightsaber-chassis-short",
+    "unmapped::Fire Blade",
+    "unmapped::Vibro-Saw",
+    "weapon-double-bladed-lightsaber",
+    "weapon-lightfoil",
+    "weapon-lightsaber"
+   ],
+   "currentRuntimeSupport": "ignoresDR text/name heuristics",
+   "futureConsumer": [
+    "damage-reduction-resolver"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E"
+  }
+ ]
+}

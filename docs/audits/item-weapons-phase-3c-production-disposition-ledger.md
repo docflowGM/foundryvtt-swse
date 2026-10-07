@@ -1,0 +1,382 @@
+# Weapons Phase 3C — Production Disposition Ledger
+
+**Status:** `WEAPON_PHASE_3C_PRODUCTION_DISPOSITION_LEDGER_CERTIFIED` — authority-only; **productionMutationAuthorized = false**. Nothing in this ledger has been executed.
+
+Generated deterministically by `tools/build-item-weapons-phase-3c-production-disposition-ledger.mjs` from the Phase 3B canonical authority and the current `packs/weapons.db`. Data: `data/audits/item-weapons-phase-3c-production-disposition-ledger.json`.
+
+## Summary
+
+- Canonical identities: **203** (209 source claims); repo-present 151, repo-missing 52
+- Primary disposition: KEEP 0 · CREATE 52 · RENAME 0 · UPDATE 149 · MERGE 2 · REVIEW_PRECEDENCE 0
+- Repo-only production weapon records: **35** (MERGE_INTO_CANONICAL 2 · REMOVE_UNSUPPORTED 33)
+- Production weapon records covered: 186 of 186; out-of-scope pack records: 4
+- Identities with schema requirements: 203; with blocked (source-unresolved) fields: 21 (25 fields)
+- Dependency-gated cleanup records: 35
+
+## CREATE (52)
+
+- Amphistaff
+- Arggarok
+- Atlatl
+- Axe
+- Bayonet
+- Blastsword
+- Cesta
+- Club/Baton
+- Combat Gloves
+- Contact Stunner
+- Darkstick
+- Datadagger
+- Dire Sword
+- Dire Vibroblade
+- Double Vibroblade
+- Double-Bladed Sword
+- Energy Lance
+- Entrenching Tool
+- Felucian Skullblade
+- Fira
+- Fire Blade
+- Force Pike
+- Garrote
+- Knife
+- Mace
+- Mythosaur Axe
+- Neuronic Whip
+- Power Hammer
+- Power Lance
+- Quarterstaff
+- San-Ni Staff
+- Shock Stick
+- Shock Whip
+- Shockboxing Gloves
+- Shockstaff
+- Short Sword
+- Shyarn
+- Spear
+- Static Pike
+- Stunning Gauntlet
+- Survival Knife
+- Tehkla Blade
+- Vibro-Ax
+- Vibro-Saw
+- Vibrobayonet
+- Vibroblade, Double
+- Vibroknucklers
+- Vibrolance
+- Vibrorapier
+- Wan-Shen
+- War Sword
+- Zhaboka
+
+## MERGE
+
+- **Lightsaber** — survivor `weapon-lightsaber`; merged `lightsaber-chassis-standard`; gate BLOCKED_PENDING_MIGRATION
+- **Lightsaber, Double** — survivor `weapon-double-bladed-lightsaber`; merged `lightsaber-chassis-double`; gate BLOCKED_PENDING_MIGRATION
+
+## RENAME-only
+
+_none_
+
+## KEEP
+
+_none_
+
+## REVIEW_PRECEDENCE
+
+_none_
+
+## UPDATE (149) — action categories
+
+- ARC-9965 Blaster Rifle: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Adhesive Grenade: UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Ascension Gun: UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Aurial Blaster: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Black-Powder Pistol: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- BlasTech 500 Riot Gun: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- BlasTech DH-23 Outback Blaster Pistol: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- BlasTech DLT-20A "Longbarrel" Blaster Rifle: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- BlasTech DT-12 Heavy Blaster Pistol: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Cannon: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Carbine: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Blaster Carbine, Double-Barreled: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Carbine, Hunting: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Carbine, Repeating: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Carbine, Sporting: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Pistol: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Pistol, Bluebolt: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Pistol, Heavy: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Pistol, Hold-Out: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Pistol, Sidearm: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Pistol, Snap Shot: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Pistol, Sporting: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Rifle: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Blaster Rifle, Assault: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Rifle, Heavy: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Blaster Rifle, Heavy Assault: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Rifle, Heavy Variable: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Rifle, Light Repeating: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SUMMARY
+- Blaster Rifle, Sniper: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Rifle, Sporting: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster Rifle, Variable: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Blaster, Wrist: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Bow: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Bowcaster: UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Bryar Pistol: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Bryar Rifle: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- CR-1 Blast Cannon: UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Carbonite Rifle: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Commando Special Rifle: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SUMMARY
+- Concealed Dart Launcher: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Concussion Grenade: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Concussion Rifle: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Crossbow: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Crossbow, Repeating: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SUMMARY
+- Crossguard Lightsaber: UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- CryoBan Grenade: UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Czerka Adjudicator: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Czerka Adventurer: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- DX-2 Disruptor Pistol: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- DXR-6 Disruptor Rifle: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Darter: UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Deck Sweeper: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Discblade: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Dueling Lightsaber: UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- E-Web Missile Launcher: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- E-Web Repeating Blaster: UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- EMP Grenade: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Electronet: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Electropole: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_ATTACK_PROFILES, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Electrostaff: UPDATE_ATTACK_PROFILES, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Energy Ball: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Flame Cannon: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Flamethrower: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Flechette Launcher: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Gaderffii: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_ATTACK_PROFILES, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Gas Grenade: UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Gee-Tech 12 Defender Microblaster: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Grenade Launcher: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Grenade, Frag: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Grenade, Ion: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Grenade, Radiation: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Grenade, Smoke: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Grenade, Stun: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Guard Shoto: UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Heavy Blaster Cannon: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Heavy Repeating Blaster: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Heavy Slugthrower Pistol: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Heavy Sonic Pistol: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Incinerator Rifle: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Interchangeable Weapon System: UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Ion Carbine: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Ion Pistol: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Ion Rifle: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Light Concussion Missile Launcher: UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Lightfoil: UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Lightfoil, Archaic: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Lightfoil, Modern: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Lightsaber Pike: UPDATE_ATTACK_PROFILES, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Lightsaber, Archaic: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Lightsaber, Dual-Phase: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_ATTACK_PROFILES, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Lightsaber, Great: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Lightsaber, Short: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Lightwhip: UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Long-Handle Lightsaber: UPDATE_ATTACK_PROFILES, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Magna Caster: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Massassi Lanvarok: UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Merr-Sonn Model 434 DeathHammer: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Merr-Sonn PLX-2M Portable Missile Launcher: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Micro Grenade Launcher: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Miniature Proton Torpedo Launcher: UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Missile Launcher: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Mortar Launcher: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Needler: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Net: UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Neural Inhibitor: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Pulse Rifle: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Pulse-Wave Pistol: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Pulse-Wave Rifle: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- R-9 Flash Canister: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Rail Detonator Gun: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Razor Bug: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Remote Grenade: UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Retrosaber: UPDATE_ATTACK_PROFILES, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Ripper: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Rotary Blaster Cannon: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Ryyk Blade: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- SG-4 Blaster Rifle: UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Scatter Gun: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Siang Lance: UPDATE_AMMO, UPDATE_ATTACK_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Sith Lanvarok: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Sith Sword: UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Sling: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Slugthrower Pistol: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_STATS, UPDATE_SUMMARY
+- Slugthrower Rifle: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_STATS, UPDATE_SUMMARY
+- Snap Baton: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Snare Pistol: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Snare Rifle: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Sonic Disruptor: UPDATE_AMMO, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Sonic Pistol: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Sonic Rifle: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Sonic Stunner: UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- SoroSuub Firelance Blaster Rifle: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Squib Battering Ram: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Squib Tensor Rifle: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Stokhli Spray Stick: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Stun Baton: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Stun Pistol: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Subrepeating Blaster: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Tactical Tractor Beam: UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Targeting Blaster Rifle: UPDATE_AMMO, UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Targeting Laser: UPDATE_DAMAGE, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Thermal Detonator: UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Thud Bug: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Verpine Shatter Gun: REFERENCE_MIGRATION_REQUIRED, RENAME, UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_RANGE, UPDATE_SPECIAL_MECHANICS, UPDATE_SUMMARY
+- Vibroblade: UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RESOURCE_MODEL, UPDATE_STATS, UPDATE_SUMMARY
+- Vibrodagger: UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_QUALITIES, UPDATE_RESOURCE_MODEL, UPDATE_STATS, UPDATE_SUMMARY
+- Vibrosword: UPDATE_AVAILABILITY, UPDATE_DAMAGE_TYPE, UPDATE_PLAYER_TEXT, UPDATE_RESOURCE_MODEL, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Wrist Rocket Launcher: UPDATE_AMMO, UPDATE_AVAILABILITY, UPDATE_DAMAGE, UPDATE_DAMAGE_TYPE, UPDATE_PAYLOAD_PROFILES, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+- Xerrol Nightstinger: UPDATE_AMMO, UPDATE_PLAYER_TEXT, UPDATE_SPECIAL_MECHANICS, UPDATE_STATS, UPDATE_SUMMARY
+
+## Repo-only production records (reverse ledger)
+
+### MERGE_INTO_CANONICAL (2)
+
+- `lightsaber-chassis-double` (Lightsaber (Double-Bladed)) -> Lightsaber, Double (`weapon-double-bladed-lightsaber`) — gate BLOCKED_PENDING_MIGRATION, 7 reference(s) in 4 file(s)
+- `lightsaber-chassis-standard` (Lightsaber (Standard)) -> Lightsaber (`weapon-lightsaber`) — gate BLOCKED_PENDING_MIGRATION, 10 reference(s) in 6 file(s)
+
+### REMOVE_UNSUPPORTED (33)
+
+- `weapon-blast-cannon` (Blast Cannon) — gate BLOCKED_PENDING_MIGRATION, 13 reference(s) in 7 file(s)
+- `weapon-charric` (Charric) — gate BLOCKED_PENDING_MIGRATION, 7 reference(s) in 3 file(s)
+- `weapon-clone-dc15a-blaster-rifle` (Clone DC-15A Blaster Rifle) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-clone-dc15s-blaster-carbine` (Clone DC-15S Blaster Carbine) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-concussion-missile-launcher` (Concussion Missile Launcher) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-cortosis-sword` (Cortosis Sword) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-electro-net` (Electro-net) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-electro-whip` (Electro-whip) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-heavy-laser-cannon` (Heavy Laser Cannon) — gate BLOCKED_PENDING_MIGRATION, 12 reference(s) in 6 file(s)
+- `weapon-hh-15-projectile-launcher` (HH-15 Projectile Launcher) — gate BLOCKED_PENDING_MIGRATION, 7 reference(s) in 5 file(s)
+- `weapon-hold-out-blaster` (Hold-out Blaster) — gate BLOCKED_PENDING_MIGRATION, 25 reference(s) in 9 file(s)
+- `weapon-ion-blaster` (Ion Blaster) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-jedi-training-saber` (Jedi Training Saber) — gate BLOCKED_PENDING_MIGRATION, 7 reference(s) in 4 file(s)
+- `weapon-laser-cannon` (Laser Cannon) — gate BLOCKED_PENDING_MIGRATION, 167 reference(s) in 12 file(s)
+- `weapon-mandalorian-ripper` (Mandalorian Ripper) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-miniature-missile-launcher` (Miniature Missile Launcher) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-monomolecular-knife` (Monomolecular Knife) — gate BLOCKED_PENDING_MIGRATION, 7 reference(s) in 4 file(s)
+- `weapon-proton-torpedo-launcher` (Proton Torpedo Launcher) — gate BLOCKED_PENDING_MIGRATION, 11 reference(s) in 8 file(s)
+- `weapon-repeating-blaster` (Repeating Blaster) — gate BLOCKED_PENDING_MIGRATION, 7 reference(s) in 3 file(s)
+- `weapon-s-5-heavy-blaster-pistol` (S-5 Heavy Blaster Pistol) — gate BLOCKED_PENDING_MIGRATION, 11 reference(s) in 5 file(s)
+- `weapon-saberdart-launcher` (Saberdart Launcher) — gate BLOCKED_PENDING_MIGRATION, 9 reference(s) in 5 file(s)
+- `weapon-sith-tremor-sword` (Sith Tremor Sword) — gate BLOCKED_PENDING_MIGRATION, 26 reference(s) in 9 file(s)
+- `weapon-sniper-rifle` (Sniper Rifle) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-stealth-blaster-carbine` (Stealth Blaster Carbine) — gate BLOCKED_PENDING_MIGRATION, 20 reference(s) in 8 file(s)
+- `weapon-stealth-carbine` (Stealth Carbine) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-trandoshan-repeater-rifle` (Trandoshan Repeater Rifle) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-tusken-cycler-rifle` (Tusken Cycler Rifle) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-verpine-shatter-pistol` (Verpine Shatter Pistol) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-verpine-shatter-rifle` (Verpine Shatter Rifle) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-verpine-sniper-rifle` (Verpine Sniper Rifle) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-wrist-laser` (Wrist Laser) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-zabrak-combat-staff` (Zabrak Combat Staff) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+- `weapon-zeltron-neural-whip` (Zeltron Neural Whip) — gate BLOCKED_PENDING_MIGRATION, 6 reference(s) in 3 file(s)
+
+### RETAIN_SPECIAL_NONCANONICAL_ROLE (0)
+
+_none_
+
+### REVIEW_MAPPING (0)
+
+_none_
+
+## Blocked canonical fields (source-unresolved; production values may not become canonical)
+
+- **BlasTech DH-23 Outback Blaster Pistol**: canonicalStats.ammo
+- **BlasTech DLT-20A "Longbarrel" Blaster Rifle**: canonicalStats.ammo
+- **BlasTech DT-12 Heavy Blaster Pistol**: canonicalStats.ammo
+- **Bowcaster**: canonicalStats.range.profileId, canonicalStats.ammo
+- **CR-1 Blast Cannon**: canonicalStats.ammo
+- **Czerka Adventurer**: canonicalStats.ammo
+- **Darter**: canonicalStats.ammo
+- **E-Web Repeating Blaster**: canonicalStats.ammo
+- **Electronet**: canonicalStats.range.profileId
+- **Electropole**: canonicalStats.ammo
+- **Light Concussion Missile Launcher**: canonicalStats.ammo
+- **Merr-Sonn Model 434 DeathHammer**: canonicalStats.ammo
+- **Neural Inhibitor**: canonicalStats.range.profileId, canonicalStats.ammo
+- **Retrosaber**: canonicalStats.costCredits, canonicalStats.weightKg, canonicalStats.availability
+- **Sling**: canonicalStats.ammo
+- **Sonic Stunner**: canonicalStats.ammo
+- **SoroSuub Firelance Blaster Rifle**: canonicalStats.ammo
+- **Squib Battering Ram**: canonicalStats.ammo
+- **Tactical Tractor Beam**: canonicalStats.ammo
+- **Targeting Laser**: canonicalStats.ammo
+- **Wrist Rocket Launcher**: canonicalStats.range.profileId
+
+## Schema migration requirements (grouped)
+
+- `summary-field` — 203 identities. No production slot for the derived short player summary. Needed: Add a summary field (or flag) to the weapon item schema.
+- `weapon-size-field` — 199 identities. Production weapons carry no weapon size. Needed: Add a weapon size field.
+- `multiple-attack-profiles` — 36 identities. Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes. Needed: Add attack/mode profile structures.
+- `payload-profiles` — 12 identities. Production has no delivery-system/payload separation. Needed: Add payload profiles and a loaded-ammo reference model.
+- `payload-derived-damage` — 9 identities. Production stores a launcher damage string; canonical launcher damage is owned by the loaded payload. Needed: Resolve damage through payload profiles.
+- `non-dice-damage-model` — 24 identities. Production damage is a single dice string. Needed: Support none/special/modifier/inherited/alternate damage modes.
+- `multi-type-damage` — 71 identities. Production damageType is one string. Needed: Support AND/OR/qualified/unspecified damage types.
+- `stun-model` — 55 identities. Production has no stun setting / native stun model. Needed: Add stun setting and native-stun structures.
+- `range-band-restrictions` — 34 identities. Production has a range profile only; no allowed bands, fixed maximum or cone/area range rules. Needed: Add range restriction structures.
+- `area-geometry` — 33 identities. Production has no structured area geometry. Needed: Add area geometry per attack profile.
+- `ammo-profiles` — 4 identities. Production ammunition is one type/max pair. Needed: Support multiple independent ammunition profiles.
+- `operating-resource-model` — 46 identities. Production has no operating-resource (energy cell etc.) model for non-ammunition power. Needed: Add operating resource structures.
+- `conditional-modifiers` — 13 identities. Production has no conditional attack/damage modifier structures. Needed: Add conditional modifier structures.
+- `triggered-effects` — 17 identities. Production has no triggered-effect structures. Needed: Add triggered effect structures.
+- `defensive-interactions` — 7 identities. Production has no defensive-interaction structures. Needed: Add defensive interaction structures.
+- `wielding-rules` — 15 identities. Production has no wielding/handedness rule structures. Needed: Add wielding rule structures.
+- `configuration-and-state` — 10 identities. Production has no configuration/state-machine structures. Needed: Add configuration/state structures.
+- `critical-effects` — 3 identities. Production has no critical-effect structures. Needed: Add critical effect structures.
+- `conditional-damage-and-qualities` — 11 identities. Production has no conditional damage profile or conditional quality structures. Needed: Add conditional damage/quality structures.
+- `proficiency-rules` — 10 identities. Production has one proficiency value. Needed: Add conditional proficiency rule structures.
+- `quality-parameters` — 41 identities. Production traits are labels without parameters. Needed: Add quality parameter structures (allowed bands, overrides).
+- `construction-and-technology` — 24 identities. Production has no construction/technology/delivery/durability/accessory structures. Needed: Add those structures.
+- `firing-constraints` — 27 identities. Production has no firing-constraint or prepared-attack structures. Needed: Add firing constraint structures.
+- `damage-multiplier-and-range-rules` — 3 identities. Production has no damage multiplier or conditional range rule structures. Needed: Add those structures.
+- `structured-special-rules` — 157 identities. Canonical operation rules (free-form source mechanics) have no production structure. Needed: Add structured special-rule storage.
+- `size-variant-pricing` — 3 identities. Production has one cost/weight; canonical identity varies by size. Needed: Add size-variant pricing structures.
+
+## Dependency gates
+
+Every repo-only cleanup record that is referenced outside the weapon pack stays `BLOCKED_PENDING_MIGRATION`; nothing is rewritten in Phase 3C.
+
+- `lightsaber-chassis-double` — BLOCKED_PENDING_MIGRATION (7 reference(s), 4 file(s))
+- `lightsaber-chassis-standard` — BLOCKED_PENDING_MIGRATION (10 reference(s), 6 file(s))
+- `weapon-blast-cannon` — BLOCKED_PENDING_MIGRATION (13 reference(s), 7 file(s))
+- `weapon-charric` — BLOCKED_PENDING_MIGRATION (7 reference(s), 3 file(s))
+- `weapon-clone-dc15a-blaster-rifle` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-clone-dc15s-blaster-carbine` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-concussion-missile-launcher` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-cortosis-sword` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-electro-net` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-electro-whip` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-heavy-laser-cannon` — BLOCKED_PENDING_MIGRATION (12 reference(s), 6 file(s))
+- `weapon-hh-15-projectile-launcher` — BLOCKED_PENDING_MIGRATION (7 reference(s), 5 file(s))
+- `weapon-hold-out-blaster` — BLOCKED_PENDING_MIGRATION (25 reference(s), 9 file(s))
+- `weapon-ion-blaster` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-jedi-training-saber` — BLOCKED_PENDING_MIGRATION (7 reference(s), 4 file(s))
+- `weapon-laser-cannon` — BLOCKED_PENDING_MIGRATION (167 reference(s), 12 file(s))
+- `weapon-mandalorian-ripper` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-miniature-missile-launcher` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-monomolecular-knife` — BLOCKED_PENDING_MIGRATION (7 reference(s), 4 file(s))
+- `weapon-proton-torpedo-launcher` — BLOCKED_PENDING_MIGRATION (11 reference(s), 8 file(s))
+- `weapon-repeating-blaster` — BLOCKED_PENDING_MIGRATION (7 reference(s), 3 file(s))
+- `weapon-s-5-heavy-blaster-pistol` — BLOCKED_PENDING_MIGRATION (11 reference(s), 5 file(s))
+- `weapon-saberdart-launcher` — BLOCKED_PENDING_MIGRATION (9 reference(s), 5 file(s))
+- `weapon-sith-tremor-sword` — BLOCKED_PENDING_MIGRATION (26 reference(s), 9 file(s))
+- `weapon-sniper-rifle` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-stealth-blaster-carbine` — BLOCKED_PENDING_MIGRATION (20 reference(s), 8 file(s))
+- `weapon-stealth-carbine` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-trandoshan-repeater-rifle` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-tusken-cycler-rifle` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-verpine-shatter-pistol` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-verpine-shatter-rifle` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-verpine-sniper-rifle` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-wrist-laser` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-zabrak-combat-staff` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))
+- `weapon-zeltron-neural-whip` — BLOCKED_PENDING_MIGRATION (6 reference(s), 3 file(s))

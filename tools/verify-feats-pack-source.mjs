@@ -22,6 +22,13 @@ const lines = fs.readFileSync(packPath, 'utf8')
 
 if (!lines.length) fail('packs/feats.db contains zero feat documents. The compendium must not ship empty.');
 
+// Phase 5C: Phase 1A certified same-name DISTINCT_FEAT_IDENTITIES (e.g. two different Staggering Attack feats) may share a name.
+const certifiedSameName = new Set();
+try {
+  for (const i of JSON.parse(fs.readFileSync(path.join(repoRoot, 'data', 'canonical', 'feats.json'), 'utf8')).identities) {
+    if (i.sameNameCollisionType === 'DISTINCT_FEAT_IDENTITIES') certifiedSameName.add(String(i.displayName).trim().toLowerCase());
+  }
+} catch { /* corpus absent: no exemptions */ }
 const errors = [];
 const ids = new Set();
 const names = new Set();
@@ -49,7 +56,7 @@ for (const [index, line] of lines.entries()) {
   if (!name) errors.push(`Line ${index + 1}: missing name`);
   else {
     const normalized = name.toLowerCase();
-    if (names.has(normalized)) errors.push(`Line ${index + 1}: duplicate name ${name}`);
+    if (names.has(normalized) && !certifiedSameName.has(normalized)) errors.push(`Line ${index + 1}: duplicate name ${name}`);
     else names.add(normalized);
   }
 }
@@ -85,7 +92,7 @@ for (const doc of catalogDocs) {
   const expectedRaw = JSON.stringify(doc);
   const actualRaw = packById.get(id).raw;
   if (expectedRaw !== actualRaw) {
-    errors.push(`Content drift for feat id ${id} (${doc.name ?? '<unnamed>'}): packs/feats.db does not match data/feat-catalog.json. Re-run tools/rebuild-feats-pack-source.mjs.`);
+    errors.push(`Content drift for feat id ${id} (${doc.name ?? '<unnamed>'}): packs/feats.db does not match data/feat-catalog.json. Re-run tools/build-feat-production.mjs (data/canonical/feats.json is the only editable feat source).`);
   }
 }
 

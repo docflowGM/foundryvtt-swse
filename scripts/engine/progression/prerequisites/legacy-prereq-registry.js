@@ -45,7 +45,8 @@ export function resolveCanonicalFeatName(rawName) {
   const input = String(rawName ?? '').trim();
   if (!input) return '';
 
-  const direct = CanonicalFeatRegistry.getByName?.(input);
+  let direct = null;
+  try { direct = CanonicalFeatRegistry.getByName?.(input); } catch (err) { if (err?.code !== 'AMBIGUOUS_CANONICAL_FEAT_NAME') throw err; return input; } // same-name distinct feats share one display name
   if (direct?.name) return direct.name;
 
   const normalized = normalizeLookupKey(input);

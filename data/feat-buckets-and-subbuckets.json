@@ -1,654 +1,148 @@
 {
-  "generatedAt": "2026-06-30T14:56:23.700Z",
-  "intent": "Expanded Phase 8 feat picker taxonomy generated from feat-catalog.json.",
-  "totalFeats": 401,
+  "intent": "Feat picker bucket taxonomy, GENERATED from data/canonical/feats.json via the generated feat documents. Do not edit.",
+  "totalFeats": 353,
   "bucketSummary": {
-    "Leadership & Allies": {
-      "count": 18,
-      "subbuckets": {
-        "Teamwork & Aid": {
-          "count": 18,
-          "feats": [
-            "Wary Sentries",
-            "Mounted Regiment",
-            "Ascension Specialists",
-            "Technical Experts",
-            "Blaster Barrage",
-            "Stand Tall",
-            "Aquatic Specialists",
-            "Resolute Stance",
-            "Swarm",
-            "Unhindered Approach",
-            "Acrobatic Ally",
-            "Nimble Team",
-            "Covert Operatives",
-            "Slicer Team",
-            "Rapport",
-            "Suppression Fire",
-            "Coordinated Barrage",
-            "Prime Shot"
-          ]
-        }
-      }
-    },
-    "Recovery & Survival": {
-      "count": 30,
-      "subbuckets": {
-        "Second Wind & Recovery": {
-          "count": 8,
-          "feats": [
-            "Resurgence",
-            "Fast Surge",
-            "Extra Second Wind",
-            "Recovering Surge",
-            "Forceful Recovery",
-            "Vitality Surge",
-            "Impetuous Move",
-            "Unstoppable Combatant"
-          ]
-        },
-        "Healing & Natural Recovery": {
-          "count": 7,
-          "feats": [
-            "Wilderness First Aid",
-            "Medical Team",
-            "Fortifying Recovery",
-            "Pinpoint Accuracy",
-            "Experienced Medic",
-            "Surgical Precision",
-            "Surgical Expertise"
-          ]
-        },
-        "Endurance & Environmental": {
-          "count": 15,
-          "feats": [
-            "Poison Resistance",
-            "Shake It Off",
-            "Stay Up",
-            "Armor Proficiency (light)",
-            "Armor Proficiency (heavy)",
-            "Never Surrender",
-            "Feat of Strength",
-            "Mounted Combat",
-            "Tireless Squad",
-            "Burst of Speed",
-            "Armor Proficiency (medium)",
-            "Droid Shield Mastery",
-            "Wilderness Specialists",
-            "Conditioned",
-            "Forceful Vitality"
-          ]
-        }
-      }
-    },
-    "Combat": {
-      "count": 68,
-      "subbuckets": {
-        "Area & Explosives": {
-          "count": 8,
-          "feats": [
-            "Spray Shot",
-            "Whirlwind Attack",
-            "Flood of Fire",
-            "Targeted Area",
-            "Forceful Blast",
-            "Strafe",
-            "Friendly Fire Avoidance",
-            "Mobility"
-          ]
-        },
-        "Mobility & Positioning": {
-          "count": 18,
-          "feats": [
-            "Improved Charge",
-            "Wounding Strike",
-            "Deft Charge",
-            "Tactical Advantage",
-            "Spring Attack",
-            "Improved Bantha Rush",
-            "Reckless Charge",
-            "Running Attack",
-            "Opportunistic Retreat",
-            "Impulsive Flight",
-            "Heroic Surge",
-            "Steadying Position",
-            "Bantha Herder",
-            "Charging Fire",
-            "Powerful Charge",
-            "Fleet-Footed",
-            "Cornered",
-            "Bantha Rush"
-          ]
-        },
-        "Grapple & Unarmed": {
-          "count": 12,
-          "feats": [
-            "Battering Attack",
-            "Throw",
-            "Grappling Strike",
-            "Attack Combo (Fire and Strike)",
-            "Attack Combo (Melee)",
-            "Crush",
-            "Multi-Grab",
-            "Rancor Crush",
-            "Trip",
-            "Knock Heads",
-            "Pin",
-            "Grab Back"
-          ]
-        },
-        "Defense & Avoidance": {
-          "count": 14,
-          "feats": [
-            "Flurry",
-            "Tumble Defense",
-            "Predictive Defense",
-            "Moving Target",
-            "Melee Defense",
-            "Combat Reflexes",
-            "Trench Warrior",
-            "Cunning Attack",
-            "Improved Damage Threshold",
-            "Great Fortitude",
-            "Fight Through Pain",
-            "Resilient Strength",
-            "Lightning Reflexes",
-            "Wary Defender"
-          ]
-        },
-        "Attack Options": {
-          "count": 3,
-          "feats": [
-            "Rapid Reaction",
-            "Lightning Draw",
-            "Improved Stun"
-          ]
-        },
-        "Melee & Close Combat": {
-          "count": 6,
-          "feats": [
-            "Accelerated Strike",
-            "Great Cleave",
-            "Improved Knock Prone",
-            "Extra Rage",
-            "Controlled Rage",
-            "Knock Prone"
-          ]
-        },
-        "Ranged Combat": {
-          "count": 2,
-          "feats": [
-            "Opportunistic Shooter",
-            "Mighty Throw"
-          ]
-        },
-        "Damage & Threshold": {
-          "count": 5,
-          "feats": [
-            "Delay Damage",
-            "Dreadful Rage",
-            "Advantageous Attack",
-            "Attack Combo (Ranged)",
-            "Hew"
-          ]
-        }
-      }
-    },
-    "Species & Origin": {
-      "count": 57,
-      "subbuckets": {
-        "Species Traits": {
-          "count": 57,
-          "feats": [
-            "Unwavering Focus",
-            "Galactic Alliance Military Training",
-            "Increased Resistance",
-            "Primitive Warrior",
-            "Pitiless Warrior",
-            "Scion of Dorin",
-            "Confident Success",
-            "Strong Bellow",
-            "Quick Comeback",
-            "Ample Foraging",
-            "Sharp Senses",
-            "Republic Military Training",
-            "Wroshyr Rage",
-            "Binary Mind",
-            "Justice Seeker",
-            "Veteran Spacer",
-            "Keen Scent",
-            "Separatist Military Training",
-            "Resurgent Vitality",
-            "Sith Military Training",
-            "Perfect Intuition",
-            "Nikto Survival",
-            "Mandalorian Training",
-            "Perfect Swimmer",
-            "Imperial Military Training",
-            "Flawless Pilot",
-            "Survivor of Ryloth",
-            "Disarming Charm",
-            "Mind of Reason",
-            "Inborn Resilience",
-            "Devastating Bellow",
-            "Warrior Heritage",
-            "Lasting Influence",
-            "Fringe Benefits",
-            "Rebel Military Training",
-            "Mon Calamari Shipwright",
-            "Regenerative Healing",
-            "Instinctive Perception",
-            "Master Tracker",
-            "Hunter's Instincts",
-            "Jedi Heritage",
-            "Bothan Will",
-            "Fast Swimmer",
-            "Bowcaster Marksman",
-            "Spacer's Surge",
-            "Wookiee Grip",
-            "Shrewd Bargainer",
-            "Deep Sight",
-            "Thick Skin",
-            "Darkness Dweller",
-            "Imperceptible Liar",
-            "Clawed Subspecies",
-            "Read the Winds",
-            "Sure Climber",
-            "Gungan Weapon Master",
-            "Nature Specialist",
-            "Forest Stalker"
-          ]
-        }
-      }
-    },
-    "Droid": {
-      "count": 21,
-      "subbuckets": {
-        "Droid Repair": {
-          "count": 4,
-          "feats": [
-            "Expert Droid Repair",
-            "Hasty Modification",
-            "Droidcraft",
-            "Droid Focus"
-          ]
-        },
-        "Droid Combat": {
-          "count": 12,
-          "feats": [
-            "Pincer",
-            "Tool Frenzy",
-            "Ion Shielding",
-            "Sniper",
-            "Droid Hunter",
-            "Distracting Droid",
-            "Crossfire",
-            "Aiming Accuracy",
-            "Slammer",
-            "Logic Upgrade: Tactician",
-            "Mechanical Martial Arts",
-            "Multi-Targeting"
-          ]
-        },
-        "Droid Systems": {
-          "count": 5,
-          "feats": [
-            "Logic Upgrade: Self-Defense",
-            "Leader of Droids",
-            "Erratic Target",
-            "Meat Shield",
-            "Sensor Link"
-          ]
-        }
-      }
-    },
-    "Force": {
-      "count": 37,
-      "subbuckets": {
-        "Force Point & Destiny": {
-          "count": 25,
-          "feats": [
-            "Forceful Strike",
-            "Unstoppable Force",
-            "Forceful Throw",
-            "Forceful Will",
-            "Hold Together",
-            "Forceful Saber Throw",
-            "Forceful Grip",
-            "Rapid Assault",
-            "Force Boon",
-            "Turn and Burn",
-            "Forceful Slam",
-            "Risk Taker",
-            "Instinctive Attack",
-            "Strong in the Force",
-            "Forceful Telekinesis",
-            "Force Readiness",
-            "Unswerving Resolve",
-            "Combat Trickery",
-            "Instinctive Defense",
-            "Unleashed",
-            "Focused Rage",
-            "Acrobatic Dodge",
-            "Forceful Weapon",
-            "Jedi Familiarity",
-            "Forceful Stun"
-          ]
-        },
-        "Force Training & Powers": {
-          "count": 12,
-          "feats": [
-            "Saber Throw",
-            "Dreadful Countenance",
-            "Wicked Strike",
-            "Keen Force Mind",
-            "Pall of the Dark Side",
-            "Force Training",
-            "Intuitive Initiative",
-            "Mission Specialist",
-            "Improved Disarm",
-            "Logic Upgrade: Skill Swap",
-            "Force Sensitivity",
-            "Intimidator"
-          ]
-        }
-      }
-    },
-    "Starship & Vehicle": {
-      "count": 35,
-      "subbuckets": {
-        "Pilot & Maneuvers": {
-          "count": 12,
-          "feats": [
-            "Slippery Maneuver",
-            "Vehicular Combat",
-            "Starship Tactics",
-            "Dodge",
-            "Careful Shot",
-            "Deadeye",
-            "Gunnery Specialist",
-            "Mounted Defense",
-            "Unified Squadron",
-            "Precise Shot",
-            "Momentum Strike",
-            "Tactical Genius"
-          ]
-        },
-        "Gunnery & Weapons": {
-          "count": 15,
-          "feats": [
-            "Point-Blank Shot",
-            "Burst Fire",
-            "Zero Range",
-            "Double Attack",
-            "Triple Crit",
-            "Destructive Force",
-            "Triple Attack",
-            "Return Fire",
-            "Dual Weapon Mastery I",
-            "Sniper Shot",
-            "Coordinated Attack",
-            "Far Shot",
-            "Dual Weapon Mastery II",
-            "Dual Weapon Mastery III",
-            "Weapon Proficiency"
-          ]
-        },
-        "Starship Systems & Metadata": {
-          "count": 4,
-          "feats": [
-            "Signature Device",
-            "Power Attack",
-            "Vehicle Systems Expertise",
-            "Shield Surge"
-          ]
-        },
-        "Vehicle Defense": {
-          "count": 4,
-          "feats": [
-            "Overwhelming Attack",
-            "Heavy Hitter",
-            "A Few Maneuvers",
-            "Improved Defenses"
-          ]
-        }
-      }
-    },
-    "Skills": {
-      "count": 47,
-      "subbuckets": {
-        "Stealth & Perception": {
-          "count": 12,
-          "feats": [
-            "Low Profile",
-            "Stealthy",
-            "Reactive Awareness",
-            "Advantageous Cover",
-            "Reactive Stealth",
-            "Duck and Cover",
-            "Unwavering Resolve",
-            "Improved Sleight of Hand",
-            "Knife Trick",
-            "Deadly Sniper",
-            "Deceptive Drop",
-            "Informer"
-          ]
-        },
-        "Skill Training & Focus": {
-          "count": 11,
-          "feats": [
-            "Grapple Resistance",
-            "Skill Focus",
-            "Close Combat Escape",
-            "Dive for Cover",
-            "Acrobatic Strike",
-            "Improved Grapple",
-            "Quick Skill",
-            "Skill Training",
-            "Increased Agility",
-            "Trample",
-            "Powerful Rage"
-          ]
-        },
-        "Skill Reroll & Substitution": {
-          "count": 6,
-          "feats": [
-            "Conditioning",
-            "Headstrong",
-            "Desperate Gambit",
-            "Assured Attack",
-            "Resilient Reflexes",
-            "Resilient Will"
-          ]
-        },
-        "Social Skills": {
-          "count": 9,
-          "feats": [
-            "Disturbing Presence",
-            "Hideous Visage",
-            "Impersonate",
-            "Trustworthy",
-            "Intimidating Presence",
-            "Frightening Cleave",
-            "Silver Tongue",
-            "Fast Talk",
-            "Master of Disguise"
-          ]
-        },
-        "Knowledge & Recall": {
-          "count": 4,
-          "feats": [
-            "Cut the Red Tape",
-            "Elder's Knowledge",
-            "Scavenger",
-            "Friends in Low Places"
-          ]
-        },
-        "Skill Challenge": {
-          "count": 3,
-          "feats": [
-            "Skill Challenge: Catastrophic Avoidance",
-            "Skill Challenge: Last Resort",
-            "Skill Challenge: Recovery"
-          ]
-        },
-        "Mechanics & Use Computer": {
-          "count": 2,
-          "feats": [
-            "Gearhead",
-            "Hyperblazer"
-          ]
-        }
-      }
-    },
     "Character": {
       "count": 19,
       "subbuckets": {
-        "Hit Points & Durability": {
-          "count": 10,
+        "Ability & Defenses": {
+          "count": 5,
           "feats": [
-            "Toughness",
-            "Wrruushi Training",
-            "Damage Conversion",
-            "Cleave",
-            "Vehicular Surge",
-            "Superior Tech",
-            "Biotech Specialist",
-            "Fatal Hit",
-            "Follow Through",
-            "Brink of Death"
+            "Force of Personality",
+            "Metamorph",
+            "Power Blast",
+            "Rapid Shot",
+            "Rapid Strike"
           ]
         },
         "General Passive": {
           "count": 4,
           "feats": [
-            "Bad Feeling",
             "Anointed Hunter",
+            "Bad Feeling",
             "Natural Leader",
             "Officer Candidacy Training"
           ]
         },
-        "Ability & Defenses": {
-          "count": 5,
+        "Hit Points & Durability": {
+          "count": 10,
           "feats": [
-            "Power Blast",
-            "Rapid Shot",
-            "Force of Personality",
-            "Rapid Strike",
-            "Metamorph"
+            "Biotech Specialist",
+            "Brink of Death",
+            "Cleave",
+            "Damage Conversion",
+            "Fatal Hit",
+            "Follow Through",
+            "Superior Tech",
+            "Toughness",
+            "Vehicular Surge",
+            "Wrruushi Training"
           ]
         }
       }
     },
-    "Social & Intrigue": {
-      "count": 17,
+    "Combat": {
+      "count": 56,
       "subbuckets": {
-        "Persuasion & Influence": {
-          "count": 17,
+        "": {
+          "count": 1,
           "feats": [
-            "Grazing Shot",
-            "Channel Rage",
-            "Adaptable Talent",
-            "Flèche",
-            "Maniacal Charge",
-            "Recurring Success",
-            "Demoralizing Strike",
-            "Opportunistic Trickery",
-            "Expert Briber",
-            "Sadistic Strike",
-            "Frightful Presence",
-            "Improved Opportunistic Trickery",
-            "Frightening Presence",
-            "Indomitable Personality",
-            "Brilliant Defense",
-            "Bone Crusher",
-            "Resilient Talent"
-          ]
-        }
-      }
-    },
-    "Weapon & Armor": {
-      "count": 41,
-      "subbuckets": {
-        "Multiattack & Dual Weapon": {
-          "count": 6,
-          "feats": [
-            "Staggering Attack",
-            "Collateral Damage",
-            "Two-Weapon Fighting",
-            "Improved Rapid Strike",
-            "Hobbling Strike",
-            "Mighty Swing"
+            "Staggering Attack"
           ]
         },
-        "Lightsaber & Weapon Styles": {
-          "count": 9,
+        "Area & Explosives": {
+          "count": 7,
           "feats": [
-            "K'tara Training",
-            "Martial Arts II",
-            "Tae-Jitsu Training",
-            "Hijkata Training",
-            "Martial Arts I",
-            "Martial Arts III",
-            "Teräs Käsi Training",
-            "Long Haft Strike",
-            "Echani Training"
+            "Flood of Fire",
+            "Forceful Blast",
+            "Mobility",
+            "Spray Shot",
+            "Strafe",
+            "Targeted Area",
+            "Whirlwind Attack"
           ]
         },
-        "Weapon Proficiency": {
-          "count": 18,
+        "Attack Options": {
+          "count": 2,
           "feats": [
-            "Exotic Weapon Proficiency",
-            "Riflemaster",
-            "Weapon Proficiency (Simple Weapons)",
-            "Triple Crit Specialist",
-            "Relentless Attack",
-            "Heavy Weapon Proficiency",
-            "Quick Draw",
-            "Returning Bug",
-            "Weapon Proficiency (Rifles)",
-            "Weapon Proficiency (Heavy Weapons)",
-            "Sport Hunter",
-            "Savage Attack",
-            "Improvised Weapon Mastery",
-            "Weapon Focus",
-            "Withdrawal Strike",
-            "Advanced Melee Weapon Proficiency",
-            "Pistoleer",
-            "Weapon Proficiency (Pistols)"
+            "Lightning Draw",
+            "Rapid Reaction"
           ]
         },
-        "Weapon Focus & Specialization": {
-          "count": 5,
-          "feats": [
-            "Weapon Finesse",
-            "Halt",
-            "Autofire Assault",
-            "Critical Strike",
-            "Autofire Sweep"
-          ]
-        },
-        "Armor Proficiency & Use": {
+        "Damage & Threshold": {
           "count": 3,
           "feats": [
-            "Grand Army of the Republic Training",
-            "Stava Training",
-            "K'thri Training"
+            "Advantageous Attack",
+            "Attack Combo (Ranged)",
+            "Dreadful Rage"
           ]
-        }
-      }
-    },
-    "GM / Metadata": {
-      "count": 5,
-      "subbuckets": {
-        "Source Reference & Procedure": {
-          "count": 5,
+        },
+        "Defense & Avoidance": {
+          "count": 12,
           "feats": [
-            "Force Regimen Mastery",
-            "Tech Specialist",
-            "Linguist",
-            "Cybernetic Surgery",
-            "Starship Designer"
+            "Combat Reflexes",
+            "Cunning Attack",
+            "Fight Through Pain",
+            "Flurry",
+            "Improved Damage Threshold",
+            "Melee Defense",
+            "Moving Target",
+            "Predictive Defense",
+            "Resilient Strength",
+            "Trench Warrior",
+            "Tumble Defense",
+            "Wary Defender"
+          ]
+        },
+        "Grapple & Unarmed": {
+          "count": 11,
+          "feats": [
+            "Attack Combo (Fire and Strike)",
+            "Attack Combo (Melee)",
+            "Battering Attack",
+            "Crush",
+            "Grab Back",
+            "Knock Heads",
+            "Multi-Grab",
+            "Pin",
+            "Rancor Crush",
+            "Throw",
+            "Trip"
+          ]
+        },
+        "Melee & Close Combat": {
+          "count": 4,
+          "feats": [
+            "Accelerated Strike",
+            "Controlled Rage",
+            "Extra Rage",
+            "Great Cleave"
+          ]
+        },
+        "Mobility & Positioning": {
+          "count": 14,
+          "feats": [
+            "Bantha Herder",
+            "Bantha Rush",
+            "Charging Fire",
+            "Cornered",
+            "Deft Charge",
+            "Fleet-Footed",
+            "Improved Bantha Rush",
+            "Improved Charge",
+            "Impulsive Flight",
+            "Opportunistic Retreat",
+            "Powerful Charge",
+            "Running Attack",
+            "Steadying Position",
+            "Tactical Advantage"
+          ]
+        },
+        "Ranged Combat": {
+          "count": 2,
+          "feats": [
+            "Mighty Throw",
+            "Opportunistic Shooter"
           ]
         }
       }
@@ -665,16 +159,483 @@
         }
       }
     },
+    "Droid": {
+      "count": 21,
+      "subbuckets": {
+        "Droid Combat": {
+          "count": 12,
+          "feats": [
+            "Aiming Accuracy",
+            "Crossfire",
+            "Distracting Droid",
+            "Droid Hunter",
+            "Ion Shielding",
+            "Logic Upgrade: Tactician",
+            "Mechanical Martial Arts",
+            "Multi-Targeting",
+            "Pincer",
+            "Slammer",
+            "Sniper",
+            "Tool Frenzy"
+          ]
+        },
+        "Droid Repair": {
+          "count": 4,
+          "feats": [
+            "Droid Focus",
+            "Droidcraft",
+            "Expert Droid Repair",
+            "Hasty Modification"
+          ]
+        },
+        "Droid Systems": {
+          "count": 5,
+          "feats": [
+            "Erratic Target",
+            "Leader of Droids",
+            "Logic Upgrade: Self-Defense",
+            "Meat Shield",
+            "Sensor Link"
+          ]
+        }
+      }
+    },
+    "Force": {
+      "count": 25,
+      "subbuckets": {
+        "Force Point & Destiny": {
+          "count": 16,
+          "feats": [
+            "Acrobatic Dodge",
+            "Combat Trickery",
+            "Focused Rage",
+            "Force Boon",
+            "Force Readiness",
+            "Hold Together",
+            "Instinctive Attack",
+            "Instinctive Defense",
+            "Jedi Familiarity",
+            "Rapid Assault",
+            "Risk Taker",
+            "Strong in the Force",
+            "Turn and Burn",
+            "Unleashed",
+            "Unstoppable Force",
+            "Unswerving Resolve"
+          ]
+        },
+        "Force Training & Powers": {
+          "count": 9,
+          "feats": [
+            "Dreadful Countenance",
+            "Force Sensitivity",
+            "Force Training",
+            "Improved Disarm",
+            "Intimidator",
+            "Logic Upgrade: Skill Swap",
+            "Mission Specialist",
+            "Pall of the Dark Side",
+            "Wicked Strike"
+          ]
+        }
+      }
+    },
+    "GM / Metadata": {
+      "count": 5,
+      "subbuckets": {
+        "Source Reference & Procedure": {
+          "count": 5,
+          "feats": [
+            "Cybernetic Surgery",
+            "Force Regimen Mastery",
+            "Linguist",
+            "Starship Designer",
+            "Tech Specialist"
+          ]
+        }
+      }
+    },
+    "Leadership & Allies": {
+      "count": 18,
+      "subbuckets": {
+        "Teamwork & Aid": {
+          "count": 18,
+          "feats": [
+            "Acrobatic Ally",
+            "Aquatic Specialists",
+            "Ascension Specialists",
+            "Blaster Barrage",
+            "Coordinated Barrage",
+            "Covert Operatives",
+            "Mounted Regiment",
+            "Nimble Team",
+            "Prime Shot",
+            "Rapport",
+            "Resolute Stance",
+            "Slicer Team",
+            "Stand Tall",
+            "Suppression Fire",
+            "Swarm",
+            "Technical Experts",
+            "Unhindered Approach",
+            "Wary Sentries"
+          ]
+        }
+      }
+    },
+    "Recovery & Survival": {
+      "count": 27,
+      "subbuckets": {
+        "Endurance & Environmental": {
+          "count": 13,
+          "feats": [
+            "Armor Proficiency (Heavy)",
+            "Armor Proficiency (Light)",
+            "Armor Proficiency (Medium)",
+            "Burst of Speed",
+            "Droid Shield Mastery",
+            "Feat of Strength",
+            "Mounted Combat",
+            "Never Surrender",
+            "Poison Resistance",
+            "Shake It Off",
+            "Stay Up",
+            "Tireless Squad",
+            "Wilderness Specialists"
+          ]
+        },
+        "Healing & Natural Recovery": {
+          "count": 6,
+          "feats": [
+            "Experienced Medic",
+            "Fortifying Recovery",
+            "Medical Team",
+            "Pinpoint Accuracy",
+            "Surgical Expertise",
+            "Wilderness First Aid"
+          ]
+        },
+        "Second Wind & Recovery": {
+          "count": 8,
+          "feats": [
+            "Extra Second Wind",
+            "Fast Surge",
+            "Forceful Recovery",
+            "Impetuous Move",
+            "Recovering Surge",
+            "Resurgence",
+            "Unstoppable Combatant",
+            "Vitality Surge"
+          ]
+        }
+      }
+    },
+    "Skills": {
+      "count": 37,
+      "subbuckets": {
+        "": {
+          "count": 1,
+          "feats": [
+            "Recall"
+          ]
+        },
+        "Knowledge & Recall": {
+          "count": 4,
+          "feats": [
+            "Cut the Red Tape",
+            "Elder's Knowledge",
+            "Friends in Low Places",
+            "Scavenger"
+          ]
+        },
+        "Mechanics & Use Computer": {
+          "count": 2,
+          "feats": [
+            "Gearhead",
+            "Hyperblazer"
+          ]
+        },
+        "Skill Challenge": {
+          "count": 3,
+          "feats": [
+            "Skill Challenge: Catastrophic Avoidance",
+            "Skill Challenge: Last Resort",
+            "Skill Challenge: Recovery"
+          ]
+        },
+        "Skill Reroll & Substitution": {
+          "count": 3,
+          "feats": [
+            "Assured Attack",
+            "Conditioning",
+            "Desperate Gambit"
+          ]
+        },
+        "Skill Training & Focus": {
+          "count": 10,
+          "feats": [
+            "Acrobatic Strike",
+            "Close Combat Escape",
+            "Dive for Cover",
+            "Grapple Resistance",
+            "Increased Agility",
+            "Powerful Rage",
+            "Quick Skill",
+            "Skill Focus",
+            "Skill Training",
+            "Trample"
+          ]
+        },
+        "Social Skills": {
+          "count": 6,
+          "feats": [
+            "Disturbing Presence",
+            "Frightening Cleave",
+            "Hideous Visage",
+            "Impersonate",
+            "Master of Disguise",
+            "Silver Tongue"
+          ]
+        },
+        "Stealth & Perception": {
+          "count": 8,
+          "feats": [
+            "Advantageous Cover",
+            "Deadly Sniper",
+            "Deceptive Drop",
+            "Duck and Cover",
+            "Improved Sleight of Hand",
+            "Informer",
+            "Knife Trick",
+            "Unwavering Resolve"
+          ]
+        }
+      }
+    },
+    "Social & Intrigue": {
+      "count": 14,
+      "subbuckets": {
+        "Persuasion & Influence": {
+          "count": 14,
+          "feats": [
+            "Adaptable Talent",
+            "Bone Crusher",
+            "Brilliant Defense",
+            "Channel Rage",
+            "Demoralizing Strike",
+            "Expert Briber",
+            "Flèche",
+            "Grazing Shot",
+            "Improved Opportunistic Trickery",
+            "Indomitable Personality",
+            "Maniacal Charge",
+            "Opportunistic Trickery",
+            "Recurring Success",
+            "Sadistic Strike"
+          ]
+        }
+      }
+    },
+    "Species & Origin": {
+      "count": 57,
+      "subbuckets": {
+        "Species Traits": {
+          "count": 57,
+          "feats": [
+            "Ample Foraging",
+            "Binary Mind",
+            "Bothan Will",
+            "Bowcaster Marksman",
+            "Clawed Subspecies",
+            "Confident Success",
+            "Darkness Dweller",
+            "Deep Sight",
+            "Devastating Bellow",
+            "Disarming Charm",
+            "Fast Swimmer",
+            "Flawless Pilot",
+            "Forest Stalker",
+            "Fringe Benefits",
+            "Galactic Alliance Military Training",
+            "Gungan Weapon Master",
+            "Hunter's Instincts",
+            "Imperceptible Liar",
+            "Imperial Military Training",
+            "Inborn Resilience",
+            "Increased Resistance",
+            "Instinctive Perception",
+            "Jedi Heritage",
+            "Justice Seeker",
+            "Keen Scent",
+            "Lasting Influence",
+            "Mandalorian Training",
+            "Master Tracker",
+            "Mind of Reason",
+            "Mon Calamari Shipwright",
+            "Nature Specialist",
+            "Nikto Survival",
+            "Perfect Intuition",
+            "Perfect Swimmer",
+            "Pitiless Warrior",
+            "Primitive Warrior",
+            "Quick Comeback",
+            "Read the Winds",
+            "Rebel Military Training",
+            "Regenerative Healing",
+            "Republic Military Training",
+            "Resurgent Vitality",
+            "Scion of Dorin",
+            "Separatist Military Training",
+            "Sharp Senses",
+            "Shrewd Bargainer",
+            "Sith Military Training",
+            "Spacer's Surge",
+            "Strong Bellow",
+            "Sure Climber",
+            "Survivor of Ryloth",
+            "Thick Skin",
+            "Unwavering Focus",
+            "Veteran Spacer",
+            "Warrior Heritage",
+            "Wookiee Grip",
+            "Wroshyr Rage"
+          ]
+        }
+      }
+    },
+    "Starship & Vehicle": {
+      "count": 35,
+      "subbuckets": {
+        "Gunnery & Weapons": {
+          "count": 15,
+          "feats": [
+            "Burst Fire",
+            "Coordinated Attack",
+            "Destructive Force",
+            "Double Attack",
+            "Dual Weapon Mastery I",
+            "Dual Weapon Mastery II",
+            "Dual Weapon Mastery III",
+            "Far Shot",
+            "Point-Blank Shot",
+            "Return Fire",
+            "Sniper Shot",
+            "Triple Attack",
+            "Triple Crit",
+            "Weapon Proficiency",
+            "Zero Range"
+          ]
+        },
+        "Pilot & Maneuvers": {
+          "count": 12,
+          "feats": [
+            "Careful Shot",
+            "Deadeye",
+            "Dodge",
+            "Gunnery Specialist",
+            "Momentum Strike",
+            "Mounted Defense",
+            "Precise Shot",
+            "Slippery Maneuver",
+            "Starship Tactics",
+            "Tactical Genius",
+            "Unified Squadron",
+            "Vehicular Combat"
+          ]
+        },
+        "Starship Systems & Metadata": {
+          "count": 4,
+          "feats": [
+            "Power Attack",
+            "Shield Surge",
+            "Signature Device",
+            "Vehicle Systems Expertise"
+          ]
+        },
+        "Vehicle Defense": {
+          "count": 4,
+          "feats": [
+            "A Few Maneuvers",
+            "Heavy Hitter",
+            "Improved Defenses",
+            "Overwhelming Attack"
+          ]
+        }
+      }
+    },
     "Tech & Equipment": {
       "count": 4,
       "subbuckets": {
         "Demolitions & Devices": {
           "count": 4,
           "feats": [
-            "Disabler",
-            "Flash and Clear",
             "Angled Throw",
-            "Artillery Shot"
+            "Artillery Shot",
+            "Disabler",
+            "Flash and Clear"
+          ]
+        }
+      }
+    },
+    "Weapon & Armor": {
+      "count": 33,
+      "subbuckets": {
+        "Armor Proficiency & Use": {
+          "count": 3,
+          "feats": [
+            "Grand Army of the Republic Training",
+            "K'thri Training",
+            "Stava Training"
+          ]
+        },
+        "Lightsaber & Weapon Styles": {
+          "count": 9,
+          "feats": [
+            "Echani Training",
+            "Hijkata Training",
+            "K'tara Training",
+            "Long Haft Strike",
+            "Martial Arts I",
+            "Martial Arts II",
+            "Martial Arts III",
+            "Tae-Jitsu Training",
+            "Teräs Käsi Training"
+          ]
+        },
+        "Multiattack & Dual Weapon": {
+          "count": 5,
+          "feats": [
+            "Collateral Damage",
+            "Hobbling Strike",
+            "Improved Rapid Strike",
+            "Mighty Swing",
+            "Staggering Attack"
+          ]
+        },
+        "Weapon Focus & Specialization": {
+          "count": 5,
+          "feats": [
+            "Autofire Assault",
+            "Autofire Sweep",
+            "Critical Strike",
+            "Halt",
+            "Weapon Finesse"
+          ]
+        },
+        "Weapon Proficiency": {
+          "count": 11,
+          "feats": [
+            "Exotic Weapon Proficiency",
+            "Improvised Weapon Mastery",
+            "Pistoleer",
+            "Quick Draw",
+            "Relentless Attack",
+            "Returning Bug",
+            "Riflemaster",
+            "Savage Attack",
+            "Sport Hunter",
+            "Weapon Focus",
+            "Withdrawal Strike"
           ]
         }
       }

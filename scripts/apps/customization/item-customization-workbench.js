@@ -2400,7 +2400,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     return candidates.find(ch => {
       const id = String(ch?.system?.chassisId || ch?.id || ch?._id || '').toLowerCase();
       const name = String(ch?.name || '').toLowerCase();
-      return id === 'standard' || id === 'lightsaber-chassis-standard' || id === 'standard_lightsaber' || name === 'lightsaber (standard)' || name === 'standard lightsaber' || (/standard/.test(name) && /lightsaber/.test(name));
+      return id === 'standard' || id === 'weapon-lightsaber' || id === 'standard_lightsaber' || name === 'lightsaber' || name === 'lightsaber (standard)' || name === 'standard lightsaber' || (/standard/.test(name) && /lightsaber/.test(name));
     }) || candidates.find(ch => {
       const id = String(ch?.system?.chassisId || ch?.id || ch?._id || '').toLowerCase();
       const name = String(ch?.name || '').toLowerCase();

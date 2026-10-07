@@ -148,6 +148,8 @@ export function detect3E4State(root = ROOT) {
 }
 
 // Files a LATER certified phase (3F) legitimately rewrote: their verification belongs to that phase.
+// Phase 5C owns actor-pack weapon/feat reference migration (embedded sourceId remaps)
+const PHASE_5C_OWNED = new Set(['data/class-archetypes.json', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db', 'packs/droids.db', 'packs/beasts.db']);
 const LATER_OWNED = new Set(['packs/talents.db', 'packs/talent_trees.db', 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json']);
 // `later`: a certified state after 3E-4 (3E-5 repaired other records). Only the seven records and every 3E-4 invariant that 3E-5 cannot touch are checked.
 const isLater = root => ['talent-phase-3e5-dry-run-report.json', 'talent-phase-3f-dry-run-report.json', 'talent-phase-3g-dry-run-report.json', 'talent-phase-11-2a-dry-run-report.json', 'talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json'].some(f => { const p = path.join(root, 'data/audits', f); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(readText(TALENTS, root)); });
@@ -178,7 +180,7 @@ export function verifyApplied(root = ROOT, { exact = false } = {}) {
   }
   check('addendum authority: source/page/prerequisites/benefit/description.value all equal', addendum.additions.every(a => { const s = by.get(a.production.id)?.system; return s && s.source === a.publication.sourcebook && s.page === a.publication.page && (s.prerequisites ?? '') === a.prerequisites && s.benefit === a.rulesText && s.description?.value === a.rulesText; }));
   if (!later) check('the other 1,180 records are unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!later || !LATER_OWNED.has(rel)) check(`untouched: ${rel}`, fs.existsSync(path.join(root, rel)) && gitBlobSha(readText(rel, root)) === sha);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!PHASE_5C_OWNED.has(rel) && (!later || !LATER_OWNED.has(rel))) check(`untouched: ${rel}`, fs.existsSync(path.join(root, rel)) && gitBlobSha(readText(rel, root)) === sha);
   if (exact && !later) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);
   return res;
 }

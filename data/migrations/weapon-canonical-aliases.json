@@ -1,0 +1,479 @@
+{
+ "schemaVersion": "5C.1",
+ "role": "MIGRATION_ALIAS_ONLY",
+ "note": "Old production ids/names -> canonical production id. Contains no weapon definitions.",
+ "renamed": [
+  {
+   "id": "lightsaber-chassis-archaic-lightfoil",
+   "oldName": "Archaic Lightfoil",
+   "canonicalName": "Lightfoil, Archaic"
+  },
+  {
+   "id": "lightsaber-chassis-archaic-lightsaber",
+   "oldName": "Archaic Lightsaber",
+   "canonicalName": "Lightsaber, Archaic"
+  },
+  {
+   "id": "lightsaber-chassis-dual-phase",
+   "oldName": "Dual-Phase Lightsaber",
+   "canonicalName": "Lightsaber, Dual-Phase"
+  },
+  {
+   "id": "lightsaber-chassis-great",
+   "oldName": "Great Lightsaber",
+   "canonicalName": "Lightsaber, Great"
+  },
+  {
+   "id": "lightsaber-chassis-modern-lightfoil",
+   "oldName": "Modern Lightfoil",
+   "canonicalName": "Lightfoil, Modern"
+  },
+  {
+   "id": "lightsaber-chassis-short",
+   "oldName": "Short Lightsaber",
+   "canonicalName": "Lightsaber, Short"
+  },
+  {
+   "id": "weapon-adjudicator-slugthrower",
+   "oldName": "Adjudicator Slugthrower",
+   "canonicalName": "Czerka Adjudicator"
+  },
+  {
+   "id": "weapon-adventurer-slugthrower",
+   "oldName": "Adventurer Slugthrower",
+   "canonicalName": "Czerka Adventurer"
+  },
+  {
+   "id": "weapon-arc-9965-blaster",
+   "oldName": "ARC-9965 Blaster",
+   "canonicalName": "ARC-9965 Blaster Rifle"
+  },
+  {
+   "id": "weapon-assault-blaster-rifle",
+   "oldName": "Assault Blaster Rifle",
+   "canonicalName": "Blaster Rifle, Assault"
+  },
+  {
+   "id": "weapon-battering-ram",
+   "oldName": "Battering Ram",
+   "canonicalName": "Squib Battering Ram"
+  },
+  {
+   "id": "weapon-bluebolt-blaster-pistol",
+   "oldName": "Bluebolt Blaster Pistol",
+   "canonicalName": "Blaster Pistol, Bluebolt"
+  },
+  {
+   "id": "weapon-defender-microblaster",
+   "oldName": "Defender MicroBlaster",
+   "canonicalName": "Gee-Tech 12 Defender Microblaster"
+  },
+  {
+   "id": "weapon-dh-23-blaster-pistol",
+   "oldName": "DH-23 Blaster Pistol",
+   "canonicalName": "BlasTech DH-23 Outback Blaster Pistol"
+  },
+  {
+   "id": "weapon-disruptor-pistol",
+   "oldName": "Disruptor Pistol",
+   "canonicalName": "DX-2 Disruptor Pistol"
+  },
+  {
+   "id": "weapon-disruptor-rifle",
+   "oldName": "Disruptor Rifle",
+   "canonicalName": "DXR-6 Disruptor Rifle"
+  },
+  {
+   "id": "weapon-dlt-20a-longblaster",
+   "oldName": "DLT-20A Longblaster",
+   "canonicalName": "BlasTech DLT-20A \"Longbarrel\" Blaster Rifle"
+  },
+  {
+   "id": "weapon-double-barreled-blaster-carbine",
+   "oldName": "Double-Barreled Blaster Carbine",
+   "canonicalName": "Blaster Carbine, Double-Barreled"
+  },
+  {
+   "id": "weapon-double-bladed-lightsaber",
+   "oldName": "Double-Bladed Lightsaber",
+   "canonicalName": "Lightsaber, Double"
+  },
+  {
+   "id": "weapon-dt-12-heavy-blaster",
+   "oldName": "DT-12 Heavy Blaster",
+   "canonicalName": "BlasTech DT-12 Heavy Blaster Pistol"
+  },
+  {
+   "id": "weapon-espo-500-riot-gun",
+   "oldName": "ESPO 500 Riot Gun",
+   "canonicalName": "BlasTech 500 Riot Gun"
+  },
+  {
+   "id": "weapon-firelance-blaster-rifle",
+   "oldName": "Firelance Blaster Rifle",
+   "canonicalName": "SoroSuub Firelance Blaster Rifle"
+  },
+  {
+   "id": "weapon-flash-canister",
+   "oldName": "Flash Canister",
+   "canonicalName": "R-9 Flash Canister"
+  },
+  {
+   "id": "weapon-frag-grenade",
+   "oldName": "Frag Grenade",
+   "canonicalName": "Grenade, Frag"
+  },
+  {
+   "id": "weapon-gungan-electropole",
+   "oldName": "Gungan Electropole",
+   "canonicalName": "Electropole"
+  },
+  {
+   "id": "weapon-heavy-assault-blaster",
+   "oldName": "Heavy Assault Blaster",
+   "canonicalName": "Blaster Rifle, Heavy Assault"
+  },
+  {
+   "id": "weapon-heavy-blaster-pistol",
+   "oldName": "Heavy Blaster Pistol",
+   "canonicalName": "Blaster Pistol, Heavy"
+  },
+  {
+   "id": "weapon-heavy-blaster-rifle",
+   "oldName": "Heavy Blaster Rifle",
+   "canonicalName": "Blaster Rifle, Heavy"
+  },
+  {
+   "id": "weapon-heavy-variable-blaster",
+   "oldName": "Heavy Variable Blaster",
+   "canonicalName": "Blaster Rifle, Heavy Variable"
+  },
+  {
+   "id": "weapon-hold-out-blaster-pistol",
+   "oldName": "Hold-Out Blaster Pistol",
+   "canonicalName": "Blaster Pistol, Hold-Out"
+  },
+  {
+   "id": "weapon-hunting-blaster-carbine",
+   "oldName": "Hunting Blaster Carbine",
+   "canonicalName": "Blaster Carbine, Hunting"
+  },
+  {
+   "id": "weapon-ion-grenade",
+   "oldName": "Ion Grenade",
+   "canonicalName": "Grenade, Ion"
+  },
+  {
+   "id": "weapon-light-repeating-blaster",
+   "oldName": "Light Repeating Blaster",
+   "canonicalName": "Blaster Rifle, Light Repeating"
+  },
+  {
+   "id": "weapon-model-434-deathhammer",
+   "oldName": "Model 434 DeathHammer",
+   "canonicalName": "Merr-Sonn Model 434 DeathHammer"
+  },
+  {
+   "id": "weapon-plx-2m-portable-missile-launcher",
+   "oldName": "PLX-2M Portable Missile Launcher",
+   "canonicalName": "Merr-Sonn PLX-2M Portable Missile Launcher"
+  },
+  {
+   "id": "weapon-radiation-grenade",
+   "oldName": "Radiation Grenade",
+   "canonicalName": "Grenade, Radiation"
+  },
+  {
+   "id": "weapon-repeating-blaster-carbine",
+   "oldName": "Repeating Blaster Carbine",
+   "canonicalName": "Blaster Carbine, Repeating"
+  },
+  {
+   "id": "weapon-repeating-crossbow",
+   "oldName": "Repeating Crossbow",
+   "canonicalName": "Crossbow, Repeating"
+  },
+  {
+   "id": "weapon-scattergun",
+   "oldName": "Scattergun",
+   "canonicalName": "Scatter Gun"
+  },
+  {
+   "id": "weapon-sidearm-blaster-pistol",
+   "oldName": "Sidearm Blaster Pistol",
+   "canonicalName": "Blaster Pistol, Sidearm"
+  },
+  {
+   "id": "weapon-smoke-grenade",
+   "oldName": "Smoke Grenade",
+   "canonicalName": "Grenade, Smoke"
+  },
+  {
+   "id": "weapon-snap-shot-blaster-pistol",
+   "oldName": "Snap-Shot Blaster Pistol",
+   "canonicalName": "Blaster Pistol, Snap Shot"
+  },
+  {
+   "id": "weapon-sniper-blaster-rifle",
+   "oldName": "Sniper Blaster Rifle",
+   "canonicalName": "Blaster Rifle, Sniper"
+  },
+  {
+   "id": "weapon-sporting-blaster-carbine",
+   "oldName": "Sporting Blaster Carbine",
+   "canonicalName": "Blaster Carbine, Sporting"
+  },
+  {
+   "id": "weapon-sporting-blaster-pistol",
+   "oldName": "Sporting Blaster Pistol",
+   "canonicalName": "Blaster Pistol, Sporting"
+  },
+  {
+   "id": "weapon-sporting-blaster-rifle",
+   "oldName": "Sporting Blaster Rifle",
+   "canonicalName": "Blaster Rifle, Sporting"
+  },
+  {
+   "id": "weapon-stun-grenade",
+   "oldName": "Stun Grenade",
+   "canonicalName": "Grenade, Stun"
+  },
+  {
+   "id": "weapon-tusken-gaderffii-stick",
+   "oldName": "Tusken Gaderffii Stick",
+   "canonicalName": "Gaderffii"
+  },
+  {
+   "id": "weapon-variable-blaster",
+   "oldName": "Variable Blaster",
+   "canonicalName": "Blaster Rifle, Variable"
+  },
+  {
+   "id": "weapon-verpine-shattergun",
+   "oldName": "Verpine Shattergun",
+   "canonicalName": "Verpine Shatter Gun"
+  },
+  {
+   "id": "weapon-wookiee-ryyk-blade",
+   "oldName": "Wookiee Ryyk Blade",
+   "canonicalName": "Ryyk Blade"
+  },
+  {
+   "id": "weapon-wrist-blaster",
+   "oldName": "Wrist Blaster",
+   "canonicalName": "Blaster, Wrist"
+  }
+ ],
+ "retired": [
+  {
+   "oldId": "lightsaber-chassis-double",
+   "oldName": "Lightsaber (Double-Bladed)",
+   "disposition": "MERGE_INTO_CANONICAL",
+   "canonicalProductionId": "weapon-double-bladed-lightsaber"
+  },
+  {
+   "oldId": "lightsaber-chassis-standard",
+   "oldName": "Lightsaber (Standard)",
+   "disposition": "MERGE_INTO_CANONICAL",
+   "canonicalProductionId": "weapon-lightsaber"
+  },
+  {
+   "oldId": "weapon-blast-cannon",
+   "oldName": "Blast Cannon",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-charric",
+   "oldName": "Charric",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-clone-dc15a-blaster-rifle",
+   "oldName": "Clone DC-15A Blaster Rifle",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-clone-dc15s-blaster-carbine",
+   "oldName": "Clone DC-15S Blaster Carbine",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-concussion-missile-launcher",
+   "oldName": "Concussion Missile Launcher",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-cortosis-sword",
+   "oldName": "Cortosis Sword",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-electro-net",
+   "oldName": "Electro-net",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-electro-whip",
+   "oldName": "Electro-whip",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-heavy-laser-cannon",
+   "oldName": "Heavy Laser Cannon",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-hh-15-projectile-launcher",
+   "oldName": "HH-15 Projectile Launcher",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-hold-out-blaster",
+   "oldName": "Hold-out Blaster",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-ion-blaster",
+   "oldName": "Ion Blaster",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-jedi-training-saber",
+   "oldName": "Jedi Training Saber",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-laser-cannon",
+   "oldName": "Laser Cannon",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-mandalorian-ripper",
+   "oldName": "Mandalorian Ripper",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-miniature-missile-launcher",
+   "oldName": "Miniature Missile Launcher",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-monomolecular-knife",
+   "oldName": "Monomolecular Knife",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-proton-torpedo-launcher",
+   "oldName": "Proton Torpedo Launcher",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-repeating-blaster",
+   "oldName": "Repeating Blaster",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-s-5-heavy-blaster-pistol",
+   "oldName": "S-5 Heavy Blaster Pistol",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-saberdart-launcher",
+   "oldName": "Saberdart Launcher",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-sith-tremor-sword",
+   "oldName": "Sith Tremor Sword",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-sniper-rifle",
+   "oldName": "Sniper Rifle",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-stealth-blaster-carbine",
+   "oldName": "Stealth Blaster Carbine",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-stealth-carbine",
+   "oldName": "Stealth Carbine",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-trandoshan-repeater-rifle",
+   "oldName": "Trandoshan Repeater Rifle",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-tusken-cycler-rifle",
+   "oldName": "Tusken Cycler Rifle",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-verpine-shatter-pistol",
+   "oldName": "Verpine Shatter Pistol",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-verpine-shatter-rifle",
+   "oldName": "Verpine Shatter Rifle",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-verpine-sniper-rifle",
+   "oldName": "Verpine Sniper Rifle",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-wrist-laser",
+   "oldName": "Wrist Laser",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-zabrak-combat-staff",
+   "oldName": "Zabrak Combat Staff",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  },
+  {
+   "oldId": "weapon-zeltron-neural-whip",
+   "oldName": "Zeltron Neural Whip",
+   "disposition": "REMOVE_UNSUPPORTED",
+   "canonicalProductionId": null
+  }
+ ]
+}

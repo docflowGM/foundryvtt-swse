@@ -939,16 +939,16 @@
         },
         {
           "pack": "foundryvtt-swse.weapons-pistols",
-          "id": "weapon-hold-out-blaster",
-          "name": "Hold-out Blaster",
+          "id": "weapon-hold-out-blaster-pistol",
+          "name": "Blaster Pistol, Hold-Out",
           "type": "weapon",
           "quantity": 1,
-          "displayName": "Hold-out Blaster"
+          "displayName": "Blaster Pistol, Hold-Out"
         },
         {
           "pack": "foundryvtt-swse.equipment",
           "id": "computer-datapad-standard",
-          "name": "Datapad, Standard",
+          "name": "Datapad",
           "type": "equipment",
           "quantity": 1,
           "displayName": "Datapad, Standard"
@@ -972,7 +972,7 @@
         {
           "pack": "foundryvtt-swse.equipment",
           "id": "computer-datacards-blank-10",
-          "name": "Blank Datacards (10)",
+          "name": "Datacards, Blank (10)",
           "type": "equipment",
           "quantity": 1,
           "displayName": "Blank Datacards (10)"
@@ -1235,7 +1235,7 @@
         {
           "pack": "foundryvtt-swse.equipment",
           "id": "tool-utility-belt-standard",
-          "name": "Utility Belt (Standard)",
+          "name": "Utility Belt",
           "type": "equipment",
           "quantity": 1,
           "displayName": "Utility Belt (Standard)"
@@ -1677,16 +1677,16 @@
         },
         {
           "pack": "foundryvtt-swse.weapons-pistols",
-          "id": "weapon-hold-out-blaster",
-          "name": "Hold-out Blaster",
+          "id": "weapon-hold-out-blaster-pistol",
+          "name": "Blaster Pistol, Hold-Out",
           "type": "weapon",
           "quantity": 1,
-          "displayName": "Hold-out Blaster"
+          "displayName": "Blaster Pistol, Hold-Out"
         },
         {
           "pack": "foundryvtt-swse.equipment",
           "id": "computer-datacards-blank-10",
-          "name": "Blank Datacards (10)",
+          "name": "Datacards, Blank (10)",
           "type": "equipment",
           "quantity": 1,
           "displayName": "Blank Datacards (10)"
@@ -1702,7 +1702,7 @@
         {
           "pack": "foundryvtt-swse.equipment",
           "id": "computer-datapad-standard",
-          "name": "Datapad, Standard",
+          "name": "Datapad",
           "type": "equipment",
           "quantity": 1,
           "displayName": "Datapad, Standard"
@@ -2006,7 +2006,7 @@
         {
           "pack": "foundryvtt-swse.equipment",
           "id": "comms-hands-free-comlink",
-          "name": "Hands-Free Comlink",
+          "name": "Comlink, Hands-Free",
           "type": "equipment",
           "quantity": 1,
           "displayName": "Hands Free Commlink"
@@ -2196,7 +2196,7 @@
         {
           "pack": "foundryvtt-swse.equipment",
           "id": "comms-hands-free-comlink",
-          "name": "Hands-Free Comlink",
+          "name": "Comlink, Hands-Free",
           "type": "equipment",
           "quantity": 1,
           "displayName": "Hands-Free Commlink"
@@ -2646,11 +2646,11 @@
       "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
-          "id": "weapon-hold-out-blaster",
-          "name": "Hold-out Blaster",
+          "id": "weapon-hold-out-blaster-pistol",
+          "name": "Blaster Pistol, Hold-Out",
           "type": "weapon",
           "quantity": 1,
-          "displayName": "Hold-out Blaster"
+          "displayName": "Blaster Pistol, Hold-Out"
         },
         {
           "pack": "foundryvtt-swse.weapons-pistols",
@@ -3819,11 +3819,11 @@
       "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
-          "id": "weapon-hold-out-blaster",
-          "name": "Hold-out Blaster",
+          "id": "weapon-hold-out-blaster-pistol",
+          "name": "Blaster Pistol, Hold-Out",
           "type": "weapon",
           "quantity": 1,
-          "displayName": "Hold-out Blaster"
+          "displayName": "Blaster Pistol, Hold-Out"
         },
         {
           "pack": "foundryvtt-swse.equipment",

@@ -1,41 +1,5 @@
 [
   {
-    "id": "lightsaber-chassis-standard",
-    "name": "Lightsaber (Standard)",
-    "type": "weapon",
-    "category": "chassis",
-    "subtype": "lightsaber",
-    "chassisId": "standard",
-    "constructible": true,
-    "baseBuildDc": 20,
-    "baseCost": 1500,
-    "damage": {
-      "dice": "2d8",
-      "type": "energy"
-    },
-    "source": "Core Rulebook",
-    "description": "A standard lightsaber with a single blade. The fundamental weapon of the Jedi and other Force users.",
-    "cost": 3000
-  },
-  {
-    "id": "lightsaber-chassis-double",
-    "name": "Lightsaber (Double-Bladed)",
-    "type": "weapon",
-    "category": "chassis",
-    "subtype": "lightsaber",
-    "chassisId": "double",
-    "constructible": true,
-    "baseBuildDc": 20,
-    "baseCost": 3500,
-    "damage": {
-      "dice": "2d8",
-      "type": "energy"
-    },
-    "source": "Core Rulebook",
-    "description": "A double-bladed lightsaber with blades on both ends. Requires specialized training to use effectively.",
-    "cost": 7000
-  },
-  {
     "id": "lightsaber-crystal-ilum",
     "name": "Ilum Crystal",
     "type": "weaponUpgrade",

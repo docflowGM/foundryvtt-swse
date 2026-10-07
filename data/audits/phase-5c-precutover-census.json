@@ -1,0 +1,331 @@
+{
+ "schemaVersion": "5C.1",
+ "phase": "5C-0",
+ "purpose": "Frozen pre-cutover census: hashes and counts of every feat/weapon authority, production file and reference-bearing repository record before any Phase 5C mutation.",
+ "gitHeadRef": "ref: refs/heads/claude/dazzling-meitner-czyh1x",
+ "productionMutatedByThisCensus": false,
+ "expected": {
+  "feats": {
+   "canonical": 353,
+   "production": 390,
+   "present": 351,
+   "missing": 2,
+   "derivatives": 6,
+   "noncanonical": 33
+  },
+  "weapons": {
+   "canonical": 203,
+   "productionWeapons": 186,
+   "present": 151,
+   "missing": 52,
+   "repoOnly": 35
+  }
+ },
+ "feats": {
+  "canonicalIdentities": 353,
+  "productionCatalogRecords": 390,
+  "productionPackRecords": 390,
+  "catalogEqualsPack": true,
+  "canonicalPresentInProduction": 351,
+  "canonicalMissingFromProduction": 2,
+  "missingCanonicalIds": [
+   "c352f81dde5c9dff",
+   "c9c4130a55761330"
+  ],
+  "implementationDerivatives": 6,
+  "noncanonicalRemovals": 33,
+  "preservedCanonical": 351,
+  "semanticFeatRecords": 353,
+  "derivativeRepoIds": [
+   "2d680cc46a7972da",
+   "41a9ce755ecffb5b",
+   "765ff8a34e58acac",
+   "8329a353aa3899be",
+   "cf28ec45cabaff59",
+   "e5d361d01d1b44e4"
+  ],
+  "noncanonicalRepoIds": [
+   "02ac414f546a539a",
+   "058de949e909d9ae",
+   "08dbd76457db101f",
+   "0c53cb8b7c29d865",
+   "10a017a020aa4a9c",
+   "17e317292814e13e",
+   "17f4a0850e94dc7d",
+   "2f2fa438a6fb54a0",
+   "37cb4455a70876ad",
+   "3cd647b126f1d171",
+   "465434fb7b44aee1",
+   "54d6201340a6757f",
+   "5824e2360feb505a",
+   "647d77a8f5ab9af3",
+   "6673cd53493a9d6c",
+   "6d8ce2807c579289",
+   "83abd1c384b58c3c",
+   "8566edcae3a2f18c",
+   "88cdedff38b610c0",
+   "9768963c7a36237d",
+   "9a89576b3cc1347e",
+   "ae5c34d352d6dff7",
+   "b2296a4d5cef8a61",
+   "bee76d01da40677d",
+   "d612e7a708edf75b",
+   "db564cc6f9879ec8",
+   "e5ab9392378400ec",
+   "e99d9284a73cf505",
+   "eb33f5e4b5f6318c",
+   "f82323ee06f59735",
+   "fda012e3b2b1e55f",
+   "ff76bea42641ca5b",
+   "ffd5fecab0550bb6"
+  ]
+ },
+ "weapons": {
+  "canonicalIdentities": 203,
+  "productionWeaponRecords": 186,
+  "productionNonWeaponRecordsInPack": [
+   {
+    "id": "lightsaber-accessory-blade-lock",
+    "type": "weaponUpgrade"
+   },
+   {
+    "id": "lightsaber-crystal-barab-ingot",
+    "type": "weaponUpgrade"
+   },
+   {
+    "id": "lightsaber-crystal-ilum",
+    "type": "weaponUpgrade"
+   },
+   {
+    "id": "lightsaber-crystal-synthetic",
+    "type": "weaponUpgrade"
+   }
+  ],
+  "canonicalPresentInProduction": 151,
+  "canonicalMissingFromProduction": 52,
+  "repoOnlyRecords": 35,
+  "repoOnlyByDisposition": {
+   "MERGE_INTO_CANONICAL": 2,
+   "REMOVE_UNSUPPORTED": 33
+  },
+  "primaryDispositions": {
+   "KEEP": 0,
+   "CREATE": 52,
+   "RENAME": 0,
+   "UPDATE": 149,
+   "MERGE": 2,
+   "REVIEW_PRECEDENCE": 0
+  },
+  "categoryPackLineCounts": {
+   "packs/weapons-exotic.db": 19,
+   "packs/weapons-grenades.db": 12,
+   "packs/weapons-heavy.db": 24,
+   "packs/weapons-lightsabers.db": 15,
+   "packs/weapons-pistols.db": 36,
+   "packs/weapons-rifles.db": 50,
+   "packs/weapons-simple.db": 30
+  },
+  "categoryPackTotal": 186,
+  "registryIdentities": 203
+ },
+ "hashes": {
+  "featAuthorities": {
+   "data/audits/feat-content-canonical-authority.json": {
+    "sha256": "1f0197aa285f425212d817eaf96adf78c1beb60103d1160c8b82a77cef262487",
+    "bytes": 735019
+   },
+   "data/audits/feat-phase-0-canonical-census.json": {
+    "sha256": "38aa58adb7bed9ed656e48dd5c4d3cef6107f4dc0094f224a89c311088328890",
+    "bytes": 426994
+   },
+   "data/audits/feat-phase-1a-canonical-identity-manifest.json": {
+    "sha256": "f54a05563bc383a7501d4e6bdbf9112664ac6cb22f91df22c17e40c4d1479d2a",
+    "bytes": 384969
+   },
+   "data/audits/feat-phase-1b-repository-reconciliation.json": {
+    "sha256": "b577aeef9fc8ad2ccb6d1aac7a137c50ef09b224434c02c23b1e7c4ddfd2ccd5",
+    "bytes": 744450
+   },
+   "data/audits/feat-provenance-canonical-authority.json": {
+    "sha256": "5bb3468cdfa9ffce54880dd4e0e62702fa80f7f4badcf82341d236e1bd4c2f38",
+    "bytes": 962182
+   },
+   "data/audits/feat-tags-pass2-semantic-authority.json": {
+    "sha256": "74191445fa3b0b7bd3a6e451c1c3d8a6b4099167f5782bbf22af1a75454d7fb3",
+    "bytes": 788085
+   },
+   "data/audits/feat-tags-production-reconciliation.json": {
+    "sha256": "b3c4174c408bd3b5fd65c53cf174f996da01b48371fdced8db938978845b3ea6",
+    "bytes": 606937
+   },
+   "data/audits/talent-feat-phase3-final-semantic-authority.json": {
+    "sha256": "d402aed26937e7ff53fab7094b4546d4d7585ad62d7328f801725a176792c196",
+    "bytes": 1388138
+   }
+  },
+  "featProduction": {
+   "data/feat-buckets-and-subbuckets.json": {
+    "sha256": "a1db106df4be42aa4931b35d69487c8631fd2f4d0549cba4b29a34944c54ecce",
+    "bytes": 17932
+   },
+   "data/feat-catalog.json": {
+    "sha256": "e7907810f492e036517822a19f45ac1242fe2ec0044e7b2ad241f858f9925eef",
+    "bytes": 2156209
+   },
+   "data/feat-choice-options.json": {
+    "sha256": "d6bb20d92fac9f85932d7a3779f5a6521fe71d29e34cf33f0b46e3a15c90b498",
+    "bytes": 31149
+   },
+   "data/feat-effects.json": {
+    "sha256": "2cf277cb0810e9e202b1337eeef3425893bc36689a13679493805290ed2e5dcc",
+    "bytes": 66758
+   },
+   "data/feat-metadata.json": {
+    "sha256": "ebee0ddea9083b17b31162ff72c99c20db3987e05d9a04ad9052f204e3a8ed1f",
+    "bytes": 86632
+   },
+   "data/feat-validity-registry.json": {
+    "sha256": "853da5c1cd1ae835a325609f43836aaccab0243aa6d40068669c3c8803a6ac21",
+    "bytes": 7276
+   },
+   "data/feat_buckets_and_subbuckets.json": {
+    "sha256": "bc635ce2379d3000af6370dfd5bbc89d7bb488f4162dfbe4fb000b338894e410",
+    "bytes": 266508
+   },
+   "data/fixes/feat-view-model.json": {
+    "sha256": "1a7120bb335a6e9db63951b929a9e8cc4f6245cb48306ae63c0e080ccf303a1e",
+    "bytes": 245066
+   },
+   "data/generated/class-feat-list-bindings.json": {
+    "sha256": "1f74d2c342e81a006f94ab34ab5bcc615c44c5d2a6240800fbce8eb4f8ab8acc",
+    "bytes": 27087
+   },
+   "data/generated/feat-view-model.json": {
+    "sha256": "6d23f6e3c22e9e8470480ef9cb070f05950b712d06f6a30c44e60e7b07b59dd7",
+    "bytes": 226118
+   },
+   "packs/feat-catalog.db": {
+    "sha256": "90c8c0efb68a5424d47782bbc2e8df350d82eff2ed77426d32abb4f34c718153",
+    "bytes": 1538881
+   },
+   "packs/feats.db": {
+    "sha256": "9c67242a67b209a2c3d359201beb03e512962998e6bacee6d8c3eedd4787d3e8",
+    "bytes": 1629897
+   },
+   "packs/feats.db.sha256": {
+    "sha256": "fcc1aff8b59b6a23e1876d7d6aa76224eb623a16125d2ce7b57956a37f716a6d",
+    "bytes": 81
+   }
+  },
+  "weaponAuthorities": {
+   "data/audits/item-weapons-phase-3b-canonical-authority.json": {
+    "sha256": "5466e8a539918fba382368c6b73a2ae8a6f47472f4d2f35a72b39457135a7d56",
+    "bytes": 2425641
+   },
+   "data/audits/item-weapons-phase-3c-production-disposition-ledger.json": {
+    "sha256": "1e748665c4f27278b9be10abddacf0d5cdcea20cffc308714955cbe19a352c60",
+    "bytes": 2275237
+   },
+   "data/audits/item-weapons-phase-3d-global-freeze.json": {
+    "sha256": "fd570a8a9e5f0571c373cd715db7e7d0e9338c17bcd2f2c78cb3739fc1517fcb",
+    "bytes": 236693
+   },
+   "data/audits/item-weapons-phase-4h-d-phase-4-certification.json": {
+    "sha256": "dbf25a2f93967d1214fcc3320cf67d5f9ec00f93dc69c6a3d0abefe26e4425e5",
+    "bytes": 4224
+   },
+   "data/audits/item-weapons-phase-4h-global-semantic-authority.json": {
+    "sha256": "fb6670e42e38a4592888510e8453eee98237709a900c59f63603311471c150f7",
+    "bytes": 1314165
+   },
+   "data/audits/weapon-phase-5b-consumption-map.json": {
+    "sha256": "d60e0f750f329381c106c832875ecec85a3cebbfa7e43afc522b19a1e5a2dfa5",
+    "bytes": 1157895
+   },
+   "data/audits/weapon-phase-5b-r-mode-reconciliation.json": {
+    "sha256": "cbeab87d4c78b9eea1adeac5e5d576fe6182d4a8464cab464647a5c3d9476bc4",
+    "bytes": 24122
+   },
+   "data/weapons/canonical-weapon-registry.json": {
+    "sha256": "add2b7270a9df00bda7a79bedfec7354f100d65e936b1cfb6b66483c9beec4b6",
+    "bytes": 2162030
+   }
+  },
+  "weaponProduction": {
+   "data/lightsaber-components.json": {
+    "sha256": "339bad358cf2d2338249e5374cc0c935e60663be3520c721c024aa085e4c7dbf",
+    "bytes": 3223
+   },
+   "data/store/weapon-store-descriptions.json": {
+    "sha256": "19f57829388a813c310a79bf3b54e171baa218ea18cb629a34202383a2745d70",
+    "bytes": 52511
+   },
+   "packs/weapons-exotic.db": {
+    "sha256": "b470a02953849cf388b9de80ec7a0523ba283407aca2cedf16991235a216000b",
+    "bytes": 12264
+   },
+   "packs/weapons-grenades.db": {
+    "sha256": "288e15940183b00ad3c3480276139811f85cace9fc50e01a19d4558aae4e738b",
+    "bytes": 7951
+   },
+   "packs/weapons-heavy.db": {
+    "sha256": "714b3b869590ec5414b37303e424a21c022942b336229370a3448051b60fb44b",
+    "bytes": 15533
+   },
+   "packs/weapons-lightsabers.db": {
+    "sha256": "b7fb4fb6db6732c25c107418d3465e1e25df0941a3920efd915dff0e58bf7864",
+    "bytes": 16567
+   },
+   "packs/weapons-pistols.db": {
+    "sha256": "bf1b8642179e27384ecf736657d36c9466679c4569f2995ae55c1e8add873711",
+    "bytes": 22441
+   },
+   "packs/weapons-rifles.db": {
+    "sha256": "9bc0e69e93bbe92596adece9d26f6361a6737631e21a9304c2cd6d47457b75c3",
+    "bytes": 31731
+   },
+   "packs/weapons-simple.db": {
+    "sha256": "a9a1d4bb359d50cefda94549dffb1cdb7b57c1cc90dc8993c1a4151bb02cb845",
+    "bytes": 20505
+   },
+   "packs/weapons.db": {
+    "sha256": "70bd1216ef5106b48aead731d5ab38a920c065e8c3016a40e31c262b26f7b073",
+    "bytes": 181377
+   }
+  },
+  "referenceBearingRecords": {
+   "data/class-archetypes.json": {
+    "sha256": "e41b926755af7dd1ffd8d640a3cf1bca47e9b98c5675a85ab9d08b3b248792ae",
+    "bytes": 183156
+   },
+   "data/generated/class-feat-list-bindings.json": {
+    "sha256": "1f74d2c342e81a006f94ab34ab5bcc615c44c5d2a6240800fbce8eb4f8ab8acc",
+    "bytes": 27087
+   },
+   "data/heroic.json": {
+    "sha256": "522f5d9d1f2cc9e3d7c93984d66dee2e7acbd0321845090f7c14f71697593a27",
+    "bytes": 739475
+   },
+   "data/nonheroic.json": {
+    "sha256": "b5b3dad8b3b865ce6864c2aa0e88e687a1bde26df8dc00a93498b8ad139398a9",
+    "bytes": 578044
+   },
+   "packs/classes.db": {
+    "sha256": "04f435fbe0fda96a36dbf9ac147193b333d002e9e333a794c1f70678a9465497",
+    "bytes": 83378
+   },
+   "packs/heroic.db": {
+    "sha256": "cebd610dcb13d310ad770a68627c631086da77368fb9efc6ce87be581f0676da",
+    "bytes": 15296830
+   },
+   "packs/nonheroic.db": {
+    "sha256": "eef0f9b53ec77a723a11a4e693f166a11a577e11aa91266fd0eceee93ee48cea",
+    "bytes": 12330316
+   },
+   "packs/npc.db": {
+    "sha256": "bce01b89445661ea255d01f1c7a51effde4e7f2038d6d56f2389ee87853d2ab8",
+    "bytes": 28239518
+   }
+  }
+ }
+}

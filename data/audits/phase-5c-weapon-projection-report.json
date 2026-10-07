@@ -1,0 +1,567 @@
+{
+ "schemaVersion": "5C.1",
+ "role": "GENERATED_REPORT",
+ "corpusSha256": "ed680edcf918b2f45839e96efef60d661cd495d698bbd690d33357bcf1aef236",
+ "projectionTable": [
+  {
+   "legacy": "name",
+   "canonical": "canonicalName",
+   "consumers": "sheet, store, name-based lookups",
+   "retire": "5G"
+  },
+  {
+   "legacy": "system.description",
+   "canonical": "canonicalPlayerText",
+   "consumers": "item sheet, store card",
+   "retire": "5G"
+  },
+  {
+   "legacy": "system.cost / costNumeric / economics.cost",
+   "canonical": "canonicalStats.costCredits",
+   "consumers": "store, chargen",
+   "retire": "5G"
+  },
+  {
+   "legacy": "system.weight / economics.weight",
+   "canonical": "canonicalStats.weightKg",
+   "consumers": "EncumbranceEngine, store",
+   "retire": "5G"
+  },
+  {
+   "legacy": "system.damage",
+   "canonical": "default attack profile damage.formula (stun.damage for native-stun-only; payload damage for payload-only launchers)",
+   "consumers": "combat-roll-math, damage.js",
+   "retire": "5D"
+  },
+  {
+   "legacy": "system.damageType",
+   "canonical": "default attack profile damageType.types[0] mapped to the legacy vocabulary",
+   "consumers": "damage-type-rules, mitigation",
+   "retire": "5D"
+  },
+  {
+   "legacy": "system.weaponCategory",
+   "canonical": "default attack profile schemaFamily.branch",
+   "consumers": "weapon-branch-resolver, roll-config",
+   "retire": "5C-runtime"
+  },
+  {
+   "legacy": "system.proficiency / subcategory",
+   "canonical": "default attack profile schemaFamily.proficiency / subcategory (lightsabers -> exotic legacy vocabulary)",
+   "consumers": "weapon-branch-resolver, store categorizer",
+   "retire": "5C-runtime"
+  },
+  {
+   "legacy": "system.ammunition.{type,current,max}",
+   "canonical": "canonicalStats.ammo (type, capacityShots); current starts at max",
+   "consumers": "AmmoSystem",
+   "retire": "5D"
+  },
+  {
+   "legacy": "system.autofire / properties[Autofire]",
+   "canonical": "default attack profile rateOfFire includes A",
+   "consumers": "CombatOptionResolver",
+   "retire": "5D"
+  },
+  {
+   "legacy": "system.attackAttribute / attackBonus / range / rangeProfile / weaponType / traits / properties / combat.* / equippable",
+   "canonical": "(carry-over of the captured production value; canonical default when none)",
+   "consumers": "roll-config, range resolver, sheet",
+   "retire": "5D"
+  },
+  {
+   "legacy": "system.{subtype,chassisId,constructible,baseBuildDc,baseCost,upgradeSlots,installedUpgrades}",
+   "canonical": "production.legacySystemCapture + merged chassis overlay",
+   "consumers": "lightsaber construction workbench",
+   "retire": "lightsaber workbench migration"
+  },
+  {
+   "legacy": "flags.swse.canonicalWeapon",
+   "canonical": "identityKey + record hash",
+   "consumers": "WeaponRuntimeResolver, parity verifiers",
+   "retire": "permanent"
+  }
+ ],
+ "limitations": {
+  "multiProfile": "Legacy carries ONE attack; weapons with several attack profiles project only the default profile. Other profiles remain canonical-only.",
+  "payloadDamage": "Payload-dependent damage projects the default payload (or the weapon's own default profile); loaded-payload damage is not representable in legacy fields.",
+  "damageTypeRelation": "AND/OR multi-type damage projects only the first type; the simultaneous/alternative relation is canonical-only.",
+  "nonDice": "Non-dice damage models (none/special/modifier/conditional/inherited) project the nearest dice string or \"0\"; the real model is canonical-only.",
+  "configuration": "Configuration-driven attacks and operating modes are canonical-only.",
+  "conditional": "Conditional modifiers, triggered effects, critical effects and attack-resolution overrides are canonical-only."
+ },
+ "limitationCounts": {
+  "conditional": 33,
+  "configuration": 10,
+  "damageTypeRelation": 45,
+  "multiProfile": 36,
+  "nonDice": 24,
+  "payloadDamage": 1
+ },
+ "perIdentity": {
+  "lightsaber-chassis-archaic-lightfoil": [
+   "damageTypeRelation"
+  ],
+  "lightsaber-chassis-archaic-lightsaber": [
+   "configuration",
+   "damageTypeRelation"
+  ],
+  "lightsaber-chassis-crossguard": [
+   "conditional",
+   "damageTypeRelation"
+  ],
+  "lightsaber-chassis-dual-phase": [
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "lightsaber-chassis-dueling": [
+   "conditional",
+   "damageTypeRelation"
+  ],
+  "lightsaber-chassis-great": [
+   "damageTypeRelation"
+  ],
+  "lightsaber-chassis-guard-shoto": [
+   "damageTypeRelation"
+  ],
+  "lightsaber-chassis-lightwhip": [
+   "conditional",
+   "damageTypeRelation"
+  ],
+  "lightsaber-chassis-longhandle": [
+   "conditional",
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "lightsaber-chassis-modern-lightfoil": [
+   "damageTypeRelation"
+  ],
+  "lightsaber-chassis-pike": [
+   "conditional",
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "lightsaber-chassis-retrosaber": [
+   "configuration",
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "lightsaber-chassis-short": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Amphistaff": [
+   "conditional",
+   "configuration",
+   "multiProfile"
+  ],
+  "unmapped::Arggarok": [
+   "conditional"
+  ],
+  "unmapped::Atlatl": [
+   "multiProfile"
+  ],
+  "unmapped::Axe": [
+   "multiProfile"
+  ],
+  "unmapped::Bayonet": [],
+  "unmapped::Blastsword": [],
+  "unmapped::Cesta": [
+   "multiProfile"
+  ],
+  "unmapped::Club/Baton": [],
+  "unmapped::Combat Gloves": [
+   "nonDice"
+  ],
+  "unmapped::Contact Stunner": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Darkstick": [
+   "multiProfile"
+  ],
+  "unmapped::Datadagger": [],
+  "unmapped::Dire Sword": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Dire Vibroblade": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Double Vibroblade": [
+   "multiProfile"
+  ],
+  "unmapped::Double-Bladed Sword": [
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "unmapped::Energy Lance": [
+   "conditional",
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "unmapped::Entrenching Tool": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Felucian Skullblade": [],
+  "unmapped::Fira": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Fire Blade": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Force Pike": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Garrote": [
+   "conditional"
+  ],
+  "unmapped::Knife": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Mace": [],
+  "unmapped::Mythosaur Axe": [],
+  "unmapped::Neuronic Whip": [
+   "damageTypeRelation",
+   "nonDice"
+  ],
+  "unmapped::Power Hammer": [
+   "conditional"
+  ],
+  "unmapped::Power Lance": [
+   "conditional",
+   "damageTypeRelation"
+  ],
+  "unmapped::Quarterstaff": [
+   "multiProfile"
+  ],
+  "unmapped::San-Ni Staff": [
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "unmapped::Shock Stick": [
+   "configuration"
+  ],
+  "unmapped::Shock Whip": [
+   "conditional"
+  ],
+  "unmapped::Shockboxing Gloves": [
+   "damageTypeRelation",
+   "multiProfile",
+   "nonDice"
+  ],
+  "unmapped::Shockstaff": [
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "unmapped::Short Sword": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Shyarn": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Spear": [],
+  "unmapped::Static Pike": [
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "unmapped::Stunning Gauntlet": [
+   "nonDice"
+  ],
+  "unmapped::Survival Knife": [
+   "multiProfile"
+  ],
+  "unmapped::Tehkla Blade": [
+   "conditional",
+   "damageTypeRelation"
+  ],
+  "unmapped::Vibro-Ax": [],
+  "unmapped::Vibro-Saw": [],
+  "unmapped::Vibrobayonet": [
+   "configuration"
+  ],
+  "unmapped::Vibroblade, Double": [
+   "multiProfile"
+  ],
+  "unmapped::Vibroknucklers": [
+   "nonDice"
+  ],
+  "unmapped::Vibrolance": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Vibrorapier": [],
+  "unmapped::Wan-Shen": [
+   "configuration",
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "unmapped::War Sword": [
+   "damageTypeRelation"
+  ],
+  "unmapped::Zhaboka": [
+   "multiProfile"
+  ],
+  "weapon-adhesive-grenade": [
+   "nonDice"
+  ],
+  "weapon-adjudicator-slugthrower": [],
+  "weapon-adventurer-slugthrower": [
+   "configuration"
+  ],
+  "weapon-arc-9965-blaster": [],
+  "weapon-ascension-gun": [
+   "multiProfile"
+  ],
+  "weapon-assault-blaster-rifle": [],
+  "weapon-aurial-blaster": [],
+  "weapon-battering-ram": [],
+  "weapon-black-powder-pistol": [],
+  "weapon-blaster-cannon": [],
+  "weapon-blaster-carbine": [],
+  "weapon-blaster-pistol": [],
+  "weapon-blaster-rifle": [],
+  "weapon-bluebolt-blaster-pistol": [],
+  "weapon-bow": [],
+  "weapon-bowcaster": [
+   "damageTypeRelation"
+  ],
+  "weapon-bryar-pistol": [],
+  "weapon-bryar-rifle": [],
+  "weapon-carbonite-rifle": [
+   "nonDice"
+  ],
+  "weapon-commando-special-rifle": [],
+  "weapon-concealed-dart-launcher": [
+   "nonDice"
+  ],
+  "weapon-concussion-grenade": [],
+  "weapon-concussion-rifle": [
+   "conditional"
+  ],
+  "weapon-cr-1-blast-cannon": [],
+  "weapon-crossbow": [],
+  "weapon-cryoban-grenade": [],
+  "weapon-darter": [
+   "conditional"
+  ],
+  "weapon-deck-sweeper": [
+   "nonDice"
+  ],
+  "weapon-defender-microblaster": [],
+  "weapon-dh-23-blaster-pistol": [],
+  "weapon-discblade": [],
+  "weapon-disruptor-pistol": [],
+  "weapon-disruptor-rifle": [],
+  "weapon-dlt-20a-longblaster": [],
+  "weapon-double-barreled-blaster-carbine": [
+   "conditional",
+   "multiProfile"
+  ],
+  "weapon-double-bladed-lightsaber": [
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "weapon-dt-12-heavy-blaster": [],
+  "weapon-e-web-missile-launcher": [],
+  "weapon-e-web-repeating-blaster": [],
+  "weapon-electronet": [
+   "conditional",
+   "nonDice"
+  ],
+  "weapon-electrostaff": [
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "weapon-emp-grenade": [],
+  "weapon-energy-ball": [
+   "conditional"
+  ],
+  "weapon-espo-500-riot-gun": [
+   "multiProfile"
+  ],
+  "weapon-firelance-blaster-rifle": [],
+  "weapon-flame-cannon": [],
+  "weapon-flamethrower": [],
+  "weapon-flash-canister": [
+   "conditional",
+   "nonDice"
+  ],
+  "weapon-flechette-launcher": [],
+  "weapon-frag-grenade": [],
+  "weapon-gas-grenade": [
+   "conditional",
+   "nonDice"
+  ],
+  "weapon-grenade-launcher": [
+   "nonDice"
+  ],
+  "weapon-gungan-electropole": [
+   "damageTypeRelation",
+   "multiProfile"
+  ],
+  "weapon-heavy-assault-blaster": [
+   "conditional"
+  ],
+  "weapon-heavy-blaster-cannon": [],
+  "weapon-heavy-blaster-pistol": [],
+  "weapon-heavy-blaster-rifle": [],
+  "weapon-heavy-repeating-blaster": [],
+  "weapon-heavy-slugthrower-pistol": [
+   "conditional"
+  ],
+  "weapon-heavy-sonic-pistol": [],
+  "weapon-heavy-variable-blaster": [
+   "multiProfile"
+  ],
+  "weapon-hold-out-blaster-pistol": [],
+  "weapon-hunting-blaster-carbine": [
+   "conditional"
+  ],
+  "weapon-incinerator-rifle": [],
+  "weapon-interchangeable-weapon-system": [
+   "multiProfile"
+  ],
+  "weapon-ion-carbine": [],
+  "weapon-ion-grenade": [],
+  "weapon-ion-pistol": [],
+  "weapon-ion-rifle": [],
+  "weapon-light-concussion-missile-launcher": [
+   "conditional"
+  ],
+  "weapon-light-repeating-blaster": [],
+  "weapon-lightfoil": [
+   "damageTypeRelation"
+  ],
+  "weapon-lightsaber": [
+   "damageTypeRelation"
+  ],
+  "weapon-magna-caster": [],
+  "weapon-massassi-lanvarok": [
+   "multiProfile"
+  ],
+  "weapon-micro-grenade-launcher": [
+   "configuration",
+   "nonDice"
+  ],
+  "weapon-miniature-proton-torpedo-launcher": [
+   "multiProfile"
+  ],
+  "weapon-missile-launcher": [],
+  "weapon-model-434-deathhammer": [],
+  "weapon-mortar-launcher": [],
+  "weapon-needler": [],
+  "weapon-net": [
+   "nonDice"
+  ],
+  "weapon-neural-inhibitor": [
+   "conditional"
+  ],
+  "weapon-plx-2m-portable-missile-launcher": [
+   "multiProfile"
+  ],
+  "weapon-pulse-rifle": [],
+  "weapon-pulse-wave-pistol": [],
+  "weapon-pulse-wave-rifle": [],
+  "weapon-radiation-grenade": [],
+  "weapon-rail-detonator-gun": [],
+  "weapon-razor-bug": [],
+  "weapon-remote-grenade": [],
+  "weapon-repeating-blaster-carbine": [],
+  "weapon-repeating-crossbow": [],
+  "weapon-ripper": [],
+  "weapon-rotary-blaster-cannon": [],
+  "weapon-scattergun": [
+   "nonDice"
+  ],
+  "weapon-sg-4-blaster-rifle": [
+   "multiProfile"
+  ],
+  "weapon-siang-lance": [
+   "multiProfile"
+  ],
+  "weapon-sidearm-blaster-pistol": [],
+  "weapon-sith-lanvarok": [],
+  "weapon-sith-sword": [
+   "conditional",
+   "damageTypeRelation"
+  ],
+  "weapon-sling": [],
+  "weapon-slugthrower-pistol": [],
+  "weapon-slugthrower-rifle": [],
+  "weapon-smoke-grenade": [
+   "nonDice"
+  ],
+  "weapon-snap-baton": [
+   "configuration"
+  ],
+  "weapon-snap-shot-blaster-pistol": [],
+  "weapon-snare-pistol": [
+   "conditional",
+   "nonDice"
+  ],
+  "weapon-snare-rifle": [
+   "conditional",
+   "nonDice"
+  ],
+  "weapon-sniper-blaster-rifle": [
+   "conditional"
+  ],
+  "weapon-sonic-disruptor": [],
+  "weapon-sonic-pistol": [],
+  "weapon-sonic-rifle": [],
+  "weapon-sonic-stunner": [
+   "nonDice"
+  ],
+  "weapon-sporting-blaster-carbine": [
+   "conditional"
+  ],
+  "weapon-sporting-blaster-pistol": [],
+  "weapon-sporting-blaster-rifle": [],
+  "weapon-squib-tensor-rifle": [
+   "conditional"
+  ],
+  "weapon-stokhli-spray-stick": [
+   "nonDice"
+  ],
+  "weapon-stun-baton": [],
+  "weapon-stun-grenade": [
+   "nonDice"
+  ],
+  "weapon-stun-pistol": [
+   "nonDice"
+  ],
+  "weapon-subrepeating-blaster": [],
+  "weapon-tactical-tractor-beam": [],
+  "weapon-targeting-blaster-rifle": [
+   "configuration"
+  ],
+  "weapon-targeting-laser": [
+   "nonDice"
+  ],
+  "weapon-thermal-detonator": [],
+  "weapon-thud-bug": [],
+  "weapon-tusken-gaderffii-stick": [
+   "multiProfile"
+  ],
+  "weapon-variable-blaster": [
+   "multiProfile"
+  ],
+  "weapon-verpine-shattergun": [
+   "conditional"
+  ],
+  "weapon-vibroblade": [
+   "damageTypeRelation"
+  ],
+  "weapon-vibrodagger": [
+   "damageTypeRelation"
+  ],
+  "weapon-vibrosword": [
+   "damageTypeRelation"
+  ],
+  "weapon-wookiee-ryyk-blade": [],
+  "weapon-wrist-blaster": [],
+  "weapon-wrist-rocket-launcher": [
+   "payloadDamage"
+  ],
+  "weapon-xerrol-nightstinger": [
+   "conditional"
+  ]
+ }
+}

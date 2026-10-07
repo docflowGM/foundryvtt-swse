@@ -1,0 +1,1660 @@
+{
+ "schemaVersion": "5B-R.1",
+ "phase": "5B-R",
+ "family": "weapons",
+ "purpose": "Every executable canonical condition value, its evaluation policy (AUTO deterministic / PROMPT observable-only-by-player) and structured predicate. Natural-language text is never parsed; values are registered by exact match.",
+ "counts": {
+  "distinctConditionValues": 110,
+  "registeredValues": 110,
+  "AUTO": 99,
+  "PROMPT": 11,
+  "UNSUPPORTED": 0,
+  "requirementTypesUnsupported": 0
+ },
+ "EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED": 0,
+ "requirementTypes": {
+  "action": "AUTO",
+  "choice": "PROMPT",
+  "configuration": "AUTO",
+  "feat": "AUTO",
+  "operators": "PROMPT",
+  "proficiency": "AUTO",
+  "target": "AUTO",
+  "target-rule": "AUTO",
+  "usage-limit": "AUTO",
+  "wielding": "AUTO"
+ },
+ "conditions": [
+  {
+   "value": "Trip",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].requiresFeat",
+    "canonicalStats.triggeredEffects[].requiresFeat"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "hasFeat",
+    "name": "Trip"
+   }
+  },
+  {
+   "value": "active-drawn-weapon",
+   "paths": [
+    "operation.encumbranceException.when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "truthy",
+    "key": "activeDrawnWeapon"
+   }
+  },
+  {
+   "value": "after-detonation",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "after-detonation"
+   }
+  },
+  {
+   "value": "after-hit",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "after-hit"
+   }
+  },
+  {
+   "value": "after-one-round",
+   "paths": [
+    "canonicalStats.stateMachine.transitions[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "after-one-round"
+   }
+  },
+  {
+   "value": "against-attacks-from-adjacent-targets-while-extended",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "eq",
+      "key": "distance",
+      "value": "adjacent"
+     },
+     {
+      "op": "eq",
+      "key": "configurationId",
+      "value": "extended"
+     }
+    ]
+   }
+  },
+  {
+   "value": "all-Block-checks",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "reactionType",
+    "value": "block"
+   }
+  },
+  {
+   "value": "all-Deflect-checks",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 2,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "reactionType",
+    "value": "deflect"
+   }
+  },
+  {
+   "value": "area-attack-hit",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "area-attack-hit"
+   }
+  },
+  {
+   "value": "area-attack-resolution",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "area-attack-resolution"
+   }
+  },
+  {
+   "value": "attack hits and attack roll also exceeds target Fortitude Defense",
+   "paths": [
+    "operation.fortitudeRider.trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "attack-hit-and-roll-exceeds-fortitude"
+   }
+  },
+  {
+   "value": "attack roll beats target Reflex Defense",
+   "paths": [
+    "canonicalStats.payloadProfiles[].specialEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "attack-roll-equals-or-exceeds-reflex"
+   }
+  },
+  {
+   "value": "attack roll equals or exceeds both target Reflex Defense and Fortitude Defense against a living creature",
+   "paths": [
+    "operation.grievousWound.trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "event",
+      "name": "attack-roll-equals-or-exceeds-both-defenses"
+     },
+     {
+      "op": "eq",
+      "key": "targetType",
+      "value": "living"
+     }
+    ]
+   }
+  },
+  {
+   "value": "attack-of-opportunity",
+   "paths": [
+    "canonicalStats.attackProfiles[].activationRequirements[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "attack-of-opportunity"
+   }
+  },
+  {
+   "value": "attack-of-opportunity-and-wielded-one-handed",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "event",
+      "name": "attack-of-opportunity"
+     },
+     {
+      "op": "eq",
+      "key": "wieldedHands",
+      "value": 1
+     }
+    ]
+   }
+  },
+  {
+   "value": "attack-roll-equals-or-exceeds-both-defenses",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 2,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "attack-roll-equals-or-exceeds-both-defenses"
+   }
+  },
+  {
+   "value": "autofire attack",
+   "paths": [
+    "canonicalStats.modeProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "fireMode",
+    "value": "autofire"
+   }
+  },
+  {
+   "value": "beginning-of-wielder-turn",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "beginning-of-wielder-turn"
+   }
+  },
+  {
+   "value": "braced",
+   "paths": [
+    "canonicalStats.wieldingRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "truthy",
+    "key": "braced"
+   }
+  },
+  {
+   "value": "character-at-range",
+   "paths": [
+    "canonicalStats.attackProfiles[].activationRequirements[].requires"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "eq",
+      "key": "targetType",
+      "value": "character"
+     },
+     {
+      "op": "neq",
+      "key": "distance",
+      "value": "adjacent"
+     }
+    ]
+   }
+  },
+  {
+   "value": "critical-hit",
+   "paths": [
+    "canonicalStats.attackProfiles[].criticalEffects[].trigger"
+   ],
+   "identityCount": 3,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "critical-hit"
+   }
+  },
+  {
+   "value": "damage exceeds target damage threshold and moves target at least 1 step down condition track",
+   "paths": [
+    "operation.embeddedShrapnel.trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "damage-exceeds-threshold-and-moves-condition-track"
+   }
+  },
+  {
+   "value": "damage-dealt-and-attack-roll-equals-or-exceeds-defense",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "damage-dealt-and-attack-roll-equals-or-exceeds-defense"
+   }
+  },
+  {
+   "value": "darter successfully deals damage",
+   "paths": [
+    "canonicalStats.payloadProfiles[].specialEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "event",
+      "name": "successful-hit"
+     },
+     {
+      "op": "eq",
+      "key": "payloadId",
+      "value": "poison"
+     }
+    ]
+   }
+  },
+  {
+   "value": "end-of-wielder-next-turn",
+   "paths": [
+    "canonicalStats.stateMachine.transitions[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "end-of-wielder-next-turn"
+   }
+  },
+  {
+   "value": "enemy-at-up-to-short-range",
+   "paths": [
+    "canonicalStats.attackProfiles[].activationRequirements[].requires"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "eq",
+      "key": "targetDisposition",
+      "value": "hostile"
+     },
+     {
+      "op": "in",
+      "key": "rangeBand",
+      "values": [
+       "pointBlank",
+       "short"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "value": "forgo-double-strength-bonus-to-damage",
+   "paths": [
+    "canonicalStats.attackProfiles[].activationRequirements[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "prompt",
+    "promptId": "forgo-double-strength-bonus-to-damage"
+   }
+  },
+  {
+   "value": "grenade attack roll also beats target Fortitude Defense",
+   "paths": [
+    "operation.fortitudeRider.trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "grenade-roll-beats-fortitude"
+   }
+  },
+  {
+   "value": "handle-is-phrik-laced",
+   "paths": [
+    "canonicalStats.defensiveInteractions[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "prompt",
+    "promptId": "handle-is-phrik-laced"
+   }
+  },
+  {
+   "value": "host-rifle-stock-folded",
+   "paths": [
+    "canonicalStats.wieldingRules[].condition",
+    "operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "prompt",
+    "promptId": "host-rifle-stock-folded"
+   }
+  },
+  {
+   "value": "hurled by atlatl",
+   "paths": [
+    "canonicalStats.attackProfiles[].range.variants[].condition",
+    "canonicalStats.range.variants[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "launcherIdentityKey",
+    "value": "unmapped::Atlatl"
+   }
+  },
+  {
+   "value": "hurled by cesta",
+   "paths": [
+    "canonicalStats.attackProfiles[].range.variants[].condition",
+    "canonicalStats.range.variants[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "launcherIdentityKey",
+    "value": "unmapped::Cesta"
+   }
+  },
+  {
+   "value": "in-place-of-whip-damage",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "in",
+    "key": "profileId",
+    "values": [
+     "whip-pin",
+     "whip-trip"
+    ]
+   }
+  },
+  {
+   "value": "mounted-on-rifle",
+   "paths": [
+    "canonicalStats.wieldingRules[].condition",
+    "operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[].condition"
+   ],
+   "identityCount": 2,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "configurationId",
+    "value": "mounted-on-rifle"
+   }
+  },
+  {
+   "value": "not-aimed-at-target-immediately-before-attack",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "not",
+    "p": {
+     "op": "truthy",
+     "key": "aimedBeforeAttack"
+    }
+   }
+  },
+  {
+   "value": "not-braced",
+   "paths": [
+    "canonicalStats.wieldingRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "not",
+    "p": {
+     "op": "truthy",
+     "key": "braced"
+    }
+   }
+  },
+  {
+   "value": "on-hit",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "on-hit"
+   }
+  },
+  {
+   "value": "poison-cured",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].termination[].condition",
+    "canonicalStats.triggeredEffects[].termination[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "poison-cured"
+   }
+  },
+  {
+   "value": "proficient-wielder",
+   "paths": [
+    "canonicalStats.attackProfiles[].activationRequirements[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "truthy",
+    "key": "proficient"
+   }
+  },
+  {
+   "value": "proficient-wielder-swift-action-activation",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "proficient-wielder-swift-action-activation"
+   }
+  },
+  {
+   "value": "sensor scan for weapons",
+   "paths": [
+    "operation.sensorDetection.trigger"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "prompt",
+    "promptId": "sensor-scan-for-weapons"
+   }
+  },
+  {
+   "value": "single-shot mode",
+   "paths": [
+    "canonicalStats.modeProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "modeId",
+    "value": "single-shot"
+   }
+  },
+  {
+   "value": "start-of-grabbed-target-turn-before-actions",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "start-of-grabbed-target-turn-before-actions"
+   }
+  },
+  {
+   "value": "stationary-unattended-object",
+   "paths": [
+    "canonicalStats.attackProfiles[].activationRequirements[].normalDamageWhen"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "prompt",
+    "promptId": "target-is-stationary-unattended-object"
+   }
+  },
+  {
+   "value": "successful hit then secondary attack vs Fortitude Defense succeeds",
+   "paths": [
+    "canonicalStats.payloadProfiles[].specialEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "secondary-attack-vs-fortitude-succeeds"
+   }
+  },
+  {
+   "value": "successful-damage-with-poison-carrying-dart",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "successful-damage-with-poison-carrying-dart"
+   }
+  },
+  {
+   "value": "successful-hit",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.payloadProfiles[].specialEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 4,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "successful-hit"
+   }
+  },
+  {
+   "value": "successful-ranged-grab-or-grapple",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 2,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "successful-ranged-grab-or-grapple"
+   }
+  },
+  {
+   "value": "successful-weapon-hit",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "successful-weapon-hit"
+   }
+  },
+  {
+   "value": "successive-Block-checks-in-same-round",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "gte",
+    "key": "blockChecksThisRound",
+    "value": 2
+   }
+  },
+  {
+   "value": "swift-action-dial-up",
+   "paths": [
+    "canonicalStats.stateMachine.transitions[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "swift-action-dial-up"
+   }
+  },
+  {
+   "value": "target at unmodified point-blank range",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "rangeBand",
+    "value": "pointBlank"
+   }
+  },
+  {
+   "value": "target is an unattended object",
+   "paths": [
+    "canonicalStats.damageReductionInteraction.exceptions[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "prompt",
+    "promptId": "target-is-unattended-object"
+   }
+  },
+  {
+   "value": "target is moved down condition track by this weapon",
+   "paths": [
+    "operation.conditionTrackRider.trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "target-moved-down-condition-track-by-weapon"
+   }
+  },
+  {
+   "value": "target smaller than Huge",
+   "paths": [
+    "canonicalStats.payloadProfiles[].specialEffects[].condition",
+    "operation.targetSizeAttackPenalty.condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "lt",
+    "key": "targetSizeRank",
+    "value": 6
+   }
+  },
+  {
+   "value": "target-ends-turn-grabbed-or-grappled-by-lightwhip",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "target-ends-turn-grabbed-or-grappled-by-lightwhip"
+   }
+  },
+  {
+   "value": "target-falls-unconscious",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].termination[].condition",
+    "canonicalStats.triggeredEffects[].termination[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "target-falls-unconscious"
+   }
+  },
+  {
+   "value": "target-still-trapped-by-this-electronet",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].condition",
+    "canonicalStats.triggeredEffects[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "target-still-trapped-by-this-weapon"
+   }
+  },
+  {
+   "value": "thrown by hand",
+   "paths": [
+    "canonicalStats.attackProfiles[].range.variants[].condition",
+    "canonicalStats.range.variants[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "not",
+    "p": {
+     "op": "truthy",
+     "key": "launcherIdentityKey"
+    }
+   }
+  },
+  {
+   "value": "two-handed",
+   "paths": [
+    "canonicalStats.attackProfiles[].activationRequirements[].condition",
+    "canonicalStats.wieldingRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "wieldedHands",
+    "value": 2
+   }
+  },
+  {
+   "value": "two-handed-and-forgo-double-strength-bonus",
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "eq",
+      "key": "wieldedHands",
+      "value": 2
+     },
+     {
+      "op": "prompt",
+      "promptId": "forgo-double-strength-bonus-to-damage"
+     }
+    ]
+   }
+  },
+  {
+   "value": "use Rapid Shot or feat with Rapid Shot as prerequisite",
+   "paths": [
+    "operation.rapidShotReset.trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "usesAny",
+    "names": [
+     "Rapid Shot"
+    ]
+   }
+  },
+  {
+   "value": "using-Weapon-Finesse-feat",
+   "paths": [
+    "canonicalStats.wieldingRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "hasFeat",
+      "name": "Weapon Finesse"
+     },
+     {
+      "op": "truthy",
+      "key": "usingWeaponFinesse"
+     }
+    ]
+   }
+  },
+  {
+   "value": "weapon object is struck by lightsaber",
+   "paths": [
+    "canonicalStats.defensiveInteractions[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "weapon-struck-by-lightsaber"
+   }
+  },
+  {
+   "value": "weapon-fired",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "weapon-fired"
+   }
+  },
+  {
+   "value": "weapon-takes-any-damage",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "weapon-takes-any-damage"
+   }
+  },
+  {
+   "value": "whenever-beneficial",
+   "paths": [
+    "canonicalStats.wieldingRules[].condition"
+   ],
+   "identityCount": 3,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "prompt",
+    "promptId": "treat-as-smaller-size-when-beneficial"
+   }
+  },
+  {
+   "value": "while using Double Attack, Triple Attack or Rapid Strike",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "usesAny",
+    "names": [
+     "Double Attack",
+     "Triple Attack",
+     "Rapid Strike"
+    ]
+   }
+  },
+  {
+   "value": "while worn",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "equipState",
+    "value": "worn"
+   }
+  },
+  {
+   "value": "while-snared",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 2,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "while-snared"
+   }
+  },
+  {
+   "value": "while-target-grabbed-by-this-weapon",
+   "paths": [
+    "canonicalStats.attackProfiles[].triggeredEffects[].trigger",
+    "canonicalStats.triggeredEffects[].trigger"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "event",
+    "name": "while-target-grabbed-by-this-weapon"
+   }
+  },
+  {
+   "value": "wielded-one-handed",
+   "paths": [
+    "canonicalStats.wieldingRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "wieldedHands",
+    "value": 1
+   }
+  },
+  {
+   "value": "wielder Strength below 15",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "lt",
+    "key": "actorStr",
+    "value": 15
+   }
+  },
+  {
+   "value": "wielder is Gamorrean",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "speciesIs",
+    "name": "Gamorrean"
+   }
+  },
+  {
+   "value": "wielder is Gungan and has Weapon Proficiency (simple weapons)",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "speciesIs",
+      "name": "Gungan"
+     },
+     {
+      "op": "hasProficiencyGroup",
+      "group": "simple"
+     }
+    ]
+   }
+  },
+  {
+   "value": "wielder is Massassi",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "speciesIs",
+    "name": "Massassi"
+   }
+  },
+  {
+   "value": "wielder is Squib",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "speciesIs",
+    "name": "Squib"
+   }
+  },
+  {
+   "value": "wielder is Verpine",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "speciesIs",
+    "name": "Verpine"
+   }
+  },
+  {
+   "value": "wielder is Yuuzhan Vong and has Weapon Proficiency (simple weapons)",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "speciesIs",
+      "name": "Yuuzhan Vong"
+     },
+     {
+      "op": "hasProficiencyGroup",
+      "group": "simple"
+     }
+    ]
+   }
+  },
+  {
+   "value": "wielder is a Wookiee with Weapon Proficiency (rifles)",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "speciesIs",
+      "name": "Wookiee"
+     },
+     {
+      "op": "hasProficiencyGroup",
+      "group": "rifles"
+     }
+    ]
+   }
+  },
+  {
+   "value": "wielder is a Wookiee",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "speciesIs",
+    "name": "Wookiee"
+   }
+  },
+  {
+   "value": "wielder proficient with Sith sword",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "hasProficiencyGroup",
+    "group": "simple"
+   }
+  },
+  {
+   "value": "wielder uses Double Attack, Triple Attack, or Rapid Shot",
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "usesAny",
+    "names": [
+     "Double Attack",
+     "Triple Attack",
+     "Rapid Shot"
+    ]
+   }
+  },
+  {
+   "value": "wielder-size-Large-or-larger",
+   "paths": [
+    "canonicalStats.wieldingRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "gte",
+    "key": "actorSizeRank",
+    "value": 4
+   }
+  },
+  {
+   "value": {
+    "description": "hurled by atlatl"
+   },
+   "paths": [
+    "conditionalQualities[].when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "launcherIdentityKey",
+    "value": "unmapped::Atlatl"
+   }
+  },
+  {
+   "value": {
+    "description": "hurled by cesta"
+   },
+   "paths": [
+    "conditionalQualities[].when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "launcherIdentityKey",
+    "value": "unmapped::Cesta"
+   }
+  },
+  {
+   "value": {
+    "description": "quarterstaff form; has all qualities of a quarterstaff",
+    "configurationId": "quarterstaff"
+   },
+   "paths": [
+    "conditionalQualities[].when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "configurationId",
+    "value": "quarterstaff"
+   }
+  },
+  {
+   "value": {
+    "description": "spear form",
+    "configurationId": "spear"
+   },
+   "paths": [
+    "conditionalQualities[].when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "configurationId",
+    "value": "spear"
+   }
+  },
+  {
+   "value": {
+    "description": "thrown by hand"
+   },
+   "paths": [
+    "conditionalQualities[].when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "not",
+    "p": {
+     "op": "truthy",
+     "key": "launcherIdentityKey"
+    }
+   }
+  },
+  {
+   "value": {
+    "description": "whip form; reach 2 squares",
+    "configurationId": "whip"
+   },
+   "paths": [
+    "conditionalQualities[].when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "configurationId",
+    "value": "whip"
+   }
+  },
+  {
+   "value": {
+    "description": "wielder-has-Long-Haft-Form"
+   },
+   "paths": [
+    "conditionalQualities[].when"
+   ],
+   "identityCount": 2,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "hasFeat",
+    "name": "Long Haft Form"
+   }
+  },
+  {
+   "value": {
+    "environment": "not-underwater"
+   },
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalRangeRules[].when"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "not",
+    "p": {
+     "op": "prompt",
+     "promptId": "underwater"
+    }
+   }
+  },
+  {
+   "value": {
+    "environment": "underwater"
+   },
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalRangeRules[].when"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "prompt",
+    "promptId": "underwater"
+   }
+  },
+  {
+   "value": {
+    "minimumOperators": 2,
+    "roles": [
+     "stabilizer",
+     "trigger-operator"
+    ]
+   },
+   "paths": [
+    "canonicalStats.wieldingRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "PROMPT",
+   "predicate": {
+    "op": "prompt",
+    "promptId": "crew-operators-present"
+   }
+  },
+  {
+   "value": {
+    "mode": "double-shot"
+   },
+   "paths": [
+    "conditionalQualities[].when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "modeId",
+    "value": "double-shot"
+   }
+  },
+  {
+   "value": {
+    "targetCategory": "selected type"
+   },
+   "paths": [
+    "canonicalStats.modeProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "in",
+    "key": "targetType",
+    "values": "$selectedTypes"
+   }
+  },
+  {
+   "value": {
+    "targetSize": "smaller-than-Huge"
+   },
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition"
+   ],
+   "identityCount": 2,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "lt",
+    "key": "targetSizeRank",
+    "value": 6
+   }
+  },
+  {
+   "value": {
+    "type": "aimed-before-attack"
+   },
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "truthy",
+    "key": "aimedBeforeAttack"
+   }
+  },
+  {
+   "value": {
+    "type": "distance",
+    "equals": "adjacent"
+   },
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "distance",
+    "value": "adjacent"
+   }
+  },
+  {
+   "value": {
+    "type": "distance",
+    "notEquals": "adjacent"
+   },
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "neq",
+    "key": "distance",
+    "value": "adjacent"
+   }
+  },
+  {
+   "value": {
+    "type": "payload-fired-by-this-launcher",
+    "payloadFamily": "grenade"
+   },
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "payloadFamily",
+    "value": "grenade"
+   }
+  },
+  {
+   "value": {
+    "type": "quantity-held-one-hand",
+    "minimum": 2
+   },
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "gte",
+    "key": "quantityHeldOneHand",
+    "value": 2
+   }
+  },
+  {
+   "value": {
+    "type": "range-band",
+    "equals": "long"
+   },
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "rangeBand",
+    "value": "long"
+   }
+  },
+  {
+   "value": {
+    "type": "range-band",
+    "equals": "medium"
+   },
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "rangeBand",
+    "value": "medium"
+   }
+  },
+  {
+   "value": {
+    "type": "range-band",
+    "equals": "pointBlank"
+   },
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "rangeBand",
+    "value": "pointBlank"
+   }
+  },
+  {
+   "value": {
+    "type": "range-band",
+    "equals": "short"
+   },
+   "paths": [
+    "conditionalDamageProfiles[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "rangeBand",
+    "value": "short"
+   }
+  },
+  {
+   "value": {
+    "usesAny": [
+     "Double Attack",
+     "Triple Attack",
+     "Rapid Shot"
+    ]
+   },
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "usesAny",
+    "names": [
+     "Double Attack",
+     "Triple Attack",
+     "Rapid Shot"
+    ]
+   }
+  },
+  {
+   "value": {
+    "wieldedHands": 2
+   },
+   "paths": [
+    "conditionalQualities[].when"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "eq",
+    "key": "wieldedHands",
+    "value": 2
+   }
+  },
+  {
+   "value": {
+    "wielderSize": "Medium",
+    "mounted": false
+   },
+   "paths": [
+    "canonicalStats.attackProfiles[].conditionalModifiers[].condition",
+    "canonicalStats.wieldingRules[].when"
+   ],
+   "identityCount": 2,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "eq",
+      "key": "actorSize",
+      "value": "Medium"
+     },
+     {
+      "op": "not",
+      "p": {
+       "op": "truthy",
+       "key": "mounted"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "value": {
+    "wielderSize": "Medium",
+    "mounted": true,
+    "trainedSkill": "Ride"
+   },
+   "paths": [
+    "canonicalStats.wieldingRules[].when"
+   ],
+   "identityCount": 2,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "eq",
+      "key": "actorSize",
+      "value": "Medium"
+     },
+     {
+      "op": "truthy",
+      "key": "mounted"
+     },
+     {
+      "op": "truthy",
+      "key": "trainedRide"
+     }
+    ]
+   }
+  }
+ ]
+}

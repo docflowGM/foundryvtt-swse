@@ -1,0 +1,1414 @@
+{
+ "schemaVersion": "5C.1",
+ "role": "HISTORICAL_AUDIT_EVIDENCE",
+ "classes": [
+  "CANONICAL_SSOT",
+  "GENERATED_PRODUCTION",
+  "GENERATED_RUNTIME_INDEX",
+  "GENERATED_COMPATIBILITY",
+  "MIGRATION_ALIAS_ONLY",
+  "HISTORICAL_AUDIT_EVIDENCE",
+  "DEAD_REMOVE",
+  "OTHER_DOMAIN_DATA",
+  "REFERENCE_BEARING_DOMAIN_DATA"
+ ],
+ "counts": {
+  "CANONICAL_SSOT": 3,
+  "GENERATED_PRODUCTION": 15,
+  "GENERATED_RUNTIME_INDEX": 1,
+  "GENERATED_COMPATIBILITY": 3,
+  "MIGRATION_ALIAS_ONLY": 2,
+  "HISTORICAL_AUDIT_EVIDENCE": 228,
+  "DEAD_REMOVE": 0,
+  "OTHER_DOMAIN_DATA": 11,
+  "REFERENCE_BEARING_DOMAIN_DATA": 14
+ },
+ "unclassified": [],
+ "entries": [
+  {
+   "path": "data/actor-weapon-ranges.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/audits/archetype-phase-11-2/alias-normalization-set-1.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-11-2/bespoke-adjudication.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-11-2/category-decomposition.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-11-2/conceptual-adjudication.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-11-2/final-reconsider-resolution.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-11-2/role-class-adjudication.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-11-2/structural-adjudication.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-11-2/tag-pruning-pass-1.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-12a-convergence-audit.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-12a-runtime-ssot.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/archetype-phase-12b-semantic-curation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-content-canonical-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-phase-0-canonical-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-phase-1a-canonical-identity-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-phase-1b-repository-reconciliation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-provenance-canonical-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-tags-pass2-family-analysis-post-adjudication.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-tags-pass2-family-analysis.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-tags-pass2-owner-adjudication.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-tags-pass2-production-reconciliation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-tags-pass2-semantic-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-tags-pass2-skill-completeness-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-tags-production-reconciliation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-tags-semantic-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/feat-tags-skill-completeness-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/frozen/pre-cutover-weapons.db",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-canonicalization-rolling-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-phase-0-ssot-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2b-kotor-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2c-galaxy-at-war-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2d-force-unleashed-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2e-clone-wars-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2f-jedi-academy-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2g-legacy-era-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2h-unknown-regions-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2i-rebellion-era-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2j-scum-and-villainy-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2k-galaxy-of-intrigue-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-2l-threats-of-the-galaxy-standalone-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-3a-cross-publication-reconciliation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-3b-canonical-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-3c-production-disposition-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-3d-global-freeze.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4a-simple-semantic-rolling.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4d-rifle-semantic-rolling.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4g-exotic-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4h-authority-reconciliation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4h-b-global-semantic-qa.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4h-d-phase-4-certification.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-phase-4h-global-semantic-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/item-weapons-schema-v2.9-ammo-normalization.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/phase-5c-precutover-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/phase-5c-weapon-projection-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-canonical-tree-registry.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3a-baseline.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3a-semantic-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3a-skill-sweep.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-1-mechanical-primitives-owner-packet.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-2a-damage-critical-owner-packet.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-2b-control-reactive-owner-packet.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-2c-combat-mode-owner-packet.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-2d-weapon-scope-owner-packet.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-exact-mechanic-convergence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-mechanic-baseline.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-owner-adjudication.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-policy-closure.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-policy-gaps.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3b-semantic-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3c-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3c-cross-domain-analysis.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-pass3c-tag-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-phase3-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-phase3-final-ontology.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-phase3-final-owner-policy-packet.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-phase3-final-owner-rulings.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-phase3-final-semantic-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-feat-phase3d-ontology-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-11-2a-deletion-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-11-2a-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-11-2b-cleanup-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-11-2b-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-11-2c-cleanup-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-11-2c-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-11-2c-tree-credit-repair-reference.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-11-2c-tree-credit-repair.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-1-cleanup-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-1-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-1-semantic-tag-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-2-cleanup-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-2-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-2-existing-tag-authority.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-final-cleanup-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-final-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-final-ontology-adjudication.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-force-talent-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-12-global-semantic-authority-qa5.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-1d-structural-correction-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-clone-wars-campaign-guide-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-clone-wars-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-core-certification.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-core-content-certification.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-core-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-core-rulebook-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-force-unleashed-campaign-guide-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-force-unleashed-campaign-guide-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-galaxy-at-war-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-galaxy-at-war-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-galaxy-of-intrigue-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-galaxy-of-intrigue-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-jedi-academy-training-manual-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-legacy-era-campaign-guide-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-legacy-era-campaign-guide-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-legacy-era-checkpoint.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-rebellion-era-campaign-guide-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-rebellion-era-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-scavengers-guide-to-droids-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-scavengers-guide-to-droids-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-scum-and-villainy-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-scum-and-villainy-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-starships-of-the-galaxy-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-starships-of-the-galaxy-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-threats-of-the-galaxy-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-threats-of-the-galaxy-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-unknown-regions-content.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-2-unknown-regions-discrepancy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-force-unleashed-campaign-guide-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-galaxy-at-war-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-galaxy-of-intrigue-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-global-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-jedi-academy-training-manual-checkpoint.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-legacy-era-campaign-guide-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-rebellion-era-campaign-guide-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-scavengers-guide-to-droids-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-scum-and-villainy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-source-text-corrections.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3b-unknown-regions-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3c-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3d-dispositions.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3d-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3d-production-extras-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3d-reference-impact.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3e-canonical-additions.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3e-core-gunslinger-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3e-discovery-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3e-publication-reconciliation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3e4-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3e4-repair-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3e5-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3e5-text-defect-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3f-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3f-normalization-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3f-tree-identity-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3g-dry-run-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3g-identity-experiments.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3g-migration-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3g-prerequisite-identity-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/talent-phase-3g-source-corrections.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/weapon-phase-5a-runtime-consumer-matrix.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/weapon-phase-5b-consumption-map.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/weapon-phase-5b-r-condition-policy-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/weapon-phase-5b-r-mode-reconciliation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/weapon-phase-5b-schema-field-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/weapon-phase-5b-special-mechanic-consumption.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/canonical/feats.json",
+   "class": "CANONICAL_SSOT",
+   "note": "The one operational authority for its domain."
+  },
+  {
+   "path": "data/canonical/talents.json",
+   "class": "CANONICAL_SSOT",
+   "note": "The one operational authority for its domain."
+  },
+  {
+   "path": "data/canonical/weapons.json",
+   "class": "CANONICAL_SSOT",
+   "note": "The one operational authority for its domain."
+  },
+  {
+   "path": "data/combat/damage-profiles.vehicle-weapon.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/combat/damage-profiles.weapon.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/feat-buckets-and-subbuckets.json",
+   "class": "GENERATED_COMPATIBILITY",
+   "note": "Picker bucket view derived from generated feat documents."
+  },
+  {
+   "path": "data/feat-catalog.json",
+   "class": "GENERATED_COMPATIBILITY",
+   "note": "Catalog projection of packs/feats.db documents; retire when every consumer reads the pack/registry (5G)."
+  },
+  {
+   "path": "data/feat-choice-options.json",
+   "class": "GENERATED_PRODUCTION",
+   "note": "Feat companion data generated from the canonical feats corpus (companions + per-feat automation)."
+  },
+  {
+   "path": "data/feat-combat-actions.json",
+   "class": "GENERATED_PRODUCTION",
+   "note": "Feat companion data generated from the canonical feats corpus (companions + per-feat automation)."
+  },
+  {
+   "path": "data/feat-effects.json",
+   "class": "GENERATED_PRODUCTION",
+   "note": "Feat companion data generated from the canonical feats corpus (companions + per-feat automation)."
+  },
+  {
+   "path": "data/feat-implementation/clone-wars-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/clone-wars-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/core-rulebook-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/core-rulebook-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/force-unleashed-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/force-unleashed-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/galaxy-at-war-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/galaxy-at-war-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/galaxy-intrigue-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/galaxy-intrigue-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/jedi-academy-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/jedi-academy-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/kotor-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/kotor-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/phase10a-runtime-status-overrides.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/phase10b-engine-fit-matrix.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/phase10c-adapter-contracts.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/phase10d-reaction-adapter-implementation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/phase10e-target-effect-adapter-implementation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/phase10f-damage-timing-rider-adapter-implementation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/phase10g-damage-timing-rider-wiring.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/phase10h-damage-context-callsite-audit.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/scavengers-droids-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/scavengers-droids-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/scum-and-villainy-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/scum-and-villainy-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/starships-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/starships-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/threats-of-the-galaxy-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/threats-of-the-galaxy-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/unknown-regions-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/unknown-regions-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/web-enhancement-feat-implementation-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-implementation/web-enhancement-feat-implementation-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-metadata.json",
+   "class": "GENERATED_PRODUCTION",
+   "note": "Feat companion data generated from the canonical feats corpus (companions + per-feat automation)."
+  },
+  {
+   "path": "data/feat-source-parity/clone-wars-galaxy-at-war-feat-parity-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-source-parity/core-web-feat-parity-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-source-parity/force-unleashed-feat-parity-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-source-parity/galaxy-intrigue-feat-parity-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-source-parity/kotor-jedi-academy-feat-parity-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-source-parity/scavengers-droids-feat-parity-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-source-parity/scum-threats-unknown-feat-parity-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-source-parity/skill-challenge-feat-readiness-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-source-parity/starships-feat-parity-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-taxonomy/expanded-feat-bucket-taxonomy.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-taxonomy/feat-bucket-taxonomy-migration-template.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-taxonomy/feat-taxonomy-application-map.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-taxonomy/feat-taxonomy-source-review-list.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Developer audit inputs read only by scripts/dev audit tools."
+  },
+  {
+   "path": "data/feat-validity-registry.json",
+   "class": "GENERATED_PRODUCTION",
+   "note": "Feat companion data generated from the canonical feats corpus (companions + per-feat automation)."
+  },
+  {
+   "path": "data/generated/class-feat-list-bindings.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Class-owned feat id lists (runtime); ids verified against the canonical corpus."
+  },
+  {
+   "path": "data/migrations/feat-canonical-aliases.json",
+   "class": "MIGRATION_ALIAS_ONLY",
+   "note": "Old id/name -> canonical mapping; defines nothing."
+  },
+  {
+   "path": "data/migrations/weapon-canonical-aliases.json",
+   "class": "MIGRATION_ALIAS_ONLY",
+   "note": "Old id/name -> canonical mapping; defines nothing."
+  },
+  {
+   "path": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.nh5-scavengers-guide-droids.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/nonheroic/nonheroic-weapon-damage-profiles.schema.json",
+   "class": "REFERENCE_BEARING_DOMAIN_DATA",
+   "note": "Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs."
+  },
+  {
+   "path": "data/prestige-layers/weapon-master.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/skill-challenges/skill-challenge-feat-hooks.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Read only by scripts/dev skill-challenge audits."
+  },
+  {
+   "path": "data/store/weapon-store-descriptions.json",
+   "class": "GENERATED_COMPATIBILITY",
+   "note": "Store card text projected from canonical player summaries."
+  },
+  {
+   "path": "data/upgrades/weapon-upgrades.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/vehicle-modifications/weapon-systems.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/vehicle-weapon-ranges.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/vehicle-weapons.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/weapons/canonical-weapon-registry.json",
+   "class": "GENERATED_RUNTIME_INDEX",
+   "note": "tools/build-weapon-runtime-registry.mjs from data/canonical/weapons.json"
+  },
+  {
+   "path": "packs/feats.db",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-feat-production.mjs from data/canonical/feats.json"
+  },
+  {
+   "path": "packs/feats.db.sha256",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-feat-production.mjs from data/canonical/feats.json"
+  },
+  {
+   "path": "packs/vehicle-weapon-ranges.db",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "packs/vehicle-weapons.db",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "packs/vehicles-weapon-emplacements.db",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus."
+  },
+  {
+   "path": "packs/weapons-exotic.db",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-weapon-production.mjs from data/canonical/weapons.json"
+  },
+  {
+   "path": "packs/weapons-grenades.db",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-weapon-production.mjs from data/canonical/weapons.json"
+  },
+  {
+   "path": "packs/weapons-heavy.db",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-weapon-production.mjs from data/canonical/weapons.json"
+  },
+  {
+   "path": "packs/weapons-lightsabers.db",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-weapon-production.mjs from data/canonical/weapons.json"
+  },
+  {
+   "path": "packs/weapons-pistols.db",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-weapon-production.mjs from data/canonical/weapons.json"
+  },
+  {
+   "path": "packs/weapons-rifles.db",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-weapon-production.mjs from data/canonical/weapons.json"
+  },
+  {
+   "path": "packs/weapons-simple.db",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-weapon-production.mjs from data/canonical/weapons.json"
+  },
+  {
+   "path": "packs/weapons.db",
+   "class": "GENERATED_PRODUCTION",
+   "note": "tools/build-weapon-production.mjs from data/canonical/weapons.json"
+  }
+ ]
+}

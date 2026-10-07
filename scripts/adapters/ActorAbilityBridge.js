@@ -58,12 +58,16 @@ export class ActorAbilityBridge {
       const index = ActorItemIndex.build(actor);
 
       // Try to resolve the feat from registry first
-      let featDef = null;
-      if (FeatRegistry.getByName) {
-        featDef = FeatRegistry.getByName(featNameOrId);
-      }
-      if (!featDef && FeatRegistry.getById) {
-        featDef = FeatRegistry.getById(featNameOrId);
+      // Canonical id is authoritative; a bare name that matches several canonical feats (e.g. the two Staggering Attack
+      // identities) cannot be resolved to one and fails closed (AMBIGUOUS_CANONICAL_FEAT_NAME).
+      let featDef = FeatRegistry.getById ? FeatRegistry.getById(featNameOrId) : null;
+      if (!featDef && FeatRegistry.findByName) {
+        const hits = FeatRegistry.findByName(featNameOrId);
+        if (hits.length > 1) {
+          SWSELogger.warn(`[ActorAbilityBridge] AMBIGUOUS_CANONICAL_FEAT_NAME "${featNameOrId}": pass a canonical feat id`);
+          return false;
+        }
+        featDef = hits[0] || null;
       }
 
       if (!featDef) {

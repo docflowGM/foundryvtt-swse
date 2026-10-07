@@ -1,0 +1,1162 @@
+{
+  "schemaVersion": "weapon-semantic-tags-heavy-complete-v1",
+  "phase": "4F",
+  "family": "weapons",
+  "categoryBatch": "Heavy Weapons",
+  "status": "WEAPON_TAG_PHASE_4F_HEAVY_COMPLETE_PLANNER_AUTHORITY",
+  "authorityOnly": true,
+  "productionMutationAuthorized": false,
+  "baseline": {
+    "phase3BBlobSha": "e1f19068526e773a700496976403628c24d34b51",
+    "comparisonIdentityKey": "weapon-blaster-cannon",
+    "comparisonCanonicalName": "Blaster Cannon",
+    "semanticBaseline": [
+      "heavy_weapon",
+      "ranged",
+      "offense_ranged",
+      "burst_damage"
+    ]
+  },
+  "scope": {
+    "primaryHeavyWeaponGroupIdentities": 15,
+    "heavyProficiencyAdjunctIdentities": 2,
+    "totalHeavyProficiencySurface": 17,
+    "adjunctIdentities": [
+      "Electronet",
+      "Interchangeable Weapon System"
+    ],
+    "repoPresent": 17,
+    "repoMissing": 0
+  },
+  "heavyWeaponSemanticPolicy": {
+    "decision": "USE_WHEN_ACTIVE_PROFILE_USES_HEAVY_WEAPONS_PROFICIENCY",
+    "hybridRule": "Hybrid items receive conditional heavy_weapon relevance only in Heavy Weapons modes.",
+    "ammunitionRule": "Heavy Weapon ammunition may carry heavy_weapon relevance when use is resolved through a Heavy Weapon launcher."
+  },
+  "rollingProgress": {
+    "round": 2,
+    "adjudicatedThisRound": 7,
+    "adjudicatedTotal": 17,
+    "remaining": 0,
+    "categoryComplete": true,
+    "firstCanonicalName": "Light Concussion Missile Launcher",
+    "lastCanonicalName": "Tactical Tractor Beam",
+    "nextCanonicalName": null,
+    "totalFinalTagAssignmentsCumulative": 105,
+    "conditionalSemanticTagAssignmentsCumulative": 1,
+    "distinctSemanticTagsUsedCumulative": 25,
+    "semanticTagsUsedCumulative": [
+      "action_economy",
+      "battlefield_control",
+      "burst_damage",
+      "control",
+      "cover",
+      "equipment",
+      "grab",
+      "heavy_weapon",
+      "mechanics",
+      "mobility",
+      "movement",
+      "nonlethal",
+      "offense_ranged",
+      "positioning",
+      "precision",
+      "ranged",
+      "restrain",
+      "setup",
+      "sniper",
+      "standard_action",
+      "stun",
+      "sustained_damage",
+      "swift_action",
+      "targeting",
+      "vehicle"
+    ]
+  },
+  "roundLedger": [
+    {
+      "round": 1,
+      "adjudicated": 10,
+      "firstCanonicalName": "Blaster Cannon",
+      "lastCanonicalName": "Interchangeable Weapon System"
+    },
+    {
+      "round": 2,
+      "adjudicated": 7,
+      "firstCanonicalName": "Light Concussion Missile Launcher",
+      "lastCanonicalName": "Tactical Tractor Beam"
+    }
+  ],
+  "completionCertification": {
+    "status": "HEAVY_WEAPON_SEMANTIC_SELECTOR_RECOMMENDATION_AUTHORITY_COMPLETE",
+    "identityReconciliation": "17 = 17",
+    "repoPresent": 17,
+    "repoMissing": 0,
+    "payloadAwareSemanticsUsedWhereRequired": true,
+    "modeAwareSemanticsUsedWhereRequired": true,
+    "productionMutationAuthorized": false
+  },
+  "implementationContract": {
+    "semanticAuthority": "planner",
+    "productionMutationAuthorized": false,
+    "productionFilesMustRemainUnchanged": [
+      "packs/weapons.db",
+      "template.json"
+    ]
+  },
+  "assignments": [
+    {
+      "identityKey": "weapon-blaster-cannon",
+      "canonicalName": "Blaster Cannon",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 125,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "3d12 single-fire area cannon; 10 shots; full/half primary-target resolution plus half damage to adjacent targets on a hit.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "tradeoffTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-blaster-cannon",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:blaster-cannon",
+          "weapon-family:area-cannon",
+          "weapon-family:shoulder-fired-heavy"
+        ]
+      },
+      "recommendationFit": "Portable high-damage area baseline."
+    },
+    {
+      "identityKey": "weapon-carbonite-rifle",
+      "canonicalName": "Carbonite Rifle",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "Native 3d10 stun; 20-shot carbonite cartridge; a target moved down the condition track is also immobilized until the end of its next turn.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "stun",
+        "nonlethal",
+        "control",
+        "battlefield_control"
+      ],
+      "tradeoffTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-carbonite-rifle",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:carbonite-rifle",
+          "weapon-family:stun-heavy-weapon"
+        ]
+      },
+      "recommendationFit": "Nonlethal control Heavy Weapon."
+    },
+    {
+      "identityKey": "weapon-e-web-missile-launcher",
+      "canonicalName": "E-Web Missile Launcher",
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 198,
+        "statTablePage": 199
+      },
+      "canonicalMechanicSummary": "Tripod single-shot 2x2 area missile launcher; normally crew-reloaded as a move action; two swift actions can improve effective range one step; max one shot per round.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage",
+        "swift_action",
+        "action_economy",
+        "setup"
+      ],
+      "tradeoffTags": [
+        "full_attack",
+        "sustained_damage"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-e-web-missile-launcher",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:missile-launcher",
+          "weapon-family:e-web-missile-launcher",
+          "weapon-family:crew-served-heavy",
+          "weapon-family:payload-launcher"
+        ]
+      },
+      "recommendationFit": "Prepared crew-served area missile platform."
+    },
+    {
+      "identityKey": "weapon-e-web-repeating-blaster",
+      "canonicalName": "E-Web Repeating Blaster",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 125,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "3d12 autofire-only generator-powered tripod weapon; normally requires a second crew member to regulate power or attacks take -2.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-e-web-repeating-blaster",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:repeating-blaster",
+          "weapon-family:e-web-repeating-blaster",
+          "weapon-family:autofire-heavy",
+          "weapon-family:crew-served-heavy"
+        ]
+      },
+      "recommendationFit": "Emplacement sustained-fire platform."
+    },
+    {
+      "identityKey": "weapon-electronet",
+      "canonicalName": "Electronet",
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 50,
+        "statTablePage": 51
+      },
+      "canonicalMechanicSummary": "Grenade-launcher ammunition affecting a 2x2 area; hits deal 3d8 stun and grab; trapped targets take recurring 3d8 stun each round.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "stun",
+        "nonlethal",
+        "grab",
+        "restrain",
+        "control",
+        "battlefield_control",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-electronet",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:electronet",
+          "weapon-family:net-ammunition",
+          "weapon-family:grenade-launcher-ammunition",
+          "weapon-family:capture-payload"
+        ]
+      },
+      "recommendationFit": "Multi-target capture/control payload.",
+      "unrepresentedMechanics": [
+        "This identity is ammunition, not a standalone launcher; delivery/range are inherited from the grenade launcher."
+      ]
+    },
+    {
+      "identityKey": "weapon-flame-cannon",
+      "canonicalName": "Flame Cannon",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 39,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "5d6 fire cone 12 squares long and 8 wide at the end; 20-use tank; full-round reload; tripod reduces effective wielding size.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "action_economy",
+        "sustained_damage"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-flame-cannon",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:flame-cannon",
+          "weapon-family:cone-heavy",
+          "weapon-family:tripod-heavy"
+        ]
+      },
+      "recommendationFit": "Broad cone battlefield-clearing weapon."
+    },
+    {
+      "identityKey": "weapon-grenade-launcher",
+      "canonicalName": "Grenade Launcher",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 128,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "Four-round payload launcher; loaded grenade determines damage/type/burst/effects; full-round reload; rifle-mountable in 1 minute with DC 15 Mechanics; cannot fire thermal detonators.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "equipment",
+        "mechanics",
+        "setup"
+      ],
+      "tradeoffTags": [
+        "action_economy",
+        "sustained_damage"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-grenade-launcher",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:grenade-launcher",
+          "weapon-family:payload-launcher",
+          "weapon-family:rifle-mounted-heavy"
+        ]
+      },
+      "recommendationFit": "Payload-flexible launcher; semantics should inherit from the loaded grenade.",
+      "unrepresentedMechanics": [
+        "Loaded grenade supplies damage, area, stun/ion/control and other payload semantics dynamically."
+      ]
+    },
+    {
+      "identityKey": "weapon-heavy-blaster-cannon",
+      "canonicalName": "Heavy Blaster Cannon",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 182,
+        "statTablePage": 183
+      },
+      "canonicalMechanicSummary": "Huge Inaccurate 4d12 area cannon; 10 shots; Medium or smaller wielder must spend two swift actions immediately before firing to brace it; no Long range.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage",
+        "swift_action",
+        "action_economy",
+        "setup"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "sustained_damage"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-heavy-blaster-cannon",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:blaster-cannon",
+          "weapon-family:heavy-blaster-cannon",
+          "weapon-family:area-cannon",
+          "weapon-family:braced-heavy"
+        ]
+      },
+      "recommendationFit": "Maximum cannon damage with a setup tax."
+    },
+    {
+      "identityKey": "weapon-heavy-repeating-blaster",
+      "canonicalName": "Heavy Repeating Blaster",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 125,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "3d10 autofire-only; 20-shot pack or generator; cannot brace unless mounted on tripod or another mount.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-heavy-repeating-blaster",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:repeating-blaster",
+          "weapon-family:heavy-repeating-blaster",
+          "weapon-family:autofire-heavy"
+        ]
+      },
+      "recommendationFit": "Mobile sustained-fire Heavy Weapon."
+    },
+    {
+      "identityKey": "weapon-interchangeable-weapon-system",
+      "canonicalName": "Interchangeable Weapon System",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 39,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "DC-17m switches among rifle, sniper, and anti-armor modes. Only anti-armor mode uses Heavy Weapons proficiency and fires a 4d6 3-square-burst round.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage",
+        "sniper",
+        "targeting",
+        "precision",
+        "standard_action",
+        "action_economy",
+        "setup",
+        "burst_damage"
+      ],
+      "tradeoffTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-interchangeable-weapon-system",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:interchangeable-weapon-system",
+          "weapon-family:modular-weapon-system"
+        ],
+        "modeSelectors": [
+          {
+            "mode": "blaster-rifle",
+            "weaponGroup": "weapon-group:rifle",
+            "proficiency": "weapon-proficiency:rifles"
+          },
+          {
+            "mode": "sniper",
+            "weaponGroup": "weapon-group:rifle",
+            "proficiency": "weapon-proficiency:rifles"
+          },
+          {
+            "mode": "anti-armor",
+            "weaponGroup": "weapon-group:heavy-weapon",
+            "proficiency": "weapon-proficiency:heavy-weapons"
+          }
+        ],
+        "selectorGuardrails": [
+          "Preserve Phase 4D global tags; resolve Heavy Weapon applicability against active anti-armor mode only."
+        ]
+      },
+      "recommendationFit": "Hybrid rifle/heavy platform; Heavy Weapon relevance is conditional on anti-armor mode.",
+      "conditionalSemanticTags": [
+        {
+          "tag": "heavy_weapon",
+          "condition": "anti-armor mode active",
+          "reason": "Only the anti-armor profile uses Heavy Weapons proficiency."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-light-concussion-missile-launcher",
+      "canonicalName": "Light Concussion Missile Launcher",
+      "source": {
+        "book": "Threats of the Galaxy",
+        "descriptionPage": 134,
+        "statTablePage": null
+      },
+      "canonicalMechanicSummary": "Single-shot antivehicle launcher firing one light concussion missile per attack. The missile deals 4d10x2 slashing damage with a 2-square splash. Attacks against targets smaller than Huge take -10, and Rapid Shot cannot be used.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage",
+        "vehicle"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "full_attack",
+        "sustained_damage"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-light-concussion-missile-launcher",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:missile-launcher",
+          "weapon-family:light-concussion-missile-launcher",
+          "weapon-family:anti-vehicle-launcher",
+          "weapon-family:payload-launcher"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Rapid Shot",
+            "relation": "PROHIBITED",
+            "effect": "Rapid Shot cannot be used with this launcher."
+          }
+        ],
+        "selectorGuardrails": [
+          "Payload damage/type/splash are missile-owned; launcher owns delivery restrictions.",
+          "Do not convert the -10 against smaller targets into a generic accuracy semantic tag."
+        ]
+      },
+      "recommendationFit": "Dedicated anti-vehicle launcher for Huge targets and larger battlefield threats.",
+      "explicitAbilityLinks": [
+        {
+          "abilityType": "feat",
+          "abilityName": "Rapid Shot",
+          "relation": "PROHIBITED"
+        }
+      ],
+      "rationale": {
+        "heavy_weapon": "The attack profile uses Heavy Weapons proficiency.",
+        "ranged": "It is a ranged missile launcher.",
+        "offense_ranged": "It deals direct ranged missile damage.",
+        "burst_damage": "The missile has a 2-square splash and very high payload damage.",
+        "vehicle": "The source explicitly identifies it as antivehicle and mechanically penalizes attacks against targets smaller than Huge."
+      },
+      "relativeToBlasterCannon": {
+        "damage": {
+          "canonical": "4d10x2 payload",
+          "relation": "MUCH_HIGHER_ANTI_VEHICLE"
+        },
+        "area": {
+          "relation": "2_SQUARE_SPLASH"
+        },
+        "capacity": {
+          "shots": null,
+          "relation": "SOURCE_UNRESOLVED"
+        },
+        "fireMode": {
+          "modes": [
+            "single"
+          ],
+          "relation": "SINGLE_ONLY"
+        },
+        "range": {
+          "relation": "BASELINE_HEAVY_WEAPON"
+        },
+        "mobilitySetup": {
+          "relation": "PORTABLE"
+        },
+        "payload": {
+          "relation": "LIGHT_CONCUSSION_MISSILE_DERIVED"
+        },
+        "control": {
+          "relation": "NONE"
+        },
+        "recommendationFit": "Dedicated anti-vehicle launcher for Huge targets and larger battlefield threats; poor for infantry and multi-shot builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "-10 attack against targets smaller than Huge.",
+          "representationStatus": "STRUCTURED_TARGET_SIZE_MODIFIER",
+          "note": "Vehicle semantics capture the role; exact size penalty remains structured."
+        },
+        {
+          "mechanic": "Launcher capacity/reload action are not stated by the source.",
+          "representationStatus": "SOURCE_UNRESOLVED",
+          "note": "Do not infer capacity from other missile launchers."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-plx-2m-portable-missile-launcher",
+      "canonicalName": "Merr-Sonn PLX-2M Portable Missile Launcher",
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 49,
+        "statTablePage": 50
+      },
+      "canonicalMechanicSummary": "Six-shot portable missile launcher firing 8d6 energy 3-square-burst missiles. Direct, heat-seeking, and gravity-activated modes allow specialized target-category handling; the specialized modes impose -2 Reflex Defense on the selected target type. Reloading is a full-round action. A microrepulsorlift removes the launcher's weight from encumbrance while it is the active drawn weapon.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage",
+        "targeting",
+        "mobility"
+      ],
+      "tradeoffTags": [
+        "action_economy",
+        "sustained_damage"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-plx-2m-portable-missile-launcher",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:missile-launcher",
+          "weapon-family:plx-2m",
+          "weapon-family:portable-missile-launcher",
+          "weapon-family:payload-launcher"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Target-category modes do not make the launcher permanently droid-, vehicle-, or character-specific.",
+          "Missile damage/type/area remain payload-owned."
+        ],
+        "modeSelectors": [
+          {
+            "mode": "direct",
+            "families": [
+              "weapon-family:missile-launcher"
+            ]
+          },
+          {
+            "mode": "heat-seeking",
+            "families": [
+              "weapon-family:targeting-missile-launcher"
+            ]
+          },
+          {
+            "mode": "gravity-activated",
+            "families": [
+              "weapon-family:targeting-missile-launcher"
+            ]
+          }
+        ]
+      },
+      "recommendationFit": "Portable guided-area launcher with target-category assistance.",
+      "rationale": {
+        "heavy_weapon": "All launcher attacks use Heavy Weapons proficiency.",
+        "ranged": "It is a ranged missile launcher.",
+        "offense_ranged": "Its missile payload provides direct ranged damage.",
+        "burst_damage": "Each missile attacks a 3-square burst.",
+        "targeting": "Heat-seeking/gravity-activated modes mechanically improve attacks against a selected target category by reducing its Reflex Defense.",
+        "mobility": "The built-in microrepulsorlift removes the weapon's weight from encumbrance while actively carried."
+      },
+      "relativeToBlasterCannon": {
+        "damage": {
+          "canonical": "8d6 payload",
+          "relation": "HIGHER"
+        },
+        "area": {
+          "relation": "3_SQUARE_BURST"
+        },
+        "capacity": {
+          "shots": 6,
+          "relation": "LOWER"
+        },
+        "fireMode": {
+          "modes": [
+            "single"
+          ],
+          "relation": "SINGLE_ONLY"
+        },
+        "range": {
+          "relation": "BASELINE_HEAVY_WEAPON"
+        },
+        "mobilitySetup": {
+          "relation": "BETTER_CARRYING_BUT_FULL_ROUND_RELOAD"
+        },
+        "payload": {
+          "relation": "ARAKYD_3T3_MISSILE_DERIVED"
+        },
+        "control": {
+          "relation": "NONE"
+        },
+        "recommendationFit": "Portable guided-area launcher for characters who need strong burst damage and target-category assistance without accepting normal heavy-weapon encumbrance."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Full-round reload after six missiles.",
+          "representationStatus": "STRUCTURED_RELOAD_TRADEOFF",
+          "note": "Remain comparison/action-economy data."
+        },
+        {
+          "mechanic": "While active and drawn, the weapon's weight does not count toward encumbrance.",
+          "representationStatus": "STRUCTURED_ENCUMBRANCE_EXCEPTION",
+          "note": "`mobility` captures recommendation relevance."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-miniature-proton-torpedo-launcher",
+      "canonicalName": "Miniature Proton Torpedo Launcher",
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 49,
+        "statTablePage": 50
+      },
+      "canonicalMechanicSummary": "Four-shot proton torpedo launcher. Area mode fires a 6d10 2-square blast. A swift action switches to single-target mode, removing the area and changing damage to 6d10x2 with -10 against targets smaller than Huge. After every shot the launcher must be reset with a standard action.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage",
+        "vehicle",
+        "swift_action",
+        "standard_action",
+        "action_economy"
+      ],
+      "tradeoffTags": [
+        "full_attack",
+        "sustained_damage",
+        "precision"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-miniature-proton-torpedo-launcher",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:torpedo-launcher",
+          "weapon-family:miniature-proton-torpedo-launcher",
+          "weapon-family:anti-vehicle-launcher",
+          "weapon-family:payload-launcher"
+        ],
+        "explicitAbilityLinks": [],
+        "modeSelectors": [
+          {
+            "mode": "area",
+            "families": [
+              "weapon-family:area-launcher"
+            ]
+          },
+          {
+            "mode": "single-target",
+            "families": [
+              "weapon-family:anti-vehicle-launcher",
+              "weapon-family:focused-launcher"
+            ]
+          }
+        ]
+      },
+      "recommendationFit": "High-output anti-vehicle launcher with a heavy action-economy cost.",
+      "rationale": {
+        "heavy_weapon": "Both firing modes use Heavy Weapons proficiency.",
+        "ranged": "It is a ranged torpedo launcher.",
+        "offense_ranged": "Both profiles deal direct ranged energy damage.",
+        "burst_damage": "Area mode produces a 2-square blast; focused mode doubles payload damage.",
+        "vehicle": "Focused mode strongly favors Huge or larger targets through its -10 penalty against smaller targets.",
+        "swift_action": "Switching into focused single-target mode is a swift action.",
+        "standard_action": "The launcher must be reset with a standard action after each shot.",
+        "action_economy": "Mode switching and mandatory post-shot reset are central to how the launcher operates."
+      },
+      "relativeToBlasterCannon": {
+        "damage": {
+          "canonical": "6d10 area / 6d10x2 focused",
+          "relation": "MUCH_HIGHER"
+        },
+        "area": {
+          "relation": "2_SQUARE_BLAST_OR_NONE"
+        },
+        "capacity": {
+          "shots": 4,
+          "relation": "LOWER"
+        },
+        "fireMode": {
+          "modes": [
+            "single"
+          ],
+          "relation": "MANDATORY_RESET_AFTER_SHOT"
+        },
+        "range": {
+          "relation": "BASELINE_HEAVY_WEAPON"
+        },
+        "mobilitySetup": {
+          "relation": "HIGH_ACTION_TAX"
+        },
+        "payload": {
+          "relation": "MINIATURE_PROTON_TORPEDO_DERIVED"
+        },
+        "control": {
+          "relation": "NONE"
+        },
+        "recommendationFit": "High-output anti-vehicle launcher that can choose area or focused damage, but pays one of the category's heaviest action-economy costs."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Standard-action reset required after every shot.",
+          "representationStatus": "STRUCTURED_POST_SHOT_STATE",
+          "note": "Prevents normal sustained-fire cadence."
+        },
+        {
+          "mechanic": "Focused mode removes area, doubles payload damage, and imposes -10 against targets smaller than Huge.",
+          "representationStatus": "STRUCTURED_MODE_TRANSFORM",
+          "note": "Preserve exact transform."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-missile-launcher",
+      "canonicalName": "Missile Launcher",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 130,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "Four-shot launcher firing standard 6d6 slashing missiles in a 2-square burst. One attack roll is compared against every target in the burst; hits deal full damage and misses half, with Evasion modifying the result. Reloading a four-missile magazine is a full-round action.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "action_economy",
+        "sustained_damage"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-missile-launcher",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:missile-launcher",
+          "weapon-family:standard-missile-launcher",
+          "weapon-family:payload-launcher"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "recommendationFit": "Core general-purpose missile launcher.",
+      "rationale": {
+        "heavy_weapon": "It requires Heavy Weapons proficiency.",
+        "ranged": "It is a ranged missile launcher.",
+        "offense_ranged": "Loaded standard missiles deal direct ranged damage.",
+        "burst_damage": "The standard missile produces a 2-square burst."
+      },
+      "relativeToBlasterCannon": {
+        "damage": {
+          "canonical": "6d6 payload",
+          "relation": "HIGHER_AVERAGE"
+        },
+        "area": {
+          "relation": "2_SQUARE_BURST"
+        },
+        "capacity": {
+          "shots": 4,
+          "relation": "LOWER"
+        },
+        "fireMode": {
+          "modes": [
+            "single"
+          ],
+          "relation": "SINGLE_ONLY"
+        },
+        "range": {
+          "relation": "BASELINE_HEAVY_WEAPON"
+        },
+        "mobilitySetup": {
+          "relation": "PORTABLE_FULL_ROUND_RELOAD"
+        },
+        "payload": {
+          "relation": "STANDARD_MISSILE_DERIVED"
+        },
+        "control": {
+          "relation": "NONE"
+        },
+        "recommendationFit": "Core general-purpose missile launcher: stronger burst radius than the Blaster Cannon but lower capacity and a full-round reload."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Full-round reload of four-missile magazine.",
+          "representationStatus": "STRUCTURED_RELOAD_TRADEOFF",
+          "note": "Remain recommendation/action-economy data."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-mortar-launcher",
+      "canonicalName": "Mortar Launcher",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 40,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "Large single-fire indirect launcher with a five-shell magazine. It cannot attack at point-blank range. For line of sight and cover, the attack's point of origin can be treated as 20 squares in the air. Mortar shells are statistically identical to grenades.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage",
+        "cover",
+        "positioning"
+      ],
+      "tradeoffTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-mortar-launcher",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:mortar-launcher",
+          "weapon-family:indirect-fire-heavy",
+          "weapon-family:grenade-equivalent-shell"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not add forbidden `grenade` or `explosives` semantic tags.",
+          "Point-blank attacks are explicitly prohibited."
+        ]
+      },
+      "recommendationFit": "Indirect-fire weapon for attacking around terrain and conventional cover.",
+      "rationale": {
+        "heavy_weapon": "Its attack uses Heavy Weapons proficiency.",
+        "ranged": "It is a ranged indirect-fire launcher.",
+        "offense_ranged": "Its shells deal direct ranged explosive damage.",
+        "burst_damage": "Mortar shells are area-effect grenade-equivalent attacks.",
+        "cover": "Its elevated virtual origin directly changes cover calculations.",
+        "positioning": "The 20-square-high line-of-sight origin lets the weapon attack around conventional battlefield geometry."
+      },
+      "relativeToBlasterCannon": {
+        "damage": {
+          "canonical": "4d6 shell",
+          "relation": "LOWER"
+        },
+        "area": {
+          "relation": "SHELL_GRENADE_EQUIVALENT"
+        },
+        "capacity": {
+          "shots": 5,
+          "relation": "LOWER"
+        },
+        "fireMode": {
+          "modes": [
+            "single"
+          ],
+          "relation": "SINGLE_ONLY"
+        },
+        "range": {
+          "relation": "NO_POINT_BLANK_INDIRECT_ADVANTAGE"
+        },
+        "mobilitySetup": {
+          "relation": "INDIRECT_FIRE_ROLE"
+        },
+        "payload": {
+          "relation": "MORTAR_SHELL_GRENADE_EQUIVALENT"
+        },
+        "control": {
+          "relation": "COVER_GEOMETRY_ADVANTAGE"
+        },
+        "recommendationFit": "Indirect-fire Heavy Weapon for attacking targets protected by terrain or conventional cover; poor at point-blank range."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Line-of-sight and cover origin can be treated as 20 squares in the air.",
+          "representationStatus": "STRUCTURED_INDIRECT_FIRE_GEOMETRY",
+          "note": "`cover` and `positioning` capture recommendation value."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-rotary-blaster-cannon",
+      "canonicalName": "Rotary Blaster Cannon",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 40,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "Large 3d10 autofire-only cannon. If braced, its autofire area can expand from the normal 2x2 to 2x4. If not braced, attacks take an additional -5 penalty. It uses a 20-shot pack or can connect to a power generator.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "sustained_damage",
+        "setup",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-rotary-blaster-cannon",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:rotary-blaster-cannon",
+          "weapon-family:autofire-heavy",
+          "weapon-family:braced-heavy"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "recommendationFit": "Wide-area sustained-fire cannon for braced firing lanes.",
+      "rationale": {
+        "heavy_weapon": "It uses Heavy Weapons proficiency.",
+        "ranged": "It is a ranged blaster cannon.",
+        "offense_ranged": "It deals direct 3d10 energy damage.",
+        "sustained_damage": "Autofire is its only firing mode and generator support enables prolonged fire.",
+        "setup": "Bracing materially improves the weapon and avoids an additional attack penalty.",
+        "burst_damage": "When braced, it can cover an enlarged 2-by-4 autofire area."
+      },
+      "relativeToBlasterCannon": {
+        "damage": {
+          "canonical": "3d10",
+          "relation": "LOWER"
+        },
+        "area": {
+          "relation": "AUTOFIRE_2X2_OR_BRACED_2X4"
+        },
+        "capacity": {
+          "shots": 20,
+          "relation": "HIGHER_WITH_GENERATOR_OPTION"
+        },
+        "fireMode": {
+          "modes": [
+            "autofire"
+          ],
+          "relation": "AUTOFIRE_ONLY"
+        },
+        "range": {
+          "relation": "BASELINE_HEAVY_WEAPON"
+        },
+        "mobilitySetup": {
+          "relation": "BRACING_STRONGLY_RECOMMENDED"
+        },
+        "payload": {
+          "relation": "WEAPON_OWNED"
+        },
+        "control": {
+          "relation": "WIDE_AREA_PRESSURE"
+        },
+        "recommendationFit": "Wide-area sustained-fire cannon for characters willing to brace before attacking; especially strong when controlling a broad firing lane."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Unbraced autofire takes an additional -5 attack penalty; braced autofire can expand to 2x4 squares.",
+          "representationStatus": "STRUCTURED_BRACE_STATE",
+          "note": "Exact brace mechanics remain structural."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-tactical-tractor-beam",
+      "canonicalName": "Tactical Tractor Beam",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 42,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "Generator-powered Heavy Weapon affecting Huge or smaller targets. A grabbed object can be moved up to 10 squares in any direction or hurled at another target within 10 squares, dealing falling-object damage by size. It normally requires a second crew member to spend a standard action each round regulating power; otherwise attacks take -2. Tripod mounting makes it count as one size smaller.",
+      "finalTags": [
+        "heavy_weapon",
+        "ranged",
+        "offense_ranged",
+        "grab",
+        "control",
+        "battlefield_control",
+        "movement",
+        "positioning"
+      ],
+      "tradeoffTags": [
+        "action_economy"
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-tactical-tractor-beam",
+        "weaponGroup": "weapon-group:heavy-weapon",
+        "proficiency": "weapon-proficiency:heavy-weapons",
+        "families": [
+          "weapon-family:tractor-beam",
+          "weapon-family:tactical-tractor-beam",
+          "weapon-family:crew-served-heavy",
+          "weapon-family:tripod-heavy"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Crew regulation is a dependency, not an intrinsic teamwork semantic tag.",
+          "Do not tag telekinesis; this is technological tractor-beam control, not Force use."
+        ]
+      },
+      "recommendationFit": "Heavy Weapon control platform for grabbing, moving, and hurling battlefield objects.",
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Second crew member normally spends a standard action each round regulating power; otherwise attacks take -2.",
+          "representationStatus": "STRUCTURED_CREW_DEPENDENCY",
+          "note": "Recorded as action-economy tradeoff."
+        },
+        {
+          "mechanic": "Hurled object deals falling-object damage according to object size.",
+          "representationStatus": "STRUCTURED_OBJECT_DAMAGE_RULE",
+          "note": "Do not flatten this into a fixed damage formula."
+        }
+      ],
+      "rationale": {
+        "heavy_weapon": "Its tractor attack uses Heavy Weapons proficiency.",
+        "ranged": "It affects targets at range.",
+        "offense_ranged": "The printed profile deals 3d6 and grabbed objects can be hurled for ranged impact damage.",
+        "grab": "Its core function is seizing an object or target with the tractor beam.",
+        "control": "It can hold and reposition grabbed targets or objects.",
+        "battlefield_control": "Moving objects/targets up to 10 squares can radically alter battlefield state.",
+        "movement": "The beam explicitly moves a grabbed object up to 10 squares.",
+        "positioning": "Its primary tactical value is forced repositioning and object placement."
+      },
+      "relativeToBlasterCannon": {
+        "damage": {
+          "canonical": "3d6 plus hurled-object damage by size",
+          "relation": "LOWER_DIRECT_HIGH_UTILITY"
+        },
+        "area": {
+          "relation": "SINGLE_TARGET_CONTROL"
+        },
+        "capacity": {
+          "shots": null,
+          "relation": "GENERATOR_POWERED"
+        },
+        "fireMode": {
+          "modes": [
+            "single"
+          ],
+          "relation": "SINGLE_ONLY"
+        },
+        "range": {
+          "relation": "BASELINE_HEAVY_WEAPON_WITH_10_SQUARE_HURL"
+        },
+        "mobilitySetup": {
+          "relation": "CREW_AND_OPTIONAL_TRIPOD"
+        },
+        "payload": {
+          "relation": "WEAPON_OWNED"
+        },
+        "control": {
+          "relation": "MUCH_BETTER"
+        },
+        "recommendationFit": "Heavy Weapon control platform for moving, holding, and weaponizing battlefield objects rather than maximizing direct damage."
+      }
+    }
+  ],
+  "phase4hReconciliation": {
+    "id": "4H-C-4F",
+    "rule": "Adopt the richer planner artifact where it is an information-preserving superset; keep committed-only fields; no tag/selector conflict permitted.",
+    "richerArtifactSha256": "15cbbb5a9f86775ae0f022ab84e0d64a3827cc5fedb7c7d9bbaf29932ccea4a8",
+    "tagsIdentical": true,
+    "selectorKeyConflicts": 0,
+    "changes": [
+      "Light Concussion Missile Launcher: rationale added",
+      "Light Concussion Missile Launcher: ruleSelectors.explicitAbilityLinks added",
+      "Light Concussion Missile Launcher: ruleSelectors.selectorGuardrails added",
+      "Light Concussion Missile Launcher: relativeToBlasterCannon added",
+      "Light Concussion Missile Launcher: unrepresentedMechanics added",
+      "Merr-Sonn PLX-2M Portable Missile Launcher: canonicalMechanicSummary expanded",
+      "Merr-Sonn PLX-2M Portable Missile Launcher: rationale added",
+      "Merr-Sonn PLX-2M Portable Missile Launcher: ruleSelectors.explicitAbilityLinks added",
+      "Merr-Sonn PLX-2M Portable Missile Launcher: ruleSelectors.selectorGuardrails added",
+      "Merr-Sonn PLX-2M Portable Missile Launcher: ruleSelectors.modeSelectors added",
+      "Merr-Sonn PLX-2M Portable Missile Launcher: relativeToBlasterCannon added",
+      "Merr-Sonn PLX-2M Portable Missile Launcher: unrepresentedMechanics added",
+      "Miniature Proton Torpedo Launcher: canonicalMechanicSummary expanded",
+      "Miniature Proton Torpedo Launcher: rationale added",
+      "Miniature Proton Torpedo Launcher: ruleSelectors.explicitAbilityLinks added",
+      "Miniature Proton Torpedo Launcher: ruleSelectors.modeSelectors added",
+      "Miniature Proton Torpedo Launcher: relativeToBlasterCannon added",
+      "Miniature Proton Torpedo Launcher: unrepresentedMechanics added",
+      "Missile Launcher: canonicalMechanicSummary expanded",
+      "Missile Launcher: rationale added",
+      "Missile Launcher: ruleSelectors.explicitAbilityLinks added",
+      "Missile Launcher: relativeToBlasterCannon added",
+      "Missile Launcher: unrepresentedMechanics added",
+      "Mortar Launcher: canonicalMechanicSummary expanded",
+      "Mortar Launcher: rationale added",
+      "Mortar Launcher: ruleSelectors.explicitAbilityLinks added",
+      "Mortar Launcher: ruleSelectors.selectorGuardrails added",
+      "Mortar Launcher: relativeToBlasterCannon added",
+      "Mortar Launcher: unrepresentedMechanics added",
+      "Rotary Blaster Cannon: canonicalMechanicSummary expanded",
+      "Rotary Blaster Cannon: rationale added",
+      "Rotary Blaster Cannon: ruleSelectors.explicitAbilityLinks added",
+      "Rotary Blaster Cannon: relativeToBlasterCannon added",
+      "Rotary Blaster Cannon: unrepresentedMechanics added",
+      "Tactical Tractor Beam: canonicalMechanicSummary expanded",
+      "Tactical Tractor Beam: rationale added",
+      "Tactical Tractor Beam: ruleSelectors.explicitAbilityLinks added",
+      "Tactical Tractor Beam: ruleSelectors.selectorGuardrails added",
+      "Tactical Tractor Beam: relativeToBlasterCannon added",
+      "Tactical Tractor Beam: unrepresentedMechanics replaced by richer planner structure"
+    ]
+  }
+}
