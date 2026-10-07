@@ -1895,6 +1895,22 @@ if (fs.existsSync(path.join(ROOT, P4E))) {
   const slice = asg.slice(Math.max(0, REQ - thisN)), sliceTags = new Set(slice.flatMap((a) => a.finalTags));
   if (rp.totalFinalTagAssignmentsThisRound !== slice.reduce((m, a) => m + a.finalTags.length, 0) || rp.distinctFinalTagsUsedThisRound !== sliceTags.size || !same([...sliceTags].sort(), [...rp.finalTagsUsedThisRound].sort())) fail('4E rolling progress tag counts');
   if (REQ >= 10 && sh(JSON.stringify(canon(asg.slice(0, 10)))) !== '9159f3758e098bf5614ed457a590db5a6b556c600dbf8c6c239cc72eccb6743b') fail('4E round 1 planner rulings changed after adjudication');
+  if (REQ === 22) {
+    // Advanced Melee category complete: exact totals and the named completion rulings
+    if (rp.categoryComplete !== true || rp.remaining !== 0 || rp.nextCanonicalName !== null || S.status !== 'WEAPON_TAG_PHASE_4E_ADVANCED_MELEE_COMPLETE_PLANNER_AUTHORITY') fail('4E complete authority: status, categoryComplete, no next identity');
+    if (tagTotal !== 109 || tagsUsed.size !== 28 || rp.totalFinalTagAssignmentsCumulative !== tagTotal || rp.distinctFinalTagsUsedCumulative !== tagsUsed.size) fail('4E final totals must be 109 assignments and 28 distinct tags');
+    if (asg.filter((a) => a.repo.present).length !== 5 || asg.filter((a) => !a.repo.present).length !== 17 || asg.some((a) => !a.repo.present && ((a.repo.id || null) !== null || a.ruleSelectors.repoIdentityKey !== null))) fail('4E 17 missing identities must stay explicit with no repo id (no production records invented)');
+    const aby = (n) => asg.find((a) => a.canonicalName === n);
+    const sw = aby('Shock Whip'), vk = aby('Vibroknucklers'), vr = aby('Vibrorapier'), vb = aby('Vibrobayonet'), dv = aby('Double Vibroblade'), vd = aby('Vibroblade, Double'), ss = aby('Shockstaff'), vi = aby('Vibrodagger');
+    if (!sw?.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === 'Trip' && featNames.has('Trip'))) fail('4E Shock Whip must link the Trip feat');
+    if (!vk || !['unarmed', 'martial_arts', 'damage_bonus'].every((t) => vk.finalTags.includes(t))) fail('4E Vibroknucklers must bridge unarmed / Martial Arts builds');
+    if (!vr || !['stealth', 'infiltration'].every((t) => vr.finalTags.includes(t))) fail('4E Vibrorapier must carry its silent-operation stealth/infiltration role');
+    if (!vb || !vb.finalTags.includes('attack_of_opportunity')) fail('4E Vibrobayonet must preserve attack-of-opportunity threat');
+    if (!dv || !vd || dv.phase3BIdentityKey === vd.phase3BIdentityKey) fail('4E the two published Double Vibroblade identities must stay distinct');
+    if (vi && (vi.finalTags.includes('concealment') || vi.finalTags.includes('stealth'))) fail('4E Vibrodagger must not gain concealment/stealth from size alone');
+    if (ss && /DR\s*\d+/i.test(JSON.stringify(ss.relativeToVibroblade) + ss.canonicalMechanicSummary)) fail('4E Shockstaff must not invent a numeric DR value');
+    if (sh(JSON.stringify(canon(asg))) !== '6bfb8e16349d883554dc90271d9a62703083c37ad57a02846e6a5f27099c3066') fail('4E complete planner authority changed after adjudication');
+  }
   if (errors.length === e4e) console.log(`Phase 4E Advanced Melee semantic tags OK: ${REQ}/22 adjudicated (${asg.filter((a) => a.repo.present).length} repo-present / ${asg.filter((a) => !a.repo.present).length} repo-missing), ${tagTotal} assignments, ${tagsUsed.size} distinct tags, selectors + comparison data cross-checked against Phase 3B, baseline = Vibroblade, next ${rp.nextCanonicalName}`);
 }
 
