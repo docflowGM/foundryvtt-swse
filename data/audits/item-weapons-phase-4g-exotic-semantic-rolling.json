@@ -1,7 +1,7 @@
 {
   "schemaVersion": "swse-weapon-semantic-authority-v1",
   "title": "Phase 4G — Exotic Weapons Semantic / Selector / Recommendation Rolling Planner Authority",
-  "status": "WEAPON_TAG_PHASE_4G_EXOTIC_ROUND_3_PLANNER_ADJUDICATED_CORRECTED",
+  "status": "WEAPON_TAG_PHASE_4G_EXOTIC_32_IDENTITY_PLANNER_AUTHORITY_COMPLETE",
   "phase": "4G",
   "category": "Exotic Weapons",
   "productionMutationAuthorized": false,
@@ -25,9 +25,9 @@
     "rangedProfile": 15,
     "hybridProfile": 2,
     "alternateProficiencyOrHandlingCases": 9,
-    "adjudicated": 15,
-    "remaining": 17,
-    "nextIdentity": "Garrote"
+    "adjudicated": 32,
+    "remaining": 0,
+    "nextIdentity": null
   },
   "rounds": [
     {
@@ -50,6 +50,34 @@
       "identityCount": 5,
       "repoPresent": 3,
       "repoMissing": 2
+    },
+    {
+      "round": 4,
+      "range": "Garrote → Neuronic Whip",
+      "identityCount": 5,
+      "repoPresent": 3,
+      "repoMissing": 2
+    },
+    {
+      "round": 5,
+      "range": "Pulse Rifle → Sith Lanvarok",
+      "identityCount": 5,
+      "repoPresent": 4,
+      "repoMissing": 1
+    },
+    {
+      "round": 6,
+      "range": "Squib Tensor Rifle → Wrist Rocket Launcher",
+      "identityCount": 5,
+      "repoPresent": 3,
+      "repoMissing": 2
+    },
+    {
+      "round": 7,
+      "range": "Xerrol Nightstinger → Zhaboka",
+      "identityCount": 2,
+      "repoPresent": 1,
+      "repoMissing": 1
     }
   ],
   "assignments": [
@@ -1391,6 +1419,1403 @@
         "The chemical cartridge reload is a full-round action, but full_round_action is retained as structured/plain-text mechanics rather than a Phase 4G semantic tag.",
         "action_economy and setup describe the reload tradeoff but are not promoted into finalTags under the Phase 4C–4G planner convention."
       ]
+    },
+    {
+      "index": 16,
+      "identityKey": "unmapped::Garrote",
+      "canonicalName": "Garrote",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 59,
+        "statTablePage": 60
+      },
+      "canonicalMechanic": "Two-handed Exotic melee weapon whose attack is treated as a grab attack. Bonuses from feats and talents that apply to the garrote also apply to that grab. At the beginning of the grabbed target's turn, before it acts, the target takes the garrote's damage and moves -1 step on the condition track, in addition to the normal effects of a grab; the target can attempt to break the grab normally.",
+      "sharedTags": [
+        "exotic_weapon",
+        "melee"
+      ],
+      "advantageTags": [
+        "offense_melee",
+        "grab",
+        "control",
+        "battlefield_control",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "grab",
+        "control",
+        "battlefield_control",
+        "sustained_damage"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Garrote"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:garrote"
+        ],
+        "families": [
+          "weapon-family:garrote",
+          "weapon-family:grab-weapon",
+          "weapon-family:two-handed-melee"
+        ],
+        "grabProfile": {
+          "attackTreatedAs": "grab",
+          "twoHanded": true
+        },
+        "persistentRider": {
+          "timing": "beginning of grabbed target's turn before it acts",
+          "effect": [
+            "garrote damage",
+            "-1 condition step"
+          ],
+          "escape": "normal break-grab rules"
+        }
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Garrote)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Garrote)."
+        ],
+        "fit": "Dedicated single-target control weapon for grab-focused melee builds. Its value is sustained pressure while the grab persists rather than raw opening damage."
+      },
+      "guardrails": [
+        "Do not introduce condition_track as a semantic tag; the persistent condition-track rider remains structured canonical mechanics.",
+        "Do not add restrain merely from the grab state; the source says grab, not Pin or a stronger restraint mechanic.",
+        "sustained_damage is justified by automatic recurring weapon damage at the beginning of the grabbed target's turns."
+      ]
+    },
+    {
+      "index": 17,
+      "identityKey": "weapon-magna-caster",
+      "canonicalName": "Magna Caster",
+      "repo": {
+        "present": true,
+        "id": "weapon-magna-caster"
+      },
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 38,
+        "statTablePage": 38
+      },
+      "canonicalMechanic": "Exotic projectile ranged weapon using magnetically accelerated bolts. Its low-noise operation grants a +5 equipment bonus to Stealth checks made to snipe. The weapon table marks it Accurate, and it uses 10-shot bolt cases.",
+      "sharedTags": [
+        "exotic_weapon",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stealth",
+        "sniper",
+        "precision"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "stealth",
+        "sniper",
+        "precision"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-magna-caster"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:magna-caster"
+        ],
+        "families": [
+          "weapon-family:magna-caster",
+          "weapon-family:magnetic-projectile-weapon",
+          "weapon-family:sniper-weapon"
+        ],
+        "accurate": true,
+        "stealthRider": {
+          "bonus": 5,
+          "bonusType": "equipment",
+          "scope": "Stealth checks made to snipe"
+        },
+        "capacity": 10
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Magna Caster)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Magna Caster)."
+        ],
+        "fit": "Covert precision exotic for snipers who value stealth after firing. Accurate handling and the explicit Stealth-to-snipe bonus make it a strong ambush weapon."
+      },
+      "guardrails": [
+        "Do not create an accuracy semantic tag; the Accurate quality is represented by certified precision plus structured range mechanics.",
+        "Do not infer a rifle proficiency group merely because the weapon fills a hunting/sniping role.",
+        "The +5 Stealth bonus is specifically for sniping, not a universal bonus to all Stealth checks."
+      ]
+    },
+    {
+      "index": 18,
+      "identityKey": "weapon-massassi-lanvarok",
+      "canonicalName": "Massassi Lanvarok",
+      "repo": {
+        "present": true,
+        "id": "weapon-massassi-lanvarok"
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "canonicalMechanic": "Large Exotic polearm that can hurl one disc using thrown-weapon ranges; after the disc is hurled it functions as a two-handed slashing melee weapon. Its ranged use is Inaccurate and it holds one disc at a time. The frozen Phase 3B authority follows the weapon entry and treats Massassi as using Advanced Melee proficiency instead of Exotic proficiency.",
+      "sharedTags": [
+        "exotic_weapon",
+        "melee",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_melee",
+        "offense_ranged"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-massassi-lanvarok"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:massassi-lanvarok"
+        ],
+        "families": [
+          "weapon-family:massassi-lanvarok",
+          "weapon-family:lanvarok",
+          "weapon-family:polearm",
+          "weapon-family:throwable-melee"
+        ],
+        "modes": [
+          {
+            "mode": "disc",
+            "attackProfile": "ranged",
+            "rangeProfile": "thrown-weapon",
+            "capacity": 1,
+            "inaccurate": true
+          },
+          {
+            "mode": "polearm",
+            "attackProfile": "melee",
+            "hands": 2
+          }
+        ],
+        "sourceConflict": {
+          "status": "FROZEN_PHASE3B_RULING_CONTROLS",
+          "speciesSection": "Massassi treat the lanvarok as a simple weapon.",
+          "weaponSection": "Massassi treat the Massassi lanvarok as an advanced melee weapon.",
+          "plannerDisposition": "Use Phase 3B advanced-melee ruling; do not silently merge both."
+        }
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Massassi Lanvarok)"
+          }
+        ],
+        "alternate": [
+          {
+            "condition": "Species is Massassi",
+            "requirement": "Weapon Proficiency (advanced melee weapons)",
+            "result": "Treat as proficient under the frozen Phase 3B weapon-entry ruling."
+          }
+        ]
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Massassi Lanvarok).",
+          "Species is Massassi: Treat as proficient under the frozen Phase 3B weapon-entry ruling."
+        ],
+        "fit": "Hybrid melee/ranged exotic with a one-disc opening throw followed by two-handed melee use. Particularly efficient for Massassi under the frozen alternate-proficiency ruling."
+      },
+      "guardrails": [
+        "Do not add thrown as a semantic tag; thrown range is structural.",
+        "Inaccurate ranged use is a precision tradeoff, not a negative final tag.",
+        "KOTOR species text separately says Massassi treat 'the lanvarok' as a simple weapon, while the weapon entry says advanced melee. Phase 3B froze the weapon-entry advanced-melee interpretation; preserve that ruling and keep the source conflict visible."
+      ]
+    },
+    {
+      "index": 19,
+      "identityKey": "weapon-neural-inhibitor",
+      "canonicalName": "Neural Inhibitor",
+      "repo": {
+        "present": true,
+        "id": "weapon-neural-inhibitor"
+      },
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 50,
+        "statTablePage": 51
+      },
+      "canonicalMechanic": "Exotic dart weapon that injects neurotoxin into a living target. After the weapon hits, the poison makes a 1d20+5 attack against Fortitude Defense; success moves the target -1 condition step. Failed poison attacks gain a cumulative +1 until one succeeds. The poison attacks again at the beginning of the target's turns until cured with DC 20 Treat Injury or until the target falls unconscious.",
+      "sharedTags": [
+        "exotic_weapon",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "poison",
+        "control",
+        "battlefield_control",
+        "targeting"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "poison",
+        "control",
+        "battlefield_control",
+        "targeting"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-neural-inhibitor"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:neural-inhibitor"
+        ],
+        "families": [
+          "weapon-family:neural-inhibitor",
+          "weapon-family:dart-weapon",
+          "weapon-family:poison-delivery"
+        ],
+        "poisonRider": {
+          "targetScope": "living target",
+          "attack": "1d20+5 vs Fortitude Defense",
+          "success": "-1 condition step",
+          "failureEscalation": "+1 cumulative bonus to the next poison attack until one succeeds",
+          "recurrence": "beginning of target's turns",
+          "cure": "DC 20 Treat Injury",
+          "termination": "neurotoxin dissipates if target falls unconscious"
+        }
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Neural Inhibitor)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Neural Inhibitor)."
+        ],
+        "fit": "Persistent anti-living control weapon for builds that want to pressure Fortitude rather than rely only on normal Reflex attacks. Strong against durable targets that are hard to drop immediately."
+      },
+      "guardrails": [
+        "Do not add condition_track; the condition movement is structured mechanics.",
+        "Do not use sustained_damage because the recurring effect is a poison/condition attack rather than repeated damage.",
+        "Treat Injury is counterplay, not a recommendation semantic for the wielder, so it is retained structurally rather than tagged.",
+        "The neurotoxin applies to living targets."
+      ]
+    },
+    {
+      "index": 20,
+      "identityKey": "unmapped::Neuronic Whip",
+      "canonicalName": "Neuronic Whip",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 200,
+        "statTablePage": 199
+      },
+      "canonicalMechanic": "Exotic melee whip that deals its normal stun damage plus 1d4 slashing damage on a successful hit. It increases the wielder's reach by 1 square and requires an energy cell.",
+      "sharedTags": [
+        "exotic_weapon",
+        "melee"
+      ],
+      "advantageTags": [
+        "offense_melee",
+        "stun",
+        "nonlethal",
+        "damage_bonus",
+        "positioning"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "stun",
+        "nonlethal",
+        "damage_bonus",
+        "positioning"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Neuronic Whip"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:neuronic-whip"
+        ],
+        "families": [
+          "weapon-family:neuronic-whip",
+          "weapon-family:whip",
+          "weapon-family:reach-weapon",
+          "weapon-family:stun-weapon"
+        ],
+        "reachIncreaseSquares": 1,
+        "damageProfile": {
+          "base": "normal stun damage",
+          "additional": "1d4 slashing damage"
+        }
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Neuronic Whip)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Neuronic Whip)."
+        ],
+        "fit": "Reach-oriented capture weapon for melee characters who want native stun pressure without giving up some lethal chip damage."
+      },
+      "guardrails": [
+        "damage_bonus is justified by the explicit extra 1d4 slashing damage added to the normal stun damage.",
+        "positioning represents the explicit +1-square reach; do not invent a reach semantic tag.",
+        "The weapon is not purely nonlethal because it also deals slashing damage, but its primary damage package explicitly includes stun."
+      ]
+    },
+    {
+      "index": 21,
+      "identityKey": "weapon-pulse-rifle",
+      "canonicalName": "Pulse Rifle",
+      "repo": {
+        "present": true,
+        "id": "weapon-pulse-rifle"
+      },
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 50,
+        "statTablePage": 51
+      },
+      "canonicalMechanic": "Exotic ranged weapon that fires a 6-square cone. Make one attack roll and compare it to the Reflex Defense of every target in the area; hits take normal damage and misses take half damage. A power pack provides 5 shots.",
+      "sharedTags": [
+        "exotic_weapon",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-pulse-rifle"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:pulse-rifle"
+        ],
+        "families": [
+          "weapon-family:pulse-rifle",
+          "weapon-family:cone-weapon",
+          "weapon-family:area-weapon"
+        ],
+        "attackProfile": {
+          "shape": "cone",
+          "lengthSquares": 6,
+          "defense": "Reflex Defense",
+          "hitEffect": "normal damage",
+          "missEffect": "half damage"
+        },
+        "capacity": 5
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Pulse Rifle)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Pulse Rifle)."
+        ],
+        "fit": "Short-range multi-target exotic for characters who want dependable cone pressure, including half damage on misses, and can work within its five-shot capacity."
+      },
+      "guardrails": [
+        "Do not add rifle; that string is not part of the certified weapon semantic vocabulary.",
+        "Do not create area_damage or cone semantic tags; cone geometry remains structured.",
+        "burst_damage is justified by the direct multi-target cone attack."
+      ]
+    },
+    {
+      "index": 22,
+      "identityKey": "weapon-wookiee-ryyk-blade",
+      "canonicalName": "Ryyk Blade",
+      "repo": {
+        "present": true,
+        "id": "weapon-wookiee-ryyk-blade"
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 97,
+        "statTablePage": 96
+      },
+      "canonicalMechanic": "Traditional Wookiee Exotic melee blade. Wookiees with Weapon Proficiency (advanced melee weapons) are proficient with it. A proficient character carrying one gains a +2 bonus on Survival checks made for basic survival in forest or jungle wilderness.",
+      "sharedTags": [
+        "exotic_weapon",
+        "melee"
+      ],
+      "advantageTags": [
+        "offense_melee",
+        "survival",
+        "exploration"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "survival",
+        "exploration"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-wookiee-ryyk-blade"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:ryyk-blade"
+        ],
+        "families": [
+          "weapon-family:ryyk-blade",
+          "weapon-family:wookiee-weapon",
+          "weapon-family:survival-weapon"
+        ],
+        "survivalRider": {
+          "bonus": 2,
+          "scope": "basic survival in forest or jungle wilderness",
+          "requires": "proficient character carrying the weapon"
+        }
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Ryyk Blade)"
+          }
+        ],
+        "alternate": [
+          {
+            "condition": "Species is Wookiee",
+            "requirement": "Weapon Proficiency (advanced melee weapons)",
+            "result": "Proficient with the Ryyk Blade without Exotic Weapon Proficiency (Ryyk Blade)."
+          }
+        ]
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Ryyk Blade).",
+          "Species is Wookiee: Proficient with the Ryyk Blade without Exotic Weapon Proficiency (Ryyk Blade)."
+        ],
+        "fit": "Wookiee-friendly exotic melee weapon with genuine wilderness utility. Best for forest/jungle survival builds, especially Wookiees who already have Advanced Melee proficiency."
+      },
+      "guardrails": [
+        "The +2 Survival bonus applies only to basic survival in forest or jungle wilderness.",
+        "Do not recommend redundant Exotic Weapon Proficiency to a qualifying Wookiee.",
+        "survival and exploration are direct mechanical utility tags, not flavor inference."
+      ]
+    },
+    {
+      "index": 23,
+      "identityKey": "unmapped::Shyarn",
+      "canonicalName": "Shyarn",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "canonicalMechanic": "Rare Cerean Exotic melee blade. A character wielding a shyarn takes no penalty to attack rolls when using the Rapid Strike feat.",
+      "sharedTags": [
+        "exotic_weapon",
+        "melee"
+      ],
+      "advantageTags": [
+        "offense_melee",
+        "precision"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "precision"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Shyarn"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:shyarn"
+        ],
+        "families": [
+          "weapon-family:shyarn",
+          "weapon-family:cerean-weapon",
+          "weapon-family:sword"
+        ],
+        "explicitAbilityInteractions": [
+          {
+            "ability": "Rapid Strike",
+            "interaction": "REMOVE_RAPID_STRIKE_ATTACK_PENALTY"
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Shyarn)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Shyarn)."
+        ],
+        "fit": "Rapid Strike specialist weapon: it removes Rapid Strike's attack penalty while preserving the feat's offensive benefit."
+      },
+      "guardrails": [
+        "Do not add damage_bonus or burst_damage from Rapid Strike itself; the weapon's explicit benefit is removal of the attack penalty.",
+        "Do not infer broader melee accuracy benefits beyond the named Rapid Strike interaction."
+      ]
+    },
+    {
+      "index": 24,
+      "identityKey": "weapon-siang-lance",
+      "canonicalName": "Siang Lance",
+      "repo": {
+        "present": true,
+        "id": "weapon-siang-lance"
+      },
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 50,
+        "statTablePage": 50
+      },
+      "canonicalMechanic": "Ancient one-handed sporting blaster with an affixed bayonet. It can make attacks of opportunity; when one is triggered, the wielder may choose either a ranged shot with the lance or a melee bayonet attack. The frozen Exotic census treats the ranged lance profile as Exotic and the affixed bayonet profile as Simple. Siang Lance Mastery can instead make the lance count as a rifle and grants +1 to attacks with it.",
+      "sharedTags": [
+        "melee",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_melee",
+        "offense_ranged",
+        "attack_of_opportunity"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "attack_of_opportunity"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-siang-lance"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:siang-lance"
+        ],
+        "families": [
+          "weapon-family:siang-lance",
+          "weapon-family:blaster-bayonet",
+          "weapon-family:hybrid-melee-ranged"
+        ],
+        "modes": [
+          {
+            "mode": "lance-shot",
+            "attackProfile": "ranged",
+            "nativeProficiency": "exotic"
+          },
+          {
+            "mode": "bayonet",
+            "attackProfile": "melee",
+            "nativeProficiency": "simple"
+          }
+        ],
+        "explicitAbilityInteractions": [
+          {
+            "ability": "Siang Lance Mastery",
+            "interaction": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK"
+          }
+        ],
+        "capacity": 100
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "mode-specific",
+            "requirement": "Exotic Weapon Proficiency (Siang Lance) for the ranged lance profile"
+          },
+          {
+            "type": "mode-specific",
+            "requirement": "Weapon Proficiency (simple weapons) for the affixed bayonet profile"
+          }
+        ],
+        "alternate": [
+          {
+            "condition": "Character has Siang Lance Mastery",
+            "requirement": "Siang Lance Mastery talent",
+            "result": "Treat the Siang Lance as a rifle instead of as an exotic weapon; the talent also grants +1 to attack rolls with it."
+          }
+        ]
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Siang Lance) for the ranged lance profile.",
+          "Character satisfies: Weapon Proficiency (simple weapons) for the affixed bayonet profile.",
+          "Character has Siang Lance Mastery: Treat the Siang Lance as a rifle instead of as an exotic weapon; the talent also grants +1 to attack rolls with it."
+        ],
+        "fit": "Hybrid opportunity-attack weapon for one-handed ranged/melee builds. It is especially attractive to Kilian Ranger builds using Siang Lance Mastery, which replaces the Exotic treatment with rifle treatment."
+      },
+      "guardrails": [
+        "Do not place exotic_weapon in unconditional finalTags; this is the category's key profile-scoped hybrid case.",
+        "Do not add rifle as a semantic tag when Siang Lance Mastery changes proficiency treatment; rifle remains structural.",
+        "Do not add lightsaber or lightsaber_polearm to the weapon merely because Siang Lance Mastery is a certified talent with its own semantic vocabulary.",
+        "The ranged and bayonet opportunity attacks are both explicitly legal when an attack of opportunity is triggered."
+      ],
+      "conditionalSynergyTags": [
+        {
+          "tag": "exotic_weapon",
+          "condition": "using the ranged lance profile under its native proficiency treatment",
+          "reason": "The Exotic proficiency classification applies to the lance's ranged profile; the affixed bayonet is a Simple profile."
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "identityKey": "weapon-sith-lanvarok",
+      "canonicalName": "Sith Lanvarok",
+      "repo": {
+        "present": true,
+        "id": "weapon-sith-lanvarok"
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "canonicalMechanic": "Wrist-mounted Exotic disc launcher that is worn rather than held, leaving the wielder's hands free. It uses pistol ranges and can be fired as though it were a second weapon for two-weapon fighting. It is Inaccurate and holds 5 discs.",
+      "sharedTags": [
+        "exotic_weapon",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "dual_wield"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "dual_wield"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-sith-lanvarok"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:sith-lanvarok"
+        ],
+        "families": [
+          "weapon-family:sith-lanvarok",
+          "weapon-family:lanvarok",
+          "weapon-family:wrist-launcher",
+          "weapon-family:dual-wield-ranged"
+        ],
+        "rangeProfile": "pistol",
+        "inaccurate": true,
+        "capacity": 5,
+        "explicitAbilityInteractions": [
+          {
+            "ability": "two-weapon fighting",
+            "interaction": "MAY_BE_FIRED_AS_SECOND_WEAPON_WHILE_WORN"
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Sith Lanvarok)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Sith Lanvarok)."
+        ],
+        "fit": "Hands-free off-hand exotic for dual-wield builds. It is particularly valuable when a character wants a second ranged weapon without occupying a hand."
+      },
+      "guardrails": [
+        "Pistol range does not make the Sith Lanvarok a Pistol-group weapon and does not grant pistol proficiency.",
+        "Do not add pistol as a semantic tag from range equivalence.",
+        "Inaccurate is a precision tradeoff and remains structured.",
+        "Do not reproduce the old repo's invented three-disc cone/spread attack; Phase 1 explicitly rejected it."
+      ]
+    },
+    {
+      "index": 26,
+      "identityKey": "weapon-squib-tensor-rifle",
+      "canonicalName": "Squib Tensor Rifle",
+      "repo": {
+        "present": true,
+        "id": "weapon-squib-tensor-rifle"
+      },
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 39,
+        "statTablePage": 38
+      },
+      "canonicalMechanic": "Exotic ranged tensor weapon that attacks Fortitude Defense rather than Reflex Defense. On a successful attack the target moves -1 step on the condition track regardless of the damage roll. Squibs treat the weapon as a rifle rather than an Exotic weapon; it also uses rifle range and a 15-shot power pack.",
+      "sharedTags": [
+        "exotic_weapon",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "control",
+        "battlefield_control",
+        "targeting"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "control",
+        "battlefield_control",
+        "targeting"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-squib-tensor-rifle"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:squib-tensor-rifle"
+        ],
+        "families": [
+          "weapon-family:squib-tensor-rifle",
+          "weapon-family:tensor-weapon",
+          "weapon-family:tractor-beam-weapon"
+        ],
+        "targetDefense": "Fortitude Defense",
+        "hitRider": "-1 condition step regardless of damage roll",
+        "rangeProfile": "rifle",
+        "capacity": 15
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Squib Tensor Rifle)"
+          }
+        ],
+        "alternate": [
+          {
+            "condition": "Species is Squib",
+            "requirement": "Weapon Proficiency (rifles)",
+            "result": "Treat the Squib Tensor Rifle as a rifle rather than as an exotic weapon."
+          }
+        ]
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Squib Tensor Rifle).",
+          "Species is Squib: Treat the Squib Tensor Rifle as a rifle rather than as an exotic weapon."
+        ],
+        "fit": "Defense-targeting exotic that pressures Fortitude and condition state directly. Especially efficient for Squibs who already possess rifle proficiency."
+      },
+      "guardrails": [
+        "Do not add condition_track; the -1 condition-step effect remains structured.",
+        "Do not add rifle as a semantic tag; rifle treatment is a structural proficiency/range rule.",
+        "targeting captures the explicit alternate-defense attack profile without implying an accuracy bonus."
+      ]
+    },
+    {
+      "index": 27,
+      "identityKey": "unmapped::Tehkla Blade",
+      "canonicalName": "Tehk'la Blade",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 62
+      },
+      "canonicalMechanic": "Nagai Exotic melee blade. If the attack roll equals or exceeds both the target's Reflex Defense and Fortitude Defense, the target takes an additional 1d6 damage from bleeding at the start of its next turn. Legacy species text separately states that Nagai treat tehk'la blades as simple weapons instead of exotic weapons.",
+      "sharedTags": [
+        "exotic_weapon",
+        "melee"
+      ],
+      "advantageTags": [
+        "offense_melee",
+        "damage_bonus",
+        "sustained_damage",
+        "targeting"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "damage_bonus",
+        "sustained_damage",
+        "targeting"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Tehkla Blade"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:tehkla-blade"
+        ],
+        "families": [
+          "weapon-family:tehkla-blade",
+          "weapon-family:nagai-weapon",
+          "weapon-family:vibro-weapon"
+        ],
+        "damageRider": {
+          "trigger": "attack roll equals or exceeds both Reflex Defense and Fortitude Defense",
+          "effect": "additional 1d6 damage at start of target's next turn"
+        },
+        "sourceAuthorityGap": {
+          "status": "SOURCE_CONFIRMED_NOT_IN_FROZEN_4G_ALT_CASE_COUNT",
+          "rule": "Nagai treat tehk'la blades as simple weapons instead of exotic weapons.",
+          "plannerDisposition": "Flag for Phase 3B/proficiency-authority correction before runtime activation."
+        }
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Tehk'la Blade)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Tehk'la Blade)."
+        ],
+        "fit": "Accuracy-rewarding melee exotic that converts attacks clearing both Reflex and Fortitude into delayed bonus damage."
+      },
+      "guardrails": [
+        "The delayed 1d6 rider triggers only when the same attack roll equals or exceeds both Reflex and Fortitude.",
+        "damage_bonus and sustained_damage represent the explicit delayed bleeding damage.",
+        "The frozen 4G census did not include Nagai's simple-weapon familiarity among its nine alternate cases. The source text does. Preserve this as an authority discrepancy rather than silently rewriting the frozen census."
+      ]
+    },
+    {
+      "index": 28,
+      "identityKey": "weapon-verpine-shattergun",
+      "canonicalName": "Verpine Shatter Gun",
+      "repo": {
+        "present": true,
+        "id": "weapon-verpine-shattergun"
+      },
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 39,
+        "statTablePage": 38
+      },
+      "canonicalMechanic": "Exotic magnetic-coil handgun. The weapon table marks it Accurate. On a successful critical hit it deals an additional 1d10 damage after the normal critical multiplication. If the weapon takes any damage it becomes disabled until repaired with Mechanics. Verpines treat it as a pistol rather than an exotic weapon; it uses pistol range and a 50-shot special ammunition clip.",
+      "sharedTags": [
+        "exotic_weapon",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "precision",
+        "critical_hit",
+        "damage_bonus"
+      ],
+      "tradeoffTags": [
+        "durability"
+      ],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "critical_hit",
+        "damage_bonus"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-verpine-shattergun"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:verpine-shatter-gun"
+        ],
+        "families": [
+          "weapon-family:verpine-shatter-gun",
+          "weapon-family:magnetic-projectile-weapon",
+          "weapon-family:critical-weapon"
+        ],
+        "accurate": true,
+        "criticalRider": "additional 1d10 damage after multiplying for the critical hit",
+        "fragility": "any damage to the weapon disables it until repaired with Mechanics",
+        "rangeProfile": "pistol",
+        "capacity": 50
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Verpine Shatter Gun)"
+          }
+        ],
+        "alternate": [
+          {
+            "condition": "Species is Verpine",
+            "requirement": "Weapon Proficiency (pistols)",
+            "result": "Treat the Verpine Shatter Gun as a pistol rather than as an exotic weapon."
+          }
+        ]
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Verpine Shatter Gun).",
+          "Species is Verpine: Treat the Verpine Shatter Gun as a pistol rather than as an exotic weapon."
+        ],
+        "fit": "High-end critical-hit exotic with Accurate handling. Excellent for crit-focused Verpine or pistol-adjacent builds, but unusually fragile if the weapon itself is damaged."
+      },
+      "guardrails": [
+        "Do not add stealth merely because the weapon is described as nearly silent; the entry grants no Stealth modifier or explicit concealment rule.",
+        "The weapon's fragility is a durability tradeoff; do not put durability into finalTags as though it were an advantage.",
+        "Pistol range and Verpine pistol treatment are structural and do not justify a global pistol semantic tag.",
+        "The additional 1d10 applies after normal critical-hit multiplication."
+      ]
+    },
+    {
+      "index": 29,
+      "identityKey": "unmapped::Vibro-Saw",
+      "canonicalName": "Vibro-Saw",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 36,
+        "statTablePage": 37
+      },
+      "canonicalMechanic": "Large Exotic vibro cutting tool/weapon dealing heavy melee damage. A vibro-saw ignores a target's Damage Reduction and requires two energy cells.",
+      "sharedTags": [
+        "exotic_weapon",
+        "melee"
+      ],
+      "advantageTags": [
+        "offense_melee"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Vibro-Saw"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:vibro-saw"
+        ],
+        "families": [
+          "weapon-family:vibro-saw",
+          "weapon-family:vibro-weapon",
+          "weapon-family:cutting-tool"
+        ],
+        "damageReductionInteraction": "ignores target Damage Reduction"
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Vibro-Saw)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Vibro-Saw)."
+        ],
+        "fit": "Heavy melee exotic for characters who specifically need to defeat Damage Reduction. Its signature advantage is DR bypass, which remains structured because no certified offensive DR-penetration tag exists."
+      },
+      "guardrails": [
+        "Do not use damage_reduction for offensive DR penetration; prior weapon authority reserves that semantic for actual DR/durability behavior.",
+        "Do not add damage_bonus merely because the base damage is high.",
+        "Record DR bypass as structured recommendation data / ontology gap rather than inventing a new tag."
+      ],
+      "ontologyGapCandidates": [
+        {
+          "concept": "DAMAGE_REDUCTION_BYPASS",
+          "mechanic": "Ignores a target's Damage Reduction.",
+          "reason": "No certified feat/talent-used tag cleanly represents offensive DR penetration; damage_reduction has a different semantic meaning."
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "identityKey": "weapon-wrist-rocket-launcher",
+      "canonicalName": "Wrist Rocket Launcher",
+      "repo": {
+        "present": true,
+        "id": "weapon-wrist-rocket-launcher"
+      },
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 63,
+        "statTablePage": 61
+      },
+      "canonicalMechanic": "Forearm-mounted Exotic single-shot launcher. It must be reloaded after every shot, and its effect depends on the loaded wrist rocket. Published payloads include antipersonnel, antivehicle, flash, hollow-tip empty, hollow-tip nerve toxin, hollow-tip stun gas, and ion-blast rockets.",
+      "sharedTags": [
+        "exotic_weapon",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged"
+      ],
+      "tradeoffTags": [
+        "setup",
+        "action_economy"
+      ],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-wrist-rocket-launcher"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:wrist-rocket-launcher"
+        ],
+        "families": [
+          "weapon-family:wrist-rocket-launcher",
+          "weapon-family:wrist-launcher",
+          "weapon-family:payload-launcher"
+        ],
+        "capacity": 1,
+        "reload": "after every shot",
+        "payloadProfiles": [
+          {
+            "id": "antipersonnel-rocket",
+            "role": "damage payload"
+          },
+          {
+            "id": "antivehicle-rocket",
+            "role": "damage payload"
+          },
+          {
+            "id": "flash-rocket",
+            "role": "special payload"
+          },
+          {
+            "id": "hollow-tip-empty",
+            "role": "piercing payload"
+          },
+          {
+            "id": "hollow-tip-nerve-toxin",
+            "role": "toxin payload"
+          },
+          {
+            "id": "hollow-tip-stun-gas",
+            "role": "stun-gas payload"
+          },
+          {
+            "id": "ion-blast-rocket",
+            "role": "ion payload"
+          }
+        ],
+        "payloadSemanticPolicy": "INHERIT_FROM_CURRENTLY_LOADED_ROCKET; DO_NOT_FLATTEN_ALL_PAYLOAD_TAGS_ON_BASE_WEAPON"
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Wrist Rocket Launcher)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Wrist Rocket Launcher)."
+        ],
+        "fit": "Payload-flexible Exotic launcher for characters who want one forearm weapon to serve multiple tactical roles. The recommendation engine should score the launcher together with the currently loaded rocket rather than flatten every payload effect onto the base weapon."
+      },
+      "guardrails": [
+        "Rocket payloads are structural payload profiles, not separate Exotic weapon identities.",
+        "Do not statically attach stun, poison, droid, vehicle, burst_damage, control, or other payload semantics to the base launcher.",
+        "Resolve payload semantics from the loaded rocket at recommendation/runtime time.",
+        "Single-shot reloading is an action-economy/setup tradeoff, not a final semantic advantage."
+      ]
+    },
+    {
+      "index": 31,
+      "identityKey": "weapon-xerrol-nightstinger",
+      "canonicalName": "Xerrol Nightstinger",
+      "repo": {
+        "present": true,
+        "id": "weapon-xerrol-nightstinger"
+      },
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "descriptionPage": 64,
+        "statTablePage": 65
+      },
+      "canonicalMechanic": "Long-range sporting blaster designed for sniping. It fires visually invisible shots from special exotic-gas canisters, allowing a sniper to shoot without visually revealing the firing position. Each gas canister provides 5 shots. The frozen Phase 3B Exotic census controls its proficiency identity despite older Phase 1 prose classifying it as Rifle.",
+      "sharedTags": [
+        "exotic_weapon",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stealth",
+        "sniper"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "ranged",
+        "offense_ranged",
+        "stealth",
+        "sniper"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:weapon-xerrol-nightstinger"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:xerrol-nightstinger"
+        ],
+        "families": [
+          "weapon-family:xerrol-nightstinger",
+          "weapon-family:sniper-weapon",
+          "weapon-family:covert-ranged"
+        ],
+        "capacity": 5,
+        "stealthProperty": "shots are invisible to the eye and do not visually reveal firing position",
+        "authorityNote": "PHASE3B_EXOTIC_CLASSIFICATION_CONTROLS_OVER_PHASE1_RIFLE_LABEL"
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Xerrol Nightstinger)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Xerrol Nightstinger)."
+        ],
+        "fit": "Covert sniping exotic for characters whose priority is firing without visually exposing their position. It trades ammunition economy for strong concealment-of-origin utility."
+      },
+      "guardrails": [
+        "Do not add precision merely because the weapon is intended for sniping; the weapon entry grants no direct attack-roll bonus.",
+        "Do not add concealment; invisible bolts conceal the firing origin visually but do not grant the wielder a concealment state.",
+        "Phase 1 called the weapon a Rifle while the frozen Phase 3B Exotic census includes it as an Exotic-proficiency identity. Phase 3B controls this Phase 4G classification.",
+        "Do not add rifle as a semantic tag."
+      ]
+    },
+    {
+      "index": 32,
+      "identityKey": "unmapped::Zhaboka",
+      "canonicalName": "Zhaboka",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 66,
+        "statTablePage": 64
+      },
+      "canonicalMechanic": "Zabrak Exotic double melee weapon with a blade at each end. A character wielding a zhaboka takes no penalty to attack rolls when using Rapid Strike. Both ends can be used in a full-round attack using the normal double-weapon penalties before feat/talent reductions.",
+      "sharedTags": [
+        "exotic_weapon",
+        "melee"
+      ],
+      "advantageTags": [
+        "offense_melee",
+        "double_weapon",
+        "full_attack",
+        "precision"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "exotic_weapon",
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack",
+        "precision"
+      ],
+      "ruleSelectors": {
+        "exact": [
+          "weapon:unmapped::Zhaboka"
+        ],
+        "group": [
+          "weapon-group:exotic"
+        ],
+        "proficiency": [
+          "weapon-proficiency:zhaboka"
+        ],
+        "families": [
+          "weapon-family:zhaboka",
+          "weapon-family:zabrak-weapon",
+          "weapon-family:double-weapon"
+        ],
+        "doubleWeapon": true,
+        "explicitAbilityInteractions": [
+          {
+            "ability": "Rapid Strike",
+            "interaction": "REMOVE_RAPID_STRIKE_ATTACK_PENALTY"
+          }
+        ]
+      },
+      "proficiencyRoutes": {
+        "canonical": [
+          {
+            "type": "feat",
+            "requirement": "Exotic Weapon Proficiency (Zhaboka)"
+          }
+        ],
+        "alternate": []
+      },
+      "recommendation": {
+        "eligibleWithoutPenaltyWhen": [
+          "Character satisfies: Exotic Weapon Proficiency (Zhaboka)."
+        ],
+        "fit": "Double-weapon Exotic for full-attack builds that also use Rapid Strike. It combines normal double-weapon multiattack support with removal of Rapid Strike's attack penalty."
+      },
+      "guardrails": [
+        "Do not add dual_wield merely because both ends can attack; existing weapon authority uses double_weapon + full_attack for double weapons.",
+        "Do not add damage_bonus or burst_damage from Rapid Strike itself; the weapon explicitly removes only the attack penalty.",
+        "precision is justified by the named Rapid Strike penalty-removal rule."
+      ]
     }
   ],
   "rollingGuardrails": [
@@ -1399,5 +2824,73 @@
     "Do not recommend Exotic Weapon Proficiency when an already-owned species/proficiency route makes the character proficient.",
     "Do not treat range-profile equivalence as proficiency-group equivalence.",
     "Hybrids with only one Exotic attack mode must use conditional/profile-scoped Exotic semantics rather than globally misclassifying every mode."
-  ]
+  ],
+  "qa": {
+    "status": "PASS",
+    "identityCount": 32,
+    "expectedIdentityCount": 32,
+    "repoPresentCount": 18,
+    "repoMissingCount": 14,
+    "distinctSemanticTagsUsed": 41,
+    "semanticTagsUsed": [
+      "action_economy",
+      "attack_of_opportunity",
+      "battlefield_control",
+      "biotech",
+      "block",
+      "burst_damage",
+      "concealment",
+      "control",
+      "critical_hit",
+      "damage_bonus",
+      "defense",
+      "double_weapon",
+      "dual_wield",
+      "durability",
+      "exotic_weapon",
+      "exploration",
+      "force",
+      "full_attack",
+      "grab",
+      "grapple",
+      "lightsaber",
+      "melee",
+      "melee_defense",
+      "nonlethal",
+      "offense_melee",
+      "offense_ranged",
+      "perception",
+      "poison",
+      "positioning",
+      "precision",
+      "ranged",
+      "restrain",
+      "setup",
+      "sniper",
+      "standard_action",
+      "stealth",
+      "stun",
+      "survival",
+      "sustained_damage",
+      "swift_action",
+      "targeting"
+    ],
+    "vocabularyInvariant": "Every tag in semantic tag-bearing fields must already be used in certified feat/talent finalTags.",
+    "certifiedUsedUnionCount": 183,
+    "completionPassCandidateTagCount": 29,
+    "completionPassCandidateTagsVerifiedAgainst183Union": true,
+    "forbiddenPseudoTagsFound": [],
+    "hybridExoticSemantics": {
+      "Siang Lance": "exotic_weapon is profile-scoped to the native ranged lance profile and omitted from unconditional finalTags."
+    },
+    "payloadFlattening": {
+      "Wrist Rocket Launcher": "PASS — payload effects are not statically flattened onto the base launcher."
+    },
+    "sourceAuthorityFlags": [
+      "Massassi Lanvarok: KOTOR species text says simple weapon while weapon entry says advanced melee; frozen Phase 3B advanced-melee ruling controls.",
+      "Tehk'la Blade: Legacy species text gives Nagai simple-weapon familiarity, but the frozen 4G census did not include it among the nine alternate cases; flagged for earlier-authority correction before runtime activation.",
+      "Xerrol Nightstinger: Phase 1 labels Rifle while the frozen Phase 3B Exotic census classifies it as Exotic; Phase 3B controls Phase 4G."
+    ],
+    "productionMutationAuthorized": false
+  }
 }
