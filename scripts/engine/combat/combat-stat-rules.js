@@ -326,15 +326,30 @@ export function isThrownMeleeWeapon(weapon) {
   return system.thrown === true || /thrown|grenade/.test(text);
 }
 
+import { PROJECTED_ATTACK_ABILITIES, ATTACK_ABILITY_OVERRIDE_FLAG, readAttackAbilityOverride } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-ability-override.js";
+
+// Attack-ability provenance (Phase 5D-B). Production/canonical weapons carry a PROJECTED system.attackAttribute (generated
+// from the item's branch; the projection vocabulary is only str/dex) that is not player intent. For a canonical weapon with a
+// selected profile the ability is therefore resolved as:
+//   1. flags.swse.attackAbilityOverride  (written only by genuine player edits: item sheet / weapon config dialog)
+//   2. a stored system.attackAttribute outside the projection vocabulary (con/int/wis/cha can only be a player choice --
+//      keeps e.g. Noble Fencing Style 'cha' setups working)
+//   3. the selected profile's branch default (ranged -> DEX, melee -> STR)
+// Legacy/custom weapons keep the pre-5D-B rule: any stored attackAttribute is explicit.
+export { ATTACK_ABILITY_OVERRIDE_FLAG, readAttackAbilityOverride };
+
 export function getWeaponAttackAbility(actor, weapon, context = {}) {
   const system = weapon?.system ?? {};
   const explicit = String(system.attackAttribute ?? system.combat?.attack?.ability ?? '').toLowerCase();
-  // Phase 5D-A: a selected canonical profile's branch (context.weaponRuntime, from the weapon-runtime attack consumer)
-  // drives the DEFAULT ability only; an explicit player/data-owned attackAttribute above still wins.
   const profileBranch = context?.weaponRuntime?.source === 'canonical' ? context.weaponRuntime.branch : null;
-  const defaultAbility = profileBranch === 'ranged' ? 'dex'
-    : profileBranch === 'melee' ? 'str'
-    : (isRangedWeapon(weapon) && !isMeleeWeapon(weapon) ? 'dex' : 'str');
+  if (profileBranch === 'ranged' || profileBranch === 'melee') {
+    const override = readAttackAbilityOverride(weapon);
+    if (override) return override;
+    const stored = explicit.includes('dex') ? 'dex' : explicit.includes('str') ? 'str' : explicit;
+    if (stored && !PROJECTED_ATTACK_ABILITIES.has(stored)) return stored;
+    return profileBranch === 'ranged' ? 'dex' : 'str';
+  }
+  const defaultAbility = isRangedWeapon(weapon) && !isMeleeWeapon(weapon) ? 'dex' : 'str';
   let resolved = defaultAbility;
 
   if (explicit) {
