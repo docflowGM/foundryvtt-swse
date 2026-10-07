@@ -316,8 +316,8 @@ _none_
 
 - `summary-field` — 203 identities. No production slot for the derived short player summary. Needed: Add a summary field (or flag) to the weapon item schema.
 - `weapon-size-field` — 199 identities. Production weapons carry no weapon size. Needed: Add a weapon size field.
-- `multiple-attack-profiles` — 33 identities. Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes. Needed: Add attack/mode profile structures.
-- `payload-profiles` — 10 identities. Production has no delivery-system/payload separation. Needed: Add payload profiles and a loaded-ammo reference model.
+- `multiple-attack-profiles` — 36 identities. Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes. Needed: Add attack/mode profile structures.
+- `payload-profiles` — 12 identities. Production has no delivery-system/payload separation. Needed: Add payload profiles and a loaded-ammo reference model.
 - `payload-derived-damage` — 9 identities. Production stores a launcher damage string; canonical launcher damage is owned by the loaded payload. Needed: Resolve damage through payload profiles.
 - `non-dice-damage-model` — 24 identities. Production damage is a single dice string. Needed: Support none/special/modifier/inherited/alternate damage modes.
 - `multi-type-damage` — 71 identities. Production damageType is one string. Needed: Support AND/OR/qualified/unspecified damage types.
@@ -327,18 +327,18 @@ _none_
 - `ammo-profiles` — 4 identities. Production ammunition is one type/max pair. Needed: Support multiple independent ammunition profiles.
 - `operating-resource-model` — 46 identities. Production has no operating-resource (energy cell etc.) model for non-ammunition power. Needed: Add operating resource structures.
 - `conditional-modifiers` — 13 identities. Production has no conditional attack/damage modifier structures. Needed: Add conditional modifier structures.
-- `triggered-effects` — 16 identities. Production has no triggered-effect structures. Needed: Add triggered effect structures.
+- `triggered-effects` — 17 identities. Production has no triggered-effect structures. Needed: Add triggered effect structures.
 - `defensive-interactions` — 7 identities. Production has no defensive-interaction structures. Needed: Add defensive interaction structures.
-- `wielding-rules` — 14 identities. Production has no wielding/handedness rule structures. Needed: Add wielding rule structures.
-- `configuration-and-state` — 7 identities. Production has no configuration/state-machine structures. Needed: Add configuration/state structures.
+- `wielding-rules` — 15 identities. Production has no wielding/handedness rule structures. Needed: Add wielding rule structures.
+- `configuration-and-state` — 10 identities. Production has no configuration/state-machine structures. Needed: Add configuration/state structures.
 - `critical-effects` — 3 identities. Production has no critical-effect structures. Needed: Add critical effect structures.
 - `conditional-damage-and-qualities` — 11 identities. Production has no conditional damage profile or conditional quality structures. Needed: Add conditional damage/quality structures.
 - `proficiency-rules` — 9 identities. Production has one proficiency value. Needed: Add conditional proficiency rule structures.
 - `quality-parameters` — 41 identities. Production traits are labels without parameters. Needed: Add quality parameter structures (allowed bands, overrides).
 - `construction-and-technology` — 24 identities. Production has no construction/technology/delivery/durability/accessory structures. Needed: Add those structures.
-- `firing-constraints` — 25 identities. Production has no firing-constraint or prepared-attack structures. Needed: Add firing constraint structures.
+- `firing-constraints` — 27 identities. Production has no firing-constraint or prepared-attack structures. Needed: Add firing constraint structures.
 - `damage-multiplier-and-range-rules` — 3 identities. Production has no damage multiplier or conditional range rule structures. Needed: Add those structures.
-- `structured-special-rules` — 156 identities. Canonical operation rules (free-form source mechanics) have no production structure. Needed: Add structured special-rule storage.
+- `structured-special-rules` — 157 identities. Canonical operation rules (free-form source mechanics) have no production structure. Needed: Add structured special-rule storage.
 - `size-variant-pricing` — 3 identities. Production has one cost/weight; canonical identity varies by size. Needed: Add size-variant pricing structures.
 
 ## Dependency gates

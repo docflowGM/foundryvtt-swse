@@ -47,7 +47,7 @@ export function buildRegistry(read = text) {
       if (productionIdIndex[pid] && productionIdIndex[pid] !== k) fail(`production id ${pid} maps to two identities`);
       productionIdIndex[pid] = k;
     }
-    const rec = reconcileProfiles(cs.attackProfiles, r.selectors?.modes ?? []);
+    const rec = reconcileProfiles(cs, r.selectors?.modes ?? [], r.proficiency, i.operation);
     return {
       identityKey: k,
       canonicalName: i.canonicalName,
@@ -84,6 +84,8 @@ export function buildRegistry(read = text) {
   });
 
   const incomplete = identities.filter((x) => x.profileReconciliation.status !== 'COMPLETE').map((x) => x.identityKey);
+  const typed = identities.flatMap((x) => x.profileReconciliation.modes.map((m) => m.classification));
+  const typedCounts = Object.fromEntries([...new Set(typed)].sort().map((c) => [c, typed.filter((t) => t === c).length]));
   const body = {
     schemaVersion: REGISTRY_SCHEMA_VERSION,
     phase: '5B',
@@ -94,10 +96,11 @@ export function buildRegistry(read = text) {
       repoPresent: identities.filter((x) => x.repo.present).length,
       repoMissing: identities.filter((x) => !x.repo.present).length,
       productionIds: Object.keys(productionIdIndex).length,
-      profileDefinitionIncompleteIdentities: incomplete.length,
-      unmatchedPhase4HModes: identities.reduce((n, x) => n + x.profileReconciliation.unmatchedModes.length, 0),
+      unresolvedModeIdentities: incomplete.length,
+      unresolvedPhase4HModes: identities.reduce((n, x) => n + x.profileReconciliation.unresolvedModes.length, 0),
+      typedModeCounts: typedCounts,
     },
-    profileDefinitionIncompleteIdentities: incomplete,
+    unresolvedModeIdentities: incomplete,
     productionIdIndex: sortKeys(productionIdIndex),
     identities,
   };

@@ -79,8 +79,9 @@ export function resolveProficiency(resolved, profile, actor, context = {}) {
   const requiredGroup = normalizeGroup(profile.proficiencyGroup);
   const considered = [];
   const diagnostics = [];
+  const pending = [];
   const result = (proficient, route, extra = {}) => Object.freeze({
-    proficient, penalty: proficient ? 0 : -5, route, profileId: profile.id, requiredGroup,
+    proficient, penalty: proficient ? 0 : -5, route, profileId: profile.id, requiredGroup, pending: Object.freeze(pending),
     exoticIdentity: requiredGroup === 'exotic' ? exoticIdentityFor(resolved, profile) : null,
     consideredRoutes: Object.freeze(considered), diagnostics: Object.freeze(diagnostics), ...extra,
   });
@@ -116,6 +117,25 @@ export function resolveProficiency(resolved, profile, actor, context = {}) {
     const held = !!via && ent.groups.has(via);
     considered.push({ kind: 'species-override', species: o.species, via, applicable: speciesMatch && fits, speciesMatch, branchFit: fits, held });
     if (speciesMatch && fits && held) return result(true, { kind: 'species-override', species: o.species, treatAsGroup: via, authority: o.authority ?? null });
+  }
+  // structured Phase 3B alternate routes that name a species (when no 4H speciesOverride already covers that species)
+  const covered = new Set((resolved.proficiency?.speciesOverrides ?? []).map((o) => norm(o.species)));
+  for (const r of resolved.proficiency?.alternateRoutesPhase3B ?? []) {
+    if (!r.species || covered.has(norm(r.species))) continue;
+    const via = normalizeGroup((r.classifications ?? [])[0]);
+    const speciesMatch = norm(r.species) === ent.species && ent.species !== '';
+    const fits = via ? groupFitsBranch(via, profile.branch) : false;
+    const held = !!via && ent.groups.has(via);
+    considered.push({ kind: 'species-route-phase3b', species: r.species, via, applicable: speciesMatch && fits, speciesMatch, branchFit: fits, held });
+    if (speciesMatch && fits && held) return result(true, { kind: 'species-override', species: r.species, treatAsGroup: via, authority: 'PHASE3B_STRUCTURED_RULE' });
+  }
+  // mounted-bayonet waiver (structured operation predicate; host rifle proficiency is a PROMPT unless supplied)
+  const bay = resolved.operation?.bayonetMount;
+  if (bay?.allowed && bay.rifleProficiencyWaivesAdvancedMeleeNonproficiencyPenalty && resolved.selection?.configurationId === 'mounted-bayonet') {
+    const known = context.hostRifleProficient;
+    considered.push({ kind: 'mounted-host-rifle-proficiency', applicable: true, held: known === true, policy: known === undefined ? 'PROMPT' : 'AUTO' });
+    if (known === true) return result(true, { kind: 'mounted-host-rifle-proficiency' });
+    if (known === undefined) pending.push({ promptId: 'host-rifle-proficiency', text: 'wielder proficient with that rifle' });
   }
   // ability routes
   for (const o of resolved.proficiency?.abilityOverrides ?? []) {

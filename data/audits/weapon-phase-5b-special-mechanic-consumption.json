@@ -374,10 +374,12 @@
     "secondaryPoisonAttackBaseBonus",
     "secondaryPoisonDefense",
     "survivalBasicForestJungleBonusWhenProficientAndCarried",
-    "treatInjuryCureDC"
+    "treatInjuryCureDC",
+    "venomSpit"
    ],
-   "identityCount": 11,
+   "identityCount": 12,
    "identities": [
+    "unmapped::Amphistaff",
     "unmapped::Darkstick",
     "unmapped::Fira",
     "unmapped::Garrote",
@@ -407,6 +409,7 @@
     "cannotBeWieldedTwoHanded",
     "cannotWieldTwoHanded",
     "collapsedForm",
+    "configurationResolution",
     "configurationSwitchAction",
     "configurations",
     "costWithoutRetractableStockCredits",
@@ -435,19 +438,21 @@
     "sizeGate",
     "sizeRule",
     "switchAction",
+    "switchFormAction",
     "tripodTreatsAsOneSizeSmallerForWielding",
     "twoHandedStrengthRuleExplicitlyHighlighted",
     "wornAs",
     "wornNotHeld",
     "wornOnWrist"
    ],
-   "identityCount": 37,
+   "identityCount": 39,
    "identities": [
     "lightsaber-chassis-archaic-lightfoil",
     "lightsaber-chassis-dual-phase",
     "lightsaber-chassis-great",
     "lightsaber-chassis-modern-lightfoil",
     "lightsaber-chassis-retrosaber",
+    "unmapped::Amphistaff",
     "unmapped::Darkstick",
     "unmapped::Dire Vibroblade",
     "unmapped::Entrenching Tool",
@@ -455,6 +460,7 @@
     "unmapped::Power Lance",
     "unmapped::San-Ni Staff",
     "unmapped::Stunning Gauntlet",
+    "unmapped::Vibrobayonet",
     "unmapped::Vibroblade, Double",
     "unmapped::Vibroknucklers",
     "unmapped::Wan-Shen",
@@ -659,13 +665,15 @@
     "maximumGrabRangeIncrement",
     "moveGrabbedObjectSquares",
     "pinAndTripAllowed",
+    "pinTripSubstitution",
     "prohibitedGrappleFeats",
     "rangedGrabOrGrapple",
     "webbingFunctionsAsNet"
    ],
-   "identityCount": 7,
+   "identityCount": 8,
    "identities": [
     "lightsaber-chassis-lightwhip",
+    "unmapped::Amphistaff",
     "unmapped::Garrote",
     "weapon-net",
     "weapon-snare-pistol",
@@ -728,13 +736,15 @@
     "extendedReachBonusSquares",
     "reachBonusSquares",
     "reachIncreaseSquares",
+    "reachProfileIds",
     "reachSquares"
    ],
-   "identityCount": 6,
+   "identityCount": 7,
    "identities": [
     "lightsaber-chassis-dual-phase",
     "lightsaber-chassis-lightwhip",
     "lightsaber-chassis-pike",
+    "unmapped::Amphistaff",
     "unmapped::Neuronic Whip",
     "unmapped::Shock Whip",
     "unmapped::Wan-Shen"
@@ -959,9 +969,10 @@
   {
    "mechanic": "triggered-effects",
    "source": "structured attack-profile / canonicalStats field",
-   "identityCount": 16,
+   "identityCount": 17,
    "identities": [
     "lightsaber-chassis-lightwhip",
+    "unmapped::Amphistaff",
     "unmapped::Garrote",
     "unmapped::Shock Whip",
     "unmapped::Tehkla Blade",
@@ -1014,12 +1025,14 @@
   {
    "mechanic": "activation-requirements",
    "source": "structured attack-profile / canonicalStats field",
-   "identityCount": 8,
+   "identityCount": 10,
    "identities": [
     "lightsaber-chassis-dual-phase",
     "lightsaber-chassis-longhandle",
     "lightsaber-chassis-pike",
     "lightsaber-chassis-retrosaber",
+    "unmapped::Amphistaff",
+    "unmapped::Vibrobayonet",
     "weapon-battering-ram",
     "weapon-siang-lance",
     "weapon-snare-pistol",
@@ -1118,8 +1131,10 @@
   {
    "mechanic": "payload-profiles",
    "source": "structured attack-profile / canonicalStats field",
-   "identityCount": 9,
+   "identityCount": 11,
    "identities": [
+    "unmapped::Atlatl",
+    "unmapped::Cesta",
     "weapon-concealed-dart-launcher",
     "weapon-darter",
     "weapon-e-web-missile-launcher",
@@ -1140,10 +1155,13 @@
   {
    "mechanic": "configuration-states-and-state-machines",
    "source": "structured attack-profile / canonicalStats field",
-   "identityCount": 7,
+   "identityCount": 10,
    "identities": [
     "lightsaber-chassis-archaic-lightsaber",
     "lightsaber-chassis-retrosaber",
+    "unmapped::Amphistaff",
+    "unmapped::Shock Stick",
+    "unmapped::Vibrobayonet",
     "unmapped::Wan-Shen",
     "weapon-adventurer-slugthrower",
     "weapon-micro-grenade-launcher",
@@ -1160,7 +1178,7 @@
   {
    "mechanic": "wielding-rules",
    "source": "structured attack-profile / canonicalStats field",
-   "identityCount": 14,
+   "identityCount": 15,
    "identities": [
     "lightsaber-chassis-archaic-lightfoil",
     "lightsaber-chassis-dueling",
@@ -1172,6 +1190,7 @@
     "unmapped::Energy Lance",
     "unmapped::Garrote",
     "unmapped::Power Lance",
+    "unmapped::Vibrobayonet",
     "weapon-battering-ram",
     "weapon-heavy-blaster-cannon",
     "weapon-lightfoil",

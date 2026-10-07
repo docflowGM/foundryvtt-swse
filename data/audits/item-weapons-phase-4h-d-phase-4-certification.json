@@ -106,9 +106,9 @@
     }
   ],
   "chain": {
-    "4H-A": "d09dbb57ebb83d26abed2137cf62fc00c49a9e0b46580ede07a42125822d2d2d",
+    "4H-A": "857f525328396df0f7d1d7ea4354f2b4ab88d9aaf71db59012019ec876082629",
     "4H-B": "7454d9cbd8ff83a15604b2af6533c30d8a7bd9b26d6e948af1e63a8241132f8e",
-    "4H-C": "217cde99eaba587f86fd0c66ba367a3dcba2fedecbc9970f5a2cca92e68a11fc"
+    "4H-C": "40cbd443c995df472a7a9d75c1715d7db66bb4ac1a6b9aebb94e7532f4140b24"
   },
   "productionHashes": {
     "packs/weapons.db": "70bd1216ef5106b48aead731d5ab38a920c065e8c3016a40e31c262b26f7b073",

@@ -35,22 +35,22 @@
   "adapterExposureGaps": 0
  },
  "summary": {
-  "fieldPaths": 2159,
+  "fieldPaths": 2190,
   "byImplementationState": {
    "ADAPTER_REQUIRED": 66,
    "DISPLAY_ONLY": 29,
    "EXISTING_CONSUMER_WRONG_INPUT": 539,
-   "NEW_CONSUMER_REQUIRED": 1071,
+   "NEW_CONSUMER_REQUIRED": 1102,
    "RECOMMENDATION_ONLY": 248,
    "STORE_ONLY": 25,
    "VALIDATION_ONLY": 181
   },
   "byClassification": {
    "DISPLAY": 433,
-   "EXECUTION": 1509,
+   "EXECUTION": 1540,
    "INVENTORY": 121,
-   "PLAYER_CHOICE": 396,
-   "PLAYER_STATE": 282,
+   "PLAYER_CHOICE": 401,
+   "PLAYER_STATE": 289,
    "PROVENANCE": 153,
    "RECOMMENDATION": 253,
    "SELECTOR": 527,
@@ -66,9 +66,9 @@
    "5C/5D": 5,
    "5C/5E": 16,
    "5D": 294,
-   "5D/5E": 138,
-   "5E": 522,
-   "5E/5F": 83,
+   "5D/5E": 140,
+   "5E": 535,
+   "5E/5F": 99,
    "5E/5H": 162,
    "5F": 104,
    "5G": 52,
@@ -79,7 +79,7 @@
   "alreadyConsumedCorrectly": 0,
   "existingConsumerWrongInput": 539,
   "adapterRequired": 66,
-  "newConsumerRequired": 1071,
+  "newConsumerRequired": 1102,
   "nonRuntimeDisposition": 483
  },
  "entries": [
@@ -1341,6 +1341,24 @@
    "note": null
   },
   {
+   "path": "3B:canonicalStats.attackProfiles[].activationRequirements[].per",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "condition evaluator -> effective profile (resolver)",
+    "attack bonus / range / requirement checks"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.profile.conditional",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
    "path": "3B:canonicalStats.attackProfiles[].activationRequirements[].requires",
    "classification": [
     "EXECUTION"
@@ -1432,6 +1450,24 @@
   },
   {
    "path": "3B:canonicalStats.attackProfiles[].activationRequirements[].type",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "condition evaluator -> effective profile (resolver)",
+    "attack bonus / range / requirement checks"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.profile.conditional",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:canonicalStats.attackProfiles[].activationRequirements[].uses",
    "classification": [
     "EXECUTION"
    ],
@@ -5789,6 +5825,42 @@
    "note": null
   },
   {
+   "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].choices",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "critical damage composition",
+    "post-hit effect/rider executor"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.profile.effects",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].choices[]",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "critical damage composition",
+    "post-hit effect/rider executor"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.profile.effects",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
    "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].condition",
    "classification": [
     "EXECUTION"
@@ -6168,6 +6240,24 @@
   },
   {
    "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].damageType.types[]",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "critical damage composition",
+    "post-hit effect/rider executor"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.profile.effects",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].defense",
    "classification": [
     "EXECUTION"
    ],
@@ -6852,6 +6942,24 @@
   },
   {
    "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].options[].method",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "critical damage composition",
+    "post-hit effect/rider executor"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.profile.effects",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:canonicalStats.attackProfiles[].triggeredEffects[].persistent",
    "classification": [
     "EXECUTION"
    ],
@@ -15411,6 +15519,40 @@
    "note": null
   },
   {
+   "path": "3B:canonicalStats.triggeredEffects[].choices",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.triggered",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:canonicalStats.triggeredEffects[].choices[]",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.triggered",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
    "path": "3B:canonicalStats.triggeredEffects[].condition",
    "classification": [
     "EXECUTION"
@@ -15769,6 +15911,23 @@
   },
   {
    "path": "3B:canonicalStats.triggeredEffects[].damageType.types[]",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.triggered",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:canonicalStats.triggeredEffects[].defense",
    "classification": [
     "EXECUTION"
    ],
@@ -16415,6 +16574,23 @@
   },
   {
    "path": "3B:canonicalStats.triggeredEffects[].options[].method",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.triggered",
+   "mechanicFamily": null,
+   "registryField": "canonicalStats",
+   "resolvedProperty": "canonicalStats",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:canonicalStats.triggeredEffects[].persistent",
    "classification": [
     "EXECUTION"
    ],
@@ -18543,6 +18719,24 @@
   },
   {
    "path": "3B:conditionalQualities[].when",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "condition evaluator -> effective profile (resolver)",
+    "range / damage composition"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.qualityParameters",
+   "mechanicFamily": null,
+   "registryField": "conditionalQualities",
+   "resolvedProperty": "conditionalQualities",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:conditionalQualities[].when.configurationId",
    "classification": [
     "EXECUTION"
    ],
@@ -21189,6 +21383,90 @@
    "note": null
   },
   {
+   "path": "3B:operation.configurationResolution",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.configurationResolution.detached",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.configurationResolution.detached.resolveAsIdentityKey",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.configurationResolution.detached.resolveAsProfileId",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
    "path": "3B:operation.configurationSwitchAction",
    "classification": [
     "EXECUTION",
@@ -23516,6 +23794,27 @@
    "note": null
   },
   {
+   "path": "3B:operation.mountedOnRifle.canMakeAttacksOfOpportunity",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "AmmoSystem",
+    "attack legality",
+    "reload UI",
+    "customization workbench (mounting)"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5D/5E",
+   "ruleId": "3b.operation.ammo-resource-reload",
+   "mechanicFamily": "ammo-resource-reload",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
    "path": "3B:operation.mountedOnRifle.foldedStockCompatible",
    "classification": [
     "EXECUTION",
@@ -23538,6 +23837,27 @@
   },
   {
    "path": "3B:operation.mountedOnRifle.requiresTwoHands",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "AmmoSystem",
+    "attack legality",
+    "reload UI",
+    "customization workbench (mounting)"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5D/5E",
+   "ruleId": "3b.operation.ammo-resource-reload",
+   "mechanicFamily": "ammo-resource-reload",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.mountedOnRifle.threatensAfterHostRifleRangedAttack",
    "classification": [
     "EXECUTION",
     "PLAYER_STATE"
@@ -24290,6 +24610,78 @@
    "note": null
   },
   {
+   "path": "3B:operation.pinTripSubstitution",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.pinTripSubstitution.feat",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.pinTripSubstitution.profileId",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.pinTripSubstitution.requiresProficientWielder",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
    "path": "3B:operation.pointBlankDamageEquipmentBonus",
    "classification": [
     "EXECUTION"
@@ -25018,6 +25410,42 @@
   },
   {
    "path": "3B:operation.reachIncreaseSquares",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "melee targeting",
+    "threatened squares / AoO"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.reach-and-threat",
+   "mechanicFamily": "reach-and-threat",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.reachProfileIds",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "melee targeting",
+    "threatened squares / AoO"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.reach-and-threat",
+   "mechanicFamily": "reach-and-threat",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.reachProfileIds[]",
    "classification": [
     "EXECUTION"
    ],
@@ -26206,6 +26634,27 @@
    "note": null
   },
   {
+   "path": "3B:operation.switchFormAction",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
    "path": "3B:operation.targetRule",
    "classification": [
     "EXECUTION",
@@ -26858,6 +27307,139 @@
    "migrationPhase": "5G",
    "ruleId": "3b.operation.economics-and-variants",
    "mechanicFamily": "economics-and-variants",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.venomSpit",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor",
+    "poison engine",
+    "condition track engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.condition-and-persistent-effects",
+   "mechanicFamily": "condition-and-persistent-effects",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.venomSpit.action",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor",
+    "poison engine",
+    "condition track engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.condition-and-persistent-effects",
+   "mechanicFamily": "condition-and-persistent-effects",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.venomSpit.profileId",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor",
+    "poison engine",
+    "condition track engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.condition-and-persistent-effects",
+   "mechanicFamily": "condition-and-persistent-effects",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.venomSpit.rangeSquares",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor",
+    "poison engine",
+    "condition track engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.condition-and-persistent-effects",
+   "mechanicFamily": "condition-and-persistent-effects",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.venomSpit.usage",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor",
+    "poison engine",
+    "condition track engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.condition-and-persistent-effects",
+   "mechanicFamily": "condition-and-persistent-effects",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.venomSpit.usage.per",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor",
+    "poison engine",
+    "condition track engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.condition-and-persistent-effects",
+   "mechanicFamily": "condition-and-persistent-effects",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.venomSpit.usage.uses",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "post-hit effect/rider executor",
+    "poison engine",
+    "condition track engine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.condition-and-persistent-effects",
+   "mechanicFamily": "condition-and-persistent-effects",
    "registryField": "operation",
    "resolvedProperty": "operation",
    "runtimeCarried": true,

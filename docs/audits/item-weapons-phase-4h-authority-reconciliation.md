@@ -44,7 +44,7 @@
 
 ## Inputs
 
-- data/audits/item-weapons-phase-3b-canonical-authority.json: `45f0ba3b9cbba8a277981bb19631c1d639b7e488b3e748b9bef40db0ef63acb0`
+- data/audits/item-weapons-phase-3b-canonical-authority.json: `711c6c7a738a69d40ba2e1e4e3cebc6075de2eb6670827771d05f27d0a42978d`
 - data/audits/item-weapons-phase-4a-simple-semantic-rolling.json: `4cf3b12777a113de82b21dbe2ff8a388d6e39c5e0a220d1afbb0e32703c0acdd`
 - data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json: `0c2574d28129519fbc16433ff03469243d87eda38edc04ea09ce4984d0f8e226`
 - data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json: `144e5b04e76ad792b7c01e29b6039a4a313c41d6a8287a7a896f9738e557ccbd`

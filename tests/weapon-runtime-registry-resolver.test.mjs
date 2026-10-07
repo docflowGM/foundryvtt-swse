@@ -36,7 +36,7 @@ for (const forbidden of ['"currentAmmo"', '"effectiveProficiency"', '"actorProfi
 }
 
 // ---- all 203 identities resolve canonically, zero heuristics ---------------------------------------------------------
-let heuristicHits = 0, incomplete = [];
+let heuristicHits = 0, unresolvedIdentities = [];
 for (const rec of registry.getAll()) {
   const w = resolve(rec.identityKey);
   assert.equal(w.source, 'canonical');
@@ -48,13 +48,10 @@ for (const rec of registry.getAll()) {
   const s = resolveSelected(w, { items: [] });
   assert.equal(s.profile.id, w.defaultProfileId);
   assert.ok(s.damage.components.length >= 1);
-  if (w.diagnostics.profileDefinitionIncomplete) incomplete.push(rec.identityKey);
+  if (w.diagnostics.unresolvedModes.length) unresolvedIdentities.push(rec.identityKey);
 }
 assert.equal(heuristicHits, 0);
-assert.deepEqual(incomplete.sort(), [
-  'unmapped::Amphistaff', 'unmapped::Atlatl', 'unmapped::Cesta', 'unmapped::Shock Stick', 'unmapped::Vibrobayonet',
-  'weapon-gungan-electropole', 'weapon-plx-2m-portable-missile-launcher',
-].sort());
+assert.deepEqual(unresolvedIdentities, [], 'every 4H mode is typed (0 unresolved)');
 
 // ---- identity resolution: stamp / source id, never name -----------------------------------------------------------
 assert.equal(resolver.resolve(stamped('weapon-bowcaster')).identity.via, 'flag-stamp');
@@ -77,7 +74,8 @@ throwsCode(() => resolve('weapon-bowcaster', { profileId: 'nope' }), 'unknown-pr
 throwsCode(() => resolve('weapon-wrist-rocket-launcher', { payloadId: 'nope' }), 'unknown-payload-id');
 throwsCode(() => resolve('lightsaber-chassis-retrosaber', { configurationId: 'nope' }), 'unknown-configuration-id');
 // selector-only mode is never promoted to an executable profile
-throwsCode(() => resolve('unmapped::Amphistaff', { profileId: 'venom-spit' }), 'profile-not-executable');
+throwsCode(() => resolve('unmapped::Amphistaff', { profileId: 'whip-pin-trip' }), 'profile-unavailable-in-configuration');
+throwsCode(() => resolve('unmapped::Amphistaff', { profileId: 'spear' }), 'unknown-profile-id'); // 'spear' is a configuration, not a profile
 // explicit valid profile is selected; none -> default
 assert.equal(resolve('weapon-massassi-lanvarok', { profileId: 'melee' }).selection.profileId, 'melee');
 assert.equal(resolve('weapon-massassi-lanvarok').selection.profileId, 'disc');
@@ -98,23 +96,61 @@ assert.equal(realLegacy.source, 'legacy');
 assert.ok(realLegacy.heuristics.length > 0);
 assert.equal(realLegacy.identity, null);
 
-// ---- profile reconciliation / seven incomplete identities -------------------------------------------------------
-for (const key of registryData.profileDefinitionIncompleteIdentities) {
-  const w = resolve(key);
-  assert.equal(w.diagnostics.profileDefinitionIncomplete, true);
-  assert.ok(w.diagnostics.unmatchedPhase4HModes.length > 0);
-  for (const m of w.diagnostics.unmatchedPhase4HModes) {
-    assert.equal(m.selectorOnlyMode, true); assert.equal(m.profileDefinitionIncomplete, true); assert.equal(m.executable, false);
-    assert.ok(!w.profiles.some((p) => p.id === m.mode), 'selector-only mode never appears as an executable profile');
-  }
+// ---- typed reconciliation of the seven formerly-unmatched identities (5B-R) ------------------------------------------
+const typedOf = (key, mode) => resolve(key).diagnostics.modeReconciliation.find((m) => m.mode === mode);
+assert.equal(typedOf('unmapped::Amphistaff', 'spear').classification, 'CONFIGURATION');
+assert.equal(typedOf('unmapped::Amphistaff', 'whip').classification, 'CONFIGURATION');
+assert.equal(typedOf('unmapped::Amphistaff', 'venom-spit').classification, 'SPECIAL_ACTION');
+assert.equal(typedOf('unmapped::Atlatl', 'launcher').classification, 'ATTACK_PROFILE');
+assert.equal(typedOf('unmapped::Cesta', 'launcher').classification, 'ATTACK_PROFILE');
+assert.equal(typedOf('unmapped::Shock Stick', 'mounted-bayonet').classification, 'CONFIGURATION');
+assert.equal(typedOf('unmapped::Vibrobayonet', 'detached').classification, 'CONFIGURATION');
+for (const m of ['direct', 'heat-seeking', 'gravity-activated']) assert.equal(typedOf('weapon-plx-2m-portable-missile-launcher', m).classification, 'OPERATING_MODE');
+assert.equal(typedOf('weapon-gungan-electropole', 'gungan-alternate-proficiency').classification, 'PROFICIENCY_ROUTE');
+// Amphistaff is fully executable by configuration
+const amp = (c) => resolve('unmapped::Amphistaff', c ? { configurationId: c } : {});
+assert.deepEqual(amp().profiles.filter((p) => !p.availableIn || p.availableIn.includes('quarterstaff')).map((p) => p.id), ['quarterstaff-end1', 'quarterstaff-end2', 'venom-spit']);
+assert.equal(amp().selection.configurationId, 'quarterstaff'); assert.equal(amp().selection.profileId, 'quarterstaff-end1');
+assert.equal(amp('spear').selection.profileId, 'spear-melee');
+assert.equal(resolve('unmapped::Amphistaff', { configurationId: 'spear', profileId: 'spear-thrown' }).profiles.find((p) => p.id === 'spear-thrown').branch, 'ranged');
+assert.equal(resolve('unmapped::Amphistaff', { configurationId: 'whip', profileId: 'whip-pin-trip' }).selection.profileId, 'whip-pin-trip');
+throwsCode(() => resolve('unmapped::Amphistaff', { configurationId: 'whip', profileId: 'spear-melee' }), 'profile-unavailable-in-configuration');
+assert.equal(resolve('unmapped::Amphistaff', { profileId: 'venom-spit' }).selection.profileId, 'venom-spit', 'special action available in any form');
+// Atlatl / Cesta: melee + launcher; launcher damage is payload-owned (never the melee 2d4)
+for (const [key, accurate] of [['unmapped::Atlatl', false], ['unmapped::Cesta', true]]) {
+  const w = resolve(key, { profileId: 'launcher' });
+  assert.deepEqual(w.profiles.map((p) => `${p.id}:${p.branch}`), ['primary:melee', 'launcher:ranged']);
+  const d = resolveDamageProfile(w, getProfile(w), {});
+  assert.equal(d.components[0].kind, 'payload'); assert.equal(d.components[0].damage.formula, '2d8'); assert.deepEqual([...d.components[0].damageTypes], ['energy']);
+  assert.equal(resolveRange(w, getProfile(w)).accurate, accurate); assert.equal(resolveRange(w, getProfile(w)).family, 'simple-weapons');
+  const melee = resolve(key); assert.equal(resolveDamageProfile(melee, getProfile(melee), {}).components[0].damage.formula, '2d4');
 }
-assert.deepEqual([...resolve('unmapped::Amphistaff').diagnostics.selectorOnlyModes].sort(), ['spear', 'venom-spit', 'whip']);
-assert.deepEqual(resolve('unmapped::Atlatl').diagnostics.selectorOnlyModes, ['launcher']);
-assert.deepEqual(resolve('unmapped::Cesta').diagnostics.selectorOnlyModes, ['launcher']);
-assert.equal(resolve('unmapped::Amphistaff').profiles.length, 1);
-// the registry (frozen authorities) is not synthesizing profiles
-assert.equal(registry.getByIdentityKey('unmapped::Amphistaff').canonicalStats.attackProfiles.length, 1);
-assert.equal(reconcileProfiles([{ id: 'a', schemaFamily: { branch: 'melee' } }], [{ mode: 'x' }, { mode: 'y' }]).status, 'PROFILE_DEFINITION_INCOMPLETE');
+// Electropole: both profiles executable
+assert.deepEqual(resolve('weapon-gungan-electropole').profiles.map((p) => `${p.id}:${p.branch}`), ['melee:melee', 'thrown:ranged']);
+// Shock Stick: configuration overlay, one attack profile
+const ss = resolve('unmapped::Shock Stick');
+assert.deepEqual(ss.profiles.map((p) => p.id), ['native-stun']); assert.equal(ss.selection.configurationId, 'handheld');
+assert.equal(resolve('unmapped::Shock Stick', { configurationId: 'mounted-bayonet' }).selection.profileId, 'native-stun');
+// Vibrobayonet: mounted attack vs detached delegation to the certified Vibrodagger
+const vb = resolve('unmapped::Vibrobayonet');
+assert.equal(vb.selection.configurationId, 'mounted-on-rifle'); assert.equal(vb.selection.profileId, 'primary');
+assert.equal(vb.profiles.find((p) => p.id === 'primary').definition.damage.formula, '2d6');
+const det = resolve('unmapped::Vibrobayonet', { configurationId: 'detached' });
+assert.equal(det.identity.identityKey, 'unmapped::Vibrobayonet'); assert.equal(det.selection.profileId, 'detached');
+assert.deepEqual({ ...det.profiles.find((p) => p.id === 'detached').delegatedFrom }, { identityKey: 'weapon-vibrodagger', profileId: 'primary' });
+assert.equal(det.profiles.find((p) => p.id === 'detached').definition.damage.formula, '2d4');
+throwsCode(() => resolve('unmapped::Vibrobayonet', { configurationId: 'detached', profileId: 'primary' }), 'profile-unavailable-in-configuration');
+// PLX-2M: three operating modes over ONE attack profile
+const plx = resolve('weapon-plx-2m-portable-missile-launcher');
+assert.deepEqual(plx.profiles.map((p) => p.id), ['area-missile']);
+assert.deepEqual(plx.operatingModes.map((m) => m.id).sort(), ['direct', 'gravity-activated', 'heat-seeking']);
+assert.equal(resolve('weapon-plx-2m-portable-missile-launcher', { modeId: 'heat-seeking' }).selection.modeId, 'heat-seeking');
+throwsCode(() => resolve('weapon-plx-2m-portable-missile-launcher', { modeId: 'nope' }), 'unknown-mode-id');
+// reconciliation negatives: no evidence => UNRESOLVED; configuration/mode/profile precedence; no mechanics synthesized
+const rc = reconcileProfiles({ attackProfiles: [{ id: 'a', kind: 'attack', schemaFamily: { branch: 'melee' } }], configurationStates: [{ id: 'c1' }], modeProfiles: [{ id: 'm1', attackProfileId: 'a' }] }, [{ mode: 'c1' }, { mode: 'm1' }, { mode: 'a' }, { mode: 'zzz' }, { mode: 'yyy' }]);
+assert.deepEqual(rc.modes.map((m) => `${m.mode}:${m.classification}`).sort(), ['a:ATTACK_PROFILE', 'c1:CONFIGURATION', 'm1:OPERATING_MODE', 'yyy:UNRESOLVED', 'zzz:UNRESOLVED']);
+assert.equal(rc.status, 'UNRESOLVED_MODES');
+assert.equal(registry.getByIdentityKey('unmapped::Amphistaff').canonicalStats.attackProfiles.length, 7);
 
 // ---- profile family coverage (ordinary, hybrid, double, multi-profile, payload, stun) ---------------------------------
 const all = registry.getAll();

@@ -16,10 +16,14 @@ Each subphase has a rollback boundary: it is a feature-flagged consumer switch (
 | **5I** | retire legacy heuristics (~55), `system.proficient` authority, dead code | zero-heuristic CI | `weapon-branch-resolver` heuristics, legacy adapter scope, `combat-action-bar.js` | — | no canonical weapon reaches the legacy adapter | 5G | restore adapter |
 | **5J** | end-to-end certification | consumption map | tools | all | map re-verified with `ALREADY_CONSUMED_CORRECTLY` for every runtime path; 0 `EXISTING_CONSUMER_WRONG_INPUT`/`NEW_CONSUMER_REQUIRED` | all | — |
 
-## Planner decisions needed before 5C/5E
-1. The seven identities with unmatched 4H modes (Amphistaff, Atlatl, Cesta, Shock Stick, Vibrobayonet, Electropole, PLX-2M): supply 3B attack profiles for the selector-only modes or confirm they remain non-executable.
-2. Canonical item sheet: confirm read-only rules fields for canonical weapons (player-visible choices only).
-3. Condition evaluator scope (which `conditionalModifiers` conditions are machine-evaluable vs. GM-confirmed prompts).
+## Planner rulings now binding (5B-R)
+1. **Typed modes:** attack profile / configuration / operating mode / special action (+ proficiency route). Profiles are gated by configuration; configurations may delegate to another certified identity's attack (Vibrobayonet → Vibrodagger).
+2. **Item sheet (5G):** canonical-linked weapons are rules-read-only; state-only editing; GM “Create Custom Copy / Detach From Canonical Authority” for homebrew.
+3. **Conditions (5C–5E):** AUTO / PROMPT / UNSUPPORTED hybrid policy (`condition-policy.js`); answers persist in the `AttackWorkflowContext`; **5J gate: `EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED = 0`** (0 today at the data level; the workflow must also supply the AUTO context vocabulary).
+
+## Remaining planner decisions before 5C
+1. Accept `PROFICIENCY_ROUTE` as a fifth typed value (Electropole), or amend 4H to drop the descriptor from `modes`.
+2. Structured predicates (or explicit PROMPT policy) for the 20 identities' condition-only `alternateRoutesPhase3B` routes (e.g. Sith Sword) before 5C proficiency migration.
 
 ## Exit metric for the whole program
 `ALREADY_CONSUMED_CORRECTLY` goes from **0 / 2,159** today to every runtime-classified path; `NEW_CONSUMER_REQUIRED` and `EXISTING_CONSUMER_WRONG_INPUT` reach 0; verifier stays at 0 orphans.

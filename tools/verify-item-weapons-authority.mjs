@@ -9,6 +9,7 @@ import crypto from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { applyCompletenessAmendments } from './lib/item-weapons-phase-3b-amendments.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const auth = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-canonicalization-rolling-authority.json'), 'utf8'));
@@ -1093,6 +1094,16 @@ if (p3b && typeof p3b === 'object') {
   if (!same(ids.map((i) => [i.canonicalName, i.identityKey]), [...ids].map((i) => [i.canonicalName, i.identityKey]).sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0)))) fail('3B identities must be sorted by canonicalName then identityKey');
   const REQ = ['identityKey', 'canonicalName', 'repo', 'sourceClaims', 'firstPublication', 'canonicalPlayerText', 'summary', 'weaponGroup', 'schemaFamily', 'canonicalStats', 'qualities', 'conditionalQualities', 'proficiencyRules', 'operation', 'sourceFootnotes', 'crossPublication', 'repoComparison', 'ambiguities', 'mergeAudit'];
   const seenClaims = new Set();
+  // Phase 5B-R: source-backed completeness amendments are re-applied to the certified Phase 2 claims; amended identities must equal that expectation exactly.
+  const cl = (x) => JSON.parse(JSON.stringify(x));
+  const shells = ids.map((i) => {
+    if (i.sourceClaims.length !== 1) return cl(i);
+    const b = p2by.get(`${nb(i.sourceClaims[0].book)}|${i.sourceClaims[0].canonicalName}`);
+    return { identityKey: i.identityKey, canonicalName: i.canonicalName, canonicalStats: cl(b.r.canonicalStats), qualities: cl(b.r.qualities), conditionalQualities: cl(b.r.conditionalQualities), operation: cl(b.r.operation), proficiencyRules: cl(b.r.proficiencyRules) };
+  });
+  const amendLog = applyCompletenessAmendments(shells);
+  if (!same(amendLog, d3b.completenessAmendments ?? [])) fail('3B completenessAmendments log differs from the amendment module');
+  const amended = new Map(amendLog.map((a) => [a.identityKey, shells.find((x) => x.identityKey === a.identityKey)]));
   for (const i of ids) {
     const w = `3B ${i.canonicalName}`;
     for (const k of REQ) if (!(k in i)) fail(`${w} missing ${k}`);
@@ -1112,15 +1123,20 @@ if (p3b && typeof p3b === 'object') {
     if (i.sourceClaims.length === 1) {
       const a = p1by.get(`${nb(i.sourceClaims[0].book)}|${i.sourceClaims[0].canonicalName}`), b = p2by.get(`${nb(i.sourceClaims[0].book)}|${i.sourceClaims[0].canonicalName}`);
       if (i.canonicalPlayerText !== a.canonicalPlayerText || i.summary !== a.summary) fail(`${w} one-claim identity must reuse the certified Phase 1 text and summary unchanged`);
-      if (!same(sorted(i.canonicalStats), sorted(b.r.canonicalStats)) || !same(sorted(i.qualities), sorted(b.r.qualities))) fail(`${w} one-claim identity mechanics must equal the certified Phase 2 claim`);
+      const exp = amended.get(i.identityKey);
+      if (!same(sorted(i.canonicalStats), sorted(exp ? exp.canonicalStats : b.r.canonicalStats)) || !same(sorted(i.qualities), sorted(exp ? exp.qualities : b.r.qualities))) fail(`${w} one-claim identity mechanics must equal the certified Phase 2 claim${exp ? ' plus the enumerated 5B-R completeness amendments' : ''}`);
+      if (exp && (!same(sorted(i.operation), sorted(exp.operation)) || !same(sorted(i.conditionalQualities), sorted(exp.conditionalQualities)) || !same(sorted(i.proficiencyRules), sorted(exp.proficiencyRules)))) fail(`${w} operation/conditionalQualities/proficiencyRules must equal the certified claim plus the enumerated amendments`);
     }
     const am = i.canonicalStats.ammo, hasRanged = i.canonicalStats.attackProfiles.some((q) => q.range.mode !== 'melee');
-    if ((am === null) === hasRanged) fail(`${w} ammo must be null exactly for pure melee identities`);
+    // a ranged profile that is a thrown form or a special action, consumes nothing and has no resource does not make the identity ammo-bearing
+    const ammoFree = am === null && i.canonicalStats.resource?.kind === 'none' && i.canonicalStats.attackProfiles.filter((q) => q.range.mode !== 'melee').every((q) => (q.qualities.thrown || q.kind === 'special') && !q.resourceConsumption);
+    if ((am === null) === hasRanged && !ammoFree) fail(`${w} ammo must be null exactly for pure melee identities`);
     if (am && am.capacityShots === 0) fail(`${w} ammo must never carry capacityShots 0`);
     if (am && am.status === 'not-stated' && (am.type !== null || am.capacityShots !== null)) fail(`${w} not-stated ammo must stay empty (never filled from repo data)`);
     if (am?.payloadDerived && ['loaded-ammo', 'loaded-ammo-modified-by-weapon'].includes(am.damageSource)) {
-      if (['dice', 'double', 'fixed'].includes(i.canonicalStats.baseDamage.mode)) fail(`${w} payload-derived delivery system must not own payload damage as intrinsic launcher baseDamage (v2.9 separation)`);
-      for (const q of i.canonicalStats.attackProfiles) if (q.damage.mode === 'dice' && !i.canonicalStats.payloadProfiles.some((pl) => pl.damage?.formula === q.damage.formula && same(pl.damageType, q.damageType))) fail(`${w} resolved attack profile ${q.id} damage must come from a loaded payload profile`);
+      const scoped = Array.isArray(am.scopedToAttackProfiles) ? am.scopedToAttackProfiles : null; // payload-scoped launcher profile(s); other profiles keep their own damage
+      if (!scoped && ['dice', 'double', 'fixed'].includes(i.canonicalStats.baseDamage.mode)) fail(`${w} payload-derived delivery system must not own payload damage as intrinsic launcher baseDamage (v2.9 separation)`);
+      for (const q of i.canonicalStats.attackProfiles.filter((x) => !scoped || scoped.includes(x.id))) if (q.damage.mode === 'dice' && !i.canonicalStats.payloadProfiles.some((pl) => pl.damage?.formula === q.damage.formula && same(pl.damageType, q.damageType))) fail(`${w} resolved attack profile ${q.id} damage must come from a loaded payload profile`);
     }
     for (const k of AMMO_RUNTIME_KEYS) if (am && k in am) fail(`${w} ammo must not carry runtime state ${k}`);
     if (i.crossPublication.claimCount !== i.sourceClaims.length || i.mergeAudit.claimCount !== i.sourceClaims.length) fail(`${w} crossPublication/mergeAudit claim counts`);

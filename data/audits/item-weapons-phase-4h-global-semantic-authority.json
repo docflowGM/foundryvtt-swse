@@ -2723,7 +2723,7 @@
             "statTablePage": 122
           }
         ],
-        "mechanicsRecordSha256": "0e6c535a927067863b987710081751d6533441c738985b6d9c3736240184180e",
+        "mechanicsRecordSha256": "f93f10ba8b55b34e614d1c2f918a45995aa667d1193eae7ac50ddc7cf915ef37",
         "mechanicsPointer": "data/audits/item-weapons-phase-3b-canonical-authority.json#identities[unmapped::Amphistaff].canonicalStats"
       },
       "categories": [
@@ -3217,7 +3217,7 @@
             "statTablePage": 122
           }
         ],
-        "mechanicsRecordSha256": "499c5535aae2866097212f24d1041d9880d85a072f07b15f26e0a17555423181",
+        "mechanicsRecordSha256": "38d82c5b9f38dadcd318bb59aafad92d6fa70c9739fb705048190f37923c3b21",
         "mechanicsPointer": "data/audits/item-weapons-phase-3b-canonical-authority.json#identities[unmapped::Atlatl].canonicalStats"
       },
       "categories": [
@@ -3866,7 +3866,7 @@
             "statTablePage": 122
           }
         ],
-        "mechanicsRecordSha256": "c4fedf17a0adfc4b4de47e1797a3db83de5659230eceeddfb30b538ad6596006",
+        "mechanicsRecordSha256": "8eab1c6720bf16d42fbfaa304dc207270400dbb472d76f42e50d6c80b84a8818",
         "mechanicsPointer": "data/audits/item-weapons-phase-3b-canonical-authority.json#identities[unmapped::Cesta].canonicalStats"
       },
       "categories": [
@@ -8159,7 +8159,7 @@
             "statTablePage": 36
           }
         ],
-        "mechanicsRecordSha256": "ca7325efef2b4b3be135199ab609fbe82a7ad20ce3391c91df7e57895f206ab9",
+        "mechanicsRecordSha256": "8b307031dcbaf876e5cda3c52015270bfb2891014cd7f375c6ff260a181d97fd",
         "mechanicsPointer": "data/audits/item-weapons-phase-3b-canonical-authority.json#identities[unmapped::Shock Stick].canonicalStats"
       },
       "categories": [
@@ -10497,7 +10497,7 @@
             "statTablePage": 122
           }
         ],
-        "mechanicsRecordSha256": "4e251676dc04f725806cb317052566a1a9224f09b0687e3f053915da3ecddffa",
+        "mechanicsRecordSha256": "942092cfea43d1dcf6f33d30ff2d8f67354f60f0a81c2e1fae6d3afdfc007dc6",
         "mechanicsPointer": "data/audits/item-weapons-phase-3b-canonical-authority.json#identities[unmapped::Vibrobayonet].canonicalStats"
       },
       "categories": [
@@ -21621,7 +21621,8 @@
             "sourceClassification": "Advanced Melee Weapon",
             "classifications": [
               "simple"
-            ]
+            ],
+            "species": "Gungan"
           }
         ],
         "alternateRoutesPlanner": [],
@@ -39079,7 +39080,7 @@
     }
   ],
   "inputs": {
-    "data/audits/item-weapons-phase-3b-canonical-authority.json": "45f0ba3b9cbba8a277981bb19631c1d639b7e488b3e748b9bef40db0ef63acb0",
+    "data/audits/item-weapons-phase-3b-canonical-authority.json": "711c6c7a738a69d40ba2e1e4e3cebc6075de2eb6670827771d05f27d0a42978d",
     "data/audits/item-weapons-phase-4a-simple-semantic-rolling.json": "4cf3b12777a113de82b21dbe2ff8a388d6e39c5e0a220d1afbb0e32703c0acdd",
     "data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json": "0c2574d28129519fbc16433ff03469243d87eda38edc04ea09ce4984d0f8e226",
     "data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json": "144e5b04e76ad792b7c01e29b6039a4a313c41d6a8287a7a896f9738e557ccbd",
@@ -39087,7 +39088,7 @@
     "data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json": "88cc4fe20a3a86594e961676160682cbe3e902154ef9f0becdc368a2258feb58",
     "data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json": "fd484c64f0eb5472253f4f99f5e871a584ff482f6435aafe22d8a21454c073d5",
     "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json": "e0fc2e14d14f0227b9e84b904dd82e9b9c94df3fad5f8df121cbe2937b9f5005",
-    "data/audits/item-weapons-phase-4h-authority-reconciliation.json": "d09dbb57ebb83d26abed2137cf62fc00c49a9e0b46580ede07a42125822d2d2d",
+    "data/audits/item-weapons-phase-4h-authority-reconciliation.json": "857f525328396df0f7d1d7ea4354f2b4ab88d9aaf71db59012019ec876082629",
     "data/audits/item-weapons-phase-4h-b-global-semantic-qa.json": "7454d9cbd8ff83a15604b2af6533c30d8a7bd9b26d6e948af1e63a8241132f8e"
   }
 }

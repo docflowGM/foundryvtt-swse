@@ -17,6 +17,75 @@
     "sourceBooks": 12
   },
   "publicationPrecedencePolicy": "Field-local later-publication precedence for exact same-identity direct contradictions; silence never supersedes; earlier-only compatible mechanics survive; both claims stay preserved (planner ruling, Phase 3B).",
+  "completenessAmendments": [
+    {
+      "id": "amphistaff-forms-and-special-attacks",
+      "identityKey": "unmapped::Amphistaff",
+      "fields": [
+        "canonicalStats.attackProfiles",
+        "canonicalStats.configurationStates",
+        "canonicalStats.modeProfiles",
+        "canonicalStats.triggeredEffects",
+        "conditionalQualities[].when.configurationId",
+        "operation.*"
+      ],
+      "basis": "Amphistaff canonicalPlayerText (three forms, spear wielded/thrown, whip reach 2 + Pin/Trip, venom spit 10 squares once/24h); damage/qualities cloned from certified Quarterstaff, Spear and Electropole-thrown range",
+      "schemaShapeChange": false
+    },
+    {
+      "id": "atlatl-energy-ball-launcher",
+      "identityKey": "unmapped::Atlatl",
+      "fields": [
+        "canonicalStats.attackProfiles[launcher]",
+        "canonicalStats.payloadProfiles",
+        "canonicalStats.ammo"
+      ],
+      "basis": "Atlatl canonicalPlayerText (hurls energy balls; usable in melee); payload values copied from weapon-energy-ball; range from the certified simple-weapons range template (not Accurate)",
+      "schemaShapeChange": false
+    },
+    {
+      "id": "cesta-energy-ball-launcher",
+      "identityKey": "unmapped::Cesta",
+      "fields": [
+        "canonicalStats.attackProfiles[launcher]",
+        "canonicalStats.payloadProfiles",
+        "canonicalStats.ammo"
+      ],
+      "basis": "Cesta canonicalPlayerText (hurls energy balls; usable in melee); payload values copied from weapon-energy-ball; range from the certified simple-weapons range template (Accurate per the Energy Ball cesta rule)",
+      "schemaShapeChange": false
+    },
+    {
+      "id": "electropole-gungan-route-structured",
+      "identityKey": "weapon-gungan-electropole",
+      "fields": [
+        "proficiencyRules[0].species"
+      ],
+      "basis": "Electropole canonicalPlayerText (Gungans with Weapon Proficiency (simple weapons) are proficient); melee and thrown attack profiles already certified",
+      "schemaShapeChange": false
+    },
+    {
+      "id": "shock-stick-configurations",
+      "identityKey": "unmapped::Shock Stick",
+      "fields": [
+        "canonicalStats.configurationStates"
+      ],
+      "basis": "Shock Stick canonicalPlayerText (can be mounted as a rifle bayonet; wielder proficient with that rifle takes no nonproficiency penalty) — no second attack profile; proficiency waiver stays in operation.bayonetMount",
+      "schemaShapeChange": false
+    },
+    {
+      "id": "vibrobayonet-configurations",
+      "identityKey": "unmapped::Vibrobayonet",
+      "fields": [
+        "canonicalStats.configurationStates",
+        "canonicalStats.wieldingRules",
+        "attackProfiles[primary].activationRequirements",
+        "operation.mountedOnRifle",
+        "operation.configurationResolution"
+      ],
+      "basis": "Vibrobayonet canonicalPlayerText (mounted: two hands, no folded stock, threatens/AoO after rifle fire; detached functions as a vibrodagger) — detached delegates to the certified Vibrodagger attack, no duplicated stats",
+      "schemaShapeChange": false
+    }
+  ],
   "plannerRulingsApplied": [
     "guard-shoto-phrik-dr",
     "lightsaber-pike-phrik-dr",
@@ -983,8 +1052,8 @@
         },
         "attackProfiles": [
           {
-            "id": "primary",
-            "label": "Primary",
+            "id": "quarterstaff-end1",
+            "label": "Quarterstaff form (end 1)",
             "kind": "attack",
             "schemaFamily": {
               "branch": "melee",
@@ -993,14 +1062,538 @@
               "exoticWeaponIdentity": "Amphistaff"
             },
             "damage": {
-              "mode": "special",
-              "diceCount": null,
-              "dieSize": null,
-              "flatBonus": null,
-              "formula": "Special"
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "1d6"
             },
             "damageType": {
-              "mode": "special",
+              "mode": "single",
+              "types": [
+                "bludgeoning"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "longAllowed": null
+              },
+              "penaltyApplication": null,
+              "hardMaxSquares": null
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": [
+              "Quarterstaff form has all the qualities of a quarterstaff (source text)."
+            ],
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "configuration",
+                "id": "quarterstaff"
+              }
+            ],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          },
+          {
+            "id": "quarterstaff-end2",
+            "label": "Quarterstaff form (end 2)",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Amphistaff"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "1d6"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "bludgeoning"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "longAllowed": null
+              },
+              "penaltyApplication": null,
+              "hardMaxSquares": null
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": [],
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "configuration",
+                "id": "quarterstaff"
+              }
+            ],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          },
+          {
+            "id": "spear-melee",
+            "label": "Spear form (melee)",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Amphistaff"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "1d8"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "piercing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "longAllowed": null
+              },
+              "penaltyApplication": null,
+              "hardMaxSquares": null
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": true,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": [],
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "configuration",
+                "id": "spear"
+              }
+            ],
+            "triggeredEffects": [
+              {
+                "id": "spear-poison-condition-track",
+                "trigger": "damage-dealt-and-attack-roll-equals-or-exceeds-defense",
+                "defense": "fortitude",
+                "effect": "move-target-condition-track",
+                "steps": -1,
+                "persistent": true,
+                "notes": [
+                  "Amphistaff poison condition-track effect (source text)."
+                ]
+              }
+            ],
+            "modifierPolicy": null,
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          },
+          {
+            "id": "spear-thrown",
+            "label": "Spear form (thrown)",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Amphistaff"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "1d8"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "piercing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "ranged",
+              "profileId": "thrown-weapons",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  6
+                ],
+                "short": [
+                  7,
+                  8
+                ],
+                "medium": [
+                  9,
+                  10
+                ],
+                "long": [
+                  11,
+                  12
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ],
+              "hardMaxSquares": null,
+              "penaltyApplication": "attack",
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": true,
+                "longAllowed": true
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": true,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": [],
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "configuration",
+                "id": "spear"
+              }
+            ],
+            "triggeredEffects": [
+              {
+                "id": "spear-thrown-poison-condition-track",
+                "trigger": "damage-dealt-and-attack-roll-equals-or-exceeds-defense",
+                "defense": "fortitude",
+                "effect": "move-target-condition-track",
+                "steps": -1,
+                "persistent": true,
+                "notes": [
+                  "Amphistaff poison condition-track effect (source text)."
+                ]
+              }
+            ],
+            "modifierPolicy": null,
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          },
+          {
+            "id": "whip",
+            "label": "Whip form (tail)",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Amphistaff"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 4,
+              "flatBonus": 0,
+              "formula": "1d4"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "piercing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "longAllowed": null
+              },
+              "penaltyApplication": null,
+              "hardMaxSquares": null
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": true
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": [
+              "Tail deals 1d4 piercing plus the wielder's Strength modifier; reach 2 squares (source text)."
+            ],
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "configuration",
+                "id": "whip"
+              }
+            ],
+            "triggeredEffects": [
+              {
+                "id": "whip-poison-condition-track",
+                "trigger": "damage-dealt-and-attack-roll-equals-or-exceeds-defense",
+                "defense": "fortitude",
+                "effect": "move-target-condition-track",
+                "steps": -1,
+                "persistent": true,
+                "notes": [
+                  "Amphistaff poison condition-track effect (source text)."
+                ]
+              }
+            ],
+            "modifierPolicy": null,
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          },
+          {
+            "id": "whip-pin-trip",
+            "label": "Whip form (Pin or Trip instead of damage)",
+            "kind": "special",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Amphistaff"
+            },
+            "damage": {
+              "mode": "none",
+              "diceCount": 0,
+              "dieSize": null,
+              "flatBonus": 0,
+              "formula": "-"
+            },
+            "damageType": {
+              "mode": "none",
               "types": [],
               "qualifiers": []
             },
@@ -1035,6 +1628,112 @@
               "autofireOnly": false,
               "doubleWeapon": false,
               "thrown": false,
+              "reach": true
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": [
+              "Instead of dealing whip damage, a proficient wielder may pin or trip as though using the Pin or Trip feat without needing that feat (source text)."
+            ],
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "configuration",
+                "id": "whip"
+              },
+              {
+                "type": "proficiency",
+                "condition": "proficient-wielder"
+              }
+            ],
+            "triggeredEffects": [
+              {
+                "id": "pin-or-trip-substitution",
+                "trigger": "in-place-of-whip-damage",
+                "effect": "resolve-as-pin-or-trip-feat-without-feat",
+                "choices": [
+                  "pin",
+                  "trip"
+                ]
+              }
+            ],
+            "modifierPolicy": null,
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          },
+          {
+            "id": "venom-spit",
+            "label": "Venom spit (any form)",
+            "kind": "special",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Amphistaff"
+            },
+            "damage": {
+              "mode": "none",
+              "diceCount": 0,
+              "dieSize": null,
+              "flatBonus": 0,
+              "formula": "-"
+            },
+            "damageType": {
+              "mode": "none",
+              "types": [],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "fixed-maximum",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "longAllowed": null
+              },
+              "penaltyApplication": null,
+              "hardMaxSquares": null,
+              "maxSquares": 10
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
               "reach": false
             },
             "attackResolution": {
@@ -1054,29 +1753,144 @@
               "notes": null
             },
             "resourceConsumption": null,
-            "notes": [],
+            "notes": [
+              "In any form the wielder can coax it to spit venom up to 10 squares as a standard action; usable once every 24 standard hours (source text)."
+            ],
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "activationRequirements": [],
-            "triggeredEffects": [],
+            "activationRequirements": [
+              {
+                "type": "action",
+                "action": "standard"
+              },
+              {
+                "type": "usage-limit",
+                "uses": 1,
+                "per": "24-standard-hours"
+              }
+            ],
+            "triggeredEffects": [
+              {
+                "id": "venom-spit-condition-track",
+                "trigger": "attack-roll-equals-or-exceeds-both-defenses",
+                "defenses": [
+                  "reflex",
+                  "fortitude"
+                ],
+                "effect": "move-target-condition-track",
+                "steps": -1,
+                "persistent": true
+              }
+            ],
             "modifierPolicy": null,
             "criticalEffects": [],
             "damageMultiplier": 1,
             "conditionalRangeRules": []
           }
         ],
-        "modeProfiles": [],
+        "modeProfiles": [
+          {
+            "id": "double-weapon-full-round",
+            "label": "Attack with both ends (quarterstaff form)",
+            "attackProfileIds": [
+              "quarterstaff-end1",
+              "quarterstaff-end2"
+            ],
+            "attackRollModifierEach": -10,
+            "notes": [
+              "Quarterstaff qualities: attack with both ends as a full-round action; certain feats and talents reduce these penalties."
+            ],
+            "attackProfileId": null,
+            "switchAction": "full-round"
+          }
+        ],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
         "stateMachine": null,
-        "configurationStates": [],
+        "configurationStates": [
+          {
+            "id": "quarterstaff",
+            "label": "Quarterstaff form",
+            "default": true,
+            "attackUsable": true,
+            "transitionAction": "swift"
+          },
+          {
+            "id": "spear",
+            "label": "Spear form",
+            "default": false,
+            "attackUsable": true,
+            "transitionAction": "swift"
+          },
+          {
+            "id": "whip",
+            "label": "Whip form",
+            "default": false,
+            "attackUsable": true,
+            "transitionAction": "swift"
+          }
+        ],
         "constructionRules": null,
-        "triggeredEffects": [],
+        "triggeredEffects": [
+          {
+            "id": "spear-poison-condition-track",
+            "trigger": "damage-dealt-and-attack-roll-equals-or-exceeds-defense",
+            "defense": "fortitude",
+            "effect": "move-target-condition-track",
+            "steps": -1,
+            "persistent": true,
+            "notes": [
+              "Amphistaff poison condition-track effect (source text)."
+            ]
+          },
+          {
+            "id": "spear-thrown-poison-condition-track",
+            "trigger": "damage-dealt-and-attack-roll-equals-or-exceeds-defense",
+            "defense": "fortitude",
+            "effect": "move-target-condition-track",
+            "steps": -1,
+            "persistent": true,
+            "notes": [
+              "Amphistaff poison condition-track effect (source text)."
+            ]
+          },
+          {
+            "id": "whip-poison-condition-track",
+            "trigger": "damage-dealt-and-attack-roll-equals-or-exceeds-defense",
+            "defense": "fortitude",
+            "effect": "move-target-condition-track",
+            "steps": -1,
+            "persistent": true,
+            "notes": [
+              "Amphistaff poison condition-track effect (source text)."
+            ]
+          },
+          {
+            "id": "pin-or-trip-substitution",
+            "trigger": "in-place-of-whip-damage",
+            "effect": "resolve-as-pin-or-trip-feat-without-feat",
+            "choices": [
+              "pin",
+              "trip"
+            ]
+          },
+          {
+            "id": "venom-spit-condition-track",
+            "trigger": "attack-roll-equals-or-exceeds-both-defenses",
+            "defenses": [
+              "reflex",
+              "fortitude"
+            ],
+            "effect": "move-target-condition-track",
+            "steps": -1,
+            "persistent": true
+          }
+        ],
         "technologyClassification": {
           "tags": [],
           "rules": []
@@ -1101,7 +1915,8 @@
           "quality": "doubleWeapon",
           "state": true,
           "when": {
-            "description": "quarterstaff form; has all qualities of a quarterstaff"
+            "description": "quarterstaff form; has all qualities of a quarterstaff",
+            "configurationId": "quarterstaff"
           },
           "scope": "weapon",
           "effect": null
@@ -1110,7 +1925,8 @@
           "quality": "thrown",
           "state": true,
           "when": {
-            "description": "spear form"
+            "description": "spear form",
+            "configurationId": "spear"
           },
           "scope": "weapon",
           "effect": null
@@ -1119,7 +1935,8 @@
           "quality": "reach",
           "state": true,
           "when": {
-            "description": "whip form; reach 2 squares"
+            "description": "whip form; reach 2 squares",
+            "configurationId": "whip"
           },
           "scope": "weapon",
           "effect": null
@@ -1127,7 +1944,31 @@
       ],
       "conditionalDamageProfiles": [],
       "proficiencyRules": [],
-      "operation": null,
+      "operation": {
+        "switchFormAction": "swift",
+        "reachSquares": 2,
+        "reachProfileIds": [
+          "whip"
+        ],
+        "allowedGrappleFeats": [
+          "Pin",
+          "Trip"
+        ],
+        "pinTripSubstitution": {
+          "profileId": "whip-pin-trip",
+          "requiresProficientWielder": true,
+          "feat": "none-required"
+        },
+        "venomSpit": {
+          "profileId": "venom-spit",
+          "rangeSquares": 10,
+          "action": "standard",
+          "usage": {
+            "uses": 1,
+            "per": "24-standard-hours"
+          }
+        }
+      },
       "sourceFootnotes": [
         "Can be thrown.",
         "Reach weapon."
@@ -2181,11 +3022,180 @@
             "criticalEffects": [],
             "damageMultiplier": 1,
             "conditionalRangeRules": []
+          },
+          {
+            "id": "launcher",
+            "label": "Energy Ball launcher",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Atlatl"
+            },
+            "damage": {
+              "mode": "varies-by-payload",
+              "diceCount": null,
+              "dieSize": null,
+              "flatBonus": 0,
+              "formula": "Varies"
+            },
+            "damageType": {
+              "mode": "varies",
+              "types": [],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "simple-weapons",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  20
+                ],
+                "short": [
+                  21,
+                  40
+                ],
+                "medium": [
+                  41,
+                  60
+                ],
+                "long": [
+                  61,
+                  80
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ],
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": {
+              "resource": "energy-ball",
+              "baseUnits": 1,
+              "multiplier": 1
+            },
+            "notes": [
+              "Damage comes from the loaded Energy Ball payload, not from the Atlatl's melee damage. Energy balls hurled by an atlatl use simple-weapon range."
+            ],
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
-        "payloadProfiles": [],
+        "payloadProfiles": [
+          {
+            "id": "energy-ball",
+            "label": "Energy Ball",
+            "default": true,
+            "costCredits": 20,
+            "weightKg": 0.25,
+            "availability": {
+              "restriction": "licensed",
+              "rare": true
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageMultiplier": 1,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "notes": null
+            },
+            "specialEffects": [],
+            "notes": [
+              "Payload-owned damage and type copied from the certified Energy Ball identity (weapon-energy-ball); the Energy Ball is not a second launcher identity."
+            ]
+          }
+        ],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
@@ -2199,7 +3209,29 @@
         },
         "deliveryMethod": null,
         "resourceProfiles": [],
-        "ammo": null
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "energy-ball",
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": 1,
+          "reloadAction": null,
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": false,
+          "acceptedPayloadFamily": "energy-ball",
+          "acceptedAmmoIdentities": [
+            "Energy Ball"
+          ],
+          "damageSource": "loaded-ammo",
+          "payloadDerived": true,
+          "scopedToAttackProfiles": [
+            "launcher"
+          ],
+          "sourceStatus": "Only the launcher profile consumes an Energy Ball; the melee profile uses no ammunition. Loaded capacity is not stated by the source."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -17644,11 +18676,180 @@
             "criticalEffects": [],
             "damageMultiplier": 1,
             "conditionalRangeRules": []
+          },
+          {
+            "id": "launcher",
+            "label": "Energy Ball launcher",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Cesta"
+            },
+            "damage": {
+              "mode": "varies-by-payload",
+              "diceCount": null,
+              "dieSize": null,
+              "flatBonus": 0,
+              "formula": "Varies"
+            },
+            "damageType": {
+              "mode": "varies",
+              "types": [],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "simple-weapons",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  20
+                ],
+                "short": [
+                  21,
+                  40
+                ],
+                "medium": [
+                  41,
+                  60
+                ],
+                "long": [
+                  61,
+                  80
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ],
+              "penaltyApplication": "attack",
+              "hardMaxSquares": null
+            },
+            "qualities": {
+              "accurate": true,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": {
+              "resource": "energy-ball",
+              "baseUnits": 1,
+              "multiplier": 1
+            },
+            "notes": [
+              "Damage comes from the loaded Energy Ball payload, not from the Cesta's melee damage. Energy balls hurled by a cesta are Accurate and use simple-weapon range."
+            ],
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
-        "payloadProfiles": [],
+        "payloadProfiles": [
+          {
+            "id": "energy-ball",
+            "label": "Energy Ball",
+            "default": true,
+            "costCredits": 20,
+            "weightKg": 0.25,
+            "availability": {
+              "restriction": "licensed",
+              "rare": true
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageMultiplier": 1,
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null,
+              "activation": null
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": []
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "notes": null
+            },
+            "specialEffects": [],
+            "notes": [
+              "Payload-owned damage and type copied from the certified Energy Ball identity (weapon-energy-ball); the Energy Ball is not a second launcher identity."
+            ]
+          }
+        ],
         "objectDurability": null,
         "integratedAccessories": [],
         "wieldingRules": [],
@@ -17662,7 +18863,29 @@
         },
         "deliveryMethod": null,
         "resourceProfiles": [],
-        "ammo": null
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "energy-ball",
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": 1,
+          "reloadAction": null,
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": false,
+          "acceptedPayloadFamily": "energy-ball",
+          "acceptedAmmoIdentities": [
+            "Energy Ball"
+          ],
+          "damageSource": "loaded-ammo",
+          "payloadDerived": true,
+          "scopedToAttackProfiles": [
+            "launcher"
+          ],
+          "sourceStatus": "Only the launcher profile consumes an Energy Ball; the melee profile uses no ammunition. Loaded capacity is not stated by the source."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -28471,7 +29694,8 @@
           "sourceClassification": "Advanced Melee Weapon",
           "classifications": [
             "simple"
-          ]
+          ],
+          "species": "Gungan"
         }
       ],
       "operation": {
@@ -57220,7 +58444,20 @@
         "integratedAccessories": [],
         "wieldingRules": [],
         "stateMachine": null,
-        "configurationStates": [],
+        "configurationStates": [
+          {
+            "id": "handheld",
+            "label": "Handheld",
+            "default": true,
+            "attackUsable": true
+          },
+          {
+            "id": "mounted-bayonet",
+            "label": "Mounted on a rifle as a bayonet",
+            "default": false,
+            "attackUsable": true
+          }
+        ],
         "constructionRules": null,
         "triggeredEffects": [],
         "technologyClassification": {
@@ -71747,7 +72984,12 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "activationRequirements": [],
+            "activationRequirements": [
+              {
+                "type": "configuration",
+                "id": "mounted-on-rifle"
+              }
+            ],
             "triggeredEffects": [],
             "modifierPolicy": null,
             "criticalEffects": [],
@@ -71760,9 +73002,33 @@
         "payloadProfiles": [],
         "objectDurability": null,
         "integratedAccessories": [],
-        "wieldingRules": [],
+        "wieldingRules": [
+          {
+            "id": "mounted-requires-two-hands",
+            "effect": "requires-two-hands",
+            "condition": "mounted-on-rifle"
+          },
+          {
+            "id": "mounted-incompatible-with-folded-stock",
+            "effect": "unavailable",
+            "condition": "host-rifle-stock-folded"
+          }
+        ],
         "stateMachine": null,
-        "configurationStates": [],
+        "configurationStates": [
+          {
+            "id": "mounted-on-rifle",
+            "label": "Mounted on a rifle",
+            "default": true,
+            "attackUsable": true
+          },
+          {
+            "id": "detached",
+            "label": "Detached (functions as a Vibrodagger)",
+            "default": false,
+            "attackUsable": true
+          }
+        ],
         "constructionRules": null,
         "triggeredEffects": [],
         "technologyClassification": {
@@ -71790,9 +73056,17 @@
       "operation": {
         "mountedOnRifle": {
           "requiresTwoHands": true,
-          "foldedStockCompatible": false
+          "foldedStockCompatible": false,
+          "threatensAfterHostRifleRangedAttack": true,
+          "canMakeAttacksOfOpportunity": true
         },
-        "detachedTreatAs": "Vibrodagger"
+        "detachedTreatAs": "Vibrodagger",
+        "configurationResolution": {
+          "detached": {
+            "resolveAsIdentityKey": "weapon-vibrodagger",
+            "resolveAsProfileId": "primary"
+          }
+        }
       },
       "sourceFootnotes": [],
       "qualityParameters": {

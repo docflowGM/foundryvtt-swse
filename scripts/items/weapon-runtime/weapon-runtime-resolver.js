@@ -12,25 +12,43 @@ import { resolveDamageProfile } from './damage-profile-resolver.js';
 import { resolveRange } from './range-resolver.js';
 import { resolveResource } from './resource-resolver.js';
 
-function buildProfiles(record) {
+function buildProfiles(record, registry) {
   const rec = record.profileReconciliation;
   const byId = new Map(rec.profiles.map((p) => [p.profileId, p]));
-  return record.canonicalStats.attackProfiles.map((p) => Object.freeze({
+  const profiles = record.canonicalStats.attackProfiles.map((p) => Object.freeze({
     id: p.id, label: p.label ?? p.id, kind: p.kind ?? 'attack',
     branch: p.schemaFamily?.branch ?? null,
     subcategory: p.schemaFamily?.subcategory ?? null,
     proficiencyGroup: p.schemaFamily?.proficiency ?? null,
     exoticWeaponIdentity: p.schemaFamily?.exoticWeaponIdentity ?? null,
     executable: true,
+    availableIn: byId.get(p.id)?.availableInConfigurations ?? null,
+    delegatedFrom: null,
     matchedModes: byId.get(p.id)?.matchedModes ?? [],
     reconciliation: byId.get(p.id)?.reconciliation ?? 'profile-only',
     definition: p,
   }));
+  // configuration-driven delegation: a configuration resolves as another certified identity's attack (no duplicated stats)
+  for (const [configId, to] of Object.entries(record.operation?.configurationResolution ?? {})) {
+    const target = registry.getByIdentityKey(to.resolveAsIdentityKey);
+    const tp = target?.canonicalStats?.attackProfiles?.find((x) => x.id === to.resolveAsProfileId);
+    if (!tp) throw new WeaponRuntimeError(ERROR_CODES.CANONICAL_ENTRY_CORRUPT, `${record.identityKey} delegates ${configId} to missing ${to.resolveAsIdentityKey}/${to.resolveAsProfileId}`, { identityKey: record.identityKey });
+    profiles.push(Object.freeze({
+      id: configId, label: `${target.canonicalName} (${configId})`, kind: tp.kind ?? 'attack', branch: tp.schemaFamily?.branch ?? null,
+      subcategory: tp.schemaFamily?.subcategory ?? null, proficiencyGroup: tp.schemaFamily?.proficiency ?? null, exoticWeaponIdentity: tp.schemaFamily?.exoticWeaponIdentity ?? null,
+      executable: true, availableIn: [configId], delegatedFrom: Object.freeze({ identityKey: to.resolveAsIdentityKey, profileId: to.resolveAsProfileId }),
+      matchedModes: rec.modes.filter((m) => m.mappedConfigurationId === configId).map((m) => m.mode), reconciliation: 'configuration-delegation', definition: tp,
+    }));
+  }
+  return profiles;
 }
 
-function chooseDefaultProfile(record, profiles) {
+const availableIn = (p, configurationId) => !p.availableIn || (configurationId !== null && p.availableIn.includes(configurationId));
+
+function chooseDefaultProfile(record, profiles, configurationId) {
+  const usable = profiles.filter((p) => availableIn(p, configurationId));
   const d = record.canonicalStats.operatingModes?.default;
-  return profiles.find((p) => p.id === d)?.id ?? profiles[0].id;
+  return (usable.find((p) => p.id === d) ?? usable[0])?.id ?? null;
 }
 
 function readOwnedState(item) {
@@ -71,30 +89,42 @@ export class WeaponRuntimeResolver {
     if (!cs || !Array.isArray(cs.attackProfiles) || !cs.attackProfiles.length || !record.profileReconciliation) {
       throw new WeaponRuntimeError(ERROR_CODES.CANONICAL_ENTRY_CORRUPT, `registry entry ${identityKey} is corrupt`, { identityKey });
     }
-    const profiles = buildProfiles(record);
-    const defaultProfileId = chooseDefaultProfile(record, profiles);
+    const profiles = buildProfiles(record, this.#registry);
     const payloads = (cs.payloadProfiles ?? []);
     const configurationStates = (cs.configurationStates ?? []);
     const configurationIds = [...configurationStates.map((c) => c.id), ...(cs.stateMachine?.states ?? [])];
-
-    let profileId = context.profileId ?? null;
-    if (profileId !== null && profileId !== undefined) {
-      if (!profiles.some((p) => p.id === profileId)) {
-        const selectorOnly = record.profileReconciliation.unmatchedModes.some((m) => m.mode === profileId);
-        throw new WeaponRuntimeError(selectorOnly ? ERROR_CODES.PROFILE_NOT_EXECUTABLE : ERROR_CODES.UNKNOWN_PROFILE,
-          selectorOnly ? `${profileId} is a selector-only mode of ${identityKey} and is not executable` : `unknown profileId ${profileId} for ${identityKey}`, { identityKey, profileId });
-      }
-    } else profileId = defaultProfileId;
-
-    let payloadId = context.payloadId ?? null;
-    if (payloadId !== null && payloadId !== undefined) {
-      if (!payloads.some((p) => p.id === payloadId)) throw new WeaponRuntimeError(ERROR_CODES.UNKNOWN_PAYLOAD, `unknown payloadId ${payloadId} for ${identityKey}`, { identityKey, payloadId });
-    } else payloadId = payloads.find((p) => p.default === true)?.id ?? null;
+    const operatingModes = (cs.modeProfiles ?? []);
 
     let configurationId = context.configurationId ?? null;
     if (configurationId !== null && configurationId !== undefined) {
       if (!configurationIds.includes(configurationId)) throw new WeaponRuntimeError(ERROR_CODES.UNKNOWN_CONFIGURATION, `unknown configurationId ${configurationId} for ${identityKey}`, { identityKey, configurationId });
     } else configurationId = configurationStates.find((c) => c.default === true)?.id ?? cs.stateMachine?.initialState ?? null;
+
+    let modeId = context.modeId ?? null;
+    if (modeId !== null && modeId !== undefined && !operatingModes.some((m) => m.id === modeId)) throw new WeaponRuntimeError(ERROR_CODES.UNKNOWN_MODE, `unknown modeId ${modeId} for ${identityKey}`, { identityKey, modeId });
+    modeId = modeId ?? null;
+
+    const defaultProfileId = chooseDefaultProfile(record, profiles, configurationId);
+    if (!defaultProfileId) throw new WeaponRuntimeError(ERROR_CODES.NO_EXECUTABLE_PROFILE, `${identityKey} has no executable profile in configuration ${configurationId}`, { identityKey, configurationId });
+
+    let profileId = context.profileId ?? null;
+    if (profileId !== null && profileId !== undefined) {
+      const found = profiles.find((p) => p.id === profileId);
+      if (!found) {
+        const unresolved = record.profileReconciliation.unresolvedModes.some((m) => m.mode === profileId);
+        throw new WeaponRuntimeError(unresolved ? ERROR_CODES.PROFILE_NOT_EXECUTABLE : ERROR_CODES.UNKNOWN_PROFILE,
+          unresolved ? `${profileId} is an unresolved selector mode of ${identityKey} and is not executable` : `unknown profileId ${profileId} for ${identityKey}`, { identityKey, profileId });
+      }
+      if (!availableIn(found, configurationId)) throw new WeaponRuntimeError(ERROR_CODES.PROFILE_UNAVAILABLE, `profile ${profileId} of ${identityKey} is not available in configuration ${configurationId}`, { identityKey, profileId, configurationId });
+    } else {
+      const m = modeId ? operatingModes.find((x) => x.id === modeId) : null;
+      profileId = (m?.attackProfileId && profiles.some((p) => p.id === m.attackProfileId)) ? m.attackProfileId : defaultProfileId;
+    }
+
+    let payloadId = context.payloadId ?? null;
+    if (payloadId !== null && payloadId !== undefined) {
+      if (!payloads.some((p) => p.id === payloadId)) throw new WeaponRuntimeError(ERROR_CODES.UNKNOWN_PAYLOAD, `unknown payloadId ${payloadId} for ${identityKey}`, { identityKey, payloadId });
+    } else payloadId = payloads.find((p) => p.default === true)?.id ?? null;
 
     const rec = record.profileReconciliation;
     const resolved = {
@@ -110,7 +140,8 @@ export class WeaponRuntimeResolver {
       payloads,
       configurationStates,
       stateMachine: cs.stateMachine ?? null,
-      selection: { profileId, payloadId, configurationId, damageMode: context.damageMode ?? 'normal' },
+      selection: { profileId, payloadId, configurationId, modeId, damageMode: context.damageMode ?? 'normal' },
+      operatingModes,
       selectors: record.selectors,
       semanticTags: record.semantic?.tags?.finalTags ?? [],
       abilityInteractions: record.abilityInteractions,
@@ -128,9 +159,8 @@ export class WeaponRuntimeResolver {
       ownedState: readOwnedState(item),
       diagnostics: {
         profileReconciliation: rec.status,
-        profileDefinitionIncomplete: rec.status !== 'COMPLETE',
-        selectorOnlyModes: rec.unmatchedModes.map((m) => m.mode),
-        unmatchedPhase4HModes: rec.unmatchedModes,
+        modeReconciliation: rec.modes,
+        unresolvedModes: rec.unresolvedModes,
         heuristics: [],
       },
       heuristics: [],

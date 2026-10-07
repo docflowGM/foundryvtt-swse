@@ -5,6 +5,7 @@
 // Usage: node tools/build-item-weapons-phase-3b-canonical-authority.mjs [--check]
 //   --check  rebuild in memory and fail if the committed files differ (byte-stability proof)
 import fs from 'node:fs';
+import { applyCompletenessAmendments } from './lib/item-weapons-phase-3b-amendments.mjs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -215,6 +216,7 @@ export function buildPhase3B() {
     // normalize: the gate on a resolved claim must not leak into the identity record
     delete identities[identities.length - 1].conflictGate;
   }
+  const completenessAmendments = applyCompletenessAmendments(identities);
   identities.sort((a, b) => cmp(a.canonicalName, b.canonicalName) || cmp(a.identityKey, b.identityKey));
   if (claimTotal !== 209 || identities.length !== 203) throw new Error(`count failure ${claimTotal}/${identities.length}`);
 
@@ -237,6 +239,7 @@ export function buildPhase3B() {
       sourceBooks: new Set(identities.flatMap((i) => i.sourceClaims.map((c) => c.book))).size,
     },
     publicationPrecedencePolicy: 'Field-local later-publication precedence for exact same-identity direct contradictions; silence never supersedes; earlier-only compatible mechanics survive; both claims stay preserved (planner ruling, Phase 3B).',
+    completenessAmendments,
     plannerRulingsApplied: ['guard-shoto-phrik-dr', 'lightsaber-pike-phrik-dr', 'guard-shoto-availability', 'riot-gun-precedence', 'bowcaster-range-profile', 'cr1-area-effect', 'concussion-grenade-description-page', 'xerrol-nightstinger-group'],
     productionBaseline: {
       note: 'SHA-256 of the production files at 3B certification; the build must not change them.',

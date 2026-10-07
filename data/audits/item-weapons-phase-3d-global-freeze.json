@@ -82,11 +82,11 @@
     },
     "phase3b": {
       "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
-      "sha256": "45f0ba3b9cbba8a277981bb19631c1d639b7e488b3e748b9bef40db0ef63acb0"
+      "sha256": "711c6c7a738a69d40ba2e1e4e3cebc6075de2eb6670827771d05f27d0a42978d"
     },
     "phase3c": {
       "file": "data/audits/item-weapons-phase-3c-production-disposition-ledger.json",
-      "sha256": "f74cd8f234ba7d334276c50be29ccb04d7b1548e676acedca1e02999ca4bdf57"
+      "sha256": "8b73f45a54c3bd4373b2fa8d734b25165aea7a6d3a9aa838332b1ff6dc45ff9a"
     },
     "phase01Weapons": {
       "sha256": "8082703831caf7f6a1679cbd3f6df4b5e88eb776a0e85d4c941be4af93d39d6b"
@@ -720,7 +720,7 @@
     },
     {
       "capability": "configuration-and-state",
-      "identities": 7,
+      "identities": 10,
       "canonicalAuthority": "Represented in the certified Phase 3B v2.9 canonical authority.",
       "productionRepresentation": "Production has no configuration/state-machine structures.",
       "futureV2SchemaCapability": "Add configuration/state structures."
@@ -755,7 +755,7 @@
     },
     {
       "capability": "firing-constraints",
-      "identities": 25,
+      "identities": 27,
       "canonicalAuthority": "Represented in the certified Phase 3B v2.9 canonical authority.",
       "productionRepresentation": "Production has no firing-constraint or prepared-attack structures.",
       "futureV2SchemaCapability": "Add firing constraint structures."
@@ -769,7 +769,7 @@
     },
     {
       "capability": "multiple-attack-profiles",
-      "identities": 33,
+      "identities": 36,
       "canonicalAuthority": "Represented in the certified Phase 3B v2.9 canonical authority.",
       "productionRepresentation": "Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes.",
       "futureV2SchemaCapability": "Add attack/mode profile structures."
@@ -797,7 +797,7 @@
     },
     {
       "capability": "payload-profiles",
-      "identities": 10,
+      "identities": 12,
       "canonicalAuthority": "Represented in the certified Phase 3B v2.9 canonical authority.",
       "productionRepresentation": "Production has no delivery-system/payload separation.",
       "futureV2SchemaCapability": "Add payload profiles and a loaded-ammo reference model."
@@ -832,7 +832,7 @@
     },
     {
       "capability": "structured-special-rules",
-      "identities": 156,
+      "identities": 157,
       "canonicalAuthority": "Represented in the certified Phase 3B v2.9 canonical authority.",
       "productionRepresentation": "Canonical operation rules (free-form source mechanics) have no production structure.",
       "futureV2SchemaCapability": "Add structured special-rule storage."
@@ -853,7 +853,7 @@
     },
     {
       "capability": "triggered-effects",
-      "identities": 16,
+      "identities": 17,
       "canonicalAuthority": "Represented in the certified Phase 3B v2.9 canonical authority.",
       "productionRepresentation": "Production has no triggered-effect structures.",
       "futureV2SchemaCapability": "Add triggered effect structures."
@@ -867,7 +867,7 @@
     },
     {
       "capability": "wielding-rules",
-      "identities": 14,
+      "identities": 15,
       "canonicalAuthority": "Represented in the certified Phase 3B v2.9 canonical authority.",
       "productionRepresentation": "Production has no wielding/handedness rule structures.",
       "futureV2SchemaCapability": "Add wielding rule structures."
@@ -1990,7 +1990,7 @@
       "phase2Sha256": "d060f6860e67470b1b235e230adca546fcf23371e81786e78c7db3b16ea2ab21",
       "ammoOverlaySha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
       "identityKey": "unmapped::Amphistaff",
-      "identity3BSha256": "1d4d732a1bb13de7268c3f830d04d91cb65a886fbdc94724c5a857aed2818d93",
+      "identity3BSha256": "9d179aad336cc276d04a1b0c18b74b3241bacd09e1ab9a2760ced4eaea6035a2",
       "disposition3C": "CREATE"
     },
     {
@@ -2001,7 +2001,7 @@
       "phase2Sha256": "e08aa32e7c9a79cb66bdfcb00b3e5caa2b50824b6e9c57fd326b4dde206ac32e",
       "ammoOverlaySha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
       "identityKey": "unmapped::Atlatl",
-      "identity3BSha256": "fa221a4c9f2f25345a96c4fa46788abfc6e9780edcbd7ce30327704408b52364",
+      "identity3BSha256": "6d3d190c71a884a9c85fcdb5e145db35777b3391b9d63f63452aad06a3ef485f",
       "disposition3C": "CREATE"
     },
     {
@@ -2155,7 +2155,7 @@
       "phase2Sha256": "0a9b15998c25a1ff30e5adfa8c0d1a5ea0a067d1f92d46049ab86308237eebd4",
       "ammoOverlaySha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
       "identityKey": "unmapped::Cesta",
-      "identity3BSha256": "ea2728c0d829cff79828340ab39c5bd86ab7eff0f2d240ac3f4063ea41154574",
+      "identity3BSha256": "b9dd0485aca97125c014ea864f6217696f1bc1c7d6698a0d288edc1a8887b3d8",
       "disposition3C": "CREATE"
     },
     {
@@ -2485,7 +2485,7 @@
       "phase2Sha256": "5167e60a03f6d25334889e561616507845f5c90e36be393b15f700189dbf6461",
       "ammoOverlaySha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
       "identityKey": "unmapped::Vibrobayonet",
-      "identity3BSha256": "4e06fe69230cd6e50d2c1bb9c6c5f774cb59d97831444a192664e3a48d517669",
+      "identity3BSha256": "14e0a5fd175bb68b19ec7a21b8d085cbd901b886d2092ad026ed85acdc09b88a",
       "disposition3C": "CREATE"
     },
     {
@@ -2881,7 +2881,7 @@
       "phase2Sha256": "d7f82c629695e5a1f197ad26eb5a2c41ebd06f647808e1fd733278922914bcdd",
       "ammoOverlaySha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
       "identityKey": "unmapped::Shock Stick",
-      "identity3BSha256": "ba936a327e8c2c1f6122a72eabd23a2dcdb9e5ccc01b4eb29e02ce6979b606c6",
+      "identity3BSha256": "9900b714af6d50968c63cd70bc42957f9826f096a4dc6e5ff740f2f797dfbac7",
       "disposition3C": "CREATE"
     },
     {
@@ -4014,7 +4014,7 @@
       "phase2Sha256": "154d4279a9416f2fad4cf1df5e15f5475a80a7156578411022553d0780cec92e",
       "ammoOverlaySha256": "c69b6fe2220a2077ad18cb751c12249d40dbdaf012f04ed89cdb83407d169831",
       "identityKey": "weapon-gungan-electropole",
-      "identity3BSha256": "00fdcdcfe009cf760c9b7c5aa5d00b1a581ad3d935d59e7efa8bc5b40a047a74",
+      "identity3BSha256": "b8410559ac5e7828d79b987f172ba44e9c1053775a0b7da4991dc04b1a4da068",
       "disposition3C": "UPDATE"
     },
     {
@@ -4216,7 +4216,7 @@
       "canonicalName": "Amphistaff",
       "claims": 1,
       "repoId": null,
-      "identity3BSha256": "1d4d732a1bb13de7268c3f830d04d91cb65a886fbdc94724c5a857aed2818d93",
+      "identity3BSha256": "9d179aad336cc276d04a1b0c18b74b3241bacd09e1ab9a2760ced4eaea6035a2",
       "disposition3C": "CREATE"
     },
     {
@@ -4232,7 +4232,7 @@
       "canonicalName": "Atlatl",
       "claims": 1,
       "repoId": null,
-      "identity3BSha256": "fa221a4c9f2f25345a96c4fa46788abfc6e9780edcbd7ce30327704408b52364",
+      "identity3BSha256": "6d3d190c71a884a9c85fcdb5e145db35777b3391b9d63f63452aad06a3ef485f",
       "disposition3C": "CREATE"
     },
     {
@@ -4264,7 +4264,7 @@
       "canonicalName": "Cesta",
       "claims": 1,
       "repoId": null,
-      "identity3BSha256": "ea2728c0d829cff79828340ab39c5bd86ab7eff0f2d240ac3f4063ea41154574",
+      "identity3BSha256": "b9dd0485aca97125c014ea864f6217696f1bc1c7d6698a0d288edc1a8887b3d8",
       "disposition3C": "CREATE"
     },
     {
@@ -4464,7 +4464,7 @@
       "canonicalName": "Shock Stick",
       "claims": 1,
       "repoId": null,
-      "identity3BSha256": "ba936a327e8c2c1f6122a72eabd23a2dcdb9e5ccc01b4eb29e02ce6979b606c6",
+      "identity3BSha256": "9900b714af6d50968c63cd70bc42957f9826f096a4dc6e5ff740f2f797dfbac7",
       "disposition3C": "CREATE"
     },
     {
@@ -4568,7 +4568,7 @@
       "canonicalName": "Vibrobayonet",
       "claims": 1,
       "repoId": null,
-      "identity3BSha256": "4e06fe69230cd6e50d2c1bb9c6c5f774cb59d97831444a192664e3a48d517669",
+      "identity3BSha256": "14e0a5fd175bb68b19ec7a21b8d085cbd901b886d2092ad026ed85acdc09b88a",
       "disposition3C": "CREATE"
     },
     {
@@ -5048,7 +5048,7 @@
       "canonicalName": "Electropole",
       "claims": 1,
       "repoId": "weapon-gungan-electropole",
-      "identity3BSha256": "00fdcdcfe009cf760c9b7c5aa5d00b1a581ad3d935d59e7efa8bc5b40a047a74",
+      "identity3BSha256": "b8410559ac5e7828d79b987f172ba44e9c1053775a0b7da4991dc04b1a4da068",
       "disposition3C": "UPDATE"
     },
     {

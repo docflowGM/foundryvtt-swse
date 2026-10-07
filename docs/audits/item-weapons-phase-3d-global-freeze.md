@@ -110,28 +110,28 @@ Vehicle/starship terms removed only from the character-weapon corpus are not a d
 | area-geometry | 33 | Production has no structured area geometry. | Add area geometry per attack profile. |
 | conditional-damage-and-qualities | 11 | Production has no conditional damage profile or conditional quality structures. | Add conditional damage/quality structures. |
 | conditional-modifiers | 13 | Production has no conditional attack/damage modifier structures. | Add conditional modifier structures. |
-| configuration-and-state | 7 | Production has no configuration/state-machine structures. | Add configuration/state structures. |
+| configuration-and-state | 10 | Production has no configuration/state-machine structures. | Add configuration/state structures. |
 | construction-and-technology | 24 | Production has no construction/technology/delivery/durability/accessory structures. | Add those structures. |
 | critical-effects | 3 | Production has no critical-effect structures. | Add critical effect structures. |
 | damage-multiplier-and-range-rules | 3 | Production has no damage multiplier or conditional range rule structures. | Add those structures. |
 | defensive-interactions | 7 | Production has no defensive-interaction structures. | Add defensive interaction structures. |
-| firing-constraints | 25 | Production has no firing-constraint or prepared-attack structures. | Add firing constraint structures. |
+| firing-constraints | 27 | Production has no firing-constraint or prepared-attack structures. | Add firing constraint structures. |
 | multi-type-damage | 71 | Production damageType is one string. | Support AND/OR/qualified/unspecified damage types. |
-| multiple-attack-profiles | 33 | Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes. | Add attack/mode profile structures. |
+| multiple-attack-profiles | 36 | Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes. | Add attack/mode profile structures. |
 | non-dice-damage-model | 24 | Production damage is a single dice string. | Support none/special/modifier/inherited/alternate damage modes. |
 | operating-resource-model | 46 | Production has no operating-resource (energy cell etc.) model for non-ammunition power. | Add operating resource structures. |
 | payload-derived-damage | 9 | Production stores a launcher damage string; canonical launcher damage is owned by the loaded payload. | Resolve damage through payload profiles. |
-| payload-profiles | 10 | Production has no delivery-system/payload separation. | Add payload profiles and a loaded-ammo reference model. |
+| payload-profiles | 12 | Production has no delivery-system/payload separation. | Add payload profiles and a loaded-ammo reference model. |
 | proficiency-rules | 9 | Production has one proficiency value. | Add conditional proficiency rule structures. |
 | quality-parameters | 41 | Production traits are labels without parameters. | Add quality parameter structures (allowed bands, overrides). |
 | range-band-restrictions | 34 | Production has a range profile only; no allowed bands, fixed maximum or cone/area range rules. | Add range restriction structures. |
 | size-variant-pricing | 3 | Production has one cost/weight; canonical identity varies by size. | Add size-variant pricing structures. |
-| structured-special-rules | 156 | Canonical operation rules (free-form source mechanics) have no production structure. | Add structured special-rule storage. |
+| structured-special-rules | 157 | Canonical operation rules (free-form source mechanics) have no production structure. | Add structured special-rule storage. |
 | stun-model | 55 | Production has no stun setting / native stun model. | Add stun setting and native-stun structures. |
 | summary-field | 203 | No production slot for the derived short player summary. | Add a summary field (or flag) to the weapon item schema. |
-| triggered-effects | 16 | Production has no triggered-effect structures. | Add triggered effect structures. |
+| triggered-effects | 17 | Production has no triggered-effect structures. | Add triggered effect structures. |
 | weapon-size-field | 199 | Production weapons carry no weapon size. | Add a weapon size field. |
-| wielding-rules | 14 | Production has no wielding/handedness rule structures. | Add wielding rule structures. |
+| wielding-rules | 15 | Production has no wielding/handedness rule structures. | Add wielding rule structures. |
 
 Canonical authority already carries every capability above (3B, schema v2.9); the gap is in the production representation only.
 
@@ -140,6 +140,6 @@ Canonical authority already carries every capability above (3B, schema v2.9); th
 - phase1WeaponsContent: `1cc37b41db8dba9579a025edc36d621e334ebc77ee742214a8b7d0d07d95be13`
 - ammoOverlay: `1f319a7df3ab2ee71043743bce033b75a4bbb600ec27553c7ecb9f8d48aba65c`
 - phase3a: `ed6adc356caa25371d5600ea6f104bfef9fb449dec7a015f9d2724cc32bd0222`
-- phase3b: `45f0ba3b9cbba8a277981bb19631c1d639b7e488b3e748b9bef40db0ef63acb0`
-- phase3c: `f74cd8f234ba7d334276c50be29ccb04d7b1548e676acedca1e02999ca4bdf57`
+- phase3b: `711c6c7a738a69d40ba2e1e4e3cebc6075de2eb6670827771d05f27d0a42978d`
+- phase3c: `8b73f45a54c3bd4373b2fa8d734b25165aea7a6d3a9aa838332b1ff6dc45ff9a`
 - phase01Weapons: `8082703831caf7f6a1679cbd3f6df4b5e88eb776a0e85d4c941be4af93d39d6b`

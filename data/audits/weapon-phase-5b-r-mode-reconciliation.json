@@ -1,0 +1,701 @@
+{
+ "schemaVersion": "5B-R.1",
+ "phase": "5B-R",
+ "family": "weapons",
+ "purpose": "Typed reconciliation of Phase 4H selector modes: ATTACK_PROFILE / CONFIGURATION / OPERATING_MODE / SPECIAL_ACTION (+ PROFICIENCY_ROUTE where a proficiency descriptor was filed under modes).",
+ "completenessAmendments": [
+  {
+   "id": "amphistaff-forms-and-special-attacks",
+   "identityKey": "unmapped::Amphistaff",
+   "fields": [
+    "canonicalStats.attackProfiles",
+    "canonicalStats.configurationStates",
+    "canonicalStats.modeProfiles",
+    "canonicalStats.triggeredEffects",
+    "conditionalQualities[].when.configurationId",
+    "operation.*"
+   ],
+   "basis": "Amphistaff canonicalPlayerText (three forms, spear wielded/thrown, whip reach 2 + Pin/Trip, venom spit 10 squares once/24h); damage/qualities cloned from certified Quarterstaff, Spear and Electropole-thrown range",
+   "schemaShapeChange": false
+  },
+  {
+   "id": "atlatl-energy-ball-launcher",
+   "identityKey": "unmapped::Atlatl",
+   "fields": [
+    "canonicalStats.attackProfiles[launcher]",
+    "canonicalStats.payloadProfiles",
+    "canonicalStats.ammo"
+   ],
+   "basis": "Atlatl canonicalPlayerText (hurls energy balls; usable in melee); payload values copied from weapon-energy-ball; range from the certified simple-weapons range template (not Accurate)",
+   "schemaShapeChange": false
+  },
+  {
+   "id": "cesta-energy-ball-launcher",
+   "identityKey": "unmapped::Cesta",
+   "fields": [
+    "canonicalStats.attackProfiles[launcher]",
+    "canonicalStats.payloadProfiles",
+    "canonicalStats.ammo"
+   ],
+   "basis": "Cesta canonicalPlayerText (hurls energy balls; usable in melee); payload values copied from weapon-energy-ball; range from the certified simple-weapons range template (Accurate per the Energy Ball cesta rule)",
+   "schemaShapeChange": false
+  },
+  {
+   "id": "electropole-gungan-route-structured",
+   "identityKey": "weapon-gungan-electropole",
+   "fields": [
+    "proficiencyRules[0].species"
+   ],
+   "basis": "Electropole canonicalPlayerText (Gungans with Weapon Proficiency (simple weapons) are proficient); melee and thrown attack profiles already certified",
+   "schemaShapeChange": false
+  },
+  {
+   "id": "shock-stick-configurations",
+   "identityKey": "unmapped::Shock Stick",
+   "fields": [
+    "canonicalStats.configurationStates"
+   ],
+   "basis": "Shock Stick canonicalPlayerText (can be mounted as a rifle bayonet; wielder proficient with that rifle takes no nonproficiency penalty) — no second attack profile; proficiency waiver stays in operation.bayonetMount",
+   "schemaShapeChange": false
+  },
+  {
+   "id": "vibrobayonet-configurations",
+   "identityKey": "unmapped::Vibrobayonet",
+   "fields": [
+    "canonicalStats.configurationStates",
+    "canonicalStats.wieldingRules",
+    "attackProfiles[primary].activationRequirements",
+    "operation.mountedOnRifle",
+    "operation.configurationResolution"
+   ],
+   "basis": "Vibrobayonet canonicalPlayerText (mounted: two hands, no folded stock, threatens/AoO after rifle fire; detached functions as a vibrodagger) — detached delegates to the certified Vibrodagger attack, no duplicated stats",
+   "schemaShapeChange": false
+  }
+ ],
+ "counts": {
+  "identities": 203,
+  "typedModes": 34,
+  "byClassification": {
+   "ATTACK_PROFILE": 15,
+   "CONFIGURATION": 7,
+   "OPERATING_MODE": 10,
+   "PROFICIENCY_ROUTE": 1,
+   "SPECIAL_ACTION": 1
+  },
+  "unresolved": 0,
+  "previouslyUnmatchedModes": 13,
+  "previouslyUnmatchedIdentities": 7
+ },
+ "previouslyUnmatchedModes": [
+  {
+   "identity": "unmapped::Amphistaff",
+   "mode": "spear",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "spear-melee",
+    "spear-thrown"
+   ],
+   "mappedConfigurationId": "spear",
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "unmapped::Amphistaff",
+   "mode": "venom-spit",
+   "classification": "SPECIAL_ACTION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "special-action attack with usage limit and effect executor (5C/5E)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "venom-spit"
+   ],
+   "mappedConfigurationId": null,
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "unmapped::Amphistaff",
+   "mode": "whip",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "whip",
+    "whip-pin-trip"
+   ],
+   "mappedConfigurationId": "whip",
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "unmapped::Atlatl",
+   "mode": "launcher",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "launcher"
+   ],
+   "mappedConfigurationId": null,
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "unmapped::Cesta",
+   "mode": "launcher",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "launcher"
+   ],
+   "mappedConfigurationId": null,
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "weapon-gungan-electropole",
+   "mode": "gungan-alternate-proficiency",
+   "classification": "PROFICIENCY_ROUTE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "resolveProficiency species route (5C)",
+   "reason": "proficiency-route descriptor; the route is carried by structured species data (not an attack/mode)",
+   "mappedProfileIds": [],
+   "mappedConfigurationId": null,
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "unmapped::Shock Stick",
+   "mode": "handheld",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "native-stun"
+   ],
+   "mappedConfigurationId": "handheld",
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "unmapped::Shock Stick",
+   "mode": "mounted-bayonet",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "native-stun"
+   ],
+   "mappedConfigurationId": "mounted-bayonet",
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "unmapped::Vibrobayonet",
+   "mode": "detached",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "detached"
+   ],
+   "mappedConfigurationId": "detached",
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "unmapped::Vibrobayonet",
+   "mode": "mounted-on-rifle",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "primary"
+   ],
+   "mappedConfigurationId": "mounted-on-rifle",
+   "mappedModeProfileId": null
+  },
+  {
+   "identity": "weapon-plx-2m-portable-missile-launcher",
+   "mode": "direct",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "area-missile"
+   ],
+   "mappedConfigurationId": null,
+   "mappedModeProfileId": "direct"
+  },
+  {
+   "identity": "weapon-plx-2m-portable-missile-launcher",
+   "mode": "gravity-activated",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "area-missile"
+   ],
+   "mappedConfigurationId": null,
+   "mappedModeProfileId": "gravity-activated"
+  },
+  {
+   "identity": "weapon-plx-2m-portable-missile-launcher",
+   "mode": "heat-seeking",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "area-missile"
+   ],
+   "mappedConfigurationId": null,
+   "mappedModeProfileId": "heat-seeking"
+  }
+ ],
+ "allTypedModes": [
+  {
+   "identity": "unmapped::Amphistaff",
+   "mode": "quarterstaff",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "quarterstaff-end1",
+    "quarterstaff-end2"
+   ],
+   "mappedConfigurationId": "quarterstaff"
+  },
+  {
+   "identity": "unmapped::Amphistaff",
+   "mode": "spear",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "spear-melee",
+    "spear-thrown"
+   ],
+   "mappedConfigurationId": "spear"
+  },
+  {
+   "identity": "unmapped::Amphistaff",
+   "mode": "venom-spit",
+   "classification": "SPECIAL_ACTION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "special-action attack with usage limit and effect executor (5C/5E)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "venom-spit"
+   ]
+  },
+  {
+   "identity": "unmapped::Amphistaff",
+   "mode": "whip",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "whip",
+    "whip-pin-trip"
+   ],
+   "mappedConfigurationId": "whip"
+  },
+  {
+   "identity": "unmapped::Atlatl",
+   "mode": "club",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "unique explicit branch evidence",
+   "mappedProfileIds": [
+    "primary"
+   ]
+  },
+  {
+   "identity": "unmapped::Atlatl",
+   "mode": "launcher",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "launcher"
+   ]
+  },
+  {
+   "identity": "unmapped::Cesta",
+   "mode": "launcher",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "launcher"
+   ]
+  },
+  {
+   "identity": "unmapped::Cesta",
+   "mode": "staff",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "unique explicit branch evidence",
+   "mappedProfileIds": [
+    "primary"
+   ]
+  },
+  {
+   "identity": "unmapped::Darkstick",
+   "mode": "melee",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "melee"
+   ]
+  },
+  {
+   "identity": "unmapped::Darkstick",
+   "mode": "thrown",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "thrown"
+   ]
+  },
+  {
+   "identity": "unmapped::Energy Lance",
+   "mode": "melee",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "melee"
+   ]
+  },
+  {
+   "identity": "unmapped::Energy Lance",
+   "mode": "plasma-bolt",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "plasma-bolt"
+   ]
+  },
+  {
+   "identity": "unmapped::Shock Stick",
+   "mode": "handheld",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "native-stun"
+   ],
+   "mappedConfigurationId": "handheld"
+  },
+  {
+   "identity": "unmapped::Shock Stick",
+   "mode": "mounted-bayonet",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "native-stun"
+   ],
+   "mappedConfigurationId": "mounted-bayonet"
+  },
+  {
+   "identity": "unmapped::Vibrobayonet",
+   "mode": "detached",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "detached"
+   ],
+   "mappedConfigurationId": "detached"
+  },
+  {
+   "identity": "unmapped::Vibrobayonet",
+   "mode": "mounted-on-rifle",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "primary"
+   ],
+   "mappedConfigurationId": "mounted-on-rifle"
+  },
+  {
+   "identity": "unmapped::Vibroknucklers",
+   "mode": "worn-unarmed",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "strict 1:1 cardinality with no conflicting evidence",
+   "mappedProfileIds": [
+    "melee"
+   ]
+  },
+  {
+   "identity": "weapon-gungan-electropole",
+   "mode": "gungan-alternate-proficiency",
+   "classification": "PROFICIENCY_ROUTE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "resolveProficiency species route (5C)",
+   "reason": "proficiency-route descriptor; the route is carried by structured species data (not an attack/mode)",
+   "mappedProfileIds": []
+  },
+  {
+   "identity": "weapon-gungan-electropole",
+   "mode": "melee",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "melee"
+   ]
+  },
+  {
+   "identity": "weapon-gungan-electropole",
+   "mode": "thrown",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "thrown"
+   ]
+  },
+  {
+   "identity": "weapon-interchangeable-weapon-system",
+   "mode": "anti-armor",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "anti-armor"
+   ],
+   "mappedModeProfileId": "anti-armor"
+  },
+  {
+   "identity": "weapon-interchangeable-weapon-system",
+   "mode": "blaster-rifle",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "blaster-rifle"
+   ],
+   "mappedModeProfileId": "blaster-rifle"
+  },
+  {
+   "identity": "weapon-interchangeable-weapon-system",
+   "mode": "sniper",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "sniper"
+   ],
+   "mappedModeProfileId": "sniper"
+  },
+  {
+   "identity": "weapon-massassi-lanvarok",
+   "mode": "disc",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "matches a Phase 3B attack profile by explicit id",
+   "mappedProfileIds": [
+    "disc"
+   ]
+  },
+  {
+   "identity": "weapon-massassi-lanvarok",
+   "mode": "polearm",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "unique explicit branch evidence",
+   "mappedProfileIds": [
+    "melee"
+   ]
+  },
+  {
+   "identity": "weapon-miniature-proton-torpedo-launcher",
+   "mode": "area",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "area"
+   ],
+   "mappedModeProfileId": "area"
+  },
+  {
+   "identity": "weapon-miniature-proton-torpedo-launcher",
+   "mode": "single-target",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "single-target"
+   ],
+   "mappedModeProfileId": "single-target"
+  },
+  {
+   "identity": "weapon-plx-2m-portable-missile-launcher",
+   "mode": "direct",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "area-missile"
+   ],
+   "mappedModeProfileId": "direct"
+  },
+  {
+   "identity": "weapon-plx-2m-portable-missile-launcher",
+   "mode": "gravity-activated",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "area-missile"
+   ],
+   "mappedModeProfileId": "gravity-activated"
+  },
+  {
+   "identity": "weapon-plx-2m-portable-missile-launcher",
+   "mode": "heat-seeking",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "area-missile"
+   ],
+   "mappedModeProfileId": "heat-seeking"
+  },
+  {
+   "identity": "weapon-sg-4-blaster-rifle",
+   "mode": "blaster",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "blaster"
+   ],
+   "mappedModeProfileId": "blaster"
+  },
+  {
+   "identity": "weapon-sg-4-blaster-rifle",
+   "mode": "harpoon",
+   "classification": "OPERATING_MODE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "operating-mode selector layered on the same attack (5C/5E)",
+   "reason": "matches a Phase 3B modeProfile by explicit id (same attack, different resolution)",
+   "mappedProfileIds": [
+    "harpoon"
+   ],
+   "mappedModeProfileId": "harpoon"
+  },
+  {
+   "identity": "weapon-siang-lance",
+   "mode": "bayonet",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "unique explicit branch evidence",
+   "mappedProfileIds": [
+    "bayonet-aao"
+   ]
+  },
+  {
+   "identity": "weapon-siang-lance",
+   "mode": "lance-shot",
+   "classification": "ATTACK_PROFILE",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "attack dialog profile chooser / AttackWorkflowContext.profileId (5C)",
+   "reason": "unique explicit branch evidence",
+   "mappedProfileIds": [
+    "ranged"
+   ]
+  }
+ ]
+}

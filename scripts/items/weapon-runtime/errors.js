@@ -16,6 +16,8 @@ export const ERROR_CODES = Object.freeze({
   UNKNOWN_PROFILE: 'unknown-profile-id',
   UNKNOWN_PAYLOAD: 'unknown-payload-id',
   UNKNOWN_CONFIGURATION: 'unknown-configuration-id',
+  UNKNOWN_MODE: 'unknown-mode-id',
+  PROFILE_UNAVAILABLE: 'profile-unavailable-in-configuration',
   UNSUPPORTED_DAMAGE_MODE: 'unsupported-damage-mode',
   PROFILE_NOT_EXECUTABLE: 'profile-not-executable',
   NO_EXECUTABLE_PROFILE: 'no-executable-profile',

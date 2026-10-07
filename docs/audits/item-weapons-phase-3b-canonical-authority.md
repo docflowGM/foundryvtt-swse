@@ -42,7 +42,7 @@ Precedence policy: Field-local later-publication precedence for exact same-ident
 | Amphistaff | 1 | Exotic Weapon | (missing) | none (null) |  |
 | Arggarok | 1 | Exotic Weapon | (missing) | none (null) |  |
 | Ascension Gun | 1 | Pistol | weapon-ascension-gun | established |  |
-| Atlatl | 1 | Exotic Weapon | (missing) | none (null) |  |
+| Atlatl | 1 | Exotic Weapon | (missing) | established |  |
 | Aurial Blaster | 1 | Exotic Weapon | weapon-aurial-blaster | established |  |
 | Axe | 1 | Simple Weapon | (missing) | self-contained |  |
 | Bayonet | 1 | Simple Weapon | (missing) | none (null) |  |
@@ -81,7 +81,7 @@ Precedence policy: Field-local later-publication precedence for exact same-ident
 | Bryar Rifle | 1 | Rifle | weapon-bryar-rifle | established |  |
 | CR-1 Blast Cannon | 1 | Exotic Weapon | weapon-cr-1-blast-cannon | not-stated | AMMO_NOT_STATED_BY_SOURCE |
 | Carbonite Rifle | 1 | Heavy Weapon | weapon-carbonite-rifle | established |  |
-| Cesta | 1 | Exotic Weapon | (missing) | none (null) |  |
+| Cesta | 1 | Exotic Weapon | (missing) | established |  |
 | Club/Baton | 1 | Simple Weapon | (missing) | none (null) |  |
 | Combat Gloves | 1 | Simple Weapon | (missing) | none (null) |  |
 | Commando Special Rifle | 1 | Rifle | weapon-commando-special-rifle | established |  |

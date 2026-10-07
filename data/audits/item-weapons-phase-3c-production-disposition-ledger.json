@@ -8,7 +8,7 @@
   "inputs": {
     "phase3b": {
       "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
-      "sha256": "45f0ba3b9cbba8a277981bb19631c1d639b7e488b3e748b9bef40db0ef63acb0"
+      "sha256": "711c6c7a738a69d40ba2e1e4e3cebc6075de2eb6670827771d05f27d0a42978d"
     },
     "phase01Weapons": {
       "sha256": "8082703831caf7f6a1679cbd3f6df4b5e88eb776a0e85d4c941be4af93d39d6b"
@@ -58,28 +58,28 @@
       "area-geometry": 33,
       "conditional-damage-and-qualities": 11,
       "conditional-modifiers": 13,
-      "configuration-and-state": 7,
+      "configuration-and-state": 10,
       "construction-and-technology": 24,
       "critical-effects": 3,
       "damage-multiplier-and-range-rules": 3,
       "defensive-interactions": 7,
-      "firing-constraints": 25,
+      "firing-constraints": 27,
       "multi-type-damage": 71,
-      "multiple-attack-profiles": 33,
+      "multiple-attack-profiles": 36,
       "non-dice-damage-model": 24,
       "operating-resource-model": 46,
       "payload-derived-damage": 9,
-      "payload-profiles": 10,
+      "payload-profiles": 12,
       "proficiency-rules": 9,
       "quality-parameters": 41,
       "range-band-restrictions": 34,
       "size-variant-pricing": 3,
-      "structured-special-rules": 156,
+      "structured-special-rules": 157,
       "stun-model": 55,
       "summary-field": 203,
-      "triggered-effects": 16,
+      "triggered-effects": 17,
       "weapon-size-field": 199,
-      "wielding-rules": 14
+      "wielding-rules": 15
     },
     "identitiesWithBlockedFields": 21,
     "blockedFieldTotal": 25,
@@ -98,12 +98,12 @@
       "futureMigrationRequirement": "Add a weapon size field."
     },
     "multiple-attack-profiles": {
-      "identities": 33,
+      "identities": 36,
       "currentProductionLimitation": "Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes.",
       "futureMigrationRequirement": "Add attack/mode profile structures."
     },
     "payload-profiles": {
-      "identities": 10,
+      "identities": 12,
       "currentProductionLimitation": "Production has no delivery-system/payload separation.",
       "futureMigrationRequirement": "Add payload profiles and a loaded-ammo reference model."
     },
@@ -153,7 +153,7 @@
       "futureMigrationRequirement": "Add conditional modifier structures."
     },
     "triggered-effects": {
-      "identities": 16,
+      "identities": 17,
       "currentProductionLimitation": "Production has no triggered-effect structures.",
       "futureMigrationRequirement": "Add triggered effect structures."
     },
@@ -163,12 +163,12 @@
       "futureMigrationRequirement": "Add defensive interaction structures."
     },
     "wielding-rules": {
-      "identities": 14,
+      "identities": 15,
       "currentProductionLimitation": "Production has no wielding/handedness rule structures.",
       "futureMigrationRequirement": "Add wielding rule structures."
     },
     "configuration-and-state": {
-      "identities": 7,
+      "identities": 10,
       "currentProductionLimitation": "Production has no configuration/state-machine structures.",
       "futureMigrationRequirement": "Add configuration/state structures."
     },
@@ -198,7 +198,7 @@
       "futureMigrationRequirement": "Add those structures."
     },
     "firing-constraints": {
-      "identities": 25,
+      "identities": 27,
       "currentProductionLimitation": "Production has no firing-constraint or prepared-attack structures.",
       "futureMigrationRequirement": "Add firing constraint structures."
     },
@@ -208,7 +208,7 @@
       "futureMigrationRequirement": "Add those structures."
     },
     "structured-special-rules": {
-      "identities": 156,
+      "identities": 157,
       "currentProductionLimitation": "Canonical operation rules (free-form source mechanics) have no production structure.",
       "futureMigrationRequirement": "Add structured special-rule storage."
     },
@@ -1021,7 +1021,7 @@
         "phase3bRef": {
           "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
           "identityKey": "unmapped::Amphistaff",
-          "sha256": "1d4d732a1bb13de7268c3f830d04d91cb65a886fbdc94724c5a857aed2818d93"
+          "sha256": "9d179aad336cc276d04a1b0c18b74b3241bacd09e1ab9a2760ced4eaea6035a2"
         }
       },
       "repo": {
@@ -1076,6 +1076,14 @@
         },
         {
           "canonicalPath": [
+            "canonicalStats.attackProfiles/modeProfiles"
+          ],
+          "requiredSchemaCapability": "multiple-attack-profiles",
+          "currentProductionLimitation": "Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes.",
+          "futureMigrationRequirement": "Add attack/mode profile structures."
+        },
+        {
+          "canonicalPath": [
             "canonicalStats.baseDamage"
           ],
           "requiredSchemaCapability": "payload-derived-damage",
@@ -1092,11 +1100,43 @@
         },
         {
           "canonicalPath": [
+            "canonicalStats.triggeredEffects"
+          ],
+          "requiredSchemaCapability": "triggered-effects",
+          "currentProductionLimitation": "Production has no triggered-effect structures.",
+          "futureMigrationRequirement": "Add triggered effect structures."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.configurationStates/stateMachine"
+          ],
+          "requiredSchemaCapability": "configuration-and-state",
+          "currentProductionLimitation": "Production has no configuration/state-machine structures.",
+          "futureMigrationRequirement": "Add configuration/state structures."
+        },
+        {
+          "canonicalPath": [
             "conditionalDamageProfiles/conditionalQualities"
           ],
           "requiredSchemaCapability": "conditional-damage-and-qualities",
           "currentProductionLimitation": "Production has no conditional damage profile or conditional quality structures.",
           "futureMigrationRequirement": "Add conditional damage/quality structures."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.attackProfiles[].firingConstraints/preparedAttack/activationRequirements"
+          ],
+          "requiredSchemaCapability": "firing-constraints",
+          "currentProductionLimitation": "Production has no firing-constraint or prepared-attack structures.",
+          "futureMigrationRequirement": "Add firing constraint structures."
+        },
+        {
+          "canonicalPath": [
+            "operation"
+          ],
+          "requiredSchemaCapability": "structured-special-rules",
+          "currentProductionLimitation": "Canonical operation rules (free-form source mechanics) have no production structure.",
+          "futureMigrationRequirement": "Add structured special-rule storage."
         }
       ],
       "referenceDependencies": [],
@@ -1662,7 +1702,7 @@
         "phase3bRef": {
           "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
           "identityKey": "unmapped::Atlatl",
-          "sha256": "fa221a4c9f2f25345a96c4fa46788abfc6e9780edcbd7ce30327704408b52364"
+          "sha256": "6d3d190c71a884a9c85fcdb5e145db35777b3391b9d63f63452aad06a3ef485f"
         }
       },
       "repo": {
@@ -1714,6 +1754,22 @@
           "requiredSchemaCapability": "weapon-size-field",
           "currentProductionLimitation": "Production weapons carry no weapon size.",
           "futureMigrationRequirement": "Add a weapon size field."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.attackProfiles/modeProfiles"
+          ],
+          "requiredSchemaCapability": "multiple-attack-profiles",
+          "currentProductionLimitation": "Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes.",
+          "futureMigrationRequirement": "Add attack/mode profile structures."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.payloadProfiles"
+          ],
+          "requiredSchemaCapability": "payload-profiles",
+          "currentProductionLimitation": "Production has no delivery-system/payload separation.",
+          "futureMigrationRequirement": "Add payload profiles and a loaded-ammo reference model."
         }
       ],
       "referenceDependencies": [],
@@ -16330,7 +16386,7 @@
         "phase3bRef": {
           "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
           "identityKey": "unmapped::Cesta",
-          "sha256": "ea2728c0d829cff79828340ab39c5bd86ab7eff0f2d240ac3f4063ea41154574"
+          "sha256": "b9dd0485aca97125c014ea864f6217696f1bc1c7d6698a0d288edc1a8887b3d8"
         }
       },
       "repo": {
@@ -16382,6 +16438,22 @@
           "requiredSchemaCapability": "weapon-size-field",
           "currentProductionLimitation": "Production weapons carry no weapon size.",
           "futureMigrationRequirement": "Add a weapon size field."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.attackProfiles/modeProfiles"
+          ],
+          "requiredSchemaCapability": "multiple-attack-profiles",
+          "currentProductionLimitation": "Production has one attack (one damage/range/quality set); canonical identities may carry several profiles or modes.",
+          "futureMigrationRequirement": "Add attack/mode profile structures."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.payloadProfiles"
+          ],
+          "requiredSchemaCapability": "payload-profiles",
+          "currentProductionLimitation": "Production has no delivery-system/payload separation.",
+          "futureMigrationRequirement": "Add payload profiles and a loaded-ammo reference model."
         }
       ],
       "referenceDependencies": [],
@@ -24601,7 +24673,7 @@
         "phase3bRef": {
           "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
           "identityKey": "weapon-gungan-electropole",
-          "sha256": "00fdcdcfe009cf760c9b7c5aa5d00b1a581ad3d935d59e7efa8bc5b40a047a74"
+          "sha256": "b8410559ac5e7828d79b987f172ba44e9c1053775a0b7da4991dc04b1a4da068"
         }
       },
       "repo": {
@@ -51691,7 +51763,7 @@
         "phase3bRef": {
           "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
           "identityKey": "unmapped::Shock Stick",
-          "sha256": "ba936a327e8c2c1f6122a72eabd23a2dcdb9e5ccc01b4eb29e02ce6979b606c6"
+          "sha256": "9900b714af6d50968c63cd70bc42957f9826f096a4dc6e5ff740f2f797dfbac7"
         }
       },
       "repo": {
@@ -51767,6 +51839,14 @@
           "requiredSchemaCapability": "operating-resource-model",
           "currentProductionLimitation": "Production has no operating-resource (energy cell etc.) model for non-ammunition power.",
           "futureMigrationRequirement": "Add operating resource structures."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.configurationStates/stateMachine"
+          ],
+          "requiredSchemaCapability": "configuration-and-state",
+          "currentProductionLimitation": "Production has no configuration/state-machine structures.",
+          "futureMigrationRequirement": "Add configuration/state structures."
         },
         {
           "canonicalPath": [
@@ -63062,7 +63142,7 @@
         "phase3bRef": {
           "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
           "identityKey": "unmapped::Vibrobayonet",
-          "sha256": "4e06fe69230cd6e50d2c1bb9c6c5f774cb59d97831444a192664e3a48d517669"
+          "sha256": "14e0a5fd175bb68b19ec7a21b8d085cbd901b886d2092ad026ed85acdc09b88a"
         }
       },
       "repo": {
@@ -63122,6 +63202,30 @@
           "requiredSchemaCapability": "operating-resource-model",
           "currentProductionLimitation": "Production has no operating-resource (energy cell etc.) model for non-ammunition power.",
           "futureMigrationRequirement": "Add operating resource structures."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.wieldingRules"
+          ],
+          "requiredSchemaCapability": "wielding-rules",
+          "currentProductionLimitation": "Production has no wielding/handedness rule structures.",
+          "futureMigrationRequirement": "Add wielding rule structures."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.configurationStates/stateMachine"
+          ],
+          "requiredSchemaCapability": "configuration-and-state",
+          "currentProductionLimitation": "Production has no configuration/state-machine structures.",
+          "futureMigrationRequirement": "Add configuration/state structures."
+        },
+        {
+          "canonicalPath": [
+            "canonicalStats.attackProfiles[].firingConstraints/preparedAttack/activationRequirements"
+          ],
+          "requiredSchemaCapability": "firing-constraints",
+          "currentProductionLimitation": "Production has no firing-constraint or prepared-attack structures.",
+          "futureMigrationRequirement": "Add firing constraint structures."
         },
         {
           "canonicalPath": [

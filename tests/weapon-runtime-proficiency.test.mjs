@@ -82,6 +82,33 @@ assert.equal(prof('unmapped::Atlatl', actor({ species: 'Gungan', feats: ['Weapon
 // Electropole: both profiles advanced-melee (profile-specific data), Gungan simple route
 assert.equal(prof('weapon-gungan-electropole', actor({ feats: ['Weapon Proficiency (Advanced Melee Weapons)'] }), { profileId: 'thrown' }).requiredGroup, 'advanced-melee');
 
+// ---- 5B-R: structured Gungan routes on the corrected profiles ---------------------------------------------------------
+const gungan = actor({ species: 'Gungan', feats: ['Weapon Proficiency (Simple Weapons)'] });
+assert.equal(prof('weapon-gungan-electropole', gungan, { profileId: 'melee' }).proficient, true, 'Electropole melee: Gungan + simple');
+assert.equal(prof('weapon-gungan-electropole', gungan, { profileId: 'thrown' }).proficient, true, 'Electropole thrown: Gungan + simple');
+assert.equal(prof('weapon-gungan-electropole', actor({ species: 'Gungan' }), { profileId: 'melee' }).proficient, false, 'route still needs Weapon Proficiency (simple weapons)');
+assert.equal(prof('weapon-gungan-electropole', actor({ species: 'Human', feats: ['Weapon Proficiency (Simple Weapons)'] }), { profileId: 'melee' }).proficient, false);
+for (const key of ['unmapped::Atlatl', 'unmapped::Cesta']) {
+  assert.equal(prof(key, gungan, { profileId: 'launcher' }).proficient, true, `${key} launcher Gungan route`);
+  assert.equal(prof(key, gungan, { profileId: 'primary' }).proficient, true, `${key} melee Gungan route`);
+  assert.equal(prof(key, none, { profileId: 'launcher' }).proficient, false);
+  assert.equal(prof(key, actor({ feats: [exoticFeat(key.endsWith('Atlatl') ? 'Atlatl' : 'Cesta')] }), { profileId: 'launcher' }).proficient, true);
+}
+// Shock Stick: handheld needs advanced melee; mounted waives it when the host rifle is proficient (PROMPT if unknown)
+const shockHeld = resolve('unmapped::Shock Stick');
+assert.equal(resolveProficiency(shockHeld, getProfile(shockHeld), none).proficient, false);
+const shockMounted = resolve('unmapped::Shock Stick', { configurationId: 'mounted-bayonet' });
+const sm0 = resolveProficiency(shockMounted, getProfile(shockMounted), none);
+assert.equal(sm0.proficient, false); assert.deepEqual(sm0.pending.map((p) => p.promptId), ['host-rifle-proficiency']);
+const sm1 = resolveProficiency(shockMounted, getProfile(shockMounted), none, { hostRifleProficient: true });
+assert.equal(sm1.proficient, true); assert.equal(sm1.route.kind, 'mounted-host-rifle-proficiency'); assert.equal(sm1.pending.length, 0);
+assert.equal(resolveProficiency(shockMounted, getProfile(shockMounted), none, { hostRifleProficient: false }).proficient, false);
+assert.equal(resolveProficiency(shockHeld, getProfile(shockHeld), none, { hostRifleProficient: true }).proficient, false, 'waiver applies only while mounted');
+// Amphistaff forms keep the exact Exotic identity across every profile
+const ampW = resolve('unmapped::Amphistaff', { configurationId: 'spear', profileId: 'spear-thrown' });
+assert.equal(resolveProficiency(ampW, getProfile(ampW), actor({ feats: [exoticFeat('Amphistaff')] })).proficient, true);
+assert.equal(resolveProficiency(ampW, getProfile(ampW), none).proficient, false);
+
 // ---- explicit integration inputs, system.proficient never drives canonical -----------------------------------------------
 assert.equal(prof('weapon-bowcaster', none, { proficiencyIntegrations: { ignoresProficiencyPenalty: true } }).route.kind, 'integration:implant');
 assert.equal(prof('weapon-bowcaster', none, { proficiencyIntegrations: { spacehoundVehicleWeapon: true } }).route.kind, 'integration:spacehound');
