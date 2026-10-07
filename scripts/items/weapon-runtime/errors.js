@@ -27,6 +27,8 @@ export const ERROR_CODES = Object.freeze({
   NO_ORDINARY_DAMAGE: 'no-ordinary-damage',
   PAYLOAD_REQUIRED: 'payload-required',
   FORM_IDENTITY_MISMATCH: 'weapon-form-identity-mismatch',
+  RANGE_BRANCH_MISMATCH: 'range-branch-mismatch',
+  RANGE_BAND_NOT_ALLOWED: 'range-band-not-allowed',
 });
 
 /** GM-visible, non-silent reporting for runtime callers that cannot propagate a throw. */

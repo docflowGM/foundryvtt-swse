@@ -10,6 +10,8 @@ import { resolveCanonicalIdentity } from './canonical-identity.js';
 import { WeaponRuntimeResolver, getProfile } from './weapon-runtime-resolver.js';
 import { resolveProficiency } from './proficiency-resolver.js';
 import { resolveDamageProfile } from './damage-profile-resolver.js';
+import { resolveCanonicalRange, assertRangeSelectionResolvable } from './canonical-range.js';
+import { resolveCanonicalResourceCost } from './canonical-resource.js';
 
 const LEGACY = Object.freeze({ source: 'legacy' });
 const SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode'];
@@ -64,7 +66,10 @@ export function resolveAttackWeaponRuntime(weapon, context = {}) {
   for (const k of SELECTION_KEYS) if (context?.[k] != null) ctx[k] = context[k];
   const resolved = resolverFor(registry).resolveIdentity(id.identityKey, weapon, ctx, id.via);
   const profile = getProfile(resolved);
-  return Object.freeze({ source: 'canonical', resolved, profile, branch: profile.branch ?? null, identityKey: id.identityKey, requested: Object.freeze(requested) });
+  // Phase 5D-D: the selected form's canonical range facet travels with the runtime (one resolution for preview + roll); a
+  // profile whose branch contradicts its own range mode is refused here, never guessed.
+  const range = resolveCanonicalRange(resolved, profile);
+  return Object.freeze({ source: 'canonical', resolved, profile, branch: profile.branch ?? null, range, identityKey: id.identityKey, requested: Object.freeze(requested) });
 }
 
 /** Dynamic, profile-specific proficiency for a canonical runtime (delegates entirely to resolveProficiency). */
@@ -78,6 +83,7 @@ export function summarizeAttackRuntime(runtime, proficiency = null) {
   if (runtime?.source !== 'canonical') return { source: runtime?.source ?? 'legacy' };
   return {
     source: 'canonical', identityKey: runtime.identityKey, profileId: runtime.profile.id, branch: runtime.branch,
+    range: runtime.range ? { status: runtime.range.status, family: runtime.range.family, allowedBands: [...runtime.range.allowedBands] } : null,
     proficiency: proficiency ? { proficient: proficiency.proficient, penalty: proficiency.penalty, route: proficiency.route, requiredGroup: proficiency.requiredGroup, exoticIdentity: proficiency.exoticIdentity } : null,
   };
 }
@@ -113,6 +119,18 @@ export function assertDamageSelectionResolvable(runtime, damageMode = null) {
   if (runtime?.source !== 'canonical') return;
   const mode = damageMode ?? runtime.resolved.selection.damageMode ?? 'normal';
   resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode: mode });
+}
+
+/** Phase 5D-D: every pre-spend validation of the selected canonical form (damage mode, range band) in one place. */
+export function assertAttackFormResolvable(runtime, { damageMode = null, rangeBand = null } = {}) {
+  if (runtime?.source !== 'canonical') return;
+  assertDamageSelectionResolvable(runtime, damageMode);
+  if (runtime.range?.status === 'banded' && runtime.branch === 'ranged') assertRangeSelectionResolvable(runtime.range, rangeBand);
+}
+
+/** Canonical per-attack resource cost of the selected form (see canonical-resource.js). Pure: never mutates. */
+export function resolveAttackResourceCost(runtime, { damageMode = null } = {}) {
+  return runtime?.source === 'canonical' ? resolveCanonicalResourceCost(runtime, { damageMode: damageMode ?? runtime.resolved.selection.damageMode }) : null;
 }
 
 const DICE_RE = /^\d+d\d+([+-]\d+)?$/;
@@ -168,7 +186,13 @@ export function resolveCanonicalDamage(weapon, context = {}) {
   if (base === null) {
     if (dmode === 'none') { status = 'no-damage'; reason = 'no-damage-definition'; }
     else if (dmode === 'special') { status = 'special'; reason = 'special-effect-damage'; }
-    else { status = 'deferred'; reason = `damage-mode:${dmode}`; }
+    else {
+      // ammunition-dependent damage: the loaded ammunition's identity is not represented by the live single-counter ammo model
+      // (and the canonical payload list is empty or textual), so the Item-level compatibility base stays -- documented, not guessed
+      const src = String(runtime.resolved.canonicalStats.ammo?.damageSource ?? '');
+      status = 'deferred';
+      reason = (dmode === 'ammunition' || src.startsWith('loaded-ammo')) ? 'loaded-ammo-identity-unavailable' : `damage-mode:${dmode}`;
+    }
   }
   const types = [...(primary?.damageTypes ?? [])];
   const selectedType = primary?.selectedDamageType ?? null;

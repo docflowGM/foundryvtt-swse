@@ -13,6 +13,8 @@ import { resolveAttackWeaponRuntime } from './attack-consumer.js';
 import { getSharedWeaponAuthorityRegistry } from './weapon-authority-registry.js';
 import { resolveCanonicalIdentity } from './canonical-identity.js';
 import { WeaponRuntimeResolver } from './weapon-runtime-resolver.js';
+import { resolveCanonicalRange } from './canonical-range.js';
+import { resolveCanonicalResourceCost } from './canonical-resource.js';
 
 const SEP = '|';
 export const attackFormValue = ({ profileId, configurationId = null, modeId = null }) =>
@@ -59,13 +61,20 @@ export function buildAttackForms(weapon, requested = {}) {
     for (const configurationId of cfgIds) {
       const ctx = { profileId: opt.profileId, ...(configurationId ? { configurationId } : {}), ...(opt.modeId ? { modeId: opt.modeId } : {}) };
       let resolved;
-      try { resolved = resolver.resolveIdentity(id.identityKey, weapon, ctx, id.via); } catch (err) { if (err instanceof WeaponRuntimeError) continue; throw err; }
+      let range;
+      try {
+        resolved = resolver.resolveIdentity(id.identityKey, weapon, ctx, id.via);
+        range = resolveCanonicalRange(resolved, resolved.profiles.find((p) => p.id === resolved.selection.profileId)); // a form whose range contradicts its branch is never offered
+      } catch (err) { if (err instanceof WeaponRuntimeError) continue; throw err; }
       const sel = resolved.selection;
       const cfgLabel = configurationId ? base.configurationStates.find((c) => c.id === configurationId)?.label ?? configurationId : null;
       forms.push(Object.freeze({
         value: attackFormValue({ profileId: sel.profileId, configurationId, modeId: opt.modeId }),
         profileId: sel.profileId, configurationId, modeId: opt.modeId,
         branch: resolved.profiles.find((p) => p.id === sel.profileId)?.branch ?? null,
+        // Phase 5D-D (display + validation data only; the runtime resolves the same facets again at attack time)
+        range: Object.freeze({ status: range.status, allowedBands: range.allowedBands, bandSquares: range.bandSquares, basePenalties: range.basePenalties, shortPenaltyOverride: range.shortPenaltyOverride }),
+        ammoUnits: (() => { const c = resolveCanonicalResourceCost({ resolved, profile: resolved.profiles.find((p) => p.id === sel.profileId) }); return c.status === 'pending' ? null : c.units; })(),
         label: cfgLabel ? `${opt.label} · ${cfgLabel}` : opt.label,
       }));
     }

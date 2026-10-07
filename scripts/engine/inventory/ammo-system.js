@@ -97,6 +97,12 @@ export class AmmoSystem {
     if (hasTruthyOption(options, 'burstFire') || tags.has('burstfire') || tags.has('burst-fire') || context?.attack?.isBurstFire === true) return 5;
     if (hasTruthyOption(options, 'autofire') || tags.has('autofire') || context?.attack?.isAutofire === true) return 10;
 
+    // Phase 5D-D: a canonical weapon's selected attack form states its own per-attack units (e.g. Variable Blaster medium x5,
+    // double-shot x2, a melee form of a ranged weapon 0). Supplied by the weapon-runtime attack consumer; absent for legacy
+    // weapons and for canonical forms whose cost is not structured, which keep the rule below.
+    const canonicalUnits = options?.canonicalAmmoUnits;
+    if (typeof canonicalUnits === 'number' && Number.isFinite(canonicalUnits)) return Math.max(0, Math.floor(canonicalUnits));
+
     if (this.weaponUsesAmmunition(weapon) && weaponLooksRanged(weapon)) return 1;
     return 0;
   }

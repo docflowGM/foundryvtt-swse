@@ -12,5 +12,7 @@ export { resolveResource } from './resource-resolver.js';
 export { adaptLegacyWeapon } from './legacy-adapter.js';
 export { resolveHostAugmentations } from './host-augmentation.js';
 export { evaluateCondition, policyFor } from './condition-policy.js';
-export { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime, weaponFormRecord, assertDamageSelectionResolvable, resolveCanonicalDamage, summarizeCanonicalDamage } from './attack-consumer.js';
+export { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime, weaponFormRecord, assertDamageSelectionResolvable, assertAttackFormResolvable, resolveAttackResourceCost, resolveCanonicalDamage, summarizeCanonicalDamage } from './attack-consumer.js';
 export { buildAttackForms, findAttackForm, attackFormSelection, attackFormValue } from './attack-form-options.js';
+export { resolveCanonicalRange, assertRangeSelectionResolvable, canonicalRangePenalty, normalizeRangeBand, RANGE_BANDS } from './canonical-range.js';
+export { resolveCanonicalResourceCost } from './canonical-resource.js';
