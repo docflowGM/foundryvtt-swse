@@ -1,15 +1,16 @@
 # Phase 4G — Exotic Weapons Semantic / Selector / Recommendation Rolling Planner Authority
 
-**Status:** `WEAPON_TAG_PHASE_4G_EXOTIC_ROUND_2_PLANNER_ADJUDICATED`
+**Status:** `WEAPON_TAG_PHASE_4G_EXOTIC_ROUND_3_PLANNER_ADJUDICATED_CORRECTED`
 
 ## Progress
 
 - Canonical Exotic-proficiency identities: **32**
-- Adjudicated: **10 / 32**
-- Remaining: **22**
+- Adjudicated: **15 / 32**
+- Remaining: **17**
 - Round 1: **Amphistaff → Blastsword**
 - Round 2: **Bowcaster → Darkstick**
-- Next identity: **Deck Sweeper**
+- Round 3: **Deck Sweeper → Flamethrower**
+- Next identity: **Garrote**
 - Production mutation: **NOT AUTHORIZED**
 
 ## Exotic semantic ruling
@@ -18,7 +19,7 @@
 
 A species or ancestry rule that supplies an alternate legal proficiency route does **not** erase the weapon's Exotic identity. Hybrid items with only one Exotic mode/profile will be handled conditionally when reached.
 
-Structural selectors such as `weapon-proficiency:*`, `weapon-family:*`, `weapon-group:exotic`, species overrides, modes, payloads, range profiles, and configuration states are **not semantic tags**.
+Structural selectors such as `weapon-proficiency:*`, `weapon-family:*`, `weapon-group:exotic`, species overrides, modes, payloads, range profiles, templates, configuration states, and full-round reload timing are **not semantic tags**.
 
 ## 1. Amphistaff
 
@@ -118,7 +119,6 @@ Eligible without nonproficiency penalty when:
 - Group: `weapon-group:exotic`
 - Proficiency: `weapon-proficiency:atlatl`
 - Families: `weapon-family:atlatl`, `weapon-family:gungan-weapon`, `weapon-family:energy-ball-launcher`
-- Payloads: `payload:energy-ball`
 - Modes:
   - mode=launcher; attackProfile=ranged; payload=energy-ball
   - mode=club; attackProfile=melee
@@ -158,8 +158,6 @@ Eligible without nonproficiency penalty when:
 - Group: `weapon-group:exotic`
 - Proficiency: `weapon-proficiency:aurial-blaster`
 - Families: `weapon-family:aurial-blaster`, `weapon-family:sonic-blaster`
-- Range profile: `pistol`
-- Defense rider: successful hit → Fortitude Defense → -5 Perception until end of attacker's next turn
 
 ### Recommendation fit
 
@@ -228,7 +226,6 @@ Eligible without nonproficiency penalty when:
 - Group: `weapon-group:exotic`
 - Proficiency: `weapon-proficiency:bowcaster`
 - Families: `weapon-family:bowcaster`, `weapon-family:wookiee-weapon`
-- Range authority: `SOURCE_UNRESOLVED`
 - Species overrides:
   - species=Wookiee; requiresProficiency=rifles; effect=Treated as proficient with the Bowcaster.
 
@@ -265,11 +262,9 @@ Eligible without nonproficiency penalty when:
 - Group: `weapon-group:exotic`
 - Proficiency: `weapon-proficiency:cr-1-blast-cannon`
 - Families: `weapon-family:cr-1-blast-cannon`, `weapon-family:blast-cannon`
-- Range profile: `pistol`
 - Distance modes:
   - condition=target is adjacent; effect=+1d8 damage
   - condition=target is nonadjacent; effect=1-square splash radius
-- Range rule: attackPenalty=NONE_FROM_RANGE; damagePenalty=APPLY_NORMAL_RANGE_PENALTIES_TO_DAMAGE; longRange=PROHIBITED_INACCURATE
 
 ### Recommendation fit
 
@@ -304,7 +299,6 @@ Eligible without nonproficiency penalty when:
 - Group: `weapon-group:exotic`
 - Proficiency: `weapon-proficiency:cesta`
 - Families: `weapon-family:cesta`, `weapon-family:gungan-weapon`, `weapon-family:energy-ball-launcher`
-- Payloads: `payload:energy-ball`
 - Modes:
   - mode=launcher; attackProfile=ranged; payload=energy-ball; rangeProfile=simple; accurate=True
   - mode=staff; attackProfile=melee
@@ -344,7 +338,6 @@ Eligible without nonproficiency penalty when:
 - Group: `weapon-group:exotic`
 - Proficiency: `weapon-proficiency:concealed-dart-launcher`
 - Families: `weapon-family:concealed-dart-launcher`, `weapon-family:wrist-launcher`
-- Range profile: `pistol`
 - Payload profiles:
   - id=sedative; effect=3d8 stun damage; default=True; extendedStunRange=True
   - id=contact-poison; effect=delivers loaded contact poison; default=False
@@ -407,6 +400,196 @@ Eligible without nonproficiency penalty when:
 - Do not add a thrown semantic tag; thrown capability remains structural.
 - damage_bonus is justified by the explicit 1d6-to-2d8 configuration rule, not by high raw damage alone.
 - Concealment/defense are conditional to the later light-absorbing version and must not be promoted into unconditional finalTags.
+
+## 11. Deck Sweeper
+
+- **Identity:** `weapon-deck-sweeper`
+- **Repo:** present (`weapon-deck-sweeper`)
+- **Source:** Scum and Villainy — description p.50 / table p.51
+- **Canonical mechanic:** Exotic ranged weapon that fires only on the stun setting. It attacks every target in a 6-square cone with one attack roll; a hit deals full stun damage and a miss deals half stun damage. It must be primed with a swift action during the same turn before firing. Its power pack provides 5 shots.
+- **Final tags:** `exotic_weapon`, `ranged`, `offense_ranged`, `stun`, `nonlethal`, `swift_action`, `action_economy`, `setup`
+
+### Proficiency routes
+
+- Canonical: **Exotic Weapon Proficiency (Deck Sweeper)**
+- Alternate: none certified.
+
+### Rule selectors
+
+- Exact: `weapon:weapon-deck-sweeper`
+- Group: `weapon-group:exotic`
+- Proficiency: `weapon-proficiency:deck-sweeper`
+- Families: `weapon-family:deck-sweeper`, `weapon-family:stun-area-weapon`
+- attackProfile: shape=cone; lengthSquares=6; areaAttack=True; hitEffect=full stun damage; missEffect=half stun damage
+- activation: requiredBeforeAttack=True; action=swift; timing=same turn; failureEffect=weapon does not fire
+- Capacity: `5`
+
+### Recommendation fit
+
+Dedicated nonlethal crowd-control exotic for characters willing to spend a swift action to prime it before firing. Its 6-square cone and half-stun-on-miss behavior make it especially useful when multiple targets must be subdued.
+
+Eligible without nonproficiency penalty when:
+- Character has Exotic Weapon Proficiency (Deck Sweeper).
+
+### Guardrails
+
+- Do not create area_damage as a semantic tag; cone geometry and area-attack resolution remain structured mechanics.
+- The same-turn swift-action prime is mandatory setup, not optional flavor.
+- The weapon is stun-only; do not infer a lethal firing mode.
+
+## 12. Discblade
+
+- **Identity:** `weapon-discblade`
+- **Repo:** present (`weapon-discblade`)
+- **Source:** Jedi Academy Training Manual — description p.61 / table p.61
+- **Canonical mechanic:** Exotic aerodynamic thrown ring weapon favored by the Zeison Sha. The base weapon does not automatically return after a throw. Certified Zeison Sha talents provide the weapon-specific return, range, and multi-target interactions.
+- **Final tags:** `exotic_weapon`, `ranged`, `offense_ranged`
+
+### Proficiency routes
+
+- Canonical: **Exotic Weapon Proficiency (Discblade)**
+- Alternate: none certified.
+
+### Rule selectors
+
+- Exact: `weapon:weapon-discblade`
+- Group: `weapon-group:exotic`
+- Proficiency: `weapon-proficiency:discblade`
+- Families: `weapon-family:discblade`, `weapon-family:zeison-sha-weapon`
+- Explicit ability interactions:
+  - ability=Discblade Arc; interaction=FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE
+  - ability=Distant Discblade Throw; interaction=TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY
+  - ability=Recall Discblade; interaction=USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION
+  - ability=Weapon Specialization (discblade); interaction=NAMED_DISCBLADE_DAMAGE_SYNERGY
+- attackProfile: type=thrown-ranged
+
+### Recommendation fit
+
+Signature exotic ranged weapon for Zeison Sha and other builds investing in its named talent package. Its strongest recommendation value comes from exact Discblade-specific ability joins rather than from broad thrown-weapon inference.
+
+Eligible without nonproficiency penalty when:
+- Character has Exotic Weapon Proficiency (Discblade).
+
+### Guardrails
+
+- Do not add force, telekinesis, pistol, or area semantics to the base weapon merely because named talents can grant those interactions.
+- Return-to-hand is not an innate property of every Discblade throw.
+- Do not create a thrown semantic tag; thrown status remains structural.
+
+## 13. Felucian Skullblade
+
+- **Identity:** `unmapped::Felucian Skullblade`
+- **Repo:** missing
+- **Source:** Force Unleashed Campaign Guide — description p.96 / table p.96
+- **Canonical mechanic:** Small exotic swordlike melee weapon made from Felucian animal skulls containing trace Force-reactive crystal. The weapon can be imbued with Force energy and, while so imbued, can block lightsaber strikes. It is culturally important and normally obtained through Felucian Force adepts rather than ordinary commerce.
+- **Final tags:** `exotic_weapon`, `melee`, `offense_melee`
+- **Conditional semantic tags:**
+  - `force` when **skullblade is imbued with Force energy** — The lightsaber-blocking property exists only when Force-imbued.
+  - `lightsaber` when **skullblade is imbued with Force energy** — The special defensive interaction specifically concerns lightsaber strikes.
+  - `block` when **skullblade is imbued with Force energy** — The source explicitly states that the imbued skullblade can block lightsaber strikes.
+  - `melee_defense` when **skullblade is imbued with Force energy** — The special property is a defensive melee interaction.
+  - `defense` when **skullblade is imbued with Force energy** — The special property defensively answers lightsaber attacks.
+
+### Proficiency routes
+
+- Canonical: **Exotic Weapon Proficiency (Felucian Skullblade)**
+- Alternate: none certified.
+
+### Rule selectors
+
+- Exact: `weapon:unmapped::Felucian Skullblade`
+- Group: `weapon-group:exotic`
+- Proficiency: `weapon-proficiency:felucian-skullblade`
+- Families: `weapon-family:felucian-skullblade`, `weapon-family:felucian-weapon`, `weapon-family:force-reactive-weapon`
+- States:
+  - state=force-imbued; effect=can block lightsaber strikes; activationMechanic=SOURCE_DOES_NOT_DEFINE_HERE
+
+### Recommendation fit
+
+Specialized exotic melee weapon for Force-sensitive/Felucian concepts, with its distinctive value coming from the Force-imbued lightsaber-blocking state rather than raw weapon statistics.
+
+Eligible without nonproficiency penalty when:
+- Character has Exotic Weapon Proficiency (Felucian Skullblade).
+
+### Guardrails
+
+- Do not make force, lightsaber, block, melee_defense, or defense unconditional final tags; the source gates the interaction behind Force imbuement.
+- Do not invent an activation action, skill check, duration, or Force Point cost for imbuing the weapon; the cited weapon entry does not define one.
+- Cultural scarcity belongs to availability/recommendation data, not semantic tags.
+
+## 14. Fira
+
+- **Identity:** `unmapped::Fira`
+- **Repo:** missing
+- **Source:** Knights of the Old Republic Campaign Guide — description p.65 / table p.64
+- **Canonical mechanic:** Selkath exotic melee sword made from a cortosis-bearing alloy and benefiting from the Cortosis Weave/Phrik Alloy template. Against a living creature, if the attack roll equals or exceeds both Reflex Defense and Fortitude Defense, the target takes half the attack's damage again on the following round from the grievous wound.
+- **Final tags:** `exotic_weapon`, `melee`, `offense_melee`, `damage_bonus`, `sustained_damage`, `targeting`
+
+### Proficiency routes
+
+- Canonical: **Exotic Weapon Proficiency (Fira)**
+- Alternate: none certified.
+
+### Rule selectors
+
+- Exact: `weapon:unmapped::Fira`
+- Group: `weapon-group:exotic`
+- Proficiency: `weapon-proficiency:fira`
+- Families: `weapon-family:fira`, `weapon-family:selkath-weapon`, `weapon-family:sword`
+- Explicit ability interactions:
+  - ability=Greater Weapon Focus (Fira); interaction=NAMED_FIRA_ATTACK_BONUS_SYNERGY
+- damageRider: targetCondition=living creature; secondaryDefense=Fortitude Defense; trigger=attack roll equals or exceeds both Reflex Defense and Fortitude Defense; effect=target takes half the attack's damage again on the following round
+- Templates: `gear-template:cortosis-weave-phrikh-alloy`
+
+### Recommendation fit
+
+Exotic melee weapon for accuracy-focused characters who can reliably clear both Reflex and Fortitude with the same attack roll, converting strong hits into delayed additional damage. It also has an exact named build join with Greater Weapon Focus (Fira).
+
+Eligible without nonproficiency penalty when:
+- Character has Exotic Weapon Proficiency (Fira).
+
+### Guardrails
+
+- The grievous-wound rider applies only to living creatures and only when the same attack roll clears both defenses.
+- The delayed half-damage rider supports damage_bonus and sustained_damage; do not rewrite it as immediate burst damage.
+- Cortosis/Phrik behavior remains a structured gear-template property and must not be generalized into unrelated lightsaber semantics.
+
+## 15. Flamethrower
+
+- **Identity:** `weapon-flamethrower`
+- **Repo:** present (`weapon-flamethrower`)
+- **Source:** Core Rulebook — description p.127 / table p.126
+- **Canonical mechanic:** Exotic ranged weapon dealing 3d6 damage in a cone 6 squares long and 6 squares wide at the terminus. Make one attack roll against the Reflex Defense of every target in the area; Evasion modifies the area attack normally. The chemical supply provides 5 uses, and reloading the chemical cartridge is a full-round action.
+- **Final tags:** `exotic_weapon`, `ranged`, `offense_ranged`
+- **Tradeoff tags (not promoted to finalTags):** `action_economy`, `setup`
+
+### Proficiency routes
+
+- Canonical: **Exotic Weapon Proficiency (Flamethrower)**
+- Alternate: none certified.
+
+### Rule selectors
+
+- Exact: `weapon:weapon-flamethrower`
+- Group: `weapon-group:exotic`
+- Proficiency: `weapon-proficiency:flamethrower`
+- Families: `weapon-family:flamethrower`, `weapon-family:chemical-area-weapon`
+- attackProfile: shape=cone; lengthSquares=6; terminusWidthSquares=6; areaAttack=True; defense=Reflex Defense; evasionApplies=True
+- ammo: type=chemical-cartridge; uses=5; reloadAction=full-round
+
+### Recommendation fit
+
+Short-range multi-target exotic for builds that value broad cone coverage and can tolerate limited five-use ammunition and a full-round reload requirement.
+
+Eligible without nonproficiency penalty when:
+- Character has Exotic Weapon Proficiency (Flamethrower).
+
+### Guardrails
+
+- Do not create area_damage, cone, or fire as semantic tags unless separately certified; geometry and damage type remain structured.
+- Do not add control merely because the attack covers an area.
+- The chemical cartridge reload is a full-round action, but full_round_action is retained as structured/plain-text mechanics rather than a Phase 4G semantic tag.
+- action_economy and setup describe the reload tradeoff but are not promoted into finalTags under the Phase 4C–4G planner convention.
 
 ## Rolling guardrails
 

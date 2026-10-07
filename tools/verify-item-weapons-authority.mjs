@@ -2125,7 +2125,14 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
   });
   // Round 1 is frozen; Round 2 named rulings
   if (N >= 5 && sh(JSON.stringify(asg.slice(0, 5))) !== 'b565ac4c92bf19a058a7f6933d2a537690c42f7b5881c5ce2188fff31febd320') fail('4G Round 1 assignments changed after planner certification');
+  if (N >= 10 && sh(JSON.stringify(asg.slice(0, 10))) !== 'ea580e5a483658679b06a879833ca3e9c13cf8de257fcccd97bcba73d5fa82d9') fail('4G Rounds 1-2 assignments changed after planner certification');
   const g4 = (k) => asg.find((a) => a.identityKey === k);
+  const fl = g4('weapon-flamethrower'), ds = g4('weapon-deck-sweeper'), db = g4('weapon-discblade'), sk = g4('unmapped::Felucian Skullblade'), fi = g4('unmapped::Fira');
+  if (fl && (!same(fl.tradeoffTags, ['action_economy', 'setup']) || fl.finalTags.some((t) => ['action_economy', 'setup', 'full_round_action', 'area_damage', 'control'].includes(t)))) fail('4G Flamethrower: reload tradeoffs stay out of finalTags; no full_round_action/area_damage/control');
+  if (ds && (ds.finalTags.includes('area_damage') || !['stun', 'nonlethal', 'swift_action', 'setup'].every((t) => ds.finalTags.includes(t)))) fail('4G Deck Sweeper: stun/nonlethal + swift_action/setup prime, no area_damage');
+  if (db && db.finalTags.some((t) => ['force', 'telekinesis', 'pistol', 'area_damage'].includes(t))) fail('4G Discblade base weapon must not carry talent-granted force/pistol/area semantics');
+  if (sk && (['force', 'lightsaber', 'block', 'melee_defense', 'defense'].some((t) => sk.finalTags.includes(t)) || !['force', 'lightsaber', 'block', 'melee_defense', 'defense'].every((t) => (sk.conditionalSynergyTags || []).some((c) => c.tag === t)))) fail('4G Felucian Skullblade: Force-imbued block semantics conditional only');
+  if (fi && !['damage_bonus', 'sustained_damage', 'targeting'].every((t) => fi.finalTags.includes(t))) fail('4G Fira must carry damage_bonus + sustained_damage + targeting');
   const bw = g4('weapon-bowcaster'), cr = g4('weapon-cr-1-blast-cannon'), ce = g4('unmapped::Cesta'), at = g4('unmapped::Atlatl'), dk = g4('unmapped::Darkstick');
   if (bw && (bw.finalTags.includes('burst_damage') || bw.ruleSelectors.rangeAuthority !== 'SOURCE_UNRESOLVED')) fail('4G Bowcaster: no burst_damage from flavor text; range stays SOURCE_UNRESOLVED');
   if (cr && (cr.finalTags.includes('area_damage') || cr.finalTags.includes('inaccurate') || !cr.finalTags.includes('damage_bonus'))) fail('4G CR-1: damage_bonus (adjacent rider) yes; area_damage/inaccurate no');
