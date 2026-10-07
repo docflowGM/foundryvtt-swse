@@ -8,7 +8,7 @@
 - **Melee-profile:** 15
 - **Ranged-profile:** 15
 - **Hybrid-profile:** 2
-- **Alternate proficiency/handling cases:** 9
+- **Alternate proficiency/handling cases:** 10 (corrected from 9 by Phase 4H-A4)
 - **Semantic rulings made:** 0
 
 ## Census rule
@@ -220,6 +220,7 @@ This freezes **scope only**. It does not yet decide whether `exotic_weapon` is g
 - **Repo:** missing
 - **Source:** Legacy Era Campaign Guide — description p.62 / table p.62
 - **Profile kind:** `melee`
+- **Alternate proficiency/handling:** Nagai: treat as simple weapon rather than exotic weapon (added by Phase 4H-A4 correction; Legacy Era Campaign Guide Nagai Weapon Familiarity)
 
 ### 28. Verpine Shatter Gun
 
@@ -270,3 +271,7 @@ This freezes **scope only**. It does not yet decide whether `exotic_weapon` is g
 - Do not create a `thrown`, `ion`, `sonic`, `grenade`, or other weapon-only pseudo-tag.
 - Preserve species-specific alternate proficiency routes exactly.
 - Do not mutate production during Phase 4G semantic authority work.
+
+## Phase 4H amendment
+
+- **4H-A4:** alternate-case count 9 → 10 (Tehk'la Blade, Nagai). Identity set, profile kinds and repo mapping unchanged.

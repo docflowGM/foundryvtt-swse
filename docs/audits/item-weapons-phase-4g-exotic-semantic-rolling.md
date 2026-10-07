@@ -1082,3 +1082,10 @@ Double-weapon Exotic for full-attack builds that also use Rapid Strike. It combi
 - Hybrid Exotic scoping: **PASS**
 - Payload flattening: **PASS**
 - Production mutation: **NOT AUTHORIZED**
+
+## Phase 4H-A corrections (selector / provenance only; no semantic tag changed)
+
+- **4H-A2:** machine-readable `speciesOverrides` / `abilityOverrides` selectors added for Massassi Lanvarok (Massassi → advanced melee, Phase 3B weapon-entry ruling; source conflict preserved), Ryyk Blade (Wookiee + advanced melee), Siang Lance (Siang Lance Mastery → rifle, +1 attack), Squib Tensor Rifle (Squib + rifles → rifle), Verpine Shatter Gun (Verpine + pistols → pistol).
+- **4H-A3:** Sith Lanvarok exact ability name corrected to `Two-Weapon Fighting`.
+- **4H-A4:** Tehk'la Blade gains the Nagai alternate route (treat as simple weapon instead of exotic; Legacy Era Campaign Guide). Alternate-case count 9 → 10.
+- **4H-A6:** Sith Lanvarok records the KOTOR Kissai "the lanvarok" simple-weapon familiarity as an unadjudicated source gap (variety not specified); no route added.

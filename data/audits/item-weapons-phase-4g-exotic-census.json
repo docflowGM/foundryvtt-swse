@@ -30,7 +30,7 @@
     "meleeProfileIdentities": 15,
     "rangedProfileIdentities": 15,
     "hybridProfileIdentities": 2,
-    "identitiesWithAlternateProficiencyOrHandling": 9,
+    "identitiesWithAlternateProficiencyOrHandling": 10,
     "separatePayloadAdjunctIdentities": 0
   },
   "payloadNotes": [
@@ -600,7 +600,7 @@
         "schemaFamily.proficiency:exotic",
         "attackProfile proficiency:exotic"
       ],
-      "alternateProficiencyOrHandling": null
+      "alternateProficiencyOrHandling": "Nagai: treat as simple weapon rather than exotic weapon (added by Phase 4H-A4 correction)"
     },
     {
       "identityKey": "weapon-verpine-shattergun",
@@ -701,6 +701,12 @@
         "attackProfile proficiency:exotic"
       ],
       "alternateProficiencyOrHandling": null
+    }
+  ],
+  "phase4hAmendments": [
+    {
+      "id": "4H-A4",
+      "change": "identitiesWithAlternateProficiencyOrHandling 9 -> 10; Tehk'la Blade gains the Nagai route. Source: Legacy Era Campaign Guide Nagai Weapon Familiarity. Identity set, profile kinds and repo mapping unchanged."
     }
   ]
 }

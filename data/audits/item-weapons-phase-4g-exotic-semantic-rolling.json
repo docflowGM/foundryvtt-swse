@@ -24,7 +24,7 @@
     "meleeProfile": 15,
     "rangedProfile": 15,
     "hybridProfile": 2,
-    "alternateProficiencyOrHandlingCases": 9,
+    "alternateProficiencyOrHandlingCases": 10,
     "adjudicated": 32,
     "remaining": 0,
     "nextIdentity": null
@@ -1649,7 +1649,17 @@
           "speciesSection": "Massassi treat the lanvarok as a simple weapon.",
           "weaponSection": "Massassi treat the Massassi lanvarok as an advanced melee weapon.",
           "plannerDisposition": "Use Phase 3B advanced-melee ruling; do not silently merge both."
-        }
+        },
+        "speciesOverrides": [
+          {
+            "species": "Massassi",
+            "requiresProficiency": "advanced-melee-weapons",
+            "treatAsGroup": "advanced-melee",
+            "effect": "Massassi treat the Massassi lanvarok as an advanced melee weapon instead of an exotic weapon.",
+            "authority": "FROZEN_PHASE3B_WEAPON_ENTRY_RULING",
+            "sourceConflictRef": "ruleSelectors.sourceConflict"
+          }
+        ]
       },
       "proficiencyRoutes": {
         "canonical": [
@@ -1963,7 +1973,14 @@
           "bonus": 2,
           "scope": "basic survival in forest or jungle wilderness",
           "requires": "proficient character carrying the weapon"
-        }
+        },
+        "speciesOverrides": [
+          {
+            "species": "Wookiee",
+            "requiresProficiency": "advanced-melee-weapons",
+            "effect": "Wookiee Weapon Proficiency (advanced melee weapons) counts as proficiency with the Ryyk Blade."
+          }
+        ]
       },
       "proficiencyRoutes": {
         "canonical": [
@@ -2128,7 +2145,17 @@
             "interaction": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK"
           }
         ],
-        "capacity": 100
+        "capacity": 100,
+        "abilityOverrides": [
+          {
+            "ability": "Siang Lance Mastery",
+            "abilityType": "talent",
+            "treatAsGroup": "rifle",
+            "replaces": "exotic",
+            "attackBonus": 1,
+            "effect": "Siang Lance Mastery treats the Siang Lance as a rifle instead of an exotic weapon and grants +1 to attack rolls with it."
+          }
+        ]
       },
       "proficiencyRoutes": {
         "canonical": [
@@ -2223,10 +2250,16 @@
         "capacity": 5,
         "explicitAbilityInteractions": [
           {
-            "ability": "two-weapon fighting",
+            "ability": "Two-Weapon Fighting",
             "interaction": "MAY_BE_FIRED_AS_SECOND_WEAPON_WHILE_WORN"
           }
-        ]
+        ],
+        "sourceAuthorityGap": {
+          "status": "SOURCE_CONFIRMED_AMBIGUOUS_VARIANT_NOT_ADJUDICATED",
+          "rule": "KOTOR Kissai species Weapon Familiarity: Kissai treat 'the lanvarok' as a simple weapon instead of an exotic weapon.",
+          "note": "The source does not say which lanvarok variety; the Sith lanvarok is Exotic and the Massassi lanvarok is Advanced Melee. No alternate route is added until the planner rules.",
+          "plannerDisposition": "OPEN_QUESTION"
+        }
       },
       "proficiencyRoutes": {
         "canonical": [
@@ -2301,7 +2334,15 @@
         "targetDefense": "Fortitude Defense",
         "hitRider": "-1 condition step regardless of damage roll",
         "rangeProfile": "rifle",
-        "capacity": 15
+        "capacity": 15,
+        "speciesOverrides": [
+          {
+            "species": "Squib",
+            "requiresProficiency": "rifles",
+            "treatAsGroup": "rifle",
+            "effect": "Squibs treat the Squib Tensor Rifle as a rifle rather than an exotic weapon."
+          }
+        ]
       },
       "proficiencyRoutes": {
         "canonical": [
@@ -2384,10 +2425,19 @@
           "effect": "additional 1d6 damage at start of target's next turn"
         },
         "sourceAuthorityGap": {
-          "status": "SOURCE_CONFIRMED_NOT_IN_FROZEN_4G_ALT_CASE_COUNT",
+          "status": "CORRECTED_IN_PHASE_4H",
           "rule": "Nagai treat tehk'la blades as simple weapons instead of exotic weapons.",
-          "plannerDisposition": "Flag for Phase 3B/proficiency-authority correction before runtime activation."
-        }
+          "resolution": "Alternate route added to proficiencyRoutes and speciesOverrides; frozen 4G census alternate-case count corrected 9 -> 10."
+        },
+        "speciesOverrides": [
+          {
+            "species": "Nagai",
+            "treatAsGroup": "simple",
+            "replaces": "exotic",
+            "effect": "Nagai treat tehk'la blades as simple weapons instead of exotic weapons.",
+            "source": "Legacy Era Campaign Guide, Nagai species Weapon Familiarity"
+          }
+        ]
       },
       "proficiencyRoutes": {
         "canonical": [
@@ -2396,7 +2446,13 @@
             "requirement": "Exotic Weapon Proficiency (Tehk'la Blade)"
           }
         ],
-        "alternate": []
+        "alternate": [
+          {
+            "condition": "Species is Nagai",
+            "requirement": "Nagai species Weapon Familiarity (the source text names no additional Weapon Proficiency)",
+            "result": "Treat the tehk'la blade as a simple weapon instead of an exotic weapon."
+          }
+        ]
       },
       "recommendation": {
         "eligibleWithoutPenaltyWhen": [
@@ -2464,7 +2520,15 @@
         "criticalRider": "additional 1d10 damage after multiplying for the critical hit",
         "fragility": "any damage to the weapon disables it until repaired with Mechanics",
         "rangeProfile": "pistol",
-        "capacity": 50
+        "capacity": 50,
+        "speciesOverrides": [
+          {
+            "species": "Verpine",
+            "requiresProficiency": "pistols",
+            "treatAsGroup": "pistol",
+            "effect": "Verpines treat the Verpine Shatter Gun as a pistol rather than an exotic weapon."
+          }
+        ]
       },
       "proficiencyRoutes": {
         "canonical": [
@@ -2892,5 +2956,27 @@
       "Xerrol Nightstinger: Phase 1 labels Rifle while the frozen Phase 3B Exotic census classifies it as Exotic; Phase 3B controls Phase 4G."
     ],
     "productionMutationAuthorized": false
-  }
+  },
+  "phase4hCorrections": [
+    {
+      "id": "4H-A2",
+      "scope": "Massassi Lanvarok, Ryyk Blade, Siang Lance, Squib Tensor Rifle, Verpine Shatter Gun",
+      "change": "Added machine-readable speciesOverrides / abilityOverrides selectors for alternate proficiency routes previously described only in prose. No semantic tag changed."
+    },
+    {
+      "id": "4H-A3",
+      "scope": "Sith Lanvarok",
+      "change": "Exact ability name corrected to canonical 'Two-Weapon Fighting'. Interaction unchanged."
+    },
+    {
+      "id": "4H-A4",
+      "scope": "Tehk'la Blade",
+      "change": "Added Nagai alternate proficiency route (source-confirmed, Legacy Era Campaign Guide) and speciesOverrides selector. Alternate-case count 9 -> 10. No semantic tag changed."
+    },
+    {
+      "id": "4H-A6",
+      "scope": "Sith Lanvarok",
+      "change": "Recorded Kissai 'the lanvarok' simple-weapon familiarity as an unadjudicated source gap. No route added."
+    }
+  ]
 }

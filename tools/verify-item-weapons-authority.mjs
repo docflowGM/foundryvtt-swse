@@ -2058,7 +2058,8 @@ if (fs.existsSync(path.join(ROOT, P4G))) {
   const cnt = (f) => ids.filter(f).length;
   const want = { canonicalExoticProficiencyIdentities: ids.length, repoPresent: cnt((i) => i.repo?.present === true), repoMissing: cnt((i) => i.repo?.present === false), meleeProfileIdentities: cnt((i) => i.profileKind === 'melee'), rangedProfileIdentities: cnt((i) => i.profileKind === 'ranged'), hybridProfileIdentities: cnt((i) => i.profileKind === 'hybrid'), identitiesWithAlternateProficiencyOrHandling: cnt((i) => i.alternateProficiencyOrHandling) };
   for (const [k, v] of Object.entries(want)) if (C.counts[k] !== v) fail(`4G count ${k} ${C.counts[k]} != recomputed ${v}`);
-  if (ids.length !== 32 || want.repoPresent !== 18 || want.repoMissing !== 14 || want.meleeProfileIdentities !== 15 || want.rangedProfileIdentities !== 15 || want.hybridProfileIdentities !== 2 || want.identitiesWithAlternateProficiencyOrHandling !== 9 || C.counts.separatePayloadAdjunctIdentities !== 0) fail('4G frozen census totals changed (32 / 18+14 / 15+15+2 / 9 / 0)');
+  if (ids.length !== 32 || want.repoPresent !== 18 || want.repoMissing !== 14 || want.meleeProfileIdentities !== 15 || want.rangedProfileIdentities !== 15 || want.hybridProfileIdentities !== 2 || want.identitiesWithAlternateProficiencyOrHandling !== 10 || C.counts.separatePayloadAdjunctIdentities !== 0) fail('4G frozen census totals changed (32 / 18+14 / 15+15+2 / 10 after the 4H-A4 Tehk\'la correction / 0)');
+  if (!(C.phase4hAmendments || []).some((x) => x.id === '4H-A4') || !/Nagai/.test(ids.find((i) => i.identityKey === 'unmapped::Tehkla Blade')?.alternateProficiencyOrHandling || '')) fail('4G census must carry the explicit 4H-A4 Tehk\'la/Nagai amendment');
   const ph = new Set(b3.identities.map((i) => i.identityKey));
   for (const i of ids) { if (i.assignments || i.finalTags || i.ruleSelectors) fail(`4G ${i.canonicalName} carries semantic rulings (census is scope-only)`); if (!ph.has(i.identityKey)) fail(`4G ${i.identityKey} not in Phase 3B`); }
   if (errors.length === e4g) console.log(`Phase 4G Exotic census OK: ${ids.length} identities (${want.repoPresent} present / ${want.repoMissing} missing; ${want.meleeProfileIdentities} melee / ${want.rangedProfileIdentities} ranged / ${want.hybridProfileIdentities} hybrid), ${want.identitiesWithAlternateProficiencyOrHandling} alternate-proficiency cases, no semantic rulings, matches Phase 3B Exotic Weapon group`);
@@ -2118,13 +2119,14 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
     for (const m of q.modes || []) if (!m.mode || !m.attackProfile) fail(`4G ${w} mode shape`);
     for (const l of q.explicitAbilityInteractions || []) {
       if (!ENUM.test(l.interaction || '')) fail(`4G ${w} ability interaction enum (${l.ability})`);
-      else if (!abilityNames.has(l.ability)) { if ([...abilityNames].some((n) => n.toLowerCase() === String(l.ability).toLowerCase())) caseFix4g.push(`${w}: "${l.ability}"`); else fail(`4G ${w} ability interaction (${l.ability})`); }
+      else if (!abilityNames.has(l.ability)) fail(`4G ${w} ability interaction "${l.ability}" is not an exact canonical ability name`);
     }
     if (!a.proficiencyRoutes?.canonical?.length || !a.recommendation?.fit || !a.recommendation.eligibleWithoutPenaltyWhen?.length) fail(`4G ${w} proficiency/recommendation shape`);
     const hasAlt = a.proficiencyRoutes.alternate.length > 0;
     if (hasAlt !== !!c.alternateProficiencyOrHandling) fail(`4G ${w} alternate proficiency route must match the census (${!!c.alternateProficiencyOrHandling})`);
     if (hasAlt && a.proficiencyRoutes.alternate.some((r) => !r.condition || !r.requirement || !r.result)) fail(`4G ${w} alternate route needs condition + requirement + result`);
-    if (hasAlt && !(q.speciesOverrides || []).length) gap4g.push(w);
+    if (hasAlt && !(q.speciesOverrides || []).length && !(q.abilityOverrides || []).length) fail(`4G ${w} alternate route needs a machine-readable speciesOverrides/abilityOverrides selector (runtime must not parse prose)`);
+    for (const o of [...(q.speciesOverrides || []), ...(q.abilityOverrides || [])]) if (!o.effect || !(o.species || o.ability)) fail(`4G ${w} override shape`);
     // profile-kind sanity vs census
     const melee = a.finalTags.includes('offense_melee'), ranged = a.finalTags.includes('offense_ranged');
     if (c.profileKind === 'melee' && ranged && !(q.modes || []).some((m) => /ranged|thrown/.test(m.attackProfile))) fail(`4G ${w} ranged tag without a ranged/thrown mode`);
@@ -2163,17 +2165,41 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
     ['weapon-wrist-rocket-launcher', (a) => same(a.finalTags, ['exotic_weapon', 'ranged', 'offense_ranged']) && same([...a.tradeoffTags].sort(), ['action_economy', 'setup']), 'Wrist Rocket Launcher: no static payload tags; reload tradeoffs only'],
     ['weapon-xerrol-nightstinger', (a) => has4(a, 'stealth', 'sniper') && no4(a, 'precision', 'concealment', 'rifle'), 'Xerrol Nightstinger: stealth + sniper, no precision/concealment/rifle'],
     ['unmapped::Zhaboka', (a) => has4(a, 'double_weapon', 'full_attack', 'precision') && no4(a, 'dual_wield'), 'Zhaboka: double_weapon + full_attack, no dual_wield']];
+  const tk = by4('unmapped::Tehkla Blade'), ml = by4('weapon-massassi-lanvarok'), xn = by4('weapon-xerrol-nightstinger'), vs = by4('unmapped::Vibro-Saw'), sl = by4('weapon-sith-lanvarok'), sg = by4('weapon-siang-lance');
+  const ovr = (a, key, who) => (a?.ruleSelectors?.speciesOverrides || []).some((o) => o.species === who && (key ? o.treatAsGroup === key : true));
+  if (N === 32) {
+    if (!ovr(tk, 'simple', 'Nagai') || !tk.proficiencyRoutes.alternate.some((r) => /Nagai/.test(r.condition)) || tk.ruleSelectors.sourceAuthorityGap?.status !== 'CORRECTED_IN_PHASE_4H' || !same(tk.finalTags, ['exotic_weapon', 'melee', 'offense_melee', 'damage_bonus', 'sustained_damage', 'targeting'])) fail('4H-A4 Tehk\'la Blade: Nagai simple route must exist structurally with unchanged semantic tags');
+    if (!ovr(ml, 'advanced-melee', 'Massassi') || ml.ruleSelectors.sourceConflict?.status !== 'FROZEN_PHASE3B_RULING_CONTROLS') fail('4H-A5 Massassi Lanvarok: frozen advanced-melee ruling + visible source conflict must remain');
+    if (!ovr(by4('weapon-wookiee-ryyk-blade'), null, 'Wookiee') || !ovr(by4('weapon-squib-tensor-rifle'), 'rifle', 'Squib') || !ovr(by4('weapon-verpine-shattergun'), 'pistol', 'Verpine') || !(sg.ruleSelectors.abilityOverrides || []).some((o) => o.ability === 'Siang Lance Mastery' && o.treatAsGroup === 'rifle' && o.attackBonus === 1)) fail('4H-A2 Ryyk/Squib/Verpine/Siang alternate-proficiency selectors must remain machine-readable');
+    if (xn.ruleSelectors.group?.[0] !== 'weapon-group:exotic' || xn.finalTags.includes('rifle')) fail('4H-A6 Xerrol Nightstinger: Phase 3B Exotic classification controls; no rifle tag');
+    if (!(vs.guardrails || []).some((g) => /ontology gap/i.test(g)) || vs.finalTags.includes('damage_reduction') || vs.finalTags.includes('damage_bonus')) fail('4H-A7 Vibro-Saw: DR bypass stays structural / ontology gap');
+    if (sl.ruleSelectors.explicitAbilityInteractions[0].ability !== 'Two-Weapon Fighting') fail('4H-A3 Sith Lanvarok must reference the exact ability name Two-Weapon Fighting');
+    if (!['4H-A2', '4H-A3', '4H-A4'].every((id) => (S.phase4hCorrections || []).some((x) => x.id === id))) fail('4H corrections ledger missing');
+  }
   for (const [k, ok, msg] of r4) { const a = by4(k); if (a && !ok(a)) fail(`4G ${msg}`); }
   const cp = S.census || {};
   if (cp.adjudicated !== N || cp.remaining !== 32 - N || cp.nextIdentity !== (cen[N]?.canonicalName ?? null)) fail('4G rolling progress counters');
-  if (cp.canonicalExoticProficiencyIdentities !== 32 || cp.repoPresent !== 18 || cp.repoMissing !== 14 || cp.meleeProfile !== 15 || cp.rangedProfile !== 15 || cp.hybridProfile !== 2 || cp.alternateProficiencyOrHandlingCases !== 9) fail('4G rolling census totals differ from the frozen census');
+  if (cp.canonicalExoticProficiencyIdentities !== 32 || cp.repoPresent !== 18 || cp.repoMissing !== 14 || cp.meleeProfile !== 15 || cp.rangedProfile !== 15 || cp.hybridProfile !== 2 || cp.alternateProficiencyOrHandlingCases !== 10) fail('4G rolling census totals differ from the frozen census');
   if (N === 32 && (S.status !== 'WEAPON_TAG_PHASE_4G_EXOTIC_32_IDENTITY_PLANNER_AUTHORITY_COMPLETE' || S.qa?.status !== 'PASS' || S.qa?.distinctSemanticTagsUsed !== 41 || S.qa.forbiddenPseudoTagsFound.length)) fail('4G complete: status / QA / 41 distinct tags');
   if (N === 32) { const u41 = new Set(asg.flatMap((a) => [...a.finalTags, ...a.tradeoffTags, ...(a.conditionalSynergyTags || []).map((x) => x.tag)])); if (u41.size !== 41 || !same([...u41].sort(), [...S.qa.semanticTagsUsed].sort())) fail(`4G complete: distinct semantic tags (final + tradeoff + conditional) ${u41.size} must equal the planner QA list of 41`); }
   const rr = (S.rounds || []).reduce((n, r) => n + r.identityCount, 0);
   if (rr !== N) fail('4G rolling round ledger does not sum to the adjudicated count');
-  if (gap4g.length) console.log(`  note 4G: ${gap4g.length} alternate-route identities carry no speciesOverrides selector (route is described in proficiencyRoutes only): ${gap4g.join(', ')}`);
-  if (caseFix4g.length) console.log(`  note 4G: ability-name casing differs from the production pack (join key needs exact name): ${caseFix4g.join('; ')}`);
   if (errors.length === e4r) console.log(`Phase 4G Exotic semantic tags OK: ${N}/32 adjudicated in ${S.rounds.length} round(s), ${tagTotal} assignments, ${tagsUsed.size} distinct tags from the 183-tag vocabulary, exotic_weapon unconditional, selectors/routes cross-checked against the census and Phase 3B, next ${cp.nextIdentity}`);
+}
+
+// ---- Phase 4H-A authority reconciliation (cross-category census; builder byte-stable) ----
+if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-authority-reconciliation.json'))) {
+  const e4h = errors.length;
+  try {
+    const mod = await import('./build-item-weapons-phase-4h-reconciliation.mjs');
+    const out = mod.buildPhase4HA();
+    if (fs.readFileSync(path.join(ROOT, mod.OUT_JSON), 'utf8') !== out.json || fs.readFileSync(path.join(ROOT, mod.OUT_MD), 'utf8') !== out.md) fail('4H-A reconciliation outputs are stale or hand-edited (rebuild with tools/build-item-weapons-phase-4h-reconciliation.mjs)');
+    const R = JSON.parse(out.json);
+    if (R.status !== mod.STATUS || R.productionMutationAuthorized !== false) fail('4H-A status / authority-only flags');
+    const need = ['DH23_DESCRIPTION_PAGE', 'MASSASSI_LANVAROK_SPECIES_CONFLICT', 'XERROL_NIGHTSTINGER_GROUP', 'TEHKLA_NAGAI_ROUTE', 'VIBRO_SAW_DR_BYPASS', 'SITH_LANVAROK_KISSAI_FAMILIARITY'];
+    if (!need.every((id) => R.carriedDiscrepancies.some((d) => d.id === id))) fail('4H-A carried-discrepancy ledger is incomplete');
+    if (errors.length === e4h) console.log(`Phase 4H-A reconciliation OK: ${R.census.categoryRecords} category records -> ${R.census.uniqueIdentities} unique identities (${R.census.repoPresent} present / ${R.census.repoMissing} missing), 0 missing, 0 unexpected, duplicate ${R.census.duplicates.map((d) => d.canonicalName).join(', ')}, ${R.carriedDiscrepancies.length} carried discrepancies, builder byte-stable`);
+  } catch (e) { fail(`4H-A reconciliation: ${e.message}`); }
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
