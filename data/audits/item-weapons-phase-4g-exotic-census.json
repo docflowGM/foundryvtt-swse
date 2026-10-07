@@ -1,0 +1,706 @@
+{
+  "schemaVersion": "weapon-phase-4g-exotic-census-v1",
+  "phase": "4G",
+  "family": "weapons",
+  "categoryBatch": "Exotic Weapons",
+  "status": "WEAPON_TAG_PHASE_4G_EXOTIC_CENSUS_FROZEN",
+  "authorityOnly": true,
+  "semanticAdjudicationStarted": false,
+  "productionMutationAuthorized": false,
+  "baseline": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "branch": "claude/dazzling-meitner-czyh1x",
+    "phase3DStatus": "WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN",
+    "phase3B": {
+      "path": "data/audits/item-weapons-phase-3b-canonical-authority.json",
+      "gitBlobSha": "e1f19068526e773a700496976403628c24d34b51"
+    }
+  },
+  "censusPolicy": {
+    "primaryRule": "Include every frozen Phase 3B identity whose weapon group or active attack profile requires Exotic proficiency.",
+    "hybridRule": "Include hybrid identities when at least one canonical profile requires Exotic proficiency; preserve non-Exotic profiles structurally.",
+    "alternateProficiencyRule": "Species/familiarity alternatives do not remove the identity from the Exotic census; they are proficiency-route exceptions to preserve for later semantic adjudication.",
+    "payloadRule": "Do not create separate Exotic census identities for ammunition/payloads unless the payload itself changes Exotic proficiency matching.",
+    "semanticRule": "No `exotic_weapon` or other semantic tag rulings are made in this census artifact."
+  },
+  "counts": {
+    "canonicalExoticProficiencyIdentities": 32,
+    "repoPresent": 18,
+    "repoMissing": 14,
+    "meleeProfileIdentities": 15,
+    "rangedProfileIdentities": 15,
+    "hybridProfileIdentities": 2,
+    "identitiesWithAlternateProficiencyOrHandling": 9,
+    "separatePayloadAdjunctIdentities": 0
+  },
+  "payloadNotes": [
+    {
+      "launcher": "Concealed Dart Launcher",
+      "payloadProfiles": [
+        "sedative",
+        "contact-poison"
+      ],
+      "censusDisposition": "STRUCTURAL_ONLY_NO_SEPARATE_EXOTIC_IDENTITY"
+    },
+    {
+      "launcher": "Wrist Rocket Launcher",
+      "payloadProfiles": [
+        "antipersonnel",
+        "antivehicle",
+        "flash",
+        "hollow-tip-empty",
+        "hollow-tip-nerve-toxin",
+        "hollow-tip-stun-gas",
+        "ion-blast"
+      ],
+      "censusDisposition": "STRUCTURAL_ONLY_NO_SEPARATE_EXOTIC_IDENTITY"
+    }
+  ],
+  "openSemanticQuestionsForRound1": [
+    "Whether `exotic_weapon` becomes a baseline final semantic tag for every profile that actively requires Exotic proficiency.",
+    "How species/familiarity alternate proficiency routes should affect recommendation scoring without changing the canonical Exotic identity.",
+    "How hybrids such as Siang Lance and Massassi Lanvarok should expose conditional profile semantics without flattening all modes into Exotic-only behavior."
+  ],
+  "identities": [
+    {
+      "identityKey": "unmapped::Amphistaff",
+      "canonicalName": "Amphistaff",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 121,
+        "statTablePage": 122
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "unmapped::Arggarok",
+      "canonicalName": "Arggarok",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 64,
+        "statTablePage": 64
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": "Gamorrean: advanced melee weapon"
+    },
+    {
+      "identityKey": "unmapped::Atlatl",
+      "canonicalName": "Atlatl",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 121,
+        "statTablePage": 122
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": "Gungan simple-weapon familiarity/proficiency treatment in source text"
+    },
+    {
+      "identityKey": "weapon-aurial-blaster",
+      "canonicalName": "Aurial Blaster",
+      "repo": {
+        "present": true,
+        "id": "weapon-aurial-blaster"
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 67,
+        "statTablePage": 68
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "unmapped::Blastsword",
+      "canonicalName": "Blastsword",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Unknown Regions",
+        "descriptionPage": 36,
+        "statTablePage": 37
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-bowcaster",
+      "canonicalName": "Bowcaster",
+      "repo": {
+        "present": true,
+        "id": "weapon-bowcaster"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 127,
+        "statTablePage": 126
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": "Wookiee + Weapon Proficiency (rifles): proficient with weapon"
+    },
+    {
+      "identityKey": "weapon-cr-1-blast-cannon",
+      "canonicalName": "CR-1 Blast Cannon",
+      "repo": {
+        "present": true,
+        "id": "weapon-cr-1-blast-cannon"
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 198,
+        "statTablePage": 199
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "unmapped::Cesta",
+      "canonicalName": "Cesta",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 121,
+        "statTablePage": 122
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": "Gungan simple-weapon familiarity/proficiency treatment in source text"
+    },
+    {
+      "identityKey": "weapon-concealed-dart-launcher",
+      "canonicalName": "Concealed Dart Launcher",
+      "repo": {
+        "present": true,
+        "id": "weapon-concealed-dart-launcher"
+      },
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "unmapped::Darkstick",
+      "canonicalName": "Darkstick",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 36,
+        "statTablePage": 36
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-deck-sweeper",
+      "canonicalName": "Deck Sweeper",
+      "repo": {
+        "present": true,
+        "id": "weapon-deck-sweeper"
+      },
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 50,
+        "statTablePage": 51
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-discblade",
+      "canonicalName": "Discblade",
+      "repo": {
+        "present": true,
+        "id": "weapon-discblade"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 61,
+        "statTablePage": 61
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "unmapped::Felucian Skullblade",
+      "canonicalName": "Felucian Skullblade",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 96,
+        "statTablePage": 96
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "unmapped::Fira",
+      "canonicalName": "Fira",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-flamethrower",
+      "canonicalName": "Flamethrower",
+      "repo": {
+        "present": true,
+        "id": "weapon-flamethrower"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 127,
+        "statTablePage": 126
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "unmapped::Garrote",
+      "canonicalName": "Garrote",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 59,
+        "statTablePage": 60
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-magna-caster",
+      "canonicalName": "Magna Caster",
+      "repo": {
+        "present": true,
+        "id": "weapon-magna-caster"
+      },
+      "source": {
+        "book": "Unknown Regions",
+        "descriptionPage": 38,
+        "statTablePage": 38
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-massassi-lanvarok",
+      "canonicalName": "Massassi Lanvarok",
+      "repo": {
+        "present": true,
+        "id": "weapon-massassi-lanvarok"
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "profileKind": "hybrid",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": "Massassi: advanced melee weapon"
+    },
+    {
+      "identityKey": "weapon-neural-inhibitor",
+      "canonicalName": "Neural Inhibitor",
+      "repo": {
+        "present": true,
+        "id": "weapon-neural-inhibitor"
+      },
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 50,
+        "statTablePage": 51
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "unmapped::Neuronic Whip",
+      "canonicalName": "Neuronic Whip",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 200,
+        "statTablePage": 199
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-pulse-rifle",
+      "canonicalName": "Pulse Rifle",
+      "repo": {
+        "present": true,
+        "id": "weapon-pulse-rifle"
+      },
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 50,
+        "statTablePage": 51
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-wookiee-ryyk-blade",
+      "canonicalName": "Ryyk Blade",
+      "repo": {
+        "present": true,
+        "id": "weapon-wookiee-ryyk-blade"
+      },
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 97,
+        "statTablePage": 96
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": "Wookiee: advanced melee proficiency counts"
+    },
+    {
+      "identityKey": "unmapped::Shyarn",
+      "canonicalName": "Shyarn",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-siang-lance",
+      "canonicalName": "Siang Lance",
+      "repo": {
+        "present": true,
+        "id": "weapon-siang-lance"
+      },
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 50,
+        "statTablePage": 50
+      },
+      "profileKind": "hybrid",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": "Ranged profile exotic; affixed bayonet profile simple"
+    },
+    {
+      "identityKey": "weapon-sith-lanvarok",
+      "canonicalName": "Sith Lanvarok",
+      "repo": {
+        "present": true,
+        "id": "weapon-sith-lanvarok"
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-squib-tensor-rifle",
+      "canonicalName": "Squib Tensor Rifle",
+      "repo": {
+        "present": true,
+        "id": "weapon-squib-tensor-rifle"
+      },
+      "source": {
+        "book": "Unknown Regions",
+        "descriptionPage": 39,
+        "statTablePage": 38
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": "Squib: treat as rifle rather than exotic weapon"
+    },
+    {
+      "identityKey": "unmapped::Tehkla Blade",
+      "canonicalName": "Tehkla Blade",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 62
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-verpine-shattergun",
+      "canonicalName": "Verpine Shatter Gun",
+      "repo": {
+        "present": true,
+        "id": "weapon-verpine-shattergun"
+      },
+      "source": {
+        "book": "Unknown Regions",
+        "descriptionPage": 39,
+        "statTablePage": 38
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": "Verpine: treat as pistol rather than exotic weapon"
+    },
+    {
+      "identityKey": "unmapped::Vibro-Saw",
+      "canonicalName": "Vibro-Saw",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Unknown Regions",
+        "descriptionPage": 36,
+        "statTablePage": 37
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-wrist-rocket-launcher",
+      "canonicalName": "Wrist Rocket Launcher",
+      "repo": {
+        "present": true,
+        "id": "weapon-wrist-rocket-launcher"
+      },
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 63,
+        "statTablePage": 61
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "weapon-xerrol-nightstinger",
+      "canonicalName": "Xerrol Nightstinger",
+      "repo": {
+        "present": true,
+        "id": "weapon-xerrol-nightstinger"
+      },
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "descriptionPage": 64,
+        "statTablePage": 65
+      },
+      "profileKind": "ranged",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    },
+    {
+      "identityKey": "unmapped::Zhaboka",
+      "canonicalName": "Zhaboka",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 66,
+        "statTablePage": 64
+      },
+      "profileKind": "melee",
+      "phase3BExoticEvidence": [
+        "weaponGroup:Exotic Weapon",
+        "schemaFamily.proficiency:exotic",
+        "attackProfile proficiency:exotic"
+      ],
+      "alternateProficiencyOrHandling": null
+    }
+  ]
+}

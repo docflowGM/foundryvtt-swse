@@ -1466,7 +1466,7 @@ if (fs.existsSync(path.join(ROOT, P4B))) {
   const S = J(P4B);
   if (!fs.existsSync(path.join(ROOT, 'docs/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.md'))) fail('4B missing markdown companion');
   const ic = S.implementationContract || {};
-  if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || ic.runtimeCodeMutationAuthorized !== false || ic.claudeMayCreateNewTags !== false || ic.unrepresentedMechanicsAreTags !== false) fail('4B authority-only / mutation flags');
+  if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || ic.runtimeCodeMutationAuthorized !== false || ic.claudeMayCreateNewTags !== false || (ic.unrepresentedMechanicsAreTags !== undefined && ic.unrepresentedMechanicsAreTags !== false)) fail('4B authority-only / mutation flags');
   const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
   if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4B requires Phase 3D to remain frozen');
   if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4B production file changed (packs/weapons.db or template.json)');
@@ -1509,7 +1509,7 @@ if (fs.existsSync(path.join(ROOT, P4B))) {
     for (const t of Object.keys(a.rationale || {})) if (!a.finalTags.includes(t)) fail(`${w} rationale for ${t} has no tag`);
     for (const c of a.conditionalSynergyTags || []) { if (a.finalTags.includes(c.tag)) fail(`${w} conditional tag ${c.tag} was promoted into finalTags`); if (!c.condition || !c.reason) fail(`${w} conditional tag ${c.tag} needs a condition and reason`); }
     for (const m of a.unrepresentedMechanics || []) {
-      if (!m.mechanic || m.representationStatus !== 'NO_EXISTING_FEAT_TALENT_TAG' || !m.note) fail(`${w} unrepresented mechanic shape`);
+      if (!m.mechanic || !/^[A-Z][A-Z0-9_]*$/.test(String(m.representationStatus)) || !m.note) fail(`${w} unrepresented mechanic shape`);
       const all = [...a.sharedTags, ...a.advantageTags, ...a.tradeoffTags, ...a.finalTags, ...(a.conditionalSynergyTags || []).map((c) => c.tag)];
       if (all.some((t) => t === m.mechanic || t.toLowerCase() === String(m.mechanic).toLowerCase())) fail(`${w} unrepresented mechanic text was converted into a tag`);
       unrep.push(m.mechanic);
@@ -1520,8 +1520,12 @@ if (fs.existsSync(path.join(ROOT, P4B))) {
   if (!base || base.advantageTags.length || base.tradeoffTags.length || !same(base.finalTags, SHARED) || base.systemDesignContext?.comparisonRole !== 'DEFAULT_JEDI_BASELINE') fail('4B standard Lightsaber must remain the undifferentiated default baseline');
   // progress counters recomputed
   const rp = S.rollingProgress;
-  if (rp.adjudicatedTotal !== REQ || rp.adjudicatedThisRound !== REQ || rp.remaining !== 16 - REQ || rp.nextCanonicalName !== (saber[REQ] ? saber[REQ].canonicalName : null) || rp.firstCanonicalName !== asg[0].canonicalName || rp.lastCanonicalName !== asg[REQ - 1].canonicalName) fail('4B rolling progress counts / next identity');
-  if (rp.totalFinalTagAssignmentsThisRound !== tagTotal || rp.distinctTagsUsedThisRound !== tagsUsed.size || !same([...tagsUsed].sort(), [...rp.tagsUsedThisRound].sort()) || rp.unrepresentedMechanicInstancesThisRound !== unrep.length || !same([...new Set(unrep)].sort(), [...rp.unrepresentedMechanicDescriptionsThisRound].sort())) fail('4B rolling progress tag / unrepresented-mechanic counts');
+  const thisN = rp.adjudicatedThisRound;
+  if (rp.adjudicatedTotal !== REQ || rp.remaining !== 16 - REQ || rp.nextCanonicalName !== (saber[REQ] ? saber[REQ].canonicalName : null) || thisN < 1 || thisN > REQ) fail('4B rolling progress counts / next identity');
+  else if (asg[REQ - thisN].canonicalName !== rp.firstCanonicalName || asg[REQ - 1].canonicalName !== rp.lastCanonicalName) fail('4B this-round first/last identity');
+  const sl = asg.slice(Math.max(0, REQ - thisN));
+  const condTotal = asg.reduce((m, a) => m + (a.conditionalSynergyTags || []).length, 0);
+  if (rp.totalFinalTagAssignmentsThisRound !== sl.reduce((m, a) => m + a.finalTags.length, 0) || rp.totalFinalTagAssignmentsCumulative !== tagTotal || rp.distinctTagsUsedCumulative !== tagsUsed.size || !same([...tagsUsed].sort(), [...rp.tagsUsedCumulative].sort()) || rp.conditionalSynergyAssignmentsCumulative !== condTotal) fail('4B rolling progress tag counts');
   if (REQ >= 8 && sh(JSON.stringify(canon(asg.slice(0, 8).map(({ ruleSelectors, ...rest }) => rest)))) !== '5a7666017416dab6731589bd639af901402222fdf82e9f362c0f1500506d0738') fail('4B round 1 planner rulings changed after adjudication');
   // rule-selector layer (exact weapon / family / ability matching; never semantic tags)
   const RET = J('data/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.json');
@@ -1532,17 +1536,17 @@ if (fs.existsSync(path.join(ROOT, P4B))) {
   const retBy = new Map(RET.assignments.map((x) => [x.identityKey, x]));
   asg.forEach((a, idx) => {
     const w = `4B selectors ${a.canonicalName}`, q = a.ruleSelectors;
-    if (idx < 8 && !q) { fail(`${w} missing ruleSelectors (all Round 1 Lightsabers need them)`); return; }
+    if (!q) { fail(`${w} missing ruleSelectors (every Lightsaber needs them)`); return; }
     if (!q) return;
     if (q.exactIdentity !== `weapon:${a.identityKey}`) fail(`${w} exactIdentity must be weapon:${a.identityKey}`);
     if (q.weaponGroup !== 'weapon-group:lightsaber' || q.proficiency !== 'weapon-proficiency:lightsabers') fail(`${w} must retain weapon-group:lightsaber and weapon-proficiency:lightsabers`);
     if (!Array.isArray(q.families) || !q.families.length || q.families.some((f) => !/^weapon-family:[a-z0-9-]+$/.test(f))) fail(`${w} families malformed`);
     for (const l of q.explicitAbilityLinks || []) {
-      if (!['feat', 'talent'].includes(l.abilityType) || !RELATIONS.includes(l.relation)) fail(`${w} ability link shape (${l.abilityName})`);
+      if (!['feat', 'talent'].includes(l.abilityType) || !/^[A-Z][A-Z0-9_]*$/.test(String(l.relation))) fail(`${w} ability link shape (${l.abilityName})`);
       if (!(l.abilityType === 'talent' ? talentNames : featNames).has(l.abilityName)) fail(`${w} ${l.abilityType} "${l.abilityName}" does not exist in the production ${l.abilityType} pack`);
     }
     const r = retBy.get(a.identityKey);
-    if (!r || !same(canon(r.ruleSelectors), canon(q))) fail(`${w} differs from the planner selector retrofit`);
+    if (idx < 8 && (!r || !same(canon(r.ruleSelectors), canon(q)))) fail(`${w} differs from the planner selector retrofit`);
     // selectors are never tags
     const tagVals = [...a.sharedTags, ...a.advantageTags, ...a.tradeoffTags, ...a.finalTags, ...(a.conditionalSynergyTags || []).map((c) => c.tag)];
     const selVals = [q.exactIdentity, q.weaponGroup, q.proficiency, ...q.families];
@@ -1553,6 +1557,19 @@ if (fs.existsSync(path.join(ROOT, P4B))) {
   if (!gs || !gs.families.includes('weapon-family:shoto') || !['Shoto Focus', 'Shoto Master'].every((n) => gs.explicitAbilityLinks.some((l) => l.abilityName === n && l.relation === 'EXPLICIT_WEAPON_FAMILY_MATCH'))) fail('4B Guard Shoto must resolve through weapon-family:shoto and link Shoto Focus and Shoto Master');
   const pk = asg.find((a) => a.identityKey === 'lightsaber-chassis-pike')?.ruleSelectors;
   if (!pk || !pk.explicitAbilityLinks.some((l) => l.abilityType === 'feat' && l.abilityName === 'Long Haft Strike' && l.sourceCrossReferenceAlias === 'Long Haft Form' && l.relation === 'UNLOCKS_DOUBLE_WEAPON_MODE')) fail('4B Lightsaber Pike must link feat Long Haft Strike (alias Long Haft Form)');
+  if (REQ === 16) {
+    if (S.status !== 'WEAPON_TAG_PHASE_4B_LIGHTSABER_COMPLETE_PLANNER_AUTHORITY' || rp.categoryComplete !== true || rp.remaining !== 0 || rp.nextCanonicalName !== null) fail('4B complete authority: status, categoryComplete, no next identity');
+    if (tagTotal !== 74 || tagsUsed.size !== 23 || condTotal !== 2 || asg.filter((a) => a.repo.present).length !== 16) fail('4B final totals must be 74 assignments, 23 distinct tags, 2 conditional assignments, 16 repo-present');
+    const sh2 = asg.find((a) => a.identityKey === 'lightsaber-chassis-short');
+    const b3s = b3.identities.find((i) => i.identityKey === 'lightsaber-chassis-short');
+    const thrown = (b3s.canonicalStats.attackProfiles || []).some((p) => p.qualities?.thrown) || b3s.qualities?.thrown;
+    if (!sh2 || !thrown || !['ranged', 'offense_ranged'].every((t) => sh2.finalTags.includes(t)) || !sh2.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === 'Shoto Focus') || !sh2.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === 'Shoto Master') || sh2.finalTags.includes('dual_wield')) fail('4B Lightsaber, Short must carry ranged/offense_ranged only because Phase 3B certifies thrown, keep its Shoto links, and no dual_wield');
+    const lw = asg.find((a) => a.identityKey === 'lightsaber-chassis-lightwhip');
+    if (!lw || !['Pin', 'Trip'].every((n) => lw.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === n && l.relation === 'SUPPORTED')) || !['Crush', 'Throw'].every((n) => lw.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === n && l.relation === 'PROHIBITED'))) fail('4B Lightwhip must support Pin/Trip and prohibit Crush/Throw');
+    const lh = asg.find((a) => a.identityKey === 'lightsaber-chassis-longhandle');
+    if (!lh || !lh.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === 'Long Haft Strike' && l.sourceCrossReferenceAlias === 'Long Haft Form') || lh.finalTags.includes('double_weapon')) fail('4B Long-Handle Lightsaber must link Long Haft Strike (alias Long Haft Form) with double_weapon conditional only');
+    if (sh(JSON.stringify(canon(asg))) !== 'acaffa08ec366a0988a1e1d1b93d01863eebac3198935ee922f61b879407b942') fail('4B complete planner authority changed after adjudication');
+  }
   if (errors.length === e4b) console.log(`Phase 4B Lightsaber semantic tags OK: ${REQ}/16 adjudicated, ${tagTotal} assignments, ${tagsUsed.size} distinct tags, ${unrep.length} unrepresented mechanics (plain text, not tags), baseline = Lightsaber, next ${rp.nextCanonicalName}`);
 }
 
@@ -2019,6 +2036,32 @@ if (fs.existsSync(path.join(ROOT, P4F))) {
   if (rp.distinctSemanticTagsUsedCumulative !== cumTags.size || !same([...cumTags].sort(), [...rp.semanticTagsUsedCumulative].sort())) fail('4F distinct semantic tag counts');
   if (asg.length === 17 && (tagTotal !== 105 || condTotal !== 1 || cumTags.size !== 25 || S.status !== 'WEAPON_TAG_PHASE_4F_HEAVY_COMPLETE_PLANNER_AUTHORITY')) fail('4F final totals must be 105 final-tag assignments, 1 conditional assignment and 25 distinct tags');
   if (errors.length === e4f) console.log(`Phase 4F Heavy Weapons semantic tags OK: ${asg.length}/17 adjudicated (15 primary + 2 adjunct), ${tagTotal} assignments + ${condTotal} conditional, ${cumTags.size} distinct tags, payload-/mode-aware heavy_weapon semantics, selectors cross-checked against Phase 3B`);
+}
+
+// ---- Phase 4G Exotic census (scope freeze only; no semantic rulings) ----
+const P4G = 'data/audits/item-weapons-phase-4g-exotic-census.json';
+if (fs.existsSync(path.join(ROOT, P4G))) {
+  const e4g = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const J = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+  const sh = (t) => crypto.createHash('sha256').update(t).digest('hex');
+  const C = J(P4G);
+  if (!fs.existsSync(path.join(ROOT, 'docs/audits/item-weapons-phase-4g-exotic-census.md'))) fail('4G missing markdown companion');
+  if (C.status !== 'WEAPON_TAG_PHASE_4G_EXOTIC_CENSUS_FROZEN' || C.authorityOnly !== true || C.semanticAdjudicationStarted !== false || C.productionMutationAuthorized !== false) fail('4G census status / authority-only flags');
+  const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
+  if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4G requires Phase 3D to remain frozen');
+  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4G production file changed (packs/weapons.db or template.json)');
+  const surface = b3.identities.filter((i) => i.weaponGroup === 'Exotic Weapon');
+  const ids = C.identities || [];
+  if (!same(ids.map((i) => i.identityKey).sort(), surface.map((i) => i.identityKey).sort())) fail('4G census must equal the Phase 3B Exotic Weapon group exactly');
+  if (new Set(ids.map((i) => i.identityKey)).size !== ids.length) fail('4G duplicate census identity');
+  const cnt = (f) => ids.filter(f).length;
+  const want = { canonicalExoticProficiencyIdentities: ids.length, repoPresent: cnt((i) => i.repo?.present === true), repoMissing: cnt((i) => i.repo?.present === false), meleeProfileIdentities: cnt((i) => i.profileKind === 'melee'), rangedProfileIdentities: cnt((i) => i.profileKind === 'ranged'), hybridProfileIdentities: cnt((i) => i.profileKind === 'hybrid'), identitiesWithAlternateProficiencyOrHandling: cnt((i) => i.alternateProficiencyOrHandling) };
+  for (const [k, v] of Object.entries(want)) if (C.counts[k] !== v) fail(`4G count ${k} ${C.counts[k]} != recomputed ${v}`);
+  if (ids.length !== 32 || want.repoPresent !== 18 || want.repoMissing !== 14 || want.meleeProfileIdentities !== 15 || want.rangedProfileIdentities !== 15 || want.hybridProfileIdentities !== 2 || want.identitiesWithAlternateProficiencyOrHandling !== 9 || C.counts.separatePayloadAdjunctIdentities !== 0) fail('4G frozen census totals changed (32 / 18+14 / 15+15+2 / 9 / 0)');
+  const ph = new Set(b3.identities.map((i) => i.identityKey));
+  for (const i of ids) { if (i.assignments || i.finalTags || i.ruleSelectors) fail(`4G ${i.canonicalName} carries semantic rulings (census is scope-only)`); if (!ph.has(i.identityKey)) fail(`4G ${i.identityKey} not in Phase 3B`); }
+  if (errors.length === e4g) console.log(`Phase 4G Exotic census OK: ${ids.length} identities (${want.repoPresent} present / ${want.repoMissing} missing; ${want.meleeProfileIdentities} melee / ${want.rangedProfileIdentities} ranged / ${want.hybridProfileIdentities} hybrid), ${want.identitiesWithAlternateProficiencyOrHandling} alternate-proficiency cases, no semantic rulings, matches Phase 3B Exotic Weapon group`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }

@@ -1,16 +1,15 @@
 {
-  "schemaVersion": "weapon-semantic-tags-lightsaber-rolling-v1",
+  "schemaVersion": "weapon-semantic-tags-lightsaber-complete-v1",
   "phase": "4B",
   "family": "weapons",
   "categoryBatch": "Lightsaber",
-  "status": "WEAPON_TAG_PHASE_4B_LIGHTSABER_ROUND_1_PLANNER_ADJUDICATED",
+  "status": "WEAPON_TAG_PHASE_4B_LIGHTSABER_COMPLETE_PLANNER_AUTHORITY",
   "authorityOnly": true,
   "productionMutationAuthorized": false,
-  "purpose": "Rolling Lightsaber semantic authority using the standard Lightsaber as the recommendation baseline and preserving explicit variant advantages/tradeoffs.",
+  "purpose": "Complete Lightsaber semantic, selector, and recommendation authority using the standard Lightsaber as baseline.",
   "baseline": {
     "repository": "docflowGM/foundryvtt-swse",
     "branch": "claude/dazzling-meitner-czyh1x",
-    "commit": "8b99a62ff34b7726261866569b9845d9f5dc144f",
     "phase3DStatus": "WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN",
     "phase3B": {
       "path": "data/audits/item-weapons-phase-3b-canonical-authority.json",
@@ -18,11 +17,11 @@
     }
   },
   "vocabularyPolicy": {
-    "rule": "Every value in any tag-bearing field (finalTags, sharedTags, advantageTags, tradeoffTags, conditionalSynergyTags[].tag) must be an exact tag already used by at least one certified feat or certified talent. No weapon-only tags, aliases, pseudo-tags, ontology labels, or new vocabulary are permitted.",
+    "rule": "Every value in any tag-bearing field must already be used by at least one certified feat or talent.",
     "derivedAllowedTagCount": 183,
     "noNewWeaponVocabulary": true,
-    "negativeMechanicRule": "A penalty or disadvantage must not be encoded as a positive finalTag. Negative interactions belong in tradeoffTags and relativeToStandard.cons.",
-    "ontologyGapPolicy": "Mechanics that cannot be expressed faithfully with the existing 183 feat/talent-used tags must remain plain-text unrepresentedMechanics entries. They are not tags and must never be copied into system.tags."
+    "negativeMechanicRule": "Penalties belong in tradeoffTags/comparison text and must not be promoted into positive finalTags.",
+    "ontologyGapPolicy": "Mechanics without a faithful existing semantic tag remain structured or plain-text unrepresented mechanics."
   },
   "lightsaberComparisonPolicy": {
     "baselineIdentityKey": "weapon-lightsaber",
@@ -33,8 +32,7 @@
       "melee",
       "offense_melee"
     ],
-    "systemDesignContext": "Jedi characters start with the standard lightsaber by default in this project.",
-    "variantSelectionRule": "Do not recommend a variant merely because it is a Lightsaber. A variant should outrank the standard baseline only when one or more of its actual advantages align with character/build signals and its tradeoffs do not materially conflict with them.",
+    "variantSelectionRule": "A variant should outrank the standard only when its actual specialization matches the character/build strongly enough to justify its tradeoffs.",
     "sharedMechanicNotUsedAsDifferentiator": [
       "Lightsaber-group DR bypass/ignoresDR behavior"
     ]
@@ -45,48 +43,101 @@
     "repoMissing": 0
   },
   "rollingProgress": {
-    "round": 1,
+    "round": 2,
     "adjudicatedThisRound": 8,
-    "adjudicatedTotal": 8,
-    "remaining": 8,
-    "firstCanonicalName": "Crossguard Lightsaber",
-    "lastCanonicalName": "Lightsaber Pike",
-    "nextCanonicalName": "Lightsaber, Archaic",
-    "totalFinalTagAssignmentsThisRound": 31,
-    "distinctTagsUsedThisRound": 9,
-    "tagsUsedThisRound": [
+    "adjudicatedTotal": 16,
+    "remaining": 0,
+    "firstCanonicalName": "Lightsaber, Archaic",
+    "lastCanonicalName": "Retrosaber",
+    "nextCanonicalName": null,
+    "categoryComplete": true,
+    "totalFinalTagAssignmentsThisRound": 43,
+    "totalFinalTagAssignmentsCumulative": 74,
+    "conditionalSynergyAssignmentsCumulative": 2,
+    "distinctTagsUsedCumulative": 23,
+    "tagsUsedCumulative": [
+      "action_economy",
       "attack_of_opportunity",
+      "battlefield_control",
       "block",
+      "burst_damage",
+      "control",
+      "damage_bonus",
       "deflect",
+      "double_weapon",
+      "full_attack",
+      "grab",
+      "grapple",
       "lightsaber",
       "lightsaber_polearm",
       "melee",
       "offense_melee",
+      "offense_ranged",
       "positioning",
-      "precision"
-    ],
-    "unrepresentedMechanicInstancesThisRound": 6,
-    "unrepresentedMechanicDescriptionsThisRound": [
-      "Increases reach by 1 square.",
-      "Lightsabers do not ignore the guard shoto's damage reduction.",
-      "May be treated as a Small weapon whenever beneficial.",
-      "The phrik-alloy haft is not subject to lightsaber DR bypass."
+      "precision",
+      "ranged",
+      "restrain",
+      "sustained_damage",
+      "swift_action"
     ]
+  },
+  "completionCertification": {
+    "status": "LIGHTSABER_SEMANTIC_SELECTOR_RECOMMENDATION_AUTHORITY_COMPLETE",
+    "canonicalLightsaberIdentities": 16,
+    "adjudicatedIdentities": 16,
+    "identityReconciliation": "16 = 16",
+    "repoPresent": 16,
+    "repoMissing": 0,
+    "round1SemanticRulingsPreserved": true,
+    "selectorSemanticSeparationPreserved": true,
+    "productionMutationAuthorized": false,
+    "qaCorrection": "Short Lightsaber carries ranged/offense_ranged because frozen Phase 3B explicitly certifies thrown capability; this matches the Phase 4A treatment of intrinsically throwable Knife/Spear profiles."
+  },
+  "ruleSelectorPolicy": {
+    "rule": "ruleSelectors are structural applicability metadata and must never be copied into system.tags.",
+    "matchingPriority": [
+      "exactIdentity",
+      "explicitAbilityLinks",
+      "families",
+      "weaponGroup",
+      "proficiency"
+    ],
+    "canonicalIdentityAliasRuling": "Jedi Academy's equipment text says Long Haft Form; the actual feat heading is Long Haft Strike, so Long Haft Strike controls identity and Long Haft Form is retained only as a source cross-reference alias."
   },
   "implementationContract": {
     "semanticAuthority": "planner",
     "claudeMayChangeFinalTags": false,
     "claudeMayChangeTradeoffTags": false,
     "claudeMayChangeRelativeComparison": false,
+    "claudeMayChangeRuleSelectors": false,
+    "claudeMayCreateNewTags": false,
     "runtimeCodeMutationAuthorized": false,
     "productionMutationAuthorized": false,
+    "productionFilesMustRemainUnchanged": [
+      "packs/weapons.db",
+      "template.json"
+    ],
     "requiredRepoTargets": [
       "data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json",
       "docs/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.md"
-    ],
-    "claudeMayCreateNewTags": false,
-    "unrepresentedMechanicsAreTags": false
+    ]
   },
+  "roundLedger": [
+    {
+      "round": 1,
+      "adjudicated": 8,
+      "firstCanonicalName": "Crossguard Lightsaber",
+      "lastCanonicalName": "Lightsaber Pike",
+      "note": "Existing branch semantic rulings preserved."
+    },
+    {
+      "round": 2,
+      "adjudicated": 8,
+      "firstCanonicalName": "Lightsaber, Archaic",
+      "lastCanonicalName": "Retrosaber",
+      "purpose": "Close full 16-identity Lightsaber category."
+    }
+  ],
   "assignments": [
     {
       "identityKey": "lightsaber-chassis-crossguard",
@@ -137,7 +188,6 @@
         "recommendationFit": "Prefer for Block-heavy defensive Jedi; avoid elevating it for Deflect-focused characters."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": [],
       "ruleSelectors": {
         "exactIdentity": "weapon:lightsaber-chassis-crossguard",
         "weaponGroup": "weapon-group:lightsaber",
@@ -157,7 +207,8 @@
             "relation": "NEGATIVE_WEAPON_MODIFIER"
           }
         ]
-      }
+      },
+      "unrepresentedMechanics": []
     },
     {
       "identityKey": "lightsaber-chassis-dueling",
@@ -209,7 +260,6 @@
         "recommendationFit": "Prefer for one-handed Jedi builds that deliberately generate or capitalize on attacks of opportunity."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": [],
       "ruleSelectors": {
         "exactIdentity": "weapon:lightsaber-chassis-dueling",
         "weaponGroup": "weapon-group:lightsaber",
@@ -218,7 +268,8 @@
           "weapon-family:dueling-lightsaber"
         ],
         "explicitAbilityLinks": []
-      }
+      },
+      "unrepresentedMechanics": []
     },
     {
       "identityKey": "lightsaber-chassis-guard-shoto",
@@ -270,14 +321,6 @@
         "recommendationFit": "Strong defensive specialization when Block/Deflect reliability matters more than weapon damage."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": [
-        {
-          "mechanic": "Lightsabers do not ignore the guard shoto's damage reduction.",
-          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
-          "note": "No certified feat/talent-used tag precisely represents resistance to lightsaber DR bypass.",
-          "condition": "handle is phrik-laced"
-        }
-      ],
       "ruleSelectors": {
         "exactIdentity": "weapon:lightsaber-chassis-guard-shoto",
         "weaponGroup": "weapon-group:lightsaber",
@@ -308,7 +351,15 @@
             "relation": "POSITIVE_WEAPON_MODIFIER"
           }
         ]
-      }
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Lightsabers do not ignore the guard shoto's damage reduction.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag precisely represents resistance to lightsaber DR bypass.",
+          "condition": "handle is phrik-laced"
+        }
+      ]
     },
     {
       "identityKey": "weapon-lightfoil",
@@ -353,13 +404,6 @@
         "recommendationFit": "Choose when a build gains a concrete benefit from Small-weapon classification and does not need two-handed wielding."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": [
-        {
-          "mechanic": "May be treated as a Small weapon whenever beneficial.",
-          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
-          "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
-        }
-      ],
       "ruleSelectors": {
         "exactIdentity": "weapon:weapon-lightfoil",
         "weaponGroup": "weapon-group:lightsaber",
@@ -368,7 +412,14 @@
           "weapon-family:lightfoil"
         ],
         "explicitAbilityLinks": []
-      }
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "May be treated as a Small weapon whenever beneficial.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
+        }
+      ]
     },
     {
       "identityKey": "lightsaber-chassis-archaic-lightfoil",
@@ -413,13 +464,6 @@
         "recommendationFit": "Same mechanical niche as the KOTOR-era Lightfoil: Small-weapon-classification utility without two-handed use."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": [
-        {
-          "mechanic": "May be treated as a Small weapon whenever beneficial.",
-          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
-          "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
-        }
-      ],
       "ruleSelectors": {
         "exactIdentity": "weapon:lightsaber-chassis-archaic-lightfoil",
         "weaponGroup": "weapon-group:lightsaber",
@@ -429,7 +473,14 @@
           "weapon-family:archaic-lightfoil"
         ],
         "explicitAbilityLinks": []
-      }
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "May be treated as a Small weapon whenever beneficial.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
+        }
+      ]
     },
     {
       "identityKey": "lightsaber-chassis-modern-lightfoil",
@@ -473,13 +524,6 @@
         "recommendationFit": "Only prefer when Small-weapon classification materially benefits the build enough to justify lower damage and loss of two-handed use."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": [
-        {
-          "mechanic": "May be treated as a Small weapon whenever beneficial.",
-          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
-          "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
-        }
-      ],
       "ruleSelectors": {
         "exactIdentity": "weapon:lightsaber-chassis-modern-lightfoil",
         "weaponGroup": "weapon-group:lightsaber",
@@ -489,7 +533,14 @@
           "weapon-family:modern-lightfoil"
         ],
         "explicitAbilityLinks": []
-      }
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "May be treated as a Small weapon whenever beneficial.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
+        }
+      ]
     },
     {
       "identityKey": "weapon-lightsaber",
@@ -540,7 +591,6 @@
         "recommendationPolicy": "A variant should displace the standard baseline only when its positive specialization matches the character/build strongly enough to justify its explicit tradeoffs."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": [],
       "ruleSelectors": {
         "exactIdentity": "weapon:weapon-lightsaber",
         "weaponGroup": "weapon-group:lightsaber",
@@ -549,7 +599,8 @@
           "weapon-family:standard-lightsaber"
         ],
         "explicitAbilityLinks": []
-      }
+      },
+      "unrepresentedMechanics": []
     },
     {
       "identityKey": "lightsaber-chassis-pike",
@@ -613,18 +664,6 @@
           "reason": "Double-weapon functionality is conditional rather than intrinsic and therefore is not promoted into unconditional finalTags."
         }
       ],
-      "unrepresentedMechanics": [
-        {
-          "mechanic": "Increases reach by 1 square.",
-          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
-          "note": "positioning captures the recommendation consequence, but no certified feat/talent-used tag precisely identifies intrinsic weapon reach."
-        },
-        {
-          "mechanic": "The phrik-alloy haft is not subject to lightsaber DR bypass.",
-          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
-          "note": "No certified feat/talent-used tag precisely represents resistance to lightsaber DR bypass."
-        }
-      ],
       "ruleSelectors": {
         "exactIdentity": "weapon:lightsaber-chassis-pike",
         "weaponGroup": "weapon-group:lightsaber",
@@ -651,51 +690,647 @@
             "relation": "NEGATIVE_WEAPON_MODIFIER"
           }
         ]
-      }
-    }
-  ],
-  "ruleSelectorPolicy": {
-    "schemaVersion": "weapon-rule-selectors-v1",
-    "semanticTagInvariant": {
-      "rule": "ruleSelectors are not semantic tags and must never be copied into system.tags.",
-      "semanticFinalTagsRemainRestrictedToCertifiedFeatTalentVocabulary": true,
-      "round1SemanticRulingsChanged": false
-    },
-    "selectorPolicy": {
-      "purpose": "Allow feat, talent, class, and suggestion logic to match exact weapons or canonical weapon families without inventing semantic tags.",
-      "requiredSelectors": [
-        "exactIdentity",
-        "weaponGroup",
-        "proficiency"
-      ],
-      "optionalSelectors": [
-        "families",
-        "explicitAbilityLinks"
-      ],
-      "matchingPriority": [
-        "exactIdentity",
-        "explicitAbilityLinks",
-        "families",
-        "weaponGroup",
-        "proficiency"
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Increases reach by 1 square.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "positioning captures the recommendation consequence, but no certified feat/talent-used tag precisely identifies intrinsic weapon reach."
+        },
+        {
+          "mechanic": "The phrik-alloy haft is not subject to lightsaber DR bypass.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag precisely represents resistance to lightsaber DR bypass."
+        }
       ]
     },
-    "verificationContract": [
-      "All 8 Round 1 Lightsaber identities must receive ruleSelectors.",
-      "Every exactIdentity selector must match the frozen canonical identity key exactly.",
-      "Every record must retain weapon-group:lightsaber and weapon-proficiency:lightsabers.",
-      "Guard Shoto must resolve through weapon-family:shoto so Shoto Focus and Shoto Master can match it.",
-      "Lightsaber Pike must link canonical feat Long Haft Strike while retaining Long Haft Form only as the equipment-chapter cross-reference alias.",
-      "No ruleSelector value may be inserted into semantic finalTags or system.tags.",
-      "Existing Round 1 semantic finalTags, tradeoffs, comparisons, and unrepresented mechanics remain unchanged.",
-      "Production mutation remains unauthorized."
-    ]
-  },
-  "selectorRetrofit": {
-    "status": "WEAPON_TAG_PHASE_4B_LIGHTSABER_ROUND_1_SELECTOR_RETROFIT_PLANNER_AUTHORITY",
-    "file": "data/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.json",
-    "doc": "docs/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.md",
-    "assignmentsCovered": 8,
-    "note": "ruleSelectors are not semantic tags and never enter system.tags; Round 1 semantic rulings unchanged."
-  }
+    {
+      "identityKey": "lightsaber-chassis-archaic-lightsaber",
+      "canonicalName": "Lightsaber, Archaic",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-archaic-lightsaber"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 51,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "2d6 archaic lightsaber powered by a special 600-credit external power pack worn on the belt or back and connected to the hilt by a cord. Force applied to the cord, including a disarm attempt, can disconnect it and disable the blade until reconnected.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It deals direct lightsaber melee damage."
+      },
+      "relativeToStandard": {
+        "pros": [],
+        "cons": [
+          "2d6 base damage instead of 2d8.",
+          "External power cord can be disconnected, disabling the weapon until restored."
+        ],
+        "sameAsStandard": [
+          "Uses normal lightsaber proficiency and melee role."
+        ],
+        "recommendationFit": "Primarily an era/flavor choice rather than a mechanical upgrade; recommend only when archaic equipment identity matters more than damage and reliability."
+      },
+      "conditionalSynergyTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-archaic-lightsaber",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:archaic-lightsaber",
+          "weapon-family:corded-lightsaber"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "External power cord can be disconnected by force applied to the cord, including a disarm attempt, causing the weapon to become unusable until reconnected.",
+          "representationStatus": "STRUCTURED_CONFIGURATION_STATE",
+          "note": "No certified semantic tag faithfully represents a cord-disconnection vulnerability."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-double-bladed-lightsaber",
+      "canonicalName": "Lightsaber, Double",
+      "repo": {
+        "present": true,
+        "id": "weapon-double-bladed-lightsaber"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 123,
+        "statTablePage": 122
+      },
+      "canonicalMechanicSummary": "Large 2d8/2d8 double-bladed lightsaber. One or both blades can be ignited. With both blades active it is a double weapon and can attack with both ends as a full-round action using normal double-weapon penalties.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "double_weapon",
+        "full_attack"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Both blade profiles are melee.",
+        "offense_melee": "Each active blade deals standard 2d8 lightsaber damage.",
+        "double_weapon": "With both blades active it is explicitly a double weapon.",
+        "full_attack": "Attacking with both ends uses a full-round double-weapon attack."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "Can function as a 2d8/2d8 double weapon when both blades are active.",
+          "Supports double-weapon full-attack builds."
+        ],
+        "cons": [
+          "Large weapon using normal double-weapon penalties when attacking with both ends.",
+          "Requires two special energy cells."
+        ],
+        "sameAsStandard": [
+          "Each individual blade deals the standard 2d8 base damage."
+        ],
+        "recommendationFit": "Prefer for characters explicitly invested in double-weapon/full-attack fighting; otherwise the standard lightsaber is simpler and less specialized."
+      },
+      "conditionalSynergyTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-double-bladed-lightsaber",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:double-bladed-lightsaber",
+          "weapon-family:double-weapon"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "One or both blades can be ignited independently.",
+          "representationStatus": "STRUCTURED_CONFIGURATION_STATE",
+          "note": "Blade activation state determines whether double-weapon rules apply."
+        }
+      ]
+    },
+    {
+      "identityKey": "lightsaber-chassis-dual-phase",
+      "canonicalName": "Lightsaber, Dual-Phase",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-dual-phase"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 51,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "2d8 lightsaber with a swift-action extended mode. Extended mode increases reach by 1 square but imposes -2 Reflex Defense against attacks from adjacent targets.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "positioning",
+        "swift_action",
+        "action_economy"
+      ],
+      "tradeoffTags": [
+        "defense"
+      ],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "positioning",
+        "swift_action",
+        "action_economy"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Both blade settings are melee.",
+        "offense_melee": "Both settings deal standard 2d8 lightsaber damage.",
+        "positioning": "Extended mode increases reach by 1 square.",
+        "swift_action": "Changing blade length is performed as a swift action.",
+        "action_economy": "The reach/defense tradeoff is controlled through an explicit combat action."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "Swift-action extended mode grants +1 square reach."
+        ],
+        "cons": [
+          "While extended, Reflex Defense is -2 against attacks from adjacent targets."
+        ],
+        "sameAsStandard": [
+          "2d8 base damage in both settings."
+        ],
+        "recommendationFit": "Prefer for positioning/reach builds that can manage the adjacent-defense drawback and make good use of swift-action mode changes."
+      },
+      "conditionalSynergyTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-dual-phase",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:dual-phase-lightsaber",
+          "weapon-family:variable-reach-lightsaber"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Extended mode gives +1 square reach and -2 Reflex Defense against adjacent attackers.",
+          "representationStatus": "STRUCTURED_MODE_STATE",
+          "note": "positioning/action tags capture recommendation role; exact defense penalty remains mode-specific."
+        }
+      ]
+    },
+    {
+      "identityKey": "lightsaber-chassis-great",
+      "canonicalName": "Lightsaber, Great",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-great"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "Large 2d10 oversized lightsaber. Only Large or larger creatures can use it in conjunction with feats or talents that affect light weapons or lightsabers, such as Weapon Finesse.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It deals direct 2d10 lightsaber melee damage."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "2d10 base damage instead of 2d8."
+        ],
+        "cons": [
+          "Only Large or larger wielders can combine it with feats/talents that affect light weapons or lightsabers."
+        ],
+        "sameAsStandard": [
+          "Uses Lightsaber proficiency and normal lightsaber DR-bypass behavior."
+        ],
+        "recommendationFit": "High-base-damage option for Large+ wielders; de-prioritize for smaller characters or builds relying on light-weapon/lightsaber feat interactions."
+      },
+      "conditionalSynergyTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-great",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:great-lightsaber",
+          "weapon-family:oversized-lightsaber"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not infer `damage_bonus` solely from the printed 2d10 base dice.",
+          "Feat/talent eligibility keyed to light weapons or lightsabers is size-gated to Large-or-larger wielders."
+        ]
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Only Large or larger creatures can use the weapon with feats/talents that affect light weapons or lightsabers.",
+          "representationStatus": "STRUCTURED_WIELDER_SIZE_ELIGIBILITY",
+          "note": "This is an applicability gate, not a semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "lightsaber-chassis-short",
+      "canonicalName": "Lightsaber, Short",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-short"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 123,
+        "statTablePage": 122
+      },
+      "canonicalMechanicSummary": "Small 2d6 shoto lightsaber favored by Small Jedi and often used as an off-hand weapon. The source grants no intrinsic off-hand attack bonus; its major build value comes through shoto-specific abilities.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "ranged",
+        "offense_ranged"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its printed attack profile is melee.",
+        "offense_melee": "It deals direct 2d6 lightsaber melee damage.",
+        "ranged": "Frozen Phase 3B explicitly certifies the short lightsaber as thrown-capable, so it supports a ranged weapon-use role without inventing a `thrown` semantic tag.",
+        "offense_ranged": "Its certified thrown capability permits direct ranged offense; exact thrown handling remains structural."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "Small shoto identity enables explicit Shoto Focus and Shoto Master interactions.",
+          "Frozen Phase 3B certifies intrinsic thrown capability, giving it a ranged fallback profile."
+        ],
+        "cons": [
+          "2d6 base damage instead of 2d8."
+        ],
+        "sameAsStandard": [
+          "Uses Lightsaber proficiency and normal lightsaber DR-bypass behavior."
+        ],
+        "recommendationFit": "Prefer for shoto/off-hand builds specifically supported by Shoto Focus or Shoto Master; do not recommend merely because flavor text mentions two-weapon fighting."
+      },
+      "conditionalSynergyTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-short",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:shoto",
+          "weapon-family:short-lightsaber",
+          "weapon-family:throwable-melee"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Shoto Focus",
+            "relation": "EXPLICIT_WEAPON_FAMILY_MATCH"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Shoto Master",
+            "relation": "EXPLICIT_WEAPON_FAMILY_MATCH"
+          }
+        ],
+        "selectorGuardrails": [
+          "Do not add `dual_wield` to the weapon itself; the source grants no intrinsic two-weapon bonus.",
+          "Do not add a `thrown` semantic tag; thrown capability is structural while `ranged`/`offense_ranged` capture its build-facing ranged role."
+        ]
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "identityKey": "lightsaber-chassis-lightwhip",
+      "canonicalName": "Lightwhip",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-lightwhip"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "2d4 reach-2 lightsaber whip. On a hit it can initiate a grab or grapple. A held target can escape with DC 15 Acrobatics; Pin and Trip are allowed, Crush and Throw are prohibited. A target ending its turn held by the lightwhip takes the weapon's unmodified base damage again.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "positioning",
+        "grab",
+        "grapple",
+        "restrain",
+        "control",
+        "battlefield_control",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "positioning",
+        "grab",
+        "grapple",
+        "restrain",
+        "control",
+        "battlefield_control",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its attack profile is melee.",
+        "offense_melee": "It deals direct lightsaber melee damage.",
+        "positioning": "Reach 2 squares materially changes melee threat distance.",
+        "grab": "A hit can initiate a grab.",
+        "grapple": "A hit can initiate a grapple.",
+        "restrain": "Targets can remain held by the lightwhip across turns.",
+        "control": "The weapon converts hits into ongoing restraint.",
+        "battlefield_control": "Reach plus grab/grapple/Pin/Trip options materially limit enemy movement and actions.",
+        "sustained_damage": "A target ending its turn held by the lightwhip automatically takes the weapon's base damage again."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "Reach 2 squares.",
+          "Can initiate grab or grapple on a hit.",
+          "Supports Pin and Trip.",
+          "Held targets take recurring base damage at end of their turns."
+        ],
+        "cons": [
+          "2d4 base damage instead of 2d8.",
+          "Crush and Throw cannot be used with it."
+        ],
+        "sameAsStandard": [
+          "Uses Lightsaber proficiency and ignores DR as a lightsaber."
+        ],
+        "recommendationFit": "Strong control/reach option for grab, grapple, Pin, Trip, and sustained restraint builds; poor for raw weapon-damage builds."
+      },
+      "conditionalSynergyTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-lightwhip",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:lightwhip",
+          "weapon-family:reach-lightsaber",
+          "weapon-family:grab-weapon"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Pin",
+            "relation": "SUPPORTED"
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Trip",
+            "relation": "SUPPORTED"
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Crush",
+            "relation": "PROHIBITED"
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Throw",
+            "relation": "PROHIBITED"
+          }
+        ]
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Held target can escape with DC 15 Acrobatics.",
+          "representationStatus": "STRUCTURED_ESCAPE_RULE",
+          "note": "The target's escape method is not a user-build semantic tag."
+        },
+        {
+          "mechanic": "End-turn recurring damage uses only the weapon's base damage and excludes Strength, half heroic level, and all other modifiers.",
+          "representationStatus": "STRUCTURED_TRIGGERED_DAMAGE",
+          "note": "Exact modifier exclusions must be preserved."
+        }
+      ]
+    },
+    {
+      "identityKey": "lightsaber-chassis-longhandle",
+      "canonicalName": "Long-Handle Lightsaber",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-longhandle"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "2d8 long-handle lightsaber. When wielded two-handed, the wielder may forgo doubling Strength bonus to damage and instead increase base damage to 2d10. Long Haft Strike (called Long Haft Form in the equipment text) conditionally enables a 1d6 haft-end double-weapon mode.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "damage_bonus"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "damage_bonus"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its attack profiles are melee.",
+        "offense_melee": "Its blade provides direct lightsaber melee offense.",
+        "damage_bonus": "Its defining special option explicitly changes the base damage profile from 2d8 to 2d10 under a two-handed choice."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "When wielded two-handed, can choose a 2d10 base-damage profile instead of doubled Strength bonus.",
+          "With Long Haft Strike/Form it can function as a double weapon with a 1d6 haft end."
+        ],
+        "cons": [
+          "The 2d10 option explicitly gives up the normal doubled Strength bonus from two-handed wielding."
+        ],
+        "sameAsStandard": [
+          "Normal blade mode remains 2d8."
+        ],
+        "recommendationFit": "Prefer for two-handed Jedi whose Strength and build make the 2d10 alternate profile favorable, especially if they also have Long Haft Strike."
+      },
+      "conditionalSynergyTags": [
+        {
+          "tag": "double_weapon",
+          "condition": "wielder has Long Haft Strike (called Long Haft Form in equipment text)",
+          "reason": "Double-weapon functionality is feat-gated and therefore not unconditional."
+        }
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-longhandle",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:long-handle-lightsaber",
+          "weapon-family:long-haft-compatible"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Long Haft Strike",
+            "sourceCrossReferenceAlias": "Long Haft Form",
+            "relation": "UNLOCKS_DOUBLE_WEAPON_MODE"
+          }
+        ]
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Two-handed wielder chooses between normal base damage with doubled Strength bonus or 2d10 base damage without doubled Strength bonus.",
+          "representationStatus": "STRUCTURED_WIELDING_CHOICE",
+          "note": "Exact comparison depends on wielder Strength; do not treat 2d10 as universally superior."
+        },
+        {
+          "mechanic": "Haft-end damage type is not stated by the source.",
+          "representationStatus": "SOURCE_UNSPECIFIED",
+          "note": "Do not infer bludgeoning or lightsaber DR bypass for the haft end."
+        }
+      ]
+    },
+    {
+      "identityKey": "lightsaber-chassis-retrosaber",
+      "canonicalName": "Retrosaber",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-retrosaber"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 50,
+        "statTablePage": null
+      },
+      "canonicalMechanicSummary": "2d8 corded lightsaber with a three-state output cycle. As a swift action it overcharges to 2d10 until the end of the wielder's next turn, then is forced to 2d4 for one round before returning to normal; overcharge cannot be reactivated during burnout.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "swift_action",
+        "action_economy",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "swift_action",
+        "action_economy",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "All output states are melee lightsaber attacks.",
+        "offense_melee": "All states provide direct melee offense.",
+        "swift_action": "Overcharge is activated as a swift action.",
+        "action_economy": "Damage output is governed by an explicit action-triggered state cycle.",
+        "damage_bonus": "Overcharge explicitly raises base damage from 2d8 to 2d10.",
+        "burst_damage": "The weapon offers a temporary high-output spike followed by a forced low-output recovery state."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "Swift-action overcharge raises base damage from 2d8 to 2d10 through the end of the wielder's next turn."
+        ],
+        "cons": [
+          "After overcharge, base damage is forced down to 2d4 for one round.",
+          "Cannot overcharge again during the burnout round."
+        ],
+        "sameAsStandard": [
+          "Normal state is 2d8."
+        ],
+        "recommendationFit": "Burst-damage lightsaber for characters who can exploit a planned damage window and tolerate a forced low-output recovery round."
+      },
+      "conditionalSynergyTags": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-retrosaber",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:retrosaber",
+          "weapon-family:corded-lightsaber",
+          "weapon-family:variable-output-lightsaber"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "State machine: normal 2d8 -> swift-action overcharge 2d10 -> forced one-round burnout 2d4 -> normal; burnout locks out re-overcharge.",
+          "representationStatus": "STRUCTURED_STATE_MACHINE",
+          "note": "Exact transition timing must remain structured."
+        },
+        {
+          "mechanic": "Construction DC 25.",
+          "representationStatus": "STRUCTURED_CONSTRUCTION_RULE",
+          "note": "Construction difficulty is not promoted into semantic tags."
+        }
+      ]
+    }
+  ]
 }
