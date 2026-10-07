@@ -49,9 +49,11 @@ for (const doc of catalog) {
   ids.add(doc._id);
 }
 const normalizedNames = new Set();
+// Phase 5C: Phase 1A certified two distinct same-name feat identities (Staggering Attack); only those may share a name.
+const certifiedSameName = new Set(JSON.parse(readFileSync(new URL('../data/canonical/feats.json', import.meta.url), 'utf8')).identities.filter((i) => i.sameNameCollisionType === 'DISTINCT_FEAT_IDENTITIES').map((i) => i.displayName.toLowerCase()));
 for (const doc of catalog) {
   const key = String(doc.name).trim().toLowerCase();
-  assert.ok(!normalizedNames.has(key), `duplicate normalized catalog name: ${doc.name}`);
+  assert.ok(!normalizedNames.has(key) || certifiedSameName.has(key), `duplicate normalized catalog name: ${doc.name}`);
   normalizedNames.add(key);
 }
 

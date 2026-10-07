@@ -7,7 +7,7 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // wiring) -- FIRST deliverable per explicit reviewer instruction: prove
 // the groundwork ActionAvailabilityEngine can truthfully reproduce the
 // live CombatOptionResolver's presentation decision for every one of the
-// 136 real ATTACK_OPTION records (packs/feats.db + packs/talents.db)
+// 134 real ATTACK_OPTION records (packs/feats.db + packs/talents.db) -- was 136 until Phase 5C removed two certified-noncanonical feat records (Saber Throw, Improved Grapple)
 // BEFORE any production replacement is attempted -- so a silent drop or
 // behavior change would be caught here, not discovered live.
 //
@@ -71,7 +71,7 @@ function collectRecords(relPath, itemType) {
 }
 
 const records = [...collectRecords('packs/feats.db', 'feat'), ...collectRecords('packs/talents.db', 'talent')];
-assert.equal(records.length, 136, `expected the certified 136 real ATTACK_OPTION records (feats.db + talents.db); found ${records.length} -- pack content changed since this reconciliation was written`);
+assert.equal(records.length, 134, `expected the certified 134 real ATTACK_OPTION records (feats.db + talents.db); found ${records.length} -- pack content changed since this reconciliation was written`);
 
 function asArray(v) { return v === undefined || v === null ? [] : Array.isArray(v) ? v : [v]; }
 function camelize(value) {
@@ -157,7 +157,7 @@ function hasField(rule, fields) { return fields.some((f) => rule[f] !== undefine
 // re-verifying the new/changed record's classification, never to loosen
 // the assertion back to a count.
 const EXPECTED_EXTERNAL_WORKFLOW_IDS = new Set([
-  'opportunisticShooter', 'improvedGrapple', 'knifeTrick', 'hijkataCounterattack',
+  'opportunisticShooter', 'knifeTrick', 'hijkataCounterattack',
   'halt', 'opportunisticTrickery', 'improvedOpportunisticTrickery', 'improvedDisarm',
   'expertGrappler', 'opportunity-fire-rifle'
 ]);

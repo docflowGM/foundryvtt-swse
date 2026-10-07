@@ -27,7 +27,7 @@ export function buildPhase4HD() {
   const { b3, cats } = loadAll();
   const frozen3D = readJson('data/audits/item-weapons-phase-3d-global-freeze.json');
   if (frozen3D.status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('Phase 3D is not frozen');
-  const prod = { 'packs/weapons.db': sha(readText('packs/weapons.db')), 'template.json': sha(readText('template.json')) };
+  const prod = { 'packs/weapons.db': sha(readText('data/audits/frozen/pre-cutover-weapons.db')), 'template.json': sha(readText('template.json')) };
   if (prod['packs/weapons.db'] !== b3.productionBaseline['packs/weapons.db'] || prod['template.json'] !== b3.productionBaseline['template.json']) fail('production weapon files changed');
   const g = (id) => cats.find((x) => x.id === id).data;
   const exo = g('4G').assignments, byName = (n) => exo.find((x) => x.canonicalName === n);

@@ -38,10 +38,16 @@ export const TALENT_ONLY_FEAT_CONTAMINANTS = new Set([
   'weapon specialization'
 ]);
 
+// Phase 5C: canonical feat identities that share a name with a talent (certified SAME_NAME_DIFFERENT_DOMAIN). The name guard
+// above targets scraped contaminants; these records are real, certified feats and are recognised by canonical id.
+export const CANONICAL_FEATS_SHARING_TALENT_NAMES = new Set(['c352f81dde5c9dff' /* Recall (The Force Unleashed Campaign Guide p.35) */]);
+
 export function isTalentOnlyFeatContaminant(docOrName) {
   const name = typeof docOrName === 'string' ? docOrName : docOrName?.name;
   const key = normalizeContentName(name);
   if (!key) return false;
+  if (typeof docOrName !== 'string' && String(docOrName?.type ?? 'feat').toLowerCase() !== 'talent'
+    && CANONICAL_FEATS_SHARING_TALENT_NAMES.has(docOrName?._id ?? docOrName?.id)) return false;
   if (TALENT_ONLY_FEAT_CONTAMINANTS.has(key)) return true;
 
   const type = typeof docOrName === 'string' ? null : docOrName?.type;

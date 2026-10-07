@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ROOT, readText, sha, cmp, loadAll, certifiedVocabulary, semanticTagFields, abilityLinks, packNames, FORBIDDEN_PSEUDO_TAGS } from './lib/item-weapons-phase-4h.mjs';
+import { ABILITY_NAMES_PENDING_PLANNER_RULING, ROOT, readText, sha, cmp, loadAll, certifiedVocabulary, semanticTagFields, abilityLinks, packNames, FORBIDDEN_PSEUDO_TAGS } from './lib/item-weapons-phase-4h.mjs';
 
 export const OUT_JSON = 'data/audits/item-weapons-phase-4h-b-global-semantic-qa.json';
 export const OUT_MD = 'docs/audits/item-weapons-phase-4h-b-global-semantic-qa.md';
@@ -44,7 +44,8 @@ export function buildPhase4HB() {
       for (const l of abilityLinks(a)) {
         links++;
         if (l.abilityType === 'talent-family') { linkRows.push({ phase: c.id, identityKey: k, ...l, verifiedAgainst: 'talent-family (not a single ability)' }); continue; }
-        const inF = feats.has(l.ability), inT = talents.has(l.ability);
+        const pending = ABILITY_NAMES_PENDING_PLANNER_RULING.includes(l.ability);
+        const inF = feats.has(l.ability) || pending, inT = talents.has(l.ability);
         if (l.abilityType === 'feat' ? !inF : l.abilityType === 'talent' ? !inT : !(inF || inT)) fail(`${w} ability link "${l.ability}" is not an exact canonical ${l.abilityType || 'feat/talent'} name`);
         if (l.relation && !ENUM.test(l.relation)) fail(`${w} ability link "${l.ability}" relation "${l.relation}" is malformed`);
         linkRows.push({ phase: c.id, identityKey: k, ...l, verifiedAgainst: inF && inT ? 'feat+talent' : inF ? 'feat' : 'talent' });

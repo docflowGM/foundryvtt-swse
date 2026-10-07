@@ -66,4 +66,9 @@ export function loadAll() {
   return { b3, byKey, cats };
 }
 
+// Phase 5C: ability names the certified 4G/4H weapon authority links to that the certified feat authority does not contain.
+// "Two-Weapon Fighting" was a certified-NONCANONICAL feat record (Phase 1B REMOVE_NONCANONICAL, removed in 5C); the 4H-A3 ruling
+// named it "the exact canonical ability name". The two authorities disagree; the link stays (interaction unchanged) and the
+// conflict is reported to the planner. Remove this exception once the planner rules on the correct ability name.
+export const ABILITY_NAMES_PENDING_PLANNER_RULING = Object.freeze(['Two-Weapon Fighting']);
 export const packNames = (f) => new Set(readText(f).split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l).name));

@@ -43,7 +43,7 @@
       "Skill Focus (Stealth) -> Generic Skill Focus: 1592aaedf4b6e40a",
       "Skill Focus (Mechanics) -> Generic Skill Focus: 1592aaedf4b6e40a",
       "Weapon Focus (Melee Weapon) -> Generic Weapon Focus: c41814601364b643",
-      "Weapon Proficiency (Advanced Melee Weapons) -> Advanced Melee Weapon Proficiency: cf28ec45cabaff59",
+      "Weapon Proficiency (Advanced Melee Weapons) -> Advanced Melee Weapon Proficiency: ecc2471ac96ec2d4",
       "Weapon Proficiency (Lightsabers) -> NO FEAT EQUIVALENT (use talent?)"
     ]
   },
@@ -158,7 +158,7 @@
       "bab": 7,
       "feats": [
         "Improved Damage Threshold: 96666de28ba99b64",
-        "Advanced Melee Weapon Proficiency: cf28ec45cabaff59"
+        "Advanced Melee Weapon Proficiency: ecc2471ac96ec2d4"
       ]
     },
     "Gunslinger": {
@@ -167,7 +167,7 @@
         "Point-Blank Shot: 05459ac4d439f229",
         "Precise Shot: c180eee7d3bc29b2",
         "Quick Draw: 44705a692e2f01a6",
-        "Weapon Proficiency (Pistols): e5d361d01d1b44e4"
+        "Weapon Proficiency (Pistols): ecc2471ac96ec2d4"
       ]
     },
     "Imperial Knight": {

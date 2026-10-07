@@ -149,7 +149,7 @@ export function detect3E4State(root = ROOT) {
 
 // Files a LATER certified phase (3F) legitimately rewrote: their verification belongs to that phase.
 // Phase 5C owns actor-pack weapon/feat reference migration (embedded sourceId remaps)
-const PHASE_5C_OWNED = new Set(['packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db', 'packs/droids.db', 'packs/beasts.db']);
+const PHASE_5C_OWNED = new Set(['data/class-archetypes.json', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db', 'packs/droids.db', 'packs/beasts.db']);
 const LATER_OWNED = new Set(['packs/talents.db', 'packs/talent_trees.db', 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json']);
 // `later`: a certified state after 3E-4 (3E-5 repaired other records). Only the seven records and every 3E-4 invariant that 3E-5 cannot touch are checked.
 const isLater = root => ['talent-phase-3e5-dry-run-report.json', 'talent-phase-3f-dry-run-report.json', 'talent-phase-3g-dry-run-report.json', 'talent-phase-11-2a-dry-run-report.json', 'talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json'].some(f => { const p = path.join(root, 'data/audits', f); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(readText(TALENTS, root)); });

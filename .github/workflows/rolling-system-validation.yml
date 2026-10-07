@@ -112,6 +112,17 @@ jobs:
           node tools/build-poisons-pack.mjs --check
           node tools/build-talent-enhancements-pack.mjs --check
 
+      - name: Guard — canonical feat + weapon production (Phase 5C)
+        run: |
+          set -e
+          node tools/build-canonical-feats.mjs --check
+          node tools/build-canonical-weapons.mjs --check
+          node tools/build-feat-production.mjs --check
+          node tools/build-weapon-production.mjs --check
+          node tools/migrate-phase-5c-weapon-references.mjs --check
+          node tools/migrate-phase-5c-feat-references.mjs --check
+          node tools/verify-canonical-production.mjs
+
       - name: Guard — feats pack source integrity
         run: node tools/verify-feats-pack-source.mjs
 

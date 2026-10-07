@@ -243,7 +243,7 @@ export function buildPhase3B() {
     plannerRulingsApplied: ['guard-shoto-phrik-dr', 'lightsaber-pike-phrik-dr', 'guard-shoto-availability', 'riot-gun-precedence', 'bowcaster-range-profile', 'cr1-area-effect', 'concussion-grenade-description-page', 'xerrol-nightstinger-group'],
     productionBaseline: {
       note: 'SHA-256 of the production files at 3B certification; the build must not change them.',
-      'packs/weapons.db': sha(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')),
+      'packs/weapons.db': sha(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8')),
       'template.json': sha(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')),
     },
     inputs,

@@ -62,18 +62,6 @@
       ],
       "summary": "Deal triple damage on a Critical Hit."
     },
-    "Triple Crit Specialist": {
-      "category": "combat-offense",
-      "tags": [
-        "critical",
-        "damage",
-        "advanced"
-      ],
-      "chain": "Critical Hit Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Triple Crit",
-      "summary": "When you score a critical hit with the selected weapon group, you deal triple damage and move the target -1 step down the condition track."
-    },
     "Power Attack": {
       "category": "combat-offense",
       "tags": [
@@ -112,17 +100,6 @@
         "combat"
       ],
       "summary": "Push opponent 1 square after making a successful melee attack."
-    },
-    "Two-Weapon Fighting": {
-      "category": "combat-offense",
-      "tags": [
-        "dual-wield",
-        "combat",
-        "dexterity"
-      ],
-      "chain": "Two-Weapon Chain",
-      "chainOrder": 1,
-      "summary": "You reduce the penalty for fighting with two weapons by 2."
     },
     "Dual Weapon Mastery I": {
       "category": "combat-offense",
@@ -286,18 +263,6 @@
       ],
       "chain": "Grapple Chain",
       "chainOrder": 1
-    },
-    "Improved Grapple": {
-      "category": "combat-offense",
-      "tags": [
-        "maneuver",
-        "mastery",
-        "control"
-      ],
-      "chain": "Grapple Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Grapple",
-      "summary": "You gain a +5 bonus on grapple checks and do not provoke attacks of opportunity when initiating a grapple."
     },
     "Pin": {
       "category": "combat-offense",
@@ -530,42 +495,6 @@
       ],
       "summary": "Gain additional Attacks of Opportunity."
     },
-    "Weapon Proficiency (Simple Weapons)": {
-      "category": "combat-defense",
-      "tags": [
-        "proficiency",
-        "basic",
-        "combat"
-      ],
-      "summary": "You are proficient with simple weapons and do not take the -5 penalty when using them."
-    },
-    "Weapon Proficiency (Pistols)": {
-      "category": "combat-defense",
-      "tags": [
-        "proficiency",
-        "ranged",
-        "combat"
-      ],
-      "summary": "You are proficient with pistols and do not take the -5 penalty when using them."
-    },
-    "Weapon Proficiency (Rifles)": {
-      "category": "combat-defense",
-      "tags": [
-        "proficiency",
-        "ranged",
-        "combat"
-      ],
-      "summary": "You are proficient with rifles and do not take the -5 penalty when using them."
-    },
-    "Weapon Proficiency (Heavy Weapons)": {
-      "category": "combat-defense",
-      "tags": [
-        "proficiency",
-        "heavy",
-        "combat"
-      ],
-      "summary": "You are proficient with heavy weapons and do not take the -5 penalty when using them."
-    },
     "Weapon Proficiency (Lightsabers)": {
       "category": "combat-defense",
       "tags": [
@@ -573,24 +502,6 @@
         "lightsaber",
         "force"
       ]
-    },
-    "Advanced Melee Weapon Proficiency": {
-      "category": "combat-defense",
-      "tags": [
-        "proficiency",
-        "melee",
-        "advanced"
-      ],
-      "summary": "You are proficient with advanced melee weapons and do not take the -5 penalty when using them."
-    },
-    "Heavy Weapon Proficiency": {
-      "category": "combat-defense",
-      "tags": [
-        "proficiency",
-        "heavy",
-        "combat"
-      ],
-      "summary": "You are proficient with heavy weapons and do not take the -5 penalty when using them."
     },
     "Armor Proficiency (Light)": {
       "category": "combat-defense",
@@ -676,17 +587,6 @@
       "chainOrder": 1,
       "summary": "Use the Force to negate a ranged attack while wielding a lightsaber."
     },
-    "Saber Throw": {
-      "category": "force",
-      "tags": [
-        "force",
-        "lightsaber",
-        "ranged"
-      ],
-      "chain": "Saber Throw Chain",
-      "chainOrder": 1,
-      "summary": "You may throw your lightsaber as a ranged attack using Use the Force instead of a ranged attack roll."
-    },
     "Battle Strike": {
       "category": "force",
       "tags": [
@@ -714,18 +614,6 @@
       ],
       "summary": "Deal Unarmed or Claw damage to a Pinned opponent."
     },
-    "Forceful Grip": {
-      "category": "force",
-      "tags": [
-        "force",
-        "power-boost",
-        "mastery"
-      ],
-      "chain": "Force Grip Chain",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Force Grip",
-      "summary": "You gain a +2 bonus on Use the Force checks made to activate Force Grip."
-    },
     "Force Slam": {
       "category": "force",
       "tags": [
@@ -748,18 +636,6 @@
       "prerequisiteFeat": "Force Slam",
       "summary": "Move a target damaged by your Grenade attack."
     },
-    "Forceful Slam": {
-      "category": "force",
-      "tags": [
-        "force",
-        "power-boost",
-        "mastery"
-      ],
-      "chain": "Force Slam Chain",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Force Slam",
-      "summary": "You gain a +2 bonus on Use the Force checks made to activate Force Slam."
-    },
     "Force Stun": {
       "category": "force",
       "tags": [
@@ -769,30 +645,6 @@
       ],
       "chain": "Force Stun Chain",
       "chainOrder": 1
-    },
-    "Forceful Strike": {
-      "category": "force",
-      "tags": [
-        "force",
-        "condition",
-        "advanced"
-      ],
-      "chain": "Force Stun Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Force Stun",
-      "summary": "You may spend a Force Point to move a target -1 step down the condition track when using Force Stun."
-    },
-    "Forceful Stun": {
-      "category": "force",
-      "tags": [
-        "force",
-        "power-boost",
-        "mastery"
-      ],
-      "chain": "Force Stun Chain",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Force Stun",
-      "summary": "You gain a +2 bonus on Use the Force checks made to activate Force Stun."
     },
     "Move Object": {
       "category": "force",
@@ -804,30 +656,6 @@
       "chain": "Move Object Chain",
       "chainOrder": 1
     },
-    "Forceful Telekinesis": {
-      "category": "force",
-      "tags": [
-        "force",
-        "damage",
-        "advanced"
-      ],
-      "chain": "Move Object Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Move Object",
-      "summary": "You may spend a Force Point to move a target -1 step down the condition track when using Move Object."
-    },
-    "Forceful Throw": {
-      "category": "force",
-      "tags": [
-        "force",
-        "power-boost",
-        "mastery"
-      ],
-      "chain": "Move Object Chain",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Move Object",
-      "summary": "You gain a +2 bonus on Use the Force checks made to activate Move Object."
-    },
     "Battle Meditation": {
       "category": "force",
       "tags": [
@@ -837,24 +665,6 @@
       ],
       "summary": "Bolster allies through the Force and coordinate them in battle."
     },
-    "Forceful Vitality": {
-      "category": "force",
-      "tags": [
-        "force",
-        "endurance",
-        "resilience"
-      ],
-      "summary": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter."
-    },
-    "Forceful Will": {
-      "category": "force",
-      "tags": [
-        "force",
-        "mental",
-        "defense"
-      ],
-      "summary": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter."
-    },
     "Forceful Recovery": {
       "category": "recovery",
       "tags": [
@@ -863,28 +673,6 @@
         "power"
       ],
       "summary": "Regain one Force Power when you catch a Second Wind."
-    },
-    "Forceful Weapon": {
-      "category": "force",
-      "tags": [
-        "force",
-        "power-boost",
-        "combat"
-      ],
-      "prerequisiteFeat": "Battle Strike",
-      "summary": "You gain a +2 bonus on Use the Force checks made to activate Battle Strike."
-    },
-    "Forceful Saber Throw": {
-      "category": "force",
-      "tags": [
-        "force",
-        "lightsaber",
-        "mastery"
-      ],
-      "chain": "Saber Throw Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Saber Throw",
-      "summary": "You gain a +2 bonus on Use the Force checks made to activate Saber Throw."
     },
     "Fast Surge": {
       "category": "force",
@@ -912,24 +700,6 @@
         "power"
       ],
       "summary": "Gain a +5 bonus to Fortitude Defense and Will Defense against any effect requiring a Use the Force check."
-    },
-    "Intuitive Initiative": {
-      "category": "force",
-      "tags": [
-        "force",
-        "initiative",
-        "tactical"
-      ],
-      "summary": "You may reroll your Initiative check and take the better result."
-    },
-    "Keen Force Mind": {
-      "category": "force",
-      "tags": [
-        "force",
-        "mental",
-        "power-boost"
-      ],
-      "summary": "You gain a +2 bonus on Use the Force checks made to activate mind-affecting Force powers."
     },
     "Skill Focus": {
       "category": "utility",
@@ -966,33 +736,6 @@
         "awareness"
       ]
     },
-    "Fast Talk": {
-      "category": "utility",
-      "tags": [
-        "social",
-        "deception",
-        "swift-action"
-      ],
-      "summary": "You may make a Persuasion check to feint in combat as a swift action instead of a standard action."
-    },
-    "Intimidating Presence": {
-      "category": "utility",
-      "tags": [
-        "social",
-        "intimidate",
-        "swift-action"
-      ],
-      "summary": "You may use Persuasion to intimidate as a swift action instead of a standard action."
-    },
-    "Trustworthy": {
-      "category": "utility",
-      "tags": [
-        "social",
-        "persuasion",
-        "bonus"
-      ],
-      "summary": "You gain a +2 bonus on Persuasion checks and may reroll a failed Persuasion check once per encounter."
-    },
     "Natural Leader": {
       "category": "utility",
       "tags": [
@@ -1010,29 +753,6 @@
         "combat"
       ],
       "summary": "Automatic success with Aid Another action at Point-Blank Range."
-    },
-    "Frightful Presence": {
-      "category": "utility",
-      "tags": [
-        "social",
-        "intimidate",
-        "area"
-      ],
-      "chain": "Intimidation Chain",
-      "chainOrder": 1,
-      "summary": "As a standard action, you may make a Persuasion check to intimidate all enemies within 6 squares."
-    },
-    "Frightening Presence": {
-      "category": "utility",
-      "tags": [
-        "social",
-        "intimidate",
-        "advanced"
-      ],
-      "chain": "Intimidation Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Frightful Presence",
-      "summary": "When you use Frightful Presence, targets that fail their Will Defense check move -2 steps down the condition track instead of -1."
     },
     "Tech Specialist": {
       "category": "utility",
@@ -1070,15 +790,6 @@
       ],
       "summary": "Temporarily gain access to an additional Talent."
     },
-    "Resilient Talent": {
-      "category": "utility",
-      "tags": [
-        "versatility",
-        "talent",
-        "temporary"
-      ],
-      "summary": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute."
-    },
     "Toughness": {
       "category": "recovery",
       "tags": [
@@ -1097,15 +808,6 @@
       ],
       "summary": "Damage Threshold increases by 5 points."
     },
-    "Great Fortitude": {
-      "category": "recovery",
-      "tags": [
-        "resilience",
-        "fortitude",
-        "defense"
-      ],
-      "summary": "You gain a +2 bonus to your Fortitude Defense."
-    },
     "Iron Will": {
       "category": "recovery",
       "tags": [
@@ -1113,15 +815,6 @@
         "will",
         "defense"
       ]
-    },
-    "Lightning Reflexes": {
-      "category": "recovery",
-      "tags": [
-        "resilience",
-        "reflex",
-        "defense"
-      ],
-      "summary": "You gain a +2 bonus to your Reflex Defense."
     },
     "Improved Defenses": {
       "category": "recovery",
@@ -1131,24 +824,6 @@
         "all"
       ],
       "summary": "Gain +1 bonus to all Defenses."
-    },
-    "Conditioned": {
-      "category": "recovery",
-      "tags": [
-        "resilience",
-        "endurance",
-        "reroll"
-      ],
-      "summary": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter."
-    },
-    "Headstrong": {
-      "category": "recovery",
-      "tags": [
-        "resilience",
-        "will",
-        "fear"
-      ],
-      "summary": "You gain a +2 bonus on Will Defense against fear effects and may reroll a failed Will Defense check once per encounter."
     },
     "Delay Damage": {
       "category": "recovery",
@@ -1168,24 +843,6 @@
       ],
       "summary": "Use Strength or Constitution to determine Fortitude Defense."
     },
-    "Resilient Reflexes": {
-      "category": "recovery",
-      "tags": [
-        "resilience",
-        "reflex",
-        "dexterity"
-      ],
-      "summary": "You gain a +2 bonus on Reflex Defense against effects that target Dexterity and may reroll a failed check once per encounter."
-    },
-    "Resilient Will": {
-      "category": "recovery",
-      "tags": [
-        "resilience",
-        "will",
-        "wisdom"
-      ],
-      "summary": "You gain a +2 bonus on Will Defense against effects that target Wisdom and may reroll a failed check once per encounter."
-    },
     "Quick Draw": {
       "category": "misc",
       "tags": [
@@ -1204,33 +861,6 @@
       ],
       "summary": "Use Dexterity modifier instead of Strength modifier on attack rolls with Light Melee Weapons and Lightsabers."
     },
-    "Reactive Stealth": {
-      "category": "misc",
-      "tags": [
-        "utility",
-        "stealth",
-        "reroll"
-      ],
-      "summary": "Once per encounter, you may reroll a Stealth check and take the better result."
-    },
-    "Reactive Awareness": {
-      "category": "misc",
-      "tags": [
-        "utility",
-        "perception",
-        "reroll"
-      ],
-      "summary": "Once per encounter, you may reroll a Perception check and take the better result."
-    },
-    "Surgical Precision": {
-      "category": "misc",
-      "tags": [
-        "utility",
-        "medical",
-        "healing"
-      ],
-      "summary": "You gain a +2 bonus on Treat Injury checks and may reroll a failed check once per encounter."
-    },
     "Mounted Combat": {
       "category": "misc",
       "tags": [
@@ -1248,24 +878,6 @@
         "defense"
       ],
       "summary": "Negate one attack per round against the Vehicle you're piloting."
-    },
-    "Stealthy": {
-      "category": "misc",
-      "tags": [
-        "utility",
-        "stealth",
-        "bonus"
-      ],
-      "summary": "You gain a +2 bonus on Stealth checks and may reroll a failed Stealth check once per encounter."
-    },
-    "Low Profile": {
-      "category": "misc",
-      "tags": [
-        "utility",
-        "stealth",
-        "cover"
-      ],
-      "summary": "You gain cover from enemies at long range and may reroll Stealth checks made to avoid detection."
     },
     "Desperate Gambit": {
       "category": "misc",

@@ -67,7 +67,9 @@ test('derivation fails closed for 3B.2A: wrong ID/name, ADD of an already-presen
   assert.throws(() => derive(baseline, mk(o => { o.cumulativeExpected.tagAdditions = 39; })), /CUMULATIVE DISCREPANCY/);
 });
 test('production files unchanged and rebuild is byte-stable', () => {
-  const pins = { 'packs/talents.db': '832937d451c2353da9afbd6b1f34366b293b659f24b3d09808d44ad767ee8288', 'packs/feats.db': '9c67242a67b209a2c3d359201beb03e512962998e6bacee6d8c3eedd4787d3e8', 'data/feat-catalog.json': 'e7907810f492e036517822a19f45ac1242fe2ec0044e7b2ad241f858f9925eef' };
+  // Phase 5C regenerated packs/feats.db and data/feat-catalog.json from data/canonical/feats.json; the live feat files are gated by
+  // tools/verify-canonical-production.mjs (these report-only phases pinned the pre-cutover hashes).
+  const pins = { 'packs/talents.db': '832937d451c2353da9afbd6b1f34366b293b659f24b3d09808d44ad767ee8288', };
   for (const [f, h] of Object.entries(pins)) assert.equal(sha(f), h, f); assert.equal(auth.counts.productionMutated, false);
   const a = buildOutputs(), b = buildOutputs(); assert.equal(a.json, b.json); assert.equal(txt(AUTH3B_JSON), a.json); assert.equal(txt(AUTH3B_MD), a.md); assert.equal(txt(OWNER_OVERLAY_MD), a.overlayMd);
 });

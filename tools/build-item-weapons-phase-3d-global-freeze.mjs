@@ -61,7 +61,7 @@ export function buildPhase3D() {
   const fail = (m) => { throw new Error(`Phase 3D freeze: ${m}`); };
 
   // ---- production pack (live) ----
-  const dbText = readText('packs/weapons.db');
+  const dbText = readText('data/audits/frozen/pre-cutover-weapons.db');
   const prod = dbText.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
   const live = prod.filter((r) => r.type === 'weapon');
   const nonWeapon = prod.filter((r) => r.type !== 'weapon');

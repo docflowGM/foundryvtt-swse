@@ -217,7 +217,7 @@ function compareIdentity(i, r) {
 export function buildPhase3C() {
   const p3bText = readText(P3B); const p3b = JSON.parse(p3bText);
   const auth = readJson(AUTH); const p01 = auth.phases['0-1-weapons'];
-  const dbText = readText('packs/weapons.db');
+  const dbText = readText('data/audits/frozen/pre-cutover-weapons.db');
   const prod = dbText.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
   const weapons = prod.filter((r) => r.type === 'weapon'); const nonWeapons = prod.filter((r) => r.type !== 'weapon');
   const byId = new Map(weapons.map((r) => [r._id, r]));

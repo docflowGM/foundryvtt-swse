@@ -3833,7 +3833,7 @@
             "4c236343b01ea763"
           ],
           "feats": [
-            "8329a353aa3899be",
+            "ecc2471ac96ec2d4",
             "1f2f70d34a17667d"
           ],
           "tagBias": {
@@ -5307,8 +5307,7 @@
           "notes": "Long-range infiltration and intelligence-gathering specialist.",
           "talents": [],
           "feats": [
-            "1592aaedf4b6e40a",
-            "0c53cb8b7c29d865"
+            "1592aaedf4b6e40a"
           ],
           "tagBias": {
             "ability_con": 0.1,
@@ -5647,8 +5646,7 @@
             "5319a796f2c4ff64"
           ],
           "feats": [
-            "1592aaedf4b6e40a",
-            "6d8ce2807c579289"
+            "1592aaedf4b6e40a"
           ],
           "tagBias": {
             "ability_cha": 0.5,

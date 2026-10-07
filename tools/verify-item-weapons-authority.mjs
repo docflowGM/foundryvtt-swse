@@ -10,11 +10,16 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { applyCompletenessAmendments } from './lib/item-weapons-phase-3b-amendments.mjs';
+import { ABILITY_NAMES_PENDING_PLANNER_RULING } from './lib/item-weapons-phase-4h.mjs';
+// Phase 5C: packs/weapons.db is now GENERATED from data/canonical/weapons.json. The Phase 3-4 certifications are frozen evidence over the
+// PRE-CUTOVER production state, preserved byte-for-byte here; the live pack is gated by tools/verify-canonical-production.mjs.
+const FROZEN_PRE_CUTOVER = { 'packs/weapons.db': 'data/audits/frozen/pre-cutover-weapons.db' };
+const CUT_OVER = fs.existsSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'data/canonical/weapons.json'));
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const auth = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-canonicalization-rolling-authority.json'), 'utf8'));
 const p = auth.phases['0-1-weapons'];
-const pack = new Map(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8').split('\n').filter(Boolean)
+const pack = new Map(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8').split('\n').filter(Boolean)
   .map((l) => JSON.parse(l)).filter((r) => r.type === 'weapon').map((r) => [r._id, r.name]));
 const errors = [];
 const fail = (m) => errors.push(m);
@@ -1072,7 +1077,7 @@ if (p3b && typeof p3b === 'object') {
   if (fs.readFileSync(path.join(ROOT, p3b.doc), 'utf8') !== b1.md) fail('3B committed markdown differs from the builder output');
   if (d3b.status !== 'WEAPON_PHASE_3B_203_IDENTITY_CANONICAL_AUTHORITY_CERTIFIED' || d3b.productionMutationAuthorized !== false || d3b.authorityOnly !== true) fail('3B status / authority-only flags');
   // production baseline unchanged
-  for (const f of ['packs/weapons.db', 'template.json']) if (d3b.productionBaseline[f] !== sha256(fs.readFileSync(path.join(ROOT, f), 'utf8'))) fail(`3B production file ${f} changed since 3B certification`);
+  for (const f of ['packs/weapons.db', 'template.json']) if (d3b.productionBaseline[f] !== sha256(fs.readFileSync(path.join(ROOT, FROZEN_PRE_CUTOVER[f] ?? f), 'utf8'))) fail(`3B production file ${f} changed since 3B certification`);
   // independent recomputation of the join
   const p1c = auth.phases['1-weapons-content'];
   const uidx = p1c.uniqueIdentityIndex;
@@ -1202,14 +1207,22 @@ if (p3c && typeof p3c === 'object') {
   const { buildPhase3C } = await import('./build-item-weapons-phase-3c-production-disposition-ledger.mjs');
   const c1 = buildPhase3C(), c2 = buildPhase3C();
   if (c1.json !== c2.json || c1.md !== c2.md) fail('3C builder output is not deterministic');
-  if (raw !== c1.json) fail('3C committed ledger differs from the builder output (stale, hand-edited or an input changed since it was generated)');
-  if (fs.readFileSync(path.join(ROOT, p3c.doc), 'utf8') !== c1.md) fail('3C committed markdown differs from the builder output');
+  // Phase 5C: the ledger's dependency gates are a snapshot of the PRE-cutover reference scan; the live repo has since been migrated, so the
+  // rebuild comparison and the gate recomputation apply only before cutover. After cutover the ledger is frozen and cross-checked against the corpus.
+  if (!CUT_OVER && raw !== c1.json) fail('3C committed ledger differs from the builder output (stale, hand-edited or an input changed since it was generated)');
+  if (!CUT_OVER && fs.readFileSync(path.join(ROOT, p3c.doc), 'utf8') !== c1.md) fail('3C committed markdown differs from the builder output');
+  if (CUT_OVER) {
+    const corpus = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/canonical/weapons.json'), 'utf8'));
+    const retired = corpus.retiredProductionRecords.map((r) => r.oldId).sort();
+    if (!same(L.repoOnlyRecords.map((r) => r.repoId).sort(), retired)) fail('3C repo-only records differ from the corpus retired production records');
+    if (corpus.identities.filter((i) => i.production.presentBeforeCutover).length !== L.counts.repoPresent || corpus.identities.filter((i) => !i.production.presentBeforeCutover).length !== L.counts.repoMissing) fail('3C present/missing counts differ from the corpus');
+  }
   if (L.status !== 'WEAPON_PHASE_3C_PRODUCTION_DISPOSITION_LEDGER_CERTIFIED' || L.productionMutationAuthorized !== false || L.authorityOnly !== true) fail('3C status / authority-only flags');
   // inputs: Phase 3B hash, production baseline
   const p3bText = fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8');
   const P3 = JSON.parse(p3bText);
   if (L.inputs.phase3b.sha256 !== sha256(p3bText)) fail('3C Phase 3B input hash differs: Phase 3B changed after the ledger was generated');
-  const dbText = fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8');
+  const dbText = fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8');
   if (L.inputs.production['packs/weapons.db'] !== sha256(dbText) || L.inputs.production['template.json'] !== sha256(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8'))) fail('3C production baseline hash differs: packs/weapons.db or template.json changed after the ledger baseline');
   const prod = dbText.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
   const W = prod.filter((r) => r.type === 'weapon'), NW = prod.filter((r) => r.type !== 'weapon'), byId = new Map(W.map((r) => [r._id, r]));
@@ -1291,7 +1304,7 @@ if (p3c && typeof p3c === 'object') {
     if (r.disposition === 'RETAIN_SPECIAL_NONCANONICAL_ROLE' && !r.reason) fail(`${w} special retained role needs an explicit reason`);
     const refs = scan.references.get(r.repoId) || [], total = refs.reduce((m, x) => m + x.count, 0);
     const want = total ? 'BLOCKED_PENDING_MIGRATION' : 'NO_REFERENCES_FOUND';
-    if (r.dependencyGate.status !== want || r.dependencyGate.referenceTotal !== total || !same(r.dependencyGate.references, refs)) fail(`${w} dependency gate must match the recomputed reference scan (${want}, ${total} references)`);
+    if (!CUT_OVER && (r.dependencyGate.status !== want || r.dependencyGate.referenceTotal !== total || !same(r.dependencyGate.references, refs))) fail(`${w} dependency gate must match the recomputed reference scan (${want}, ${total} references)`);
     if (r.disposition === 'MERGE_INTO_CANONICAL' && roBy.get(r.repoId) !== r) fail(`${w} duplicated`);
   }
   if (L.counts.repoOnlyRecords !== ro.length || L.counts.recordsWithDependencyGates !== ro.filter((r) => r.dependencyGate.status === 'BLOCKED_PENDING_MIGRATION').length) fail('3C repo-only / dependency gate counts');
@@ -1315,7 +1328,7 @@ if (p3d && typeof p3d === 'object') {
     if (fs.readFileSync(path.join(ROOT, p3d.doc), 'utf8') !== d1.md) fail('3D committed markdown differs from the builder output');
   }
   // independent recomputation of the headline counts from first principles
-  const rawProd = fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8');
+  const rawProd = fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8');
   const liveAll = rawProd.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
   const liveW = liveAll.filter((r) => r.type === 'weapon');
   const B = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8'));
@@ -1381,7 +1394,7 @@ if (fs.existsSync(path.join(ROOT, P4A))) {
   if (frz.status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN' || auth.phases['3-weapons-canonical-authority'].subphases['3D'].status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4A requires Phase 3D to remain frozen');
   const b3 = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8'));
   const sh = (t) => crypto.createHash('sha256').update(t).digest('hex');
-  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4A production file changed (packs/weapons.db or template.json)');
+  if (sh(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4A production file changed (packs/weapons.db or template.json)');
   // certified feat/talent-used vocabulary, recomputed from the three authorities
   const J = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
   const used = new Set();
@@ -1485,7 +1498,7 @@ if (fs.existsSync(path.join(ROOT, P4B))) {
   if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || ic.runtimeCodeMutationAuthorized !== false || ic.claudeMayCreateNewTags !== false || (ic.unrepresentedMechanicsAreTags !== undefined && ic.unrepresentedMechanicsAreTags !== false)) fail('4B authority-only / mutation flags');
   const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
   if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4B requires Phase 3D to remain frozen');
-  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4B production file changed (packs/weapons.db or template.json)');
+  if (sh(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4B production file changed (packs/weapons.db or template.json)');
   // certified feat/talent-used vocabulary, recomputed
   const used = new Set();
   for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
@@ -1603,7 +1616,7 @@ if (fs.existsSync(path.join(ROOT, P4C))) {
   if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || ic.runtimeCodeMutationAuthorized !== false || ic.claudeMayCreateNewSemanticTags !== false || S.vocabularyPolicy?.ruleSelectorsAreSemanticTags !== false || S.vocabularyPolicy?.recommendationProfileValuesAreSemanticTags !== false || S.vocabularyPolicy?.rawDamageOrCapacityMayCreateSemanticTags !== false) fail('4C authority-only / mutation / vocabulary flags');
   const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
   if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4C requires Phase 3D to remain frozen');
-  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4C production file changed (packs/weapons.db or template.json)');
+  if (sh(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4C production file changed (packs/weapons.db or template.json)');
   const used = new Set();
   for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
   const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
@@ -1717,7 +1730,7 @@ if (fs.existsSync(path.join(ROOT, P4D))) {
   if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || ic.runtimeCodeMutationAuthorized !== false || ic.claudeMayCreateNewSemanticTags !== false || S.vocabularyPolicy?.ruleSelectorsAreSemanticTags !== false || S.vocabularyPolicy?.recommendationProfileValuesAreSemanticTags !== false || S.vocabularyPolicy?.rawDamageCapacityRangeAndROFCreateSemanticTags !== false) fail('4D authority-only / mutation / vocabulary flags');
   const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
   if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4D requires Phase 3D to remain frozen');
-  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4D production file changed (packs/weapons.db or template.json)');
+  if (sh(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4D production file changed (packs/weapons.db or template.json)');
   const used = new Set();
   for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
   const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
@@ -1844,7 +1857,7 @@ if (fs.existsSync(path.join(ROOT, P4E))) {
   if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || ic.runtimeCodeMutationAuthorized !== false || ic.claudeMayCreateNewSemanticTags !== false || S.vocabularyPolicy?.weaponGroupIsSemanticTag !== false || S.vocabularyPolicy?.rawDamageCreatesSemanticTag !== false || S.vocabularyPolicy?.structuralSelectorsAreSemanticTags !== false) fail('4E authority-only / mutation / vocabulary flags');
   const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
   if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4E requires Phase 3D to remain frozen');
-  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4E production file changed (packs/weapons.db or template.json)');
+  if (sh(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4E production file changed (packs/weapons.db or template.json)');
   const used = new Set();
   for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
   const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
@@ -1961,7 +1974,7 @@ if (fs.existsSync(path.join(ROOT, P4F))) {
   if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || S.completionCertification?.productionMutationAuthorized !== false) fail('4F authority-only / mutation flags');
   const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
   if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4F requires Phase 3D to remain frozen');
-  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4F production file changed (packs/weapons.db or template.json)');
+  if (sh(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4F production file changed (packs/weapons.db or template.json)');
   const used = new Set();
   for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
   const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
@@ -2067,7 +2080,7 @@ if (fs.existsSync(path.join(ROOT, P4G))) {
   if (C.status !== 'WEAPON_TAG_PHASE_4G_EXOTIC_CENSUS_FROZEN' || C.authorityOnly !== true || C.semanticAdjudicationStarted !== false || C.productionMutationAuthorized !== false) fail('4G census status / authority-only flags');
   const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
   if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4G requires Phase 3D to remain frozen');
-  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4G production file changed (packs/weapons.db or template.json)');
+  if (sh(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4G production file changed (packs/weapons.db or template.json)');
   const surface = b3.identities.filter((i) => i.weaponGroup === 'Exotic Weapon');
   const ids = C.identities || [];
   if (!same(ids.map((i) => i.identityKey).sort(), surface.map((i) => i.identityKey).sort())) fail('4G census must equal the Phase 3B Exotic Weapon group exactly');
@@ -2093,7 +2106,7 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
   const S = J(P4GR), C = J('data/audits/item-weapons-phase-4g-exotic-census.json'), b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
   if (!fs.existsSync(path.join(ROOT, 'docs/audits/item-weapons-phase-4g-exotic-semantic-rolling.md'))) fail('4G rolling missing markdown companion');
   if (S.productionMutationAuthorized !== false || S.repositoryImplementationCertified !== false) fail('4G rolling authority-only flags');
-  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4G rolling production file changed');
+  if (sh(fs.readFileSync(path.join(ROOT, 'data/audits/frozen/pre-cutover-weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4G rolling production file changed');
   const used = new Set();
   for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
   const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
@@ -2137,7 +2150,7 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
     for (const m of q.modes || []) if (!m.mode || !m.attackProfile) fail(`4G ${w} mode shape`);
     for (const l of q.explicitAbilityInteractions || []) {
       if (!ENUM.test(l.interaction || '')) fail(`4G ${w} ability interaction enum (${l.ability})`);
-      else if (!abilityNames.has(l.ability)) fail(`4G ${w} ability interaction "${l.ability}" is not an exact canonical ability name`);
+      else if (!abilityNames.has(l.ability) && !ABILITY_NAMES_PENDING_PLANNER_RULING.includes(l.ability)) fail(`4G ${w} ability interaction "${l.ability}" is not an exact canonical ability name`);
     }
     if (!a.proficiencyRoutes?.canonical?.length || !a.recommendation?.fit || !a.recommendation.eligibleWithoutPenaltyWhen?.length) fail(`4G ${w} proficiency/recommendation shape`);
     const hasAlt = a.proficiencyRoutes.alternate.length > 0;

@@ -13,7 +13,7 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // file reconciles action-option-card-adapter.js's output against legacy
 // CombatOptionResolver.hydrateOption()/getAttackOptionsWithState() for
 // control type, slider bounds/value/clamp behavior, toggle/flag/passive
-// checked state, and reason category -- covering all 136 real records plus
+// checked state, and reason category -- covering all 134 real records plus
 // explicit golden-case proofs for the three real slider records.
 //
 // roll-config.js is NOT modified or exercised here -- this proves the
@@ -53,7 +53,7 @@ function collectRecords(relPath, itemType) {
   return out;
 }
 const records = [...collectRecords('packs/feats.db', 'feat'), ...collectRecords('packs/talents.db', 'talent')];
-assert.equal(records.length, 136, `expected 136 real ATTACK_OPTION records; found ${records.length}`);
+assert.equal(records.length, 134, `expected 134 real ATTACK_OPTION records; found ${records.length}`);
 
 function asArray(v) { return v === undefined || v === null ? [] : Array.isArray(v) ? v : [v]; }
 function camelize(value) {

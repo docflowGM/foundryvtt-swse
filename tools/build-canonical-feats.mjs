@@ -23,10 +23,21 @@ const CATALOG = 'data/feat-catalog.json';
 const COMPANIONS = { featEffects: 'data/feat-effects.json', choiceOptions: 'data/feat-choice-options.json', featMetadata: 'data/feat-metadata.json', combatActions: 'data/feat-combat-actions.json', validityRegistry: 'data/feat-validity-registry.json' };
 const WEAPON_PROFICIENCY_ID = 'ecc2471ac96ec2d4';
 
+// Captured Foundry data keeps its authored key order (documents are byte-compared against Foundry exports); the audit-derived
+// fields are key-sorted for byte stability.
+const CAPTURED = ['legacySystemCapture', 'flags', 'effects', 'automation'];
+const sortExceptCaptured = (x) => {
+  const { production, ...rest } = x;
+  const p = { ...production }; const keep = {};
+  for (const k of CAPTURED) { keep[k] = p[k]; delete p[k]; }
+  return { ...sortKeys(rest), production: { ...sortKeys(p), ...keep } };
+};
+
 export const serializeFeats = (corpus) => {
-  const { identities, ...head } = corpus;
-  const headText = JSON.stringify(sortKeys(head), null, 1);
-  return `${headText.slice(0, -2)},\n "identities": [\n${identities.map((x) => JSON.stringify(sortKeys(x))).join(',\n')}\n ]\n}\n`;
+  const { identities, companions, ...head } = corpus;
+  // companions keep their authored key order (consumers iterate some of them); everything else is key-sorted
+  const headText = JSON.stringify({ ...sortKeys(head), companions }, null, 1);
+  return `${headText.slice(0, -2)},\n "identities": [\n${identities.map((x) => JSON.stringify(sortExceptCaptured(x))).join(',\n')}\n ]\n}\n`;
 };
 
 function auditInputs() {

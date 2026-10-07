@@ -26,6 +26,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getCanonicalBenefitText, getCanonicalDescriptionText, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/authority/prerequisite-text-helpers.js";
 import { FeatPackSeeder, loadFeatCatalogDocuments } from "/systems/foundryvtt-swse/scripts/registries/feat-pack-seeder.js";
 import { isTalentOnlyFeatContaminant } from "/systems/foundryvtt-swse/scripts/data/feat-domain-guard.js";
+import { CANONICAL_WEAPON_PROFICIENCY_ID, legacyWeaponProficiencyChoice, applyLegacyWeaponProficiencyChoice } from "/systems/foundryvtt-swse/scripts/engine/feats/legacy-weapon-proficiency-alias.js";
 
 /**
  * Internal normalized feat entry
@@ -826,7 +827,14 @@ export class FeatRegistry {
 
     static async getDocumentByName(name) {
         const entry = this.getByName(name);
-        return entry ? this._getDocument(entry.id) : null;
+        if (entry) return this._getDocument(entry.id);
+        // Phase 5C: retired implementation-derivative Weapon Proficiency labels resolve to the canonical feat + explicit choice
+        const group = legacyWeaponProficiencyChoice(name);
+        if (!group) return null;
+        const base = await this._getDocument(CANONICAL_WEAPON_PROFICIENCY_ID);
+        if (!base) return null;
+        const label = String(name);
+        return { id: base.id, _id: base.id, name: label, type: 'feat', uuid: base.uuid, toObject: () => applyLegacyWeaponProficiencyChoice(base.toObject(), label, group) };
     }
 
     /**

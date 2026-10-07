@@ -1,23 +1,23 @@
 {
   "_meta": {
     "version": 1,
-    "generatedFrom": "packs/feats.db",
+    "generatedFrom": "data/canonical/feats.json",
     "description": "Mechanical ActiveEffect definitions extracted from feat compendium items. FeatRegistry owns feat identity; FeatEffectRegistry owns these mechanical definitions. The applier reproduces Foundry's prior behavior: only effects with transfer:true were applied to actors before migration.",
-    "featCount": 400,
-    "featsWithEffects": 77,
-    "effectCount": 79,
-    "generatedEffectIds": 15,
-    "transferTrueEffects": 15
+    "featCount": 353,
+    "featsWithEffects": 54,
+    "effectCount": 56,
+    "generatedEffectIds": 8,
+    "transferTrueEffects": 8
   },
   "definitions": {
-    "pitiless-warrior": {
-      "featId": "08896a9f860ebca9",
-      "featName": "Pitiless Warrior",
-      "featKey": "pitiless-warrior",
+    "aquatic-specialists": {
+      "featId": "55483fd350b3ba28",
+      "featName": "Aquatic Specialists",
+      "featKey": "aquatic-specialists",
       "effects": [
         {
-          "_id": "f3ae6fcb-66f0-4608-afa0-a8f2d593188f",
-          "name": "Pitiless Warrior",
+          "_id": "457bea9c-bde5-4d8e-b463-622d2db80636",
+          "name": "Aquatic Specialists",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -26,104 +26,113 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Pitiless Warrior",
-              "effectType": "combat_bonus",
-              "flagType": "Pitiless Warrior"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "f3ae6fcb-66f0-4608-afa0-a8f2d593188f",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "scion-of-dorin": {
-      "featId": "08a15012d82f0d16",
-      "featName": "Scion of Dorin",
-      "featKey": "scion-of-dorin",
-      "effects": [
-        {
-          "_id": "8152154b-93e2-42e0-9f67-aefc79526f69",
-          "name": "Scion of Dorin",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Scion of Dorin",
-              "effectType": "defense_bonus",
-              "flagType": "Scion of Dorin"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "8152154b-93e2-42e0-9f67-aefc79526f69",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "forceful-throw": {
-      "featId": "10a017a020aa4a9c",
-      "featName": "Forceful Throw",
-      "featKey": "forceful-throw",
-      "effects": [
-        {
-          "_id": "f40c0e8c-27d6-4fb4-b60b-480437c9ad82",
-          "name": "Forceful Throw",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Forceful Throw",
+              "featName": "Aquatic Specialists",
               "effectType": "skill_bonus",
-              "flagType": "Forceful Throw"
+              "requiresCustomLogic": true
             }
           },
           "_provenance": {
-            "originalEffectId": "f40c0e8c-27d6-4fb4-b60b-480437c9ad82",
+            "originalEffectId": "457bea9c-bde5-4d8e-b463-622d2db80636",
             "generatedId": false
           }
         }
       ]
     },
-    "toughness": {
-      "featId": "11db29efd899c438",
-      "featName": "Toughness",
-      "featKey": "toughness",
+    "armor-proficiency-heavy": {
+      "featId": "859d6b9f49118499",
+      "featName": "Armor Proficiency (heavy)",
+      "featKey": "armor-proficiency-heavy",
       "effects": [
         {
-          "_id": "7tBsXZ6x9k0zDaVC",
-          "name": "Toughness",
+          "_id": "2c536333-89aa-4859-b875-3c23070a7e9b",
+          "name": "Armor Proficiency (Heavy)",
           "icon": "icons/svg/upgrade.svg",
           "changes": [
             {
-              "key": "system.hitPoints.bonusPerLevel",
-              "mode": 2,
-              "value": "5",
-              "priority": 20
+              "key": "system.armorProficiency.heavy",
+              "mode": 5,
+              "value": "true"
             }
           ],
           "duration": {},
-          "disabled": true,
-          "transfer": true,
+          "disabled": false,
+          "transfer": false,
           "flags": {
             "swse": {
-              "type": "hit-points",
-              "perLevel": true,
-              "migratedToPassive": true
+              "source": "feat",
+              "featName": "Armor Proficiency (Heavy)",
+              "effectType": "armor_proficiency"
             }
           },
           "_provenance": {
-            "originalEffectId": null,
-            "generatedId": true
+            "originalEffectId": "2c536333-89aa-4859-b875-3c23070a7e9b",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "armor-proficiency-light": {
+      "featId": "773ec00effc7e96f",
+      "featName": "Armor Proficiency (light)",
+      "featKey": "armor-proficiency-light",
+      "effects": [
+        {
+          "_id": "9781a3c7-4e7e-4af0-9dcc-cdea0524b414",
+          "name": "Armor Proficiency (Light)",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [
+            {
+              "key": "system.armorProficiency.light",
+              "mode": 5,
+              "value": "true"
+            }
+          ],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Armor Proficiency (Light)",
+              "effectType": "armor_proficiency"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "9781a3c7-4e7e-4af0-9dcc-cdea0524b414",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "armor-proficiency-medium": {
+      "featId": "d445051370a88a7f",
+      "featName": "Armor Proficiency (medium)",
+      "featKey": "armor-proficiency-medium",
+      "effects": [
+        {
+          "_id": "af0983df-e771-4593-8f88-f0aa43612597",
+          "name": "Armor Proficiency (Medium)",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [
+            {
+              "key": "system.armorProficiency.medium",
+              "mode": 5,
+              "value": "true"
+            }
+          ],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Armor Proficiency (Medium)",
+              "effectType": "armor_proficiency"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "af0983df-e771-4593-8f88-f0aa43612597",
+            "generatedId": false
           }
         }
       ]
@@ -156,212 +165,34 @@
         }
       ]
     },
-    "skill-focus": {
-      "featId": "1592aaedf4b6e40a",
-      "featName": "Skill Focus",
-      "featKey": "skill-focus",
+    "autofire-assault": {
+      "featId": "c973e43c85382068",
+      "featName": "Autofire Assault",
+      "featKey": "autofire-assault",
       "effects": [
         {
-          "_id": "R8muW6Fatju43NSc",
-          "name": "Skill Focus",
+          "_id": "870f5168-26b8-487a-8255-fbf32ddc06ff",
+          "name": "Autofire Assault",
           "icon": "icons/svg/upgrade.svg",
           "changes": [
             {
-              "key": "system.skills.perception.miscMod",
+              "key": "system.combat.autofireDamageBonus",
               "mode": 2,
-              "value": "5",
-              "priority": 20
+              "value": "2"
             }
           ],
           "duration": {},
-          "disabled": true,
-          "transfer": true,
-          "flags": {
-            "swse": {
-              "type": "skill-bonus",
-              "skill": "43c5941072ec78af",
-              "source": "Skill Focus",
-              "migratedToPassive": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": null,
-            "generatedId": true
-          }
-        }
-      ]
-    },
-    "forceful-will": {
-      "featId": "17e317292814e13e",
-      "featName": "Forceful Will",
-      "featKey": "forceful-will",
-      "effects": [
-        {
-          "_id": "AMfPA4cvFhEzmE2K",
-          "name": "Forceful Will (vs mind-affecting)",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.defenses.will.misc",
-              "mode": 2,
-              "value": "2",
-              "priority": 20
-            }
-          ],
-          "duration": {},
-          "disabled": true,
-          "transfer": true,
-          "flags": {
-            "swse": {
-              "type": "feat-conditional-defense",
-              "source": "Forceful Will",
-              "defenseType": "will",
-              "condition": "vs mind-affecting",
-              "toggleable": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": null,
-            "generatedId": true
-          }
-        }
-      ]
-    },
-    "technical-experts": {
-      "featId": "18779d9a72b47a12",
-      "featName": "Technical Experts",
-      "featKey": "technical-experts",
-      "effects": [
-        {
-          "_id": "84fed409-8efc-4d98-b57c-e524969fea3c",
-          "name": "Technical Experts",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
           "disabled": false,
           "transfer": false,
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Technical Experts",
-              "effectType": "skill_bonus",
-              "requiresCustomLogic": true
+              "featName": "Autofire Assault",
+              "effectType": "damage_bonus"
             }
           },
           "_provenance": {
-            "originalEffectId": "84fed409-8efc-4d98-b57c-e524969fea3c",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "medical-team": {
-      "featId": "1d27dfb8ce491836",
-      "featName": "Medical Team",
-      "featKey": "medical-team",
-      "effects": [
-        {
-          "_id": "2c1ca71e-4e78-4270-8b8c-35c1ebd97839",
-          "name": "Medical Team",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Medical Team",
-              "effectType": "skill_bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "2c1ca71e-4e78-4270-8b8c-35c1ebd97839",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "sharp-senses": {
-      "featId": "2357f4a68fe571fb",
-      "featName": "Sharp Senses",
-      "featKey": "sharp-senses",
-      "effects": [
-        {
-          "_id": "73c8fbc0-142d-460e-ba02-c9455de3a848",
-          "name": "Sharp Senses",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Sharp Senses",
-              "effectType": "special",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "73c8fbc0-142d-460e-ba02-c9455de3a848",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "improved-stun": {
-      "featId": "2bad688298402481",
-      "featName": "Improved Stun",
-      "featKey": "improved-stun",
-      "effects": [
-        {
-          "_id": "b7c4dc5d-6ade-4f1c-a95d-1657c43260f6",
-          "name": "Improved Stun",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Improved Stun",
-              "effectType": "combat_bonus",
-              "flagType": "Improved Stun"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "b7c4dc5d-6ade-4f1c-a95d-1657c43260f6",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "weapon-proficiency-simple-weapons": {
-      "featId": "2d680cc46a7972da",
-      "featName": "Weapon Proficiency (Simple Weapons)",
-      "featKey": "weapon-proficiency-simple-weapons",
-      "effects": [
-        {
-          "_id": "220daaa7-e1b5-440d-98cd-10f5e586ef8b",
-          "name": "Weapon Proficiency (Simple Weapons)",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Weapon Proficiency (Simple Weapons)",
-              "effectType": "passive_effect",
-              "flagType": "Weapon Proficiency (Simple Weapons)"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "220daaa7-e1b5-440d-98cd-10f5e586ef8b",
+            "originalEffectId": "870f5168-26b8-487a-8255-fbf32ddc06ff",
             "generatedId": false
           }
         }
@@ -395,14 +226,48 @@
         }
       ]
     },
-    "justice-seeker": {
-      "featId": "3595086bb17d4303",
-      "featName": "Justice Seeker",
-      "featKey": "justice-seeker",
+    "bothan-will": {
+      "featId": "d40dea327376ec90",
+      "featName": "Bothan Will",
+      "featKey": "bothan-will",
       "effects": [
         {
-          "_id": "4d14d994-e1db-4d72-ae3f-0bcd3fa34575",
-          "name": "Justice Seeker",
+          "_id": "5e3995c0-0142-45f4-a0d7-27e1f0f89562",
+          "name": "Bothan Will",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [
+            {
+              "key": "system.defenses.will.misc",
+              "mode": 2,
+              "value": "1"
+            }
+          ],
+          "duration": {},
+          "disabled": true,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Bothan Will",
+              "effectType": "will_defense_bonus",
+              "migratedToPassive": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "5e3995c0-0142-45f4-a0d7-27e1f0f89562",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "bowcaster-marksman": {
+      "featId": "db82e1df17c3110b",
+      "featName": "Bowcaster Marksman",
+      "featKey": "bowcaster-marksman",
+      "effects": [
+        {
+          "_id": "f376ea67-161a-4b7e-bcea-f967926d5867",
+          "name": "Bowcaster Marksman",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -411,82 +276,26 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Justice Seeker",
+              "featName": "Bowcaster Marksman",
               "effectType": "combat_bonus",
-              "flagType": "Justice Seeker"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "4d14d994-e1db-4d72-ae3f-0bcd3fa34575",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "forceful-saber-throw": {
-      "featId": "37cb4455a70876ad",
-      "featName": "Forceful Saber Throw",
-      "featKey": "forceful-saber-throw",
-      "effects": [
-        {
-          "_id": "a4d4bea4-b709-4277-b831-4968e0570216",
-          "name": "Forceful Saber Throw",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Forceful Saber Throw",
-              "effectType": "skill_bonus",
-              "flagType": "Forceful Saber Throw"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "a4d4bea4-b709-4277-b831-4968e0570216",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "reckless-charge": {
-      "featId": "4025202b97ec451d",
-      "featName": "Reckless Charge",
-      "featKey": "reckless-charge",
-      "effects": [
-        {
-          "_id": "54ed6adb-4bec-4864-9fd4-f8a974f2f3a0",
-          "name": "Reckless Charge",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Reckless Charge",
-              "effectType": "defense_bonus",
               "requiresCustomLogic": true
             }
           },
           "_provenance": {
-            "originalEffectId": "54ed6adb-4bec-4864-9fd4-f8a974f2f3a0",
+            "originalEffectId": "f376ea67-161a-4b7e-bcea-f967926d5867",
             "generatedId": false
           }
         }
       ]
     },
-    "heavy-weapon-proficiency": {
-      "featId": "41a9ce755ecffb5b",
-      "featName": "Heavy Weapon Proficiency",
-      "featKey": "heavy-weapon-proficiency",
+    "coordinated-attack": {
+      "featId": "964f0781b3e3fc37",
+      "featName": "Coordinated Attack",
+      "featKey": "coordinated-attack",
       "effects": [
         {
-          "_id": "8022df9b-54d6-420c-bc56-70dd4666b140",
-          "name": "Heavy Weapon Proficiency",
+          "_id": "64b1c39a-2f16-43e4-aa8b-0ee213caf7a2",
+          "name": "Coordinated Attack",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -495,26 +304,26 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Heavy Weapon Proficiency",
-              "effectType": "passive_effect",
-              "flagType": "Heavy Weapon Proficiency"
+              "featName": "Coordinated Attack",
+              "effectType": "combat_bonus",
+              "requiresCustomLogic": true
             }
           },
           "_provenance": {
-            "originalEffectId": "8022df9b-54d6-420c-bc56-70dd4666b140",
+            "originalEffectId": "64b1c39a-2f16-43e4-aa8b-0ee213caf7a2",
             "generatedId": false
           }
         }
       ]
     },
-    "veteran-spacer": {
-      "featId": "423c5fffe7abe449",
-      "featName": "Veteran Spacer",
-      "featKey": "veteran-spacer",
+    "covert-operatives": {
+      "featId": "75daa55c22ffed5e",
+      "featName": "Covert Operatives",
+      "featKey": "covert-operatives",
       "effects": [
         {
-          "_id": "5e810754-78db-4b51-a879-83d55b7439cb",
-          "name": "Veteran Spacer",
+          "_id": "acf6131e-f0c7-4851-99dd-0f0efd6241b8",
+          "name": "Covert Operatives",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -523,13 +332,69 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Veteran Spacer",
+              "featName": "Covert Operatives",
               "effectType": "skill_bonus",
-              "flagType": "Veteran Spacer"
+              "requiresCustomLogic": true
             }
           },
           "_provenance": {
-            "originalEffectId": "5e810754-78db-4b51-a879-83d55b7439cb",
+            "originalEffectId": "acf6131e-f0c7-4851-99dd-0f0efd6241b8",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "darkness-dweller": {
+      "featId": "eaf7079b977d60b7",
+      "featName": "Darkness Dweller",
+      "featKey": "darkness-dweller",
+      "effects": [
+        {
+          "_id": "1b28fe0a-2045-4172-866e-4a81cd6a662d",
+          "name": "Darkness Dweller",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Darkness Dweller",
+              "effectType": "passive_effect",
+              "flagType": "Darkness Dweller"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "1b28fe0a-2045-4172-866e-4a81cd6a662d",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "disarming-charm": {
+      "featId": "9567c9e2fe8416e6",
+      "featName": "Disarming Charm",
+      "featKey": "disarming-charm",
+      "effects": [
+        {
+          "_id": "3ce60f8f-157c-4b02-b329-cd961752b685",
+          "name": "Disarming Charm",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Disarming Charm",
+              "effectType": "skill_bonus",
+              "flagType": "Disarming Charm"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "3ce60f8f-157c-4b02-b329-cd961752b685",
             "generatedId": false
           }
         }
@@ -570,375 +435,6 @@
         }
       ]
     },
-    "forceful-grip": {
-      "featId": "465434fb7b44aee1",
-      "featName": "Forceful Grip",
-      "featKey": "forceful-grip",
-      "effects": [
-        {
-          "_id": "048ea732-aecd-4c0e-99b7-d996fa72eaa5",
-          "name": "Forceful Grip",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Forceful Grip",
-              "effectType": "skill_bonus",
-              "flagType": "Forceful Grip"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "048ea732-aecd-4c0e-99b7-d996fa72eaa5",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "resurgent-vitality": {
-      "featId": "47f21e32233bb910",
-      "featName": "Resurgent Vitality",
-      "featKey": "resurgent-vitality",
-      "effects": [
-        {
-          "_id": "6bd1b831-e5a0-42d5-9bfa-a2dd3dbfda4c",
-          "name": "Resurgent Vitality",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Resurgent Vitality",
-              "effectType": "bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "6bd1b831-e5a0-42d5-9bfa-a2dd3dbfda4c",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "force-boon": {
-      "featId": "53444cc061d81627",
-      "featName": "Force Boon",
-      "featKey": "force-boon",
-      "effects": [
-        {
-          "_id": "77311d06-cd4c-4e4e-88a1-3eb53ba7bf60",
-          "name": "Force Boon",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Force Boon",
-              "effectType": "passive",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "77311d06-cd4c-4e4e-88a1-3eb53ba7bf60",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "aquatic-specialists": {
-      "featId": "55483fd350b3ba28",
-      "featName": "Aquatic Specialists",
-      "featKey": "aquatic-specialists",
-      "effects": [
-        {
-          "_id": "457bea9c-bde5-4d8e-b463-622d2db80636",
-          "name": "Aquatic Specialists",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Aquatic Specialists",
-              "effectType": "skill_bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "457bea9c-bde5-4d8e-b463-622d2db80636",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "improved-grapple": {
-      "featId": "5824e2360feb505a",
-      "featName": "Improved Grapple",
-      "featKey": "improved-grapple",
-      "effects": [
-        {
-          "_id": "051a0e7f-c11a-44af-95eb-683f9d8d7467",
-          "name": "Improved Grapple",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Improved Grapple",
-              "effectType": "skill_bonus",
-              "flagType": "Improved Grapple"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "051a0e7f-c11a-44af-95eb-683f9d8d7467",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "keen-force-mind": {
-      "featId": "647d77a8f5ab9af3",
-      "featName": "Keen Force Mind",
-      "featKey": "keen-force-mind",
-      "effects": [
-        {
-          "_id": "53d22820-a807-4a74-bcc8-77674689b0fb",
-          "name": "Keen Force Mind",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Keen Force Mind",
-              "effectType": "skill_bonus",
-              "flagType": "Keen Force Mind"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "53d22820-a807-4a74-bcc8-77674689b0fb",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "forceful-slam": {
-      "featId": "6673cd53493a9d6c",
-      "featName": "Forceful Slam",
-      "featKey": "forceful-slam",
-      "effects": [
-        {
-          "_id": "dd3bb5b5-ed2f-4950-9cb1-faca1dce72c0",
-          "name": "Forceful Slam",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Forceful Slam",
-              "effectType": "skill_bonus",
-              "flagType": "Forceful Slam"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "dd3bb5b5-ed2f-4950-9cb1-faca1dce72c0",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "unhindered-approach": {
-      "featId": "72183c573d1cc44e",
-      "featName": "Unhindered Approach",
-      "featKey": "unhindered-approach",
-      "effects": [
-        {
-          "_id": "e235e428-f19c-46cb-baa9-10c7a79edc84",
-          "name": "Unhindered Approach",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Unhindered Approach",
-              "effectType": "skill_bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "e235e428-f19c-46cb-baa9-10c7a79edc84",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "covert-operatives": {
-      "featId": "75daa55c22ffed5e",
-      "featName": "Covert Operatives",
-      "featKey": "covert-operatives",
-      "effects": [
-        {
-          "_id": "acf6131e-f0c7-4851-99dd-0f0efd6241b8",
-          "name": "Covert Operatives",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Covert Operatives",
-              "effectType": "skill_bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "acf6131e-f0c7-4851-99dd-0f0efd6241b8",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "weapon-proficiency-rifles": {
-      "featId": "765ff8a34e58acac",
-      "featName": "Weapon Proficiency (Rifles)",
-      "featKey": "weapon-proficiency-rifles",
-      "effects": [
-        {
-          "_id": "3b695d0d-747b-4081-8b6c-8b5f8584ff43",
-          "name": "Weapon Proficiency (Rifles)",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Weapon Proficiency (Rifles)",
-              "effectType": "passive_effect",
-              "flagType": "Weapon Proficiency (Rifles)"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "3b695d0d-747b-4081-8b6c-8b5f8584ff43",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "armor-proficiency-light": {
-      "featId": "773ec00effc7e96f",
-      "featName": "Armor Proficiency (light)",
-      "featKey": "armor-proficiency-light",
-      "effects": [
-        {
-          "_id": "9781a3c7-4e7e-4af0-9dcc-cdea0524b414",
-          "name": "Armor Proficiency (Light)",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.armorProficiency.light",
-              "mode": 5,
-              "value": "true"
-            }
-          ],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Armor Proficiency (Light)",
-              "effectType": "armor_proficiency"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "9781a3c7-4e7e-4af0-9dcc-cdea0524b414",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "slicer-team": {
-      "featId": "77c897590b4000f6",
-      "featName": "Slicer Team",
-      "featKey": "slicer-team",
-      "effects": [
-        {
-          "_id": "42e2b97a-7c7f-419c-ae1d-42e6080cb792",
-          "name": "Slicer Team",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Slicer Team",
-              "effectType": "skill_bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "42e2b97a-7c7f-419c-ae1d-42e6080cb792",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "weapon-proficiency-heavy-weapons": {
-      "featId": "8329a353aa3899be",
-      "featName": "Weapon Proficiency (Heavy Weapons)",
-      "featKey": "weapon-proficiency-heavy-weapons",
-      "effects": [
-        {
-          "_id": "5f95d267-fdb7-43aa-998c-918188f277fe",
-          "name": "Weapon Proficiency (Heavy Weapons)",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Weapon Proficiency (Heavy Weapons)",
-              "effectType": "passive_effect",
-              "flagType": "Weapon Proficiency (Heavy Weapons)"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "5f95d267-fdb7-43aa-998c-918188f277fe",
-            "generatedId": false
-          }
-        }
-      ]
-    },
     "dual-weapon-mastery-i": {
       "featId": "84d8866a57381620",
       "featName": "Dual Weapon Mastery I",
@@ -962,559 +458,6 @@
           },
           "_provenance": {
             "originalEffectId": "5e1f7aa0-8f41-4f6e-9a16-1710b2de25e9",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "armor-proficiency-heavy": {
-      "featId": "859d6b9f49118499",
-      "featName": "Armor Proficiency (heavy)",
-      "featKey": "armor-proficiency-heavy",
-      "effects": [
-        {
-          "_id": "2c536333-89aa-4859-b875-3c23070a7e9b",
-          "name": "Armor Proficiency (Heavy)",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.armorProficiency.heavy",
-              "mode": 5,
-              "value": "true"
-            }
-          ],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Armor Proficiency (Heavy)",
-              "effectType": "armor_proficiency"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "2c536333-89aa-4859-b875-3c23070a7e9b",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "two-weapon-fighting": {
-      "featId": "88cdedff38b610c0",
-      "featName": "Two-Weapon Fighting",
-      "featKey": "two-weapon-fighting",
-      "effects": [
-        {
-          "_id": "4f1d95ad-b4cd-4d39-875e-730213a08d56",
-          "name": "Two-Weapon Fighting",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Two-Weapon Fighting",
-              "effectType": "passive_effect",
-              "flagType": "Two-Weapon Fighting"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "4f1d95ad-b4cd-4d39-875e-730213a08d56",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "improved-knock-prone": {
-      "featId": "9138c70e1ae07fe1",
-      "featName": "Improved Knock Prone",
-      "featKey": "improved-knock-prone",
-      "effects": [
-        {
-          "_id": "b1f63e24-9bc9-4ade-a65c-39ddd6f85205",
-          "name": "Improved Knock Prone",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Improved Knock Prone",
-              "effectType": "combat_bonus",
-              "flagType": "Improved Knock Prone"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "b1f63e24-9bc9-4ade-a65c-39ddd6f85205",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "disarming-charm": {
-      "featId": "9567c9e2fe8416e6",
-      "featName": "Disarming Charm",
-      "featKey": "disarming-charm",
-      "effects": [
-        {
-          "_id": "3ce60f8f-157c-4b02-b329-cd961752b685",
-          "name": "Disarming Charm",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Disarming Charm",
-              "effectType": "skill_bonus",
-              "flagType": "Disarming Charm"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "3ce60f8f-157c-4b02-b329-cd961752b685",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "coordinated-attack": {
-      "featId": "964f0781b3e3fc37",
-      "featName": "Coordinated Attack",
-      "featKey": "coordinated-attack",
-      "effects": [
-        {
-          "_id": "64b1c39a-2f16-43e4-aa8b-0ee213caf7a2",
-          "name": "Coordinated Attack",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Coordinated Attack",
-              "effectType": "combat_bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "64b1c39a-2f16-43e4-aa8b-0ee213caf7a2",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "improved-damage-threshold": {
-      "featId": "96666de28ba99b64",
-      "featName": "Improved Damage Threshold",
-      "featKey": "improved-damage-threshold",
-      "effects": [
-        {
-          "_id": "i0DsZj7XF4AeSUrY",
-          "name": "Improved Damage Threshold",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.damageThreshold",
-              "mode": 2,
-              "value": "5",
-              "priority": 20
-            }
-          ],
-          "duration": {},
-          "disabled": true,
-          "transfer": true,
-          "flags": {
-            "swse": {
-              "migratedToPassive": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": null,
-            "generatedId": true
-          }
-        }
-      ]
-    },
-    "great-fortitude": {
-      "featId": "9a89576b3cc1347e",
-      "featName": "Great Fortitude",
-      "featKey": "great-fortitude",
-      "effects": [
-        {
-          "_id": "uvNf4wggwZVaX1mx",
-          "name": "Great Fortitude",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.defenses.fortitude.bonus",
-              "mode": 2,
-              "value": "2",
-              "priority": 20
-            }
-          ],
-          "duration": {},
-          "disabled": true,
-          "transfer": true,
-          "flags": {
-            "swse": {
-              "type": "defense-bonus",
-              "defense": "fortitude",
-              "migratedToPassive": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": null,
-            "generatedId": true
-          }
-        }
-      ]
-    },
-    "force-training": {
-      "featId": "9b7b869a86f39190",
-      "featName": "Force Training",
-      "featKey": "force-training",
-      "effects": [
-        {
-          "_id": "d1c60a9b-78e6-4601-85a4-320794fa5a91",
-          "name": "Force Training",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Force Training",
-              "effectType": "passive_effect",
-              "flagType": "Force Training"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "d1c60a9b-78e6-4601-85a4-320794fa5a91",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "warrior-heritage": {
-      "featId": "a9a59c85cddbda1f",
-      "featName": "Warrior Heritage",
-      "featKey": "warrior-heritage",
-      "effects": [
-        {
-          "_id": "d81202e0-20b2-409c-8d32-45838433244f",
-          "name": "Warrior Heritage",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Warrior Heritage",
-              "effectType": "defense_bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "d81202e0-20b2-409c-8d32-45838433244f",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "lasting-influence": {
-      "featId": "ad740c563485664d",
-      "featName": "Lasting Influence",
-      "featKey": "lasting-influence",
-      "effects": [
-        {
-          "_id": "d140a858-0a44-4f95-a88f-cfa9d35d16fa",
-          "name": "Lasting Influence",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Lasting Influence",
-              "effectType": "passive_effect",
-              "flagType": "Lasting Influence"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "d140a858-0a44-4f95-a88f-cfa9d35d16fa",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "ter-s-k-si-training": {
-      "featId": "b0feacaeae4860e9",
-      "featName": "Teräs Käsi Training",
-      "featKey": "ter-s-k-si-training",
-      "effects": [
-        {
-          "_id": "13c55868-397b-4d06-8f97-8ad4743c04d3",
-          "name": "Teräs Käsi Training",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Teräs Käsi Training",
-              "effectType": "special",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "13c55868-397b-4d06-8f97-8ad4743c04d3",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "fringe-benefits": {
-      "featId": "b1299c242802a260",
-      "featName": "Fringe Benefits",
-      "featKey": "fringe-benefits",
-      "effects": [
-        {
-          "_id": "a9baf594-dbf5-4166-97f6-28942f1b2f16",
-          "name": "Fringe Benefits",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Fringe Benefits",
-              "effectType": "passive_effect",
-              "flagType": "Fringe Benefits"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "a9baf594-dbf5-4166-97f6-28942f1b2f16",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "unified-squadron": {
-      "featId": "b1970c18996d44dd",
-      "featName": "Unified Squadron",
-      "featKey": "unified-squadron",
-      "effects": [
-        {
-          "_id": "318db08e-459c-45f8-b86e-3e67175b59ee",
-          "name": "Unified Squadron",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Unified Squadron",
-              "effectType": "skill_bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "318db08e-459c-45f8-b86e-3e67175b59ee",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "far-shot": {
-      "featId": "b5a8d5899e02139c",
-      "featName": "Far Shot",
-      "featKey": "far-shot",
-      "effects": [
-        {
-          "_id": "95e717d6-e35f-4987-aa9f-df3ad86b403f",
-          "name": "Far Shot",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Far Shot",
-              "effectType": "passive_effect",
-              "flagType": "Far Shot"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "95e717d6-e35f-4987-aa9f-df3ad86b403f",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "tireless-squad": {
-      "featId": "b648515a5e8dd612",
-      "featName": "Tireless Squad",
-      "featKey": "tireless-squad",
-      "effects": [
-        {
-          "_id": "173e71a3-9001-4b47-95b2-9143a098273a",
-          "name": "Tireless Squad",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Tireless Squad",
-              "effectType": "skill_bonus",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "173e71a3-9001-4b47-95b2-9143a098273a",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "hew": {
-      "featId": "b7d60764c9cb6bbd",
-      "featName": "Hew",
-      "featKey": "hew",
-      "effects": [
-        {
-          "_id": "2ea228d9-ede6-403b-8eea-201927f387e3",
-          "name": "Hew",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Hew",
-              "effectType": "negation",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "2ea228d9-ede6-403b-8eea-201927f387e3",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "mon-calamari-shipwright": {
-      "featId": "bb16070b5fdfccf4",
-      "featName": "Mon Calamari Shipwright",
-      "featKey": "mon-calamari-shipwright",
-      "effects": [
-        {
-          "_id": "cdf1b6ac-e96a-47ce-b26b-4b35a6e0d0fb",
-          "name": "Mon Calamari Shipwright",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Mon Calamari Shipwright",
-              "effectType": "special",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "cdf1b6ac-e96a-47ce-b26b-4b35a6e0d0fb",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "lightning-reflexes": {
-      "featId": "bee76d01da40677d",
-      "featName": "Lightning Reflexes",
-      "featKey": "lightning-reflexes",
-      "effects": [
-        {
-          "_id": "si0bvL8JiwTiGrkA",
-          "name": "Lightning Reflexes",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.defenses.reflex.bonus",
-              "mode": 2,
-              "value": "2",
-              "priority": 20
-            }
-          ],
-          "duration": {},
-          "disabled": true,
-          "transfer": true,
-          "flags": {
-            "swse": {
-              "type": "defense-bonus",
-              "defense": "reflex",
-              "migratedToPassive": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": null,
-            "generatedId": true
-          }
-        }
-      ]
-    },
-    "precise-shot": {
-      "featId": "c180eee7d3bc29b2",
-      "featName": "Precise Shot",
-      "featKey": "precise-shot",
-      "effects": [
-        {
-          "_id": "77e126ab-16c9-4116-9d67-b5550c007b1b",
-          "name": "Precise Shot",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Precise Shot",
-              "effectType": "passive_effect",
-              "flagType": "Precise Shot"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "77e126ab-16c9-4116-9d67-b5550c007b1b",
             "generatedId": false
           }
         }
@@ -1548,47 +491,14 @@
         }
       ]
     },
-    "autofire-assault": {
-      "featId": "c973e43c85382068",
-      "featName": "Autofire Assault",
-      "featKey": "autofire-assault",
+    "dual-weapon-mastery-iii": {
+      "featId": "ea684defcd3222ca",
+      "featName": "Dual Weapon Mastery III",
+      "featKey": "dual-weapon-mastery-iii",
       "effects": [
         {
-          "_id": "870f5168-26b8-487a-8255-fbf32ddc06ff",
-          "name": "Autofire Assault",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.combat.autofireDamageBonus",
-              "mode": 2,
-              "value": "2"
-            }
-          ],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Autofire Assault",
-              "effectType": "damage_bonus"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "870f5168-26b8-487a-8255-fbf32ddc06ff",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "improved-disarm": {
-      "featId": "ce473e52f90b160a",
-      "featName": "Improved Disarm",
-      "featKey": "improved-disarm",
-      "effects": [
-        {
-          "_id": "11028f88-1c7b-4f68-8cb6-352d73d94b1b",
-          "name": "Improved Disarm",
+          "_id": "8937b074-f7ef-40fa-889c-85578fc3e023",
+          "name": "Dual Weapon Mastery III",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -1597,164 +507,41 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Improved Disarm",
-              "effectType": "combat_bonus",
-              "flagType": "Improved Disarm"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "11028f88-1c7b-4f68-8cb6-352d73d94b1b",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "advanced-melee-weapon-proficiency": {
-      "featId": "cf28ec45cabaff59",
-      "featName": "Advanced Melee Weapon Proficiency",
-      "featKey": "advanced-melee-weapon-proficiency",
-      "effects": [
-        {
-          "_id": "98db3afe-ce93-4e0a-8169-ba50a061bb00",
-          "name": "Advanced Melee Weapon Proficiency",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Advanced Melee Weapon Proficiency",
-              "effectType": "weapon_proficiency",
-              "flagType": "advancedMeleeWeapons"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "98db3afe-ce93-4e0a-8169-ba50a061bb00",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "master-tracker": {
-      "featId": "d133d3fad058c35f",
-      "featName": "Master Tracker",
-      "featKey": "master-tracker",
-      "effects": [
-        {
-          "_id": "71f867b4-027c-4516-b1fe-9f5f070baf09",
-          "name": "Master Tracker",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Master Tracker",
-              "effectType": "special",
-              "requiresCustomLogic": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "71f867b4-027c-4516-b1fe-9f5f070baf09",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "jedi-heritage": {
-      "featId": "d3c4ae9f793b8573",
-      "featName": "Jedi Heritage",
-      "featKey": "jedi-heritage",
-      "effects": [
-        {
-          "_id": "9fcf8646-06b7-43a2-8783-ae78a243ef1e",
-          "name": "Jedi Heritage",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Jedi Heritage",
+              "featName": "Dual Weapon Mastery III",
               "effectType": "passive_effect",
-              "flagType": "Jedi Heritage"
+              "flagType": "Dual Weapon Mastery III"
             }
           },
           "_provenance": {
-            "originalEffectId": "9fcf8646-06b7-43a2-8783-ae78a243ef1e",
+            "originalEffectId": "8937b074-f7ef-40fa-889c-85578fc3e023",
             "generatedId": false
           }
         }
       ]
     },
-    "bothan-will": {
-      "featId": "d40dea327376ec90",
-      "featName": "Bothan Will",
-      "featKey": "bothan-will",
+    "far-shot": {
+      "featId": "b5a8d5899e02139c",
+      "featName": "Far Shot",
+      "featKey": "far-shot",
       "effects": [
         {
-          "_id": "5e3995c0-0142-45f4-a0d7-27e1f0f89562",
-          "name": "Bothan Will",
+          "_id": "95e717d6-e35f-4987-aa9f-df3ad86b403f",
+          "name": "Far Shot",
           "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.defenses.will.misc",
-              "mode": 2,
-              "value": "1"
-            }
-          ],
-          "duration": {},
-          "disabled": true,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Bothan Will",
-              "effectType": "will_defense_bonus",
-              "migratedToPassive": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "5e3995c0-0142-45f4-a0d7-27e1f0f89562",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "armor-proficiency-medium": {
-      "featId": "d445051370a88a7f",
-      "featName": "Armor Proficiency (medium)",
-      "featKey": "armor-proficiency-medium",
-      "effects": [
-        {
-          "_id": "af0983df-e771-4593-8f88-f0aa43612597",
-          "name": "Armor Proficiency (Medium)",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.armorProficiency.medium",
-              "mode": 5,
-              "value": "true"
-            }
-          ],
+          "changes": [],
           "duration": {},
           "disabled": false,
           "transfer": false,
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Armor Proficiency (Medium)",
-              "effectType": "armor_proficiency"
+              "featName": "Far Shot",
+              "effectType": "passive_effect",
+              "flagType": "Far Shot"
             }
           },
           "_provenance": {
-            "originalEffectId": "af0983df-e771-4593-8f88-f0aa43612597",
+            "originalEffectId": "95e717d6-e35f-4987-aa9f-df3ad86b403f",
             "generatedId": false
           }
         }
@@ -1789,14 +576,14 @@
         }
       ]
     },
-    "wilderness-specialists": {
-      "featId": "daf0594fbb48e61e",
-      "featName": "Wilderness Specialists",
-      "featKey": "wilderness-specialists",
+    "force-boon": {
+      "featId": "53444cc061d81627",
+      "featName": "Force Boon",
+      "featKey": "force-boon",
       "effects": [
         {
-          "_id": "4e6b6849-eae9-4126-ab01-44509e3fe819",
-          "name": "Wilderness Specialists",
+          "_id": "77311d06-cd4c-4e4e-88a1-3eb53ba7bf60",
+          "name": "Force Boon",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -1805,26 +592,26 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Wilderness Specialists",
-              "effectType": "skill_bonus",
+              "featName": "Force Boon",
+              "effectType": "passive",
               "requiresCustomLogic": true
             }
           },
           "_provenance": {
-            "originalEffectId": "4e6b6849-eae9-4126-ab01-44509e3fe819",
+            "originalEffectId": "77311d06-cd4c-4e4e-88a1-3eb53ba7bf60",
             "generatedId": false
           }
         }
       ]
     },
-    "forceful-weapon": {
-      "featId": "db564cc6f9879ec8",
-      "featName": "Forceful Weapon",
-      "featKey": "forceful-weapon",
+    "force-training": {
+      "featId": "9b7b869a86f39190",
+      "featName": "Force Training",
+      "featKey": "force-training",
       "effects": [
         {
-          "_id": "590a3fb1-2871-47fc-b349-cc01158ff224",
-          "name": "Forceful Weapon",
+          "_id": "d1c60a9b-78e6-4601-85a4-320794fa5a91",
+          "name": "Force Training",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -1833,26 +620,26 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Forceful Weapon",
-              "effectType": "skill_bonus",
-              "flagType": "Forceful Weapon"
+              "featName": "Force Training",
+              "effectType": "passive_effect",
+              "flagType": "Force Training"
             }
           },
           "_provenance": {
-            "originalEffectId": "590a3fb1-2871-47fc-b349-cc01158ff224",
+            "originalEffectId": "d1c60a9b-78e6-4601-85a4-320794fa5a91",
             "generatedId": false
           }
         }
       ]
     },
-    "bowcaster-marksman": {
-      "featId": "db82e1df17c3110b",
-      "featName": "Bowcaster Marksman",
-      "featKey": "bowcaster-marksman",
+    "fringe-benefits": {
+      "featId": "b1299c242802a260",
+      "featName": "Fringe Benefits",
+      "featKey": "fringe-benefits",
       "effects": [
         {
-          "_id": "f376ea67-161a-4b7e-bcea-f967926d5867",
-          "name": "Bowcaster Marksman",
+          "_id": "a9baf594-dbf5-4166-97f6-28942f1b2f16",
+          "name": "Fringe Benefits",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -1861,154 +648,41 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Bowcaster Marksman",
-              "effectType": "combat_bonus",
+              "featName": "Fringe Benefits",
+              "effectType": "passive_effect",
+              "flagType": "Fringe Benefits"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "a9baf594-dbf5-4166-97f6-28942f1b2f16",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "gungan-weapon-master": {
+      "featId": "f916516eeeaae10b",
+      "featName": "Gungan Weapon Master",
+      "featKey": "gungan-weapon-master",
+      "effects": [
+        {
+          "_id": "88fe2270-9c25-4453-a518-0fa6729d4afe",
+          "name": "Gungan Weapon Master",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Gungan Weapon Master",
+              "effectType": "special",
               "requiresCustomLogic": true
             }
           },
           "_provenance": {
-            "originalEffectId": "f376ea67-161a-4b7e-bcea-f967926d5867",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "spacer-s-surge": {
-      "featId": "dd6ad0e712e9a314",
-      "featName": "Spacer's Surge",
-      "featKey": "spacer-s-surge",
-      "effects": [
-        {
-          "_id": "b3fc588e-6694-4d1e-8cd9-2c08adb72883",
-          "name": "Spacer's Surge",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Spacer's Surge",
-              "effectType": "passive_effect",
-              "flagType": "Spacer's Surge"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "b3fc588e-6694-4d1e-8cd9-2c08adb72883",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "weapon-proficiency-pistols": {
-      "featId": "e5d361d01d1b44e4",
-      "featName": "Weapon Proficiency (Pistols)",
-      "featKey": "weapon-proficiency-pistols",
-      "effects": [
-        {
-          "_id": "04733e85-193e-4f4b-8792-c359083557d1",
-          "name": "Weapon Proficiency (Pistols)",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Weapon Proficiency (Pistols)",
-              "effectType": "passive_effect",
-              "flagType": "Weapon Proficiency (Pistols)"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "04733e85-193e-4f4b-8792-c359083557d1",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "thick-skin": {
-      "featId": "e97cc5c5128a55ce",
-      "featName": "Thick Skin",
-      "featKey": "thick-skin",
-      "effects": [
-        {
-          "_id": "b3b93b78-9b9c-46c8-9f9b-dde02270f63c",
-          "name": "Thick Skin",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": true,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Thick Skin",
-              "effectType": "defense_bonus",
-              "flagType": "Thick Skin",
-              "migratedToPassive": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "b3b93b78-9b9c-46c8-9f9b-dde02270f63c",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "dual-weapon-mastery-iii": {
-      "featId": "ea684defcd3222ca",
-      "featName": "Dual Weapon Mastery III",
-      "featKey": "dual-weapon-mastery-iii",
-      "effects": [
-        {
-          "_id": "8937b074-f7ef-40fa-889c-85578fc3e023",
-          "name": "Dual Weapon Mastery III",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Dual Weapon Mastery III",
-              "effectType": "passive_effect",
-              "flagType": "Dual Weapon Mastery III"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "8937b074-f7ef-40fa-889c-85578fc3e023",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "darkness-dweller": {
-      "featId": "eaf7079b977d60b7",
-      "featName": "Darkness Dweller",
-      "featKey": "darkness-dweller",
-      "effects": [
-        {
-          "_id": "1b28fe0a-2045-4172-866e-4a81cd6a662d",
-          "name": "Darkness Dweller",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Darkness Dweller",
-              "effectType": "passive_effect",
-              "flagType": "Darkness Dweller"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "1b28fe0a-2045-4172-866e-4a81cd6a662d",
+            "originalEffectId": "88fe2270-9c25-4453-a518-0fa6729d4afe",
             "generatedId": false
           }
         }
@@ -2042,30 +716,34 @@
         }
       ]
     },
-    "read-the-winds": {
-      "featId": "f5be1207aa6b1817",
-      "featName": "Read the Winds",
-      "featKey": "read-the-winds",
+    "improved-damage-threshold": {
+      "featId": "96666de28ba99b64",
+      "featName": "Improved Damage Threshold",
+      "featKey": "improved-damage-threshold",
       "effects": [
         {
-          "_id": "488fdaa6-0b80-46ba-a625-e4a4facbd8fb",
-          "name": "Read the Winds",
+          "_id": "i0DsZj7XF4AeSUrY",
+          "name": "Improved Damage Threshold",
           "icon": "icons/svg/upgrade.svg",
-          "changes": [],
+          "changes": [
+            {
+              "key": "system.damageThreshold",
+              "mode": 2,
+              "value": "5",
+              "priority": 20
+            }
+          ],
           "duration": {},
-          "disabled": false,
-          "transfer": false,
+          "disabled": true,
+          "transfer": true,
           "flags": {
             "swse": {
-              "source": "feat",
-              "featName": "Read the Winds",
-              "effectType": "passive_effect",
-              "flagType": "Read the Winds"
+              "migratedToPassive": true
             }
           },
           "_provenance": {
-            "originalEffectId": "488fdaa6-0b80-46ba-a625-e4a4facbd8fb",
-            "generatedId": false
+            "originalEffectId": null,
+            "generatedId": true
           }
         }
       ]
@@ -2158,14 +836,14 @@
         }
       ]
     },
-    "gungan-weapon-master": {
-      "featId": "f916516eeeaae10b",
-      "featName": "Gungan Weapon Master",
-      "featKey": "gungan-weapon-master",
+    "improved-disarm": {
+      "featId": "ce473e52f90b160a",
+      "featName": "Improved Disarm",
+      "featKey": "improved-disarm",
       "effects": [
         {
-          "_id": "88fe2270-9c25-4453-a518-0fa6729d4afe",
-          "name": "Gungan Weapon Master",
+          "_id": "11028f88-1c7b-4f68-8cb6-352d73d94b1b",
+          "name": "Improved Disarm",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -2174,26 +852,26 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Gungan Weapon Master",
-              "effectType": "special",
-              "requiresCustomLogic": true
+              "featName": "Improved Disarm",
+              "effectType": "combat_bonus",
+              "flagType": "Improved Disarm"
             }
           },
           "_provenance": {
-            "originalEffectId": "88fe2270-9c25-4453-a518-0fa6729d4afe",
+            "originalEffectId": "11028f88-1c7b-4f68-8cb6-352d73d94b1b",
             "generatedId": false
           }
         }
       ]
     },
-    "nature-specialist": {
-      "featId": "f965ca153bb13aaf",
-      "featName": "Nature Specialist",
-      "featKey": "nature-specialist",
+    "jedi-heritage": {
+      "featId": "d3c4ae9f793b8573",
+      "featName": "Jedi Heritage",
+      "featKey": "jedi-heritage",
       "effects": [
         {
-          "_id": "c632079d-0af6-4580-a501-594d7092128a",
-          "name": "Nature Specialist",
+          "_id": "9fcf8646-06b7-43a2-8783-ae78a243ef1e",
+          "name": "Jedi Heritage",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -2202,26 +880,26 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Nature Specialist",
-              "effectType": "special",
-              "requiresCustomLogic": true
+              "featName": "Jedi Heritage",
+              "effectType": "passive_effect",
+              "flagType": "Jedi Heritage"
             }
           },
           "_provenance": {
-            "originalEffectId": "c632079d-0af6-4580-a501-594d7092128a",
+            "originalEffectId": "9fcf8646-06b7-43a2-8783-ae78a243ef1e",
             "generatedId": false
           }
         }
       ]
     },
-    "forceful-stun": {
-      "featId": "ff76bea42641ca5b",
-      "featName": "Forceful Stun",
-      "featKey": "forceful-stun",
+    "justice-seeker": {
+      "featId": "3595086bb17d4303",
+      "featName": "Justice Seeker",
+      "featKey": "justice-seeker",
       "effects": [
         {
-          "_id": "2a977ad3-fabc-43dc-80bc-bd75d8807383",
-          "name": "Forceful Stun",
+          "_id": "4d14d994-e1db-4d72-ae3f-0bcd3fa34575",
+          "name": "Justice Seeker",
           "icon": "icons/svg/upgrade.svg",
           "changes": [],
           "duration": {},
@@ -2230,13 +908,97 @@
           "flags": {
             "swse": {
               "source": "feat",
-              "featName": "Forceful Stun",
+              "featName": "Justice Seeker",
+              "effectType": "combat_bonus",
+              "flagType": "Justice Seeker"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "4d14d994-e1db-4d72-ae3f-0bcd3fa34575",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "lasting-influence": {
+      "featId": "ad740c563485664d",
+      "featName": "Lasting Influence",
+      "featKey": "lasting-influence",
+      "effects": [
+        {
+          "_id": "d140a858-0a44-4f95-a88f-cfa9d35d16fa",
+          "name": "Lasting Influence",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Lasting Influence",
+              "effectType": "passive_effect",
+              "flagType": "Lasting Influence"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "d140a858-0a44-4f95-a88f-cfa9d35d16fa",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "master-tracker": {
+      "featId": "d133d3fad058c35f",
+      "featName": "Master Tracker",
+      "featKey": "master-tracker",
+      "effects": [
+        {
+          "_id": "71f867b4-027c-4516-b1fe-9f5f070baf09",
+          "name": "Master Tracker",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Master Tracker",
+              "effectType": "special",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "71f867b4-027c-4516-b1fe-9f5f070baf09",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "medical-team": {
+      "featId": "1d27dfb8ce491836",
+      "featName": "Medical Team",
+      "featKey": "medical-team",
+      "effects": [
+        {
+          "_id": "2c1ca71e-4e78-4270-8b8c-35c1ebd97839",
+          "name": "Medical Team",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Medical Team",
               "effectType": "skill_bonus",
-              "flagType": "Forceful Stun"
+              "requiresCustomLogic": true
             }
           },
           "_provenance": {
-            "originalEffectId": "2a977ad3-fabc-43dc-80bc-bd75d8807383",
+            "originalEffectId": "2c1ca71e-4e78-4270-8b8c-35c1ebd97839",
             "generatedId": false
           }
         }
@@ -2276,20 +1038,244 @@
         }
       ]
     },
-    "forceful-vitality": {
-      "featId": "ffd5fecab0550bb6",
-      "featName": "Forceful Vitality",
-      "featKey": "forceful-vitality",
+    "mon-calamari-shipwright": {
+      "featId": "bb16070b5fdfccf4",
+      "featName": "Mon Calamari Shipwright",
+      "featKey": "mon-calamari-shipwright",
       "effects": [
         {
-          "_id": "TjRtA3sc5qs21o8z",
-          "name": "Forceful Vitality",
+          "_id": "cdf1b6ac-e96a-47ce-b26b-4b35a6e0d0fb",
+          "name": "Mon Calamari Shipwright",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Mon Calamari Shipwright",
+              "effectType": "special",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "cdf1b6ac-e96a-47ce-b26b-4b35a6e0d0fb",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "nature-specialist": {
+      "featId": "f965ca153bb13aaf",
+      "featName": "Nature Specialist",
+      "featKey": "nature-specialist",
+      "effects": [
+        {
+          "_id": "c632079d-0af6-4580-a501-594d7092128a",
+          "name": "Nature Specialist",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Nature Specialist",
+              "effectType": "special",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "c632079d-0af6-4580-a501-594d7092128a",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "pitiless-warrior": {
+      "featId": "08896a9f860ebca9",
+      "featName": "Pitiless Warrior",
+      "featKey": "pitiless-warrior",
+      "effects": [
+        {
+          "_id": "f3ae6fcb-66f0-4608-afa0-a8f2d593188f",
+          "name": "Pitiless Warrior",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Pitiless Warrior",
+              "effectType": "combat_bonus",
+              "flagType": "Pitiless Warrior"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "f3ae6fcb-66f0-4608-afa0-a8f2d593188f",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "precise-shot": {
+      "featId": "c180eee7d3bc29b2",
+      "featName": "Precise Shot",
+      "featKey": "precise-shot",
+      "effects": [
+        {
+          "_id": "77e126ab-16c9-4116-9d67-b5550c007b1b",
+          "name": "Precise Shot",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Precise Shot",
+              "effectType": "passive_effect",
+              "flagType": "Precise Shot"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "77e126ab-16c9-4116-9d67-b5550c007b1b",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "read-the-winds": {
+      "featId": "f5be1207aa6b1817",
+      "featName": "Read the Winds",
+      "featKey": "read-the-winds",
+      "effects": [
+        {
+          "_id": "488fdaa6-0b80-46ba-a625-e4a4facbd8fb",
+          "name": "Read the Winds",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Read the Winds",
+              "effectType": "passive_effect",
+              "flagType": "Read the Winds"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "488fdaa6-0b80-46ba-a625-e4a4facbd8fb",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "resurgent-vitality": {
+      "featId": "47f21e32233bb910",
+      "featName": "Resurgent Vitality",
+      "featKey": "resurgent-vitality",
+      "effects": [
+        {
+          "_id": "6bd1b831-e5a0-42d5-9bfa-a2dd3dbfda4c",
+          "name": "Resurgent Vitality",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Resurgent Vitality",
+              "effectType": "bonus",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "6bd1b831-e5a0-42d5-9bfa-a2dd3dbfda4c",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "scion-of-dorin": {
+      "featId": "08a15012d82f0d16",
+      "featName": "Scion of Dorin",
+      "featKey": "scion-of-dorin",
+      "effects": [
+        {
+          "_id": "8152154b-93e2-42e0-9f67-aefc79526f69",
+          "name": "Scion of Dorin",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Scion of Dorin",
+              "effectType": "defense_bonus",
+              "flagType": "Scion of Dorin"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "8152154b-93e2-42e0-9f67-aefc79526f69",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "sharp-senses": {
+      "featId": "2357f4a68fe571fb",
+      "featName": "Sharp Senses",
+      "featKey": "sharp-senses",
+      "effects": [
+        {
+          "_id": "73c8fbc0-142d-460e-ba02-c9455de3a848",
+          "name": "Sharp Senses",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Sharp Senses",
+              "effectType": "special",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "73c8fbc0-142d-460e-ba02-c9455de3a848",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "skill-focus": {
+      "featId": "1592aaedf4b6e40a",
+      "featName": "Skill Focus",
+      "featKey": "skill-focus",
+      "effects": [
+        {
+          "_id": "R8muW6Fatju43NSc",
+          "name": "Skill Focus",
           "icon": "icons/svg/upgrade.svg",
           "changes": [
             {
-              "key": "system.skills.endurance.miscMod",
+              "key": "system.skills.perception.miscMod",
               "mode": 2,
-              "value": "2",
+              "value": "5",
               "priority": 20
             }
           ],
@@ -2298,15 +1284,358 @@
           "transfer": true,
           "flags": {
             "swse": {
-              "type": "feat-skill-bonus",
-              "source": "Forceful Vitality",
-              "skillKey": "endurance",
+              "type": "skill-bonus",
+              "skill": "43c5941072ec78af",
+              "source": "Skill Focus",
               "migratedToPassive": true
             }
           },
           "_provenance": {
             "originalEffectId": null,
             "generatedId": true
+          }
+        }
+      ]
+    },
+    "slicer-team": {
+      "featId": "77c897590b4000f6",
+      "featName": "Slicer Team",
+      "featKey": "slicer-team",
+      "effects": [
+        {
+          "_id": "42e2b97a-7c7f-419c-ae1d-42e6080cb792",
+          "name": "Slicer Team",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Slicer Team",
+              "effectType": "skill_bonus",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "42e2b97a-7c7f-419c-ae1d-42e6080cb792",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "spacer-s-surge": {
+      "featId": "dd6ad0e712e9a314",
+      "featName": "Spacer's Surge",
+      "featKey": "spacer-s-surge",
+      "effects": [
+        {
+          "_id": "b3fc588e-6694-4d1e-8cd9-2c08adb72883",
+          "name": "Spacer's Surge",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Spacer's Surge",
+              "effectType": "passive_effect",
+              "flagType": "Spacer's Surge"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "b3fc588e-6694-4d1e-8cd9-2c08adb72883",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "technical-experts": {
+      "featId": "18779d9a72b47a12",
+      "featName": "Technical Experts",
+      "featKey": "technical-experts",
+      "effects": [
+        {
+          "_id": "84fed409-8efc-4d98-b57c-e524969fea3c",
+          "name": "Technical Experts",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Technical Experts",
+              "effectType": "skill_bonus",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "84fed409-8efc-4d98-b57c-e524969fea3c",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "ter-s-k-si-training": {
+      "featId": "b0feacaeae4860e9",
+      "featName": "Teräs Käsi Training",
+      "featKey": "ter-s-k-si-training",
+      "effects": [
+        {
+          "_id": "13c55868-397b-4d06-8f97-8ad4743c04d3",
+          "name": "Teräs Käsi Training",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Teräs Käsi Training",
+              "effectType": "special",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "13c55868-397b-4d06-8f97-8ad4743c04d3",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "thick-skin": {
+      "featId": "e97cc5c5128a55ce",
+      "featName": "Thick Skin",
+      "featKey": "thick-skin",
+      "effects": [
+        {
+          "_id": "b3b93b78-9b9c-46c8-9f9b-dde02270f63c",
+          "name": "Thick Skin",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": true,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Thick Skin",
+              "effectType": "defense_bonus",
+              "flagType": "Thick Skin",
+              "migratedToPassive": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "b3b93b78-9b9c-46c8-9f9b-dde02270f63c",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "tireless-squad": {
+      "featId": "b648515a5e8dd612",
+      "featName": "Tireless Squad",
+      "featKey": "tireless-squad",
+      "effects": [
+        {
+          "_id": "173e71a3-9001-4b47-95b2-9143a098273a",
+          "name": "Tireless Squad",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Tireless Squad",
+              "effectType": "skill_bonus",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "173e71a3-9001-4b47-95b2-9143a098273a",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "toughness": {
+      "featId": "11db29efd899c438",
+      "featName": "Toughness",
+      "featKey": "toughness",
+      "effects": [
+        {
+          "_id": "7tBsXZ6x9k0zDaVC",
+          "name": "Toughness",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [
+            {
+              "key": "system.hitPoints.bonusPerLevel",
+              "mode": 2,
+              "value": "5",
+              "priority": 20
+            }
+          ],
+          "duration": {},
+          "disabled": true,
+          "transfer": true,
+          "flags": {
+            "swse": {
+              "type": "hit-points",
+              "perLevel": true,
+              "migratedToPassive": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": null,
+            "generatedId": true
+          }
+        }
+      ]
+    },
+    "unhindered-approach": {
+      "featId": "72183c573d1cc44e",
+      "featName": "Unhindered Approach",
+      "featKey": "unhindered-approach",
+      "effects": [
+        {
+          "_id": "e235e428-f19c-46cb-baa9-10c7a79edc84",
+          "name": "Unhindered Approach",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Unhindered Approach",
+              "effectType": "skill_bonus",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "e235e428-f19c-46cb-baa9-10c7a79edc84",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "unified-squadron": {
+      "featId": "b1970c18996d44dd",
+      "featName": "Unified Squadron",
+      "featKey": "unified-squadron",
+      "effects": [
+        {
+          "_id": "318db08e-459c-45f8-b86e-3e67175b59ee",
+          "name": "Unified Squadron",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Unified Squadron",
+              "effectType": "skill_bonus",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "318db08e-459c-45f8-b86e-3e67175b59ee",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "veteran-spacer": {
+      "featId": "423c5fffe7abe449",
+      "featName": "Veteran Spacer",
+      "featKey": "veteran-spacer",
+      "effects": [
+        {
+          "_id": "5e810754-78db-4b51-a879-83d55b7439cb",
+          "name": "Veteran Spacer",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Veteran Spacer",
+              "effectType": "skill_bonus",
+              "flagType": "Veteran Spacer"
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "5e810754-78db-4b51-a879-83d55b7439cb",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "warrior-heritage": {
+      "featId": "a9a59c85cddbda1f",
+      "featName": "Warrior Heritage",
+      "featKey": "warrior-heritage",
+      "effects": [
+        {
+          "_id": "d81202e0-20b2-409c-8d32-45838433244f",
+          "name": "Warrior Heritage",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Warrior Heritage",
+              "effectType": "defense_bonus",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "d81202e0-20b2-409c-8d32-45838433244f",
+            "generatedId": false
+          }
+        }
+      ]
+    },
+    "wilderness-specialists": {
+      "featId": "daf0594fbb48e61e",
+      "featName": "Wilderness Specialists",
+      "featKey": "wilderness-specialists",
+      "effects": [
+        {
+          "_id": "4e6b6849-eae9-4126-ab01-44509e3fe819",
+          "name": "Wilderness Specialists",
+          "icon": "icons/svg/upgrade.svg",
+          "changes": [],
+          "duration": {},
+          "disabled": false,
+          "transfer": false,
+          "flags": {
+            "swse": {
+              "source": "feat",
+              "featName": "Wilderness Specialists",
+              "effectType": "skill_bonus",
+              "requiresCustomLogic": true
+            }
+          },
+          "_provenance": {
+            "originalEffectId": "4e6b6849-eae9-4126-ab01-44509e3fe819",
+            "generatedId": false
           }
         }
       ]

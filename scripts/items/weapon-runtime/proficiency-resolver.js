@@ -53,6 +53,9 @@ export function extractActorEntitlements(actor) {
       if (m) { exotic.add(norm(m[1])); continue; }
       m = /^Weapon Proficiency\s*\((.+)\)\s*$/i.exec(name);
       if (m) addGroup(m[1]);
+      // Phase 5C: explicit stored choice on the canonical Weapon Proficiency feat (name fallback above stays for legacy items)
+      const stored = item?.flags?.swse?.choices?.weaponProficiency;
+      if (stored) { addGroup(typeof stored === 'string' ? stored : stored.group); if (stored.weapon) exotic.add(norm(stored.weapon)); }
       if (norm(name) === 'advancedmeleeweaponproficiency') groups.add('advanced-melee');
       if (norm(name) === 'lightsaberproficiency') groups.add('lightsabers');
     }

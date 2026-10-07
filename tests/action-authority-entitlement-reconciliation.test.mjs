@@ -13,7 +13,7 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 //   actor -> ActorActionResolver -> ActionRegistry -> ActionEntitlement
 //   -> ActionDefinition -> ActionAvailabilityEngine
 //
-// This file reconciles THAT seam for all 136 real records: does owning
+// This file reconciles THAT seam for all 134 real records: does owning
 // the real source item produce the expected entitlement and canonical
 // definition, does a non-owning actor get nothing, do duplicate grants of
 // the same logical action collapse to one definition without losing
@@ -57,7 +57,7 @@ function collectRecords(relPath, itemType) {
   return out;
 }
 const records = [...collectRecords('packs/feats.db', 'feat'), ...collectRecords('packs/talents.db', 'talent')];
-assert.equal(records.length, 136, `expected 136 real ATTACK_OPTION records; found ${records.length}`);
+assert.equal(records.length, 134, `expected 134 real ATTACK_OPTION records; found ${records.length}`);
 
 function itemsCollection(items) {
   const arr = [...items];
@@ -111,9 +111,9 @@ function ok(label) { step += 1; console.log(`  [${step}] ${label} OK`); }
 
     checked += 1;
   }
-  assert.equal(checked, 136);
+  assert.equal(checked, 134);
 }
-ok('1-3: every one of the 136 real records resolves to exactly one matching entitlement + canonical definition, with per-grant configuration (including v1-unmodeled fields like slider max) preserved on the entitlement');
+ok('1-3: every one of the 134 real records resolves to exactly one matching entitlement + canonical definition, with per-grant configuration (including v1-unmodeled fields like slider max) preserved on the entitlement');
 
 // ── 4: a non-owning actor gets no entitlement/definition for a real record. ──
 {
