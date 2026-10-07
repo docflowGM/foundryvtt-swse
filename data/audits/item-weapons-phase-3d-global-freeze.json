@@ -82,11 +82,11 @@
     },
     "phase3b": {
       "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
-      "sha256": "6fbdeedddafdc2ab31990ef790345b2357ce4a2849dcd5935b4189b2c3ff4cab"
+      "sha256": "5466e8a539918fba382368c6b73a2ae8a6f47472f4d2f35a72b39457135a7d56"
     },
     "phase3c": {
       "file": "data/audits/item-weapons-phase-3c-production-disposition-ledger.json",
-      "sha256": "cae94be6f6435cec9bc3909339661cfa169619a96de08ac4e4b94580e84a5fce"
+      "sha256": "1e748665c4f27278b9be10abddacf0d5cdcea20cffc308714955cbe19a352c60"
     },
     "phase01Weapons": {
       "sha256": "8082703831caf7f6a1679cbd3f6df4b5e88eb776a0e85d4c941be4af93d39d6b"
@@ -804,7 +804,7 @@
     },
     {
       "capability": "proficiency-rules",
-      "identities": 9,
+      "identities": 10,
       "canonicalAuthority": "Represented in the certified Phase 3B v2.9 canonical authority.",
       "productionRepresentation": "Production has one proficiency value.",
       "futureV2SchemaCapability": "Add conditional proficiency rule structures."
@@ -1990,7 +1990,7 @@
       "phase2Sha256": "d060f6860e67470b1b235e230adca546fcf23371e81786e78c7db3b16ea2ab21",
       "ammoOverlaySha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
       "identityKey": "unmapped::Amphistaff",
-      "identity3BSha256": "f3e0a6e2cff66a2ba4bc1fcb39dc892a35a482d0c871a43cfe2d76b7a69f76ae",
+      "identity3BSha256": "8171a8be7cc8cd79b07e5a4ad8f81403fce3c5fec2c0421f1360fa5f357f1e6c",
       "disposition3C": "CREATE"
     },
     {
@@ -2485,7 +2485,7 @@
       "phase2Sha256": "5167e60a03f6d25334889e561616507845f5c90e36be393b15f700189dbf6461",
       "ammoOverlaySha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
       "identityKey": "unmapped::Vibrobayonet",
-      "identity3BSha256": "14e0a5fd175bb68b19ec7a21b8d085cbd901b886d2092ad026ed85acdc09b88a",
+      "identity3BSha256": "cae9017cd5f31c128c01ac3b0a4cff525aeea6ee1b97e9eac1da1e948141c25d",
       "disposition3C": "CREATE"
     },
     {
@@ -4216,7 +4216,7 @@
       "canonicalName": "Amphistaff",
       "claims": 1,
       "repoId": null,
-      "identity3BSha256": "f3e0a6e2cff66a2ba4bc1fcb39dc892a35a482d0c871a43cfe2d76b7a69f76ae",
+      "identity3BSha256": "8171a8be7cc8cd79b07e5a4ad8f81403fce3c5fec2c0421f1360fa5f357f1e6c",
       "disposition3C": "CREATE"
     },
     {
@@ -4568,7 +4568,7 @@
       "canonicalName": "Vibrobayonet",
       "claims": 1,
       "repoId": null,
-      "identity3BSha256": "14e0a5fd175bb68b19ec7a21b8d085cbd901b886d2092ad026ed85acdc09b88a",
+      "identity3BSha256": "cae9017cd5f31c128c01ac3b0a4cff525aeea6ee1b97e9eac1da1e948141c25d",
       "disposition3C": "CREATE"
     },
     {

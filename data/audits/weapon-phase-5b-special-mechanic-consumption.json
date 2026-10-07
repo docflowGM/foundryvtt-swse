@@ -428,6 +428,7 @@
     "forearmMounted",
     "fragile",
     "handsRemainFree",
+    "hostWeaponAugmentation",
     "lacksEnergyLancePlasmaMode",
     "mayCountAsSmallWhenBeneficial",
     "mayTreatAsSizeWhenBeneficial",

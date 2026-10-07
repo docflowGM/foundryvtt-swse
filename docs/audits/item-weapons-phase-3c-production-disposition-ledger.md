@@ -333,7 +333,7 @@ _none_
 - `configuration-and-state` — 10 identities. Production has no configuration/state-machine structures. Needed: Add configuration/state structures.
 - `critical-effects` — 3 identities. Production has no critical-effect structures. Needed: Add critical effect structures.
 - `conditional-damage-and-qualities` — 11 identities. Production has no conditional damage profile or conditional quality structures. Needed: Add conditional damage/quality structures.
-- `proficiency-rules` — 9 identities. Production has one proficiency value. Needed: Add conditional proficiency rule structures.
+- `proficiency-rules` — 10 identities. Production has one proficiency value. Needed: Add conditional proficiency rule structures.
 - `quality-parameters` — 41 identities. Production traits are labels without parameters. Needed: Add quality parameter structures (allowed bands, overrides).
 - `construction-and-technology` — 24 identities. Production has no construction/technology/delivery/durability/accessory structures. Needed: Add those structures.
 - `firing-constraints` — 27 identities. Production has no firing-constraint or prepared-attack structures. Needed: Add firing constraint structures.

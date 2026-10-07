@@ -19,6 +19,15 @@
    "schemaShapeChange": false
   },
   {
+   "id": "amphistaff-yuuzhan-vong-familiarity",
+   "identityKey": "unmapped::Amphistaff",
+   "fields": [
+    "proficiencyRules[0]"
+   ],
+   "basis": "Planner-supplied source ruling: Yuuzhan Vong with Weapon Proficiency (simple weapons) are considered proficient with the amphistaff; native Exotic classification unchanged; same rule shape as the Gungan Electropole route",
+   "schemaShapeChange": false
+  },
+  {
    "id": "atlatl-energy-ball-launcher",
    "identityKey": "unmapped::Atlatl",
    "fields": [
@@ -69,6 +78,15 @@
     "operation.configurationResolution"
    ],
    "basis": "Vibrobayonet canonicalPlayerText (mounted: two hands, no folded stock, threatens/AoO after rifle fire; detached functions as a vibrodagger) — detached delegates to the certified Vibrodagger attack, no duplicated stats",
+   "schemaShapeChange": false
+  },
+  {
+   "id": "vibrobayonet-mounted-rifle-double-weapon",
+   "identityKey": "unmapped::Vibrobayonet",
+   "fields": [
+    "operation.hostWeaponAugmentation"
+   ],
+   "basis": "Planner-supplied Core rule: rifle + mounted vibrobayonet = double weapon (vibrobayonet end + club end). Club end delegated to certified Club/Baton; neither Vibrobayonet nor rifles are globally double weapons",
    "schemaShapeChange": false
   }
  ],

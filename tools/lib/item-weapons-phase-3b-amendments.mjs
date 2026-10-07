@@ -6,7 +6,7 @@
 const clone = (x) => JSON.parse(JSON.stringify(x));
 const need = (cond, msg) => { if (!cond) throw new Error(`3B amendment pre-condition failed: ${msg}`); };
 
-export const AMENDMENT_IDS = ['amphistaff-forms-and-special-attacks', 'atlatl-energy-ball-launcher', 'cesta-energy-ball-launcher', 'electropole-gungan-route-structured', 'shock-stick-configurations', 'vibrobayonet-configurations'];
+export const AMENDMENT_IDS = ['amphistaff-forms-and-special-attacks', 'amphistaff-yuuzhan-vong-familiarity', 'atlatl-energy-ball-launcher', 'cesta-energy-ball-launcher', 'electropole-gungan-route-structured', 'shock-stick-configurations', 'vibrobayonet-configurations', 'vibrobayonet-mounted-rifle-double-weapon'];
 
 export function applyCompletenessAmendments(identities) {
   const by = (k) => { const i = identities.find((x) => x.identityKey === k); need(i, `identity ${k}`); return i; };
@@ -67,6 +67,14 @@ export function applyCompletenessAmendments(identities) {
     note('amphistaff-forms-and-special-attacks', a.identityKey, ['canonicalStats.attackProfiles', 'canonicalStats.configurationStates', 'canonicalStats.modeProfiles', 'canonicalStats.triggeredEffects', 'conditionalQualities[].when.configurationId', 'operation.*'], 'Amphistaff canonicalPlayerText (three forms, spear wielded/thrown, whip reach 2 + Pin/Trip, venom spit 10 squares once/24h); damage/qualities cloned from certified Quarterstaff, Spear and Electropole-thrown range');
   }
 
+  // ---- Amphistaff: Yuuzhan Vong familiarity (structured alternate proficiency route; native Exotic classification unchanged) ----
+  {
+    const a = by('unmapped::Amphistaff');
+    need(Array.isArray(a.proficiencyRules) && a.proficiencyRules.length === 0 && a.schemaFamily.proficiency === 'exotic', 'Amphistaff has no alternate proficiency rule and stays Exotic');
+    a.proficiencyRules = [{ condition: 'wielder is Yuuzhan Vong and has Weapon Proficiency (simple weapons)', effect: 'considered proficient with the amphistaff', sourceClassification: 'Exotic Weapon', classifications: ['simple'], species: 'Yuuzhan Vong' }];
+    note('amphistaff-yuuzhan-vong-familiarity', a.identityKey, ['proficiencyRules[0]'], 'Planner-supplied source ruling: Yuuzhan Vong with Weapon Proficiency (simple weapons) are considered proficient with the amphistaff; native Exotic classification unchanged; same rule shape as the Gungan Electropole route');
+  }
+
   // ---- Atlatl / Cesta -----------------------------------------------------------------------------------------------
   {
     const ball = by('weapon-energy-ball'), bow = by('weapon-bow');
@@ -124,6 +132,21 @@ export function applyCompletenessAmendments(identities) {
     v.canonicalStats.attackProfiles[0].activationRequirements = [{ type: 'configuration', id: 'mounted-on-rifle' }];
     v.operation = { ...v.operation, mountedOnRifle: { ...v.operation.mountedOnRifle, threatensAfterHostRifleRangedAttack: true, canMakeAttacksOfOpportunity: true }, configurationResolution: { detached: { resolveAsIdentityKey: vd.identityKey, resolveAsProfileId: 'primary' } } };
     note('vibrobayonet-configurations', v.identityKey, ['canonicalStats.configurationStates', 'canonicalStats.wieldingRules', 'attackProfiles[primary].activationRequirements', 'operation.mountedOnRifle', 'operation.configurationResolution'], 'Vibrobayonet canonicalPlayerText (mounted: two hands, no folded stock, threatens/AoO after rifle fire; detached functions as a vibrodagger) — detached delegates to the certified Vibrodagger attack, no duplicated stats');
+  }
+  // ---- Vibrobayonet: mounted-on-rifle host weapon becomes a double weapon (host-weapon configuration augmentation) ----------
+  {
+    const v = by('unmapped::Vibrobayonet'), club = by('unmapped::Club/Baton');
+    need(club.canonicalStats.attackProfiles[0].id === 'primary' && !v.operation.hostWeaponAugmentation && v.qualities.doubleWeapon === false, 'Club primary profile exists; Vibrobayonet not globally a double weapon');
+    v.operation = { ...v.operation, hostWeaponAugmentation: { 'mounted-on-rifle': {
+      hostWeaponGroup: 'rifle',
+      availableWhen: [{ condition: 'mounted-on-rifle' }, { condition: 'host-rifle-stock-folded', negate: true }],
+      grantsDoubleWeapon: { ends: [
+        { id: 'vibrobayonet-end', resolveAsIdentityKey: v.identityKey, resolveAsProfileId: 'primary' },
+        { id: 'rifle-butt-club-end', resolveAsIdentityKey: club.identityKey, resolveAsProfileId: 'primary' },
+      ] },
+      notes: ['A rifle with a mounted vibrobayonet may be wielded as a double weapon: the vibrobayonet end is treated normally, the other end as a club (Core rule). Attack count, penalties and full-round behaviour belong to the existing double-weapon rules.'],
+    } } };
+    note('vibrobayonet-mounted-rifle-double-weapon', v.identityKey, ['operation.hostWeaponAugmentation'], 'Planner-supplied Core rule: rifle + mounted vibrobayonet = double weapon (vibrobayonet end + club end). Club end delegated to certified Club/Baton; neither Vibrobayonet nor rifles are globally double weapons');
   }
   return log;
 }

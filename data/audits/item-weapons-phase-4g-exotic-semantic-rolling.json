@@ -176,6 +176,13 @@
             "ability": "Trip",
             "interaction": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM"
           }
+        ],
+        "speciesOverrides": [
+          {
+            "species": "Yuuzhan Vong",
+            "requiresProficiency": "simple-weapons",
+            "effect": "Treated as proficient with the Amphistaff."
+          }
         ]
       },
       "proficiencyRoutes": {
@@ -185,18 +192,26 @@
             "requirement": "Exotic Weapon Proficiency (Amphistaff)"
           }
         ],
-        "alternate": []
+        "alternate": [
+          {
+            "condition": "Species is Yuuzhan Vong",
+            "requirement": "Weapon Proficiency (simple weapons)",
+            "result": "Proficient with the Amphistaff without Exotic Weapon Proficiency (Amphistaff)."
+          }
+        ]
       },
       "recommendation": {
         "eligibleWithoutPenaltyWhen": [
-          "Character is proficient with the Amphistaff through Exotic Weapon Proficiency (Amphistaff)."
+          "Character is proficient with the Amphistaff through Exotic Weapon Proficiency (Amphistaff).",
+          "Character is Yuuzhan Vong and has Weapon Proficiency (simple weapons)."
         ],
         "fit": "High-complexity control weapon for characters who can exploit reach, poison, thrown/ranged options, and Pin/Trip utility. Strongest when the build values flexible mode switching and battlefield control."
       },
       "guardrails": [
         "Do not create a thrown semantic tag; thrown capability remains structural.",
         "Do not create a reach semantic tag; positioning expresses the semantic consequence while exact reach remains structured.",
-        "Pin/Trip feat emulation is exact rule-selector authority and must not be generalized to unrelated grapple abilities."
+        "Pin/Trip feat emulation is exact rule-selector authority and must not be generalized to unrelated grapple abilities.",
+        "Yuuzhan Vong Simple Weapon proficiency is an alternate route, not a reclassification of the Amphistaff for other species."
       ]
     },
     {
@@ -3023,6 +3038,11 @@
       "id": "4H-E2",
       "scope": "Concealed Dart Launcher",
       "change": "Planner correction of the Round 2 ruling: poison moved from unconditional tags to a payload-conditional tag (contact-poison dart loaded); stun and nonlethal stay unconditional (default sedative payload). Intentional amendment; Exotic Rounds 1-2 hashes re-pinned accordingly."
+    },
+    {
+      "id": "4H-E3",
+      "scope": "Amphistaff",
+      "change": "Planner ruling (source-confirmed): added the Yuuzhan Vong + Weapon Proficiency (simple weapons) alternate proficiency route (machine-readable speciesOverrides + proficiencyRoutes.alternate). Native Exotic classification and semantic tags unchanged."
     }
   ]
 }

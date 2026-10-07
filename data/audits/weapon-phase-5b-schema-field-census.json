@@ -5,13 +5,13 @@
  "purpose": "Programmatic census of every field path present in the frozen Phase 3B and Phase 4H authorities. Paths normalise array indices to [].",
  "identities": 203,
  "inputs": {
-  "data/audits/item-weapons-phase-3b-canonical-authority.json": "6fbdeedddafdc2ab31990ef790345b2357ce4a2849dcd5935b4189b2c3ff4cab",
-  "data/audits/item-weapons-phase-4h-global-semantic-authority.json": "bd2445a07d276c3e2e0baa2eb148834db495d342c749d3fe521bc91f455b2c14"
+  "data/audits/item-weapons-phase-3b-canonical-authority.json": "5466e8a539918fba382368c6b73a2ae8a6f47472f4d2f35a72b39457135a7d56",
+  "data/audits/item-weapons-phase-4h-global-semantic-authority.json": "fb6670e42e38a4592888510e8453eee98237709a900c59f63603311471c150f7"
  },
  "counts": {
-  "phase3BFieldPaths": 1504,
+  "phase3BFieldPaths": 1519,
   "phase4HFieldPaths": 683,
-  "totalFieldPaths": 2187
+  "totalFieldPaths": 2202
  },
  "fields": [
   {
@@ -17883,6 +17883,218 @@
    "conditional": true
   },
   {
+   "fieldPath": "operation.hostWeaponAugmentation",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "array"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[]",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[].condition",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"host-rifle-stock-folded\"",
+    "\"mounted-on-rifle\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[].negate",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "boolean"
+   ],
+   "sampleValues": [
+    "true"
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "array"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends[]",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends[].id",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"rifle-butt-club-end\"",
+    "\"vibrobayonet-end\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends[].resolveAsIdentityKey",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"unmapped::Club/Baton\"",
+    "\"unmapped::Vibrobayonet\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends[].resolveAsProfileId",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"primary\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.hostWeaponGroup",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"rifle\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.notes",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "array"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "fieldPath": "operation.hostWeaponAugmentation.mounted-on-rifle.notes[]",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"A rifle with a mounted vibrobayonet may be wielded as a dou"
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
    "fieldPath": "operation.hurlGrabbedObjectRangeSquares",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
@@ -21221,8 +21433,8 @@
    "fieldPath": "proficiencyRules[]",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 9,
-   "identityCount": 9,
+   "occurrenceCount": 10,
+   "identityCount": 10,
    "valueTypes": [
     "object"
    ],
@@ -21249,8 +21461,8 @@
    "fieldPath": "proficiencyRules[].classifications",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 9,
-   "identityCount": 9,
+   "occurrenceCount": 10,
+   "identityCount": 10,
    "valueTypes": [
     "array"
    ],
@@ -21262,8 +21474,8 @@
    "fieldPath": "proficiencyRules[].classifications[]",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 10,
-   "identityCount": 9,
+   "occurrenceCount": 11,
+   "identityCount": 10,
    "valueTypes": [
     "string"
    ],
@@ -21279,8 +21491,8 @@
    "fieldPath": "proficiencyRules[].condition",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 9,
-   "identityCount": 9,
+   "occurrenceCount": 10,
+   "identityCount": 10,
    "valueTypes": [
     "string"
    ],
@@ -21311,15 +21523,15 @@
    "fieldPath": "proficiencyRules[].effect",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 3,
-   "identityCount": 3,
+   "occurrenceCount": 4,
+   "identityCount": 4,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
     "\"considered proficient with Electropole\"",
-    "\"treat Squib Tensor Rifle as rifle rather than exotic weapon",
-    "\"treat Verpine Shatter Gun as pistol rather than exotic weap"
+    "\"considered proficient with the amphistaff\"",
+    "\"treat Squib Tensor Rifle as rifle rather than exotic weapon"
    ],
    "nullable": false,
    "conditional": true
@@ -21393,13 +21605,14 @@
    "fieldPath": "proficiencyRules[].sourceClassification",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
-    "\"Advanced Melee Weapon\""
+    "\"Advanced Melee Weapon\"",
+    "\"Exotic Weapon\""
    ],
    "nullable": false,
    "conditional": true
@@ -21408,8 +21621,8 @@
    "fieldPath": "proficiencyRules[].species",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 5,
-   "identityCount": 5,
+   "occurrenceCount": 6,
+   "identityCount": 6,
    "valueTypes": [
     "string"
    ],
@@ -23190,7 +23403,7 @@
    "fieldPath": "authorities[].plannerMetadata.guardrails[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 106,
+   "occurrenceCount": 107,
    "identityCount": 32,
    "valueTypes": [
     "string"
@@ -24574,7 +24787,7 @@
    "fieldPath": "authorities[].plannerMetadata.recommendation.eligibleWithoutPenaltyWhen[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 42,
+   "occurrenceCount": 43,
    "identityCount": 32,
    "valueTypes": [
     "string"
@@ -26890,8 +27103,8 @@
    "fieldPath": "authorities[].proficiencyRoutes.alternate[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 11,
+   "occurrenceCount": 13,
+   "identityCount": 12,
    "valueTypes": [
     "object"
    ],
@@ -26903,8 +27116,8 @@
    "fieldPath": "authorities[].proficiencyRoutes.alternate[].condition",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 11,
+   "occurrenceCount": 13,
+   "identityCount": 12,
    "valueTypes": [
     "string"
    ],
@@ -26920,8 +27133,8 @@
    "fieldPath": "authorities[].proficiencyRoutes.alternate[].requirement",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 11,
+   "occurrenceCount": 13,
+   "identityCount": 12,
    "valueTypes": [
     "string"
    ],
@@ -26937,15 +27150,15 @@
    "fieldPath": "authorities[].proficiencyRoutes.alternate[].result",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 11,
+   "occurrenceCount": 13,
+   "identityCount": 12,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
+    "\"Proficient with the Amphistaff without Exotic Weapon Profic",
     "\"Proficient with the Atlatl without Exotic Weapon Proficienc",
-    "\"Proficient with the Bowcaster without Exotic Weapon Profici",
-    "\"Proficient with the Cesta without Exotic Weapon Proficiency"
+    "\"Proficient with the Bowcaster without Exotic Weapon Profici"
    ],
    "nullable": false,
    "conditional": true
@@ -29674,8 +29887,8 @@
    "fieldPath": "authorities[].ruleSelectors.speciesOverrides",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 10,
-   "identityCount": 10,
+   "occurrenceCount": 11,
+   "identityCount": 11,
    "valueTypes": [
     "array"
    ],
@@ -29687,8 +29900,8 @@
    "fieldPath": "authorities[].ruleSelectors.speciesOverrides[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 11,
-   "identityCount": 10,
+   "occurrenceCount": 12,
+   "identityCount": 11,
    "valueTypes": [
     "object"
    ],
@@ -29730,8 +29943,8 @@
    "fieldPath": "authorities[].ruleSelectors.speciesOverrides[].effect",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 11,
-   "identityCount": 10,
+   "occurrenceCount": 12,
+   "identityCount": 11,
    "valueTypes": [
     "string"
    ],
@@ -29762,8 +29975,8 @@
    "fieldPath": "authorities[].ruleSelectors.speciesOverrides[].requiresProficiency",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 9,
-   "identityCount": 8,
+   "occurrenceCount": 10,
+   "identityCount": 9,
    "valueTypes": [
     "string"
    ],
@@ -29810,8 +30023,8 @@
    "fieldPath": "authorities[].ruleSelectors.speciesOverrides[].species",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 11,
-   "identityCount": 10,
+   "occurrenceCount": 12,
+   "identityCount": 11,
    "valueTypes": [
     "string"
    ],
@@ -31407,8 +31620,8 @@
    "fieldPath": "proficiency.alternateRoutesPhase3B[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 9,
-   "identityCount": 9,
+   "occurrenceCount": 10,
+   "identityCount": 10,
    "valueTypes": [
     "object"
    ],
@@ -31435,8 +31648,8 @@
    "fieldPath": "proficiency.alternateRoutesPhase3B[].classifications",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 9,
-   "identityCount": 9,
+   "occurrenceCount": 10,
+   "identityCount": 10,
    "valueTypes": [
     "array"
    ],
@@ -31448,8 +31661,8 @@
    "fieldPath": "proficiency.alternateRoutesPhase3B[].classifications[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 10,
-   "identityCount": 9,
+   "occurrenceCount": 11,
+   "identityCount": 10,
    "valueTypes": [
     "string"
    ],
@@ -31465,8 +31678,8 @@
    "fieldPath": "proficiency.alternateRoutesPhase3B[].condition",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 9,
-   "identityCount": 9,
+   "occurrenceCount": 10,
+   "identityCount": 10,
    "valueTypes": [
     "string"
    ],
@@ -31497,15 +31710,15 @@
    "fieldPath": "proficiency.alternateRoutesPhase3B[].effect",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 3,
-   "identityCount": 3,
+   "occurrenceCount": 4,
+   "identityCount": 4,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
     "\"considered proficient with Electropole\"",
-    "\"treat Squib Tensor Rifle as rifle rather than exotic weapon",
-    "\"treat Verpine Shatter Gun as pistol rather than exotic weap"
+    "\"considered proficient with the amphistaff\"",
+    "\"treat Squib Tensor Rifle as rifle rather than exotic weapon"
    ],
    "nullable": false,
    "conditional": true
@@ -31579,13 +31792,14 @@
    "fieldPath": "proficiency.alternateRoutesPhase3B[].sourceClassification",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
-    "\"Advanced Melee Weapon\""
+    "\"Advanced Melee Weapon\"",
+    "\"Exotic Weapon\""
    ],
    "nullable": false,
    "conditional": true
@@ -31594,8 +31808,8 @@
    "fieldPath": "proficiency.alternateRoutesPhase3B[].species",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 5,
-   "identityCount": 5,
+   "occurrenceCount": 6,
+   "identityCount": 6,
    "valueTypes": [
     "string"
    ],
@@ -31624,8 +31838,8 @@
    "fieldPath": "proficiency.alternateRoutesPlanner[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 11,
+   "occurrenceCount": 13,
+   "identityCount": 12,
    "valueTypes": [
     "object"
    ],
@@ -31637,8 +31851,8 @@
    "fieldPath": "proficiency.alternateRoutesPlanner[].condition",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 11,
+   "occurrenceCount": 13,
+   "identityCount": 12,
    "valueTypes": [
     "string"
    ],
@@ -31654,8 +31868,8 @@
    "fieldPath": "proficiency.alternateRoutesPlanner[].requirement",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 11,
+   "occurrenceCount": 13,
+   "identityCount": 12,
    "valueTypes": [
     "string"
    ],
@@ -31671,15 +31885,15 @@
    "fieldPath": "proficiency.alternateRoutesPlanner[].result",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 12,
-   "identityCount": 11,
+   "occurrenceCount": 13,
+   "identityCount": 12,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
+    "\"Proficient with the Amphistaff without Exotic Weapon Profic",
     "\"Proficient with the Atlatl without Exotic Weapon Proficienc",
-    "\"Proficient with the Bowcaster without Exotic Weapon Profici",
-    "\"Proficient with the Cesta without Exotic Weapon Proficiency"
+    "\"Proficient with the Bowcaster without Exotic Weapon Profici"
    ],
    "nullable": false,
    "conditional": true
@@ -31888,8 +32102,8 @@
    "fieldPath": "proficiency.speciesOverrides[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 11,
-   "identityCount": 10,
+   "occurrenceCount": 12,
+   "identityCount": 11,
    "valueTypes": [
     "object"
    ],
@@ -31931,8 +32145,8 @@
    "fieldPath": "proficiency.speciesOverrides[].effect",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 11,
-   "identityCount": 10,
+   "occurrenceCount": 12,
+   "identityCount": 11,
    "valueTypes": [
     "string"
    ],
@@ -31963,8 +32177,8 @@
    "fieldPath": "proficiency.speciesOverrides[].requiresProficiency",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 9,
-   "identityCount": 8,
+   "occurrenceCount": 10,
+   "identityCount": 9,
    "valueTypes": [
     "string"
    ],
@@ -32011,8 +32225,8 @@
    "fieldPath": "proficiency.speciesOverrides[].species",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 11,
-   "identityCount": 10,
+   "occurrenceCount": 12,
+   "identityCount": 11,
    "valueTypes": [
     "string"
    ],
@@ -32834,8 +33048,8 @@
    "fieldPath": "selectors.speciesOverrides[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 11,
-   "identityCount": 10,
+   "occurrenceCount": 12,
+   "identityCount": 11,
    "valueTypes": [
     "object"
    ],
@@ -32877,8 +33091,8 @@
    "fieldPath": "selectors.speciesOverrides[].effect",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 11,
-   "identityCount": 10,
+   "occurrenceCount": 12,
+   "identityCount": 11,
    "valueTypes": [
     "string"
    ],
@@ -32909,8 +33123,8 @@
    "fieldPath": "selectors.speciesOverrides[].requiresProficiency",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 9,
-   "identityCount": 8,
+   "occurrenceCount": 10,
+   "identityCount": 9,
    "valueTypes": [
     "string"
    ],
@@ -32957,8 +33171,8 @@
    "fieldPath": "selectors.speciesOverrides[].species",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 11,
-   "identityCount": 10,
+   "occurrenceCount": 12,
+   "identityCount": 11,
    "valueTypes": [
     "string"
    ],

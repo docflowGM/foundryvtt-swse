@@ -1099,7 +1099,7 @@ if (p3b && typeof p3b === 'object') {
   const shells = ids.map((i) => {
     if (i.sourceClaims.length !== 1) return cl(i);
     const b = p2by.get(`${nb(i.sourceClaims[0].book)}|${i.sourceClaims[0].canonicalName}`);
-    return { identityKey: i.identityKey, canonicalName: i.canonicalName, canonicalStats: cl(b.r.canonicalStats), qualities: cl(b.r.qualities), conditionalQualities: cl(b.r.conditionalQualities), operation: cl(b.r.operation), proficiencyRules: cl(b.r.proficiencyRules) };
+    return { identityKey: i.identityKey, canonicalName: i.canonicalName, schemaFamily: cl(b.r.schemaFamily), canonicalStats: cl(b.r.canonicalStats), qualities: cl(b.r.qualities), conditionalQualities: cl(b.r.conditionalQualities), operation: cl(b.r.operation), proficiencyRules: cl(b.r.proficiencyRules) };
   });
   const amendLog = applyCompletenessAmendments(shells);
   if (!same(amendLog, d3b.completenessAmendments ?? [])) fail('3B completenessAmendments log differs from the amendment module');
@@ -2075,7 +2075,7 @@ if (fs.existsSync(path.join(ROOT, P4G))) {
   const cnt = (f) => ids.filter(f).length;
   const want = { canonicalExoticProficiencyIdentities: ids.length, repoPresent: cnt((i) => i.repo?.present === true), repoMissing: cnt((i) => i.repo?.present === false), meleeProfileIdentities: cnt((i) => i.profileKind === 'melee'), rangedProfileIdentities: cnt((i) => i.profileKind === 'ranged'), hybridProfileIdentities: cnt((i) => i.profileKind === 'hybrid'), identitiesWithAlternateProficiencyOrHandling: cnt((i) => i.alternateProficiencyOrHandling) };
   for (const [k, v] of Object.entries(want)) if (C.counts[k] !== v) fail(`4G count ${k} ${C.counts[k]} != recomputed ${v}`);
-  if (ids.length !== 32 || want.repoPresent !== 18 || want.repoMissing !== 14 || want.meleeProfileIdentities !== 15 || want.rangedProfileIdentities !== 15 || want.hybridProfileIdentities !== 2 || want.identitiesWithAlternateProficiencyOrHandling !== 11 || C.counts.separatePayloadAdjunctIdentities !== 0) fail('4G frozen census totals changed (32 / 18+14 / 15+15+2 / 11 after the 4H-A4 Tehk\'la and 4H-E1 Kissai corrections / 0)');
+  if (ids.length !== 32 || want.repoPresent !== 18 || want.repoMissing !== 14 || want.meleeProfileIdentities !== 15 || want.rangedProfileIdentities !== 15 || want.hybridProfileIdentities !== 2 || want.identitiesWithAlternateProficiencyOrHandling !== 12 || C.counts.separatePayloadAdjunctIdentities !== 0) fail('4G frozen census totals changed (32 / 18+14 / 15+15+2 / 12 after the 4H-A4 Tehk\'la, 4H-E1 Kissai and 4H-E3 Amphistaff corrections / 0)');
   if (!(C.phase4hAmendments || []).some((x) => x.id === '4H-A4') || !/Nagai/.test(ids.find((i) => i.identityKey === 'unmapped::Tehkla Blade')?.alternateProficiencyOrHandling || '')) fail('4G census must carry the explicit 4H-A4 Tehk\'la/Nagai amendment');
   if (!(C.phase4hAmendments || []).some((x) => x.id === '4H-E1') || !/Kissai/.test(ids.find((i) => i.identityKey === 'weapon-sith-lanvarok')?.alternateProficiencyOrHandling || '')) fail('4G census must carry the explicit 4H-E1 Kissai amendment');
   const ph = new Set(b3.identities.map((i) => i.identityKey));
@@ -2151,8 +2151,8 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
     if (c.profileKind === 'ranged' && melee) fail(`4G ${w} melee tag on a ranged-profile census identity`);
   });
   // Round 1 is frozen; Round 2 named rulings
-  if (N >= 5 && sh(JSON.stringify(asg.slice(0, 5))) !== 'b565ac4c92bf19a058a7f6933d2a537690c42f7b5881c5ce2188fff31febd320') fail('4G Round 1 assignments changed after planner certification');
-  if (N >= 10 && sh(JSON.stringify(asg.slice(0, 10))) !== '63b33472e3b6be19890c975b4eef5ac67c6d430d25157e8025e46aca41d3d7e0') fail('4G Rounds 1-2 assignments changed after planner certification');
+  if (N >= 5 && sh(JSON.stringify(asg.slice(0, 5))) !== '6920333490f81a8987061e4c3d5522c8804555b7740634d64f618f42d17d7c4d' /* re-pinned for 4H-E3 (Amphistaff Yuuzhan Vong route); previous b565ac4c92bf19a058a7f6933d2a537690c42f7b5881c5ce2188fff31febd320 */) fail('4G Round 1 assignments changed after planner certification');
+  if (N >= 10 && sh(JSON.stringify(asg.slice(0, 10))) !== 'efd5f6ce1c38ece2c39def73cad99fb80bb3f435c3ec83d1b9a9d0dfd0617f6b' /* re-pinned for 4H-E3; previous 63b33472e3b6be19890c975b4eef5ac67c6d430d25157e8025e46aca41d3d7e0 */) fail('4G Rounds 1-2 assignments changed after planner certification');
   const g4 = (k) => asg.find((a) => a.identityKey === k);
   const fl = g4('weapon-flamethrower'), ds = g4('weapon-deck-sweeper'), db = g4('weapon-discblade'), sk = g4('unmapped::Felucian Skullblade'), fi = g4('unmapped::Fira');
   if (fl && (!same(fl.tradeoffTags, ['action_economy', 'setup']) || fl.finalTags.some((t) => ['action_economy', 'setup', 'full_round_action', 'area_damage', 'control'].includes(t)))) fail('4G Flamethrower: reload tradeoffs stay out of finalTags; no full_round_action/area_damage/control');
@@ -2283,7 +2283,7 @@ if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-d-phase-4-c
     const D = JSON.parse(out.json), h = D.headline;
     if (D.status !== mod.STATUS || D.productionMutationAuthorized !== false || h.productionMutation !== 'none') fail('4H-D status / production-mutation flags');
     if (h.phase3BCanonicalIdentities !== 203 || h.phase4IdentitiesRepresented !== 203 || h.categoryRecords !== 204 || h.semanticVocabularyViolations !== 0 || h.forbiddenPseudoTagLeaks !== 0 || h.malformedExactAbilityJoins !== 0 || h.unresolvedMachineReadableAlternateRouteOmissions !== 0 || h.accidentalPayloadFlattening !== 0 || h.accidentalHybridFlattening !== 0) fail('4H-D headline invariants must be 203/203/204 and all violation counters 0');
-    if (D.rulingChecks.length !== 10 || D.rulingChecks.some((c) => c.result !== 'PASS')) fail('4H-D named rulings must all pass');
+    if (D.rulingChecks.length !== 11 || D.rulingChecks.some((c) => c.result !== 'PASS')) fail('4H-D named rulings must all pass');
     if (errors.length === e4hd) console.log(`Phase 4 weapon semantic authority CERTIFIED AND FROZEN (final amended state): ${h.phase4IdentitiesRepresented}/${h.phase3BCanonicalIdentities} identities (${h.categoryRecords} category records), 0 vocabulary violations, 0 pseudo-tag leaks, 0 malformed ability joins, 0 alternate-route omissions, 0 accidental payload/hybrid flattening, ${D.carriedOpenItems.length} carried open items, production mutation none`);
   } catch (e) { fail(`4H-D certification: ${e.message}`); }
 }

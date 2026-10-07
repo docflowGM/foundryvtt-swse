@@ -6,7 +6,7 @@
 - Repo-present / repo-missing: **151 / 52**
 - Distinct semantic tags (all fields): **80**
 - Records with derived (not planner-authored) structural selectors: **49** (4A Simple Weapons, which predate the selector layer)
-- Alternate-proficiency identities: **20** (Phase 3B-structured only: weapon-sith-sword)
+- Alternate-proficiency identities: **21** (Phase 3B-structured only: weapon-sith-sword)
 - Structured mechanics remain in Phase 3B (`mechanicsPointer` + hash per record); this file adds the semantic/selector/proficiency layer only.
 
 | Phase 3B group | Identities |
@@ -23,13 +23,13 @@
 
 ## Inputs
 
-- data/audits/item-weapons-phase-3b-canonical-authority.json: `6fbdeedddafdc2ab31990ef790345b2357ce4a2849dcd5935b4189b2c3ff4cab`
+- data/audits/item-weapons-phase-3b-canonical-authority.json: `5466e8a539918fba382368c6b73a2ae8a6f47472f4d2f35a72b39457135a7d56`
 - data/audits/item-weapons-phase-4a-simple-semantic-rolling.json: `4cf3b12777a113de82b21dbe2ff8a388d6e39c5e0a220d1afbb0e32703c0acdd`
 - data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json: `0c2574d28129519fbc16433ff03469243d87eda38edc04ea09ce4984d0f8e226`
 - data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json: `144e5b04e76ad792b7c01e29b6039a4a313c41d6a8287a7a896f9738e557ccbd`
 - data/audits/item-weapons-phase-4d-rifle-semantic-rolling.json: `099091431b40fda931725da28fd809caef699a24de4ecdaa5753d8bc0a5d7a57`
 - data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json: `88cc4fe20a3a86594e961676160682cbe3e902154ef9f0becdc368a2258feb58`
 - data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json: `fd484c64f0eb5472253f4f99f5e871a584ff482f6435aafe22d8a21454c073d5`
-- data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json: `e0fc2e14d14f0227b9e84b904dd82e9b9c94df3fad5f8df121cbe2937b9f5005`
-- data/audits/item-weapons-phase-4h-authority-reconciliation.json: `91c1874b96b31491debcc923293f27805cd813dd876b995f300f69f4c33c0f05`
-- data/audits/item-weapons-phase-4h-b-global-semantic-qa.json: `7454d9cbd8ff83a15604b2af6533c30d8a7bd9b26d6e948af1e63a8241132f8e`
+- data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json: `c81c1a8ad285df1c902bb1f88411e3dbe26e4baddedd6cc0836acb98795ce09a`
+- data/audits/item-weapons-phase-4h-authority-reconciliation.json: `435a74854b06c979c67041eb255ce925d5941f82fdd714bfd1c19859456ab72b`
+- data/audits/item-weapons-phase-4h-b-global-semantic-qa.json: `54eb241e3a018928c6020921e7e2f2a0fdb36010bc7400f1bd976dbbc78c2e6b`

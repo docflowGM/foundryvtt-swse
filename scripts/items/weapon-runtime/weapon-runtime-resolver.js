@@ -11,6 +11,7 @@ import { resolveProficiency } from './proficiency-resolver.js';
 import { resolveDamageProfile } from './damage-profile-resolver.js';
 import { resolveRange } from './range-resolver.js';
 import { resolveResource } from './resource-resolver.js';
+import { resolveHostAugmentations } from './host-augmentation.js';
 
 function buildProfiles(record, registry) {
   const rec = record.profileReconciliation;
@@ -80,6 +81,9 @@ export class WeaponRuntimeResolver {
       return Object.freeze({ source: 'error', error: err });
     }
   }
+
+  /** Host-weapon augmentations (e.g. rifle + mounted Vibrobayonet = double weapon) for the resolved configuration. */
+  resolveHostAugmentations(resolved, context = {}) { return resolveHostAugmentations(resolved, this.#registry, context); }
 
   /** Resolve directly from a registry identity key (synthetic fixtures / tooling). */
   resolveIdentity(identityKey, item = null, context = {}, via = 'direct') {

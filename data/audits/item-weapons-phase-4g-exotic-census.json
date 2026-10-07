@@ -30,7 +30,7 @@
     "meleeProfileIdentities": 15,
     "rangedProfileIdentities": 15,
     "hybridProfileIdentities": 2,
-    "identitiesWithAlternateProficiencyOrHandling": 11,
+    "identitiesWithAlternateProficiencyOrHandling": 12,
     "separatePayloadAdjunctIdentities": 0
   },
   "payloadNotes": [
@@ -80,7 +80,7 @@
         "schemaFamily.proficiency:exotic",
         "attackProfile proficiency:exotic"
       ],
-      "alternateProficiencyOrHandling": null
+      "alternateProficiencyOrHandling": "Yuuzhan Vong with Weapon Proficiency (simple weapons) is treated as proficient (species familiarity)"
     },
     {
       "identityKey": "unmapped::Arggarok",
@@ -711,6 +711,10 @@
     {
       "id": "4H-E1",
       "change": "identitiesWithAlternateProficiencyOrHandling 10 -> 11; Sith Lanvarok gains the Kissai route (Massassi Lanvarok, already counted, gains a second route). Identity set, profile kinds and repo mapping unchanged."
+    },
+    {
+      "id": "4H-E3",
+      "change": "identitiesWithAlternateProficiencyOrHandling 11 -> 12; Amphistaff gains the Yuuzhan Vong + Weapon Proficiency (simple weapons) route (planner ruling, source-confirmed). Identity set, profile kinds and repo mapping unchanged."
     }
   ]
 }

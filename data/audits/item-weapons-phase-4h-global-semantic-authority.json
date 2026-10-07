@@ -16,7 +16,7 @@
     ],
     "distinctSemanticTags": 80,
     "derivedSelectorRecords": 49,
-    "alternateRouteIdentities": 20,
+    "alternateRouteIdentities": 21,
     "phase3BStructuredOnlyRouteIdentities": [
       "weapon-sith-sword"
     ]
@@ -2807,16 +2807,22 @@
           }
         ],
         "payloads": [],
-        "speciesOverrides": [],
+        "speciesOverrides": [
+          {
+            "species": "Yuuzhan Vong",
+            "requiresProficiency": "simple-weapons",
+            "effect": "Treated as proficient with the Amphistaff."
+          }
+        ],
         "abilityOverrides": [],
         "attributeRequirements": []
       },
       "proficiency": {
         "reconciliation": {
-          "phase3BStructuredRules": 0,
-          "plannerAlternateRoutes": 0,
-          "plannerMachineReadableOverrides": 0,
-          "status": "NONE_REQUIRED"
+          "phase3BStructuredRules": 1,
+          "plannerAlternateRoutes": 1,
+          "plannerMachineReadableOverrides": 1,
+          "status": "REPRESENTED"
         },
         "normal": [
           {
@@ -2824,9 +2830,31 @@
             "requirement": "Exotic Weapon Proficiency (Amphistaff)"
           }
         ],
-        "alternateRoutesPhase3B": [],
-        "alternateRoutesPlanner": [],
-        "speciesOverrides": [],
+        "alternateRoutesPhase3B": [
+          {
+            "condition": "wielder is Yuuzhan Vong and has Weapon Proficiency (simple weapons)",
+            "effect": "considered proficient with the amphistaff",
+            "sourceClassification": "Exotic Weapon",
+            "classifications": [
+              "simple"
+            ],
+            "species": "Yuuzhan Vong"
+          }
+        ],
+        "alternateRoutesPlanner": [
+          {
+            "condition": "Species is Yuuzhan Vong",
+            "requirement": "Weapon Proficiency (simple weapons)",
+            "result": "Proficient with the Amphistaff without Exotic Weapon Proficiency (Amphistaff)."
+          }
+        ],
+        "speciesOverrides": [
+          {
+            "species": "Yuuzhan Vong",
+            "requiresProficiency": "simple-weapons",
+            "effect": "Treated as proficient with the Amphistaff."
+          }
+        ],
         "abilityOverrides": []
       },
       "abilityInteractions": [
@@ -2941,6 +2969,13 @@
                 "ability": "Trip",
                 "interaction": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM"
               }
+            ],
+            "speciesOverrides": [
+              {
+                "species": "Yuuzhan Vong",
+                "requiresProficiency": "simple-weapons",
+                "effect": "Treated as proficient with the Amphistaff."
+              }
             ]
           },
           "proficiencyRoutes": {
@@ -2950,7 +2985,13 @@
                 "requirement": "Exotic Weapon Proficiency (Amphistaff)"
               }
             ],
-            "alternate": []
+            "alternate": [
+              {
+                "condition": "Species is Yuuzhan Vong",
+                "requirement": "Weapon Proficiency (simple weapons)",
+                "result": "Proficient with the Amphistaff without Exotic Weapon Proficiency (Amphistaff)."
+              }
+            ]
           },
           "abilityInteractions": [
             {
@@ -2970,14 +3011,16 @@
             "canonicalMechanic": "Living Yuuzhan Vong weapon with quarterstaff, spear, and whip forms. Changing forms is a swift action. Spear form can be thrown and applies a poison condition-track rider. Whip form has 2-square reach, applies the same poison rider, and a proficient wielder can use it to Pin or Trip without possessing those feats. In any form it can spit venom up to 10 squares as a standard action once per 24 hours.",
             "recommendation": {
               "eligibleWithoutPenaltyWhen": [
-                "Character is proficient with the Amphistaff through Exotic Weapon Proficiency (Amphistaff)."
+                "Character is proficient with the Amphistaff through Exotic Weapon Proficiency (Amphistaff).",
+                "Character is Yuuzhan Vong and has Weapon Proficiency (simple weapons)."
               ],
               "fit": "High-complexity control weapon for characters who can exploit reach, poison, thrown/ranged options, and Pin/Trip utility. Strongest when the build values flexible mode switching and battlefield control."
             },
             "guardrails": [
               "Do not create a thrown semantic tag; thrown capability remains structural.",
               "Do not create a reach semantic tag; positioning expresses the semantic consequence while exact reach remains structured.",
-              "Pin/Trip feat emulation is exact rule-selector authority and must not be generalized to unrelated grapple abilities."
+              "Pin/Trip feat emulation is exact rule-selector authority and must not be generalized to unrelated grapple abilities.",
+              "Yuuzhan Vong Simple Weapon proficiency is an alternate route, not a reclassification of the Amphistaff for other species."
             ]
           }
         }
@@ -39080,15 +39123,15 @@
     }
   ],
   "inputs": {
-    "data/audits/item-weapons-phase-3b-canonical-authority.json": "6fbdeedddafdc2ab31990ef790345b2357ce4a2849dcd5935b4189b2c3ff4cab",
+    "data/audits/item-weapons-phase-3b-canonical-authority.json": "5466e8a539918fba382368c6b73a2ae8a6f47472f4d2f35a72b39457135a7d56",
     "data/audits/item-weapons-phase-4a-simple-semantic-rolling.json": "4cf3b12777a113de82b21dbe2ff8a388d6e39c5e0a220d1afbb0e32703c0acdd",
     "data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json": "0c2574d28129519fbc16433ff03469243d87eda38edc04ea09ce4984d0f8e226",
     "data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json": "144e5b04e76ad792b7c01e29b6039a4a313c41d6a8287a7a896f9738e557ccbd",
     "data/audits/item-weapons-phase-4d-rifle-semantic-rolling.json": "099091431b40fda931725da28fd809caef699a24de4ecdaa5753d8bc0a5d7a57",
     "data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json": "88cc4fe20a3a86594e961676160682cbe3e902154ef9f0becdc368a2258feb58",
     "data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json": "fd484c64f0eb5472253f4f99f5e871a584ff482f6435aafe22d8a21454c073d5",
-    "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json": "e0fc2e14d14f0227b9e84b904dd82e9b9c94df3fad5f8df121cbe2937b9f5005",
-    "data/audits/item-weapons-phase-4h-authority-reconciliation.json": "91c1874b96b31491debcc923293f27805cd813dd876b995f300f69f4c33c0f05",
-    "data/audits/item-weapons-phase-4h-b-global-semantic-qa.json": "7454d9cbd8ff83a15604b2af6533c30d8a7bd9b26d6e948af1e63a8241132f8e"
+    "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json": "c81c1a8ad285df1c902bb1f88411e3dbe26e4baddedd6cc0836acb98795ce09a",
+    "data/audits/item-weapons-phase-4h-authority-reconciliation.json": "435a74854b06c979c67041eb255ce925d5941f82fdd714bfd1c19859456ab72b",
+    "data/audits/item-weapons-phase-4h-b-global-semantic-qa.json": "54eb241e3a018928c6020921e7e2f2a0fdb36010bc7400f1bd976dbbc78c2e6b"
   }
 }

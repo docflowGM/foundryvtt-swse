@@ -22,8 +22,8 @@
     "repoMissing": 52,
     "distinctSemanticTags": 80,
     "exactAbilityLinks": 66,
-    "alternateRouteIdentities": 20,
-    "exoticAlternateProficiencyCases": 11
+    "alternateRouteIdentities": 21,
+    "exoticAlternateProficiencyCases": 12
   },
   "amendments": [
     {
@@ -66,6 +66,11 @@
       "detail": "Nagai simple route added; native Exotic tag/tags unchanged; census 9 -> 11 incl. 4H-E1"
     },
     {
+      "id": "AMPHISTAFF_YUUZHAN_VONG_ROUTE",
+      "result": "PASS",
+      "detail": "Yuuzhan Vong + simple-weapons alternate route added; native Exotic classification and tags unchanged (4H-E3)"
+    },
+    {
       "id": "SITH_LANVAROK_EXACT_ABILITY_NAME",
       "result": "PASS",
       "detail": "canonical ability casing"
@@ -106,9 +111,9 @@
     }
   ],
   "chain": {
-    "4H-A": "91c1874b96b31491debcc923293f27805cd813dd876b995f300f69f4c33c0f05",
-    "4H-B": "7454d9cbd8ff83a15604b2af6533c30d8a7bd9b26d6e948af1e63a8241132f8e",
-    "4H-C": "bd2445a07d276c3e2e0baa2eb148834db495d342c749d3fe521bc91f455b2c14"
+    "4H-A": "435a74854b06c979c67041eb255ce925d5941f82fdd714bfd1c19859456ab72b",
+    "4H-B": "54eb241e3a018928c6020921e7e2f2a0fdb36010bc7400f1bd976dbbc78c2e6b",
+    "4H-C": "fb6670e42e38a4592888510e8453eee98237709a900c59f63603311471c150f7"
   },
   "productionHashes": {
     "packs/weapons.db": "70bd1216ef5106b48aead731d5ab38a920c065e8c3016a40e31c262b26f7b073",

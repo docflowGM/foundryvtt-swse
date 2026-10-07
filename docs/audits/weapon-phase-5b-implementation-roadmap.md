@@ -23,7 +23,7 @@ Each subphase has a rollback boundary: it is a feature-flagged consumer switch (
 
 ## Remaining planner decisions before 5C
 1. Accept `PROFICIENCY_ROUTE` as a fifth typed value (Electropole), or amend 4H to drop the descriptor from `modes`.
-2. Structured predicates (or explicit PROMPT policy) for the 20 identities' condition-only `alternateRoutesPhase3B` routes (e.g. Sith Sword) before 5C proficiency migration.
+2. Structured predicates (or explicit PROMPT policy) for the 20 other identities' condition-only `alternateRoutesPhase3B` routes (e.g. Sith Sword) before 5C proficiency migration.
 
 ## Exit metric for the whole program
 `ALREADY_CONSUMED_CORRECTLY` goes from **0 / 2,159** today to every runtime-classified path; `NEW_CONSUMER_REQUIRED` and `EXISTING_CONSUMER_WRONG_INPUT` reach 0; verifier stays at 0 orphans.

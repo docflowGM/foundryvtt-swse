@@ -4,9 +4,9 @@
  "family": "weapons",
  "purpose": "Every executable canonical condition value, its evaluation policy (AUTO deterministic / PROMPT observable-only-by-player) and structured predicate. Natural-language text is never parsed; values are registered by exact match.",
  "counts": {
-  "distinctConditionValues": 109,
-  "registeredValues": 109,
-  "AUTO": 98,
+  "distinctConditionValues": 110,
+  "registeredValues": 110,
+  "AUTO": 99,
   "PROMPT": 11,
   "UNSUPPORTED": 0,
   "requirementTypesUnsupported": 0
@@ -453,7 +453,8 @@
   {
    "value": "host-rifle-stock-folded",
    "paths": [
-    "canonicalStats.wieldingRules[].condition"
+    "canonicalStats.wieldingRules[].condition",
+    "operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[].condition"
    ],
    "identityCount": 1,
    "policy": "PROMPT",
@@ -510,7 +511,8 @@
   {
    "value": "mounted-on-rifle",
    "paths": [
-    "canonicalStats.wieldingRules[].condition"
+    "canonicalStats.wieldingRules[].condition",
+    "operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[].condition"
    ],
    "identityCount": 2,
    "policy": "AUTO",
@@ -1116,6 +1118,27 @@
    "predicate": {
     "op": "speciesIs",
     "name": "Verpine"
+   }
+  },
+  {
+   "value": "wielder is Yuuzhan Vong and has Weapon Proficiency (simple weapons)",
+   "paths": [
+    "proficiencyRules[].condition"
+   ],
+   "identityCount": 1,
+   "policy": "AUTO",
+   "predicate": {
+    "op": "all",
+    "ps": [
+     {
+      "op": "speciesIs",
+      "name": "Yuuzhan Vong"
+     },
+     {
+      "op": "hasProficiencyGroup",
+      "group": "simple"
+     }
+    ]
    }
   },
   {

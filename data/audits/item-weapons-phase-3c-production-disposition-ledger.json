@@ -8,7 +8,7 @@
   "inputs": {
     "phase3b": {
       "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
-      "sha256": "6fbdeedddafdc2ab31990ef790345b2357ce4a2849dcd5935b4189b2c3ff4cab"
+      "sha256": "5466e8a539918fba382368c6b73a2ae8a6f47472f4d2f35a72b39457135a7d56"
     },
     "phase01Weapons": {
       "sha256": "8082703831caf7f6a1679cbd3f6df4b5e88eb776a0e85d4c941be4af93d39d6b"
@@ -70,7 +70,7 @@
       "operating-resource-model": 46,
       "payload-derived-damage": 9,
       "payload-profiles": 12,
-      "proficiency-rules": 9,
+      "proficiency-rules": 10,
       "quality-parameters": 41,
       "range-band-restrictions": 34,
       "size-variant-pricing": 3,
@@ -183,7 +183,7 @@
       "futureMigrationRequirement": "Add conditional damage/quality structures."
     },
     "proficiency-rules": {
-      "identities": 9,
+      "identities": 10,
       "currentProductionLimitation": "Production has one proficiency value.",
       "futureMigrationRequirement": "Add conditional proficiency rule structures."
     },
@@ -1021,7 +1021,7 @@
         "phase3bRef": {
           "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
           "identityKey": "unmapped::Amphistaff",
-          "sha256": "f3e0a6e2cff66a2ba4bc1fcb39dc892a35a482d0c871a43cfe2d76b7a69f76ae"
+          "sha256": "8171a8be7cc8cd79b07e5a4ad8f81403fce3c5fec2c0421f1360fa5f357f1e6c"
         }
       },
       "repo": {
@@ -1121,6 +1121,14 @@
           "requiredSchemaCapability": "conditional-damage-and-qualities",
           "currentProductionLimitation": "Production has no conditional damage profile or conditional quality structures.",
           "futureMigrationRequirement": "Add conditional damage/quality structures."
+        },
+        {
+          "canonicalPath": [
+            "proficiencyRules"
+          ],
+          "requiredSchemaCapability": "proficiency-rules",
+          "currentProductionLimitation": "Production has one proficiency value.",
+          "futureMigrationRequirement": "Add conditional proficiency rule structures."
         },
         {
           "canonicalPath": [
@@ -63142,7 +63150,7 @@
         "phase3bRef": {
           "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
           "identityKey": "unmapped::Vibrobayonet",
-          "sha256": "14e0a5fd175bb68b19ec7a21b8d085cbd901b886d2092ad026ed85acdc09b88a"
+          "sha256": "cae9017cd5f31c128c01ac3b0a4cff525aeea6ee1b97e9eac1da1e948141c25d"
         }
       },
       "repo": {

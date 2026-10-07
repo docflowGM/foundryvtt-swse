@@ -122,7 +122,7 @@ Vehicle/starship terms removed only from the character-weapon corpus are not a d
 | operating-resource-model | 46 | Production has no operating-resource (energy cell etc.) model for non-ammunition power. | Add operating resource structures. |
 | payload-derived-damage | 9 | Production stores a launcher damage string; canonical launcher damage is owned by the loaded payload. | Resolve damage through payload profiles. |
 | payload-profiles | 12 | Production has no delivery-system/payload separation. | Add payload profiles and a loaded-ammo reference model. |
-| proficiency-rules | 9 | Production has one proficiency value. | Add conditional proficiency rule structures. |
+| proficiency-rules | 10 | Production has one proficiency value. | Add conditional proficiency rule structures. |
 | quality-parameters | 41 | Production traits are labels without parameters. | Add quality parameter structures (allowed bands, overrides). |
 | range-band-restrictions | 34 | Production has a range profile only; no allowed bands, fixed maximum or cone/area range rules. | Add range restriction structures. |
 | size-variant-pricing | 3 | Production has one cost/weight; canonical identity varies by size. | Add size-variant pricing structures. |
@@ -140,6 +140,6 @@ Canonical authority already carries every capability above (3B, schema v2.9); th
 - phase1WeaponsContent: `1cc37b41db8dba9579a025edc36d621e334ebc77ee742214a8b7d0d07d95be13`
 - ammoOverlay: `1f319a7df3ab2ee71043743bce033b75a4bbb600ec27553c7ecb9f8d48aba65c`
 - phase3a: `ed6adc356caa25371d5600ea6f104bfef9fb449dec7a015f9d2724cc32bd0222`
-- phase3b: `6fbdeedddafdc2ab31990ef790345b2357ce4a2849dcd5935b4189b2c3ff4cab`
-- phase3c: `cae94be6f6435cec9bc3909339661cfa169619a96de08ac4e4b94580e84a5fce`
+- phase3b: `5466e8a539918fba382368c6b73a2ae8a6f47472f4d2f35a72b39457135a7d56`
+- phase3c: `1e748665c4f27278b9be10abddacf0d5cdcea20cffc308714955cbe19a352c60`
 - phase01Weapons: `8082703831caf7f6a1679cbd3f6df4b5e88eb776a0e85d4c941be4af93d39d6b`

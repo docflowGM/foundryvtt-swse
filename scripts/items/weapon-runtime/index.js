@@ -10,3 +10,5 @@ export { resolveDamageProfile } from './damage-profile-resolver.js';
 export { resolveRange } from './range-resolver.js';
 export { resolveResource } from './resource-resolver.js';
 export { adaptLegacyWeapon } from './legacy-adapter.js';
+export { resolveHostAugmentations } from './host-augmentation.js';
+export { evaluateCondition, policyFor } from './condition-policy.js';

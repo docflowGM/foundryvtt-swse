@@ -35,22 +35,22 @@
   "adapterExposureGaps": 0
  },
  "summary": {
-  "fieldPaths": 2187,
+  "fieldPaths": 2202,
   "byImplementationState": {
    "ADAPTER_REQUIRED": 66,
    "DISPLAY_ONLY": 29,
    "EXISTING_CONSUMER_WRONG_INPUT": 539,
-   "NEW_CONSUMER_REQUIRED": 1099,
+   "NEW_CONSUMER_REQUIRED": 1114,
    "RECOMMENDATION_ONLY": 248,
    "STORE_ONLY": 25,
    "VALIDATION_ONLY": 181
   },
   "byClassification": {
    "DISPLAY": 433,
-   "EXECUTION": 1537,
+   "EXECUTION": 1552,
    "INVENTORY": 121,
-   "PLAYER_CHOICE": 401,
-   "PLAYER_STATE": 289,
+   "PLAYER_CHOICE": 416,
+   "PLAYER_STATE": 304,
    "PROVENANCE": 153,
    "RECOMMENDATION": 253,
    "SELECTOR": 527,
@@ -68,7 +68,7 @@
    "5D": 294,
    "5D/5E": 140,
    "5E": 531,
-   "5E/5F": 100,
+   "5E/5F": 115,
    "5E/5H": 162,
    "5F": 104,
    "5G": 52,
@@ -79,7 +79,7 @@
   "alreadyConsumedCorrectly": 0,
   "existingConsumerWrongInput": 539,
   "adapterRequired": 66,
-  "newConsumerRequired": 1099,
+  "newConsumerRequired": 1114,
   "nonRuntimeDisposition": 483
  },
  "entries": [
@@ -23091,6 +23091,321 @@
    "migrationPhase": "5D/5E",
    "ruleId": "3b.operation.ammo-resource-reload",
    "mechanicFamily": "ammo-resource-reload",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[]",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[].condition",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.availableWhen[].negate",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends[]",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends[].id",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends[].resolveAsIdentityKey",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.grantsDoubleWeapon.ends[].resolveAsProfileId",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.hostWeaponGroup",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.notes",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.hostWeaponAugmentation.mounted-on-rifle.notes[]",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
    "registryField": "operation",
    "resolvedProperty": "operation",
    "runtimeCarried": true,

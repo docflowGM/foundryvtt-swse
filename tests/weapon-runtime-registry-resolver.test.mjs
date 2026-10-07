@@ -140,6 +140,34 @@ assert.equal(det.identity.identityKey, 'unmapped::Vibrobayonet'); assert.equal(d
 assert.deepEqual({ ...det.profiles.find((p) => p.id === 'detached').delegatedFrom }, { identityKey: 'weapon-vibrodagger', profileId: 'primary' });
 assert.equal(det.profiles.find((p) => p.id === 'detached').definition.damage.formula, '2d4');
 throwsCode(() => resolve('unmapped::Vibrobayonet', { configurationId: 'detached', profileId: 'primary' }), 'profile-unavailable-in-configuration');
+// Vibrobayonet host-weapon augmentation: rifle + mounted Vibrobayonet = double weapon (club end delegated, nothing globally double)
+{
+  const resolver1 = resolver;
+  const mounted = resolve('unmapped::Vibrobayonet');
+  const aug = (w, ctx) => resolver1.resolveHostAugmentations(w, ctx)[0];
+  const a0 = aug(mounted, {});
+  assert.equal(a0.active, true); assert.equal(a0.available, null); assert.deepEqual(a0.pending.map((p) => p.promptId), ['host-rifle-stock-folded']);
+  const a1 = aug(mounted, { answers: { 'host-rifle-stock-folded': false } });
+  assert.equal(a1.available, true); assert.equal(a1.hostWeaponGroup, 'rifle');
+  assert.deepEqual(a1.doubleWeapon.ends.map((e) => `${e.id}:${e.identityKey}:${e.profileId}`), ['vibrobayonet-end:unmapped::Vibrobayonet:primary', 'rifle-butt-club-end:unmapped::Club/Baton:primary']);
+  assert.equal(a1.doubleWeapon.ends[0].definition.damage.formula, '2d6'); assert.equal(a1.doubleWeapon.ends[1].definition.damage.formula, '1d6', 'club end is the certified Club/Baton attack, delegated');
+  assert.equal(aug(mounted, { answers: { 'host-rifle-stock-folded': true } }).available, false, 'folded stock: no double weapon');
+  const det = resolve('unmapped::Vibrobayonet', { configurationId: 'detached' });
+  assert.equal(aug(det, {}).active, false); assert.equal(aug(det, {}).available, false);
+  // never global: no double-weapon quality on the Vibrobayonet, and no other identity declares host augmentation
+  assert.equal(mounted.profiles.find((p) => p.id === 'primary').definition.qualities.doubleWeapon, false);
+  assert.equal(mounted.qualities.doubleWeapon, false);
+  assert.deepEqual(registry.getAll().filter((r) => r.operation?.hostWeaponAugmentation).map((r) => r.identityKey), ['unmapped::Vibrobayonet']);
+  for (const r of registry.getAll().filter((x) => x.weaponGroup === 'Rifle')) assert.ok(!r.qualities?.doubleWeapon, `${r.identityKey} not globally a double weapon`);
+  assert.ok(!('damage' in mounted.operation.hostWeaponAugmentation['mounted-on-rifle'].grantsDoubleWeapon.ends[1]), 'no copied Club data');
+  assert.equal(resolve('unmapped::Vibrobayonet', { configurationId: 'detached' }).profiles.find((p) => p.id === 'detached').delegatedFrom.identityKey, 'weapon-vibrodagger', 'detached delegation still works');
+}
+// Amphistaff poison condition-track riders stay PERSISTENT (planner ruling 1)
+for (const [cfg, pid] of [['spear', 'spear-melee'], ['spear', 'spear-thrown'], ['whip', 'whip-melee'], ['quarterstaff', 'venom-spit']]) {
+  const w = resolve('unmapped::Amphistaff', { configurationId: cfg, profileId: pid });
+  const fx = getProfile(w).definition.triggeredEffects;
+  assert.ok(fx.length >= 1 && fx.every((t) => t.effect === 'move-target-condition-track' && t.steps === -1 && t.persistent === true), `${pid} persistent CT rider`);
+}
 // PLX-2M: three operating modes over ONE attack profile
 const plx = resolve('weapon-plx-2m-portable-missile-launcher');
 assert.deepEqual(plx.profiles.map((p) => p.id), ['area-missile']);

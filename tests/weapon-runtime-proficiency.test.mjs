@@ -109,6 +109,21 @@ const ampW = resolve('unmapped::Amphistaff', { configurationId: 'spear', profile
 assert.equal(resolveProficiency(ampW, getProfile(ampW), actor({ feats: [exoticFeat('Amphistaff')] })).proficient, true);
 assert.equal(resolveProficiency(ampW, getProfile(ampW), none).proficient, false);
 
+// ---- 5B-R final: Yuuzhan Vong Amphistaff familiarity across every executable profile/configuration --------------------------
+{
+  const vv = actor({ species: 'Yuuzhan Vong', feats: ['Weapon Proficiency (Simple Weapons)'] });
+  const cases = [['quarterstaff', 'quarterstaff-end1'], ['quarterstaff', 'quarterstaff-end2'], ['spear', 'spear-melee'], ['spear', 'spear-thrown'], ['whip', 'whip-melee'], ['whip', 'whip-pin'], ['whip', 'whip-trip'], ['quarterstaff', 'venom-spit']];
+  const at = (a, [cfg, pid]) => { const w = resolve('unmapped::Amphistaff', { configurationId: cfg, profileId: pid }); return resolveProficiency(w, getProfile(w), a); };
+  for (const c of cases) {
+    const r = at(vv, c);
+    assert.equal(r.proficient, true, `VV + simple on ${c[1]}`); assert.equal(r.route.kind, 'species-override'); assert.equal(r.requiredGroup, 'exotic', 'native Exotic classification unchanged');
+    assert.equal(at(actor({ species: 'Yuuzhan Vong' }), c).proficient, false, `VV without simple on ${c[1]}`);
+    assert.equal(at(actor({ species: 'Human', feats: ['Weapon Proficiency (Simple Weapons)'] }), c).proficient, false, `non-VV + simple on ${c[1]}`);
+    assert.equal(at(actor({ feats: [exoticFeat('Amphistaff')] }), c).proficient, true, `exact Exotic feat on ${c[1]}`);
+    assert.equal(at(actor({ species: 'yuuzhan-vong', groups: ['simple'] }), c).proficient, true, 'species slug and structured group list');
+  }
+}
+
 // ---- explicit integration inputs, system.proficient never drives canonical -----------------------------------------------
 assert.equal(prof('weapon-bowcaster', none, { proficiencyIntegrations: { ignoresProficiencyPenalty: true } }).route.kind, 'integration:implant');
 assert.equal(prof('weapon-bowcaster', none, { proficiencyIntegrations: { spacehoundVehicleWeapon: true } }).route.kind, 'integration:spacehound');

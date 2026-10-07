@@ -118,6 +118,7 @@ add('wielder is a Wookiee', species('Wookiee'));
 add('wielder is a Wookiee with Weapon Proficiency (rifles)', all(species('Wookiee'), { op: 'hasProficiencyGroup', group: 'rifles' }));
 add('wielder is Gungan and has Weapon Proficiency (simple weapons)', all(species('Gungan'), { op: 'hasProficiencyGroup', group: 'simple' }));
 add('wielder is Massassi', species('Massassi'));
+add('wielder is Yuuzhan Vong and has Weapon Proficiency (simple weapons)', all(species('Yuuzhan Vong'), { op: 'hasProficiencyGroup', group: 'simple' }));
 add('wielder proficient with Sith sword', { op: 'hasProficiencyGroup', group: 'simple' });
 add('wielder is Squib', species('Squib'));
 add('wielder is Verpine', species('Verpine'));

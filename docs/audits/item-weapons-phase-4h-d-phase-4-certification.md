@@ -10,7 +10,7 @@
 | Semantic vocabulary violations | **0** (80 tags within the 183-tag certified union) |
 | Forbidden pseudo-tag leaks | **0** |
 | Malformed exact ability joins | **0** (66 verified) |
-| Unresolved machine-readable alternate-route omissions | **0** (20 alternate-route identities) |
+| Unresolved machine-readable alternate-route omissions | **0** (21 alternate-route identities) |
 | Accidental payload / hybrid flattening | **0 / 0** |
 | Production mutation | **none** |
 
@@ -27,6 +27,7 @@
 - **MASSASSI_LANVAROK_FROZEN_PHASE3B** — advanced-melee ruling preserved; source conflict visible
 - **XERROL_PHASE3B_EXOTIC** — Phase 3B Exotic classification controls; no rifle tag
 - **TEHKLA_NAGAI_ROUTE_SCOPED** — Nagai simple route added; native Exotic tag/tags unchanged; census 9 -> 11 incl. 4H-E1
+- **AMPHISTAFF_YUUZHAN_VONG_ROUTE** — Yuuzhan Vong + simple-weapons alternate route added; native Exotic classification and tags unchanged (4H-E3)
 - **SITH_LANVAROK_EXACT_ABILITY_NAME** — canonical ability casing
 - **VIBRO_SAW_DR_BYPASS_STRUCTURAL** — DAMAGE_REDUCTION_BYPASS stays an ontology gap
 - **KISSAI_LANVAROK_FAMILY_ROUTE** — Kissai + simple weapons covers both lanvarok varieties; Massassi advanced-melee ruling and native classifications unchanged (4H-E1)
