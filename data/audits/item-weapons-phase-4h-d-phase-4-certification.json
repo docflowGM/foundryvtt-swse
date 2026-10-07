@@ -2,7 +2,7 @@
   "schemaVersion": "weapon-phase-4h-d-phase-4-certification-v1",
   "phase": "4H-D",
   "family": "weapons",
-  "status": "PHASE_4_WEAPON_SEMANTIC_SELECTOR_RECOMMENDATION_AUTHORITY_CERTIFIED_AND_FROZEN",
+  "status": "PHASE_4_WEAPON_SEMANTIC_SELECTOR_RECOMMENDATION_AUTHORITY_CERTIFIED_AND_FROZEN_FINAL_AMENDED_STATE",
   "authorityOnly": true,
   "productionMutationAuthorized": false,
   "headline": {
@@ -22,9 +22,23 @@
     "repoMissing": 52,
     "distinctSemanticTags": 80,
     "exactAbilityLinks": 66,
-    "alternateRouteIdentities": 19,
-    "exoticAlternateProficiencyCases": 10
+    "alternateRouteIdentities": 20,
+    "exoticAlternateProficiencyCases": 11
   },
+  "amendments": [
+    {
+      "id": "4H-E1",
+      "change": "Kissai + simple weapons alternate route on both lanvarok varieties."
+    },
+    {
+      "id": "4H-E2",
+      "change": "Concealed Dart Launcher: poison payload-conditional; stun/nonlethal unconditional."
+    },
+    {
+      "id": "4H-E3",
+      "change": "DH-23 description page 62 -> 61."
+    }
+  ],
   "rulingChecks": [
     {
       "id": "SIANG_LANCE_PROFILE_SCOPED",
@@ -49,7 +63,7 @@
     {
       "id": "TEHKLA_NAGAI_ROUTE_SCOPED",
       "result": "PASS",
-      "detail": "Nagai simple route added; native Exotic tag/tags unchanged; census 9 -> 10"
+      "detail": "Nagai simple route added; native Exotic tag/tags unchanged; census 9 -> 11 incl. 4H-E1"
     },
     {
       "id": "SITH_LANVAROK_EXACT_ABILITY_NAME",
@@ -60,29 +74,29 @@
       "id": "VIBRO_SAW_DR_BYPASS_STRUCTURAL",
       "result": "PASS",
       "detail": "DAMAGE_REDUCTION_BYPASS stays an ontology gap"
+    },
+    {
+      "id": "KISSAI_LANVAROK_FAMILY_ROUTE",
+      "result": "PASS",
+      "detail": "Kissai + simple weapons covers both lanvarok varieties; Massassi advanced-melee ruling and native classifications unchanged (4H-E1)"
+    },
+    {
+      "id": "CONCEALED_DART_DEFAULT_PAYLOAD_SPLIT",
+      "result": "PASS",
+      "detail": "stun/nonlethal unconditional; poison payload-conditional (4H-E2)"
+    },
+    {
+      "id": "DH23_PAGE_61",
+      "result": "PASS",
+      "detail": "description p.61 / stat table p.61 in Phase 3B and the Pistol authority (4H-E3)"
     }
   ],
   "carriedOpenItems": [
-    {
-      "id": "DH23_DESCRIPTION_PAGE",
-      "status": "UNVERIFIED_PRIMARY_SOURCE_PDF_REQUIRED",
-      "identityKey": "weapon-dh-23-blaster-pistol"
-    },
-    {
-      "id": "PAYLOAD_FLATTENING_weapon-concealed-dart-launcher",
-      "status": "OPEN_PLANNER_QUESTION",
-      "identityKey": "weapon-concealed-dart-launcher"
-    },
     {
       "id": "SIMPLE_WEAPON_DERIVED_SELECTORS",
       "status": "DERIVED_FROM_PHASE_3B",
       "count": 49,
       "note": "4A Simple records carry derived group/proficiency selectors and no families."
-    },
-    {
-      "id": "SITH_LANVAROK_KISSAI_FAMILIARITY",
-      "status": "OPEN_PLANNER_QUESTION",
-      "identityKey": "weapon-sith-lanvarok"
     },
     {
       "id": "SITH_SWORD_LIGHTSABER_CLASSIFICATION_SELECTOR",
@@ -92,9 +106,9 @@
     }
   ],
   "chain": {
-    "4H-A": "228d6903e96fde92f40abbf7370424609a9cdc6b83637e8a54ac381cb0a2ee15",
-    "4H-B": "60e22a742ecc1de8b2ab0b909f88671e89a29fd83ff7da1712b518ef60a59832",
-    "4H-C": "9dfa1b667aa6b535ee8f2e07272df986a6cf48f913622348a596212cbe38c5ba"
+    "4H-A": "d09dbb57ebb83d26abed2137cf62fc00c49a9e0b46580ede07a42125822d2d2d",
+    "4H-B": "7454d9cbd8ff83a15604b2af6533c30d8a7bd9b26d6e948af1e63a8241132f8e",
+    "4H-C": "217cde99eaba587f86fd0c66ba367a3dcba2fedecbc9970f5a2cca92e68a11fc"
   },
   "productionHashes": {
     "packs/weapons.db": "70bd1216ef5106b48aead731d5ab38a920c065e8c3016a40e31c262b26f7b073",

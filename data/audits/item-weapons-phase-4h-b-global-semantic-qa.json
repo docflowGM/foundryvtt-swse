@@ -105,7 +105,7 @@
       "thrown"
     ],
     "structuralSelectorLeaks": 0,
-    "tagFieldChecks": 1891
+    "tagFieldChecks": 1890
   },
   "byCategory": [
     {
@@ -800,7 +800,7 @@
     ]
   },
   "hybridProfileInventory": {
-    "records": 15,
+    "records": 16,
     "promotedConditionalTags": 0,
     "rows": [
       {
@@ -876,6 +876,15 @@
           "force",
           "lightsaber",
           "melee_defense"
+        ],
+        "modes": []
+      },
+      {
+        "phase": "4G",
+        "identityKey": "weapon-concealed-dart-launcher",
+        "canonicalName": "Concealed Dart Launcher",
+        "conditionalTags": [
+          "poison"
         ],
         "modes": []
       },
@@ -970,16 +979,22 @@
   "payloadInventory": {
     "records": 4,
     "accidentalFlattening": 0,
-    "exemptions": [
+    "defaultPayloadRulings": [
       {
         "identityKey": "weapon-concealed-dart-launcher",
-        "tags": [
+        "defaultPayload": "sedative",
+        "unconditionalTags": [
           "stun",
-          "nonlethal",
-          "poison"
+          "nonlethal"
         ],
-        "status": "OPEN_PLANNER_QUESTION",
-        "note": "Round 2 ruling puts the default sedative payload (stun, nonlethal) and the optional contact-poison payload (poison) on the base launcher. Payload-specific semantics would normally be payload-scoped (cf. Wrist Rocket Launcher). Not changed without a planner ruling."
+        "conditionalPayloadTags": [
+          {
+            "payload": "contact-poison",
+            "tag": "poison"
+          }
+        ],
+        "status": "PLANNER_RULED_4H_E2",
+        "note": "The sedative dart is the published default and the weapon table lists native stun damage, so stun/nonlethal stay unconditional; contact poison is an optional payload, so poison is payload-conditional."
       }
     ],
     "rows": [
@@ -1011,7 +1026,6 @@
         ],
         "basePayloadSemanticTags": [
           "nonlethal",
-          "poison",
           "stun"
         ]
       },
@@ -1035,11 +1049,11 @@
   "inputs": {
     "data/audits/item-weapons-phase-4a-simple-semantic-rolling.json": "4cf3b12777a113de82b21dbe2ff8a388d6e39c5e0a220d1afbb0e32703c0acdd",
     "data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json": "0c2574d28129519fbc16433ff03469243d87eda38edc04ea09ce4984d0f8e226",
-    "data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json": "42d9fdfd534c28e0524e78d9f9db7c89f537f89da6252d7c7b2860171cdb69fa",
+    "data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json": "144e5b04e76ad792b7c01e29b6039a4a313c41d6a8287a7a896f9738e557ccbd",
     "data/audits/item-weapons-phase-4d-rifle-semantic-rolling.json": "099091431b40fda931725da28fd809caef699a24de4ecdaa5753d8bc0a5d7a57",
     "data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json": "88cc4fe20a3a86594e961676160682cbe3e902154ef9f0becdc368a2258feb58",
     "data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json": "fd484c64f0eb5472253f4f99f5e871a584ff482f6435aafe22d8a21454c073d5",
-    "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json": "6294cb0f51598f7ef01ab46c2aa062f8a693b43d2979eccb60b920e026fd3b3c"
+    "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json": "e0fc2e14d14f0227b9e84b904dd82e9b9c94df3fad5f8df121cbe2937b9f5005"
   },
   "phase3BIdentities": 203
 }

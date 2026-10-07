@@ -13,9 +13,9 @@ import { buildPhase4HC } from './build-item-weapons-phase-4h-global-authority.mj
 
 export const OUT_JSON = 'data/audits/item-weapons-phase-4h-d-phase-4-certification.json';
 export const OUT_MD = 'docs/audits/item-weapons-phase-4h-d-phase-4-certification.md';
-export const STATUS = 'PHASE_4_WEAPON_SEMANTIC_SELECTOR_RECOMMENDATION_AUTHORITY_CERTIFIED_AND_FROZEN';
-// Exotic Rounds 1-3 (assignments 1-15) as certified by the planner; only 4H-A-authorized changes may touch records after #15.
-export const EXOTIC_ROUNDS_1_3_PIN = '2ced09a8964a134e810d1e518587467b86c5bddffd324d7ef7f252dcc4f9126a';
+export const STATUS = 'PHASE_4_WEAPON_SEMANTIC_SELECTOR_RECOMMENDATION_AUTHORITY_CERTIFIED_AND_FROZEN_FINAL_AMENDED_STATE';
+// Exotic Rounds 1-3 (assignments 1-15) as certified by the planner. Re-pinned by 4H-E2 (Concealed Dart Launcher poison -> payload-conditional; previous pin 2ced09a8964a134e810d1e518587467b86c5bddffd324d7ef7f252dcc4f9126a). Only documented planner amendments may change it.
+export const EXOTIC_ROUNDS_1_3_PIN = '7fa8fcc69d52e3f88c79119e911266dc99683dd4ad096eb42dbf96635f83a2d3';
 const sameJson = (x, y) => JSON.stringify(x) === JSON.stringify(y);
 
 export function buildPhase4HD() {
@@ -44,17 +44,23 @@ export function buildPhase4HD() {
   ok('WRIST_ROCKET_PAYLOAD_SCOPED', sameJson(wr.finalTags, ['exotic_weapon', 'ranged', 'offense_ranged']), 'no static payload semantics on the base launcher');
   ok('MASSASSI_LANVAROK_FROZEN_PHASE3B', ml.ruleSelectors.sourceConflict?.status === 'FROZEN_PHASE3B_RULING_CONTROLS' && ml.ruleSelectors.speciesOverrides.some((o) => o.treatAsGroup === 'advanced-melee'), 'advanced-melee ruling preserved; source conflict visible');
   ok('XERROL_PHASE3B_EXOTIC', xn.ruleSelectors.group[0] === 'weapon-group:exotic' && !xn.finalTags.includes('rifle'), 'Phase 3B Exotic classification controls; no rifle tag');
-  ok('TEHKLA_NAGAI_ROUTE_SCOPED', tk.ruleSelectors.speciesOverrides.some((o) => o.species === 'Nagai' && o.treatAsGroup === 'simple') && tk.finalTags.includes('exotic_weapon') && JSON.parse(readText('data/audits/item-weapons-phase-4g-exotic-census.json')).counts.identitiesWithAlternateProficiencyOrHandling === 10, 'Nagai simple route added; native Exotic tag/tags unchanged; census 9 -> 10');
+  ok('TEHKLA_NAGAI_ROUTE_SCOPED', tk.ruleSelectors.speciesOverrides.some((o) => o.species === 'Nagai' && o.treatAsGroup === 'simple') && tk.finalTags.includes('exotic_weapon') && JSON.parse(readText('data/audits/item-weapons-phase-4g-exotic-census.json')).counts.identitiesWithAlternateProficiencyOrHandling === 11, 'Nagai simple route added; native Exotic tag/tags unchanged; census 9 -> 11 incl. 4H-E1');
   ok('SITH_LANVAROK_EXACT_ABILITY_NAME', sl.ruleSelectors.explicitAbilityInteractions.every((x) => x.ability === 'Two-Weapon Fighting'), 'canonical ability casing');
   ok('VIBRO_SAW_DR_BYPASS_STRUCTURAL', !vs.finalTags.includes('damage_reduction') && (vs.guardrails || []).some((x) => /ontology gap/i.test(x)), 'DAMAGE_REDUCTION_BYPASS stays an ontology gap');
+  const kis = (x) => x.ruleSelectors.speciesOverrides.some((o) => o.species === 'Kissai' && o.treatAsGroup === 'simple' && o.appliesToFamily === 'weapon-family:lanvarok');
+  ok('KISSAI_LANVAROK_FAMILY_ROUTE', kis(sl) && kis(ml) && ml.ruleSelectors.speciesOverrides.some((o) => o.species === 'Massassi' && o.treatAsGroup === 'advanced-melee'), 'Kissai + simple weapons covers both lanvarok varieties; Massassi advanced-melee ruling and native classifications unchanged (4H-E1)');
+  const dl = byName('Concealed Dart Launcher');
+  ok('CONCEALED_DART_DEFAULT_PAYLOAD_SPLIT', dl.finalTags.includes('stun') && dl.finalTags.includes('nonlethal') && !dl.finalTags.includes('poison') && dl.conditionalSynergyTags.some((x) => x.tag === 'poison' && /contact-poison/.test(x.condition)), 'stun/nonlethal unconditional; poison payload-conditional (4H-E2)');
+  const dh = JSON.parse(readText('data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json')).assignments.find((x) => x.identityKey === 'weapon-dh-23-blaster-pistol').source;
+  ok('DH23_PAGE_61', dh.descriptionPage === 61 && dh.statTablePage === 61 && b3.identities.find((x) => x.identityKey === 'weapon-dh-23-blaster-pistol').sourceClaims[0].descriptionPage === 61, 'description p.61 / stat table p.61 in Phase 3B and the Pistol authority (4H-E3)');
   const out = {
     schemaVersion: 'weapon-phase-4h-d-phase-4-certification-v1', phase: '4H-D', family: 'weapons', status: STATUS, authorityOnly: true, productionMutationAuthorized: false,
     headline: { phase3BCanonicalIdentities: b3.identities.length, phase4IdentitiesRepresented: c.records.length, categoryRecords: c.counts.categoryRecords, semanticVocabularyViolations: violations, forbiddenPseudoTagLeaks: leaks, malformedExactAbilityJoins: b.exactAbilityLinks.malformed, unresolvedMachineReadableAlternateRouteOmissions: 0, accidentalPayloadFlattening: b.payloadInventory.accidentalFlattening, accidentalHybridFlattening: b.hybridProfileInventory.promotedConditionalTags, productionMutation: 'none' },
-    counts: { repoPresent: c.counts.repoPresent, repoMissing: c.counts.repoMissing, distinctSemanticTags: c.counts.distinctSemanticTags, exactAbilityLinks: b.exactAbilityLinks.total, alternateRouteIdentities: c.counts.alternateRouteIdentities, exoticAlternateProficiencyCases: 10 },
+    counts: { repoPresent: c.counts.repoPresent, repoMissing: c.counts.repoMissing, distinctSemanticTags: c.counts.distinctSemanticTags, exactAbilityLinks: b.exactAbilityLinks.total, alternateRouteIdentities: c.counts.alternateRouteIdentities, exoticAlternateProficiencyCases: 11 },
+    amendments: [{ id: '4H-E1', change: 'Kissai + simple weapons alternate route on both lanvarok varieties.' }, { id: '4H-E2', change: 'Concealed Dart Launcher: poison payload-conditional; stun/nonlethal unconditional.' }, { id: '4H-E3', change: 'DH-23 description page 62 -> 61.' }],
     rulingChecks: checks,
     carriedOpenItems: [
       ...a.carriedDiscrepancies.filter((d) => ['OPEN_PLANNER_QUESTION', 'UNVERIFIED_PRIMARY_SOURCE_PDF_REQUIRED'].includes(d.status)).map((d) => ({ id: d.id, status: d.status, identityKey: d.identityKey })),
-      ...b.payloadInventory.exemptions.map((e) => ({ id: 'PAYLOAD_FLATTENING_' + e.identityKey, status: e.status, identityKey: e.identityKey })),
       { id: 'SITH_SWORD_LIGHTSABER_CLASSIFICATION_SELECTOR', status: 'PHASE_3B_STRUCTURED_ONLY', identityKey: 'weapon-sith-sword', note: 'Phase 3B structured rule (lightsaber classification for Block/Deflect/Redirect Shot) has no planner selector because 4A Simple predates the selector layer; Phase 5A must consume the Phase 3B rule.' },
       { id: 'SIMPLE_WEAPON_DERIVED_SELECTORS', status: 'DERIVED_FROM_PHASE_3B', count: c.counts.derivedSelectorRecords, note: '4A Simple records carry derived group/proficiency selectors and no families.' },
     ].sort((x, y) => cmp(x.id, y.id)),
@@ -62,7 +68,7 @@ export function buildPhase4HD() {
     productionHashes: prod,
   };
   const json = JSON.stringify(out, null, 2) + '\n';
-  const md = `# Phase 4 — Weapon Semantic / Selector / Recommendation Authority: CERTIFIED AND FROZEN
+  const md = `# Phase 4 — Weapon Semantic / Selector / Recommendation Authority: CERTIFIED AND FROZEN — FINAL AMENDED STATE
 
 **Status:** \`${STATUS}\` (authority-only; production mutation: none)
 
@@ -78,7 +84,7 @@ export function buildPhase4HD() {
 | Accidental payload / hybrid flattening | **0 / 0** |
 | Production mutation | **none** |
 
-## Verified rulings
+## Final amendments (4H-E)\n\n${out.amendments.map((x) => `- **${x.id}** — ${x.change}`).join('\n')}\n\n## Verified rulings
 
 ${checks.map((x) => `- **${x.id}** — ${x.detail}`).join('\n')}
 

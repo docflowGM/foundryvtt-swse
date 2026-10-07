@@ -1089,3 +1089,8 @@ Double-weapon Exotic for full-attack builds that also use Rapid Strike. It combi
 - **4H-A3:** Sith Lanvarok exact ability name corrected to `Two-Weapon Fighting`.
 - **4H-A4:** Tehk'la Blade gains the Nagai alternate route (treat as simple weapon instead of exotic; Legacy Era Campaign Guide). Alternate-case count 9 → 10.
 - **4H-A6:** Sith Lanvarok records the KOTOR Kissai "the lanvarok" simple-weapon familiarity as an unadjudicated source gap (variety not specified); no route added.
+
+## Phase 4H-E amendments (final planner rulings)
+
+- **4H-E1 (Kissai lanvarok):** Kissai + Weapon Proficiency (simple weapons) → treated as proficient with the lanvarok family; added to both Sith Lanvarok and Massassi Lanvarok. Supersedes the 4H-A6 open gap. No native classification or semantic tag changed; Massassi's own advanced-melee ruling stays frozen.
+- **4H-E2 (Concealed Dart Launcher):** `poison` is now a payload-conditional tag (contact-poison dart loaded). `stun` and `nonlethal` remain unconditional (default sedative payload, native stun damage). Intentional correction of the Round 2 ruling.

@@ -28,12 +28,17 @@ const CATEGORIES = [
 ];
 
 export const CARRIED_DISCREPANCIES = [
-  { id: 'DH23_DESCRIPTION_PAGE', identityKey: 'weapon-dh-23-blaster-pistol', status: 'UNVERIFIED_PRIMARY_SOURCE_PDF_REQUIRED', phase3B: { descriptionPage: 61, statTablePage: 61 }, phase4C: { descriptionPage: 62, statTablePage: 61 }, evidence: 'Clone Wars Campaign Guide OCR text places the DH-23 description box in the same text block as the weapons table (stat table p.61), which weakly favours p.61, but OCR order is not page authority and the PDF is not available in this environment.', disposition: 'Neither authority was changed. Phase 3B (controlling canonical authority) is carried provisionally. Needs a visual PDF check; provenance metadata only, no semantic effect.' },
   { id: 'MASSASSI_LANVAROK_SPECIES_CONFLICT', identityKey: 'weapon-massassi-lanvarok', status: 'FROZEN_PHASE3B_RULING_CONTROLS', rule: 'KOTOR Massassi species text: Massassi treat the lanvarok as a simple weapon. Massassi lanvarok weapon entry: Massassi treat it as an advanced melee weapon. Phase 3B froze the weapon-entry advanced-melee reading; both are preserved, not merged.' },
   { id: 'XERROL_NIGHTSTINGER_GROUP', identityKey: 'weapon-xerrol-nightstinger', status: 'PHASE3B_EXOTIC_CLASSIFICATION_CONTROLS', rule: 'Phase 1 prose called it a Rifle; frozen Phase 3B places it in the Exotic proficiency census. No rifle semantic tag.' },
   { id: 'TEHKLA_NAGAI_ROUTE', identityKey: 'unmapped::Tehkla Blade', status: 'CORRECTED_IN_PHASE_4H_A4', rule: 'Nagai treat tehk\'la blades as simple weapons instead of exotic weapons (Legacy Era Campaign Guide). Added structurally; Exotic alternate-case count 9 -> 10. Native Exotic classification and every semantic tag unchanged.' },
   { id: 'VIBRO_SAW_DR_BYPASS', identityKey: 'unmapped::Vibro-Saw', status: 'ONTOLOGY_GAP_STRUCTURAL', rule: 'DAMAGE_REDUCTION_BYPASS stays structured mechanics; damage_reduction means possessing DR and must not be used.' },
-  { id: 'SITH_LANVAROK_KISSAI_FAMILIARITY', identityKey: 'weapon-sith-lanvarok', status: 'OPEN_PLANNER_QUESTION', rule: 'KOTOR Kissai species: Kissai treat "the lanvarok" as a simple weapon instead of an exotic weapon. The source does not say which lanvarok variety. No alternate route added until the planner rules.' },
+];
+
+// Items that were carried at 4H-A and were closed by the final planner rulings (4H-E).
+export const RESOLVED_DISCREPANCIES = [
+  { id: 'DH23_DESCRIPTION_PAGE', identityKey: 'weapon-dh-23-blaster-pistol', status: 'RESOLVED_4H_E3', ruling: 'Planner visually verified the Clone Wars Campaign Guide PDF: description p.61, stat table p.61 (printed page 61 holds Table 5-2 and the full DH-23 description; p.62 begins later entries). Phase 3B was correct; the Phase 4C planner description page 62 was wrong and is corrected to 61. Provenance only.' },
+  { id: 'SITH_LANVAROK_KISSAI_FAMILIARITY', identityKey: 'weapon-sith-lanvarok', status: 'RESOLVED_4H_E1', ruling: 'Planner ruling: the Kissai "the lanvarok" simple-weapon familiarity applies to the lanvarok family (KOTOR defines one weapon with two varieties). Kissai + simple weapons added to Sith Lanvarok and Massassi Lanvarok. Native classifications and the frozen Massassi advanced-melee ruling unchanged.' },
+  { id: 'CONCEALED_DART_LAUNCHER_PAYLOAD_TAGS', identityKey: 'weapon-concealed-dart-launcher', status: 'RESOLVED_4H_E2', ruling: 'Planner ruling: stun and nonlethal stay unconditional (published default sedative dart, native table stun damage); poison becomes payload-conditional on the contact-poison dart. Intentional correction of the Round 2 ruling.' },
 ];
 
 export function buildPhase4HA() {
@@ -73,7 +78,7 @@ export function buildPhase4HA() {
   const exo = readJson('data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json');
   const json = JSON.stringify({
     schemaVersion: 'weapon-phase-4h-a-authority-reconciliation-v1', phase: '4H-A', family: 'weapons', status: STATUS, authorityOnly: true, productionMutationAuthorized: false,
-    census, corrections: exo.phase4hCorrections, carriedDiscrepancies: CARRIED_DISCREPANCIES, inputs,
+    census, corrections: [...exo.phase4hCorrections, { id: '4H-E3', scope: 'Pistol authority: BlasTech DH-23', change: 'descriptionPage 62 -> 61 (planner visual PDF verification). Mechanics and semantic tags unchanged.' }], carriedDiscrepancies: CARRIED_DISCREPANCIES, resolvedDiscrepancies: RESOLVED_DISCREPANCIES, inputs,
   }, null, 2) + '\n';
   const md = `# Phase 4H-A — Weapon Authority Reconciliation
 
@@ -94,6 +99,10 @@ ${per.map((p) => `| ${p.phase} | ${p.category} | ${p.records} | ${p.phase3BGroup
 ## Corrections applied in 4H-A (selector / provenance only; no semantic tag changed)
 
 ${exo.phase4hCorrections.map((c) => `- **${c.id}** (${c.scope}): ${c.change}`).join('\n')}
+
+## Resolved by the final planner rulings (4H-E)
+
+${RESOLVED_DISCREPANCIES.map((d) => `- **${d.id}** — \`${d.status}\`: ${d.ruling}`).join('\n')}
 
 ## Carried authority discrepancies
 

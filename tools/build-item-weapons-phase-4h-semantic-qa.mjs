@@ -11,9 +11,10 @@ export const OUT_MD = 'docs/audits/item-weapons-phase-4h-b-global-semantic-qa.md
 export const STATUS = 'WEAPON_PHASE_4H_B_GLOBAL_SEMANTIC_SELECTOR_QA_PASSED';
 const ENUM = /^[A-Z][A-Z0-9_]*$/;
 
-// Payload-bearing weapons whose base final tags carry payload-derived semantics. Not changed here (planner-owned); carried as an open planner question.
-export const PAYLOAD_FLATTENING_EXEMPTIONS = [
-  { identityKey: 'weapon-concealed-dart-launcher', tags: ['stun', 'nonlethal', 'poison'], status: 'OPEN_PLANNER_QUESTION', note: 'Round 2 ruling puts the default sedative payload (stun, nonlethal) and the optional contact-poison payload (poison) on the base launcher. Payload-specific semantics would normally be payload-scoped (cf. Wrist Rocket Launcher). Not changed without a planner ruling.' },
+// Payload-bearing weapons whose base final tags carry the semantics of their published DEFAULT payload (planner-ruled).
+// Optional payload semantics must be payload-conditional. Wrist Rocket Launcher has no default payload, so it carries none.
+export const DEFAULT_PAYLOAD_RULINGS = [
+  { identityKey: 'weapon-concealed-dart-launcher', defaultPayload: 'sedative', unconditionalTags: ['stun', 'nonlethal'], conditionalPayloadTags: [{ payload: 'contact-poison', tag: 'poison' }], status: 'PLANNER_RULED_4H_E2', note: 'The sedative dart is the published default and the weapon table lists native stun damage, so stun/nonlethal stay unconditional; contact poison is an optional payload, so poison is payload-conditional.' },
 ];
 const PAYLOAD_TAGS = ['stun', 'poison', 'nonlethal', 'burst_damage', 'control', 'droid_bane', 'vehicle_bane'];
 
@@ -52,9 +53,16 @@ export function buildPhase4HB() {
       if ((q.payloads || []).length || (q.payloadProfiles || []).length || (q.modes || []).some((m) => m.payload)) {
         const carried = (a.finalTags || []).filter((t) => PAYLOAD_TAGS.includes(t));
         payload.push({ phase: c.id, identityKey: k, canonicalName: a.canonicalName, payloadIds: [...(q.payloads || []), ...(q.payloadProfiles || []).map((p) => p.id)].sort(cmp), basePayloadSemanticTags: carried.sort(cmp) });
-        const ex = PAYLOAD_FLATTENING_EXEMPTIONS.find((e) => e.identityKey === k);
+        const ex = DEFAULT_PAYLOAD_RULINGS.find((e) => e.identityKey === k);
         if (carried.length && !ex) fail(`${w} flattens payload semantics (${carried.join(', ')}) onto the base weapon`);
-        if (ex && JSON.stringify(carried) !== JSON.stringify([...ex.tags].sort(cmp))) fail(`${w} payload exemption no longer matches (${carried.join(', ')})`);
+        if (ex) {
+          if (JSON.stringify(carried) !== JSON.stringify([...ex.unconditionalTags].sort(cmp))) fail(`${w} unconditional payload tags must be exactly ${ex.unconditionalTags.join(', ')} (got ${carried.join(', ') || 'none'})`);
+          if (!(q.payloadProfiles || []).some((p) => p.id === ex.defaultPayload && p.default)) fail(`${w} default payload ${ex.defaultPayload} missing`);
+          for (const cp of ex.conditionalPayloadTags) {
+            if ((a.finalTags || []).includes(cp.tag) || (a.sharedTags || []).includes(cp.tag) || (a.advantageTags || []).includes(cp.tag)) fail(`${w} ${cp.tag} must not be an unconditional tag`);
+            if (!(a.conditionalSynergyTags || a.conditionalSemanticTags || []).some((x) => x.tag === cp.tag && x.condition.includes(cp.payload))) fail(`${w} ${cp.tag} must be conditional on the ${cp.payload} payload`);
+          }
+        }
       }
     }
     perCat.push({ phase: c.id, category: c.category, records: c.data.assignments.length, distinctSemanticTags: tags.size, semanticFields: [...fields].sort(cmp), exactAbilityLinks: links });
@@ -73,7 +81,7 @@ export function buildPhase4HB() {
     byCategory: perCat,
     exactAbilityLinks: { total: linkRows.length, malformed: 0, rows: linkRows.sort((a, b) => cmp(a.identityKey + a.ability, b.identityKey + b.ability)) },
     hybridProfileInventory: { records: hybrid.length, promotedConditionalTags: 0, rows: hybrid.sort((a, b) => cmp(a.identityKey, b.identityKey)) },
-    payloadInventory: { records: payload.length, accidentalFlattening: 0, exemptions: PAYLOAD_FLATTENING_EXEMPTIONS, rows: payload.sort((a, b) => cmp(a.identityKey, b.identityKey)) },
+    payloadInventory: { records: payload.length, accidentalFlattening: 0, defaultPayloadRulings: DEFAULT_PAYLOAD_RULINGS, rows: payload.sort((a, b) => cmp(a.identityKey, b.identityKey)) },
     inputs: Object.fromEntries(cats.map((c) => [c.file, sha(readText(c.file))])),
     phase3BIdentities: b3.identities.length,
   };
@@ -87,15 +95,15 @@ export function buildPhase4HB() {
 - Unknown weapon semantic tags: **0** · forbidden pseudo-tag leaks: **0** · structural-selector leaks: **0** (${fieldChecks} tag-field entries checked)
 - Exact ability links verified against canonical feat/talent names: **${linkRows.length}**, malformed: **0**
 - Hybrid/profile-scoped records: **${hybrid.length}** (no conditional tag promoted to a final tag)
-- Payload-bearing records: **${payload.length}**, accidental flattening: **0**, exemptions carried: **${PAYLOAD_FLATTENING_EXEMPTIONS.length}**
+- Payload-bearing records: **${payload.length}**, accidental flattening: **0**, default-payload rulings: **${DEFAULT_PAYLOAD_RULINGS.length}**
 
 | Phase | Category | Records | Distinct tags | Exact ability links |
 | --- | --- | ---: | ---: | ---: |
 ${perCat.map((p) => `| ${p.phase} | ${p.category} | ${p.records} | ${p.distinctSemanticTags} | ${p.exactAbilityLinks} |`).join('\n')}
 
-## Open planner question (payload flattening exemption)
+## Default-payload rulings (4H-E2)
 
-${PAYLOAD_FLATTENING_EXEMPTIONS.map((e) => `- **${e.identityKey}** (${e.tags.join(', ')}): ${e.note}`).join('\n')}
+${DEFAULT_PAYLOAD_RULINGS.map((e) => `- **${e.identityKey}** — default payload \`${e.defaultPayload}\`: unconditional ${e.unconditionalTags.join(', ')}; ${e.conditionalPayloadTags.map((c) => `${c.tag} only with the ${c.payload} payload`).join(', ')}. ${e.note}`).join('\n')}
 
 ## Forbidden pseudo-tags (never legal weapon semantics)
 

@@ -24,7 +24,7 @@
     "meleeProfile": 15,
     "rangedProfile": 15,
     "hybridProfile": 2,
-    "alternateProficiencyOrHandlingCases": 10,
+    "alternateProficiencyOrHandlingCases": 11,
     "adjudicated": 32,
     "remaining": 0,
     "nextIdentity": null
@@ -810,7 +810,6 @@
         "offense_ranged",
         "stun",
         "nonlethal",
-        "poison",
         "concealment",
         "stealth"
       ],
@@ -821,7 +820,6 @@
         "offense_ranged",
         "stun",
         "nonlethal",
-        "poison",
         "concealment",
         "stealth"
       ],
@@ -874,7 +872,15 @@
         "Pistol range does not make this a Pistol-group weapon and does not grant pistol proficiency.",
         "Sedative and contact-poison darts are structural payload profiles, not separate Exotic weapon identities.",
         "Do not flatten poison into every shot; poison applies when the dart is loaded with a contact poison.",
-        "The +5 concealment bonus supports concealment and stealth semantics; the exact numeric bonus remains structured."
+        "The +5 concealment bonus supports concealment and stealth semantics; the exact numeric bonus remains structured.",
+        "4H-E2 amendment: poison is payload-conditional; stun and nonlethal stay unconditional because the sedative dart is the published default and the weapon table lists native stun damage."
+      ],
+      "conditionalSynergyTags": [
+        {
+          "tag": "poison",
+          "condition": "contact-poison dart loaded (payload = contact-poison)",
+          "reason": "The default sedative dart deals stun damage; contact poison is an optional alternate payload, so poison semantics apply only while a contact-poison dart is loaded."
+        }
       ]
     },
     {
@@ -1658,6 +1664,15 @@
             "effect": "Massassi treat the Massassi lanvarok as an advanced melee weapon instead of an exotic weapon.",
             "authority": "FROZEN_PHASE3B_WEAPON_ENTRY_RULING",
             "sourceConflictRef": "ruleSelectors.sourceConflict"
+          },
+          {
+            "species": "Kissai",
+            "requiresProficiency": "simple-weapons",
+            "treatAsGroup": "simple",
+            "replaces": "exotic",
+            "appliesToFamily": "weapon-family:lanvarok",
+            "effect": "Kissai treat the lanvarok as a simple weapon instead of an exotic weapon; the KOTOR equipment entry defines the lanvarok as one weapon with two varieties (Sith and Massassi), so the route covers both.",
+            "source": "Knights of the Old Republic Campaign Guide, Kissai species Weapon Familiarity"
           }
         ]
       },
@@ -1673,6 +1688,11 @@
             "condition": "Species is Massassi",
             "requirement": "Weapon Proficiency (advanced melee weapons)",
             "result": "Treat as proficient under the frozen Phase 3B weapon-entry ruling."
+          },
+          {
+            "condition": "Species is Kissai",
+            "requirement": "Weapon Proficiency (simple weapons)",
+            "result": "Treat the lanvarok as a simple weapon instead of an exotic weapon (Kissai Weapon Familiarity)."
           }
         ]
       },
@@ -2255,11 +2275,21 @@
           }
         ],
         "sourceAuthorityGap": {
-          "status": "SOURCE_CONFIRMED_AMBIGUOUS_VARIANT_NOT_ADJUDICATED",
-          "rule": "KOTOR Kissai species Weapon Familiarity: Kissai treat 'the lanvarok' as a simple weapon instead of an exotic weapon.",
-          "note": "The source does not say which lanvarok variety; the Sith lanvarok is Exotic and the Massassi lanvarok is Advanced Melee. No alternate route is added until the planner rules.",
-          "plannerDisposition": "OPEN_QUESTION"
-        }
+          "status": "CORRECTED_IN_PHASE_4H_E1",
+          "rule": "Kissai treat 'the lanvarok' as a simple weapon instead of an exotic weapon.",
+          "resolution": "Planner ruling: the rule applies to the lanvarok weapon family (both varieties); route added structurally to Sith Lanvarok and Massassi Lanvarok. Native classifications and Massassi's own advanced-melee ruling unchanged."
+        },
+        "speciesOverrides": [
+          {
+            "species": "Kissai",
+            "requiresProficiency": "simple-weapons",
+            "treatAsGroup": "simple",
+            "replaces": "exotic",
+            "appliesToFamily": "weapon-family:lanvarok",
+            "effect": "Kissai treat the lanvarok as a simple weapon instead of an exotic weapon; the KOTOR equipment entry defines the lanvarok as one weapon with two varieties (Sith and Massassi), so the route covers both.",
+            "source": "Knights of the Old Republic Campaign Guide, Kissai species Weapon Familiarity"
+          }
+        ]
       },
       "proficiencyRoutes": {
         "canonical": [
@@ -2268,7 +2298,13 @@
             "requirement": "Exotic Weapon Proficiency (Sith Lanvarok)"
           }
         ],
-        "alternate": []
+        "alternate": [
+          {
+            "condition": "Species is Kissai",
+            "requirement": "Weapon Proficiency (simple weapons)",
+            "result": "Treat the lanvarok as a simple weapon instead of an exotic weapon (Kissai Weapon Familiarity)."
+          }
+        ]
       },
       "recommendation": {
         "eligibleWithoutPenaltyWhen": [
@@ -2977,6 +3013,16 @@
       "id": "4H-A6",
       "scope": "Sith Lanvarok",
       "change": "Recorded Kissai 'the lanvarok' simple-weapon familiarity as an unadjudicated source gap. No route added."
+    },
+    {
+      "id": "4H-E1",
+      "scope": "Sith Lanvarok, Massassi Lanvarok",
+      "change": "Planner ruling: added the Kissai + simple-weapons alternate route (weapon-family:lanvarok) to both lanvarok varieties; replaces the 4H-A6 open source gap. Native Exotic classification, semantic tags and Massassi's advanced-melee ruling unchanged."
+    },
+    {
+      "id": "4H-E2",
+      "scope": "Concealed Dart Launcher",
+      "change": "Planner correction of the Round 2 ruling: poison moved from unconditional tags to a payload-conditional tag (contact-poison dart loaded); stun and nonlethal stay unconditional (default sedative payload). Intentional amendment; Exotic Rounds 1-2 hashes re-pinned accordingly."
     }
   ]
 }

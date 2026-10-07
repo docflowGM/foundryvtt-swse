@@ -4,10 +4,10 @@
 
 - Certified feat/talent-used vocabulary: **183** tags
 - Distinct weapon semantic tags used (all semantic-bearing fields, 4A–4G): **80**
-- Unknown weapon semantic tags: **0** · forbidden pseudo-tag leaks: **0** · structural-selector leaks: **0** (1891 tag-field entries checked)
+- Unknown weapon semantic tags: **0** · forbidden pseudo-tag leaks: **0** · structural-selector leaks: **0** (1890 tag-field entries checked)
 - Exact ability links verified against canonical feat/talent names: **66**, malformed: **0**
-- Hybrid/profile-scoped records: **15** (no conditional tag promoted to a final tag)
-- Payload-bearing records: **4**, accidental flattening: **0**, exemptions carried: **1**
+- Hybrid/profile-scoped records: **16** (no conditional tag promoted to a final tag)
+- Payload-bearing records: **4**, accidental flattening: **0**, default-payload rulings: **1**
 
 | Phase | Category | Records | Distinct tags | Exact ability links |
 | --- | --- | ---: | ---: | ---: |
@@ -19,9 +19,9 @@
 | 4F | Heavy Weapon | 17 | 26 | 1 |
 | 4G | Exotic Weapon | 32 | 41 | 13 |
 
-## Open planner question (payload flattening exemption)
+## Default-payload rulings (4H-E2)
 
-- **weapon-concealed-dart-launcher** (stun, nonlethal, poison): Round 2 ruling puts the default sedative payload (stun, nonlethal) and the optional contact-poison payload (poison) on the base launcher. Payload-specific semantics would normally be payload-scoped (cf. Wrist Rocket Launcher). Not changed without a planner ruling.
+- **weapon-concealed-dart-launcher** — default payload `sedative`: unconditional stun, nonlethal; poison only with the contact-poison payload. The sedative dart is the published default and the weapon table lists native stun damage, so stun/nonlethal stay unconditional; contact poison is an optional payload, so poison is payload-conditional.
 
 ## Forbidden pseudo-tags (never legal weapon semantics)
 

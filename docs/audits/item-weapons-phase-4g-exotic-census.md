@@ -8,7 +8,7 @@
 - **Melee-profile:** 15
 - **Ranged-profile:** 15
 - **Hybrid-profile:** 2
-- **Alternate proficiency/handling cases:** 10 (corrected from 9 by Phase 4H-A4)
+- **Alternate proficiency/handling cases:** 11 (9 originally; +1 Tehk'la by 4H-A4; +1 Sith Lanvarok by 4H-E1)
 - **Semantic rulings made:** 0
 
 ## Census rule
@@ -205,6 +205,7 @@ This freezes **scope only**. It does not yet decide whether `exotic_weapon` is g
 - **Repo:** present
 - **Source:** Knights of the Old Republic Campaign Guide — description p.69 / table p.68
 - **Profile kind:** `ranged`
+- **Alternate proficiency/handling:** Kissai: treat the lanvarok as a simple weapon rather than exotic weapon (added by Phase 4H-E1 ruling)
 
 ### 26. Squib Tensor Rifle
 
@@ -275,3 +276,4 @@ This freezes **scope only**. It does not yet decide whether `exotic_weapon` is g
 ## Phase 4H amendment
 
 - **4H-A4:** alternate-case count 9 → 10 (Tehk'la Blade, Nagai). Identity set, profile kinds and repo mapping unchanged.
+- **4H-E1:** alternate-case count 10 → 11 (Sith Lanvarok, Kissai; Massassi Lanvarok gains a second route).

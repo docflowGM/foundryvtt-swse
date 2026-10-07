@@ -1681,7 +1681,8 @@ if (fs.existsSync(path.join(ROOT, P4C))) {
   else if (asg[REQ - thisN].canonicalName !== rp.firstCanonicalNameThisRound || asg[REQ - 1].canonicalName !== rp.lastCanonicalNameThisRound) fail('4C this-round first/last identity');
   if (rp.totalFinalTagAssignments !== tagTotal || rp.distinctFinalTagsUsed !== tagsUsed.size || !same([...tagsUsed].sort(), [...rp.finalTagsUsed].sort()) || !same([...tradeUsed].sort(), [...rp.tradeoffTagsUsed].sort())) fail('4C rolling progress tag counts');
   // earlier planner rulings are pinned
-  const pins = [[0, 10, 'b344890cea4cb4d45a3d8c769b33c830660a88aae2ed946c374ba0f4f52b27ac']];
+  // Re-pinned by 4H-E3 (DH-23 description page 62 -> 61, planner PDF verification); previous pin b344890cea4cb4d45a3d8c769b33c830660a88aae2ed946c374ba0f4f52b27ac.
+  const pins = [[0, 10, '3b3678425c73bfdaeef4f71fc59d2fb4cbf99885b0901448544cf54bfa58204b']];
   for (const [lo, hi, want] of pins) if (REQ >= hi && sh(JSON.stringify(canon(asg.slice(lo, hi)))) !== want) fail(`4C round ${lo / 10 + 1} planner rulings changed after adjudication`);
   if (errors.length === e4c) console.log(`Phase 4C Pistol semantic tags OK: ${REQ}/30 adjudicated, ${tagTotal} assignments, ${tagsUsed.size} distinct tags, selectors + comparison data cross-checked against Phase 3B, baseline = Blaster Pistol, next ${rp.nextCanonicalName}`);
 }
@@ -2058,8 +2059,9 @@ if (fs.existsSync(path.join(ROOT, P4G))) {
   const cnt = (f) => ids.filter(f).length;
   const want = { canonicalExoticProficiencyIdentities: ids.length, repoPresent: cnt((i) => i.repo?.present === true), repoMissing: cnt((i) => i.repo?.present === false), meleeProfileIdentities: cnt((i) => i.profileKind === 'melee'), rangedProfileIdentities: cnt((i) => i.profileKind === 'ranged'), hybridProfileIdentities: cnt((i) => i.profileKind === 'hybrid'), identitiesWithAlternateProficiencyOrHandling: cnt((i) => i.alternateProficiencyOrHandling) };
   for (const [k, v] of Object.entries(want)) if (C.counts[k] !== v) fail(`4G count ${k} ${C.counts[k]} != recomputed ${v}`);
-  if (ids.length !== 32 || want.repoPresent !== 18 || want.repoMissing !== 14 || want.meleeProfileIdentities !== 15 || want.rangedProfileIdentities !== 15 || want.hybridProfileIdentities !== 2 || want.identitiesWithAlternateProficiencyOrHandling !== 10 || C.counts.separatePayloadAdjunctIdentities !== 0) fail('4G frozen census totals changed (32 / 18+14 / 15+15+2 / 10 after the 4H-A4 Tehk\'la correction / 0)');
+  if (ids.length !== 32 || want.repoPresent !== 18 || want.repoMissing !== 14 || want.meleeProfileIdentities !== 15 || want.rangedProfileIdentities !== 15 || want.hybridProfileIdentities !== 2 || want.identitiesWithAlternateProficiencyOrHandling !== 11 || C.counts.separatePayloadAdjunctIdentities !== 0) fail('4G frozen census totals changed (32 / 18+14 / 15+15+2 / 11 after the 4H-A4 Tehk\'la and 4H-E1 Kissai corrections / 0)');
   if (!(C.phase4hAmendments || []).some((x) => x.id === '4H-A4') || !/Nagai/.test(ids.find((i) => i.identityKey === 'unmapped::Tehkla Blade')?.alternateProficiencyOrHandling || '')) fail('4G census must carry the explicit 4H-A4 Tehk\'la/Nagai amendment');
+  if (!(C.phase4hAmendments || []).some((x) => x.id === '4H-E1') || !/Kissai/.test(ids.find((i) => i.identityKey === 'weapon-sith-lanvarok')?.alternateProficiencyOrHandling || '')) fail('4G census must carry the explicit 4H-E1 Kissai amendment');
   const ph = new Set(b3.identities.map((i) => i.identityKey));
   for (const i of ids) { if (i.assignments || i.finalTags || i.ruleSelectors) fail(`4G ${i.canonicalName} carries semantic rulings (census is scope-only)`); if (!ph.has(i.identityKey)) fail(`4G ${i.identityKey} not in Phase 3B`); }
   if (errors.length === e4g) console.log(`Phase 4G Exotic census OK: ${ids.length} identities (${want.repoPresent} present / ${want.repoMissing} missing; ${want.meleeProfileIdentities} melee / ${want.rangedProfileIdentities} ranged / ${want.hybridProfileIdentities} hybrid), ${want.identitiesWithAlternateProficiencyOrHandling} alternate-proficiency cases, no semantic rulings, matches Phase 3B Exotic Weapon group`);
@@ -2134,7 +2136,7 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
   });
   // Round 1 is frozen; Round 2 named rulings
   if (N >= 5 && sh(JSON.stringify(asg.slice(0, 5))) !== 'b565ac4c92bf19a058a7f6933d2a537690c42f7b5881c5ce2188fff31febd320') fail('4G Round 1 assignments changed after planner certification');
-  if (N >= 10 && sh(JSON.stringify(asg.slice(0, 10))) !== 'ea580e5a483658679b06a879833ca3e9c13cf8de257fcccd97bcba73d5fa82d9') fail('4G Rounds 1-2 assignments changed after planner certification');
+  if (N >= 10 && sh(JSON.stringify(asg.slice(0, 10))) !== '63b33472e3b6be19890c975b4eef5ac67c6d430d25157e8025e46aca41d3d7e0') fail('4G Rounds 1-2 assignments changed after planner certification');
   const g4 = (k) => asg.find((a) => a.identityKey === k);
   const fl = g4('weapon-flamethrower'), ds = g4('weapon-deck-sweeper'), db = g4('weapon-discblade'), sk = g4('unmapped::Felucian Skullblade'), fi = g4('unmapped::Fira');
   if (fl && (!same(fl.tradeoffTags, ['action_economy', 'setup']) || fl.finalTags.some((t) => ['action_economy', 'setup', 'full_round_action', 'area_damage', 'control'].includes(t)))) fail('4G Flamethrower: reload tradeoffs stay out of finalTags; no full_round_action/area_damage/control');
@@ -2173,18 +2175,31 @@ if (fs.existsSync(path.join(ROOT, P4GR))) {
     if (!ovr(by4('weapon-wookiee-ryyk-blade'), null, 'Wookiee') || !ovr(by4('weapon-squib-tensor-rifle'), 'rifle', 'Squib') || !ovr(by4('weapon-verpine-shattergun'), 'pistol', 'Verpine') || !(sg.ruleSelectors.abilityOverrides || []).some((o) => o.ability === 'Siang Lance Mastery' && o.treatAsGroup === 'rifle' && o.attackBonus === 1)) fail('4H-A2 Ryyk/Squib/Verpine/Siang alternate-proficiency selectors must remain machine-readable');
     if (xn.ruleSelectors.group?.[0] !== 'weapon-group:exotic' || xn.finalTags.includes('rifle')) fail('4H-A6 Xerrol Nightstinger: Phase 3B Exotic classification controls; no rifle tag');
     if (!(vs.guardrails || []).some((g) => /ontology gap/i.test(g)) || vs.finalTags.includes('damage_reduction') || vs.finalTags.includes('damage_bonus')) fail('4H-A7 Vibro-Saw: DR bypass stays structural / ontology gap');
+    const kis = (a) => (a.ruleSelectors.speciesOverrides || []).some((o) => o.species === 'Kissai' && o.requiresProficiency === 'simple-weapons' && o.treatAsGroup === 'simple' && o.appliesToFamily === 'weapon-family:lanvarok') && a.ruleSelectors.families.includes('weapon-family:lanvarok') && a.proficiencyRoutes.alternate.some((r) => /Kissai/.test(r.condition) && /simple/.test(r.requirement));
+    if (!kis(sl) || !kis(ml)) fail('4H-E1 Kissai + simple-weapons lanvarok-family route must exist on BOTH Sith Lanvarok and Massassi Lanvarok');
+    if (!ovr(ml, 'advanced-melee', 'Massassi') || sl.finalTags.includes('simple_weapon') || ml.proficiencyRoutes.alternate.length !== 2) fail('4H-E1 Massassi keeps its advanced-melee route plus the Kissai route (2 alternate routes); native classifications unchanged');
+    const dl = by4('weapon-concealed-dart-launcher');
+    if (!dl.finalTags.includes('stun') || !dl.finalTags.includes('nonlethal') || dl.finalTags.includes('poison') || dl.sharedTags.includes('poison') || dl.advantageTags.includes('poison') || !(dl.conditionalSynergyTags || []).some((x) => x.tag === 'poison' && /contact-poison/.test(x.condition)) || !(dl.ruleSelectors.payloadProfiles || []).some((p) => p.id === 'sedative' && p.default) || !(dl.ruleSelectors.payloadProfiles || []).some((p) => p.id === 'contact-poison' && !p.default)) fail('4H-E2 Concealed Dart Launcher: stun + nonlethal unconditional, poison conditional on the contact-poison payload, both payload profiles preserved');
+    if (!['4H-E1', '4H-E2'].every((id) => (S.phase4hCorrections || []).some((x) => x.id === id))) fail('4H-E amendment ledger missing');
     if (sl.ruleSelectors.explicitAbilityInteractions[0].ability !== 'Two-Weapon Fighting') fail('4H-A3 Sith Lanvarok must reference the exact ability name Two-Weapon Fighting');
     if (!['4H-A2', '4H-A3', '4H-A4'].every((id) => (S.phase4hCorrections || []).some((x) => x.id === id))) fail('4H corrections ledger missing');
   }
   for (const [k, ok, msg] of r4) { const a = by4(k); if (a && !ok(a)) fail(`4G ${msg}`); }
   const cp = S.census || {};
   if (cp.adjudicated !== N || cp.remaining !== 32 - N || cp.nextIdentity !== (cen[N]?.canonicalName ?? null)) fail('4G rolling progress counters');
-  if (cp.canonicalExoticProficiencyIdentities !== 32 || cp.repoPresent !== 18 || cp.repoMissing !== 14 || cp.meleeProfile !== 15 || cp.rangedProfile !== 15 || cp.hybridProfile !== 2 || cp.alternateProficiencyOrHandlingCases !== 10) fail('4G rolling census totals differ from the frozen census');
+  if (cp.canonicalExoticProficiencyIdentities !== 32 || cp.repoPresent !== 18 || cp.repoMissing !== 14 || cp.meleeProfile !== 15 || cp.rangedProfile !== 15 || cp.hybridProfile !== 2 || cp.alternateProficiencyOrHandlingCases !== 11) fail('4G rolling census totals differ from the frozen census');
   if (N === 32 && (S.status !== 'WEAPON_TAG_PHASE_4G_EXOTIC_32_IDENTITY_PLANNER_AUTHORITY_COMPLETE' || S.qa?.status !== 'PASS' || S.qa?.distinctSemanticTagsUsed !== 41 || S.qa.forbiddenPseudoTagsFound.length)) fail('4G complete: status / QA / 41 distinct tags');
   if (N === 32) { const u41 = new Set(asg.flatMap((a) => [...a.finalTags, ...a.tradeoffTags, ...(a.conditionalSynergyTags || []).map((x) => x.tag)])); if (u41.size !== 41 || !same([...u41].sort(), [...S.qa.semanticTagsUsed].sort())) fail(`4G complete: distinct semantic tags (final + tradeoff + conditional) ${u41.size} must equal the planner QA list of 41`); }
   const rr = (S.rounds || []).reduce((n, r) => n + r.identityCount, 0);
   if (rr !== N) fail('4G rolling round ledger does not sum to the adjudicated count');
   if (errors.length === e4r) console.log(`Phase 4G Exotic semantic tags OK: ${N}/32 adjudicated in ${S.rounds.length} round(s), ${tagTotal} assignments, ${tagsUsed.size} distinct tags from the 183-tag vocabulary, exotic_weapon unconditional, selectors/routes cross-checked against the census and Phase 3B, next ${cp.nextIdentity}`);
+}
+
+// ---- Phase 4H-E3 DH-23 provenance pin (planner visually verified the Clone Wars Campaign Guide PDF: description p.61, table p.61) ----
+{
+  const pc = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json'), 'utf8')).assignments.find((a) => a.identityKey === 'weapon-dh-23-blaster-pistol');
+  const p3 = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8')).identities.find((i) => i.identityKey === 'weapon-dh-23-blaster-pistol').sourceClaims[0];
+  if (pc.source.descriptionPage !== 61 || pc.source.statTablePage !== 61 || p3.descriptionPage !== 61 || p3.statTablePage !== 61) fail('4H-E3 DH-23 must be description p.61 / stat table p.61 in both Phase 3B and the Pistol authority');
 }
 
 // ---- Phase 4H-A authority reconciliation (cross-category census; builder byte-stable) ----
@@ -2196,7 +2211,8 @@ if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-authority-r
     if (fs.readFileSync(path.join(ROOT, mod.OUT_JSON), 'utf8') !== out.json || fs.readFileSync(path.join(ROOT, mod.OUT_MD), 'utf8') !== out.md) fail('4H-A reconciliation outputs are stale or hand-edited (rebuild with tools/build-item-weapons-phase-4h-reconciliation.mjs)');
     const R = JSON.parse(out.json);
     if (R.status !== mod.STATUS || R.productionMutationAuthorized !== false) fail('4H-A status / authority-only flags');
-    const need = ['DH23_DESCRIPTION_PAGE', 'MASSASSI_LANVAROK_SPECIES_CONFLICT', 'XERROL_NIGHTSTINGER_GROUP', 'TEHKLA_NAGAI_ROUTE', 'VIBRO_SAW_DR_BYPASS', 'SITH_LANVAROK_KISSAI_FAMILIARITY'];
+    const need = ['MASSASSI_LANVAROK_SPECIES_CONFLICT', 'XERROL_NIGHTSTINGER_GROUP', 'TEHKLA_NAGAI_ROUTE', 'VIBRO_SAW_DR_BYPASS'];
+    if (R.carriedDiscrepancies.some((d) => ['DH23_DESCRIPTION_PAGE', 'SITH_LANVAROK_KISSAI_FAMILIARITY'].includes(d.id)) || !['DH23_DESCRIPTION_PAGE', 'SITH_LANVAROK_KISSAI_FAMILIARITY', 'CONCEALED_DART_LAUNCHER_PAYLOAD_TAGS'].every((id) => R.resolvedDiscrepancies.some((d) => d.id === id))) fail('4H-E resolved-discrepancy ledger');
     if (!need.every((id) => R.carriedDiscrepancies.some((d) => d.id === id))) fail('4H-A carried-discrepancy ledger is incomplete');
     if (errors.length === e4h) console.log(`Phase 4H-A reconciliation OK: ${R.census.categoryRecords} category records -> ${R.census.uniqueIdentities} unique identities (${R.census.repoPresent} present / ${R.census.repoMissing} missing), 0 missing, 0 unexpected, duplicate ${R.census.duplicates.map((d) => d.canonicalName).join(', ')}, ${R.carriedDiscrepancies.length} carried discrepancies, builder byte-stable`);
   } catch (e) { fail(`4H-A reconciliation: ${e.message}`); }
@@ -2211,7 +2227,7 @@ if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-b-global-se
     if (fs.readFileSync(path.join(ROOT, mod.OUT_JSON), 'utf8') !== out.json || fs.readFileSync(path.join(ROOT, mod.OUT_MD), 'utf8') !== out.md) fail('4H-B QA outputs are stale or hand-edited (rebuild with tools/build-item-weapons-phase-4h-semantic-qa.mjs)');
     const Q = JSON.parse(out.json);
     if (Q.status !== mod.STATUS || Q.productionMutationAuthorized !== false || Q.vocabulary.unknownWeaponSemanticTags !== 0 || Q.vocabulary.forbiddenPseudoTagLeaks !== 0 || Q.vocabulary.structuralSelectorLeaks !== 0 || Q.exactAbilityLinks.malformed !== 0 || Q.payloadInventory.accidentalFlattening !== 0 || Q.hybridProfileInventory.promotedConditionalTags !== 0) fail('4H-B QA counters must all be zero');
-    if (errors.length === e4hb) console.log(`Phase 4H-B global semantic QA OK: ${Q.vocabulary.weaponSemanticTagsUsed} weapon tags ⊆ ${Q.vocabulary.certifiedUsedUnion}-tag certified union (${Q.vocabulary.tagFieldChecks} field entries), 0 pseudo-tag/selector leaks, ${Q.exactAbilityLinks.total} exact ability links verified, ${Q.hybridProfileInventory.records} hybrid/profile records, ${Q.payloadInventory.records} payload-bearing records (${Q.payloadInventory.exemptions.length} open planner exemption)`);
+    if (errors.length === e4hb) console.log(`Phase 4H-B global semantic QA OK: ${Q.vocabulary.weaponSemanticTagsUsed} weapon tags ⊆ ${Q.vocabulary.certifiedUsedUnion}-tag certified union (${Q.vocabulary.tagFieldChecks} field entries), 0 pseudo-tag/selector leaks, ${Q.exactAbilityLinks.total} exact ability links verified, ${Q.hybridProfileInventory.records} hybrid/profile records, ${Q.payloadInventory.records} payload-bearing records (${Q.payloadInventory.defaultPayloadRulings.length} default-payload ruling)`);
   } catch (e) { fail(`4H-B QA: ${e.message}`); }
 }
 
@@ -2251,8 +2267,8 @@ if (fs.existsSync(path.join(ROOT, 'data/audits/item-weapons-phase-4h-d-phase-4-c
     const D = JSON.parse(out.json), h = D.headline;
     if (D.status !== mod.STATUS || D.productionMutationAuthorized !== false || h.productionMutation !== 'none') fail('4H-D status / production-mutation flags');
     if (h.phase3BCanonicalIdentities !== 203 || h.phase4IdentitiesRepresented !== 203 || h.categoryRecords !== 204 || h.semanticVocabularyViolations !== 0 || h.forbiddenPseudoTagLeaks !== 0 || h.malformedExactAbilityJoins !== 0 || h.unresolvedMachineReadableAlternateRouteOmissions !== 0 || h.accidentalPayloadFlattening !== 0 || h.accidentalHybridFlattening !== 0) fail('4H-D headline invariants must be 203/203/204 and all violation counters 0');
-    if (D.rulingChecks.length !== 7 || D.rulingChecks.some((c) => c.result !== 'PASS')) fail('4H-D named rulings must all pass');
-    if (errors.length === e4hd) console.log(`Phase 4 weapon semantic authority CERTIFIED AND FROZEN: ${h.phase4IdentitiesRepresented}/${h.phase3BCanonicalIdentities} identities (${h.categoryRecords} category records), 0 vocabulary violations, 0 pseudo-tag leaks, 0 malformed ability joins, 0 alternate-route omissions, 0 accidental payload/hybrid flattening, ${D.carriedOpenItems.length} carried open items, production mutation none`);
+    if (D.rulingChecks.length !== 10 || D.rulingChecks.some((c) => c.result !== 'PASS')) fail('4H-D named rulings must all pass');
+    if (errors.length === e4hd) console.log(`Phase 4 weapon semantic authority CERTIFIED AND FROZEN (final amended state): ${h.phase4IdentitiesRepresented}/${h.phase3BCanonicalIdentities} identities (${h.categoryRecords} category records), 0 vocabulary violations, 0 pseudo-tag leaks, 0 malformed ability joins, 0 alternate-route omissions, 0 accidental payload/hybrid flattening, ${D.carriedOpenItems.length} carried open items, production mutation none`);
   } catch (e) { fail(`4H-D certification: ${e.message}`); }
 }
 

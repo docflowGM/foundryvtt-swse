@@ -131,7 +131,7 @@ Pistols use three deliberately separate layers:
 ### 3. BlasTech DH-23 Outback Blaster Pistol
 
 - Identity: `weapon-dh-23-blaster-pistol`
-- Source: Clone Wars Campaign Guide — description p.62, stat table p.61
+- Source: Clone Wars Campaign Guide — description p.61, stat table p.61
 - Canonical mechanic: Reliable 3d6 blaster pistol with a stun setting and unusually durable construction, giving the weapon object Strength 17 and Break DC 20.
 - Shared tags: `pistol`, `ranged`
 - Advantage/mechanic tags: `offense_ranged`, `stun`, `nonlethal`, `durability`
