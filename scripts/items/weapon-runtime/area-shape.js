@@ -14,7 +14,7 @@ const num = (v) => (Number.isFinite(Number(v)) && v !== null ? Number(v) : null)
  * @param {object|null} resolution   profile attackResolution
  * @returns {Readonly<{isArea:boolean, kind:string, geometry:object, onMiss:string|null, halfDamageOnMiss:boolean|undefined, noDamageOnMiss:boolean, resolutionMode:string|null, completeness:string|null}>}
  */
-export function resolveAreaShape(area, resolution = null) {
+export function resolveAreaShape(area, resolution = null, { rateOfFire = null } = {}) {
   const enabled = area?.enabled === true;
   const mode = resolution?.mode ?? null;
   const onMiss = resolution?.onMiss ?? null;
@@ -25,14 +25,18 @@ export function resolveAreaShape(area, resolution = null) {
   if (!enabled) {
     return Object.freeze({ isArea: false, kind: 'single', geometry, onMiss, halfDamageOnMiss: undefined, noDamageOnMiss: false, resolutionMode: mode, completeness: null });
   }
-  const kind = area.shape ? (KIND_BY_SHAPE[area.shape] ?? 'other') : 'area-unspecified';
+  // an area-enabled form with NO intrinsic geometry is either fire-mode derived (autofire-only weapon: the generic 2x2 autofire area
+  // rule, owned by the autofire path -- no geometry is invented here) or one whose source publishes no geometry at all
+  const rof = Array.isArray(rateOfFire) ? rateOfFire.map(String) : [];
+  const fireModeDerived = !area.shape && rof.includes('A') && !rof.includes('S');
+  const kind = area.shape ? (KIND_BY_SHAPE[area.shape] ?? 'other') : fireModeDerived ? 'autofire-area' : 'area-unspecified';
   return Object.freeze({
-    isArea: true, kind, geometry, onMiss, resolutionMode: mode,
+    isArea: true, kind, geometry, derivedFrom: fireModeDerived ? 'fire-mode' : null, onMiss, resolutionMode: mode,
     // 'half-damage' -> the existing halfDamageOnMiss rule; 'none' -> a miss deals nothing; every other value is source-unspecified or
     // target-dependent and stays GM-adjudicated (nothing is invented)
     halfDamageOnMiss: onMiss === 'half-damage' ? true : undefined,
     noDamageOnMiss: onMiss === 'none',
-    completeness: area.shape ? null : 'area-enabled-without-geometry',
+    completeness: area.shape || fireModeDerived ? null : 'source-silent-geometry',
   });
 }
 

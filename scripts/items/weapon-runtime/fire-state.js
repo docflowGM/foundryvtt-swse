@@ -12,6 +12,8 @@
 //   ability-triggered-reset   `*Reset.requiredActionBeforeNextShot` + PROHIBITED/TRIGGERS_*_RESET_* ability relation:
 //                             firing WITH a named ability requires an action before the next shot
 //   prepared-required         preparedAttack.required                  a preparation action (prime/brace) must precede the shot
+//   prepared-attack           preparedAttack (optional)                a player-chosen priming action; once matured the NEXT attack gets the
+//                                                                       prepared effect (extra weapon dice, resource units) and consumes it
 //
 // Combat clock: {combatId, round} from the active combat only. With no active combat there is no round number and none is invented:
 // round-based families (per-round-limit, cooldown, alternate-round) are NOT enforced; state-based families (reload-required, resets)
@@ -22,6 +24,7 @@ const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : null);
 export const TEMPORAL_FAMILY = Object.freeze({
   PER_ROUND_LIMIT: 'per-round-limit', COOLDOWN: 'cooldown', ALTERNATE_ROUND: 'alternate-round', RELOAD_REQUIRED: 'reload-required',
   POST_SHOT_RESET: 'post-shot-reset', ABILITY_TRIGGERED_RESET: 'ability-triggered-reset', PREPARED_REQUIRED: 'prepared-required',
+  PREPARED_ATTACK: 'prepared-attack',
 });
 
 const SIZE_ORDER = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
@@ -57,6 +60,14 @@ export function resolveTemporalConstraints(def, operation = null, abilityInterac
       timing: prep.timing ?? null, exemptAboveWielderSize: prep.unpreparedRestriction?.cannotFireIfWielderSizeAtMost ?? null,
     });
   }
+  // optional prepared attack (Bryar "primed shot"): the player CHOOSES to prime; nothing is forced on an ordinary attack
+  if (prep && !(prep.required === true || prep.unpreparedRestriction)) {
+    out.push({
+      family: TEMPORAL_FAMILY.PREPARED_ATTACK, preparationId: prep.id ?? 'prepared-attack', action: String(prep.activationAction ?? 'swift'),
+      diceDelta: num(prep.damageDiceDelta) ?? 0, resourceUnits: num(prep.resourceUnitsOnPreparedAttack),
+      prohibitsMultiShot: prep.prohibitsMultiShotAbilities === true, expires: prep.expires ?? null, matures: prep.matures ?? null,
+    });
+  }
   return Object.freeze(out.map((r) => Object.freeze(r)));
 }
 
@@ -72,8 +83,18 @@ const sameCombat = (state, clock) => !!clock && !!state && state.combatId === cl
  */
 export function evaluateReadiness(constraints, state, clock, ctx = {}) {
   const blockers = [], requiredActions = [], notes = [];
+  let prepared = null;
   for (const c of asArray(constraints)) {
     switch (c.family) {
+      case TEMPORAL_FAMILY.PREPARED_ATTACK: {
+        // matures at the start of the wielder's next turn (a later round of the SAME combat); out of combat nothing can mature
+        const p = state?.primed;
+        const live = !!clock && sameCombat(state, clock) && p && p.id === c.preparationId;
+        const matured = !!live && clock.round > p.round;
+        prepared = { constraint: c, primed: !!live, matured };
+        if (live && !matured) notes.push({ family: c.family, note: 'primed: matures at the start of your next turn' });
+        break;
+      }
       case TEMPORAL_FAMILY.RELOAD_REQUIRED:
         if (state?.needsReload === true) blockers.push({ family: c.family, reason: 'awaiting-reload', reloadAction: c.reloadAction ?? state.reloadAction ?? null });
         break;
@@ -106,7 +127,7 @@ export function evaluateReadiness(constraints, state, clock, ctx = {}) {
       default: break;
     }
   }
-  return { ready: blockers.length === 0, blockers, requiredActions, notes };
+  return { ready: blockers.length === 0, blockers, requiredActions, notes, prepared };
 }
 
 /**
@@ -115,6 +136,8 @@ export function evaluateReadiness(constraints, state, clock, ctx = {}) {
  */
 export function stateAfterFire(constraints, state, clock, ctx = {}, paid = []) {
   const next = { v: 1, ...(state ?? {}) };
+  // any attack consumes the priming: a matured one is spent by the prepared shot, an unmatured one is lost by attacking early
+  delete next.primed;
   const sameRound = sameCombat(state, clock) && state?.lastRound === clock?.round;
   if (clock) { next.combatId = clock.combatId; next.shots = sameRound ? (state.shots ?? 0) + 1 : 1; next.lastRound = clock.round; }
   else { next.combatId = null; next.lastRound = null; next.shots = 1; }
@@ -137,3 +160,24 @@ export function stateAfterFire(constraints, state, clock, ctx = {}, paid = []) {
 
 /** After a reload action: the weapon is mechanically loaded again. */
 export const stateAfterReload = (state) => { const next = { v: 1, ...(state ?? {}) }; delete next.needsReload; delete next.reloadAction; return next; };
+
+/** Can the wielder prime now? Priming is a player-chosen action; it needs the combat clock (nothing matures out of combat). */
+export function evaluatePrime(constraints, state, clock) {
+  const c = asArray(constraints).find((x) => x.family === TEMPORAL_FAMILY.PREPARED_ATTACK);
+  if (!c) return { ok: false, reason: 'not-primable' };
+  if (!clock) return { ok: false, reason: 'no-active-combat', constraint: c };
+  if (sameCombat(state, clock) && state?.primed?.id === c.preparationId) return { ok: false, reason: 'already-primed', constraint: c };
+  return { ok: true, constraint: c, requiredActions: [{ action: c.action, count: 1, family: c.family, reason: `prime:${c.preparationId}` }] };
+}
+export const statePrimed = (state, constraint, clock) => ({ v: 1, ...(state ?? {}), combatId: clock.combatId, primed: { id: constraint.preparationId, round: clock.round } });
+
+/**
+ * Autofire-only brace (Core Rulebook, Autofire-Only Weapons): braced by two swift actions immediately before the attack. A form whose
+ * firingConstraints.braceRule demands a stock state cannot be braced unless that state holds (owned state `stock`; unknown = not extended).
+ * Forms that are not autofire-only keep the free `braced` flag they always had.
+ */
+export function evaluateBrace(brace, state) {
+  if (!brace?.available) return { applies: false, legal: true, requiredActions: [] };
+  if (brace.stockRule && state?.stock !== brace.stockRule) return { applies: true, legal: false, reason: 'stock-not-extended', requiredActions: [] };
+  return { applies: true, legal: true, requiredActions: brace.actions.map((a) => ({ action: a, count: 1, family: 'brace', reason: 'brace' })) };
+}

@@ -8,13 +8,13 @@
   },
   "attackShape": {
     "areaKinds": {
-      "adjacent": 1,
-      "area-unspecified": 10,
-      "autofire-area": 1,
+      "adjacent": 2,
+      "area-unspecified": 3,
+      "autofire-area": 2,
       "blast": 2,
-      "burst": 11,
+      "burst": 15,
       "cloud": 1,
-      "cone": 3,
+      "cone": 4,
       "other": 2,
       "rectangle": 1,
       "single": 227,
@@ -28,24 +28,18 @@
     },
     "areaEnabledWithoutGeometry": [
       "weapon-adhesive-grenade/primary",
-      "weapon-blaster-cannon/primary",
       "weapon-cryoban-grenade/primary",
-      "weapon-flamethrower/primary",
-      "weapon-frag-grenade/primary",
-      "weapon-ion-grenade/primary",
-      "weapon-remote-grenade/primary",
-      "weapon-repeating-blaster-carbine/primary",
-      "weapon-stun-grenade/primary",
-      "weapon-thermal-detonator/primary"
+      "weapon-remote-grenade/primary"
     ]
   },
   "temporalConstraints": {
     "families": {
       "ability-triggered-reset": 1,
       "alternate-round": 3,
-      "none": 242,
+      "none": 240,
       "per-round-limit": 20,
       "post-shot-reset": 2,
+      "prepared-attack": 2,
       "prepared-required": 2,
       "reload-required": 11
     },
@@ -83,6 +77,10 @@
       "post-shot-reset": [
         "weapon-miniature-proton-torpedo-launcher/area/area",
         "weapon-miniature-proton-torpedo-launcher/single-target/single-target"
+      ],
+      "prepared-attack": [
+        "weapon-bryar-pistol/primary",
+        "weapon-bryar-rifle/primary"
       ],
       "prepared-required": [
         "weapon-deck-sweeper/primary",
@@ -215,21 +213,5 @@
       "unspecified"
     ]
   },
-  "executableFieldsWithoutConsumers": [
-    {
-      "form": "weapon-bryar-pistol/primary",
-      "field": "preparedAttack(optional)",
-      "note": "prepared-attack"
-    },
-    {
-      "form": "weapon-bryar-rifle/primary",
-      "field": "preparedAttack(optional)",
-      "note": "prepared-attack"
-    },
-    {
-      "form": "weapon-subrepeating-blaster/primary",
-      "field": "firingConstraints.braceRule",
-      "note": "stock-state dependent"
-    }
-  ]
+  "executableFieldsWithoutConsumers": []
 }

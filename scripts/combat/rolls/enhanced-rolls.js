@@ -641,6 +641,17 @@ export class SWSERoll {
       // autofire penalty is not added a second time. Legacy weapons keep computeAttackBonus.
       let totalBonus;
       let autofireTemporal = { ok: true, paid: [] };
+      // Phase 5D-H: bracing an autofire-only form (Core: two swift actions immediately before the attack). A form with a structured
+      // braceRule (retractable stock) cannot be braced unless that state holds; refused BEFORE anything is spent.
+      let braceActions = [];
+      if (isCanonical && options.braced && !options.burstFire) {
+        const brace = FireStateStore.previewBrace(weapon, canon.shape);
+        if (!brace.legal) {
+          ui.notifications.warn(`${weapon.name} cannot be braced: ${brace.reason === 'stock-not-extended' ? 'its stock is not extended' : brace.reason}.`);
+          return null;
+        }
+        braceActions = brace.requiredActions;
+      }
       if (isCanonical) {
         const comp = await computeFinalAttackComposition(actor, weapon, {
           ...canon.selection,
@@ -662,8 +673,9 @@ export class SWSERoll {
           ui.notifications.warn(`${weapon.name} cannot fire yet: ${comp.readiness.blockers.map((b) => b.reason).join('; ')}`);
           return null;
         }
-        autofireTemporal = comp.readiness?.requiredActions?.length
-          ? await FireStateStore.spendRequiredActions(actor, comp.readiness.requiredActions, { weaponName: weapon.name })
+        const requiredNow = [...(comp.readiness?.requiredActions ?? []), ...braceActions];
+        autofireTemporal = requiredNow.length
+          ? await FireStateStore.spendRequiredActions(actor, requiredNow, { weaponName: weapon.name })
           : { ok: true, paid: [], rollback: async () => {} };
         if (!autofireTemporal.ok) {
           ui.notifications.warn(`${weapon.name} cannot fire: a required ${autofireTemporal.failed?.action ?? ''} action could not be paid.`);

@@ -92,6 +92,12 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
       reason: prohibitsMulti ? 'firing-constraint' : null,
     }),
     doubleWeapon,
+    // autofire-only brace (Core: two swift actions immediately before the attack); a braceRule may demand a stock state
+    brace: Object.freeze({
+      available: autofireOnly,
+      actions: Object.freeze(['swift', 'swift']),
+      stockRule: fc?.braceRule?.cannotBraceWhenStockNotExtended === true ? String(fc.braceRule.requiresRetractableStockState ?? 'extended') : null,
+    }),
     // temporal firing constraints (families in fire-state.js); owned readiness state lives on the Item, never here
     temporal: resolveTemporalConstraints(def, op, resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions),
     dualWield: Object.freeze({

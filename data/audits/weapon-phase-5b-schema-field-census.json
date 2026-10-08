@@ -5,7 +5,7 @@
  "purpose": "Programmatic census of every field path present in the operational canonical weapons corpus (data/canonical/weapons.json). Paths normalise array indices to []; each path is attributed to its certified origin (Phase 3B / Phase 4H) or to the canonical-only wrapper (provenance/production). Audit-only roots not carried by the corpus are enumerated in auditOnlyRootsNotCarried.",
  "identities": 203,
  "inputs": {
-  "data/canonical/weapons.json": "3f3d3aae34f5d2cdc2fbfc3dfedd16780aff46be2fb4c5eeb6d536744f86b036"
+  "data/canonical/weapons.json": "121cfe24122a3cf3ad9dac7885038582452b6b0114d5436d584006bcb9db95c0"
  },
  "auditOnlyRootsNotCarried": {
   "phase3B": [
@@ -1283,6 +1283,7 @@
     "number"
    ],
    "sampleValues": [
+    "6",
     "8"
    ],
    "nullable": true,
@@ -35793,8 +35794,8 @@
    "fieldPath": "provenance.postCertificationAmendments",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 2,
-   "identityCount": 2,
+   "occurrenceCount": 8,
+   "identityCount": 8,
    "valueTypes": [
     "array"
    ],
@@ -35807,13 +35808,14 @@
    "fieldPath": "provenance.postCertificationAmendments[]",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 2,
-   "identityCount": 2,
+   "occurrenceCount": 8,
+   "identityCount": 8,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
-    "\"5D-D-thrown-profile-ranged-branch\""
+    "\"5D-D-thrown-profile-ranged-branch\"",
+    "\"5D-H-area-geometry-backfill\""
    ],
    "nullable": false,
    "conditional": true

@@ -239,7 +239,7 @@ export function resolveCanonicalDamage(weapon, context = {}) {
     requiresDamageTypeSelection: primary?.requiresDamageTypeSelection === true,
     specialEffects: dp.specialEffects, area: dp.area,
     // Phase 5D-G: the selected form's (payload ?? profile) attack area shape
-    areaShape: resolveAreaShape(dp.area, runtime.profile.definition?.attackResolution),
+    areaShape: resolveAreaShape(dp.area, runtime.profile.definition?.attackResolution, { rateOfFire: runtime.profile.definition?.rateOfFire }),
     mechanics, damageShape: damageShapeFromMechanics(mechanics),
     // what the damage path still does NOT consume (Phase 5D-E consumes multiplier, critical effects and riders)
     deferred: Object.freeze({ extraComponents: dp.components.slice(1).map((c) => c.id), damageMultiplier: dp.damageMultiplier, conditionalModifiers: dp.conditionalModifiers?.length ?? 0, criticalEffects: dp.criticalEffects?.length ?? 0 }),

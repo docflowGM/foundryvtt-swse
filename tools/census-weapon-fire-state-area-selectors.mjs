@@ -49,8 +49,8 @@ export async function buildCensus() {
         for (const t of shape.temporal) { inc(temporal, t.family); (temporalForms[t.family] ??= []).push(label); }
         // executable structured fields the runtime still does not consume
         const def = runtime.profile.definition;
-        if (def.preparedAttack && def.preparedAttack.required !== true && !def.preparedAttack.unpreparedRestriction) unconsumed.push({ form: label, field: 'preparedAttack(optional)', note: def.preparedAttack.id ?? 'prepared-attack' });
-        if (def.firingConstraints?.braceRule) unconsumed.push({ form: label, field: 'firingConstraints.braceRule', note: 'stock-state dependent' });
+        // Phase 5D-H: optional preparedAttack (prepared-attack temporal family) and firingConstraints.braceRule (shape.brace) have consumers
+        // Phase 5D-H: optional preparedAttack (prepared-attack temporal family) and firingConstraints.braceRule (shape.brace) have consumers
       }
     }
   }
