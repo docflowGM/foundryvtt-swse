@@ -80,10 +80,10 @@ export function weaponDamageText(weapon) {
 
 export function isVehicleWeapon(weapon, context = {}) {
   if (context.vehicleWeapon === true || context.starshipWeapon === true || context.weaponSystem === true) return true;
-  // Phase 5D-H: canonical weapons are personal weapons; vehicle/starship weapons are separate (non-canonical) records
-  if (canonicalScope(weapon, context)) return false;
   const system = weapon?.system ?? {};
   if (system.vehicleWeapon === true || system.starshipWeapon === true || system.weaponSystem === true) return true;
+  // Phase 5D-H: beyond the explicit structured flags, a canonical weapon is a personal weapon (never inferred from name/text)
+  if (canonicalScope(weapon, context)) return false;
   const text = weaponText(weapon);
   return text.includes('vehicle-weapon') || text.includes('starship-weapon') || text.includes('weapon-system') || text.includes('turbolaser') || text.includes('laser-cannon') || text.includes('ion-cannon') || text.includes('proton-torpedo') || text.includes('concussion-missile');
 }
