@@ -9,6 +9,8 @@
 
 const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 import { resolveTemporalConstraints } from './fire-state.js';
+import { resolveAreaShape } from './area-shape.js';
+import { buildWeaponDescriptor } from './weapon-descriptor.js';
 export const normalizeToken = (v) => String(v ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
 /** canonical schemaFamily.proficiency -> the proficiency-group token multi-attack feats are chosen against */
@@ -73,7 +75,14 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
   });
 
   const proficiency = runtime.profile.definition?.schemaFamily?.proficiency ?? null;
+  const fireModes = Object.freeze({ single: !autofireOnly, autofire, autofireOnly, burstEligible: autofire });
+  const areaShape = resolveAreaShape(def.area, def.attackResolution, { rateOfFire: def.rateOfFire });
   return Object.freeze({
+    // Phase 5D-H: what the selected form IS, as structured tokens (ability scopes join to this, never to a name)
+    descriptor: buildWeaponDescriptor(resolved, def, { area: areaShape, fireModes }),
+    abilityRelations: Object.freeze(asArray(resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions).map((r) => Object.freeze({ ability: String(r?.ability ?? ''), abilityToken: normalizeToken(r?.ability), abilityType: r?.abilityType ?? null, relation: r?.relation ?? null }))),
+    operation: op,
+    damageTypes: Object.freeze(asArray(def.damageType?.types).map(normalizeToken)),
     source: 'canonical',
     identityKey: runtime.identityKey,
     profileId: runtime.profile.id,
@@ -81,7 +90,7 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
     branch: runtime.branch ?? null,
     groupKey: GROUP_BY_PROFICIENCY[proficiency] ?? null,
     exoticIdentity: def.schemaFamily?.exoticWeaponIdentity ?? null,
-    fireModes: Object.freeze({ single: !autofireOnly, autofire, autofireOnly, burstEligible: autofire }),
+    fireModes,
     autofireUnits: Number.isFinite(def.resourceConsumption?.autofireUnits) ? def.resourceConsumption.autofireUnits : null,
     multiShot: Object.freeze({
       prohibited: prohibitsMulti,

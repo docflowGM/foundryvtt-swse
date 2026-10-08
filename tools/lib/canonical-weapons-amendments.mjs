@@ -27,7 +27,7 @@ const CORE_RULE = 'Core Rulebook: throwing a weapon is a ranged attack (attack r
  * amended) record; `log` receives one entry per amendment actually applied.
  */
 export function applyPostCertificationAmendments(rec, log = []) {
-  return applyAreaGeometryBackfill(applyThrownRanged(rec, log), log);
+  return applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log);
 }
 
 function applyThrownRanged(rec, log) {
@@ -86,6 +86,31 @@ function applyAreaGeometryBackfill(rec, log) {
     from: { shape: before.area.shape, onMiss: before.onMiss }, to: { ...spec.area, onMiss: spec.onMiss },
     source: spec.source, rule: AREA_GENERAL,
     reason: 'Published area geometry/miss rule was present in the certified player text and operation block but missing from the executable profile area record.',
+  });
+  return out;
+}
+
+// ---- Phase 5D-H: canonical `grenade` weapon family ---------------------------------------------------------------------------------
+// Angled Throw, Forceful Blast, Higher Yield, Mighty Throw, Flash and Clear and Artillery Shot all scope themselves to "Grenades"
+// (Core Rulebook p.127-129 grenade stat table; KOTOR Campaign Guide p.68 / p.180 grenade rows). The certified selectors carried no grenade
+// family (these records had families: []), so a canonical grenade could only be recognised by its display name. The family is added
+// to exactly the twelve grenade-table identities; the weapon-level group/proficiency (simple weapons) is unchanged.
+export const GRENADE_FAMILY_AMENDMENT_ID = '5D-H-grenade-family';
+const GRENADE_IDENTITIES = ['weapon-adhesive-grenade', 'weapon-concussion-grenade', 'weapon-cryoban-grenade', 'weapon-emp-grenade', 'weapon-frag-grenade', 'weapon-gas-grenade',
+  'weapon-ion-grenade', 'weapon-radiation-grenade', 'weapon-remote-grenade', 'weapon-smoke-grenade', 'weapon-stun-grenade', 'weapon-thermal-detonator'];
+function applyGrenadeFamily(rec, log) {
+  if (!GRENADE_IDENTITIES.includes(rec.identityKey)) return rec;
+  const out = clone(rec);
+  need(out.schemaFamily.branch === 'ranged' && out.schemaFamily.proficiency === 'simple', `${rec.identityKey} is a ranged simple weapon`);
+  need(Array.isArray(out.selectors?.families) && !out.selectors.families.includes('weapon-family:grenade'), `${rec.identityKey} has no grenade family yet`);
+  out.selectors = { ...out.selectors, families: [...out.selectors.families, 'weapon-family:grenade'].sort() };
+  out.provenance = { ...out.provenance, postCertificationAmendments: [...(out.provenance.postCertificationAmendments ?? []), GRENADE_FAMILY_AMENDMENT_ID] };
+  log.push({
+    id: GRENADE_FAMILY_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-H', identityKey: rec.identityKey, field: 'selectors.families',
+    from: rec.selectors.families, to: out.selectors.families,
+    source: { book: 'Core Rulebook / Knights of the Old Republic Campaign Guide', page: '127-129 / 68, 180', evidence: 'Listed under the Grenades heading of the ranged-weapons tables; abilities (Angled Throw, Forceful Blast, Higher Yield, Mighty Throw) scope themselves to Grenades.' },
+    rule: 'Weapons declare what they are: a grenade is declared structurally so abilities need not match a display name.',
+    reason: 'The certified selectors had no grenade family, forcing name matching for every Grenade-scoped ability.',
   });
   return out;
 }
