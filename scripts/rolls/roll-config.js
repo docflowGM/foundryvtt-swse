@@ -516,6 +516,19 @@ async function buildWeaponRangeProfile(weapon) {
   }
 }
 
+// Phase 5D-D: range chips for a CANONICAL attack form come from its canonical range facet (band squares + effective penalties),
+// never from stale Item-level range data. Display only: the attack arithmetic reads the same facet via getRangePenalty().
+function canonicalRangeBands(range) {
+  if (!range?.bandSquares) return null;
+  const penalty = (b) => (b === 'short' && range.shortPenaltyOverride !== null ? range.shortPenaltyOverride : (range.basePenalties?.[b] ?? 0));
+  const mk = (b) => (range.bandSquares[b] && range.allowedBands.includes(b) ? { min: range.bandSquares[b][0], max: range.bandSquares[b][1], attackMod: penalty(b) } : null);
+  return { pb: mk('pointBlank'), short: mk('short'), medium: mk('medium'), long: mk('long') };
+}
+function rangeChipsHtml(ranges) {
+  return ranges ? [formatBandChip('PB', ranges.pb), formatBandChip('Short', ranges.short), formatBandChip('Medium', ranges.medium), formatBandChip('Long', ranges.long)].filter(Boolean).join('') : '';
+}
+const ammoNoteText = (units) => (Number.isFinite(units) && units > 1 ? `Uses ${units} shots per attack.` : '');
+
 function formatBandChip(label, band) {
   if (!band) return '';
   const mod = Number(band.attackMod ?? 0) || 0;
@@ -952,6 +965,20 @@ function syncAttackFormBranch(form, branch) {
   });
 }
 
+/** Phase 5D-D: per-form facets (range chips, legal range bands, ammunition note) follow the selected canonical form. */
+function syncAttackFormFacets(form, f) {
+  if (!f) return;
+  form.querySelectorAll('[data-rcd-form-range]').forEach((el) => { el.hidden = el.dataset.rcdFormRange !== f.value; });
+  const bands = form.querySelector('[name="rangeBand"]');
+  const allowed = f.range?.status === 'banded' ? f.range.allowedBands : null;
+  if (bands && allowed) {
+    for (const opt of bands.options) if (opt.value !== 'custom') opt.disabled = !allowed.includes(opt.value);
+    if (bands.selectedOptions?.[0]?.disabled) { const first = [...bands.options].find((o) => !o.disabled); if (first) bands.value = first.value; }
+  }
+  const note = form.querySelector('[data-rcd-ammo-note]');
+  if (note) note.textContent = ammoNoteText(f.ammoUnits);
+}
+
 function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'attack', model = null, sequencePenalty = 0 } = {}) {
   const root = html?.[0] ?? html;
   const form = root?.querySelector?.('.swse-roll-config-v2');
@@ -981,6 +1008,7 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
       const live = readLiveAttackSelection(form, model);
       const melee = live.form?.branch ? live.form.branch === 'melee' : (model?.melee ?? false);
       syncAttackFormBranch(form, live.form?.branch ?? null);
+      syncAttackFormFacets(form, live.form);
       const { aim, charge, isPointBlank, situationalContributions } = computeAttackSituationalContext(form, melee);
       // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker
       // 3): thread the dialog's own Target Context selection (Selected
@@ -1103,6 +1131,10 @@ export async function buildRollConfigModel(options = {}) {
   const payloads = canonicalForms?.payloads ?? [];
   const selectedPayloadId = payloads.length ? (options.payloadId ?? canonicalForms.defaultPayloadId ?? payloads[0].value) : null;
   const attackSelection = { attackType: melee ? 'melee' : 'ranged', ...attackFormSelection(selectedAttackForm), ...(selectedPayloadId ? { payloadId: selectedPayloadId } : {}) };
+  // Phase 5D-D: the selected form's canonical range facet replaces the Item-level range display for canonical weapons
+  const canonicalRanges = canonicalRangeBands(selectedAttackForm?.range);
+  const effectiveRangeProfile = canonicalRanges ? { profileName: selectedAttackForm.label, ranges: canonicalRanges } : rangeProfile;
+  const allowedRangeBands = selectedAttackForm?.range?.status === 'banded' ? [...selectedAttackForm.range.allowedBands] : null;
   // Math Integrity Freeze, Attack Bonus round 8 (Part 1, domain isolation):
   // actor-owned combat options and the generic attack-context authority are
   // an ATTACK-only concept -- a Damage roll passes the same weapon but must
@@ -1259,7 +1291,8 @@ export async function buildRollConfigModel(options = {}) {
     fp,
     targetRows,
     combatantRows: combatantRows(),
-    rangeProfile,
+    rangeProfile: effectiveRangeProfile,
+    allowedRangeBands,
     combatOptions,
     attackContexts,
     isAttackRoll,
@@ -1299,8 +1332,10 @@ export function buildAttackFormPanel(model) {
           ${payloads.map(p => `<option value="${escapeHTML(p.value)}" ${p.value === model.selectedPayloadId ? 'selected' : ''}>${escapeHTML(p.label)}</option>`).join('')}
         </select>
       </label>` : '';
-  if (!formSelect && !payloadSelect && !err) return '';
-  return `<div class="swse-roll-config-subpanel" data-rcd-attack-form-panel><h5>Attack Form</h5>${formSelect}${payloadSelect}${err}</div>`;
+  const note = ammoNoteText(model.selectedAttackForm?.ammoUnits);
+  const noteHtml = (forms.length > 1 || note) ? `<small class="swse-roll-config-note" data-rcd-ammo-note>${escapeHTML(note)}</small>` : '';
+  if (!formSelect && !payloadSelect && !err && !note) return '';
+  return `<div class="swse-roll-config-subpanel" data-rcd-attack-form-panel><h5>Attack Form</h5>${formSelect}${payloadSelect}${noteHtml}${err}</div>`;
 }
 
 function buildTargetPanel(model) {
@@ -1308,12 +1343,12 @@ function buildTargetPanel(model) {
   if (!needsTarget) return '';
   const targetOptions = model.targetRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
   const combatantOptions = model.combatantRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
+  const bandOptions = [['pointBlank', 'Point Blank'], ['short', 'Short'], ['medium', 'Medium'], ['long', 'Long']]
+    .filter(([value]) => !model.allowedRangeBands || model.allowedRangeBands.includes(value))
+    .map(([value, text]) => `<option value="${value}">${text}</option>`).join('');
   const rangeBandLabel = `<label>Range Band
         <select name="rangeBand">
-          <option value="pointBlank">Point Blank</option>
-          <option value="short">Short</option>
-          <option value="medium">Medium</option>
-          <option value="long">Long</option>
+          ${bandOptions}
           <option value="custom">Custom / GM</option>
         </select>
       </label>`;
@@ -1354,9 +1389,11 @@ function buildTargetPanel(model) {
 
 function buildWeaponPanel(model) {
   if (!model.weapon) return '';
-  const rangeChips = model.rangeProfile?.ranges
-    ? [formatBandChip('PB', model.rangeProfile.ranges.pb), formatBandChip('Short', model.rangeProfile.ranges.short), formatBandChip('Medium', model.rangeProfile.ranges.medium), formatBandChip('Long', model.rangeProfile.ranges.long)].filter(Boolean).join('')
-    : '';
+  // canonical multi-form weapons render one chip set per form (toggled with the selected form); everything else one set
+  const perFormChips = (model.attackForms?.length ?? 0) > 1 && model.attackForms.some((f) => f.range?.bandSquares);
+  const rangeChips = perFormChips
+    ? model.attackForms.map((f) => { const html = rangeChipsHtml(canonicalRangeBands(f.range)); return html ? `<span data-rcd-form-range="${escapeHTML(f.value)}" ${f.value === model.selectedAttackForm?.value ? '' : 'hidden'}>${html}</span>` : ''; }).join('')
+    : rangeChipsHtml(model.rangeProfile?.ranges);
   // Math Integrity Freeze, Attack Bonus round 8 (Part 1/Part 8): actor-
   // owned attack options, Autofire mode, and Melee Grip are ATTACK-only
   // concepts -- a Damage roll passes the same weapon (for its damage

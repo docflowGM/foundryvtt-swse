@@ -327,6 +327,7 @@ export function isThrownMeleeWeapon(weapon) {
 }
 
 import { PROJECTED_ATTACK_ABILITIES, ATTACK_ABILITY_OVERRIDE_FLAG, readAttackAbilityOverride } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-ability-override.js";
+import { canonicalRangePenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
 
 // Attack-ability provenance (Phase 5D-B). Production/canonical weapons carry a PROJECTED system.attackAttribute (generated
 // from the item's branch; the projection vocabulary is only str/dex) that is not player intent. For a canonical weapon with a
@@ -384,8 +385,17 @@ export function getWeaponAttackAbility(actor, weapon, context = {}) {
 }
 
 export function getRangePenalty(weapon, context = {}) {
-  const explicit = Number(context.rangePenalty ?? context.modifiers?.rangePenalty ?? weapon?.system?.rangePenalty ?? weapon?.system?.currentRangePenalty);
+  // Phase 5D-D: for a canonical weapon the selected attack form's range facet (context.weaponRuntime.range) supplies the band
+  // table / short-range override / melee-no-range; stale Item-level range fields (system.rangePenalty/currentRangePenalty)
+  // never override it. An explicit caller-supplied penalty still wins; a facet with no structured table ('pending') falls
+  // through to the existing generic band arithmetic below. Legacy weapons are unchanged.
+  const canonicalRuntime = context?.weaponRuntime?.source === 'canonical' ? context.weaponRuntime : null;
+  const explicit = Number(context.rangePenalty ?? context.modifiers?.rangePenalty ?? (canonicalRuntime ? undefined : (weapon?.system?.rangePenalty ?? weapon?.system?.currentRangePenalty)));
   if (Number.isFinite(explicit)) return explicit;
+  if (canonicalRuntime) {
+    const canonical = canonicalRangePenalty(canonicalRuntime.range, context.rangeBand ?? context.range);
+    if (canonical !== null) return canonical;
+  }
 
   const band = String(context.rangeBand ?? context.range ?? weapon?.system?.rangeBand ?? '').toLowerCase();
   if (band === 'short') return -2;

@@ -35,7 +35,7 @@
   "adapterExposureGaps": 0
  },
  "summary": {
-  "fieldPaths": 2215,
+  "fieldPaths": 2217,
   "byImplementationState": {
    "ADAPTER_REQUIRED": 58,
    "ALREADY_CONSUMED_CORRECTLY": 2,
@@ -45,7 +45,7 @@
    "NEW_CONSUMER_REQUIRED": 1114,
    "RECOMMENDATION_ONLY": 248,
    "STORE_ONLY": 25,
-   "VALIDATION_ONLY": 127
+   "VALIDATION_ONLY": 129
   },
   "byClassification": {
    "DISPLAY": 425,
@@ -53,11 +53,11 @@
    "INVENTORY": 122,
    "PLAYER_CHOICE": 416,
    "PLAYER_STATE": 304,
-   "PROVENANCE": 95,
+   "PROVENANCE": 97,
    "RECOMMENDATION": 253,
    "SELECTOR": 520,
    "STORE": 49,
-   "VALIDATION": 207
+   "VALIDATION": 209
   },
   "byMigrationPhase": {
    "5B foundation": 1,
@@ -76,13 +76,13 @@
    "5G": 46,
    "5G/5H": 3,
    "5H": 366,
-   "n/a": 127
+   "n/a": 129
   },
   "alreadyConsumedCorrectly": 2,
   "existingConsumerWrongInput": 539,
   "adapterRequired": 58,
   "newConsumerRequired": 1114,
-  "nonRuntimeDisposition": 423
+  "nonRuntimeDisposition": 425
  },
  "entries": [
   {
@@ -42779,6 +42779,44 @@
   },
   {
    "path": "CANON:provenance.phase4H.recordSha256",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance.postCertificationAmendments",
+   "classification": [
+    "VALIDATION",
+    "PROVENANCE"
+   ],
+   "consumers": [
+    "ResolvedWeapon.provenance (hash pointers to the audit evidence)",
+    "canonical-weapons lossless verifier"
+   ],
+   "implementationState": "VALIDATION_ONLY",
+   "migrationPhase": "n/a",
+   "ruleId": "canon.provenance",
+   "mechanicFamily": null,
+   "registryField": "provenance",
+   "resolvedProperty": "provenance",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "CANON:provenance.postCertificationAmendments[]",
    "classification": [
     "VALIDATION",
     "PROVENANCE"

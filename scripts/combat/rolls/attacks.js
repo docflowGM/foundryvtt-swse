@@ -29,7 +29,7 @@ import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/com
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
-import { resolveAttackWeaponRuntime, assertDamageSelectionResolvable, weaponFormRecord } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -173,9 +173,13 @@ function withCanonicalWeaponRuntime(weapon, rollOptions) {
   try {
     const weaponRuntime = resolveAttackWeaponRuntime(weapon, rollOptions);
     if (weaponRuntime.source !== 'canonical') return { rollOptions };
-    // Phase 5D-C: refuse before any cost if the selected damage mode does not exist for the selected form
-    assertDamageSelectionResolvable(weaponRuntime, rollOptions.damageMode ?? null);
-    return { rollOptions: { ...rollOptions, weaponRuntime, ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) } };
+    // Phase 5D-C/5D-D: refuse before any cost if the selected damage mode or range band does not exist for the selected form
+    assertAttackFormResolvable(weaponRuntime, { damageMode: rollOptions.damageMode ?? null, rangeBand: rollOptions.rangeBand ?? null });
+    // Phase 5D-D: the selected form's canonical per-attack resource units feed the existing AmmoSystem cost rule (read-only here;
+    // spending still happens exactly once, in AmmoSystem.spendForWorkflow). 'pending' leaves the existing rule untouched.
+    const resource = resolveAttackResourceCost(weaponRuntime, { damageMode: rollOptions.damageMode ?? null });
+    const canonicalAmmoUnits = resource && resource.status !== 'pending' ? resource.units : undefined;
+    return { rollOptions: { ...rollOptions, weaponRuntime, canonicalResource: resource, ...(canonicalAmmoUnits !== undefined ? { canonicalAmmoUnits } : {}), ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) } };
   } catch (err) {
     if (!(err instanceof WeaponRuntimeError)) throw err;
     return { error: err };
@@ -350,6 +354,13 @@ export async function rollAttack(actor, weapon, options = {}) {
     contextTags: rollOptions.damageMode === 'stun' || rollOptions.stun === true ? ['stun'] : []
   });
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
+  // Phase 5D-D: non-mutating ammunition validation BEFORE any cost is committed, so insufficient ammunition for the selected
+  // form can never leave a transient action-option spend behind (the only mutation point stays AmmoSystem.spendForWorkflow below).
+  const ammoPreflight = AmmoSystem.preflightAmmunition(actor, weapon, AmmoSystem.resolveAmmoCost({ weapon, workflowContext, options: rollOptions, optionModifiers }), rollOptions);
+  if (!ammoPreflight.ok) {
+    ui?.notifications?.error?.(ammoPreflight.message || `${weapon.name} does not have enough ammunition.`);
+    return null;
+  }
   const actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
   if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
     ui?.notifications?.warn?.(actionOptionSpend.reason || 'Selected attack option action cost could not be paid.');
