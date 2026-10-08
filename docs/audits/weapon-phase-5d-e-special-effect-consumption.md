@@ -88,17 +88,37 @@ Apply Damage (chat-interaction-bridge) ── DamagePacket (components tagged `b
 * The live prompt provider is a single `DialogV2.confirm` registered in `init-hooks.js`; tests inject their own. No provider → unanswered → surfaced.
 * Executed-once guarantee for CT effects: message flag `swse.specialEffectReceipts`, key `recordId:targetId` (parallel to the existing damage receipt).
 
-## 7. Damage multipliers
+## 7. Damage multipliers (corrected, source-backed)
 
-`damageMultiplier` ≠ 1 (Light Concussion Missile ×2, Proton Torpedo single-target ×2) is consumed **inside `resolveDamageComposition`/`buildDamageFormula`**: it wraps the weapon dice (steps and extra weapon dice included): `(4d10) * 2 + ability + …`. The payload-resolved value *replaces* the profile value (`payload ?? profile`, already how the resolver reports it), so it is never applied twice. The critical multiplier then multiplies the whole formula as before (`((4d10)*2 + …) * 2`).
+**Rulings**
 
-Assumption to confirm: the printed "6d10x2" notation is read as "×2 applies to the weapon's dice, bonuses are added after". The multiplier ordering with a critical (both multiply) is also an assumption; no source rule found in the repo contradicts it. Flagged in section 16.
+* *Core Rulebook* — weapon damage is multiplied by the weapon's damage multiplier (`6d10x2` rolls the weapon damage and multiplies it by 2).
+* *Legacy Era Campaign Guide* — extra damage on a weapon is applied **before** the multiplier; published stat blocks use forms such as `(5d10+5)x2`.
+* *Core Rulebook* — a critical hit deals double damage, with no exception for a weapon that already has a multiplier. Both multipliers apply: a ×2 weapon on a critical is effectively ×4.
 
-## 8. Damage riders
+The first version of this phase implemented "×N applies to the dice, bonuses added afterwards". That is **not** the SWSE rule and was replaced (correction commit after `2f5606a7f`).
 
-A profile-owned `damageComponents` entry beyond the primary component (Neuronic Whip `slashing-rider` 1d4) is a **separate damage event**: rolled from its own dice only (no ability/half-level/critical), typed by its canonical component, posted as its own damage card (`flags.swse.damageRider`) that flows through the unchanged Apply Damage → DamagePacket path with its own receipt. A stun main card does not make the rider stun. AND damage types (Bowcaster energy AND piercing) remain **one** component/one event — no rider.
+**Implementation staging** (`buildDamageFormula` in `combat-roll-math.js`, the one composition; `DAMAGE_STAGE` is exported and stamped on every ledger entry):
 
-Resolver fix: in stun mode with an explicit stun definition the profile's `stun` component duplicated the primary stun component; it is now skipped so the stun dice are rolled once.
+| stage | contributions |
+|---|---|
+| `PRE_WEAPON_MULTIPLIER` | weapon dice incl. die-size steps and extra weapon dice; everything in `composition.bonus.total`: ½ heroic level, ability, enhancement/flat weapon bonus, Weapon Specialization (scoped feat), rage, effect-intent and typed modifiers, combat-option damage |
+| `WEAPON_MULTIPLIER` | the canonical `damageMultiplier` (payload value replaces the profile value; never applied twice) |
+| `POST_WEAPON_MULTIPLIER` | dice riders that are not weapon damage (talent dice, Force Item/Inquisition dice) and invocation-only terms (Force Point, custom modifier) |
+| `CRITICAL` | the critical multiplier over the whole result above; critical-only formulas (critical extra damage) after it |
+| `SEPARATE_DAMAGE_COMPONENT` | profile-owned riders (own card) |
+
+Nothing was given an invented timing: the pre-multiplier set is exactly the existing `bonus.total` (the SWSE "part of weapon damage" contributions); the post set is exactly the existing dice terms/invocation terms, kept where they already were.
+
+Resulting shapes (`NdM` shown; tests replace every die with 10): normal `(4d10 + 3) * 2` = 26; critical `((4d10 + 3) * 2) * 2` = 52; non-multiplier weapon critical `(3d6 + 3) * 2` = 26; with a Force Point `(4d10 + 3) * 2 + 5` = 31.
+
+## 8. Damage riders (corrected)
+
+A profile-owned `damageComponents` entry beyond the primary component (Neuronic Whip `slashing-rider` 1d4) is a **separate damage component**: its own dice, canonical type, own damage card (`flags.swse.damageRider`), own Apply Damage receipt. A stun main card does not make the rider stun, and it is never merged into the stun component. AND damage types (Bowcaster energy AND piercing) remain **one** component/one event, normal or critical.
+
+*Force Unleashed Campaign Guide*: a successful Neuronic Whip hit deals its normal stun damage **plus** 1d4 slashing damage. *Core Rulebook*: a critical hit deals double damage and no exception exists for that additional damage. Therefore, on a critical, **both** components are doubled: stun `(2d8 + …) * 2` and slashing `(1d4) * 2`, still two typed components on two cards. The canonical component carries no explicit critical policy, so nothing overrides the Core rule. (Area attacks keep the existing "no critical doubling" rule.)
+
+Resolver fix kept from the original change: in stun mode with an explicit stun definition the profile's `stun` component duplicated the primary stun component; it is skipped so the stun dice are rolled once.
 
 ## 9. Condition-track riders and stun special rules
 
@@ -133,7 +153,7 @@ Every family carries one explicit timing from: `on-attack`, `on-hit`, `on-miss`,
 
 ## 16. Tests
 
-`tests/weapon-phase-5d-e-special-effects.test.mjs` (14 checks) covers: profile mechanics resolved; sibling profile does not inherit; payload effects persist and are not turned into damage; critical effects only on a critical; multiplier via composition and with a critical; rider separate / AND types one event; native stun; on-hit CT rider (hit only), alternate defense, execution once through the existing CT infrastructure, damage-dealt and overwhelming-stun gates; DR bypass reaching the packet components and the existing resolver; unsupported special action fail-closed; PROMPT answers stored and not re-asked (attack and Apply time) and unresolved mechanics surfaced; automatic target-size modifier without a prompt; legacy and stock droid/NPC flat contracts unchanged; corrected Darkstick/Static Pike thrown forms still available and ranged; census current and complete.
+`tests/weapon-phase-5d-e-special-effects.test.mjs` (14 checks) and `tests/weapon-phase-5d-e-multiplier-correction.test.mjs` (10 checks: ×2 with no bonus; flat bonus before ×2 = 26 not 23; half heroic level; Weapon Specialization; ×2 weapon critical = 52; non-multiplier critical; Neuronic Whip rider separate and doubled on a critical; AND stays one event; critical die replacement/extra damage order; legacy and post-multiplier invocation terms) cover: profile mechanics resolved; sibling profile does not inherit; payload effects persist and are not turned into damage; critical effects only on a critical; multiplier via composition and with a critical; rider separate / AND types one event; native stun; on-hit CT rider (hit only), alternate defense, execution once through the existing CT infrastructure, damage-dealt and overwhelming-stun gates; DR bypass reaching the packet components and the existing resolver; unsupported special action fail-closed; PROMPT answers stored and not re-asked (attack and Apply time) and unresolved mechanics surfaced; automatic target-size modifier without a prompt; legacy and stock droid/NPC flat contracts unchanged; corrected Darkstick/Static Pike thrown forms still available and ranged; census current and complete.
 
 Required regression suites remain green (5D-A 14, 5D-B 14, 5D-C 10, 5D-D 21, thrown correction 8, runtime/registry/negative/consumption-map, full suite).
 
@@ -143,9 +163,10 @@ None of these were "fixed" in data; each is recorded.
 
 1. **Darkstick return-to-hand** — only the threshold (`returnOnAttackExceedsReflexBy: 5`) is structured; the effect/action is not. Recorded as a completeness issue (DEFER). Not invented, does not block the attack.
 2. **Forms with neither damage nor structured effect** (refused, nothing invented): Adhesive Grenade, Ascension Gun / Heavy Variable Blaster ascension form, Net, Smoke Grenade, Targeting Laser, Wrist Rocket Launcher stun-gas payload.
-3. **Multiplier semantics** (section 7) — "×N applies to weapon dice" and multiplier × critical both multiplying are inferred, not source-confirmed.
-4. **Rider and critical hits** — whether a separately-rolled rider (Neuronic Whip) is multiplied on a critical is not stated; it is not multiplied.
-5. Native-stun stunning-gauntlet unarmed form still resolves damage via the unarmed Item compatibility base (5D-C `deferred: damage-mode:inherited`), unchanged.
+3. **Multiplier semantics** — resolved by the source-backed ruling in section 7 (no longer an open inference).
+4. **Rider and critical hits** — resolved by section 8 (the Neuronic Whip rider is doubled on a critical).
+5. *Weapon Specialization* is still matched by the legacy scoped-feat resolver (feat name + selected choice vs weapon name/group strings), not by canonical selectors. Its stage is correct; its identity matching is a 5D-F follow-up.
+6. Native-stun stunning-gauntlet unarmed form still resolves damage via the unarmed Item compatibility base (5D-C `deferred: damage-mode:inherited`), unchanged.
 
 ## 18. Deferred (not done in 5D-E)
 
@@ -153,7 +174,7 @@ Grab/grapple/net/snare effects (12), payload effects (8), defensive interactions
 
 ## 19. Validation
 
-Run on the final tree: all focused tests above; `node tools/census-weapon-special-mechanics.mjs --check`; canonical/production/registry builder `--check`s; `verify-canonical-production`; `validate-partials`; `validate-data`; `system.json` JSON parse; `node --check` of every changed JS; rolling runner **329 passed / 0 failed / 5 documented exclusions** (new baseline 329 = 328 + the 5D-E test).
+Run on the final tree: all focused tests above; `node tools/census-weapon-special-mechanics.mjs --check`; canonical/production/registry builder `--check`s; `verify-canonical-production`; `validate-partials`; `validate-data`; `system.json` JSON parse; `node --check` of every changed JS; rolling runner **330 passed / 0 failed / 5 documented exclusions** (corrected baseline 330 = 328 + the two 5D-E tests).
 
 ## 20. Intentionally not changed
 

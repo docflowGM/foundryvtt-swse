@@ -119,11 +119,11 @@ const fam = (mechs, f) => mechs.filter((m) => m.family === f);
   const c = comp(A, lcm, ctx);
   assert.equal(c.dice.baseMultiplier, 2); assert.equal(c.dice.base, '4d10');
   const f = buildDamageFormula(c);
-  assert.match(f, /^\(4d10\) \* 2/, `multiplier wraps the weapon dice: ${f}`);
+  assert.match(f, /^\(4d10( \+ \d+)?\) \* 2/, `multiplier wraps the weapon damage expression (dice + weapon-damage bonuses): ${f}`);
   const fc = buildDamageFormula(comp(A, lcm, { ...ctx, isCritical: true }));
-  assert.match(fc, /^\(\(4d10\) \* 2.*\) \* 2$/, `critical multiplies on top of the weapon multiplier: ${fc}`);
+  assert.match(fc, /^\(\(4d10( \+ \d+)?\) \* 2.*\) \* 2$/, `critical multiplies on top of the weapon multiplier: ${fc}`);
   const pt = canon('weapon-miniature-proton-torpedo-launcher');
-  assert.match(formula(A, pt, form('weapon-miniature-proton-torpedo-launcher', { profileId: 'single-target' })), /^\(6d10\) \* 2/);
+  assert.match(formula(A, pt, form('weapon-miniature-proton-torpedo-launcher', { profileId: 'single-target' })), /^\(6d10( \+ \d+)?\) \* 2/);
   assert.equal(comp(A, pt, form('weapon-miniature-proton-torpedo-launcher', { profileId: 'area' })).dice.baseMultiplier, 1);
   // a payload ×N is applied once (payload multiplier replaces, never stacks with, the profile one)
   assert.equal(rt.resolveCanonicalDamage(lcm, ctx).damageShape.baseMultiplier, 2);

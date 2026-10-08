@@ -817,6 +817,15 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
 // call instead of each hand-rolling `formulaParts.push(...)` independently.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** Timing of a damage contribution relative to the canonical weapon damage multiplier (Phase 5D-E correction). */
+export const DAMAGE_STAGE = Object.freeze({
+  PRE_WEAPON_MULTIPLIER: 'PRE_WEAPON_MULTIPLIER',
+  WEAPON_MULTIPLIER: 'WEAPON_MULTIPLIER',
+  POST_WEAPON_MULTIPLIER: 'POST_WEAPON_MULTIPLIER',
+  CRITICAL: 'CRITICAL',
+  SEPARATE_DAMAGE_COMPONENT: 'SEPARATE_DAMAGE_COMPONENT',
+});
+
 const DAMAGE_DIE_LADDER = [2, 3, 4, 6, 8, 10, 12];
 
 function getPrimaryDamageDieFormula(baseFormula) {
@@ -1040,17 +1049,23 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // built, rather than rebuilding it a second time.
   const typedModifierLedger = bonus.typedModifierLedger || [];
 
+  // Phase 5D-E correction: every contribution carries the stage it occupies relative to the canonical weapon damage multiplier.
+  // PRE: part of the weapon damage expression (multiplied by xN).  POST: added after the weapon multiplier.
+  // CRITICAL: the critical multiplier / critical-only terms.  SEPARATE_DAMAGE_COMPONENT: its own damage event (riders).
+  const PRE = DAMAGE_STAGE.PRE_WEAPON_MULTIPLIER, POST = DAMAGE_STAGE.POST_WEAPON_MULTIPLIER;
   const ledger = [
     ...Object.entries(bonus.components || {}).map(([label, value]) => ({
-      id: `bonus-${label}`, label, value: Number(value) || 0, category: 'additive', sourceName: label, applied: true
+      id: `bonus-${label}`, label, value: Number(value) || 0, category: 'additive', sourceName: label, applied: true, stage: PRE
     })),
-    ...(dieStepIncreases !== 0 ? [{ id: 'die-step', label: 'Die-Size Step', value: dieStepIncreases, category: 'dieStep', applied: true }] : []),
-    ...(extraWeaponDice !== 0 ? [{ id: 'extra-weapon-dice', label: 'Extra Weapon Dice', value: extraWeaponDice, category: 'extraWeaponDice', applied: true }] : []),
-    ...talentContributions.breakdown.map((label, index) => ({ id: `talent-dice-${index}`, label, value: talentContributions.bonusDice[index] ?? null, category: 'additionalDice', applied: true })),
-    ...otherDiceTerms.map((term, index) => ({ id: `other-dice-${index}`, label: 'Force Item / Inquisition', value: term, category: 'additionalDice', applied: true })),
-    ...(isCriticalRoll ? [{ id: 'critical-multiplier', label: 'Critical Multiplier', value: multiplier, category: 'criticalMultiplier', applied: true }] : []),
-    ...(bonusFormula ? [{ id: 'critical-bonus', label: 'Critical Bonus Formula', value: bonusFormula, category: 'criticalAddition', applied: true }] : []),
-    ...typedModifierLedger
+    ...(dieStepIncreases !== 0 ? [{ id: 'die-step', label: 'Die-Size Step', value: dieStepIncreases, category: 'dieStep', applied: true, stage: PRE }] : []),
+    ...(extraWeaponDice !== 0 ? [{ id: 'extra-weapon-dice', label: 'Extra Weapon Dice', value: extraWeaponDice, category: 'extraWeaponDice', applied: true, stage: PRE }] : []),
+    ...(shape && shape.baseMultiplier > 1 ? [{ id: 'weapon-multiplier', label: 'Weapon Damage Multiplier', value: shape.baseMultiplier, category: 'weaponMultiplier', applied: true, stage: DAMAGE_STAGE.WEAPON_MULTIPLIER }] : []),
+    ...talentContributions.breakdown.map((label, index) => ({ id: `talent-dice-${index}`, label, value: talentContributions.bonusDice[index] ?? null, category: 'additionalDice', applied: true, stage: POST })),
+    ...otherDiceTerms.map((term, index) => ({ id: `other-dice-${index}`, label: 'Force Item / Inquisition', value: term, category: 'additionalDice', applied: true, stage: POST })),
+    ...(isCriticalRoll ? [{ id: 'critical-multiplier', label: 'Critical Multiplier', value: multiplier, category: 'criticalMultiplier', applied: true, stage: DAMAGE_STAGE.CRITICAL }] : []),
+    ...(bonusFormula ? [{ id: 'critical-bonus', label: 'Critical Bonus Formula', value: bonusFormula, category: 'criticalAddition', applied: true, stage: DAMAGE_STAGE.CRITICAL }] : []),
+    ...typedModifierLedger.map((entry) => ({ stage: PRE, ...entry })),
+    ...(shape?.riders ?? []).map((r) => ({ id: `rider-${r.id}`, label: `Rider: ${r.componentId}`, value: r.damage?.formula ?? null, category: 'damageRider', applied: true, stage: DAMAGE_STAGE.SEPARATE_DAMAGE_COMPONENT }))
   ];
 
   return {
@@ -1146,15 +1161,19 @@ export function buildDamageFormula(composition, options = {}) {
   const stepped = stepDamageDieFormula(dice.base, dice.dieStepIncreases || 0);
   const extraDiceFormula = buildExtraWeaponDiceFormula(stepped, dice.extraWeaponDice || 0);
 
-  // Phase 5D-E: a canonical ×N weapon damage multiplier applies to the weapon's dice (steps/extra dice included); ability,
-  // half-level and other bonuses are added after it, exactly like the printed "NdMxK" notation. Composes with the critical
-  // multiplier below (both multiply; neither replaces the other).
+  // Phase 5D-E (corrected): a canonical ×N weapon damage multiplier multiplies the WEAPON DAMAGE EXPRESSION -- the weapon dice
+  // (die steps and extra weapon dice included) PLUS the contributions SWSE treats as part of weapon damage (half heroic level,
+  // ability, enhancement, Weapon Specialization and every other additive bonus in composition.bonus.total). Core Rulebook:
+  // weapon damage x multiplier ("6d10x2"); Legacy Era Campaign Guide: extra weapon damage is applied BEFORE the multiplier
+  // ("(5d10+5)x2"). Dice riders (talent / Force Item dice) and invocation-only terms (Force Point, custom modifier) are POST
+  // multiplier. The critical multiplier below then multiplies the whole result, so a x2 weapon on a critical is x4.
+  // Stage per ledger entry: see DAMAGE_STAGE in resolveDamageComposition().
   const baseMult = Number(dice.baseMultiplier || 1);
   const diceTerm = `${stepped}${extraDiceFormula}`;
-  const parts = [baseMult > 1 ? `(${diceTerm}) * ${baseMult}` : diceTerm];
-
   const bonusTotal = Number(composition?.bonus?.total || 0);
-  if (bonusTotal !== 0) parts.push(bonusTotal.toString());
+  const preMultiplier = bonusTotal !== 0 ? `${diceTerm} + ${bonusTotal}` : diceTerm;
+  const parts = [baseMult > 1 ? `(${preMultiplier}) * ${baseMult}` : diceTerm];
+  if (baseMult <= 1 && bonusTotal !== 0) parts.push(bonusTotal.toString());
 
   for (const term of dice.talentDice || []) {
     if (term) parts.push(term);

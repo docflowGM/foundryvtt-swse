@@ -198,7 +198,7 @@ export async function rollDamage(actor, weapon, context = {}) {
   // own damage card that flows through the unchanged Apply Damage -> DamagePacket path with its own receipt.
   if (roll && canonicalDamage.source === 'canonical' && rollContext.suppressChat !== true) {
     for (const rider of canonicalDamage.damageShape?.riders ?? []) {
-      await postDamageRider({ actor, weapon, rider, workflowContext, rollContext, canonicalDamage });
+      await postDamageRider({ actor, weapon, rider, workflowContext, rollContext, canonicalDamage, critical: { isCritical: rollContext.isCritical === true && !isAreaAttack(weapon, rollContext), multiplier: composition.critical.multiplier } });
     }
   }
 
@@ -207,29 +207,34 @@ export async function rollDamage(actor, weapon, context = {}) {
   return roll;
 }
 
-async function postDamageRider({ actor, weapon, rider, workflowContext, rollContext, canonicalDamage }) {
+async function postDamageRider({ actor, weapon, rider, workflowContext, rollContext, canonicalDamage, critical = { isCritical: false, multiplier: 1 } }) {
   const formula = rider.damage?.formula ?? null;
   if (typeof formula !== 'string' || !/^\d+d\d+([+-]\d+)?$/.test(formula.replace(/\s+/g, ''))) return null;
-  const riderRoll = await globalThis.SWSE.RollEngine.safeRoll(formula.replace(/\s+/g, ''));
+  // Core Rulebook: a critical hit deals double damage, with no exception for a rider that is part of the attack's damage (e.g. the
+  // Neuronic Whip's 1d4 slashing). The rider stays its own typed component/card but takes the same critical multiplier.
+  const critMult = critical.isCritical && critical.multiplier > 1 ? critical.multiplier : 1;
+  const plain = formula.replace(/\s+/g, '');
+  const riderFormula = critMult > 1 ? `(${plain}) * ${critMult}` : plain;
+  const riderRoll = await globalThis.SWSE.RollEngine.safeRoll(riderFormula);
   if (!riderRoll) return null;
-  riderRoll.swseDamageFormula = formula;
+  riderRoll.swseDamageFormula = riderFormula;
   const types = [...(rider.damageTypes ?? [])];
   const baseCtx = workflowContext ?? {};
   const riderWorkflow = summarizeCombatWorkflowContext({
     ...baseCtx,
     contextTags: (baseCtx.contextTags ?? []).filter((t) => t !== 'stun'),
     attack: { ...(baseCtx.attack ?? {}), damageMode: 'normal', isStun: false },
-    damage: { ...(baseCtx.damage ?? {}), damageMode: 'normal', isStun: false, damageType: types[0] ?? null, damageTypes: types, damageComponents: [], crit: false },
+    damage: { ...(baseCtx.damage ?? {}), damageMode: 'normal', isStun: false, damageType: types[0] ?? null, damageTypes: types, damageComponents: [], crit: critMult > 1, ...(critMult > 1 ? { critMultiplier: critMult } : {}) },
     // the rider card never re-executes the main card's CT/stun records (they execute once, on the main damage card)
-    special: { ...(baseCtx.special ?? {}), records: undefined, riders: { [rider.componentId]: { total: riderRoll.total, formula, types } } }
+    special: { ...(baseCtx.special ?? {}), records: undefined, riders: { [rider.componentId]: { total: riderRoll.total, formula: riderFormula, types } } }
   }, { damageMode: 'normal', isStun: false, damageType: types[0] ?? undefined, damageTypes: types });
   await SWSEChat.postRoll({
     roll: riderRoll,
     actor,
-    flavor: `${weapon.name} — ${rider.componentId} (separate damage, ${types.join(' / ') || 'untyped'})`,
+    flavor: `${weapon.name} — ${rider.componentId} (separate damage, ${types.join(' / ') || 'untyped'})${critMult > 1 ? ' [CRITICAL]' : ''}`,
     flags: { swse: { damageRoll: true, damageRider: true, riderOf: weapon.id, weaponId: weapon.id, workflowContext: riderWorkflow } },
     context: {
-      type: 'damage', weaponId: weapon.id, weapon, isCritical: false, critMultiplier: 1, workflowContext: riderWorkflow,
+      type: 'damage', weaponId: weapon.id, weapon, isCritical: critMult > 1, critMultiplier: critMult, workflowContext: riderWorkflow,
       target: rollContext.target ?? null, targetContext: rollContext.targetContext ?? null,
       damageType: types[0] ?? 'normal', damageTypes: types, damageComponents: []
     }
