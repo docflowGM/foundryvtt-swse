@@ -47,6 +47,8 @@ export function resolveDamageProfile(resolved, profile, context = {}) {
   // profile-owned separate damage events (e.g. rider) -- preserved, never merged into base
   for (const c of def.damageComponents ?? []) {
     if (c.resolution === 'stun' && damageMode !== 'stun') continue;
+    // Phase 5D-E: the explicit stun definition above IS this component (same dice); pushing it again would roll stun twice
+    if (c.resolution === 'stun' && damageMode === 'stun' && stun.damageMode === 'explicit' && stun.damage) continue;
     if (c.resolution === 'normal' && damageMode === 'stun' && c.id === 'stun') continue;
     components.push(typeComponent(c.id, 'profile-component', c.damage, c.damageType, { resolution: c.resolution ?? 'normal' }));
   }

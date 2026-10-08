@@ -12,6 +12,7 @@ import { resolveProficiency } from './proficiency-resolver.js';
 import { resolveDamageProfile } from './damage-profile-resolver.js';
 import { resolveCanonicalRange, assertRangeSelectionResolvable } from './canonical-range.js';
 import { resolveCanonicalResourceCost } from './canonical-resource.js';
+import { extractSpecialMechanics, damageShapeFromMechanics, summarizeMechanics } from './special-mechanics.js';
 
 const LEGACY = Object.freeze({ source: 'legacy' });
 const SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode'];
@@ -94,11 +95,21 @@ export function summarizeAttackRuntime(runtime, proficiency = null) {
 // (combat-roll-math.js#resolveDamageComposition / buildDamageFormula) remains the only place damage is computed.
 // ---------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Phase 5D-E (native-stun special rule): a form whose canonical stun capability is 'native-stun' deals stun damage only --
+ * the structured capability, not the weapon name, decides. Every other form keeps the caller's selection / 'normal'.
+ */
+export function effectiveDamageMode(runtime, requested = null) {
+  if (runtime?.source !== 'canonical') return requested;
+  if (runtime.profile?.definition?.stun?.capability === 'native-stun') return 'stun';
+  return requested ?? runtime.resolved.selection.damageMode ?? null;
+}
+
 /** The exact canonical attack form of a resolved attack, as plain serializable data (survives chat-card transport). */
 export function weaponFormRecord(runtime, damageMode = null) {
   if (runtime?.source !== 'canonical') return null;
   const sel = runtime.resolved.selection;
-  const rec = { identityKey: runtime.identityKey, profileId: sel.profileId, configurationId: sel.configurationId, modeId: sel.modeId, payloadId: sel.payloadId, damageMode: damageMode ?? sel.damageMode };
+  const rec = { identityKey: runtime.identityKey, profileId: sel.profileId, configurationId: sel.configurationId, modeId: sel.modeId, payloadId: sel.payloadId, damageMode: effectiveDamageMode(runtime, damageMode) };
   for (const k of Object.keys(rec)) if (rec[k] === null || rec[k] === undefined || rec[k] === '') delete rec[k];
   return rec;
 }
@@ -117,7 +128,7 @@ function damageSelectionContext(context = {}) {
 /** Attack-time check that the selected damage mode exists for the selected form, so nothing is spent on an attack whose damage would later be refused. */
 export function assertDamageSelectionResolvable(runtime, damageMode = null) {
   if (runtime?.source !== 'canonical') return;
-  const mode = damageMode ?? runtime.resolved.selection.damageMode ?? 'normal';
+  const mode = effectiveDamageMode(runtime, damageMode) ?? 'normal';
   resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode: mode });
 }
 
@@ -130,7 +141,7 @@ export function assertAttackFormResolvable(runtime, { damageMode = null, rangeBa
 
 /** Canonical per-attack resource cost of the selected form (see canonical-resource.js). Pure: never mutates. */
 export function resolveAttackResourceCost(runtime, { damageMode = null } = {}) {
-  return runtime?.source === 'canonical' ? resolveCanonicalResourceCost(runtime, { damageMode: damageMode ?? runtime.resolved.selection.damageMode }) : null;
+  return runtime?.source === 'canonical' ? resolveCanonicalResourceCost(runtime, { damageMode: effectiveDamageMode(runtime, damageMode) }) : null;
 }
 
 const DICE_RE = /^\d+d\d+([+-]\d+)?$/;
@@ -165,7 +176,7 @@ export function resolveCanonicalDamage(weapon, context = {}) {
   if (form?.identityKey && form.identityKey !== runtime0.identityKey) {
     throw new WeaponRuntimeError(ERROR_CODES.FORM_IDENTITY_MISMATCH, `attack form belongs to ${form.identityKey} but the weapon is ${runtime0.identityKey}`, { identityKey: runtime0.identityKey, formIdentityKey: form.identityKey });
   }
-  const damageMode = context.damageMode ?? form?.damageMode ?? runtime0.resolved.selection.damageMode ?? 'normal';
+  const damageMode = effectiveDamageMode(runtime0, context.damageMode ?? form?.damageMode ?? null) ?? 'normal';
   let runtime = runtime0;
   let dp = resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode, damageType: context.damageType ?? null });
   // a form whose damage varies by payload with exactly one payload available has an unambiguous payload
@@ -196,6 +207,11 @@ export function resolveCanonicalDamage(weapon, context = {}) {
   }
   const types = [...(primary?.damageTypes ?? [])];
   const selectedType = primary?.selectedDamageType ?? null;
+  // Phase 5D-E: every structured special mechanic of the selected form, classified (AUTO/PROMPT/DEFER/...) by structure
+  const mechanics = extractSpecialMechanics(runtime.profile.definition, {
+    damageProfile: dp, operation: runtime.resolved.operation ?? null, formRefused: status === 'no-damage' || status === 'special',
+    stunCapability: runtime.profile.definition?.stun?.capability ?? null, payloadEffects: dp.specialEffects, drInteraction: dp.damageReductionInteraction,
+  });
   return Object.freeze({
     source: 'canonical', status, reason, base, damageMode: dp.damageMode,
     runtime, selection: weaponFormRecord(runtime, dp.damageMode),
@@ -203,12 +219,13 @@ export function resolveCanonicalDamage(weapon, context = {}) {
     damageTypes: Object.freeze(types), damageTypeMode: primary?.damageTypeMode ?? 'none', selectedDamageType: selectedType,
     requiresDamageTypeSelection: primary?.requiresDamageTypeSelection === true,
     specialEffects: dp.specialEffects, area: dp.area,
-    // recorded, not applied: riders/multipliers/conditional modifiers belong to later phases (documented in the 5D-C audit)
+    mechanics, damageShape: damageShapeFromMechanics(mechanics),
+    // what the damage path still does NOT consume (Phase 5D-E consumes multiplier, critical effects and riders)
     deferred: Object.freeze({ extraComponents: dp.components.slice(1).map((c) => c.id), damageMultiplier: dp.damageMultiplier, conditionalModifiers: dp.conditionalModifiers?.length ?? 0, criticalEffects: dp.criticalEffects?.length ?? 0 }),
   });
 }
 
 export function summarizeCanonicalDamage(cd) {
   if (cd?.source !== 'canonical') return { source: cd?.source ?? 'legacy' };
-  return { source: 'canonical', status: cd.status, reason: cd.reason, base: cd.base, selection: cd.selection, damageMode: cd.damageMode, damageTypes: [...cd.damageTypes], selectedDamageType: cd.selectedDamageType, payloadId: cd.payloadId, deferred: cd.deferred };
+  return { source: 'canonical', status: cd.status, reason: cd.reason, base: cd.base, selection: cd.selection, damageMode: cd.damageMode, damageTypes: [...cd.damageTypes], selectedDamageType: cd.selectedDamageType, payloadId: cd.payloadId, deferred: cd.deferred, mechanics: summarizeMechanics(cd.mechanics) };
 }

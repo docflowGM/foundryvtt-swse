@@ -24,7 +24,7 @@ assert.throws(() => buildRegistry(mutateCanon((j) => { j.status = 'AUDIT_EVIDENC
 
 // Only explicit live-attack consumers may import the weapon runtime (allow-list: new consumers need an explicit phase decision)
 //   5D-A: attack pipeline + registry init.   5D-B: roll dialog (attack-form selector), attack-ability provenance (stat rules,
-//   item editor/weapon config write paths).   5D-C: damage roll (canonical selected-form damage).
+//   item editor/weapon config write paths).   5D-C: damage roll (canonical selected-form damage).   5D-E: special-effect execution.
 const ALLOWED_RUNTIME_CONSUMERS = new Set([
   'scripts/combat/rolls/attacks.js',
   'scripts/engine/combat/combat-roll-math.js',
@@ -34,6 +34,7 @@ const ALLOWED_RUNTIME_CONSUMERS = new Set([
   'scripts/items/item-defaults.js',
   'scripts/ui/weapon-config-dialog.js',
   'scripts/combat/rolls/damage.js',
+  'scripts/engine/combat/canonical-special-effects.js', // 5D-E: Apply-Damage execution of the selected form's special effects
 ]);
 const refs = execFileSync('git', ['ls-files', 'scripts', 'index.js', 'system.json'], { cwd: ROOT }).toString().split('\n').filter((f) => f.endsWith('.js') && !f.startsWith('scripts/items/weapon-runtime/'));
 for (const f of refs) {

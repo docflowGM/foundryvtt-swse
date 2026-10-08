@@ -394,12 +394,27 @@ async function handleApplyDamageButton(event, button, message) {
   }
 
   const { DamageSystem } = await import('/systems/foundryvtt-swse/scripts/combat/damage-system.js');
+  const hpBefore = Number(target?.system?.hp?.value);
   if (target) {
     await DamageSystem.applyPacketToActor(target, packet);
   } else {
     await DamageSystem.applyPacketToSelected(packet);
   }
   await recordDamageApplicationReceipt(message, receiptKey, { targetId: target?.id ?? null, amount: packet.amount, appliedAt: Date.now() });
+
+  // Phase 5D-E: canonical special effects evaluated at attack time (CT riders, overwhelming stun) execute now, once per
+  // message + target, through the existing CombatTargetEffectAdapter -> ActorEngine path. Damage is already applied and receipted.
+  if (target && combatContext?.special?.records?.length) {
+    try {
+      const { applyCanonicalSpecialEffects } = await import('/systems/foundryvtt-swse/scripts/engine/combat/canonical-special-effects.js');
+      await applyCanonicalSpecialEffects({
+        special: combatContext.special, target, attacker, message, weaponLabel: weapon?.name ?? 'Weapon',
+        hpBefore, hpAfter: Number(target?.system?.hp?.value), rawAmount
+      });
+    } catch (err) {
+      console.warn('[SWSE Chat] Canonical special effects could not be applied (damage was applied).', err);
+    }
+  }
 }
 
 async function handleGrappleActionButton(event, button) {
