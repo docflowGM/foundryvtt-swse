@@ -371,6 +371,7 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
     damageTypes: damageContext.damageTypes,
     originalDamageTypes: damageContext.originalDamageTypes,
     sonicCannotBeDeflected: damageContext.sonicCannotBeDeflected,
+    cannotBeNegatedBy: damageContext.cannotBeNegatedBy,
     trigger: 'ON_ATTACK_DECLARED'
   });
 
@@ -438,6 +439,23 @@ export async function rollAttack(actor, weapon, options = {}) {
   const readiness = FireStateStore.previewReadiness(actor, weapon, rollOptions.weaponRuntime, rollOptions);
   if (!readiness.ready) {
     ui?.notifications?.warn?.(`${weapon.name} cannot fire yet: ${describeReadinessBlockers(readiness.blockers)}`);
+    return null;
+  }
+
+  // Phase 5D-H: optional prepared attack. Priming is the player's choice (FireStateStore.primePreparedAttack); once it has matured the
+  // NEXT attack carries it automatically (its structured extra weapon dice / resource units flow through the ordinary option + ammo
+  // pipeline and the workflow context to damage). It cannot combine with an ability that expends more than one shot, and the
+  // `preparedAttack` option cannot be asserted without a matured priming.
+  const preparedRequested = !!(rollOptions.combatOptions?.preparedAttack ?? rollOptions.attackOptions?.preparedAttack);
+  if (readiness.prepared?.matured) {
+    const multi = CombatOptionResolver.summarizeAttackOptions(actor, weapon, rollOptions).filter((o) => o.active && o.expendsMultipleShots);
+    if (readiness.prepared.constraint.prohibitsMultiShot && (multi.length || rollOptions.autofire || rollOptions.fireMode === 'autofire' || rollOptions.fireMode === 'burst')) {
+      ui?.notifications?.warn?.(`${weapon.name}: a primed shot cannot be combined with an ability that consumes more than one shot (${multi.map((o) => o.label).join(', ') || 'autofire'}). Drop it, or fire without the primed shot is not possible until it is spent.`);
+      return null;
+    }
+    rollOptions = { ...rollOptions, combatOptions: { ...(rollOptions.combatOptions ?? rollOptions.attackOptions ?? {}), preparedAttack: true }, preparedShot: true };
+  } else if (preparedRequested) {
+    ui?.notifications?.warn?.(`${weapon.name} is not primed: a prepared attack needs the priming action and its maturing turn first.`);
     return null;
   }
 

@@ -1321,7 +1321,7 @@
    "policy": "AUTO",
    "predicate": {
     "op": "hasFeat",
-    "name": "Long Haft Form"
+    "name": "Long Haft Strike"
    }
   },
   {

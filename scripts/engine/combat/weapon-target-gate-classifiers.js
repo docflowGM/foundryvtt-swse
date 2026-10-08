@@ -17,6 +17,8 @@
 import { shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { canonicalSelectionFromContext } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 import { abilityChoiceMatchesWeapon, canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { descriptorMatchesAny, identitySlugSet, groupVocabSet } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js";
+import { getSharedWeaponAuthorityRegistry } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-authority-registry.js";
 export { canonicalSelectionFromContext };
 import {
   isRangedWeapon as canonicalIsRangedWeapon,
@@ -40,6 +42,8 @@ export function getAttackType(weapon, context = {}) {
     if (normalized.includes("melee")) return "melee";
   }
   if (!weapon) return "unknown";
+  // Phase 5D-H: a canonical weapon's attack type is its SELECTED form's structured branch, not Item category text
+  { const shape = shapeOfWeapon(weapon, canonicalSelectionFromContext(context)); if (shape.source === "canonical") return shape.descriptor.melee ? "melee" : "ranged"; if (shape.source === "error") return "unknown"; }
   return canonicalIsRangedWeapon(weapon) ? "ranged" : "melee";
 }
 
@@ -80,6 +84,8 @@ export function isVehicleWeapon(weapon, context = {}) {
   if (context.vehicleWeapon === true || context.starshipWeapon === true || context.weaponSystem === true) return true;
   const system = weapon?.system ?? {};
   if (system.vehicleWeapon === true || system.starshipWeapon === true || system.weaponSystem === true) return true;
+  // Phase 5D-H: beyond the explicit structured flags, a canonical weapon is a personal weapon (never inferred from name/text)
+  if (canonicalScope(weapon, context)) return false;
   const text = weaponText(weapon);
   return text.includes('vehicle-weapon') || text.includes('starship-weapon') || text.includes('weapon-system') || text.includes('turbolaser') || text.includes('laser-cannon') || text.includes('ion-cannon') || text.includes('proton-torpedo') || text.includes('concussion-missile');
 }
@@ -91,7 +97,22 @@ export function isUnarmedWeapon(weapon, context = {}) {
   return canonicalIsNaturalOrUnarmedWeapon(weapon);
 }
 
+// Phase 5D-H: a canonical weapon is described by the SELECTED form's structured descriptor (identity, families, group, proficiency,
+// branch, qualities, area, stun) -- never by its name/Item text. `abilityKey` (canonical ability identity) only refines "light" for
+// Weapon Finesse. Legacy / homebrew weapons keep the text matching below, unchanged.
+function canonicalScope(weapon, context = {}) {
+  const shape = shapeOfWeapon(weapon, canonicalSelectionFromContext(context));
+  return shape.source === "legacy" ? null : shape;
+}
+function scopeOptions(weapon, context = {}) {
+  const registry = getSharedWeaponAuthorityRegistry();
+  const wielderSize = context.wielderSize ?? context.actor?.system?.size ?? weapon?.actor?.system?.size ?? weapon?.actor?.system?.details?.size ?? null;
+  return { wielderSize, forAbility: context.abilityKey ?? null, identitySlugs: identitySlugSet(registry), groupVocab: groupVocabSet(registry) };
+}
+
 export function weaponMatchesGroup(weapon, groups = [], context = {}) {
+  const canonical = canonicalScope(weapon, context);
+  if (canonical) return canonical.source === "canonical" && descriptorMatchesAny(canonical.descriptor, groups, scopeOptions(weapon, context));
   const wanted = (Array.isArray(groups) ? groups : [groups]).map(normalizeKey).filter(Boolean);
   if (!wanted.length) return false;
   const haystack = weaponText(weapon);
@@ -107,6 +128,25 @@ export function weaponMatchesGroup(weapon, groups = [], context = {}) {
   });
 }
 
+/** Weapon-scope text tokens (requiresWeaponText / weaponText): canonical -> structured descriptor join; legacy -> Item text search. */
+export function weaponMatchesText(weapon, values = [], context = {}) {
+  const canonical = canonicalScope(weapon, context);
+  if (canonical) return canonical.source === "canonical" && descriptorMatchesAny(canonical.descriptor, values, scopeOptions(weapon, context));
+  return textMatchesAny(weaponText(weapon), values);
+}
+
+/** Damage-type scope (requiresDamageType / excludesDamageType): canonical -> the selected form's structured damage types. */
+export function weaponDamageMatches(weapon, values = [], context = {}) {
+  const canonical = canonicalScope(weapon, context);
+  if (canonical) {
+    if (canonical.source !== "canonical") return false;
+    const have = new Set(canonical.damageTypes);
+    if (canonical.descriptor.tokens.includes("stun")) have.add("stun");
+    return (Array.isArray(values) ? values : [values]).map(normalizeKey).filter(Boolean).some(v => have.has(v));
+  }
+  return textMatchesAny(weaponDamageText(weapon), values);
+}
+
 export function textMatchesAny(haystack, values = []) {
   const wanted = (Array.isArray(values) ? values : [values]).map(normalizeKey).filter(Boolean);
   if (!wanted.length) return false;
@@ -116,6 +156,8 @@ export function textMatchesAny(haystack, values = []) {
 
 export function isAreaAttackContext(weapon, context = {}) {
   if (context.areaAttack === true || context.isAreaAttack === true || context.attackMode === "area") return true;
+  // Phase 5D-H: a canonical weapon's area-ness is its selected form's structured area shape, not a text search
+  { const canonical = canonicalScope(weapon, context); if (canonical) return canonical.source === "canonical" && canonical.descriptor.tokens.includes("area"); }
   const system = weapon?.system ?? {};
   if (system.areaAttack === true || system.isAreaAttack === true || system.burst === true || system.splash === true) return true;
   const text = [weaponText(weapon), system.attackType, system.area, system.damageType, system.damage?.type, system.traits?.join?.(" "), system.properties?.join?.(" ")].map(value => normalizeKey(value)).filter(Boolean).join(" ");

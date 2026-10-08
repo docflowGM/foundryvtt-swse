@@ -195,8 +195,19 @@ export function isMeleeWeapon(weapon) {
   return canonicalIsMeleeWeapon(weapon);
 }
 
+
+// Phase 5D-H: a canonical weapon's kind (group / light / thrown / vehicle) is its selected form's structured descriptor; the text
+// heuristics below remain for weapons without a canonical identity. null = not canonical (caller keeps its legacy text rule).
+function canonicalKind(weapon, tokens, opts = {}) {
+  const shape = shapeOfWeapon(weapon);
+  if (shape.source === 'legacy') return null;
+  if (shape.source !== 'canonical') return false;
+  return descriptorMatchesAny(shape.descriptor, tokens, { wielderSize: 'medium', ...opts });
+}
+
 export function isLightMeleeWeapon(weapon) {
   if (!isMeleeWeapon(weapon)) return false;
+  { const c = canonicalKind(weapon, ['light']); if (c !== null) return c; }
   const system = weapon?.system ?? {};
   if (system.light === true || system.isLight === true || system.properties?.includes?.('light')) return true;
   const text = [
@@ -216,6 +227,7 @@ export function isLightMeleeWeapon(weapon) {
 
 export function isAdvancedMeleeWeapon(weapon) {
   if (!isMeleeWeapon(weapon)) return false;
+  { const c = canonicalKind(weapon, ['advanced-melee']); if (c !== null) return c; }
   const system = weapon?.system ?? {};
   const text = [
     weapon?.name,
@@ -233,6 +245,7 @@ export function isAdvancedMeleeWeapon(weapon) {
 }
 
 export function isPistolWeapon(weapon) {
+  { const c = canonicalKind(weapon, ['pistols']); if (c !== null) return c; }
   const system = weapon?.system ?? {};
   const text = [
     weapon?.name,
@@ -252,6 +265,8 @@ export function isPistolWeapon(weapon) {
 export function isVehicleWeapon(weapon) {
   const system = weapon?.system ?? {};
   if (system.vehicleWeapon === true || system.starshipWeapon === true || system.weaponSystem === true) return true;
+  // Phase 5D-H: beyond the explicit structured Item flags, a canonical weapon is a personal weapon (never inferred from name/text)
+  { const shape = shapeOfWeapon(weapon); if (shape.source === 'canonical') return false; }
   const properties = Array.isArray(system.properties) ? system.properties : [];
   const traits = Array.isArray(system.traits) ? system.traits : [];
   const candidates = [
@@ -292,7 +307,8 @@ function actorHasTalentNamed(actor, names = []) {
   try {
     for (const item of Array.from(actor?.items ?? [])) {
       if (!item || item.type !== 'talent') continue;
-      if (wanted.has(normalizeSelector(item.name))) return true;
+      // Phase 5D-H: canonical ability identity first; display name only for an ability that carries none
+      if (wanted.has(normalizeSelector(canonicalFeatSlug(item) ?? item.name))) return true;
     }
   } catch {
     return false;
@@ -301,6 +317,7 @@ function actorHasTalentNamed(actor, names = []) {
 }
 
 export function isLightsaberWeapon(weapon) {
+  { const c = canonicalKind(weapon, ['lightsabers']); if (c !== null) return c; }
   const system = weapon?.system ?? {};
   const properties = Array.isArray(system.properties) ? system.properties : [];
   const candidates = [
@@ -319,6 +336,7 @@ export function isLightsaberWeapon(weapon) {
 }
 
 export function isThrownMeleeWeapon(weapon) {
+  { const c = canonicalKind(weapon, ['thrown', 'grenade']); if (c !== null) return c; }
   const system = weapon?.system ?? {};
   const text = [system.range, system.rangeType, system.category, system.subcategory, system.properties?.join?.(' '), weapon?.name]
     .map(v => String(v ?? '').toLowerCase())
@@ -328,6 +346,9 @@ export function isThrownMeleeWeapon(weapon) {
 
 import { PROJECTED_ATTACK_ABILITIES, ATTACK_ABILITY_OVERRIDE_FLAG, readAttackAbilityOverride } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-ability-override.js";
 import { canonicalRangePenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
+import { canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
+import { shapeOfWeapon } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
+import { descriptorMatchesAny } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js';
 
 // Attack-ability provenance (Phase 5D-B). Production/canonical weapons carry a PROJECTED system.attackAttribute (generated
 // from the item's branch; the projection vocabulary is only str/dex) that is not player intent. For a canonical weapon with a

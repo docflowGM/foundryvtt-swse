@@ -48,6 +48,7 @@ import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resol
 import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
 import { resolveTalentDamageContributions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-talent-contributions.js";
 import { collectSharedDamageDiceTerms } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-item-dice-contributions.js";
+import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
@@ -61,7 +62,8 @@ function actorHasTalentNamed(actor, names = []) {
   try {
     return Array.from(actor?.items ?? []).some(item => {
       if (item?.type !== 'talent') return false;
-      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+      // Phase 5D-H: canonical ability identity first; display name only for an ability that carries none
+      const key = String(canonicalFeatSlug(item) ?? item.name ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
       return wanted.has(key);
     });
   } catch (_err) {
@@ -77,7 +79,8 @@ function actorHasFeatNamed(actor, names = []) {
   try {
     return Array.from(actor?.items ?? []).some(item => {
       if (item?.type !== 'feat') return false;
-      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+      // Phase 5D-H: canonical ability identity first; display name only for an ability that carries none
+      const key = String(canonicalFeatSlug(item) ?? item.name ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
       return wanted.has(key);
     });
   } catch (_err) {

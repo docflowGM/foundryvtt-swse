@@ -4,6 +4,7 @@
 // NOT replace actorIsProficientForAttack (consumer migration is a later phase).
 // Future integrations (Implant / Spacehound) are explicit inputs: context.proficiencyIntegrations.
 import { WeaponRuntimeError, ERROR_CODES } from './errors.js';
+import { canonicalFeatSlug } from './ability-selector.js';
 
 const norm = (v) => String(v ?? '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '');
 
@@ -49,23 +50,35 @@ export function extractActorEntitlements(actor) {
     asArray(actor?._unlockGrants?.proficiencies?.weapon).forEach(addGroup);
     for (const item of actor?.items ?? []) {
       const name = String(item?.name ?? '');
-      if (item?.type === 'feat' || item?.type === 'talent') abilities.add(norm(name));
+      // Phase 5D-H: a canonical ability is recognised by its identity (feat identityKey / talent registry id) and its stored structured
+      // choice; the display title is parsed ONLY for an ability that carries no canonical identity (legacy / homebrew)
+      const slug = canonicalFeatSlug(item);
+      if (item?.type === 'feat' || item?.type === 'talent') abilities.add(norm(slug ?? name));
       if (item?.type !== 'feat') continue;
-      // Phase 5D-A: a stored canonical weaponIdentity is authoritative and is never converted back to a name; the feat
-      // title (display text) is the legacy fallback only when no canonical identity is stored.
       const storedChoice = item?.flags?.swse?.choices?.weaponProficiency;
+      if (slug !== null) {
+        if (slug === 'exotic-weapon-proficiency') {
+          if (storedChoice?.weaponIdentity) exoticIdentities.add(String(storedChoice.weaponIdentity));
+          else if (storedChoice?.weapon) exotic.add(norm(storedChoice.weapon)); // pre-5C actor data: name-only choice
+        } else if (slug === 'weapon-proficiency' && storedChoice) {
+          addGroup(typeof storedChoice === 'string' ? storedChoice : storedChoice.group);
+          if (storedChoice.weaponIdentity) exoticIdentities.add(String(storedChoice.weaponIdentity));
+          else if (storedChoice.weapon) exotic.add(norm(storedChoice.weapon));
+        } else if (slug === 'advanced-melee-weapon-proficiency') groups.add('advanced-melee');
+        else if (slug === 'lightsaber-proficiency') groups.add('lightsabers');
+        continue;
+      }
+      // legacy / homebrew (no canonical identity): the title and the stored choice, exactly as before
       let m = /^Exotic Weapon Proficiency\s*\((.+)\)\s*$/i.exec(name);
       if (m) { if (!storedChoice?.weaponIdentity) exotic.add(norm(m[1])); }
       if (storedChoice?.weaponIdentity) exoticIdentities.add(String(storedChoice.weaponIdentity));
       if (m) continue;
       m = /^Weapon Proficiency\s*\((.+)\)\s*$/i.exec(name);
       if (m) addGroup(m[1]);
-      // Phase 5C: explicit stored choice on the canonical Weapon Proficiency feat (name fallback above stays for legacy items)
-      const stored = item?.flags?.swse?.choices?.weaponProficiency;
-      if (stored) {
-        addGroup(typeof stored === 'string' ? stored : stored.group);
-        if (stored.weaponIdentity) exoticIdentities.add(String(stored.weaponIdentity));
-        else if (stored.weapon) exotic.add(norm(stored.weapon)); // legacy name-only choice (pre-5C actor data)
+      if (storedChoice) {
+        addGroup(typeof storedChoice === 'string' ? storedChoice : storedChoice.group);
+        if (storedChoice.weaponIdentity) exoticIdentities.add(String(storedChoice.weaponIdentity));
+        else if (storedChoice.weapon) exotic.add(norm(storedChoice.weapon));
       }
       if (norm(name) === 'advancedmeleeweaponproficiency') groups.add('advanced-melee');
       if (norm(name) === 'lightsaberproficiency') groups.add('lightsabers');

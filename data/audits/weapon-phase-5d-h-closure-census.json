@@ -1,0 +1,2992 @@
+{
+  "schemaVersion": 1,
+  "phase": "5D-H",
+  "purpose": "Audit/verification artifact only: executable-field closure of the canonical weapon runtime. Every residual is named with a reason and an owner. Not a gameplay authority.",
+  "counters": {
+    "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
+    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 33,
+    "PARTIAL_EXECUTION_FIELD_FAMILIES": 14,
+    "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 10,
+    "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
+    "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
+    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 15,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 196,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 256,
+    "EXECUTABLE_FORM_MECHANICS_DEFERRED": 42,
+    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 7,
+    "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
+    "EXECUTABLE_CONDITIONS_AUTO": 99,
+    "EXECUTABLE_CONDITIONS_PROMPT": 11,
+    "EXECUTABLE_CONDITIONS_DEFERRED": 0,
+    "EXECUTABLE_CONDITIONS_UNCLASSIFIED": 0,
+    "EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED": 0,
+    "CANONICAL_NAME_TEXT_HEURISTIC_USAGE": 0,
+    "LEGACY_ONLY_NAME_TEXT_HEURISTIC_USAGE": 72,
+    "AREA_FORMS_SOURCE_SILENT": 3,
+    "AREA_FORMS_FIRE_MODE_DERIVED": 1,
+    "AREA_FORMS_MISSING_CANONICAL_DATA": 0
+  },
+  "fieldFamilies": {
+    "counters": {
+      "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
+      "EXECUTION_FIELD_FAMILIES": 57,
+      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 33,
+      "EXECUTION_FIELD_FAMILIES_PARTIAL": 14,
+      "EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER": 10
+    },
+    "familiesWithoutConsumer": [
+      "3b.defensive",
+      "3b.durability",
+      "3b.operation.crew-and-emplacement",
+      "3b.operation.proficiency-routes",
+      "3b.operation.reach-and-threat",
+      "3b.operation.utility-and-movement",
+      "3b.profile.wielding",
+      "3b.qualityParameters",
+      "3b.wielding",
+      "4h.auth.ruleSelectors.riders"
+    ],
+    "familiesPartial": [
+      "3b.operation.ability-compatibility",
+      "3b.operation.ammo-resource-reload",
+      "3b.operation.area-splash-burst",
+      "3b.operation.attack-modifiers-and-penalties",
+      "3b.operation.concealment-stealth-sensing",
+      "3b.operation.condition-and-persistent-effects",
+      "3b.operation.configuration-and-wielding",
+      "3b.operation.damage-modifiers",
+      "3b.operation.defense-and-reaction-interactions",
+      "3b.operation.grab-grapple-restrain",
+      "3b.operation.stun-ion-damage-modes",
+      "3b.profile.conditional",
+      "3b.profile.effects",
+      "3b.triggered"
+    ],
+    "rows": [
+      {
+        "id": "3b.baseDamage",
+        "fieldPaths": 15,
+        "status": "CONSUMED_VIA_DUPLICATE",
+        "consumer": "scripts/items/weapon-runtime/damage-profile-resolver.js",
+        "probe": "damageMultiplier",
+        "note": "canonicalStats.baseDamage mirrors the selected attack profile damage, which the damage-profile resolver consumes (5D-C)"
+      },
+      {
+        "id": "3b.config",
+        "fieldPaths": 32,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
+        "probe": "configurationStates",
+        "note": "configuration selection (5B/5D-B)"
+      },
+      {
+        "id": "3b.damageType",
+        "fieldPaths": 7,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/damage-profile-resolver.js",
+        "probe": "damageType",
+        "note": "5D-C"
+      },
+      {
+        "id": "3b.defensive",
+        "fieldPaths": 18,
+        "status": "DEFERRED",
+        "reason": "defensiveInteractions (7 identities: Block/Deflect Use the Force modifiers carried by the wielded lightsaber) need the reaction roll to read the wielded weapon",
+        "owner": "reaction/defense workflow (Block, Deflect rolls)",
+        "populatedIdentities": 7
+      },
+      {
+        "id": "3b.dr",
+        "fieldPaths": 7,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/damage-profile-resolver.js",
+        "probe": "damageReductionInteraction",
+        "note": "5D-E"
+      },
+      {
+        "id": "3b.durability",
+        "fieldPaths": 53,
+        "status": "DEFERRED",
+        "reason": "objectDurability (3 identities: break DC/DR as an object) and constructionRules (3 identities: crafting) are not attack mechanics",
+        "owner": "item durability / crafting (post-5D-H)",
+        "populatedIdentities": 6
+      },
+      {
+        "id": "3b.family",
+        "fieldPaths": 7,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/proficiency-resolver.js",
+        "probe": "schemaFamily",
+        "note": "5D-A"
+      },
+      {
+        "id": "3b.operatingModes",
+        "fieldPaths": 6,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
+        "probe": "operatingModes",
+        "note": "5B-R/5D-B"
+      },
+      {
+        "id": "3b.operation.ability-compatibility",
+        "fieldPaths": 35,
+        "status": "PARTIAL",
+        "consumedKeys": 3,
+        "nonExecutable": {
+          "DISPLAY": 1,
+          "STORE": 1
+        },
+        "executableUnconsumed": [
+          "darkSideEmpowerment",
+          "lightsaberTalentCompatibility",
+          "redirectionCrystalCompatibility",
+          "surveillanceTaggerCompatibility",
+          "surveillanceTaggerCompatible",
+          "upgradeRestrictions"
+        ],
+        "owner": "grapple / Pin / Trip phase (allowedFeats/disallowedFeats) and ability-compatibility consumers"
+      },
+      {
+        "id": "3b.operation.ammo-resource-reload",
+        "fieldPaths": 46,
+        "status": "PARTIAL",
+        "consumedKeys": 5,
+        "nonExecutable": {
+          "DISPLAY": 1,
+          "STORE": 1
+        },
+        "executableUnconsumed": [
+          "canMountOnRifle",
+          "canSingleLoadShell",
+          "canUseStandalone",
+          "cannotFireThermalDetonators",
+          "capacityGrenades",
+          "hasFoldingStock",
+          "mountMechanicsDC",
+          "mountTimeMinutes",
+          "mountableOnMinimumWeaponSize",
+          "mountedOnRifle",
+          "oneShotCapacity",
+          "powerCordDisconnectRule",
+          "powerLevelSwitchAction",
+          "requiresEnergyCell",
+          "requiresEnergyCells",
+          "requiresGrenadeLauncher",
+          "requiresPowerPack",
+          "requiresPowerPacks",
+          "retractableStockOptional",
+          "rifleMountable",
+          "secondCrewReloadAction",
+          "singleShot",
+          "specialRateOfFire"
+        ],
+        "owner": "resource / reload rules (inventory phase)"
+      },
+      {
+        "id": "3b.operation.area-splash-burst",
+        "fieldPaths": 36,
+        "status": "PARTIAL",
+        "consumedKeys": 3,
+        "nonExecutable": {
+          "STORE": 1
+        },
+        "executableUnconsumed": [
+          "blastEffect",
+          "bracedAutofireAreaSquares",
+          "contactDetonation",
+          "embeddedShrapnel",
+          "remoteDetonationSafetyRule",
+          "timerRounds"
+        ],
+        "owner": "area attack consumers"
+      },
+      {
+        "id": "3b.operation.attack-modifiers-and-penalties",
+        "fieldPaths": 63,
+        "status": "PARTIAL",
+        "consumedKeys": 3,
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "allyAttackBonus",
+          "allyEligibleWeapons",
+          "attackOfOpportunityChoices",
+          "attackTreatedAs",
+          "autofireEquipmentBonus",
+          "canMakeAttackOfOpportunityEvenWithStockExtended",
+          "canMakeAttacksOfOpportunity",
+          "canMakeAttacksOfOpportunityWithoutFoldedStock",
+          "cannotBeThrownEffectively",
+          "cannotBraceWithoutTripodOrMount",
+          "conditionalAttackBonus",
+          "detachedTreatAs",
+          "improvisedWeaponPenaltyReplacement",
+          "lineOfSightOriginHeightSquares",
+          "maximumRangeIncrement",
+          "maximumRangeSquares",
+          "modeEnvironmentRule",
+          "mustAimImmediatelyBeforeAttackToAvoidPenalty",
+          "preferredMode",
+          "rangePenaltyApplication",
+          "rangeStepReductionPreparation",
+          "rangedModeFunctionsAs",
+          "repeatAttackEachRoundToMaintainDesignation",
+          "singleShotAttackPenalty",
+          "sniperPointBlankAttackPenalty",
+          "targetRule",
+          "targetRules",
+          "targeting",
+          "unAimedAttackPenalty",
+          "unbracedAdditionalAttackPenalty",
+          "underwaterUsableProfiles",
+          "unregulatedAttackPenalty"
+        ],
+        "owner": "conditional attack-modifier evaluation (post-5D-H)"
+      },
+      {
+        "id": "3b.operation.concealment-stealth-sensing",
+        "fieldPaths": 36,
+        "status": "PARTIAL",
+        "consumedKeys": 1,
+        "nonExecutable": {
+          "DISPLAY": 1
+        },
+        "executableUnconsumed": [
+          "alwaysDetermineNorth",
+          "audibility",
+          "blindCreaturesImmune",
+          "builtInDigitalCompass",
+          "concealmentContext",
+          "concealmentDesign",
+          "concealmentEquipmentBonus",
+          "concealmentSkill",
+          "concealmentStealthBonus",
+          "concealmentStealthPenalty",
+          "createsSmokeHazard",
+          "durationRounds",
+          "firingDoesNotRevealShooterPosition",
+          "gasConcealmentDuration",
+          "protectedAtmosphereImmune",
+          "providesConcealment",
+          "radiationExposure",
+          "sensorDetection",
+          "shotVisibility",
+          "silentInUse",
+          "snipingSkill",
+          "snipingStealthEquipmentBonus"
+        ],
+        "owner": "stealth / sensing subsystem"
+      },
+      {
+        "id": "3b.operation.condition-and-persistent-effects",
+        "fieldPaths": 31,
+        "status": "PARTIAL",
+        "consumedKeys": 1,
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "ammunitionMayCarryContactPoison",
+          "conditionTrackOnHit",
+          "conditionTrackRider",
+          "conditionTrackWithEvasion",
+          "fortitudeRider",
+          "grievousWound",
+          "ongoingEffect",
+          "persistentUntilCured",
+          "poisonDeliveryRequiresDamage",
+          "secondaryPoisonAttackBaseBonus",
+          "secondaryPoisonDefense",
+          "survivalBasicForestJungleBonusWhenProficientAndCarried",
+          "treatInjuryCureDC",
+          "venomSpit"
+        ],
+        "owner": "persistent effects / poison subsystem"
+      },
+      {
+        "id": "3b.operation.configuration-and-wielding",
+        "fieldPaths": 62,
+        "status": "PARTIAL",
+        "consumedKeys": 5,
+        "nonExecutable": {
+          "DISPLAY": 1,
+          "STORE": 2
+        },
+        "executableUnconsumed": [
+          "assemblyAction",
+          "cannotBeWieldedTwoHanded",
+          "cannotWieldTwoHanded",
+          "collapsedForm",
+          "configurationSwitchAction",
+          "designedForTwoHandedUse",
+          "dialUpAction",
+          "disassembleAction",
+          "disassembledComponentSize",
+          "disassembledComponents",
+          "disassemblyAction",
+          "disintegratesOnKillOrDestruction",
+          "encumbranceException",
+          "expandCollapseAction",
+          "forearmMounted",
+          "fragile",
+          "lacksEnergyLancePlasmaMode",
+          "mayCountAsSmallWhenBeneficial",
+          "mayTreatAsSizeWhenBeneficial",
+          "multipleHeldOneHandCountsAsOneWeapon",
+          "reassembleAction",
+          "requiresTwoHands",
+          "sizeGate",
+          "sizeRule",
+          "switchAction",
+          "switchFormAction",
+          "tripodTreatsAsOneSizeSmallerForWielding",
+          "wornAs",
+          "wornOnWrist"
+        ],
+        "owner": "wielding & configuration state (post-5D-H)"
+      },
+      {
+        "id": "3b.operation.container",
+        "fieldPaths": 1,
+        "status": "CONSUMED",
+        "note": "operation container"
+      },
+      {
+        "id": "3b.operation.crew-and-emplacement",
+        "fieldPaths": 10,
+        "status": "DEFERRED",
+        "consumedKeys": 0,
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "crewRegulation",
+          "normallyRequiresTripod",
+          "operatorRoles",
+          "operatorsRequired",
+          "requiresSecondCrewRegulation",
+          "tripodEffectiveSize"
+        ],
+        "owner": "heavy-weapon crew / emplacement phase"
+      },
+      {
+        "id": "3b.operation.damage-modifiers",
+        "fieldPaths": 13,
+        "status": "PARTIAL",
+        "consumedKeys": 0,
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "adjacentBonusDamage",
+          "damageThresholdAdjustment",
+          "hurledObjectDamageRule",
+          "ignoresDRCondition",
+          "pointBlankDamageEquipmentBonus",
+          "powerAttackExtraDamageAppliesToObjectsAndVehicles",
+          "shieldRatingStillApplies",
+          "strengthModifierAppliesToDamage",
+          "twoHandedDamageChoice",
+          "weaponDR",
+          "weaponDRAppliesAgainstLightsabers",
+          "weaponDRValue"
+        ],
+        "owner": "damage modifier consumers (post-5D-H)"
+      },
+      {
+        "id": "3b.operation.defense-and-reaction-interactions",
+        "fieldPaths": 17,
+        "status": "PARTIAL",
+        "consumedKeys": 4,
+        "nonExecutable": {
+          "DISPLAY": 1
+        },
+        "executableUnconsumed": [
+          "BlockPenalty",
+          "adjacentReflexPenalty",
+          "blockDeflectUseTheForcePenalty",
+          "cannotBeDisarmed",
+          "cannotBeDropped",
+          "disarmDefense",
+          "disarmDefenseEquipmentBonus",
+          "forceImbuedLightsaberBlockEligible",
+          "mayUseBlockAsLightsaber",
+          "rapidStrikeAttackPenaltyWaived",
+          "returnToHand",
+          "standaloneDefenseBonus"
+        ],
+        "owner": "reaction/defense workflow (Block, Deflect rolls)"
+      },
+      {
+        "id": "3b.operation.grab-grapple-restrain",
+        "fieldPaths": 21,
+        "status": "PARTIAL",
+        "consumedKeys": 1,
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "allowedGrappleFeats",
+          "breakStrengthDC",
+          "canInitiateGrabOrGrappleAtRange",
+          "crushAndThrowDisallowed",
+          "escapeAcrobaticsDC",
+          "featTalentBonusesTreatGrabAsGarroteAttack",
+          "hurlGrabbedObjectRangeSquares",
+          "maxTargetSize",
+          "maximumGrabRangeIncrement",
+          "moveGrabbedObjectSquares",
+          "pinAndTripAllowed",
+          "prohibitedGrappleFeats",
+          "rangedGrabOrGrapple",
+          "webbingFunctionsAsNet"
+        ],
+        "owner": "grapple / Pin / Trip phase"
+      },
+      {
+        "id": "3b.operation.prepared-attacks",
+        "fieldPaths": 8,
+        "status": "CONSUMED",
+        "consumedKeys": 1,
+        "nonExecutable": {},
+        "executableUnconsumed": [],
+        "owner": "prepared attack consumer (5D-H)"
+      },
+      {
+        "id": "3b.operation.proficiency-routes",
+        "fieldPaths": 5,
+        "status": "DEFERRED",
+        "consumedKeys": 0,
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "alternateProficiency",
+          "wookieeAdvancedMeleeProficiencyCounts",
+          "wookieeTreatsAsProficientWithWeaponProficiencyRifles"
+        ],
+        "owner": "proficiency resolver"
+      },
+      {
+        "id": "3b.operation.reach-and-threat",
+        "fieldPaths": 6,
+        "status": "DEFERRED",
+        "consumedKeys": 0,
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "extendedReachBonusSquares",
+          "reachBonusSquares",
+          "reachIncreaseSquares",
+          "reachProfileIds",
+          "reachSquares"
+        ],
+        "owner": "threat / reach phase"
+      },
+      {
+        "id": "3b.operation.stun-ion-damage-modes",
+        "fieldPaths": 22,
+        "status": "PARTIAL",
+        "consumedKeys": 2,
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "burnoutDamage",
+          "convertsUnarmedMeleeAttackToStunDamage",
+          "damageTypeAndBurstDeterminedByGrenade",
+          "dealsNoDamage",
+          "ongoingStunWhileTrapped",
+          "overchargeDamage",
+          "simultaneousDamageComponents",
+          "sonicDamageIsEnergy",
+          "stunChoiceTiming",
+          "stunShotsPerAttack",
+          "stunSwitchAction"
+        ],
+        "owner": "stun / ion special modes"
+      },
+      {
+        "id": "3b.operation.utility-and-movement",
+        "fieldPaths": 5,
+        "status": "DEFERRED",
+        "consumedKeys": 0,
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "ascensionMode"
+        ],
+        "owner": "utility actions"
+      },
+      {
+        "id": "3b.payload",
+        "fieldPaths": 59,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
+        "probe": "payloads",
+        "note": "5D-B/5D-C"
+      },
+      {
+        "id": "3b.proficiencyRules",
+        "fieldPaths": 14,
+        "status": "CONSUMED_VIA_DUPLICATE",
+        "consumer": "scripts/items/weapon-runtime/proficiency-resolver.js",
+        "probe": "speciesOverrides",
+        "note": "species/ability proficiency routes are consumed through selectors.speciesOverrides / abilityOverrides (5D-A)"
+      },
+      {
+        "id": "3b.profile.area",
+        "fieldPaths": 10,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/area-shape.js",
+        "probe": "resolveAreaShape",
+        "note": "5D-G/5D-H"
+      },
+      {
+        "id": "3b.profile.attackResolution",
+        "fieldPaths": 7,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/area-shape.js",
+        "probe": "attackResolution",
+        "note": "defense + onMiss"
+      },
+      {
+        "id": "3b.profile.conditional",
+        "fieldPaths": 42,
+        "status": "PARTIAL",
+        "consumer": "scripts/items/weapon-runtime/special-mechanics.js",
+        "probe": "conditionalModifiers",
+        "note": "conditional attack modifiers execute (AUTO/PROMPT); activationRequirements are reconciled but not enforced",
+        "consumed": [
+          "conditionalModifiers"
+        ],
+        "deferred": [
+          "activationRequirements",
+          "conditionalRangeRules"
+        ],
+        "owner": "conditional activation / range conditions (post-5D-H)"
+      },
+      {
+        "id": "3b.profile.damage",
+        "fieldPaths": 16,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/damage-profile-resolver.js",
+        "probe": "damageMultiplier",
+        "note": "5D-C/5D-E"
+      },
+      {
+        "id": "3b.profile.damageComponents",
+        "fieldPaths": 16,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/damage-profile-resolver.js",
+        "probe": "components",
+        "note": "5D-C"
+      },
+      {
+        "id": "3b.profile.effects",
+        "fieldPaths": 117,
+        "status": "PARTIAL",
+        "consumer": "scripts/items/weapon-runtime/special-mechanics.js",
+        "probe": "criticalEffects",
+        "note": "AUTO families execute at Apply Damage; DEFER families are named in the 5D-E census",
+        "consumed": [
+          "criticalEffects",
+          "hit effects (ct-rider, status-condition, damage-rider)"
+        ],
+        "deferred": [
+          "persistent-effect",
+          "return-recovery",
+          "special-action",
+          "activation-effect"
+        ],
+        "owner": "persistent effects / special actions subsystem"
+      },
+      {
+        "id": "3b.profile.firing",
+        "fieldPaths": 14,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/fire-state.js",
+        "probe": "firingConstraints",
+        "note": "5D-G temporal families"
+      },
+      {
+        "id": "3b.profile.prepared",
+        "fieldPaths": 20,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/fire-state.js",
+        "probe": "preparedAttack",
+        "note": "5D-G required + 5D-H optional prepared attack"
+      },
+      {
+        "id": "3b.profile.qualities",
+        "fieldPaths": 9,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/weapon-descriptor.js",
+        "probe": "qualities",
+        "note": "descriptor tokens + attack-shape"
+      },
+      {
+        "id": "3b.profile.qualities.inaccurate",
+        "fieldPaths": 1,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/canonical-range.js",
+        "probe": "qualityEffects",
+        "note": "5D-D range quality effects"
+      },
+      {
+        "id": "3b.profile.range",
+        "fieldPaths": 35,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/canonical-range.js",
+        "probe": "allowedBands",
+        "note": "5D-D"
+      },
+      {
+        "id": "3b.profile.resourceConsumption",
+        "fieldPaths": 9,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/canonical-resource.js",
+        "probe": "resourceConsumption",
+        "note": "5D-D"
+      },
+      {
+        "id": "3b.profile.rof",
+        "fieldPaths": 2,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/attack-shape.js",
+        "probe": "rateOfFire",
+        "note": "5D-F"
+      },
+      {
+        "id": "3b.profile.schemaFamily",
+        "fieldPaths": 6,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/attack-shape.js",
+        "probe": "schemaFamily",
+        "note": "5D-A/5D-F"
+      },
+      {
+        "id": "3b.profile.stun",
+        "fieldPaths": 32,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/attack-consumer.js",
+        "probe": "stun",
+        "note": "5D-C/5D-E"
+      },
+      {
+        "id": "3b.profile.wielding",
+        "fieldPaths": 1,
+        "status": "DEFERRED",
+        "reason": "profile-level wielding fact (1 path); the wielding state model is not part of the attack path",
+        "owner": "wielding / two-hand state (post-5D-H)",
+        "populatedIdentities": 1
+      },
+      {
+        "id": "3b.qualities",
+        "fieldPaths": 10,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/weapon-descriptor.js",
+        "probe": "qualities",
+        "note": "descriptor tokens"
+      },
+      {
+        "id": "3b.qualityParameters",
+        "fieldPaths": 63,
+        "status": "DEFERRED",
+        "reason": "qualityParameters are passed through the resolver; reach/thrown/etc. parameter values have no dedicated consumer beyond canonical-range qualityEffects",
+        "owner": "quality parameter consumers (post-5D-H)",
+        "populatedIdentities": null
+      },
+      {
+        "id": "3b.range",
+        "fieldPaths": 35,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/canonical-range.js",
+        "probe": "resolveCanonicalRange",
+        "note": "5D-D"
+      },
+      {
+        "id": "3b.rateOfFire",
+        "fieldPaths": 2,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/attack-shape.js",
+        "probe": "rateOfFire",
+        "note": "5D-F"
+      },
+      {
+        "id": "3b.resource",
+        "fieldPaths": 96,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/resource-resolver.js",
+        "probe": "resourceProfiles",
+        "note": "resource pools / capacity (5D-D)"
+      },
+      {
+        "id": "3b.size",
+        "fieldPaths": 16,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/weapon-descriptor.js",
+        "probe": "sizeIndex",
+        "note": "light-weapon join (5D-H)"
+      },
+      {
+        "id": "3b.stats.container",
+        "fieldPaths": 1,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
+        "probe": "canonicalStats",
+        "note": "resolver exposes the container to every consumer"
+      },
+      {
+        "id": "3b.stun",
+        "fieldPaths": 32,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/attack-consumer.js",
+        "probe": "effectiveDamageMode",
+        "note": "5D-E"
+      },
+      {
+        "id": "3b.triggered",
+        "fieldPaths": 103,
+        "status": "PARTIAL",
+        "consumer": "scripts/items/weapon-runtime/special-mechanics.js",
+        "probe": "triggeredEffects",
+        "note": "17 identities; AUTO riders execute, DEFER families are named in the 5D-E census",
+        "consumed": [
+          "triggeredEffects (AUTO families)"
+        ],
+        "deferred": [
+          "persistent / return-recovery triggered effects"
+        ],
+        "owner": "persistent effects / special actions subsystem"
+      },
+      {
+        "id": "3b.wielding",
+        "fieldPaths": 25,
+        "status": "DEFERRED",
+        "reason": "wieldingRules (15 identities, e.g. requires-two-hands when mounted) need a wielding state model; the mounted-on-rifle condition is evaluated for double-weapon availability only",
+        "owner": "wielding / two-hand state (post-5D-H)",
+        "populatedIdentities": 15
+      },
+      {
+        "id": "4h.auth.ruleSelectors.riders",
+        "fieldPaths": 127,
+        "status": "DEFERRED",
+        "reason": "authorities[].ruleSelectors.abilityRestrictions are the 4H planner copy of the weapon-ability relation corpus; execution reads the relations (ability-relations.js), not this copy",
+        "owner": "recommendation / ability-applicability planner",
+        "populatedIdentities": null
+      },
+      {
+        "id": "4h.proficiency",
+        "fieldPaths": 46,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/proficiency-resolver.js",
+        "probe": "proficiency",
+        "note": "5D-A"
+      },
+      {
+        "id": "4h.selectors.attr",
+        "fieldPaths": 5,
+        "status": "CONSUMED_VIA_DUPLICATE",
+        "consumer": "scripts/items/weapon-runtime/special-mechanics.js",
+        "probe": "conditionalModifiers",
+        "note": "attributeRequirements (1 identity, Arg'garok) duplicates the profile conditionalModifier \"wielder Strength below 15\", which executes as a conditional attack modifier"
+      },
+      {
+        "id": "4h.selectors.exec",
+        "fieldPaths": 19,
+        "status": "CONSUMED",
+        "consumer": "scripts/items/weapon-runtime/weapon-descriptor.js",
+        "probe": "selectors",
+        "note": "descriptor + proficiency abilityOverrides"
+      }
+    ],
+    "problems": []
+  },
+  "operationKeys": {
+    "families": {
+      "ability-compatibility": {
+        "keys": 17,
+        "identities": 15,
+        "consumed": [
+          "eligibleAsSecondWeaponForTwoWeaponFighting",
+          "prohibitsMultiShotAbilities",
+          "weaponFinesseCountsAsLight"
+        ],
+        "duplicates": {
+          "allowedFeats": "PROHIBITED relation (multi-shot) ; grapple feats are the grapple phase",
+          "cannotUseAbilitiesConsumingMoreThanOneShotPerRound": "firingConstraints.prohibitsMultiShotAbilities + PROHIBITED relation",
+          "disallowedFeats": "PROHIBITED relation (multi-shot) ; grapple feats are the grapple phase",
+          "multiShotAbilitiesProhibited": "firingConstraints.prohibitsMultiShotAbilities + PROHIBITED relation",
+          "rapidShotAllowed": "firingConstraints.prohibitsMultiShotAbilities + PROHIBITED relation",
+          "rapidShotReset": "operation.rapidShotReset.requiredActionBeforeNextShot (read directly)"
+        },
+        "nonExecutable": {
+          "STORE": [
+            "ordinaryCommercialAvailability"
+          ],
+          "DISPLAY": [
+            "sourceInternalNote"
+          ]
+        },
+        "executableUnconsumed": [
+          "darkSideEmpowerment",
+          "lightsaberTalentCompatibility",
+          "redirectionCrystalCompatibility",
+          "surveillanceTaggerCompatibility",
+          "surveillanceTaggerCompatible",
+          "upgradeRestrictions"
+        ],
+        "owner": "grapple / Pin / Trip phase (allowedFeats/disallowedFeats) and ability-compatibility consumers",
+        "executableUnconsumedOccurrences": 6,
+        "representativeIdentities": [
+          "weapon-darter",
+          "weapon-sith-sword",
+          "weapon-sniper-blaster-rifle",
+          "weapon-xerrol-nightstinger"
+        ],
+        "note": {
+          "reason": "grapple-feat allow/deny lists, crystal/tagger compatibility and upgrade restrictions need the grapple and upgrade subsystems",
+          "phase": "5D-I: remaining ability relations / grapple-Pin-Trip"
+        },
+        "status": "PARTIAL"
+      },
+      "ammo-resource-reload": {
+        "keys": 33,
+        "identities": 37,
+        "consumed": [
+          "autofireOnly",
+          "bayonetMount",
+          "firingConstraints",
+          "maxShotsPerRound",
+          "reloadAction"
+        ],
+        "duplicates": {
+          "autofireAllowed": "attackProfiles[].rateOfFire",
+          "mustReloadAfterEachShot": "attackProfiles[].firingConstraints.reloadRequiredAfterEachShot",
+          "mustReloadAfterEveryShot": "attackProfiles[].firingConstraints.reloadRequiredAfterEachShot"
+        },
+        "nonExecutable": {
+          "STORE": [
+            "externalPowerPackCostCredits"
+          ],
+          "DISPLAY": [
+            "shellsStatisticallyIdenticalToGrenades"
+          ]
+        },
+        "executableUnconsumed": [
+          "canMountOnRifle",
+          "canSingleLoadShell",
+          "canUseStandalone",
+          "cannotFireThermalDetonators",
+          "capacityGrenades",
+          "hasFoldingStock",
+          "mountMechanicsDC",
+          "mountTimeMinutes",
+          "mountableOnMinimumWeaponSize",
+          "mountedOnRifle",
+          "oneShotCapacity",
+          "powerCordDisconnectRule",
+          "powerLevelSwitchAction",
+          "requiresEnergyCell",
+          "requiresEnergyCells",
+          "requiresGrenadeLauncher",
+          "requiresPowerPack",
+          "requiresPowerPacks",
+          "retractableStockOptional",
+          "rifleMountable",
+          "secondCrewReloadAction",
+          "singleShot",
+          "specialRateOfFire"
+        ],
+        "owner": "resource / reload rules (inventory phase)",
+        "executableUnconsumedOccurrences": 34,
+        "representativeIdentities": [
+          "lightsaber-chassis-archaic-lightfoil",
+          "lightsaber-chassis-archaic-lightsaber",
+          "lightsaber-chassis-guard-shoto",
+          "lightsaber-chassis-longhandle"
+        ],
+        "note": {
+          "reason": "mounting, power-source requirements, single-load and reload special cases need inventory/reload rules beyond per-shot resource spending",
+          "phase": "5D-I: special reload / recovery + host-weapon augmentation"
+        },
+        "status": "PARTIAL"
+      },
+      "area-splash-burst": {
+        "keys": 16,
+        "identities": 19,
+        "consumed": [
+          "area",
+          "areaAttack",
+          "detonation"
+        ],
+        "duplicates": {
+          "burstRadiusSquares": "attackProfiles[].area",
+          "coneLengthSquares": "attackProfiles[].area",
+          "defaultAutofireAreaSquares": "generic autofire 2x2 area (Core: Area Attacks / Autofire)",
+          "nonadjacentSplashRadiusSquares": "attackProfiles[].area",
+          "splashRadiusSquares": "attackProfiles[].area",
+          "splashSquares": "attackProfiles[].area"
+        },
+        "nonExecutable": {
+          "STORE": [
+            "remoteDetonatorCostCredits"
+          ]
+        },
+        "executableUnconsumed": [
+          "blastEffect",
+          "bracedAutofireAreaSquares",
+          "contactDetonation",
+          "embeddedShrapnel",
+          "remoteDetonationSafetyRule",
+          "timerRounds"
+        ],
+        "owner": "area attack consumers",
+        "executableUnconsumedOccurrences": 6,
+        "representativeIdentities": [
+          "weapon-adhesive-grenade",
+          "weapon-flash-canister",
+          "weapon-remote-grenade",
+          "weapon-ripper"
+        ],
+        "note": {
+          "reason": "detonation timing, blast effects, braced autofire area expansion and shrapnel are effects layered on the (already consumed) area geometry",
+          "phase": "5D-I: targeting / area effects"
+        },
+        "status": "PARTIAL"
+      },
+      "attack-modifiers-and-penalties": {
+        "keys": 44,
+        "identities": 38,
+        "consumed": [
+          "attackPenalty",
+          "postShotResetAction",
+          "rangeTreatedAs"
+        ],
+        "duplicates": {
+          "additionalAttackPenalty": "EXTRA_ATTACK_PENALTY relation / multi-attack conditionalModifiers",
+          "additionalAttackPenaltyWith": "EXTRA_ATTACK_PENALTY relation / multi-attack conditionalModifiers",
+          "attackPenaltyBelowMinimumStrength": "attackProfiles[].conditionalModifiers (\"wielder Strength below N\")",
+          "braceRequiresExtendedStock": "firingConstraints.braceRule",
+          "longHaftFormDoubleWeapon": "configurationStates / modeProfiles / conditionalQualities",
+          "minimumStrengthWithoutPenalty": "attackProfiles[].conditionalModifiers (\"wielder Strength below N\")",
+          "primeAction": "attackProfiles[].preparedAttack",
+          "primeTiming": "attackProfiles[].preparedAttack",
+          "targetSizeAttackPenalty": "attackProfiles[].conditionalModifiers (targetSize)"
+        },
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "allyAttackBonus",
+          "allyEligibleWeapons",
+          "attackOfOpportunityChoices",
+          "attackTreatedAs",
+          "autofireEquipmentBonus",
+          "canMakeAttackOfOpportunityEvenWithStockExtended",
+          "canMakeAttacksOfOpportunity",
+          "canMakeAttacksOfOpportunityWithoutFoldedStock",
+          "cannotBeThrownEffectively",
+          "cannotBraceWithoutTripodOrMount",
+          "conditionalAttackBonus",
+          "detachedTreatAs",
+          "improvisedWeaponPenaltyReplacement",
+          "lineOfSightOriginHeightSquares",
+          "maximumRangeIncrement",
+          "maximumRangeSquares",
+          "modeEnvironmentRule",
+          "mustAimImmediatelyBeforeAttackToAvoidPenalty",
+          "preferredMode",
+          "rangePenaltyApplication",
+          "rangeStepReductionPreparation",
+          "rangedModeFunctionsAs",
+          "repeatAttackEachRoundToMaintainDesignation",
+          "singleShotAttackPenalty",
+          "sniperPointBlankAttackPenalty",
+          "targetRule",
+          "targetRules",
+          "targeting",
+          "unAimedAttackPenalty",
+          "unbracedAdditionalAttackPenalty",
+          "underwaterUsableProfiles",
+          "unregulatedAttackPenalty"
+        ],
+        "owner": "conditional attack-modifier evaluation (post-5D-H)",
+        "executableUnconsumedOccurrences": 35,
+        "representativeIdentities": [
+          "lightsaber-chassis-dueling",
+          "unmapped::Bayonet",
+          "unmapped::Energy Lance",
+          "unmapped::Entrenching Tool"
+        ],
+        "note": {
+          "reason": "conditional modifiers, aim/target rules, attacks of opportunity and range tweaks need a general conditional attack-modifier evaluator",
+          "phase": "5D-I: targeting / attack resolution"
+        },
+        "status": "PARTIAL"
+      },
+      "concealment-stealth-sensing": {
+        "keys": 24,
+        "identities": 19,
+        "consumed": [
+          "concealment"
+        ],
+        "duplicates": {},
+        "nonExecutable": {
+          "DISPLAY": [
+            "laterVersionConcealment"
+          ]
+        },
+        "executableUnconsumed": [
+          "alwaysDetermineNorth",
+          "audibility",
+          "blindCreaturesImmune",
+          "builtInDigitalCompass",
+          "concealmentContext",
+          "concealmentDesign",
+          "concealmentEquipmentBonus",
+          "concealmentSkill",
+          "concealmentStealthBonus",
+          "concealmentStealthPenalty",
+          "createsSmokeHazard",
+          "durationRounds",
+          "firingDoesNotRevealShooterPosition",
+          "gasConcealmentDuration",
+          "protectedAtmosphereImmune",
+          "providesConcealment",
+          "radiationExposure",
+          "sensorDetection",
+          "shotVisibility",
+          "silentInUse",
+          "snipingSkill",
+          "snipingStealthEquipmentBonus"
+        ],
+        "owner": "stealth / sensing subsystem",
+        "executableUnconsumedOccurrences": 25,
+        "representativeIdentities": [
+          "unmapped::Contact Stunner",
+          "unmapped::Survival Knife",
+          "unmapped::Vibrorapier",
+          "weapon-adjudicator-slugthrower"
+        ],
+        "note": {
+          "reason": "weapon-driven concealment, silence and sensing belong to the stealth/sensing subsystem",
+          "phase": "5D-I: concealment / silent operation"
+        },
+        "status": "PARTIAL"
+      },
+      "condition-and-persistent-effects": {
+        "keys": 15,
+        "identities": 12,
+        "consumed": [
+          "returnOnAttackExceedsReflexBy"
+        ],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "ammunitionMayCarryContactPoison",
+          "conditionTrackOnHit",
+          "conditionTrackRider",
+          "conditionTrackWithEvasion",
+          "fortitudeRider",
+          "grievousWound",
+          "ongoingEffect",
+          "persistentUntilCured",
+          "poisonDeliveryRequiresDamage",
+          "secondaryPoisonAttackBaseBonus",
+          "secondaryPoisonDefense",
+          "survivalBasicForestJungleBonusWhenProficientAndCarried",
+          "treatInjuryCureDC",
+          "venomSpit"
+        ],
+        "owner": "persistent effects / poison subsystem",
+        "executableUnconsumedOccurrences": 15,
+        "representativeIdentities": [
+          "unmapped::Amphistaff",
+          "unmapped::Fira",
+          "unmapped::Garrote",
+          "weapon-aurial-blaster"
+        ],
+        "note": {
+          "reason": "poison delivery, persistent effects and venom need the persistent/status delivery subsystem",
+          "phase": "5D-I: persistent / status delivery"
+        },
+        "status": "PARTIAL"
+      },
+      "configuration-and-wielding": {
+        "keys": 40,
+        "identities": 39,
+        "consumed": [
+          "configurationResolution",
+          "doubleWeapon",
+          "handsRemainFree",
+          "hostWeaponAugmentation",
+          "wornNotHeld"
+        ],
+        "duplicates": {
+          "configurations": "configurationStates / modeProfiles / conditionalQualities",
+          "doubleWeaponFullRoundAttack": "configurationStates / modeProfiles / conditionalQualities",
+          "doubleWeaponFullRoundAttackPenaltyPerEnd": "configurationStates / modeProfiles / conditionalQualities"
+        },
+        "nonExecutable": {
+          "STORE": [
+            "costWithoutRetractableStockCredits",
+            "retractableStockCostCredits"
+          ],
+          "DISPLAY": [
+            "twoHandedStrengthRuleExplicitlyHighlighted"
+          ]
+        },
+        "executableUnconsumed": [
+          "assemblyAction",
+          "cannotBeWieldedTwoHanded",
+          "cannotWieldTwoHanded",
+          "collapsedForm",
+          "configurationSwitchAction",
+          "designedForTwoHandedUse",
+          "dialUpAction",
+          "disassembleAction",
+          "disassembledComponentSize",
+          "disassembledComponents",
+          "disassemblyAction",
+          "disintegratesOnKillOrDestruction",
+          "encumbranceException",
+          "expandCollapseAction",
+          "forearmMounted",
+          "fragile",
+          "lacksEnergyLancePlasmaMode",
+          "mayCountAsSmallWhenBeneficial",
+          "mayTreatAsSizeWhenBeneficial",
+          "multipleHeldOneHandCountsAsOneWeapon",
+          "reassembleAction",
+          "requiresTwoHands",
+          "sizeGate",
+          "sizeRule",
+          "switchAction",
+          "switchFormAction",
+          "tripodTreatsAsOneSizeSmallerForWielding",
+          "wornAs",
+          "wornOnWrist"
+        ],
+        "owner": "wielding & configuration state (post-5D-H)",
+        "executableUnconsumedOccurrences": 38,
+        "representativeIdentities": [
+          "lightsaber-chassis-archaic-lightfoil",
+          "lightsaber-chassis-dual-phase",
+          "lightsaber-chassis-great",
+          "lightsaber-chassis-modern-lightfoil"
+        ],
+        "note": {
+          "reason": "assembly/switch actions, two-hand rules and size gates need a wielding and configuration state model",
+          "phase": "5D-I: wielding constraints"
+        },
+        "status": "PARTIAL"
+      },
+      "crew-and-emplacement": {
+        "keys": 6,
+        "identities": 3,
+        "consumed": [],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "crewRegulation",
+          "normallyRequiresTripod",
+          "operatorRoles",
+          "operatorsRequired",
+          "requiresSecondCrewRegulation",
+          "tripodEffectiveSize"
+        ],
+        "owner": "heavy-weapon crew / emplacement phase",
+        "executableUnconsumedOccurrences": 6,
+        "representativeIdentities": [
+          "weapon-battering-ram",
+          "weapon-e-web-repeating-blaster",
+          "weapon-tactical-tractor-beam"
+        ],
+        "note": {
+          "reason": "crew roles/tripod rules belong to the heavy-weapon crew model",
+          "phase": "5D-I: crew / emplacement"
+        },
+        "status": "DEFERRED"
+      },
+      "damage-modifiers": {
+        "keys": 13,
+        "identities": 22,
+        "consumed": [],
+        "duplicates": {
+          "cannotBeNegatedByDeflect": "CANNOT_NEGATE_ATTACK relation"
+        },
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "adjacentBonusDamage",
+          "damageThresholdAdjustment",
+          "hurledObjectDamageRule",
+          "ignoresDRCondition",
+          "pointBlankDamageEquipmentBonus",
+          "powerAttackExtraDamageAppliesToObjectsAndVehicles",
+          "shieldRatingStillApplies",
+          "strengthModifierAppliesToDamage",
+          "twoHandedDamageChoice",
+          "weaponDR",
+          "weaponDRAppliesAgainstLightsabers",
+          "weaponDRValue"
+        ],
+        "owner": "damage modifier consumers (post-5D-H)",
+        "executableUnconsumedOccurrences": 20,
+        "representativeIdentities": [
+          "lightsaber-chassis-longhandle",
+          "lightsaber-chassis-short",
+          "unmapped::Fire Blade",
+          "unmapped::Power Hammer"
+        ],
+        "note": {
+          "reason": "object/vehicle damage rules, DR for the weapon as an object and damage-threshold tweaks need dedicated damage modifier consumers",
+          "phase": "5D-I: remaining damage modifiers"
+        },
+        "status": "PARTIAL"
+      },
+      "defense-and-reaction-interactions": {
+        "keys": 17,
+        "identities": 16,
+        "consumed": [
+          "BlockCumulativePenalty",
+          "DeflectPenalty",
+          "blockDeflectUseTheForceEquipmentBonus",
+          "evasion"
+        ],
+        "duplicates": {},
+        "nonExecutable": {
+          "DISPLAY": [
+            "flavorMentionsDeflectingMeleeAttacks"
+          ]
+        },
+        "executableUnconsumed": [
+          "BlockPenalty",
+          "adjacentReflexPenalty",
+          "blockDeflectUseTheForcePenalty",
+          "cannotBeDisarmed",
+          "cannotBeDropped",
+          "disarmDefense",
+          "disarmDefenseEquipmentBonus",
+          "forceImbuedLightsaberBlockEligible",
+          "mayUseBlockAsLightsaber",
+          "rapidStrikeAttackPenaltyWaived",
+          "returnToHand",
+          "standaloneDefenseBonus"
+        ],
+        "owner": "reaction/defense workflow (Block, Deflect rolls)",
+        "executableUnconsumedOccurrences": 19,
+        "representativeIdentities": [
+          "lightsaber-chassis-dual-phase",
+          "lightsaber-chassis-pike",
+          "unmapped::Combat Gloves",
+          "unmapped::Felucian Skullblade"
+        ],
+        "note": {
+          "reason": "Block/Deflect Use the Force modifiers and disarm defenses need the reaction roll to read the wielded weapon",
+          "phase": "5D-I: reaction / defense workflow"
+        },
+        "status": "PARTIAL"
+      },
+      "economics-and-variants": {
+        "keys": 6,
+        "identities": 5,
+        "consumed": [
+          "gearTemplate"
+        ],
+        "duplicates": {},
+        "nonExecutable": {
+          "STORE": [
+            "commonAccessoriesNotIncludedInListedCost",
+            "constructionDC",
+            "namedCharacterVariant",
+            "optionalCommercialVariants",
+            "variantPricing"
+          ]
+        },
+        "executableUnconsumed": [],
+        "owner": "store (not an attack field)",
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
+        "note": null,
+        "status": "CONSUMED"
+      },
+      "grab-grapple-restrain": {
+        "keys": 15,
+        "identities": 8,
+        "consumed": [
+          "pinTripSubstitution"
+        ],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "allowedGrappleFeats",
+          "breakStrengthDC",
+          "canInitiateGrabOrGrappleAtRange",
+          "crushAndThrowDisallowed",
+          "escapeAcrobaticsDC",
+          "featTalentBonusesTreatGrabAsGarroteAttack",
+          "hurlGrabbedObjectRangeSquares",
+          "maxTargetSize",
+          "maximumGrabRangeIncrement",
+          "moveGrabbedObjectSquares",
+          "pinAndTripAllowed",
+          "prohibitedGrappleFeats",
+          "rangedGrabOrGrapple",
+          "webbingFunctionsAsNet"
+        ],
+        "owner": "grapple / Pin / Trip phase",
+        "executableUnconsumedOccurrences": 22,
+        "representativeIdentities": [
+          "lightsaber-chassis-lightwhip",
+          "unmapped::Amphistaff",
+          "unmapped::Garrote",
+          "weapon-net"
+        ],
+        "note": {
+          "reason": "grab/grapple/net rules belong to the grapple subsystem",
+          "phase": "5D-I: grapple / snare / net"
+        },
+        "status": "PARTIAL"
+      },
+      "prepared-attacks": {
+        "keys": 1,
+        "identities": 2,
+        "consumed": [
+          "preparedAttack"
+        ],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [],
+        "owner": "prepared attack consumer (5D-H)",
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
+        "note": null,
+        "status": "CONSUMED"
+      },
+      "proficiency-routes": {
+        "keys": 3,
+        "identities": 4,
+        "consumed": [],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "alternateProficiency",
+          "wookieeAdvancedMeleeProficiencyCounts",
+          "wookieeTreatsAsProficientWithWeaponProficiencyRifles"
+        ],
+        "owner": "proficiency resolver",
+        "executableUnconsumedOccurrences": 4,
+        "representativeIdentities": [
+          "unmapped::Arggarok",
+          "weapon-bowcaster",
+          "weapon-massassi-lanvarok",
+          "weapon-wookiee-ryyk-blade"
+        ],
+        "note": {
+          "reason": "species/ability proficiency routes are consumed through selectors.speciesOverrides/abilityOverrides; these operation echoes have no separate consumer",
+          "phase": "5D-I: confirm duplicates, retire echoes"
+        },
+        "status": "DEFERRED"
+      },
+      "reach-and-threat": {
+        "keys": 5,
+        "identities": 7,
+        "consumed": [],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "extendedReachBonusSquares",
+          "reachBonusSquares",
+          "reachIncreaseSquares",
+          "reachProfileIds",
+          "reachSquares"
+        ],
+        "owner": "threat / reach phase",
+        "executableUnconsumedOccurrences": 9,
+        "representativeIdentities": [
+          "lightsaber-chassis-dual-phase",
+          "lightsaber-chassis-lightwhip",
+          "lightsaber-chassis-pike",
+          "unmapped::Amphistaff"
+        ],
+        "note": {
+          "reason": "reach and threatened squares need a threat/reach model",
+          "phase": "5D-I: special movement / reach"
+        },
+        "status": "DEFERRED"
+      },
+      "stun-ion-damage-modes": {
+        "keys": 18,
+        "identities": 24,
+        "consumed": [
+          "overwhelmingStunRule",
+          "stunOnly"
+        ],
+        "duplicates": {
+          "alwaysStun": "attackProfiles[].stun.capability = native-stun",
+          "ionDamage": "attackProfiles[].damageType (ion)",
+          "ionDamageRulesApply": "attackProfiles[].damageType (ion)",
+          "nativeStunDamage": "attackProfiles[].stun.capability = native-stun",
+          "nativeStunOnly": "attackProfiles[].stun.capability = native-stun"
+        },
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "burnoutDamage",
+          "convertsUnarmedMeleeAttackToStunDamage",
+          "damageTypeAndBurstDeterminedByGrenade",
+          "dealsNoDamage",
+          "ongoingStunWhileTrapped",
+          "overchargeDamage",
+          "simultaneousDamageComponents",
+          "sonicDamageIsEnergy",
+          "stunChoiceTiming",
+          "stunShotsPerAttack",
+          "stunSwitchAction"
+        ],
+        "owner": "stun / ion special modes",
+        "executableUnconsumedOccurrences": 15,
+        "representativeIdentities": [
+          "lightsaber-chassis-retrosaber",
+          "unmapped::Neuronic Whip",
+          "unmapped::San-Ni Staff",
+          "unmapped::Shockboxing Gloves"
+        ],
+        "note": {
+          "reason": "remaining stun/ion special modes (overcharge, burnout, simultaneous components) need special-damage consumers",
+          "phase": "5D-I: special damage modes"
+        },
+        "status": "PARTIAL"
+      },
+      "utility-and-movement": {
+        "keys": 1,
+        "identities": 2,
+        "consumed": [],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [
+          "ascensionMode"
+        ],
+        "owner": "utility actions",
+        "executableUnconsumedOccurrences": 2,
+        "representativeIdentities": [
+          "weapon-ascension-gun",
+          "weapon-heavy-variable-blaster"
+        ],
+        "note": {
+          "reason": "utility actions (ascension) belong to special movement",
+          "phase": "5D-I: special movement / reach"
+        },
+        "status": "DEFERRED"
+      }
+    },
+    "executableKeysUnconsumed": [
+      "ability-compatibility.darkSideEmpowerment",
+      "ability-compatibility.lightsaberTalentCompatibility",
+      "ability-compatibility.redirectionCrystalCompatibility",
+      "ability-compatibility.surveillanceTaggerCompatibility",
+      "ability-compatibility.surveillanceTaggerCompatible",
+      "ability-compatibility.upgradeRestrictions",
+      "ammo-resource-reload.canMountOnRifle",
+      "ammo-resource-reload.canSingleLoadShell",
+      "ammo-resource-reload.canUseStandalone",
+      "ammo-resource-reload.cannotFireThermalDetonators",
+      "ammo-resource-reload.capacityGrenades",
+      "ammo-resource-reload.hasFoldingStock",
+      "ammo-resource-reload.mountMechanicsDC",
+      "ammo-resource-reload.mountTimeMinutes",
+      "ammo-resource-reload.mountableOnMinimumWeaponSize",
+      "ammo-resource-reload.mountedOnRifle",
+      "ammo-resource-reload.oneShotCapacity",
+      "ammo-resource-reload.powerCordDisconnectRule",
+      "ammo-resource-reload.powerLevelSwitchAction",
+      "ammo-resource-reload.requiresEnergyCell",
+      "ammo-resource-reload.requiresEnergyCells",
+      "ammo-resource-reload.requiresGrenadeLauncher",
+      "ammo-resource-reload.requiresPowerPack",
+      "ammo-resource-reload.requiresPowerPacks",
+      "ammo-resource-reload.retractableStockOptional",
+      "ammo-resource-reload.rifleMountable",
+      "ammo-resource-reload.secondCrewReloadAction",
+      "ammo-resource-reload.singleShot",
+      "ammo-resource-reload.specialRateOfFire",
+      "area-splash-burst.blastEffect",
+      "area-splash-burst.bracedAutofireAreaSquares",
+      "area-splash-burst.contactDetonation",
+      "area-splash-burst.embeddedShrapnel",
+      "area-splash-burst.remoteDetonationSafetyRule",
+      "area-splash-burst.timerRounds",
+      "attack-modifiers-and-penalties.allyAttackBonus",
+      "attack-modifiers-and-penalties.allyEligibleWeapons",
+      "attack-modifiers-and-penalties.attackOfOpportunityChoices",
+      "attack-modifiers-and-penalties.attackTreatedAs",
+      "attack-modifiers-and-penalties.autofireEquipmentBonus",
+      "attack-modifiers-and-penalties.canMakeAttackOfOpportunityEvenWithStockExtended",
+      "attack-modifiers-and-penalties.canMakeAttacksOfOpportunity",
+      "attack-modifiers-and-penalties.canMakeAttacksOfOpportunityWithoutFoldedStock",
+      "attack-modifiers-and-penalties.cannotBeThrownEffectively",
+      "attack-modifiers-and-penalties.cannotBraceWithoutTripodOrMount",
+      "attack-modifiers-and-penalties.conditionalAttackBonus",
+      "attack-modifiers-and-penalties.detachedTreatAs",
+      "attack-modifiers-and-penalties.improvisedWeaponPenaltyReplacement",
+      "attack-modifiers-and-penalties.lineOfSightOriginHeightSquares",
+      "attack-modifiers-and-penalties.maximumRangeIncrement",
+      "attack-modifiers-and-penalties.maximumRangeSquares",
+      "attack-modifiers-and-penalties.modeEnvironmentRule",
+      "attack-modifiers-and-penalties.mustAimImmediatelyBeforeAttackToAvoidPenalty",
+      "attack-modifiers-and-penalties.preferredMode",
+      "attack-modifiers-and-penalties.rangePenaltyApplication",
+      "attack-modifiers-and-penalties.rangeStepReductionPreparation",
+      "attack-modifiers-and-penalties.rangedModeFunctionsAs",
+      "attack-modifiers-and-penalties.repeatAttackEachRoundToMaintainDesignation",
+      "attack-modifiers-and-penalties.singleShotAttackPenalty",
+      "attack-modifiers-and-penalties.sniperPointBlankAttackPenalty",
+      "attack-modifiers-and-penalties.targetRule",
+      "attack-modifiers-and-penalties.targetRules",
+      "attack-modifiers-and-penalties.targeting",
+      "attack-modifiers-and-penalties.unAimedAttackPenalty",
+      "attack-modifiers-and-penalties.unbracedAdditionalAttackPenalty",
+      "attack-modifiers-and-penalties.underwaterUsableProfiles",
+      "attack-modifiers-and-penalties.unregulatedAttackPenalty",
+      "concealment-stealth-sensing.alwaysDetermineNorth",
+      "concealment-stealth-sensing.audibility",
+      "concealment-stealth-sensing.blindCreaturesImmune",
+      "concealment-stealth-sensing.builtInDigitalCompass",
+      "concealment-stealth-sensing.concealmentContext",
+      "concealment-stealth-sensing.concealmentDesign",
+      "concealment-stealth-sensing.concealmentEquipmentBonus",
+      "concealment-stealth-sensing.concealmentSkill",
+      "concealment-stealth-sensing.concealmentStealthBonus",
+      "concealment-stealth-sensing.concealmentStealthPenalty",
+      "concealment-stealth-sensing.createsSmokeHazard",
+      "concealment-stealth-sensing.durationRounds",
+      "concealment-stealth-sensing.firingDoesNotRevealShooterPosition",
+      "concealment-stealth-sensing.gasConcealmentDuration",
+      "concealment-stealth-sensing.protectedAtmosphereImmune",
+      "concealment-stealth-sensing.providesConcealment",
+      "concealment-stealth-sensing.radiationExposure",
+      "concealment-stealth-sensing.sensorDetection",
+      "concealment-stealth-sensing.shotVisibility",
+      "concealment-stealth-sensing.silentInUse",
+      "concealment-stealth-sensing.snipingSkill",
+      "concealment-stealth-sensing.snipingStealthEquipmentBonus",
+      "condition-and-persistent-effects.ammunitionMayCarryContactPoison",
+      "condition-and-persistent-effects.conditionTrackOnHit",
+      "condition-and-persistent-effects.conditionTrackRider",
+      "condition-and-persistent-effects.conditionTrackWithEvasion",
+      "condition-and-persistent-effects.fortitudeRider",
+      "condition-and-persistent-effects.grievousWound",
+      "condition-and-persistent-effects.ongoingEffect",
+      "condition-and-persistent-effects.persistentUntilCured",
+      "condition-and-persistent-effects.poisonDeliveryRequiresDamage",
+      "condition-and-persistent-effects.secondaryPoisonAttackBaseBonus",
+      "condition-and-persistent-effects.secondaryPoisonDefense",
+      "condition-and-persistent-effects.survivalBasicForestJungleBonusWhenProficientAndCarried",
+      "condition-and-persistent-effects.treatInjuryCureDC",
+      "condition-and-persistent-effects.venomSpit",
+      "configuration-and-wielding.assemblyAction",
+      "configuration-and-wielding.cannotBeWieldedTwoHanded",
+      "configuration-and-wielding.cannotWieldTwoHanded",
+      "configuration-and-wielding.collapsedForm",
+      "configuration-and-wielding.configurationSwitchAction",
+      "configuration-and-wielding.designedForTwoHandedUse",
+      "configuration-and-wielding.dialUpAction",
+      "configuration-and-wielding.disassembleAction",
+      "configuration-and-wielding.disassembledComponentSize",
+      "configuration-and-wielding.disassembledComponents",
+      "configuration-and-wielding.disassemblyAction",
+      "configuration-and-wielding.disintegratesOnKillOrDestruction",
+      "configuration-and-wielding.encumbranceException",
+      "configuration-and-wielding.expandCollapseAction",
+      "configuration-and-wielding.forearmMounted",
+      "configuration-and-wielding.fragile",
+      "configuration-and-wielding.lacksEnergyLancePlasmaMode",
+      "configuration-and-wielding.mayCountAsSmallWhenBeneficial",
+      "configuration-and-wielding.mayTreatAsSizeWhenBeneficial",
+      "configuration-and-wielding.multipleHeldOneHandCountsAsOneWeapon",
+      "configuration-and-wielding.reassembleAction",
+      "configuration-and-wielding.requiresTwoHands",
+      "configuration-and-wielding.sizeGate",
+      "configuration-and-wielding.sizeRule",
+      "configuration-and-wielding.switchAction",
+      "configuration-and-wielding.switchFormAction",
+      "configuration-and-wielding.tripodTreatsAsOneSizeSmallerForWielding",
+      "configuration-and-wielding.wornAs",
+      "configuration-and-wielding.wornOnWrist",
+      "crew-and-emplacement.crewRegulation",
+      "crew-and-emplacement.normallyRequiresTripod",
+      "crew-and-emplacement.operatorRoles",
+      "crew-and-emplacement.operatorsRequired",
+      "crew-and-emplacement.requiresSecondCrewRegulation",
+      "crew-and-emplacement.tripodEffectiveSize",
+      "damage-modifiers.adjacentBonusDamage",
+      "damage-modifiers.damageThresholdAdjustment",
+      "damage-modifiers.hurledObjectDamageRule",
+      "damage-modifiers.ignoresDRCondition",
+      "damage-modifiers.pointBlankDamageEquipmentBonus",
+      "damage-modifiers.powerAttackExtraDamageAppliesToObjectsAndVehicles",
+      "damage-modifiers.shieldRatingStillApplies",
+      "damage-modifiers.strengthModifierAppliesToDamage",
+      "damage-modifiers.twoHandedDamageChoice",
+      "damage-modifiers.weaponDR",
+      "damage-modifiers.weaponDRAppliesAgainstLightsabers",
+      "damage-modifiers.weaponDRValue",
+      "defense-and-reaction-interactions.BlockPenalty",
+      "defense-and-reaction-interactions.adjacentReflexPenalty",
+      "defense-and-reaction-interactions.blockDeflectUseTheForcePenalty",
+      "defense-and-reaction-interactions.cannotBeDisarmed",
+      "defense-and-reaction-interactions.cannotBeDropped",
+      "defense-and-reaction-interactions.disarmDefense",
+      "defense-and-reaction-interactions.disarmDefenseEquipmentBonus",
+      "defense-and-reaction-interactions.forceImbuedLightsaberBlockEligible",
+      "defense-and-reaction-interactions.mayUseBlockAsLightsaber",
+      "defense-and-reaction-interactions.rapidStrikeAttackPenaltyWaived",
+      "defense-and-reaction-interactions.returnToHand",
+      "defense-and-reaction-interactions.standaloneDefenseBonus",
+      "grab-grapple-restrain.allowedGrappleFeats",
+      "grab-grapple-restrain.breakStrengthDC",
+      "grab-grapple-restrain.canInitiateGrabOrGrappleAtRange",
+      "grab-grapple-restrain.crushAndThrowDisallowed",
+      "grab-grapple-restrain.escapeAcrobaticsDC",
+      "grab-grapple-restrain.featTalentBonusesTreatGrabAsGarroteAttack",
+      "grab-grapple-restrain.hurlGrabbedObjectRangeSquares",
+      "grab-grapple-restrain.maxTargetSize",
+      "grab-grapple-restrain.maximumGrabRangeIncrement",
+      "grab-grapple-restrain.moveGrabbedObjectSquares",
+      "grab-grapple-restrain.pinAndTripAllowed",
+      "grab-grapple-restrain.prohibitedGrappleFeats",
+      "grab-grapple-restrain.rangedGrabOrGrapple",
+      "grab-grapple-restrain.webbingFunctionsAsNet",
+      "proficiency-routes.alternateProficiency",
+      "proficiency-routes.wookieeAdvancedMeleeProficiencyCounts",
+      "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
+      "reach-and-threat.extendedReachBonusSquares",
+      "reach-and-threat.reachBonusSquares",
+      "reach-and-threat.reachIncreaseSquares",
+      "reach-and-threat.reachProfileIds",
+      "reach-and-threat.reachSquares",
+      "stun-ion-damage-modes.burnoutDamage",
+      "stun-ion-damage-modes.convertsUnarmedMeleeAttackToStunDamage",
+      "stun-ion-damage-modes.damageTypeAndBurstDeterminedByGrenade",
+      "stun-ion-damage-modes.dealsNoDamage",
+      "stun-ion-damage-modes.ongoingStunWhileTrapped",
+      "stun-ion-damage-modes.overchargeDamage",
+      "stun-ion-damage-modes.simultaneousDamageComponents",
+      "stun-ion-damage-modes.sonicDamageIsEnergy",
+      "stun-ion-damage-modes.stunChoiceTiming",
+      "stun-ion-damage-modes.stunShotsPerAttack",
+      "stun-ion-damage-modes.stunSwitchAction",
+      "utility-and-movement.ascensionMode"
+    ],
+    "uniqueKeysUnconsumed": 196,
+    "rawOccurrencesUnconsumed": 256,
+    "problems": []
+  },
+  "relations": {
+    "distinctRelations": 22,
+    "instances": 65,
+    "counts": {
+      "CANNOT_NEGATE_ATTACK": 8,
+      "EXPLICIT_WEAPON_BENEFIT": 9,
+      "EXPLICIT_WEAPON_COMPATIBILITY": 1,
+      "EXPLICIT_WEAPON_FAMILY_MATCH": 4,
+      "EXPLICIT_WEAPON_OPTION": 1,
+      "EXTRA_ATTACK_PENALTY": 6,
+      "FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE": 1,
+      "NAMED_DISCBLADE_DAMAGE_SYNERGY": 1,
+      "NAMED_FIRA_ATTACK_BONUS_SYNERGY": 1,
+      "NEGATIVE_WEAPON_MODIFIER": 3,
+      "POSITIVE_WEAPON_MODIFIER": 3,
+      "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM": 2,
+      "PROHIBITED": 9,
+      "REMOVE_RAPID_STRIKE_ATTACK_PENALTY": 2,
+      "SUPPORTED": 6,
+      "TREAT_AS_LIGHT_WEAPON_FOR_THIS_FEAT": 1,
+      "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK": 1,
+      "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY": 1,
+      "TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT": 1,
+      "UNLOCKS_DOUBLE_WEAPON_MODE": 2,
+      "unspecified": 1,
+      "USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION": 1
+    },
+    "unclassified": [],
+    "byClass": {
+      "DISPLAY_ONLY": 1,
+      "EXECUTION": 12,
+      "SELECTOR": 8,
+      "VALIDATION": 1
+    },
+    "executableConsumed": [
+      {
+        "relation": "CANNOT_NEGATE_ATTACK",
+        "instances": 8,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "damage-type-rules#damageContextForReaction -> reaction-engine (negation exclusion)"
+      },
+      {
+        "relation": "EXPLICIT_WEAPON_BENEFIT",
+        "instances": 9,
+        "class": "SELECTOR",
+        "policy": "AUTO",
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
+      },
+      {
+        "relation": "EXPLICIT_WEAPON_COMPATIBILITY",
+        "instances": 1,
+        "class": "SELECTOR",
+        "policy": "AUTO",
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
+      },
+      {
+        "relation": "EXPLICIT_WEAPON_FAMILY_MATCH",
+        "instances": 4,
+        "class": "SELECTOR",
+        "policy": "AUTO",
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
+      },
+      {
+        "relation": "EXPLICIT_WEAPON_OPTION",
+        "instances": 1,
+        "class": "SELECTOR",
+        "policy": "AUTO",
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
+      },
+      {
+        "relation": "EXTRA_ATTACK_PENALTY",
+        "instances": 6,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "special-mechanics#multi-attack-interaction -> multi-attack planner"
+      },
+      {
+        "relation": "NAMED_DISCBLADE_DAMAGE_SYNERGY",
+        "instances": 1,
+        "class": "SELECTOR",
+        "policy": "AUTO",
+        "consumer": "weapon-descriptor join of the ability's own rule scope; the ability has no canonical id so its display name is the legacy fallback; validated by the 5D-H census relation-consistency check"
+      },
+      {
+        "relation": "NAMED_FIRA_ATTACK_BONUS_SYNERGY",
+        "instances": 1,
+        "class": "SELECTOR",
+        "policy": "AUTO",
+        "consumer": "weapon-descriptor join of the ability's own rule scope; the ability has no canonical id so its display name is the legacy fallback; validated by the 5D-H census relation-consistency check"
+      },
+      {
+        "relation": "PROHIBITED",
+        "instances": 9,
+        "class": "VALIDATION",
+        "policy": "AUTO",
+        "consumer": "attack-shape#abilityProhibitedForShape (ability identity)"
+      },
+      {
+        "relation": "REMOVE_RAPID_STRIKE_ATTACK_PENALTY",
+        "instances": 2,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "special-mechanics#multi-attack-interaction -> multi-attack planner"
+      },
+      {
+        "relation": "SUPPORTED",
+        "instances": 6,
+        "class": "SELECTOR",
+        "policy": "AUTO",
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
+      },
+      {
+        "relation": "TREAT_AS_LIGHT_WEAPON_FOR_THIS_FEAT",
+        "instances": 1,
+        "class": "SELECTOR",
+        "policy": "AUTO",
+        "consumer": "weapon-descriptor treated-as-light-for-weapon-finesse (operation.weaponFinesseCountsAsLight)"
+      },
+      {
+        "relation": "TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT",
+        "instances": 1,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "fire-state#ability-triggered-reset"
+      },
+      {
+        "relation": "UNLOCKS_DOUBLE_WEAPON_MODE",
+        "instances": 2,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "condition-policy hasFeat(ability identity) -> attack-shape#doubleWeapon + relation join"
+      }
+    ],
+    "executableDeferred": [
+      {
+        "relation": "FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE",
+        "instances": 1,
+        "policy": "AUTO",
+        "reason": "Discblade Arc is a talent-granted full-round attack MODE; the relation id encodes the effect (no structured parameters) and the talent has no canonical identity",
+        "owner": "talent canonical corpus (identity + structured Discblade Arc mode)"
+      },
+      {
+        "relation": "NEGATIVE_WEAPON_MODIFIER",
+        "instances": 3,
+        "policy": "AUTO",
+        "reason": "same as POSITIVE_WEAPON_MODIFIER (Block/Deflect Use the Force check penalty carried by the wielded lightsaber chassis)",
+        "owner": "reaction/defense workflow (Block, Deflect rolls)"
+      },
+      {
+        "relation": "POSITIVE_WEAPON_MODIFIER",
+        "instances": 3,
+        "policy": "AUTO",
+        "reason": "modifies the wielder's Block/Deflect Use the Force check; the value lives in operation.* keys (BlockCumulativePenalty, DeflectPenalty, blockDeflectUseTheForceEquipmentBonus, ...) and the consumer is the reaction roll, which does not yet read the wielded weapon",
+        "owner": "reaction/defense workflow (Block, Deflect rolls)"
+      },
+      {
+        "relation": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM",
+        "instances": 2,
+        "policy": "AUTO",
+        "reason": "Amphistaff whip form Pin/Trip substitution (operation.pinTripSubstitution) belongs to the grapple/Pin/Trip subsystem, which this phase must not widen into",
+        "owner": "grapple / Pin / Trip phase"
+      },
+      {
+        "relation": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
+        "instances": 1,
+        "policy": "AUTO",
+        "reason": "Siang Lance Mastery: the proficiency re-route is carried by the weapon abilityOverrides (consumed by the proficiency resolver); the +1 attack grant has no structured parameter and the talent has no canonical identity",
+        "owner": "talent canonical corpus (identity + structured +1 attack grant)"
+      },
+      {
+        "relation": "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
+        "instances": 1,
+        "policy": "AUTO",
+        "reason": "ability-conditional range family: the relation id encodes the effect and Distant Discblade Throw has no canonical identity; the generic range consumer (canonical-range treatedAs) exists",
+        "owner": "talent canonical corpus (identity + structured rangeTreatedAs grant)"
+      },
+      {
+        "relation": "USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION",
+        "instances": 1,
+        "policy": "PROMPT",
+        "reason": "Recall Discblade is a Use the Force recall action after a thrown attack; the relation id encodes the DC/action and the talent has no canonical identity",
+        "owner": "talent canonical corpus (identity + structured recall action)"
+      }
+    ]
+  },
+  "legacyRuleManifest": {
+    "records": 44,
+    "byGroup": {
+      "A": 38,
+      "B": 3,
+      "C": 3,
+      "D": 0
+    },
+    "rows": [
+      {
+        "abilityType": "feat",
+        "ability": "Angled Throw",
+        "abilityIdentity": "swse.feat.angled_throw",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "grenade",
+          "grenades"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 12,
+          "after": 12,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Anointed Hunter",
+        "abilityIdentity": "swse.feat.anointed_hunter",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "thrown"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 5,
+          "after": 19,
+          "lost": [],
+          "gained": [
+            "lightsaber-chassis-short",
+            "weapon-adhesive-grenade",
+            "weapon-concussion-grenade",
+            "weapon-cryoban-grenade",
+            "weapon-discblade",
+            "weapon-flash-canister",
+            "weapon-frag-grenade",
+            "weapon-gas-grenade",
+            "weapon-ion-grenade",
+            "weapon-lightsaber",
+            "weapon-remote-grenade",
+            "weapon-stun-grenade",
+            "weapon-thermal-detonator",
+            "weapon-vibrodagger"
+          ]
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Artillery Shot",
+        "abilityIdentity": "swse.feat.artillery_shot",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "burst",
+          "splash",
+          "grenade"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 14,
+          "after": 19,
+          "lost": [
+            "weapon-grenade-launcher",
+            "weapon-micro-grenade-launcher"
+          ],
+          "gained": [
+            "weapon-cr-1-blast-cannon",
+            "weapon-flash-canister",
+            "weapon-flechette-launcher",
+            "weapon-light-concussion-missile-launcher",
+            "weapon-missile-launcher",
+            "weapon-plx-2m-portable-missile-launcher",
+            "weapon-rail-detonator-gun"
+          ]
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Blowback",
+        "abilityIdentity": "swse.talent.blowback",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "HIT_RIDER",
+        "field": "weaponGroups",
+        "scope": [
+          "rifles"
+        ],
+        "mechanic": "HIT_RIDER",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 38,
+          "after": 38,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Bowcaster Marksman",
+        "abilityIdentity": "swse.feat.bowcaster_marksman",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "bowcaster"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 1,
+          "after": 1,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Bugbite",
+        "abilityIdentity": "swse.talent.bugbite",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_DAMAGE_DIE_STEP",
+        "field": "weaponGroups",
+        "scope": [
+          "razor bug",
+          "thud bug"
+        ],
+        "mechanic": "WEAPON_DAMAGE_DIE_STEP",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 2,
+          "after": 2,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Curved Throw",
+        "abilityIdentity": "swse.talent.curved_throw",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "thud bug",
+          "razor bug"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 2,
+          "after": 2,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Disabler",
+        "abilityIdentity": "swse.feat.disabler",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_DAMAGE_DIE_SIZE_STEP",
+        "field": "weaponGroups",
+        "scope": [
+          "ion-pistol"
+        ],
+        "mechanic": "WEAPON_DAMAGE_DIE_SIZE_STEP",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 1,
+          "after": 1,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Flash and Clear",
+        "abilityIdentity": "swse.feat.flash_and_clear",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "burst",
+          "splash",
+          "grenade"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 14,
+          "after": 19,
+          "lost": [
+            "weapon-grenade-launcher",
+            "weapon-micro-grenade-launcher"
+          ],
+          "gained": [
+            "weapon-cr-1-blast-cannon",
+            "weapon-flash-canister",
+            "weapon-flechette-launcher",
+            "weapon-light-concussion-missile-launcher",
+            "weapon-missile-launcher",
+            "weapon-plx-2m-portable-missile-launcher",
+            "weapon-rail-detonator-gun"
+          ]
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Flurry",
+        "abilityIdentity": "swse.feat.flurry",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "light",
+          "lightsaber"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 35,
+          "lost": [],
+          "gained": [
+            "unmapped::Club/Baton",
+            "unmapped::Contact Stunner",
+            "unmapped::Darkstick",
+            "unmapped::Datadagger",
+            "unmapped::Entrenching Tool",
+            "unmapped::Felucian Skullblade",
+            "unmapped::Fire Blade",
+            "unmapped::Garrote",
+            "unmapped::Knife",
+            "unmapped::Shock Whip",
+            "unmapped::Short Sword",
+            "unmapped::Shyarn",
+            "unmapped::Survival Knife",
+            "unmapped::Tehkla Blade",
+            "unmapped::Vibroknucklers",
+            "weapon-snap-baton",
+            "weapon-stun-baton",
+            "weapon-vibroblade",
+            "weapon-vibrodagger"
+          ]
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Forceful Blast",
+        "abilityIdentity": "swse.feat.forceful_blast",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "grenade",
+          "grenades"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 12,
+          "after": 12,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Greater Weapon Focus (Fira)",
+        "abilityIdentity": null,
+        "canonicalIdentityAvailable": false,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "fira"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "B",
+        "why": "ability record has no canonical identity (no flags.swse.id / canonicalFeat) -> DATA_COMPLETENESS; display-name fallback stays until the ability corpus stamps one",
+        "canonicalWeapons": {
+          "before": 1,
+          "after": 1,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Greater Weapon Focus (Lightsabers)",
+        "abilityIdentity": "swse.talent.greater_weapon_focus_lightsabers",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_ATTACK_BONUS",
+        "field": "weaponGroups",
+        "scope": [
+          "lightsabers"
+        ],
+        "mechanic": "WEAPON_ATTACK_BONUS",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 16,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Greater Weapon Specialization (Lightsabers)",
+        "abilityIdentity": "swse.talent.greater_weapon_specialization_lightsabers",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_DAMAGE_BONUS",
+        "field": "weaponGroups",
+        "scope": [
+          "lightsabers"
+        ],
+        "mechanic": "WEAPON_DAMAGE_BONUS",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 16,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Hailfire",
+        "abilityIdentity": "swse.talent.hailfire",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "pistols"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 30,
+          "after": 30,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Heavy Hitter",
+        "abilityIdentity": "swse.feat.heavy_hitter",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "weapon emplacement",
+          "weapon system",
+          "vehicle weapon"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "C",
+        "why": "scope names a non-weapon / vehicle / improvised domain: no canonical weapon can match; text compatibility for homebrew only",
+        "canonicalWeapons": {
+          "before": 0,
+          "after": 0,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Higher Yield",
+        "abilityIdentity": "swse.talent.higher_yield",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "grenade",
+          "mine",
+          "explosive"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 14,
+          "after": 12,
+          "lost": [
+            "weapon-grenade-launcher",
+            "weapon-micro-grenade-launcher"
+          ],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Improved Rapid Strike",
+        "abilityIdentity": "swse.feat.improved_rapid_strike",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "light melee",
+          "light melee weapons",
+          "lightsaber"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 35,
+          "lost": [],
+          "gained": [
+            "unmapped::Club/Baton",
+            "unmapped::Contact Stunner",
+            "unmapped::Darkstick",
+            "unmapped::Datadagger",
+            "unmapped::Entrenching Tool",
+            "unmapped::Felucian Skullblade",
+            "unmapped::Fire Blade",
+            "unmapped::Garrote",
+            "unmapped::Knife",
+            "unmapped::Shock Whip",
+            "unmapped::Short Sword",
+            "unmapped::Shyarn",
+            "unmapped::Survival Knife",
+            "unmapped::Tehkla Blade",
+            "unmapped::Vibroknucklers",
+            "weapon-snap-baton",
+            "weapon-stun-baton",
+            "weapon-vibroblade",
+            "weapon-vibrodagger"
+          ]
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Knife Trick",
+        "abilityIdentity": "swse.feat.knife_trick",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "knife",
+          "dagger",
+          "blade",
+          "concealed"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "B",
+        "why": "the printed scope is a concealed weapon (knife/dagger/blade are kind words); there is no structured concealability selector, so only the exact Knife identity matches -> DATA_COMPLETENESS",
+        "canonicalWeapons": {
+          "before": 15,
+          "after": 1,
+          "lost": [
+            "unmapped::Datadagger",
+            "unmapped::Dire Vibroblade",
+            "unmapped::Double Vibroblade",
+            "unmapped::Double-Bladed Sword",
+            "unmapped::Felucian Skullblade",
+            "unmapped::Fire Blade",
+            "unmapped::Survival Knife",
+            "unmapped::Tehkla Blade",
+            "unmapped::Vibroblade, Double",
+            "weapon-concealed-dart-launcher",
+            "weapon-discblade",
+            "weapon-vibroblade",
+            "weapon-vibrodagger",
+            "weapon-wookiee-ryyk-blade"
+          ],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Long Haft Strike",
+        "abilityIdentity": "swse.feat.long_haft_strike",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_PROPERTY_OVERRIDE",
+        "field": "requiresWeaponText",
+        "scope": [
+          "lightsaber pike",
+          "long-handle lightsaber",
+          "long handle lightsaber"
+        ],
+        "mechanic": "WEAPON_PROPERTY_OVERRIDE",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 2,
+          "after": 1,
+          "lost": [
+            "lightsaber-chassis-pike"
+          ],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Make Do",
+        "abilityIdentity": "swse.talent.make_do",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "improvised"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "C",
+        "why": "scope names a non-weapon / vehicle / improvised domain: no canonical weapon can match; text compatibility for homebrew only",
+        "canonicalWeapons": {
+          "before": 0,
+          "after": 0,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Mighty Throw",
+        "abilityIdentity": "swse.feat.mighty_throw",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_ABILITY_BONUS",
+        "field": "weaponGroups",
+        "scope": [
+          "thrown",
+          "grenade"
+        ],
+        "mechanic": "ATTACK_ABILITY_BONUS",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 22,
+          "after": 22,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Nonlethal Tactics",
+        "abilityIdentity": "swse.talent.nonlethal_tactics",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "stun",
+          "net",
+          "riot shield",
+          "stun baton"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 11,
+          "after": 16,
+          "lost": [
+            "unmapped::Bayonet",
+            "unmapped::Contact Stunner",
+            "unmapped::Vibrobayonet",
+            "weapon-gungan-electropole"
+          ],
+          "gained": [
+            "unmapped::Neuronic Whip",
+            "unmapped::Shock Stick",
+            "weapon-carbonite-rifle",
+            "weapon-concealed-dart-launcher",
+            "weapon-deck-sweeper",
+            "weapon-gas-grenade",
+            "weapon-snare-pistol",
+            "weapon-snare-rifle",
+            "weapon-stokhli-spray-stick"
+          ]
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Opportunity Fire",
+        "abilityIdentity": "swse.talent.opportunity_fire",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "rifles"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 38,
+          "after": 38,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Pistoleer",
+        "abilityIdentity": "swse.feat.pistoleer",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_PROPERTY_OVERRIDE",
+        "field": "requiresWeaponText",
+        "scope": [
+          "blaster pistol"
+        ],
+        "mechanic": "WEAPON_PROPERTY_OVERRIDE",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 9,
+          "after": 1,
+          "lost": [
+            "weapon-bluebolt-blaster-pistol",
+            "weapon-dh-23-blaster-pistol",
+            "weapon-dt-12-heavy-blaster",
+            "weapon-heavy-blaster-pistol",
+            "weapon-hold-out-blaster-pistol",
+            "weapon-sidearm-blaster-pistol",
+            "weapon-snap-shot-blaster-pistol",
+            "weapon-sporting-blaster-pistol"
+          ],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Pistoleer",
+        "abilityIdentity": "swse.feat.pistoleer",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_PROPERTY_OVERRIDE",
+        "field": "requiresWeaponText",
+        "scope": [
+          "heavy blaster pistol"
+        ],
+        "mechanic": "WEAPON_PROPERTY_OVERRIDE",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 1,
+          "after": 1,
+          "lost": [
+            "weapon-dt-12-heavy-blaster"
+          ],
+          "gained": [
+            "weapon-heavy-blaster-pistol"
+          ]
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Pistoleer",
+        "abilityIdentity": "swse.feat.pistoleer",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "hold-out blaster",
+          "hold out blaster"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 0,
+          "after": 0,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Praetoria Vonil",
+        "abilityIdentity": "swse.talent.praetoria_vonil",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "lightsabers"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 16,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Primitive Warrior",
+        "abilityIdentity": "swse.feat.primitive_warrior",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_DAMAGE_DIE_STEP",
+        "field": "weaponGroups",
+        "scope": [
+          "simpleWeaponsMelee",
+          "simple-weapons-melee",
+          "simple melee"
+        ],
+        "mechanic": "WEAPON_DAMAGE_DIE_STEP",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 25,
+          "after": 25,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Returning Bug",
+        "abilityIdentity": "swse.feat.returning_bug",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OUTCOME_RIDER",
+        "field": "requiresWeaponText",
+        "scope": [
+          "razor bug",
+          "thud bug"
+        ],
+        "mechanic": "ATTACK_OUTCOME_RIDER",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 2,
+          "after": 2,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Rifle Master",
+        "abilityIdentity": "swse.talent.rifle_master",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "rifles"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 38,
+          "after": 38,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Riflemaster",
+        "abilityIdentity": "swse.feat.riflemaster",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_DAMAGE_DIE_SIZE_STEP",
+        "field": "weaponGroups",
+        "scope": [
+          "heavy-blaster-rifle"
+        ],
+        "mechanic": "WEAPON_DAMAGE_DIE_SIZE_STEP",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 1,
+          "after": 1,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Sentinel Strike",
+        "abilityIdentity": "swse.talent.sentinel_strike",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "weaponGroups",
+        "scope": [
+          "lightsabers",
+          "lightsaber"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 16,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Sniper Shot",
+        "abilityIdentity": "swse.feat.sniper_shot",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "excludesWeaponGroups",
+        "scope": [
+          "heavy",
+          "vehicle"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 16,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Sport Hunter",
+        "abilityIdentity": "swse.feat.sport_hunter",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "slugthrower-pistol"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 2,
+          "after": 1,
+          "lost": [
+            "weapon-heavy-slugthrower-pistol"
+          ],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Sport Hunter",
+        "abilityIdentity": "swse.feat.sport_hunter",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponText",
+        "scope": [
+          "sporting-blaster-rifle"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 0,
+          "after": 1,
+          "lost": [],
+          "gained": [
+            "weapon-sporting-blaster-rifle"
+          ]
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Sport Hunter",
+        "abilityIdentity": "swse.feat.sport_hunter",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_DAMAGE_DIE_SIZE_STEP",
+        "field": "weaponGroups",
+        "scope": [
+          "slugthrower-rifle"
+        ],
+        "mechanic": "WEAPON_DAMAGE_DIE_SIZE_STEP",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 1,
+          "after": 1,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Strength of the Empire",
+        "abilityIdentity": "swse.talent.strength_of_the_empire",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "lightsabers"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 16,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Tool Frenzy",
+        "abilityIdentity": "swse.feat.tool_frenzy",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "unarmed",
+          "tool appendage",
+          "appendage"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "C",
+        "why": "scope names a non-weapon / vehicle / improvised domain: no canonical weapon can match; text compatibility for homebrew only",
+        "canonicalWeapons": {
+          "before": 0,
+          "after": 0,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Twin Shot",
+        "abilityIdentity": "swse.talent.twin_shot",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "pistols"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 30,
+          "after": 30,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Vaapad",
+        "abilityIdentity": "swse.talent.vaapad",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_OPTION",
+        "field": "requiresWeaponGroups",
+        "scope": [
+          "lightsaber"
+        ],
+        "mechanic": "ATTACK_OPTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 16,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Vaapad",
+        "abilityIdentity": "swse.talent.vaapad",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "EXTEND_CRITICAL_RANGE",
+        "field": "weaponGroups",
+        "scope": [
+          "lightsabers",
+          "lightsaber"
+        ],
+        "mechanic": "EXTEND_CRITICAL_RANGE",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 16,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
+        "abilityType": "feat",
+        "ability": "Weapon Finesse",
+        "abilityIdentity": "swse.feat.weapon_finesse",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "ATTACK_ABILITY_SUBSTITUTION",
+        "field": "weaponGroups",
+        "scope": [
+          "light",
+          "light-melee",
+          "lightsaber"
+        ],
+        "mechanic": "ATTACK_ABILITY_SUBSTITUTION",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 36,
+          "lost": [],
+          "gained": [
+            "unmapped::Blastsword",
+            "unmapped::Club/Baton",
+            "unmapped::Contact Stunner",
+            "unmapped::Darkstick",
+            "unmapped::Datadagger",
+            "unmapped::Entrenching Tool",
+            "unmapped::Felucian Skullblade",
+            "unmapped::Fire Blade",
+            "unmapped::Garrote",
+            "unmapped::Knife",
+            "unmapped::Shock Whip",
+            "unmapped::Short Sword",
+            "unmapped::Shyarn",
+            "unmapped::Survival Knife",
+            "unmapped::Tehkla Blade",
+            "unmapped::Vibroknucklers",
+            "weapon-snap-baton",
+            "weapon-stun-baton",
+            "weapon-vibroblade",
+            "weapon-vibrodagger"
+          ]
+        }
+      },
+      {
+        "abilityType": "talent",
+        "ability": "Weapon Specialization (Lightsabers)",
+        "abilityIdentity": null,
+        "canonicalIdentityAvailable": false,
+        "ruleType": "WEAPON_DAMAGE_BONUS",
+        "field": "weaponGroups",
+        "scope": [
+          "lightsabers"
+        ],
+        "mechanic": "WEAPON_DAMAGE_BONUS",
+        "group": "B",
+        "why": "ability record has no canonical identity (no flags.swse.id / canonicalFeat) -> DATA_COMPLETENESS; display-name fallback stays until the ability corpus stamps one",
+        "canonicalWeapons": {
+          "before": 16,
+          "after": 16,
+          "lost": [],
+          "gained": []
+        }
+      }
+    ]
+  },
+  "heuristics": {
+    "totalSites": 171,
+    "byClass": {
+      "DISPLAY": 85,
+      "IDENTITY_FALLBACK": 14,
+      "LEGACY_GATED": 58,
+      "NON_COMBAT_DOMAIN": 5,
+      "PROJECTION": 4,
+      "TARGET_SIDE": 3,
+      "WEAPON_DEFINITION": 2
+    },
+    "canonicalResidualSites": [],
+    "unclassified": []
+  },
+  "areaGeometry": {
+    "SOURCE_SILENT": [
+      {
+        "form": "weapon-adhesive-grenade/primary",
+        "identityKey": "weapon-adhesive-grenade",
+        "book": "Knights of the Old Republic Campaign Guide",
+        "page": "67-68",
+        "evidence": "Targets \"in an adhesive grenade's blast radius\" grapple against the attack roll; no radius is published."
+      },
+      {
+        "form": "weapon-cryoban-grenade/primary",
+        "identityKey": "weapon-cryoban-grenade",
+        "book": "Knights of the Old Republic Campaign Guide",
+        "page": "68-69",
+        "evidence": "The grenade coats those \"in its blast radius\"; table footnote \"Area attack weapon\"; no radius is published."
+      },
+      {
+        "form": "weapon-remote-grenade/primary",
+        "identityKey": "weapon-remote-grenade",
+        "book": "Knights of the Old Republic Campaign Guide",
+        "page": "180",
+        "evidence": "Description covers remote detonation, the 100 credit detonator and the 100 m safety rule only; no area is published."
+      }
+    ],
+    "FIRE_MODE_DERIVED": [
+      "weapon-repeating-blaster-carbine/primary"
+    ],
+    "MISSING_CANONICAL_DATA": [],
+    "note": "SOURCE_SILENT = source-reviewed, no published geometry (never invented); FIRE_MODE_DERIVED = area comes from autofire (generic 2x2), no intrinsic geometry; MISSING_CANONICAL_DATA = published geometry absent from the corpus (must be empty)"
+  },
+  "relationConsistency": {
+    "consistent": 23,
+    "inconsistent": [
+      "lightsaber-chassis-pike <- Long Haft Strike (UNLOCKS_DOUBLE_WEAPON_MODE)",
+      "weapon-sporting-blaster-pistol <- Sport Hunter (EXPLICIT_WEAPON_BENEFIT)"
+    ],
+    "unresolvedAbilities": [],
+    "note": "inconsistent = the weapon declares the ability applicable but none of the ability rules/weaponPropertyRules scope tokens resolves to this weapon through the structured descriptor: ability-side scope data (or a missing selector) is the gap; the rule is NOT widened to compensate"
+  },
+  "conditions": {
+    "policyCensus": {
+      "AUTO": 99,
+      "PROMPT": 11,
+      "UNSUPPORTED": 0
+    }
+  },
+  "problems": []
+}

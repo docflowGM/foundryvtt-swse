@@ -1,0 +1,13 @@
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+globalThis.window = globalThis.window || {}; registerFoundryPathLoader(); installFoundryShimGlobals();
+const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');
+const { registry, registryData } = await import('./helpers/weapon-runtime-fixture.mjs');
+rt.setSharedWeaponAuthorityRegistry(registry);
+const pike = { id:'p', name:'x', type:'weapon', flags:{swse:{canonicalWeapon:{identityKey:'lightsaber-chassis-pike'}}}, system:{} };
+const actor = { id:'a', items:[{type:'feat',name:'Zzz',flags:{swse:{canonicalFeat:{identityKey:'feat::scum::p1::long-haft-strike'}}}}] };
+pike.actor = actor;
+const s = rt.shapeOfWeapon(pike, {});
+console.log(s.source, JSON.stringify(s.doubleWeapon), s.abilityRelations?.length);
+const rec = registryData.identities.find(i=>i.identityKey==='lightsaber-chassis-pike');
+console.log(JSON.stringify(rec.conditionalQualities), JSON.stringify(rec.canonicalStats.attackProfiles.map(p=>[p.id,p.qualities?.doubleWeapon])), JSON.stringify(rec.canonicalStats.operatingModes), JSON.stringify(rec.canonicalStats.configurationStates).slice(0,300));

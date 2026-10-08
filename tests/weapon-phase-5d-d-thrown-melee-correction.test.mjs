@@ -134,7 +134,7 @@ ok('both thrown profiles use the canonical thrown-weapons range, are offered by 
   }
   assert.deepEqual(contradictory, [], 'no canonical profile contradicts its own range mode after the correction');
   console.log('     melee profiles carrying the thrown quality but NO thrown profile (completeness observation, NOT changed):', thrownQualityNoThrownProfile.join(', '));
-  const log = corpus.postCertificationAmendments;
+  const log = corpus.postCertificationAmendments.filter((a) => a.phase === '5D-D');
   assert.deepEqual(log.map((a) => [a.id, a.identityKey, a.classification, a.field, a.from, a.to]), [
     ['5D-D-thrown-profile-ranged-branch', DARK, 'DATA_DEFECT', 'canonicalStats.attackProfiles[id=thrown].schemaFamily.branch', 'melee', 'ranged'],
     ['5D-D-thrown-profile-ranged-branch', PIKE, 'DATA_DEFECT', 'canonicalStats.attackProfiles[id=thrown].schemaFamily.branch', 'melee', 'ranged'],
@@ -142,7 +142,7 @@ ok('both thrown profiles use the canonical thrown-weapons range, are offered by 
   assert.match(log[0].source.page, /36/); assert.match(log[1].source.page, /36.*37/);
   assert.deepEqual(rec(DARK).provenance.postCertificationAmendments, ['5D-D-thrown-profile-ranged-branch']);
   // only these two records carry the amendment
-  assert.equal(corpus.identities.filter((i) => i.provenance.postCertificationAmendments?.length).length, 2);
+  assert.equal(corpus.identities.filter((i) => i.provenance.postCertificationAmendments?.includes('5D-D-thrown-profile-ranged-branch')).length, 2);
   ok('census: no remaining branch/range contradictions; the amendment is logged with source/page/field/from/to and stamped only on the two records');
 }
 

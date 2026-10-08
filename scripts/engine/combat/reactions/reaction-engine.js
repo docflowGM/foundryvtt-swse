@@ -184,6 +184,11 @@ export class ReactionEngine {
 
       if (reactionDef.trigger !== attackContext.trigger) continue;
       if (!this._evaluateConditions(reactionDef.conditions, attackContext)) continue;
+      // Phase 5D-H: the attacking weapon form's CANNOT_NEGATE_ATTACK relation excludes the negation ability (and, by family, abilities
+      // that have it as a prerequisite) by ability identity
+      const refused = attackContext.cannotBeNegatedBy ?? [];
+      if (refused.length && ((reactionDef.negationAbility && refused.includes(reactionDef.negationAbility))
+        || (reactionDef.negationFamily && refused.includes(`talents-with-${reactionDef.negationFamily}-as-prerequisite`)))) continue;
 
       available.push({
         key: reactionDef.key,

@@ -84,14 +84,10 @@ export class AmmoSystem {
     const ruleData = context?.ruleData ?? options?.ruleData ?? {};
     const resources = context?.resources ?? {};
 
-    const explicit = asNumber(
-      options.ammoCost
-      ?? resources.ammoCost
-      ?? context.ammoCost
-      ?? ruleData.ammoCost
-      ?? optionModifiers.ammunitionCost,
-      0
-    );
+    // first POSITIVE declaration wins: a serialized workflow context carries ammoCost: 0 as "unspecified", which must not shadow
+    // a selected option's ammunitionCost (a `??` chain stops at that 0)
+    const explicit = [options.ammoCost, resources.ammoCost, context.ammoCost, ruleData.ammoCost, optionModifiers.ammunitionCost]
+      .map((v) => asNumber(v, 0)).find((v) => v > 0) ?? 0;
     if (explicit > 0) return explicit;
 
     if (hasTruthyOption(options, 'burstFire') || tags.has('burstfire') || tags.has('burst-fire') || context?.attack?.isBurstFire === true) return 5;

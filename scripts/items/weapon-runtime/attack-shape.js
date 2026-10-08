@@ -9,7 +9,10 @@
 
 const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 import { resolveTemporalConstraints } from './fire-state.js';
-export const normalizeToken = (v) => String(v ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+import { resolveAreaShape } from './area-shape.js';
+import { buildWeaponDescriptor } from './weapon-descriptor.js';
+import { evaluateCondition } from './condition-policy.js';
+export const normalizeToken = (v) => String(v ?? '').trim().replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
 /** canonical schemaFamily.proficiency -> the proficiency-group token multi-attack feats are chosen against */
 const GROUP_BY_PROFICIENCY = Object.freeze({
@@ -37,7 +40,7 @@ export function groupTokenFromChoice(text) {
  * @param {Function} [opts.hostAugmentations] (runtime, ctx) => resolveHostAugmentations result (supplied by attack-consumer)
  * @param {object}   [opts.context]           condition context / stored answers for host-configuration conditions
  */
-export function resolveAttackShape(runtime, { hostAugmentations = null, context = {} } = {}) {
+export function resolveAttackShape(runtime, { hostAugmentations = null, context = {}, feats = null } = {}) {
   if (runtime?.source !== 'canonical') return Object.freeze({ source: runtime?.source ?? 'legacy' });
   const def = runtime.profile.definition ?? {};
   const resolved = runtime.resolved;
@@ -62,10 +65,19 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
     const augs = asArray(hostAugmentations(runtime, context));
     host = augs.find((a) => a.active && a.doubleWeapon) ?? null;
   }
+  // conditional quality (e.g. Lightsaber Pike / Long-Handle Lightsaber become double weapons for a wielder with the unlocking ability):
+  // the structured condition is evaluated by the condition policy against the wielder's ability identities
+  let conditional = null;
+  for (const q of asArray(resolved.conditionalQualities)) {
+    if (q?.quality !== 'doubleWeapon' || q.state !== true || !q.when) continue;
+    const ev = evaluateCondition(q.when, { ...context, feats: context.feats ?? feats ?? [], configurationId: resolved.selection?.configurationId ?? null, answers: context.answers });
+    if (ev.value === true) { conditional = { available: true }; break; }
+    if (ev.value === null) conditional = conditional ?? { available: null, pending: ev.pending };
+  }
   const doubleWeapon = Object.freeze({
-    isDouble: profileDouble || host?.available === true,
-    pending: host?.available === null,
-    via: profileDouble ? 'profile' : host?.available === true ? 'host-configuration' : null,
+    isDouble: profileDouble || host?.available === true || conditional?.available === true,
+    pending: host?.available === null || (conditional?.available === null && !profileDouble),
+    via: profileDouble ? 'profile' : host?.available === true ? 'host-configuration' : conditional?.available === true ? 'conditional-quality' : null,
     endId: profileDouble ? runtime.profile.id : null,
     hostEnds: host?.available === true ? Object.freeze(host.doubleWeapon.ends.map((e) => Object.freeze({ id: e.id, identityKey: e.identityKey, profileId: e.profileId }))) : null,
     hostConfigurationId: host?.configurationId ?? null,
@@ -73,7 +85,15 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
   });
 
   const proficiency = runtime.profile.definition?.schemaFamily?.proficiency ?? null;
+  const fireModes = Object.freeze({ single: !autofireOnly, autofire, autofireOnly, burstEligible: autofire });
+  const areaShape = resolveAreaShape(def.area, def.attackResolution, { rateOfFire: def.rateOfFire });
   return Object.freeze({
+    // Phase 5D-H: what the selected form IS, as structured tokens (ability scopes join to this, never to a name)
+    descriptor: buildWeaponDescriptor(resolved, def, { area: areaShape, fireModes }),
+    abilityRelations: Object.freeze(asArray(resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions).map((r) => Object.freeze({ ability: String(r?.ability ?? ''), abilityToken: normalizeToken(r?.ability), abilityType: r?.abilityType ?? null, relation: r?.relation ?? null }))),
+    operation: op,
+    damageTypes: Object.freeze(asArray(def.damageType?.types).map(normalizeToken)),
+    stunCapability: def.stun?.capability ?? 'none',
     source: 'canonical',
     identityKey: runtime.identityKey,
     profileId: runtime.profile.id,
@@ -81,7 +101,7 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
     branch: runtime.branch ?? null,
     groupKey: GROUP_BY_PROFICIENCY[proficiency] ?? null,
     exoticIdentity: def.schemaFamily?.exoticWeaponIdentity ?? null,
-    fireModes: Object.freeze({ single: !autofireOnly, autofire, autofireOnly, burstEligible: autofire }),
+    fireModes,
     autofireUnits: Number.isFinite(def.resourceConsumption?.autofireUnits) ? def.resourceConsumption.autofireUnits : null,
     multiShot: Object.freeze({
       prohibited: prohibitsMulti,
@@ -92,6 +112,12 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
       reason: prohibitsMulti ? 'firing-constraint' : null,
     }),
     doubleWeapon,
+    // autofire-only brace (Core: two swift actions immediately before the attack); a braceRule may demand a stock state
+    brace: Object.freeze({
+      available: autofireOnly,
+      actions: Object.freeze(['swift', 'swift']),
+      stockRule: fc?.braceRule?.cannotBraceWhenStockNotExtended === true ? String(fc.braceRule.requiresRetractableStockState ?? 'extended') : null,
+    }),
     // temporal firing constraints (families in fire-state.js); owned readiness state lives on the Item, never here
     temporal: resolveTemporalConstraints(def, op, resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions),
     dualWield: Object.freeze({

@@ -66,7 +66,9 @@ add({ wielderSize: 'Medium', mounted: true, trainedSkill: 'Ride' }, all(eq('acto
 add({ description: 'quarterstaff form; has all qualities of a quarterstaff', configurationId: 'quarterstaff' }, eq('configurationId', 'quarterstaff'));
 add({ description: 'spear form', configurationId: 'spear' }, eq('configurationId', 'spear'));
 add({ description: 'whip form; reach 2 squares', configurationId: 'whip' }, eq('configurationId', 'whip'));
-add({ description: 'wielder-has-Long-Haft-Form' }, feat('Long Haft Form'));
+// the weapon's UNLOCKS_DOUBLE_WEAPON_MODE relation names the unlocking ability (Long Haft Strike); "Long Haft Form" is only the weapon form's
+// printed name, there is no such ability -- the condition was unsatisfiable
+add({ description: 'wielder-has-Long-Haft-Form' }, feat('Long Haft Strike'));
 add({ description: 'thrown by hand' }, not(has('launcherIdentityKey')));
 add({ description: 'hurled by atlatl' }, eq('launcherIdentityKey', 'unmapped::Atlatl'));
 add({ description: 'hurled by cesta' }, eq('launcherIdentityKey', 'unmapped::Cesta'));
@@ -162,7 +164,8 @@ export function evaluateCondition(value, ctx = {}) {
       case 'in': { if (!need(p.key)) return null; const vals = p.values === '$selectedTypes' ? (ctx.selectedTypes ?? []) : p.values; return vals.includes(ctx[p.key]); }
       case 'not': { const r = ev(p.p); return r === null ? null : !r; }
       case 'all': { let unknown = false; for (const q of p.ps) { const r = ev(q); if (r === false) return false; if (r === null) unknown = true; } return unknown ? null : true; }
-      case 'hasFeat': return (ctx.feats ?? []).map((x) => String(x).toLowerCase()).includes(String(p.name).toLowerCase());
+      // ability identity keys (canonical slugs / legacy names) normalized the same way on both sides; the display name never decides canonical content
+      case 'hasFeat': { const k = (v) => String(v).trim().replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); return (ctx.feats ?? []).map(k).includes(k(p.name)); }
       case 'speciesIs': return String(ctx.species ?? '').toLowerCase() === String(p.name).toLowerCase();
       case 'hasProficiencyGroup': return (ctx.proficiencyGroups ?? []).includes(p.group);
       case 'event': return (ctx.events ?? []).includes(p.name);

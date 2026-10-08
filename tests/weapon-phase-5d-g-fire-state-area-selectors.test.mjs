@@ -249,8 +249,8 @@ const attack = (actor, weapon, extra = {}) => rollAttack(actor, weapon, { target
     const cone = rt.resolveCanonicalDamage(canon('weapon-deck-sweeper'), { weaponForm: { identityKey: 'weapon-deck-sweeper', profileId: 'primary' } }).areaShape;
     assert.equal(cone.kind, 'cone'); assert.equal(cone.halfDamageOnMiss, true);
     // source-unspecified miss rules stay GM-adjudicated (nothing invented); explicit 'none' deals nothing on a miss
-    const unspecified = rt.resolveCanonicalDamage(canon('weapon-frag-grenade'), {}).areaShape;
-    assert.equal(unspecified.kind, 'area-unspecified'); assert.equal(unspecified.halfDamageOnMiss, undefined); assert.equal(unspecified.completeness, 'area-enabled-without-geometry');
+    const unspecified = rt.resolveCanonicalDamage(canon('weapon-adhesive-grenade'), {}).areaShape;
+    assert.equal(unspecified.kind, 'area-unspecified'); assert.equal(unspecified.halfDamageOnMiss, undefined); assert.equal(unspecified.completeness, 'source-silent-geometry');
     assert.equal(rt.resolveCanonicalDamage(canon('weapon-gas-grenade'), {}).areaShape.noDamageOnMiss, true);
     ok('single-target stays single; splash / blast / burst / cone expose their canonical geometry and drive the existing area rules; unspecified miss rules are not invented');
 

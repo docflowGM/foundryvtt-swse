@@ -8,6 +8,7 @@ const clone = (x) => JSON.parse(JSON.stringify(x));
 const need = (cond, msg) => { if (!cond) throw new Error(`canonical amendment pre-condition failed: ${msg}`); };
 
 export const POST_CERTIFICATION_AMENDMENT_IDS = ['5D-D-thrown-profile-ranged-branch'];
+export const AREA_GEOMETRY_AMENDMENT_ID = '5D-H-area-geometry-backfill';
 
 const THROWN_RANGED = [
   {
@@ -26,6 +27,10 @@ const CORE_RULE = 'Core Rulebook: throwing a weapon is a ranged attack (attack r
  * amended) record; `log` receives one entry per amendment actually applied.
  */
 export function applyPostCertificationAmendments(rec, log = []) {
+  return applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log);
+}
+
+function applyThrownRanged(rec, log) {
   const spec = THROWN_RANGED.find((x) => x.identityKey === rec.identityKey);
   if (!spec) return rec;
   const out = clone(rec);
@@ -45,6 +50,67 @@ export function applyPostCertificationAmendments(rec, log = []) {
     unchanged: ['weaponGroup', 'schemaFamily (weapon level)', 'attackProfiles[thrown].schemaFamily.proficiency', 'attackProfiles[thrown].range', 'attackProfiles[thrown].damage', 'attackProfiles[thrown].damageType', 'attackProfiles[melee]'],
     source: spec.source, rule: CORE_RULE,
     reason: 'The weapon stays a melee weapon (group/proficiency unchanged); the SELECTED thrown attack is a ranged attack and already carried the global thrown-weapons ranged range block.',
+  });
+  return out;
+}
+
+// ---- Phase 5D-H: source-backed area geometry backfill --------------------------------------------------------------------------
+// The certified profile `area` block of these forms said "geometry and miss rule are not captured ... until a source-backed backfill"
+// while the SAME certified record already carried the published numbers in `operation.area` / the player text. Core Rulebook Area
+// Attacks (p.155): one attack roll against every target's Reflex Defense; creatures you hit take full damage, creatures you miss take half.
+const AREA_GENERAL = 'Core Rulebook, Area Attacks (p.155): single attack roll vs the Reflex Defense of every target in the area; hit = full damage, miss = half damage.';
+const AREA_BACKFILL = [
+  { identityKey: 'weapon-frag-grenade', area: { shape: 'burst', radiusSquares: 2 }, onMiss: 'half-damage', source: { book: 'Core Rulebook', page: '128', evidence: 'A fragmentation grenade ... affects a 2-square burst radius. Targets hit take full damage and targets missed take half damage.' } },
+  { identityKey: 'weapon-ion-grenade', area: { shape: 'burst', radiusSquares: 2 }, onMiss: 'target-dependent-half-or-none', source: { book: 'Core Rulebook', page: '128', evidence: 'An ion grenade ... affects a 2-square burst radius. Droids/vehicles/electronics/cybernetic creatures missed take half; creatures without cybernetics take none on a miss.' } },
+  { identityKey: 'weapon-stun-grenade', area: { shape: 'burst', radiusSquares: 2 }, onMiss: 'half-damage', source: { book: 'Core Rulebook', page: '128', evidence: 'A stun grenade ... affects a 2-square burst radius. Targets hit take full stun damage and targets missed take half stun damage.' } },
+  { identityKey: 'weapon-thermal-detonator', area: { shape: 'burst', radiusSquares: 4 }, onMiss: 'half-damage', source: { book: 'Core Rulebook', page: '129', evidence: 'compare it to the Reflex Defense of every target in its 4-square burst radius. Targets hit take full damage and targets missed take half damage.' } },
+  { identityKey: 'weapon-flamethrower', area: { shape: 'cone', lengthSquares: 6, widthAtEndSquares: 6 }, onMiss: 'half-damage', source: { book: 'Core Rulebook', page: '127 (description), 155 (Area Attacks miss rule)', evidence: 'shoots a cone of burning chemicals 6 squares long and 6 squares wide at the terminus; the description states no separate miss rule, so the general area-attack rule (miss = half) applies.' } },
+  { identityKey: 'weapon-blaster-cannon', area: { shape: 'primary-target-plus-adjacent', radiusSquares: 1 }, onMiss: 'half-damage', source: { book: 'Core Rulebook', page: '125 (description), 126 (table)', evidence: 'full damage to the target on a hit and half on a miss; every creature or object adjacent to the target takes half damage on a hit and none on a miss. (Same encoding as the certified Heavy Blaster Cannon.)' } },
+];
+
+function applyAreaGeometryBackfill(rec, log) {
+  const spec = AREA_BACKFILL.find((x) => x.identityKey === rec.identityKey);
+  if (!spec) return rec;
+  const out = clone(rec);
+  const profile = out.canonicalStats.attackProfiles[0];
+  need(out.canonicalStats.attackProfiles.length === 1 && profile.id === 'primary', `${spec.identityKey} has exactly the primary profile`);
+  need(profile.area?.enabled === true && profile.area.shape === null, `${spec.identityKey} area is enabled without geometry`);
+  need(profile.attackResolution?.onMiss === 'unspecified', `${spec.identityKey} miss rule is unspecified`);
+  const before = { area: clone(profile.area), onMiss: profile.attackResolution.onMiss };
+  profile.area = { ...profile.area, ...spec.area, notes: [`Source-backed geometry backfill (${AREA_GEOMETRY_AMENDMENT_ID}): ${spec.source.book} p.${spec.source.page}.`] };
+  profile.attackResolution = { ...profile.attackResolution, onMiss: spec.onMiss };
+  out.provenance = { ...out.provenance, postCertificationAmendments: [...(out.provenance.postCertificationAmendments ?? []), AREA_GEOMETRY_AMENDMENT_ID] };
+  log.push({
+    id: AREA_GEOMETRY_AMENDMENT_ID, classification: 'DATA_DEFECT', phase: '5D-H', identityKey: spec.identityKey,
+    field: 'canonicalStats.attackProfiles[id=primary].area + attackResolution.onMiss',
+    from: { shape: before.area.shape, onMiss: before.onMiss }, to: { ...spec.area, onMiss: spec.onMiss },
+    source: spec.source, rule: AREA_GENERAL,
+    reason: 'Published area geometry/miss rule was present in the certified player text and operation block but missing from the executable profile area record.',
+  });
+  return out;
+}
+
+// ---- Phase 5D-H: canonical `grenade` weapon family ---------------------------------------------------------------------------------
+// Angled Throw, Forceful Blast, Higher Yield, Mighty Throw, Flash and Clear and Artillery Shot all scope themselves to "Grenades"
+// (Core Rulebook p.127-129 grenade stat table; KOTOR Campaign Guide p.68 / p.180 grenade rows). The certified selectors carried no grenade
+// family (these records had families: []), so a canonical grenade could only be recognised by its display name. The family is added
+// to exactly the twelve grenade-table identities; the weapon-level group/proficiency (simple weapons) is unchanged.
+export const GRENADE_FAMILY_AMENDMENT_ID = '5D-H-grenade-family';
+const GRENADE_IDENTITIES = ['weapon-adhesive-grenade', 'weapon-concussion-grenade', 'weapon-cryoban-grenade', 'weapon-emp-grenade', 'weapon-frag-grenade', 'weapon-gas-grenade',
+  'weapon-ion-grenade', 'weapon-radiation-grenade', 'weapon-remote-grenade', 'weapon-smoke-grenade', 'weapon-stun-grenade', 'weapon-thermal-detonator'];
+function applyGrenadeFamily(rec, log) {
+  if (!GRENADE_IDENTITIES.includes(rec.identityKey)) return rec;
+  const out = clone(rec);
+  need(out.schemaFamily.branch === 'ranged' && out.schemaFamily.proficiency === 'simple', `${rec.identityKey} is a ranged simple weapon`);
+  need(Array.isArray(out.selectors?.families) && !out.selectors.families.includes('weapon-family:grenade'), `${rec.identityKey} has no grenade family yet`);
+  out.selectors = { ...out.selectors, families: [...out.selectors.families, 'weapon-family:grenade'].sort() };
+  out.provenance = { ...out.provenance, postCertificationAmendments: [...(out.provenance.postCertificationAmendments ?? []), GRENADE_FAMILY_AMENDMENT_ID] };
+  log.push({
+    id: GRENADE_FAMILY_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-H', identityKey: rec.identityKey, field: 'selectors.families',
+    from: rec.selectors.families, to: out.selectors.families,
+    source: { book: 'Core Rulebook / Knights of the Old Republic Campaign Guide', page: '127-129 / 68, 180', evidence: 'Listed under the Grenades heading of the ranged-weapons tables; abilities (Angled Throw, Forceful Blast, Higher Yield, Mighty Throw) scope themselves to Grenades.' },
+    rule: 'Weapons declare what they are: a grenade is declared structurally so abilities need not match a display name.',
+    reason: 'The certified selectors had no grenade family, forcing name matching for every Grenade-scoped ability.',
   });
   return out;
 }

@@ -47,3 +47,18 @@ export function abilityChoiceMatchesWeapon(item, weapon, context = {}) {
   const slug = canonicalFeatSlug(item) ?? legacyBase(item);
   return featChoiceMatchesShape(featChoiceSelectors(item, { actor, choiceKind: slug ? slug.replace(/-/g, '_') : null }), shape);
 }
+
+/** Identity keys of every ability an actor owns (canonical slug, else legacy base + full name), for hasFeat-style conditions. */
+export function abilityKeysOfActor(actor) {
+  const out = new Set();
+  try {
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (item?.type !== 'feat' && item?.type !== 'talent') continue;
+      const c = canonicalFeatSlug(item);
+      if (c !== null) out.add(c);
+      else { out.add(legacyBase(item)); out.add(normalizeToken(String(item?.name ?? ''))); }
+    }
+  } catch { /* detached actor */ }
+  out.delete('');
+  return [...out];
+}
