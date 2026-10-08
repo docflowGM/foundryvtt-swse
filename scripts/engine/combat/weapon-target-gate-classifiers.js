@@ -15,6 +15,9 @@
  * context-authority, ...) re-passes unchanged, proving this.
  */
 import { shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { canonicalSelectionFromContext } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
+import { abilityChoiceMatchesWeapon, canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+export { canonicalSelectionFromContext };
 import {
   isRangedWeapon as canonicalIsRangedWeapon,
   isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon
@@ -172,15 +175,6 @@ export function isTargetDeniedDexBonus(context = {}) {
     || target?.system?.derived?.deniedDexBonus === true || target?.system?.derived?.isFlatFooted === true;
 }
 
-// Phase 5D-F: the selected canonical form (carried form record or explicit selection ids) is the selection a gate evaluates.
-export function canonicalSelectionFromContext(context = {}) {
-  const form = context.weaponForm ?? context.workflowContext?.weaponForm ?? context.combatContext?.weaponForm ?? {};
-  const sel = {};
-  for (const k of ["profileId", "configurationId", "modeId", "payloadId", "endId"]) { const v = context[k] ?? form[k]; if (v != null && v !== "") sel[k] = v; }
-  if (context.answers) sel.answers = context.answers;
-  return sel;
-}
-
 export function weaponSupportsAutofire(weapon, context = {}) {
   // Phase 5D-F: a canonical weapon's autofire capability is its selected form's structured rateOfFire / mode -- a context flag
   // or text cannot grant it (Burst Fire must never appear for a form that cannot autofire).
@@ -220,6 +214,10 @@ export function getSelectedChoiceValues(item, context = {}) {
 }
 
 export function weaponMatchesSelectedChoice(item, weapon, context = {}) {
+  // Phase 5D-G: a canonical weapon joins the ability's structured choice to its selected form (group / exact exotic identity);
+  // legacy/custom weapons keep the text match below
+  const canonical = abilityChoiceMatchesWeapon(item, weapon, context);
+  if (canonical !== null) return canonical;
   const choices = getSelectedChoiceValues(item, context);
   if (!choices.length) return false;
   return choices.some(choice => weaponMatchesGroup(weapon, choice, context));
@@ -229,7 +227,9 @@ export function actorHasFeatSelectedChoiceMatchingWeapon(actor, featNames = [], 
   const wanted = (Array.isArray(featNames) ? featNames : [featNames]).map(normalizeKey).filter(Boolean);
   if (!wanted.length) return false;
   for (const item of actorItems(actor)) {
-    if (!wanted.includes(normalizeKey(item?.name))) continue;
+    // Phase 5D-G: canonical feat identity decides; the display name is only the fallback for items without one
+    const canonicalSlug = canonicalFeatSlug(item);
+    if (!wanted.includes(canonicalSlug ?? normalizeKey(item?.name))) continue;
     if (weaponMatchesSelectedChoice(item, weapon, context)) return true;
   }
   return false;

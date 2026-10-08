@@ -8,6 +8,7 @@
 // executes. Pure: no actor/item mutation, no dice, no spending. Never reads a weapon name or Item-level projection.
 
 const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
+import { resolveTemporalConstraints } from './fire-state.js';
 export const normalizeToken = (v) => String(v ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
 /** canonical schemaFamily.proficiency -> the proficiency-group token multi-attack feats are chosen against */
@@ -91,6 +92,8 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
       reason: prohibitsMulti ? 'firing-constraint' : null,
     }),
     doubleWeapon,
+    // temporal firing constraints (families in fire-state.js); owned readiness state lives on the Item, never here
+    temporal: resolveTemporalConstraints(def, op, resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions),
     dualWield: Object.freeze({
       eligibleAsSecondWeapon: op.eligibleAsSecondWeaponForTwoWeaponFighting === true,
       handsRemainFree: op.handsRemainFree === true,
@@ -150,8 +153,19 @@ export function featChoiceSelectors(item, { actor = null, choiceKind = null } = 
     }
   };
   raw.forEach(visit);
-  const paren = /\(([^)]+)\)/.exec(String(item?.name ?? ''));
+  // the name parenthetical is only the legacy carrier: it never overrides a structured choice
+  const paren = raw.length ? null : /\(([^)]+)\)/.exec(String(item?.name ?? ''));
   if (paren) visit(paren[1]);
   return { groups, identities };
 }
 
+
+/** Selection ids (profile/configuration/mode/payload/end) a gate or ability evaluates against: the carried form record, overridden by explicit ids. */
+export function canonicalSelectionFromContext(context = {}) {
+  const form = context.weaponForm ?? context.workflowContext?.weaponForm ?? context.combatContext?.weaponForm ?? {};
+  const sel = {};
+  for (const k of ['profileId', 'configurationId', 'modeId', 'payloadId', 'endId']) { const v = context[k] ?? form[k]; if (v != null && v !== '') sel[k] = v; }
+  const answers = context.answers ?? context.special?.answers ?? context.workflowContext?.special?.answers ?? context.combatContext?.special?.answers;
+  if (answers) sel.answers = answers;
+  return sel;
+}

@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "phase": "5D-G",
+  "purpose": "Audit/verification artifact only: attack shape, temporal constraints and selector capability of every offered canonical attack form. Not a gameplay authority.",
+  "totals": {
+    "identities": 203,
+    "forms": 265
+  },
+  "attackShape": {
+    "areaKinds": {
+      "adjacent": 1,
+      "area-unspecified": 10,
+      "autofire-area": 1,
+      "blast": 2,
+      "burst": 11,
+      "cloud": 1,
+      "cone": 3,
+      "other": 2,
+      "rectangle": 1,
+      "single": 227,
+      "splash": 4,
+      "square": 2
+    },
+    "fireModes": {
+      "autofire-only": 7,
+      "single": 238,
+      "single+autofire": 20
+    },
+    "areaEnabledWithoutGeometry": [
+      "weapon-adhesive-grenade/primary",
+      "weapon-blaster-cannon/primary",
+      "weapon-cryoban-grenade/primary",
+      "weapon-flamethrower/primary",
+      "weapon-frag-grenade/primary",
+      "weapon-ion-grenade/primary",
+      "weapon-remote-grenade/primary",
+      "weapon-repeating-blaster-carbine/primary",
+      "weapon-stun-grenade/primary",
+      "weapon-thermal-detonator/primary"
+    ]
+  },
+  "temporalConstraints": {
+    "families": {
+      "ability-triggered-reset": 1,
+      "alternate-round": 3,
+      "none": 242,
+      "per-round-limit": 20,
+      "post-shot-reset": 2,
+      "prepared-required": 2,
+      "reload-required": 11
+    },
+    "forms": {
+      "ability-triggered-reset": [
+        "weapon-sidearm-blaster-pistol/primary"
+      ],
+      "alternate-round": [
+        "weapon-disruptor-pistol/primary",
+        "weapon-disruptor-rifle/primary",
+        "weapon-sonic-disruptor/primary"
+      ],
+      "per-round-limit": [
+        "weapon-black-powder-pistol/primary",
+        "weapon-crossbow/primary",
+        "weapon-disruptor-pistol/primary",
+        "weapon-disruptor-rifle/primary",
+        "weapon-double-barreled-blaster-carbine/double-shot/double-shot",
+        "weapon-e-web-missile-launcher/primary",
+        "weapon-flechette-launcher/primary",
+        "weapon-light-concussion-missile-launcher/light-concussion-missile",
+        "weapon-miniature-proton-torpedo-launcher/area/area",
+        "weapon-miniature-proton-torpedo-launcher/single-target/single-target",
+        "weapon-sg-4-blaster-rifle/harpoon/harpoon",
+        "weapon-sonic-disruptor/primary",
+        "weapon-subrepeating-blaster/primary",
+        "weapon-wrist-rocket-launcher/primary/antipersonnel",
+        "weapon-wrist-rocket-launcher/primary/antivehicle",
+        "weapon-wrist-rocket-launcher/primary/flash",
+        "weapon-wrist-rocket-launcher/primary/hollow-tip-empty",
+        "weapon-wrist-rocket-launcher/primary/hollow-tip-nerve-toxin",
+        "weapon-wrist-rocket-launcher/primary/hollow-tip-stun-gas",
+        "weapon-wrist-rocket-launcher/primary/ion-blast"
+      ],
+      "post-shot-reset": [
+        "weapon-miniature-proton-torpedo-launcher/area/area",
+        "weapon-miniature-proton-torpedo-launcher/single-target/single-target"
+      ],
+      "prepared-required": [
+        "weapon-deck-sweeper/primary",
+        "weapon-heavy-blaster-cannon/primary"
+      ],
+      "reload-required": [
+        "weapon-black-powder-pistol/primary",
+        "weapon-crossbow/primary",
+        "weapon-e-web-missile-launcher/primary",
+        "weapon-sg-4-blaster-rifle/harpoon/harpoon",
+        "weapon-wrist-rocket-launcher/primary/antipersonnel",
+        "weapon-wrist-rocket-launcher/primary/antivehicle",
+        "weapon-wrist-rocket-launcher/primary/flash",
+        "weapon-wrist-rocket-launcher/primary/hollow-tip-empty",
+        "weapon-wrist-rocket-launcher/primary/hollow-tip-nerve-toxin",
+        "weapon-wrist-rocket-launcher/primary/hollow-tip-stun-gas",
+        "weapon-wrist-rocket-launcher/primary/ion-blast"
+      ]
+    }
+  },
+  "abilitySelectors": {
+    "canonical-capable: selectedChoice / weapon-matches-selected-choice predicate / requiresFeatSelectedChoiceMatch": [
+      "feat:Autofire Assault",
+      "feat:Autofire Sweep",
+      "feat:Critical Strike",
+      "feat:Triple Crit",
+      "feat:Weapon Focus",
+      "talent:Devastating Attack",
+      "talent:Flurry Attack",
+      "talent:Greater Devastating Attack",
+      "talent:Greater Penetrating Attack",
+      "talent:Greater Weapon Focus",
+      "talent:Greater Weapon Specialization",
+      "talent:Penetrating Attack"
+    ],
+    "legacy text: weaponGroups / groups / requiresWeaponGroups / excludesWeaponGroups": [
+      "feat:Angled Throw",
+      "feat:Bowcaster Marksman",
+      "feat:Disabler",
+      "feat:Flurry",
+      "feat:Forceful Blast",
+      "feat:Heavy Hitter",
+      "feat:Improved Rapid Strike",
+      "feat:Mighty Throw",
+      "feat:Primitive Warrior",
+      "feat:Riflemaster",
+      "feat:Sniper Shot",
+      "feat:Sport Hunter",
+      "feat:Tool Frenzy",
+      "feat:Weapon Finesse",
+      "talent:Blowback",
+      "talent:Bugbite",
+      "talent:Greater Weapon Focus (Lightsabers)",
+      "talent:Greater Weapon Specialization (Lightsabers)",
+      "talent:Hailfire",
+      "talent:Opportunity Fire",
+      "talent:Praetoria Vonil",
+      "talent:Rifle Master",
+      "talent:Sentinel Strike",
+      "talent:Strength of the Empire",
+      "talent:Twin Shot",
+      "talent:Vaapad",
+      "talent:Weapon Specialization (Lightsabers)"
+    ],
+    "legacy text: requiresWeaponText / weaponText": [
+      "feat:Anointed Hunter",
+      "feat:Artillery Shot",
+      "feat:Flash and Clear",
+      "feat:Knife Trick",
+      "feat:Long Haft Strike",
+      "feat:Pistoleer",
+      "feat:Returning Bug",
+      "feat:Sport Hunter",
+      "talent:Curved Throw",
+      "talent:Greater Weapon Focus (Fira)",
+      "talent:Higher Yield",
+      "talent:Make Do",
+      "talent:Nonlethal Tactics"
+    ]
+  },
+  "weaponAbilityRelations": {
+    "counts": {
+      "CANNOT_NEGATE_ATTACK": 8,
+      "EXPLICIT_WEAPON_BENEFIT": 9,
+      "EXPLICIT_WEAPON_COMPATIBILITY": 1,
+      "EXPLICIT_WEAPON_FAMILY_MATCH": 4,
+      "EXPLICIT_WEAPON_OPTION": 1,
+      "EXTRA_ATTACK_PENALTY": 6,
+      "FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE": 1,
+      "NAMED_DISCBLADE_DAMAGE_SYNERGY": 1,
+      "NAMED_FIRA_ATTACK_BONUS_SYNERGY": 1,
+      "NEGATIVE_WEAPON_MODIFIER": 3,
+      "POSITIVE_WEAPON_MODIFIER": 3,
+      "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM": 2,
+      "PROHIBITED": 9,
+      "REMOVE_RAPID_STRIKE_ATTACK_PENALTY": 2,
+      "SUPPORTED": 6,
+      "TREAT_AS_LIGHT_WEAPON_FOR_THIS_FEAT": 1,
+      "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK": 1,
+      "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY": 1,
+      "TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT": 1,
+      "UNLOCKS_DOUBLE_WEAPON_MODE": 2,
+      "unspecified": 1,
+      "USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION": 1
+    },
+    "consumed": [
+      "PROHIBITED",
+      "EXTRA_ATTACK_PENALTY",
+      "REMOVE_RAPID_STRIKE_ATTACK_PENALTY",
+      "TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT"
+    ],
+    "unconsumed": [
+      "CANNOT_NEGATE_ATTACK",
+      "EXPLICIT_WEAPON_BENEFIT",
+      "EXPLICIT_WEAPON_COMPATIBILITY",
+      "EXPLICIT_WEAPON_FAMILY_MATCH",
+      "EXPLICIT_WEAPON_OPTION",
+      "FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE",
+      "NAMED_DISCBLADE_DAMAGE_SYNERGY",
+      "NAMED_FIRA_ATTACK_BONUS_SYNERGY",
+      "NEGATIVE_WEAPON_MODIFIER",
+      "POSITIVE_WEAPON_MODIFIER",
+      "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM",
+      "SUPPORTED",
+      "TREAT_AS_LIGHT_WEAPON_FOR_THIS_FEAT",
+      "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
+      "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
+      "UNLOCKS_DOUBLE_WEAPON_MODE",
+      "USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION",
+      "unspecified"
+    ]
+  },
+  "executableFieldsWithoutConsumers": [
+    {
+      "form": "weapon-bryar-pistol/primary",
+      "field": "preparedAttack(optional)",
+      "note": "prepared-attack"
+    },
+    {
+      "form": "weapon-bryar-rifle/primary",
+      "field": "preparedAttack(optional)",
+      "note": "prepared-attack"
+    },
+    {
+      "form": "weapon-subrepeating-blaster/primary",
+      "field": "firingConstraints.braceRule",
+      "note": "stock-state dependent"
+    }
+  ]
+}

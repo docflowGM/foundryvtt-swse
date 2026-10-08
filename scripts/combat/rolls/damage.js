@@ -145,7 +145,7 @@ export async function rollDamage(actor, weapon, context = {}) {
 
   const formula = buildDamageFormula(composition, {
     extraTerms: [fpBonus !== 0 ? fpBonus : null, customModifier !== 0 ? customModifier : null],
-    isAreaAttack: isAreaAttack(weapon, rollContext)
+    isAreaAttack: isCanonicalAreaAttack(canonicalDamage, weapon, rollContext)
   });
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
@@ -200,13 +200,24 @@ export async function rollDamage(actor, weapon, context = {}) {
   // own damage card that flows through the unchanged Apply Damage -> DamagePacket path with its own receipt.
   if (roll && canonicalDamage.source === 'canonical' && rollContext.suppressChat !== true) {
     for (const rider of canonicalDamage.damageShape?.riders ?? []) {
-      await postDamageRider({ actor, weapon, rider, workflowContext, rollContext, canonicalDamage, critical: { isCritical: rollContext.isCritical === true && !isAreaAttack(weapon, rollContext), multiplier: composition.critical.multiplier } });
+      await postDamageRider({ actor, weapon, rider, workflowContext, rollContext, canonicalDamage, critical: { isCritical: rollContext.isCritical === true && !isCanonicalAreaAttack(canonicalDamage, weapon, rollContext), multiplier: composition.critical.multiplier } });
     }
   }
 
   await clearRapidAlchemyDamageBonus(actor, weapon);
 
   return roll;
+}
+
+/**
+ * Phase 5D-G: is this damage roll an area attack? A canonical weapon uses its SELECTED form's area shape (a single-target profile of
+ * an area-capable weapon is not an area attack; an area profile/payload is) plus an explicit area flag on the workflow; legacy weapons
+ * keep the Item-projection rule.
+ */
+function isCanonicalAreaAttack(canonicalDamage, weapon, rollContext) {
+  if (canonicalDamage?.source !== 'canonical') return isAreaAttack(weapon, rollContext);
+  const flagged = rollContext.areaAttack === true || rollContext.isAreaAttack === true || rollContext.workflowContext?.attack?.isArea === true || rollContext.combatContext?.attack?.isArea === true;
+  return flagged || canonicalDamage.areaShape?.isArea === true;
 }
 
 async function postDamageRider({ actor, weapon, rider, workflowContext, rollContext, canonicalDamage, critical = { isCritical: false, multiplier: 1 } }) {

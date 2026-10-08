@@ -244,6 +244,8 @@ export class AmmoSystem {
     }
 
     if (currentAmmo === maxAmmo) {
+      // Phase 5D-G: a reload-after-each-shot weapon is mechanically unloaded even with a full pool -- the reload action still restores it
+      await this.#clearFireStateReload(actor, weapon);
       return {
         success: true,
         message: `${weapon.name} is already fully loaded`,
@@ -267,6 +269,7 @@ export class AmmoSystem {
         await weapon.update({ 'system.ammunition.current': maxAmmo });
       }
 
+      await this.#clearFireStateReload(actor, weapon);
       return {
         success: true,
         message: `${weapon.name} reloaded: +${reloadAmount} rounds (${currentAmmo} → ${maxAmmo})`,
@@ -278,6 +281,16 @@ export class AmmoSystem {
         success: false,
         message: `Failed to reload: ${err.message}`
       };
+    }
+  }
+
+  /** Phase 5D-G: a reload clears the owned "awaiting reload" fire state (separate from the ammunition counter). Best effort. */
+  static async #clearFireStateReload(actor, weapon) {
+    try {
+      const { FireStateStore } = await import("/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js");
+      await FireStateStore.clearReload(actor ?? weapon?.actor, weapon);
+    } catch (err) {
+      swseLogger.warn?.('Fire-state reload clear failed (ammunition was still reloaded):', err);
     }
   }
 

@@ -1,4 +1,5 @@
 import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { canonicalFeatSlug, abilityChoiceMatchesWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 
 function normalizeToken(value) {
   return String(value ?? '')
@@ -17,6 +18,9 @@ function singularizeToken(value) {
 }
 
 function featBaseKey(item) {
+  // Phase 5D-G: canonical feat identity decides; the display name is only the legacy fallback
+  const canonical = canonicalFeatSlug(item);
+  if (canonical !== null) return canonical;
   return normalizeToken(String(item?.name || item?.system?.slug || item?.slug || '').replace(/\([^)]*\)/g, '').trim());
 }
 
@@ -51,7 +55,10 @@ function weaponCandidates(weapon) {
   ].map(normalizeToken).filter(Boolean);
 }
 
-function weaponMatchesSelectedChoice(item, weapon) {
+function weaponMatchesSelectedChoice(item, weapon, context = {}) {
+  // Phase 5D-G: canonical weapon -> structured join (group / exact exotic identity of the SELECTED form); legacy weapon -> text match below
+  const canonical = abilityChoiceMatchesWeapon(item, weapon, context);
+  if (canonical !== null) return canonical;
   const selected = normalizeToken(selectedChoiceValue(item));
   if (!selected || !weapon) return false;
   const selectedSingular = singularizeToken(selected);
@@ -101,13 +108,13 @@ function isPointBlankContext(context = {}) {
 // data-driven attack modifier CombatOptionResolver would apply itself.
 // Weapon Specialization's damage bonus (a Damage-domain concern, out of this
 // round's scope) and Point Blank Shot are unaffected.
-function hasDataDrivenAttackModifier(item) {
+function hasDataDrivenAttackModifier(item, domain = 'attack') {
   const modifiers = item?.system?.abilityMeta?.modifiers;
   if (!Array.isArray(modifiers)) return false;
   return modifiers.some((mod) => {
     if (!mod || mod.enabled === false) return false;
     const targets = Array.isArray(mod.target) ? mod.target : [mod.target];
-    return targets.some((t) => t === 'attack' || t === 'attack.bonus');
+    return targets.some((t) => t === domain || t === `${domain}.bonus`);
   });
 }
 
@@ -118,12 +125,14 @@ function explicitFeatBonus(item, weapon, target, context = {}) {
     return target === 'attack' || target === 'damage' ? 1 : 0;
   }
 
-  if (!weaponMatchesSelectedChoice(item, weapon)) return 0;
+  if (key !== 'weapon-focus' && key !== 'weapon-specialization') return 0;
+  if (!weaponMatchesSelectedChoice(item, weapon, context)) return 0;
   if (key === 'weapon-focus' && target === 'attack') {
     if (hasDataDrivenAttackModifier(item)) return 0;
     return 1;
   }
-  if (key === 'weapon-specialization' && target === 'damage') return 2;
+  // same single-authority rule as Weapon Focus: an item that carries its own data-driven damage modifier is applied by the modifier pipeline
+  if (key === 'weapon-specialization' && target === 'damage') return hasDataDrivenAttackModifier(item, 'damage') ? 0 : 2;
   return 0;
 }
 
@@ -134,7 +143,8 @@ export class ScopedCombatFeatResolver {
       if (!actor?.items || !target) return 0;
       const enrichedContext = { ...context, weapon };
       for (const item of actor.items) {
-        if (item?.type !== 'feat') continue;
+        // Phase 5D-G: Weapon Specialization is carried as a TALENT in the shipped data; both ability kinds are scanned (the key decides)
+        if (item?.type !== 'feat' && item?.type !== 'talent') continue;
         total += explicitFeatBonus(item, weapon, target, enrichedContext);
       }
     } catch (err) {

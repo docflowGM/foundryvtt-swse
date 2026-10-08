@@ -14,6 +14,7 @@ import { resolveCanonicalRange, assertRangeSelectionResolvable } from './canonic
 import { resolveCanonicalResourceCost } from './canonical-resource.js';
 import { extractSpecialMechanics, damageShapeFromMechanics, summarizeMechanics } from './special-mechanics.js';
 import { resolveAttackShape } from './attack-shape.js';
+import { resolveAreaShape } from './area-shape.js';
 
 const LEGACY = Object.freeze({ source: 'legacy' });
 const SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode', 'endId'];
@@ -237,6 +238,8 @@ export function resolveCanonicalDamage(weapon, context = {}) {
     damageTypes: Object.freeze(types), damageTypeMode: primary?.damageTypeMode ?? 'none', selectedDamageType: selectedType,
     requiresDamageTypeSelection: primary?.requiresDamageTypeSelection === true,
     specialEffects: dp.specialEffects, area: dp.area,
+    // Phase 5D-G: the selected form's (payload ?? profile) attack area shape
+    areaShape: resolveAreaShape(dp.area, runtime.profile.definition?.attackResolution),
     mechanics, damageShape: damageShapeFromMechanics(mechanics),
     // what the damage path still does NOT consume (Phase 5D-E consumes multiplier, critical effects and riders)
     deferred: Object.freeze({ extraComponents: dp.components.slice(1).map((c) => c.id), damageMultiplier: dp.damageMultiplier, conditionalModifiers: dp.conditionalModifiers?.length ?? 0, criticalEffects: dp.criticalEffects?.length ?? 0 }),
