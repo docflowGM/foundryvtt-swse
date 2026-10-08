@@ -25,7 +25,7 @@ export const HEURISTIC_RULES = [
   [/weapon-runtime\/weapon-descriptor\.js$/, /subcategory/, 'WEAPON_DEFINITION', 'reads the structured canonical schemaFamily'],
   [/weapon-runtime\/(ability-selector|ability-relations)\.js$/, /legacyBase|legacyKeys|\.name/, 'IDENTITY_FALLBACK', 'ability display-name keys used only when the item carries no canonical identity'],
   [/weapon-runtime\/attack-shape\.js$/, /item\?\.name/, 'IDENTITY_FALLBACK', 'name parenthetical = legacy carrier of a feat choice, ignored when a structured choice exists'],
-  [/weapon-runtime\/proficiency-resolver\.js$/, /const name = String\(item\?\.name/, 'CANONICAL_RESIDUAL', 'proficiency entitlements read the feat display title (a stored canonical weaponIdentity/choice wins; the owned-ability set is name-keyed)', 'weapon proficiency identity (5D-A follow-up)'],
+  [/weapon-runtime\/proficiency-resolver\.js$/, /const name = String\(item\?\.name/, 'IDENTITY_FALLBACK', 'proficiency entitlements: canonical feat identity + stored structured choice decide; the title is parsed only for an ability without a canonical identity'],
   [/combat\/multi-attack\.js$/, /weapon\.name \|\| ''/, 'LEGACY_GATED', 'getWeaponGroup/isDoubleWeapon: after the canonical branch has returned'],
   [/combat\/multi-attack\.js$/, /item\.name\?\.toLowerCase\(\) \|\| ''|extractWeaponGroupFromFeat\(item\.name\)/, 'LEGACY_GATED', 'getDouble/TripleAttackGroups: legacy group-name path (canonical weapons use actorHasMultiAttackFor identity join)'],
   [/combat\/multi-attack\.js$/, /\(item\.name \?\? ''\)\.toLowerCase\(\)/, 'IDENTITY_FALLBACK', 'multiattack proficiency: canonical slug first, name only for an ability without identity'],
@@ -157,4 +157,30 @@ export const OPERATION_DUPLICATES = [
 // manifest classification overrides (named, justified): scope vocabulary the deterministic rule cannot judge on its own
 export const MANIFEST_OVERRIDES = {
   'Knife Trick': { group: 'B', why: 'the printed scope is a concealed weapon (knife/dagger/blade are kind words); there is no structured concealability selector, so only the exact Knife identity matches -> DATA_COMPLETENESS' },
+};
+
+// Area-enabled forms with no intrinsic geometry that were SOURCE-REVIEWED: the published rule gives no radius/shape (never invented)
+export const SOURCE_SILENT_GEOMETRY = [
+  { identityKey: 'weapon-adhesive-grenade', book: 'Knights of the Old Republic Campaign Guide', page: '67-68', evidence: 'Targets "in an adhesive grenade\'s blast radius" grapple against the attack roll; no radius is published.' },
+  { identityKey: 'weapon-cryoban-grenade', book: 'Knights of the Old Republic Campaign Guide', page: '68-69', evidence: 'The grenade coats those "in its blast radius"; table footnote "Area attack weapon"; no radius is published.' },
+  { identityKey: 'weapon-remote-grenade', book: 'Knights of the Old Republic Campaign Guide', page: '180', evidence: 'Description covers remote detonation, the 100 credit detonator and the 100 m safety rule only; no area is published.' },
+];
+
+// per operation topic family: why unconsumed keys remain and where they belong (the 5D-I input; no key is implemented to shrink a counter)
+export const OPERATION_FAMILY_NOTES = {
+  'ability-compatibility': { reason: 'grapple-feat allow/deny lists, crystal/tagger compatibility and upgrade restrictions need the grapple and upgrade subsystems', phase: '5D-I: remaining ability relations / grapple-Pin-Trip' },
+  'ammo-resource-reload': { reason: 'mounting, power-source requirements, single-load and reload special cases need inventory/reload rules beyond per-shot resource spending', phase: '5D-I: special reload / recovery + host-weapon augmentation' },
+  'area-splash-burst': { reason: 'detonation timing, blast effects, braced autofire area expansion and shrapnel are effects layered on the (already consumed) area geometry', phase: '5D-I: targeting / area effects' },
+  'attack-modifiers-and-penalties': { reason: 'conditional modifiers, aim/target rules, attacks of opportunity and range tweaks need a general conditional attack-modifier evaluator', phase: '5D-I: targeting / attack resolution' },
+  'concealment-stealth-sensing': { reason: 'weapon-driven concealment, silence and sensing belong to the stealth/sensing subsystem', phase: '5D-I: concealment / silent operation' },
+  'condition-and-persistent-effects': { reason: 'poison delivery, persistent effects and venom need the persistent/status delivery subsystem', phase: '5D-I: persistent / status delivery' },
+  'configuration-and-wielding': { reason: 'assembly/switch actions, two-hand rules and size gates need a wielding and configuration state model', phase: '5D-I: wielding constraints' },
+  'crew-and-emplacement': { reason: 'crew roles/tripod rules belong to the heavy-weapon crew model', phase: '5D-I: crew / emplacement' },
+  'damage-modifiers': { reason: 'object/vehicle damage rules, DR for the weapon as an object and damage-threshold tweaks need dedicated damage modifier consumers', phase: '5D-I: remaining damage modifiers' },
+  'defense-and-reaction-interactions': { reason: 'Block/Deflect Use the Force modifiers and disarm defenses need the reaction roll to read the wielded weapon', phase: '5D-I: reaction / defense workflow' },
+  'grab-grapple-restrain': { reason: 'grab/grapple/net rules belong to the grapple subsystem', phase: '5D-I: grapple / snare / net' },
+  'proficiency-routes': { reason: 'species/ability proficiency routes are consumed through selectors.speciesOverrides/abilityOverrides; these operation echoes have no separate consumer', phase: '5D-I: confirm duplicates, retire echoes' },
+  'reach-and-threat': { reason: 'reach and threatened squares need a threat/reach model', phase: '5D-I: special movement / reach' },
+  'stun-ion-damage-modes': { reason: 'remaining stun/ion special modes (overcharge, burnout, simultaneous components) need special-damage consumers', phase: '5D-I: special damage modes' },
+  'utility-and-movement': { reason: 'utility actions (ascension) belong to special movement', phase: '5D-I: special movement / reach' },
 };

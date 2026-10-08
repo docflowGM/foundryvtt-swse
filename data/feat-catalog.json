@@ -7899,7 +7899,7 @@
         "implementationStatus": "weapon_family_rules_phase14",
         "rules": [
           {
-            "type": "WEAPON_DAMAGE_DIE_STEP",
+            "type": "WEAPON_DAMAGE_DIE_SIZE_STEP",
             "weaponGroups": [
               "heavy-blaster-rifle"
             ],
@@ -27766,7 +27766,7 @@
         "implementationStatus": "weapon_family_rules_phase14",
         "rules": [
           {
-            "type": "WEAPON_DAMAGE_DIE_STEP",
+            "type": "WEAPON_DAMAGE_DIE_SIZE_STEP",
             "weaponGroups": [
               "slugthrower-rifle"
             ],
@@ -30614,7 +30614,7 @@
         "implementationStatus": "weapon_family_rules_phase14",
         "rules": [
           {
-            "type": "WEAPON_DAMAGE_DIE_STEP",
+            "type": "WEAPON_DAMAGE_DIE_SIZE_STEP",
             "weaponGroups": [
               "ion-pistol"
             ],

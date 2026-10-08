@@ -1,7 +1,6 @@
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { canonicalFeatSlug, featKeyOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
-import { weaponDeclaresAbility } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js";
 import { abilityProhibitedForShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 import {
   isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly
@@ -151,18 +150,16 @@ function collectModifierRollBonuses(item, weapon, context = {}) { const result =
 function ruleAppliesToWeapon(rule, item, weapon, context = {}) {
   if (!rule || rule.enabled === false) return false;
   if (rule.selectedChoice === true && !weaponMatchesSelectedChoice(item, weapon, context)) return false;
-  // Phase 5D-H: the ability's identity (never its name, for canonical content) scopes "light" and joins the weapon's own relations.
-  // A canonical weapon that DECLARES this ability applicable (EXPLICIT_*/SUPPORTED/UNLOCKS_*/NAMED_* relation) satisfies the weapon-scope
-  // tokens; every other requirement below (attack type, damage type, selected choice) still applies.
+  // Phase 5D-H: the ability's identity (never its name, for canonical content) refines "light" for Weapon Finesse. A rule's weapon scope
+  // is joined to the selected form's structured descriptor ONLY: weapon<->ability relations are a certified mirror of the ability's own
+  // scope (validated by the 5D-H census), never a way to widen a specifically scoped rule (Riflemaster's d10->d12 is for the Heavy
+  // Blaster Rifle alone although the Blaster Carbine/Rifle/Light Repeating Blaster also declare Riflemaster benefits).
   const scoped = { ...context, abilityKey: canonicalFeatSlug(item) ?? undefined };
-  const declared = weaponDeclaresAbility(weapon, item, context);
-  if (!declared) {
-    if (rule.weaponGroups && !weaponMatchesGroup(weapon, rule.weaponGroups, scoped)) return false;
-    if (rule.groups && !weaponMatchesGroup(weapon, rule.groups, scoped)) return false;
-    if (rule.requiresWeaponGroups && !weaponMatchesGroup(weapon, rule.requiresWeaponGroups, scoped)) return false;
-    if (rule.requiresWeaponText && !weaponMatchesText(weapon, rule.requiresWeaponText, scoped)) return false;
-    if (rule.weaponText && !weaponMatchesText(weapon, rule.weaponText, scoped)) return false;
-  }
+  if (rule.weaponGroups && !weaponMatchesGroup(weapon, rule.weaponGroups, scoped)) return false;
+  if (rule.groups && !weaponMatchesGroup(weapon, rule.groups, scoped)) return false;
+  if (rule.requiresWeaponGroups && !weaponMatchesGroup(weapon, rule.requiresWeaponGroups, scoped)) return false;
+  if (rule.requiresWeaponText && !weaponMatchesText(weapon, rule.requiresWeaponText, scoped)) return false;
+  if (rule.weaponText && !weaponMatchesText(weapon, rule.weaponText, scoped)) return false;
   if (rule.requiresAttackType && getAttackType(weapon, context) !== String(rule.requiresAttackType).toLowerCase()) return false;
   if (rule.requiresDamageType && !weaponDamageMatches(weapon, rule.requiresDamageType, context)) return false;
   if (rule.excludesDamageType && weaponDamageMatches(weapon, rule.excludesDamageType, context)) return false;

@@ -22,15 +22,15 @@ export const RELATION_POLICY = Object.freeze({
   REMOVE_RAPID_STRIKE_ATTACK_PENALTY: { class: 'EXECUTION', policy: 'AUTO', consumer: 'special-mechanics#multi-attack-interaction -> multi-attack planner' },
   TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT: { class: 'EXECUTION', policy: 'AUTO', consumer: 'fire-state#ability-triggered-reset' },
   CANNOT_NEGATE_ATTACK: { class: 'EXECUTION', policy: 'AUTO', consumer: 'damage-type-rules#damageContextForReaction -> reaction-engine (negation exclusion)' },
-  EXPLICIT_WEAPON_BENEFIT: { class: 'SELECTOR', policy: 'AUTO', consumer: 'combat-option-resolver#ruleAppliesToWeapon (relation join)' },
-  EXPLICIT_WEAPON_COMPATIBILITY: { class: 'SELECTOR', policy: 'AUTO', consumer: 'combat-option-resolver#ruleAppliesToWeapon (relation join)' },
-  EXPLICIT_WEAPON_OPTION: { class: 'SELECTOR', policy: 'AUTO', consumer: 'combat-option-resolver#ruleAppliesToWeapon (relation join)' },
-  EXPLICIT_WEAPON_FAMILY_MATCH: { class: 'SELECTOR', policy: 'AUTO', consumer: 'combat-option-resolver#ruleAppliesToWeapon (relation join)' },
-  SUPPORTED: { class: 'SELECTOR', policy: 'AUTO', consumer: 'combat-option-resolver#ruleAppliesToWeapon (relation join)' },
+  EXPLICIT_WEAPON_BENEFIT: { class: 'SELECTOR', policy: 'AUTO', consumer: 'weapon-descriptor join of the ability\'s own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check' },
+  EXPLICIT_WEAPON_COMPATIBILITY: { class: 'SELECTOR', policy: 'AUTO', consumer: 'weapon-descriptor join of the ability\'s own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check' },
+  EXPLICIT_WEAPON_OPTION: { class: 'SELECTOR', policy: 'AUTO', consumer: 'weapon-descriptor join of the ability\'s own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check' },
+  EXPLICIT_WEAPON_FAMILY_MATCH: { class: 'SELECTOR', policy: 'AUTO', consumer: 'weapon-descriptor join of the ability\'s own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check' },
+  SUPPORTED: { class: 'SELECTOR', policy: 'AUTO', consumer: 'weapon-descriptor join of the ability\'s own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check' },
   UNLOCKS_DOUBLE_WEAPON_MODE: { class: 'EXECUTION', policy: 'AUTO', consumer: 'condition-policy hasFeat(ability identity) -> attack-shape#doubleWeapon + relation join' },
   TREAT_AS_LIGHT_WEAPON_FOR_THIS_FEAT: { class: 'SELECTOR', policy: 'AUTO', consumer: 'weapon-descriptor treated-as-light-for-weapon-finesse (operation.weaponFinesseCountsAsLight)' },
-  NAMED_DISCBLADE_DAMAGE_SYNERGY: { class: 'SELECTOR', policy: 'AUTO', consumer: 'combat-option-resolver#ruleAppliesToWeapon (relation join; ability has no canonical id -> name fallback)' },
-  NAMED_FIRA_ATTACK_BONUS_SYNERGY: { class: 'SELECTOR', policy: 'AUTO', consumer: 'combat-option-resolver#ruleAppliesToWeapon (relation join; ability has no canonical id -> name fallback)' },
+  NAMED_DISCBLADE_DAMAGE_SYNERGY: { class: 'SELECTOR', policy: 'AUTO', consumer: 'weapon-descriptor join of the ability\'s own rule scope; the ability has no canonical id so its display name is the legacy fallback; validated by the 5D-H census relation-consistency check' },
+  NAMED_FIRA_ATTACK_BONUS_SYNERGY: { class: 'SELECTOR', policy: 'AUTO', consumer: 'weapon-descriptor join of the ability\'s own rule scope; the ability has no canonical id so its display name is the legacy fallback; validated by the 5D-H census relation-consistency check' },
   POSITIVE_WEAPON_MODIFIER: { class: 'EXECUTION', policy: 'AUTO', deferred: { reason: 'modifies the wielder\'s Block/Deflect Use the Force check; the value lives in operation.* keys (BlockCumulativePenalty, DeflectPenalty, blockDeflectUseTheForceEquipmentBonus, ...) and the consumer is the reaction roll, which does not yet read the wielded weapon', owner: 'reaction/defense workflow (Block, Deflect rolls)' } },
   NEGATIVE_WEAPON_MODIFIER: { class: 'EXECUTION', policy: 'AUTO', deferred: { reason: 'same as POSITIVE_WEAPON_MODIFIER (Block/Deflect Use the Force check penalty carried by the wielded lightsaber chassis)', owner: 'reaction/defense workflow (Block, Deflect rolls)' } },
   PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM: { class: 'EXECUTION', policy: 'AUTO', deferred: { reason: 'Amphistaff whip form Pin/Trip substitution (operation.pinTripSubstitution) belongs to the grapple/Pin/Trip subsystem, which this phase must not widen into', owner: 'grapple / Pin / Trip phase' } },
@@ -41,7 +41,7 @@ export const RELATION_POLICY = Object.freeze({
   unspecified: { class: 'DISPLAY_ONLY', consumer: 'none: abilityOverrides entry without a relation (the override itself is consumed by the proficiency resolver)' },
 });
 
-/** The relation keys that make an ability APPLY to the weapon that declares them (an additive join: it never removes applicability). */
+/** Relations that DECLARE an ability applicable to a weapon (mirrors of the ability's own scope; used by the census consistency check, never to widen a rule). */
 export const APPLICABILITY_RELATIONS = Object.freeze(new Set([
   'EXPLICIT_WEAPON_BENEFIT', 'EXPLICIT_WEAPON_COMPATIBILITY', 'EXPLICIT_WEAPON_OPTION', 'EXPLICIT_WEAPON_FAMILY_MATCH', 'SUPPORTED',
   'UNLOCKS_DOUBLE_WEAPON_MODE', 'NAMED_DISCBLADE_DAMAGE_SYNERGY', 'NAMED_FIRA_ATTACK_BONUS_SYNERGY',

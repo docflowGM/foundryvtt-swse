@@ -42,6 +42,8 @@ export function getAttackType(weapon, context = {}) {
     if (normalized.includes("melee")) return "melee";
   }
   if (!weapon) return "unknown";
+  // Phase 5D-H: a canonical weapon's attack type is its SELECTED form's structured branch, not Item category text
+  { const shape = shapeOfWeapon(weapon, canonicalSelectionFromContext(context)); if (shape.source === "canonical") return shape.descriptor.melee ? "melee" : "ranged"; if (shape.source === "error") return "unknown"; }
   return canonicalIsRangedWeapon(weapon) ? "ranged" : "melee";
 }
 

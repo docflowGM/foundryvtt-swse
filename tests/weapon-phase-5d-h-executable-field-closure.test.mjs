@@ -276,19 +276,63 @@ const dexActor = (items, feats) => { const a = makeActor({ items, feats }); a.sy
   assert.deepEqual(rt.shapeOfWeapon(canon('weapon-sidearm-blaster-pistol'), {}).temporal.map((t) => t.family), ['ability-triggered-reset']);
   ok('EXTRA_ATTACK_PENALTY, REMOVE_RAPID_STRIKE_ATTACK_PENALTY and the Sidearm swift-reset relation still resolve (their executions are pinned by the 5D-E/5D-F/5D-G suites)');
 
-  // 25: a newly consumed relation -- Riflemaster (EXPLICIT_WEAPON_BENEFIT) applies to every weapon that DECLARES it, via canonical identity
+  // 25: EXPLICIT_* relations are certified MIRRORS of the ability's own scope: they never widen a specifically scoped rule
+  //     (Blaster Carbine / Blaster Rifle / Light Repeating Blaster declare Riflemaster benefits, but the d10->d12 step is the Heavy Blaster Rifle's alone)
   const rifleDoc = packDoc('packs/feats.db', 'Riflemaster');
-  const step = (A, w) => CombatOptionResolver.collectAttackModifiers(A, w, { weaponForm: { identityKey: w.flags.swse.canonicalWeapon.identityKey, profileId: 'primary' } }).damageExtraWeaponDice;
-  const declaring = ['weapon-blaster-carbine', 'weapon-blaster-rifle', 'weapon-heavy-blaster-rifle', 'weapon-light-repeating-blaster'].map((k) => canon(k));
-  const notDeclaring = [canon('weapon-blaster-pistol'), canon('weapon-bowcaster')];
-  const RA = makeActor({ feats: [rifleDoc], items: [...declaring, ...notDeclaring] });
-  for (const w of declaring) assert.ok(step(RA, w) >= 1, `Riflemaster applies to ${w.flags.swse.canonicalWeapon.identityKey} through its declared relation`);
-  for (const w of notDeclaring) assert.equal(step(RA, w) ?? 0, 0, 'no relation and no scope token -> no benefit');
-  // 26 again: a same-NAMED item with another identity gets nothing
-  const fake = { ...packDoc('packs/feats.db', 'Power Attack', 'Riflemaster'), system: JSON.parse(JSON.stringify(rifleDoc.system)) };
-  const FA = makeActor({ feats: [fake], items: [canon('weapon-blaster-carbine')] });
-  assert.equal(step(FA, FA.items.find((i) => i.type === 'weapon')) ?? 0, 0, 'display name "Riflemaster" with a different canonical identity cannot use the relation');
-  ok('EXPLICIT_WEAPON_BENEFIT: a renamed canonical Riflemaster applies to exactly the weapons that declare it; a same-named impostor and undeclared weapons get nothing');
+  const mods = (A, w, extra = {}) => CombatOptionResolver.collectAttackModifiers(A, w, { weaponForm: { identityKey: w.flags.swse.canonicalWeapon.identityKey, profileId: 'primary' }, ...extra });
+  for (const k of ['weapon-blaster-carbine', 'weapon-blaster-rifle', 'weapon-light-repeating-blaster']) assert.ok(relationsForAbility(canon(k), rifleDoc, {}).some((r) => r.relation === 'EXPLICIT_WEAPON_BENEFIT'), `${k} declares the Riflemaster benefit`);
+  assert.ok(census.relationConsistency.consistent >= 20);
+  assert.deepEqual(census.relationConsistency.inconsistent, ['lightsaber-chassis-pike <- Long Haft Strike (UNLOCKS_DOUBLE_WEAPON_MODE)', 'weapon-sporting-blaster-pistol <- Sport Hunter (EXPLICIT_WEAPON_BENEFIT)']);
+  ok('EXPLICIT_* relations mirror the ability scope (23 consistent); the 2 inconsistent pairs are named (Long Haft Strike text scope, Sport Hunter sporting-blaster-pistol reroll)');
+
+  // ---- Riflemaster / Sport Hunter damage semantics (Galaxy at War p.25): die-SIZE replacement is not an extra die ------------------
+  const hbr = canon('weapon-heavy-blaster-rifle'), br = canon('weapon-blaster-rifle'), car = canon('weapon-blaster-carbine');
+  const dmg = (A, w, ctx = {}) => resolveDamageComposition(A, w, { weaponForm: { identityKey: w.flags.swse.canonicalWeapon.identityKey, profileId: 'primary' }, ...ctx });
+  const RM = makeActor({ feats: [rifleDoc], items: [hbr, br, car, canon('weapon-light-repeating-blaster')] });
+  const hbrBase = dmg(makeActor({ items: [canon('weapon-heavy-blaster-rifle')] }), canon('weapon-heavy-blaster-rifle'));
+  const hbrRm = dmg(RM, hbr);
+  assert.match(hbrBase.dice.base, /^\d+d10$/); const n = Number(/^(\d+)d/.exec(hbrBase.dice.base)[1]);
+  assert.equal(buildDamageFormula(hbrBase).startsWith(`${n}d10`), true);
+  assert.equal(buildDamageFormula(hbrRm).startsWith(`${n}d12`), true, 'Riflemaster: Heavy Blaster Rifle dice go d10 -> d12');
+  assert.equal(hbrRm.dice.extraWeaponDice ?? 0, 0, 'and it does NOT add another die');
+  for (const w of [br, car, RM.items.find((i) => i.flags?.swse?.canonicalWeapon?.identityKey === 'weapon-light-repeating-blaster')]) assert.equal(dmg(RM, w).dice.dieStepIncreases ?? 0, 0, 'no other rifle receives the Heavy Blaster Rifle step');
+  const RMren = makeActor({ feats: [packDoc('packs/feats.db', 'Riflemaster', 'Totally Different Label')], items: [canon('weapon-heavy-blaster-rifle')] });
+  assert.equal(buildDamageFormula(dmg(RMren, RMren.items.find((i) => i.type === 'weapon'))).startsWith(`${n}d12`), true, 'display-name change does not alter applicability');
+  const wrongId = { ...packDoc('packs/feats.db', 'Power Attack', 'Riflemaster'), system: JSON.parse(JSON.stringify(rifleDoc.system)) };
+  // (an item that carries the rule data IS the ability; identity matters for decisions that read identity, covered elsewhere)
+  void wrongId;
+  ok('Riflemaster: Heavy Blaster Rifle d10 -> d12 (die-size step, no extra die); other rifles untouched; display name irrelevant');
+
+  const shDoc = packDoc('packs/feats.db', 'Sport Hunter');
+  const sr = canon('weapon-slugthrower-rifle'), sp = canon('weapon-slugthrower-pistol'), sbp = canon('weapon-sporting-blaster-pistol'), sbr = canon('weapon-sporting-blaster-rifle');
+  const SH = makeActor({ feats: [shDoc], items: [sr, sp, sbp, sbr, canon('weapon-blaster-rifle')] });
+  const srBase = dmg(makeActor({ items: [canon('weapon-slugthrower-rifle')] }), canon('weapon-slugthrower-rifle'));
+  const m = Number(/^(\d+)d/.exec(srBase.dice.base)[1]);
+  assert.match(srBase.dice.base, /d8$/);
+  assert.equal(buildDamageFormula(dmg(SH, sr)).startsWith(`${m}d12`), true, 'Sport Hunter: Slugthrower Rifle dice go d8 -> d12 (two steps)');
+  assert.equal(dmg(SH, sr).dice.extraWeaponDice ?? 0, 0, 'no extra die on the rifle');
+  // pistol: +1 weapon die at point-blank ONLY (an extra die, NOT die-size scaling)
+  const spBase = dmg(makeActor({ items: [canon('weapon-slugthrower-pistol')] }), canon('weapon-slugthrower-pistol'));
+  const pbMods = mods(SH, sp, { rangeBand: 'point-blank' }); const shortMods = mods(SH, sp, { rangeBand: 'short' });
+  assert.equal(pbMods.damageExtraWeaponDice, 1, 'Slugthrower Pistol at point-blank: +1 weapon die');
+  assert.equal(shortMods.damageExtraWeaponDice ?? 0, 0, 'not outside point-blank');
+  assert.equal(dmg(SH, sp, { combatOptions: {} }).dice.dieStepIncreases ?? 0, 0, 'the pistol branch is never die-size scaling');
+  assert.equal(dmg(SH, sp).dice.base, spBase.dice.base);
+  // sporting blaster branches unchanged: pistol (reroll 1s) is NOT implemented here, rifle is +1 attack when aiming
+  assert.equal(mods(SH, sbp, { rangeBand: 'point-blank' }).damageExtraWeaponDice ?? 0, 0, 'Sporting Blaster Pistol: no extra die invented');
+  assert.equal(dmg(SH, sbp).dice.dieStepIncreases ?? 0, 0, 'Sporting Blaster Pistol: no die step invented (its reroll-1s rule is residual, see audit)');
+  assert.equal(mods(SH, sbr, { aim: true }).attackBonus, 1, 'Sporting Blaster Rifle: +1 attack when aiming'); assert.equal(mods(SH, sbr, {}).attackBonus ?? 0, 0);
+  assert.equal(dmg(SH, SH.items.find((i) => i.flags?.swse?.canonicalWeapon?.identityKey === 'weapon-blaster-rifle')).dice.dieStepIncreases ?? 0, 0, 'wrong selector: a blaster rifle gets nothing from Sport Hunter');
+  const SHren = makeActor({ feats: [packDoc('packs/feats.db', 'Sport Hunter', 'Other Label')], items: [canon('weapon-slugthrower-rifle')] });
+  assert.equal(buildDamageFormula(dmg(SHren, SHren.items.find((i) => i.type === 'weapon'))).startsWith(`${m}d12`), true, 'display name irrelevant');
+  // canonical data says die-size (SIZE_STEP) for the die-size branches and keeps the extra-die rules as extra-die rules
+  const rules = (name) => JSON.parse(JSON.stringify(rec2(name))).system.abilityMeta.rules.map((r) => [r.type, r.value ?? null]);
+  function rec2(name) { return fs.readFileSync('packs/feats.db', 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).find((d) => d.name === name); }
+  assert.deepEqual(rules('Riflemaster'), [['WEAPON_DAMAGE_DIE_SIZE_STEP', 1]]);
+  assert.equal(rules('Sport Hunter')[0][0], 'WEAPON_DAMAGE_DIE_SIZE_STEP'); assert.equal(rules('Sport Hunter')[0][1], 2);
+  assert.deepEqual(rules('Disabler'), [['WEAPON_DAMAGE_DIE_SIZE_STEP', 1]]);
+  assert.deepEqual(rules('Primitive Warrior'), [['WEAPON_DAMAGE_DIE_STEP', 1]], 'Primitive Warrior really is +1 die: untouched');
+  ok('Sport Hunter branch by branch: rifle d8 -> d12, pistol +1 die at point-blank only, sporting blaster rifle +1 aim attack, sporting blaster pistol untouched; canonical rule types corrected for Riflemaster/Sport Hunter/Disabler only');
 
   // UNLOCKS_DOUBLE_WEAPON_MODE + hasFeat identity: the pike is a double weapon only for a wielder with the unlocking ability
   const pike = canon('lightsaber-chassis-pike');
@@ -357,15 +401,48 @@ const dexActor = (items, feats) => { const a = makeActor({ items, feats }); a.sy
   assert.equal(c.EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED, 0);
   assert.equal(c.EXECUTABLE_CONDITIONS_UNCLASSIFIED, 0);
   assert.equal(c.EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED, 0);
-  assert.equal(c.CANONICAL_NAME_TEXT_HEURISTIC_SITES, census.heuristics.canonicalResidualSites.length);
+  assert.equal(c.CANONICAL_NAME_TEXT_HEURISTIC_USAGE, census.heuristics.canonicalResidualSites.length);
+  assert.equal(c.CANONICAL_NAME_TEXT_HEURISTIC_USAGE, 0, 'no canonical mechanical decision depends on display text/name');
   assert.ok(census.heuristics.canonicalResidualSites.every((s) => s.owner && s.reason), 'every canonical heuristic residual is named with a reason and an owner');
   for (const f of census.fieldFamilies.rows.filter((r) => r.status === 'DEFERRED')) assert.ok((f.owner && f.reason) || f.executableUnconsumed, `${f.id} deferred with an owner`);
-  assert.equal(c.AREA_ENABLED_FORMS_WITHOUT_GEOMETRY, 3, 'adhesive / CryoBan / remote grenades: source-silent, named');
+  assert.deepEqual([c.AREA_FORMS_SOURCE_SILENT, c.AREA_FORMS_FIRE_MODE_DERIVED, c.AREA_FORMS_MISSING_CANONICAL_DATA], [3, 1, 0], 'adhesive/CryoBan/remote = SOURCE_SILENT; repeating carbine = FIRE_MODE_DERIVED; nothing MISSING_CANONICAL_DATA');
+  assert.ok(c.UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER <= c.UNIQUE_OPERATION_MECHANIC_FAMILIES && c.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER >= c.UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER && c.RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER >= c.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER, 'families <= unique keys <= raw (identity,key) occurrences');
+  for (const [name, f] of Object.entries(census.operationKeys.families)) if (f.executableUnconsumed.length) { assert.ok(f.owner && f.note?.reason && f.note?.phase, `${name}: owner/reason/recommended phase`); assert.ok(f.representativeIdentities.length && f.executableUnconsumedOccurrences > 0, `${name}: representative identities + occurrences`); }
   assert.equal(census.legacyRuleManifest.byGroup.D, 0); assert.ok(census.legacyRuleManifest.byGroup.A > 30);
   for (const r of census.legacyRuleManifest.rows) assert.ok(['A', 'B', 'C', 'D'].includes(r.group) && r.why);
   const onDisk = JSON.parse(fs.readFileSync(closure.OUT_JSON, 'utf8'));
   assert.deepEqual(onDisk, JSON.parse(JSON.stringify(census)), 'committed closure census is current (run tools/census-weapon-executable-field-closure.mjs)');
-  ok(`closure census: ${JSON.stringify({ families: `${c.EXECUTION_FIELD_FAMILIES_WITH_CONSUMER}/${c.EXECUTION_FIELD_FAMILIES_PARTIAL}/${c.EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER} consumed/partial/none`, residualHeuristics: c.CANONICAL_NAME_TEXT_HEURISTIC_SITES, conditionsUnsupported: c.EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED })}`);
+  ok(`closure census: ${JSON.stringify({ families: `${c.FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES}/${c.PARTIAL_EXECUTION_FIELD_FAMILIES}/${c.UNCONSUMED_EXECUTION_FIELD_FAMILIES} consumed/partial/none`, residualHeuristics: c.CANONICAL_NAME_TEXT_HEURISTIC_USAGE, conditionsUnsupported: c.EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED })}`);
+}
+
+
+// ======================================================================================================================================
+// PROFICIENCY ENTITLEMENTS BY CANONICAL IDENTITY + AMMO COST (CONSUMER_DEFECT)
+// ======================================================================================================================================
+{
+  const { extractActorEntitlements } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/proficiency-resolver.js');
+  const wp = (rename, choice) => ({ ...packDoc('packs/feats.db', 'Weapon Proficiency', rename), flags: { swse: { ...packDoc('packs/feats.db', 'Weapon Proficiency').flags.swse, choices: { weaponProficiency: choice } } } });
+  const ewp = (rename, choice) => ({ ...packDoc('packs/feats.db', 'Exotic Weapon Proficiency', rename), flags: { swse: { ...packDoc('packs/feats.db', 'Exotic Weapon Proficiency').flags.swse, choices: { weaponProficiency: choice } } } });
+  const ent = (feats) => extractActorEntitlements({ items: feats, system: {} });
+  const a = ent([wp('Qzx Totally Renamed', { group: 'pistols' }), ewp('Another Label', { weaponIdentity: 'weapon-bowcaster' })]);
+  assert.ok(a.groups.has('pistols'), 'canonical Weapon Proficiency + stored group choice grants the group whatever the title says');
+  assert.ok(a.exoticIdentities.has('weapon-bowcaster'), 'canonical Exotic Weapon Proficiency + stored identity grants that exotic weapon whatever the title says');
+  // a TITLE that merely looks like the feat, on an item with a different canonical identity, grants nothing
+  const imp = { ...packDoc('packs/feats.db', 'Power Attack', 'Weapon Proficiency (Rifles)') };
+  const b = ent([imp]); assert.equal(b.groups.has('rifles'), false, 'title text cannot grant proficiency to a canonical item that is a different feat');
+  // legacy / homebrew (no canonical identity): the title is still understood
+  const legacyFeat = mk('feat', 'Weapon Proficiency (Rifles)'); const legacyExotic = mk('feat', 'Exotic Weapon Proficiency (Bowcaster)');
+  const c2 = ent([legacyFeat, legacyExotic]); assert.ok(c2.groups.has('rifles')); assert.ok(c2.exotic.has('bowcaster'));
+  ok('proficiency entitlements: canonical feat identity + stored structured choice decide (renamed titles still grant); legacy/homebrew titles keep working; a title cannot impersonate a different canonical feat');
+
+  // resolveAmmoCost: a selected option's cost wins over the serialized workflow default of 0; legitimate zero stays zero
+  const w = withAmmo('weapon-blaster-pistol');
+  const wf0 = { resources: { ammoCost: 0 }, ammoCost: 0, ruleData: {} };
+  assert.equal(AmmoSystem.resolveAmmoCost({ weapon: w, workflowContext: wf0, options: {}, optionModifiers: { ammunitionCost: 5 } }), 5, 'selected option cost > 0 + workflow default 0 -> selected cost wins');
+  assert.equal(AmmoSystem.resolveAmmoCost({ weapon: w, workflowContext: wf0, options: { ammoCost: 3 }, optionModifiers: { ammunitionCost: 5 } }), 3, 'an explicit workflow/action cost still has priority');
+  assert.equal(AmmoSystem.resolveAmmoCost({ weapon: w, workflowContext: wf0, options: { canonicalAmmoUnits: 0 }, optionModifiers: {} }), 0, 'a legitimately zero-cost canonical attack stays zero');
+  assert.equal(AmmoSystem.resolveAmmoCost({ weapon: canon('weapon-blaster-pistol'), workflowContext: wf0, options: {}, optionModifiers: {} }), 0, 'no ammunition pool -> zero');
+  ok('ammo cost (CONSUMER_DEFECT): a selected option ammunition cost beats the workflow default 0; explicit costs keep priority; zero-cost attacks stay zero');
 }
 
 console.log(`Phase 5D-H executable field closure: ${step} checks passed.`);

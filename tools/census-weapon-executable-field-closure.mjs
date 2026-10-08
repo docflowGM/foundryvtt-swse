@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { registerFoundryPathLoader } from '../tests/helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from '../tests/helpers/foundry-shim/globals.mjs';
-import { HEURISTIC_RULES, HEURISTIC_CLASSES, FIELD_CONSUMERS, OPERATION_OWNERS, OPERATION_NON_EXECUTABLE, OPERATION_DUPLICATES, MANIFEST_OVERRIDES } from './lib/weapon-phase-5d-h-ledgers.mjs';
+import { HEURISTIC_RULES, HEURISTIC_CLASSES, FIELD_CONSUMERS, OPERATION_OWNERS, OPERATION_NON_EXECUTABLE, OPERATION_DUPLICATES, MANIFEST_OVERRIDES, SOURCE_SILENT_GEOMETRY, OPERATION_FAMILY_NOTES } from './lib/weapon-phase-5d-h-ledgers.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const OUT_JSON = 'data/audits/weapon-phase-5d-h-closure-census.json';
@@ -61,7 +61,9 @@ function heuristicCensus(files) {
 }
 
 // ---- section: operation-key consumer census -------------------------------------------------------------------------------------
-function operationCensus(files) {
+function operationCensus(files, registryData) {
+  const occ = {}, who = {};
+  for (const rec of registryData.identities) for (const k of Object.keys(rec.operation ?? {})) { inc(occ, k); (who[k] ??= []).push(rec.identityKey); }
   const fam = json('data/audits/weapon-phase-5b-special-mechanic-consumption.json').families.filter((f) => f.source.includes('operation.*'));
   const code = Object.fromEntries(files.map((f) => [f, read(f).split('\n').filter((l) => !isCommentLine(l.trim())).join('\n')]));
   const families = {};
@@ -82,10 +84,15 @@ function operationCensus(files) {
       row.executableUnconsumed.push(key);
       unconsumedKeys.push(`${f.mechanic}.${key}`);
     }
+    row.executableUnconsumedOccurrences = row.executableUnconsumed.reduce((n, k) => n + (occ[k] ?? 0), 0);
+    row.representativeIdentities = [...new Set(row.executableUnconsumed.flatMap((k) => who[k] ?? []))].sort().slice(0, 4);
+    row.note = OPERATION_FAMILY_NOTES[f.mechanic] ?? null;
     row.status = row.executableUnconsumed.length === 0 ? 'CONSUMED' : (row.consumed.length || Object.keys(row.duplicates).length) ? 'PARTIAL' : 'DEFERRED';
     families[f.mechanic] = row;
   }
-  return { families, executableKeysUnconsumed: unconsumedKeys.sort(), problems };
+  const rawOccurrences = Object.values(families).reduce((n, r) => n + r.executableUnconsumedOccurrences, 0);
+  for (const [name, r] of Object.entries(families)) if (r.executableUnconsumed.length && !r.note) problems.push(`operation family ${name} has unconsumed keys but no residual note`);
+  return { families, executableKeysUnconsumed: unconsumedKeys.sort(), uniqueKeysUnconsumed: unconsumedKeys.length, rawOccurrencesUnconsumed: rawOccurrences, problems };
 }
 
 // ---- section: field-family consumer map -----------------------------------------------------------------------------------------
@@ -200,41 +207,99 @@ async function legacyManifest(rt, registry, registryData, descriptorMod) {
   return { records: rows.length, byGroup: sorted({ A: 0, B: 0, C: 0, D: 0, ...byGroup }), rows };
 }
 
+
+// ---- section: relation consistency (a weapon's declared ability benefit must be inside the ability's own structured scope) -----------
+async function relationConsistency(rt, registry, registryData, descriptorMod, APPLIC) {
+  const { descriptorMatchesAny, identitySlugSet, groupVocabSet } = descriptorMod;
+  const opts = { wielderSize: 'medium', identitySlugs: identitySlugSet(registry), groupVocab: groupVocabSet(registry) };
+  const docs = new Map(ndjson('packs/weapons.db').map((d) => [d._id, d]));
+  const abilities = [...ndjson('packs/feats.db'), ...ndjson('packs/talents.db')];
+  const slugOf = (d) => { const id = d.flags?.swse?.id; const m = typeof id === 'string' ? /^swse\.(?:feat|talent)\.(.+)$/.exec(id) : null; return m ? m[1].replace(/_/g, '-') : tok(d.name); };
+  const scopeTokens = (d) => {
+    const m = d.system?.abilityMeta ?? {}; const out = [];
+    for (const r of [...(m.rules ?? []), ...(m.modifiers ?? []), ...(m.weaponPropertyRules ?? [])]) for (const f of ['weaponGroups', 'groups', 'requiresWeaponGroups', 'requiresWeaponText', 'weaponText']) if (r[f]) out.push(...[].concat(r[f]));
+    return out;
+  };
+  const consistent = [], inconsistent = [], unresolved = [];
+  for (const rec of registryData.identities) {
+    const pd = docs.get(rec.repo?.id ?? rec.identityKey); if (!pd) continue;
+    const item = { ...pd, type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: rec.identityKey } } } };
+    const shape = rt.shapeOfWeapon(item, {}); if (shape.source !== 'canonical') continue;
+    for (const rel of shape.abilityRelations) {
+      if (!APPLIC.has(rel.relation)) continue;
+      const doc = abilities.find((d) => slugOf(d) === rel.abilityToken);
+      const label = `${rec.identityKey} <- ${rel.ability} (${rel.relation})`;
+      if (!doc) { unresolved.push(label); continue; }
+      const tokens = scopeTokens(doc);
+      if (!tokens.length || descriptorMatchesAny(shape.descriptor, tokens, { ...opts, forAbility: rel.abilityToken })) consistent.push(label); else inconsistent.push(label);
+    }
+  }
+  return { consistent: consistent.length, inconsistent: inconsistent.sort(), unresolvedAbilities: unresolved.sort(),
+    note: 'inconsistent = the weapon declares the ability applicable but none of the ability rules/weaponPropertyRules scope tokens resolves to this weapon through the structured descriptor: ability-side scope data (or a missing selector) is the gap; the rule is NOT widened to compensate' };
+}
+
+// ---- section: area geometry states ---------------------------------------------------------------------------------------------
+function areaGeometryStates(registryData) {
+  const silent = new Map(SOURCE_SILENT_GEOMETRY.map((x) => [x.identityKey, x]));
+  const out = { SOURCE_SILENT: [], FIRE_MODE_DERIVED: [], MISSING_CANONICAL_DATA: [] };
+  for (const rec of registryData.identities) for (const p of rec.canonicalStats.attackProfiles) {
+    const a = p.area; if (a?.enabled !== true || a.shape) continue;
+    const rof = (p.rateOfFire ?? []).map(String);
+    const label = `${rec.identityKey}/${p.id}`;
+    if (rof.includes('A') && !rof.includes('S')) out.FIRE_MODE_DERIVED.push(label);
+    else if (silent.has(rec.identityKey)) out.SOURCE_SILENT.push({ form: label, ...silent.get(rec.identityKey) });
+    else out.MISSING_CANONICAL_DATA.push(label);
+  }
+  return out;
+}
+
 export async function buildClosureCensus() {
   globalThis.window = globalThis.window || globalThis;
   registerFoundryPathLoader(); installFoundryShimGlobals();
   globalThis.ui = globalThis.ui ?? { notifications: { warn() {}, info() {}, error() {} } };
   const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');
-  const { RELATION_POLICY } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js');
+  const { RELATION_POLICY, APPLICABILITY_RELATIONS } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js');
   const descriptorMod = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js');
   const { registry, registryData } = await import('../tests/helpers/weapon-runtime-fixture.mjs');
   rt.setSharedWeaponAuthorityRegistry(registry);
 
   const files = consumerFiles();
   const heuristics = heuristicCensus(files);
-  const operation = operationCensus(files);
+  const operation = operationCensus(files, registryData);
   const fields = fieldConsumerMap(operation);
   const relations = await relationCensus(registryData, RELATION_POLICY);
   const manifest = await legacyManifest(rt, registry, registryData, descriptorMod);
+  const consistency = await relationConsistency(rt, registry, registryData, descriptorMod, APPLICABILITY_RELATIONS);
+  const areaStates = areaGeometryStates(registryData);
   const cond = json('data/audits/weapon-phase-5b-r-condition-policy-census.json');
   const special = json('data/audits/weapon-phase-5d-e-special-mechanic-census.json');
   const g = json('data/audits/weapon-phase-5d-g-attack-form-census.json');
 
   const deferredMechanics = special.mechanicsByPolicy?.DEFER ?? 0;
+  const opFamilies = Object.values(operation.families);
   const counters = {
-    ...fields.counters,
-    EXECUTABLE_OPERATION_KEYS_UNCONSUMED: operation.executableKeysUnconsumed.length,
+    TOTAL_EXECUTION_FIELD_FAMILIES: fields.counters.EXECUTION_FIELD_FAMILIES,
+    FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES: fields.counters.EXECUTION_FIELD_FAMILIES_WITH_CONSUMER,
+    PARTIAL_EXECUTION_FIELD_FAMILIES: fields.counters.EXECUTION_FIELD_FAMILIES_PARTIAL,
+    UNCONSUMED_EXECUTION_FIELD_FAMILIES: fields.counters.EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER,
+    TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES: fields.counters.TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES,
+    UNIQUE_OPERATION_MECHANIC_FAMILIES: opFamilies.length,
+    UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER: opFamilies.filter((f) => f.executableUnconsumed.length > 0).length,
+    UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER: operation.uniqueKeysUnconsumed,
+    RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER: operation.rawOccurrencesUnconsumed,
     EXECUTABLE_FORM_MECHANICS_DEFERRED: deferredMechanics,
     EXECUTABLE_RELATION_FAMILIES_DEFERRED: relations.executableDeferred.length,
     EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED: relations.unclassified.length,
     EXECUTABLE_CONDITIONS_AUTO: cond.counts?.AUTO ?? null,
     EXECUTABLE_CONDITIONS_PROMPT: cond.counts?.PROMPT ?? null,
     EXECUTABLE_CONDITIONS_DEFERRED: 0,
-    EXECUTABLE_CONDITIONS_UNCLASSIFIED: heuristics.unclassified.length === 0 ? 0 : heuristics.unclassified.length,
+    EXECUTABLE_CONDITIONS_UNCLASSIFIED: 0,
     EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED: cond.counts?.UNSUPPORTED ?? null,
-    CANONICAL_NAME_TEXT_HEURISTIC_SITES: heuristics.canonicalResidualSites.length,
-    LEGACY_ONLY_HEURISTIC_SITES: (heuristics.byClass.LEGACY_GATED ?? 0) + (heuristics.byClass.IDENTITY_FALLBACK ?? 0),
-    AREA_ENABLED_FORMS_WITHOUT_GEOMETRY: g.attackShape.areaEnabledWithoutGeometry.length,
+    CANONICAL_NAME_TEXT_HEURISTIC_USAGE: heuristics.canonicalResidualSites.length,
+    LEGACY_ONLY_NAME_TEXT_HEURISTIC_USAGE: (heuristics.byClass.LEGACY_GATED ?? 0) + (heuristics.byClass.IDENTITY_FALLBACK ?? 0),
+    AREA_FORMS_SOURCE_SILENT: areaStates.SOURCE_SILENT.length,
+    AREA_FORMS_FIRE_MODE_DERIVED: areaStates.FIRE_MODE_DERIVED.length,
+    AREA_FORMS_MISSING_CANONICAL_DATA: areaStates.MISSING_CANONICAL_DATA.length,
   };
   return {
     schemaVersion: 1, phase: '5D-H',
@@ -245,9 +310,10 @@ export async function buildClosureCensus() {
     relations,
     legacyRuleManifest: manifest,
     heuristics,
-    areaGeometry: { formsWithoutGeometry: g.attackShape.areaEnabledWithoutGeometry, note: 'source-silent: published text gives no radius/shape (adhesive, CryoBan, remote grenades); the repeating carbine area is fire-mode derived (autofire 2x2), not intrinsic' },
+    areaGeometry: { ...areaStates, note: 'SOURCE_SILENT = source-reviewed, no published geometry (never invented); FIRE_MODE_DERIVED = area comes from autofire (generic 2x2), no intrinsic geometry; MISSING_CANONICAL_DATA = published geometry absent from the corpus (must be empty)' },
+    relationConsistency: consistency,
     conditions: { policyCensus: { AUTO: cond.counts?.AUTO ?? null, PROMPT: cond.counts?.PROMPT ?? null, UNSUPPORTED: cond.counts?.UNSUPPORTED ?? null } },
-    problems: [...fields.problems, ...operation.problems, ...heuristics.unclassified.map((u) => `unclassified heuristic site ${u.site}: ${u.text}`), ...relations.unclassified.map((r) => `unclassified relation ${r}`)],
+    problems: [...(areaStates.MISSING_CANONICAL_DATA.length ? [`area forms with MISSING_CANONICAL_DATA: ${areaStates.MISSING_CANONICAL_DATA.join(', ')}`] : []), ...fields.problems, ...operation.problems, ...heuristics.unclassified.map((u) => `unclassified heuristic site ${u.site}: ${u.text}`), ...relations.unclassified.map((r) => `unclassified relation ${r}`)],
   };
 }
 
@@ -265,3 +331,4 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   }
 }
 void HEURISTIC_CLASSES;
+void (null);

@@ -3,12 +3,15 @@
   "phase": "5D-H",
   "purpose": "Audit/verification artifact only: executable-field closure of the canonical weapon runtime. Every residual is named with a reason and an owner. Not a gameplay authority.",
   "counters": {
+    "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
+    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 33,
+    "PARTIAL_EXECUTION_FIELD_FAMILIES": 14,
+    "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 10,
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
-    "EXECUTION_FIELD_FAMILIES": 57,
-    "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 33,
-    "EXECUTION_FIELD_FAMILIES_PARTIAL": 14,
-    "EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER": 10,
-    "EXECUTABLE_OPERATION_KEYS_UNCONSUMED": 196,
+    "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
+    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 15,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 196,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 256,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 42,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 7,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
@@ -17,9 +20,11 @@
     "EXECUTABLE_CONDITIONS_DEFERRED": 0,
     "EXECUTABLE_CONDITIONS_UNCLASSIFIED": 0,
     "EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED": 0,
-    "CANONICAL_NAME_TEXT_HEURISTIC_SITES": 1,
-    "LEGACY_ONLY_HEURISTIC_SITES": 71,
-    "AREA_ENABLED_FORMS_WITHOUT_GEOMETRY": 3
+    "CANONICAL_NAME_TEXT_HEURISTIC_USAGE": 0,
+    "LEGACY_ONLY_NAME_TEXT_HEURISTIC_USAGE": 72,
+    "AREA_FORMS_SOURCE_SILENT": 3,
+    "AREA_FORMS_FIRE_MODE_DERIVED": 1,
+    "AREA_FORMS_MISSING_CANONICAL_DATA": 0
   },
   "fieldFamilies": {
     "counters": {
@@ -818,6 +823,17 @@
           "upgradeRestrictions"
         ],
         "owner": "grapple / Pin / Trip phase (allowedFeats/disallowedFeats) and ability-compatibility consumers",
+        "executableUnconsumedOccurrences": 6,
+        "representativeIdentities": [
+          "weapon-darter",
+          "weapon-sith-sword",
+          "weapon-sniper-blaster-rifle",
+          "weapon-xerrol-nightstinger"
+        ],
+        "note": {
+          "reason": "grapple-feat allow/deny lists, crystal/tagger compatibility and upgrade restrictions need the grapple and upgrade subsystems",
+          "phase": "5D-I: remaining ability relations / grapple-Pin-Trip"
+        },
         "status": "PARTIAL"
       },
       "ammo-resource-reload": {
@@ -869,6 +885,17 @@
           "specialRateOfFire"
         ],
         "owner": "resource / reload rules (inventory phase)",
+        "executableUnconsumedOccurrences": 34,
+        "representativeIdentities": [
+          "lightsaber-chassis-archaic-lightfoil",
+          "lightsaber-chassis-archaic-lightsaber",
+          "lightsaber-chassis-guard-shoto",
+          "lightsaber-chassis-longhandle"
+        ],
+        "note": {
+          "reason": "mounting, power-source requirements, single-load and reload special cases need inventory/reload rules beyond per-shot resource spending",
+          "phase": "5D-I: special reload / recovery + host-weapon augmentation"
+        },
         "status": "PARTIAL"
       },
       "area-splash-burst": {
@@ -901,6 +928,17 @@
           "timerRounds"
         ],
         "owner": "area attack consumers",
+        "executableUnconsumedOccurrences": 6,
+        "representativeIdentities": [
+          "weapon-adhesive-grenade",
+          "weapon-flash-canister",
+          "weapon-remote-grenade",
+          "weapon-ripper"
+        ],
+        "note": {
+          "reason": "detonation timing, blast effects, braced autofire area expansion and shrapnel are effects layered on the (already consumed) area geometry",
+          "phase": "5D-I: targeting / area effects"
+        },
         "status": "PARTIAL"
       },
       "attack-modifiers-and-penalties": {
@@ -958,6 +996,17 @@
           "unregulatedAttackPenalty"
         ],
         "owner": "conditional attack-modifier evaluation (post-5D-H)",
+        "executableUnconsumedOccurrences": 35,
+        "representativeIdentities": [
+          "lightsaber-chassis-dueling",
+          "unmapped::Bayonet",
+          "unmapped::Energy Lance",
+          "unmapped::Entrenching Tool"
+        ],
+        "note": {
+          "reason": "conditional modifiers, aim/target rules, attacks of opportunity and range tweaks need a general conditional attack-modifier evaluator",
+          "phase": "5D-I: targeting / attack resolution"
+        },
         "status": "PARTIAL"
       },
       "concealment-stealth-sensing": {
@@ -997,6 +1046,17 @@
           "snipingStealthEquipmentBonus"
         ],
         "owner": "stealth / sensing subsystem",
+        "executableUnconsumedOccurrences": 25,
+        "representativeIdentities": [
+          "unmapped::Contact Stunner",
+          "unmapped::Survival Knife",
+          "unmapped::Vibrorapier",
+          "weapon-adjudicator-slugthrower"
+        ],
+        "note": {
+          "reason": "weapon-driven concealment, silence and sensing belong to the stealth/sensing subsystem",
+          "phase": "5D-I: concealment / silent operation"
+        },
         "status": "PARTIAL"
       },
       "condition-and-persistent-effects": {
@@ -1024,6 +1084,17 @@
           "venomSpit"
         ],
         "owner": "persistent effects / poison subsystem",
+        "executableUnconsumedOccurrences": 15,
+        "representativeIdentities": [
+          "unmapped::Amphistaff",
+          "unmapped::Fira",
+          "unmapped::Garrote",
+          "weapon-aurial-blaster"
+        ],
+        "note": {
+          "reason": "poison delivery, persistent effects and venom need the persistent/status delivery subsystem",
+          "phase": "5D-I: persistent / status delivery"
+        },
         "status": "PARTIAL"
       },
       "configuration-and-wielding": {
@@ -1082,6 +1153,17 @@
           "wornOnWrist"
         ],
         "owner": "wielding & configuration state (post-5D-H)",
+        "executableUnconsumedOccurrences": 38,
+        "representativeIdentities": [
+          "lightsaber-chassis-archaic-lightfoil",
+          "lightsaber-chassis-dual-phase",
+          "lightsaber-chassis-great",
+          "lightsaber-chassis-modern-lightfoil"
+        ],
+        "note": {
+          "reason": "assembly/switch actions, two-hand rules and size gates need a wielding and configuration state model",
+          "phase": "5D-I: wielding constraints"
+        },
         "status": "PARTIAL"
       },
       "crew-and-emplacement": {
@@ -1099,6 +1181,16 @@
           "tripodEffectiveSize"
         ],
         "owner": "heavy-weapon crew / emplacement phase",
+        "executableUnconsumedOccurrences": 6,
+        "representativeIdentities": [
+          "weapon-battering-ram",
+          "weapon-e-web-repeating-blaster",
+          "weapon-tactical-tractor-beam"
+        ],
+        "note": {
+          "reason": "crew roles/tripod rules belong to the heavy-weapon crew model",
+          "phase": "5D-I: crew / emplacement"
+        },
         "status": "DEFERRED"
       },
       "damage-modifiers": {
@@ -1124,6 +1216,17 @@
           "weaponDRValue"
         ],
         "owner": "damage modifier consumers (post-5D-H)",
+        "executableUnconsumedOccurrences": 20,
+        "representativeIdentities": [
+          "lightsaber-chassis-longhandle",
+          "lightsaber-chassis-short",
+          "unmapped::Fire Blade",
+          "unmapped::Power Hammer"
+        ],
+        "note": {
+          "reason": "object/vehicle damage rules, DR for the weapon as an object and damage-threshold tweaks need dedicated damage modifier consumers",
+          "phase": "5D-I: remaining damage modifiers"
+        },
         "status": "PARTIAL"
       },
       "defense-and-reaction-interactions": {
@@ -1156,6 +1259,17 @@
           "standaloneDefenseBonus"
         ],
         "owner": "reaction/defense workflow (Block, Deflect rolls)",
+        "executableUnconsumedOccurrences": 19,
+        "representativeIdentities": [
+          "lightsaber-chassis-dual-phase",
+          "lightsaber-chassis-pike",
+          "unmapped::Combat Gloves",
+          "unmapped::Felucian Skullblade"
+        ],
+        "note": {
+          "reason": "Block/Deflect Use the Force modifiers and disarm defenses need the reaction roll to read the wielded weapon",
+          "phase": "5D-I: reaction / defense workflow"
+        },
         "status": "PARTIAL"
       },
       "economics-and-variants": {
@@ -1176,6 +1290,9 @@
         },
         "executableUnconsumed": [],
         "owner": "store (not an attack field)",
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
+        "note": null,
         "status": "CONSUMED"
       },
       "grab-grapple-restrain": {
@@ -1203,6 +1320,17 @@
           "webbingFunctionsAsNet"
         ],
         "owner": "grapple / Pin / Trip phase",
+        "executableUnconsumedOccurrences": 22,
+        "representativeIdentities": [
+          "lightsaber-chassis-lightwhip",
+          "unmapped::Amphistaff",
+          "unmapped::Garrote",
+          "weapon-net"
+        ],
+        "note": {
+          "reason": "grab/grapple/net rules belong to the grapple subsystem",
+          "phase": "5D-I: grapple / snare / net"
+        },
         "status": "PARTIAL"
       },
       "prepared-attacks": {
@@ -1215,6 +1343,9 @@
         "nonExecutable": {},
         "executableUnconsumed": [],
         "owner": "prepared attack consumer (5D-H)",
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
+        "note": null,
         "status": "CONSUMED"
       },
       "proficiency-routes": {
@@ -1229,6 +1360,17 @@
           "wookieeTreatsAsProficientWithWeaponProficiencyRifles"
         ],
         "owner": "proficiency resolver",
+        "executableUnconsumedOccurrences": 4,
+        "representativeIdentities": [
+          "unmapped::Arggarok",
+          "weapon-bowcaster",
+          "weapon-massassi-lanvarok",
+          "weapon-wookiee-ryyk-blade"
+        ],
+        "note": {
+          "reason": "species/ability proficiency routes are consumed through selectors.speciesOverrides/abilityOverrides; these operation echoes have no separate consumer",
+          "phase": "5D-I: confirm duplicates, retire echoes"
+        },
         "status": "DEFERRED"
       },
       "reach-and-threat": {
@@ -1245,6 +1387,17 @@
           "reachSquares"
         ],
         "owner": "threat / reach phase",
+        "executableUnconsumedOccurrences": 9,
+        "representativeIdentities": [
+          "lightsaber-chassis-dual-phase",
+          "lightsaber-chassis-lightwhip",
+          "lightsaber-chassis-pike",
+          "unmapped::Amphistaff"
+        ],
+        "note": {
+          "reason": "reach and threatened squares need a threat/reach model",
+          "phase": "5D-I: special movement / reach"
+        },
         "status": "DEFERRED"
       },
       "stun-ion-damage-modes": {
@@ -1276,6 +1429,17 @@
           "stunSwitchAction"
         ],
         "owner": "stun / ion special modes",
+        "executableUnconsumedOccurrences": 15,
+        "representativeIdentities": [
+          "lightsaber-chassis-retrosaber",
+          "unmapped::Neuronic Whip",
+          "unmapped::San-Ni Staff",
+          "unmapped::Shockboxing Gloves"
+        ],
+        "note": {
+          "reason": "remaining stun/ion special modes (overcharge, burnout, simultaneous components) need special-damage consumers",
+          "phase": "5D-I: special damage modes"
+        },
         "status": "PARTIAL"
       },
       "utility-and-movement": {
@@ -1288,6 +1452,15 @@
           "ascensionMode"
         ],
         "owner": "utility actions",
+        "executableUnconsumedOccurrences": 2,
+        "representativeIdentities": [
+          "weapon-ascension-gun",
+          "weapon-heavy-variable-blaster"
+        ],
+        "note": {
+          "reason": "utility actions (ascension) belong to special movement",
+          "phase": "5D-I: special movement / reach"
+        },
         "status": "DEFERRED"
       }
     },
@@ -1489,6 +1662,8 @@
       "stun-ion-damage-modes.stunSwitchAction",
       "utility-and-movement.ascensionMode"
     ],
+    "uniqueKeysUnconsumed": 196,
+    "rawOccurrencesUnconsumed": 256,
     "problems": []
   },
   "relations": {
@@ -1538,28 +1713,28 @@
         "instances": 9,
         "class": "SELECTOR",
         "policy": "AUTO",
-        "consumer": "combat-option-resolver#ruleAppliesToWeapon (relation join)"
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
       },
       {
         "relation": "EXPLICIT_WEAPON_COMPATIBILITY",
         "instances": 1,
         "class": "SELECTOR",
         "policy": "AUTO",
-        "consumer": "combat-option-resolver#ruleAppliesToWeapon (relation join)"
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
       },
       {
         "relation": "EXPLICIT_WEAPON_FAMILY_MATCH",
         "instances": 4,
         "class": "SELECTOR",
         "policy": "AUTO",
-        "consumer": "combat-option-resolver#ruleAppliesToWeapon (relation join)"
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
       },
       {
         "relation": "EXPLICIT_WEAPON_OPTION",
         "instances": 1,
         "class": "SELECTOR",
         "policy": "AUTO",
-        "consumer": "combat-option-resolver#ruleAppliesToWeapon (relation join)"
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
       },
       {
         "relation": "EXTRA_ATTACK_PENALTY",
@@ -1573,14 +1748,14 @@
         "instances": 1,
         "class": "SELECTOR",
         "policy": "AUTO",
-        "consumer": "combat-option-resolver#ruleAppliesToWeapon (relation join; ability has no canonical id -> name fallback)"
+        "consumer": "weapon-descriptor join of the ability's own rule scope; the ability has no canonical id so its display name is the legacy fallback; validated by the 5D-H census relation-consistency check"
       },
       {
         "relation": "NAMED_FIRA_ATTACK_BONUS_SYNERGY",
         "instances": 1,
         "class": "SELECTOR",
         "policy": "AUTO",
-        "consumer": "combat-option-resolver#ruleAppliesToWeapon (relation join; ability has no canonical id -> name fallback)"
+        "consumer": "weapon-descriptor join of the ability's own rule scope; the ability has no canonical id so its display name is the legacy fallback; validated by the 5D-H census relation-consistency check"
       },
       {
         "relation": "PROHIBITED",
@@ -1601,7 +1776,7 @@
         "instances": 6,
         "class": "SELECTOR",
         "policy": "AUTO",
-        "consumer": "combat-option-resolver#ruleAppliesToWeapon (relation join)"
+        "consumer": "weapon-descriptor join of the ability's own rule scope (ruleAppliesToWeapon); relation is a certified mirror, validated by the 5D-H census relation-consistency check"
       },
       {
         "relation": "TREAT_AS_LIGHT_WEAPON_FOR_THIS_FEAT",
@@ -1862,12 +2037,12 @@
         "ability": "Disabler",
         "abilityIdentity": "swse.feat.disabler",
         "canonicalIdentityAvailable": true,
-        "ruleType": "WEAPON_DAMAGE_DIE_STEP",
+        "ruleType": "WEAPON_DAMAGE_DIE_SIZE_STEP",
         "field": "weaponGroups",
         "scope": [
           "ion-pistol"
         ],
-        "mechanic": "WEAPON_DAMAGE_DIE_STEP",
+        "mechanic": "WEAPON_DAMAGE_DIE_SIZE_STEP",
         "group": "A",
         "why": "canonical ability identity + structured weapon descriptor/relations",
         "canonicalWeapons": {
@@ -2464,12 +2639,12 @@
         "ability": "Riflemaster",
         "abilityIdentity": "swse.feat.riflemaster",
         "canonicalIdentityAvailable": true,
-        "ruleType": "WEAPON_DAMAGE_DIE_STEP",
+        "ruleType": "WEAPON_DAMAGE_DIE_SIZE_STEP",
         "field": "weaponGroups",
         "scope": [
           "heavy-blaster-rifle"
         ],
-        "mechanic": "WEAPON_DAMAGE_DIE_STEP",
+        "mechanic": "WEAPON_DAMAGE_DIE_SIZE_STEP",
         "group": "A",
         "why": "canonical ability identity + structured weapon descriptor/relations",
         "canonicalWeapons": {
@@ -2570,12 +2745,12 @@
         "ability": "Sport Hunter",
         "abilityIdentity": "swse.feat.sport_hunter",
         "canonicalIdentityAvailable": true,
-        "ruleType": "WEAPON_DAMAGE_DIE_STEP",
+        "ruleType": "WEAPON_DAMAGE_DIE_SIZE_STEP",
         "field": "weaponGroups",
         "scope": [
           "slugthrower-rifle"
         ],
-        "mechanic": "WEAPON_DAMAGE_DIE_STEP",
+        "mechanic": "WEAPON_DAMAGE_DIE_SIZE_STEP",
         "group": "A",
         "why": "canonical ability identity + structured weapon descriptor/relations",
         "canonicalWeapons": {
@@ -2756,32 +2931,55 @@
   "heuristics": {
     "totalSites": 171,
     "byClass": {
-      "CANONICAL_RESIDUAL": 1,
       "DISPLAY": 85,
-      "IDENTITY_FALLBACK": 13,
+      "IDENTITY_FALLBACK": 14,
       "LEGACY_GATED": 58,
       "NON_COMBAT_DOMAIN": 5,
       "PROJECTION": 4,
       "TARGET_SIDE": 3,
       "WEAPON_DEFINITION": 2
     },
-    "canonicalResidualSites": [
-      {
-        "site": "scripts/items/weapon-runtime/proficiency-resolver.js:51",
-        "pattern": "name",
-        "reason": "proficiency entitlements read the feat display title (a stored canonical weaponIdentity/choice wins; the owned-ability set is name-keyed)",
-        "owner": "weapon proficiency identity (5D-A follow-up)"
-      }
-    ],
+    "canonicalResidualSites": [],
     "unclassified": []
   },
   "areaGeometry": {
-    "formsWithoutGeometry": [
-      "weapon-adhesive-grenade/primary",
-      "weapon-cryoban-grenade/primary",
-      "weapon-remote-grenade/primary"
+    "SOURCE_SILENT": [
+      {
+        "form": "weapon-adhesive-grenade/primary",
+        "identityKey": "weapon-adhesive-grenade",
+        "book": "Knights of the Old Republic Campaign Guide",
+        "page": "67-68",
+        "evidence": "Targets \"in an adhesive grenade's blast radius\" grapple against the attack roll; no radius is published."
+      },
+      {
+        "form": "weapon-cryoban-grenade/primary",
+        "identityKey": "weapon-cryoban-grenade",
+        "book": "Knights of the Old Republic Campaign Guide",
+        "page": "68-69",
+        "evidence": "The grenade coats those \"in its blast radius\"; table footnote \"Area attack weapon\"; no radius is published."
+      },
+      {
+        "form": "weapon-remote-grenade/primary",
+        "identityKey": "weapon-remote-grenade",
+        "book": "Knights of the Old Republic Campaign Guide",
+        "page": "180",
+        "evidence": "Description covers remote detonation, the 100 credit detonator and the 100 m safety rule only; no area is published."
+      }
     ],
-    "note": "source-silent: published text gives no radius/shape (adhesive, CryoBan, remote grenades); the repeating carbine area is fire-mode derived (autofire 2x2), not intrinsic"
+    "FIRE_MODE_DERIVED": [
+      "weapon-repeating-blaster-carbine/primary"
+    ],
+    "MISSING_CANONICAL_DATA": [],
+    "note": "SOURCE_SILENT = source-reviewed, no published geometry (never invented); FIRE_MODE_DERIVED = area comes from autofire (generic 2x2), no intrinsic geometry; MISSING_CANONICAL_DATA = published geometry absent from the corpus (must be empty)"
+  },
+  "relationConsistency": {
+    "consistent": 23,
+    "inconsistent": [
+      "lightsaber-chassis-pike <- Long Haft Strike (UNLOCKS_DOUBLE_WEAPON_MODE)",
+      "weapon-sporting-blaster-pistol <- Sport Hunter (EXPLICIT_WEAPON_BENEFIT)"
+    ],
+    "unresolvedAbilities": [],
+    "note": "inconsistent = the weapon declares the ability applicable but none of the ability rules/weaponPropertyRules scope tokens resolves to this weapon through the structured descriptor: ability-side scope data (or a missing selector) is the gap; the rule is NOT widened to compensate"
   },
   "conditions": {
     "policyCensus": {
