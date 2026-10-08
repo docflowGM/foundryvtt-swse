@@ -7,6 +7,7 @@
  */
 
 import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { negationExclusions } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js';
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -216,6 +217,7 @@ export function damageTypesMatch(candidateTypes = [], wantedTypes = []) {
 
 export function damageContextForReaction({ weapon = null, workflowContext = null, options = {} } = {}) {
   const damage = damageTypesFromContext({ weapon, workflowContext, options });
+  const negated = weapon ? negationExclusions(weapon, options) : null;
   // Math Integrity Freeze, Batch 2B: options.attackType (a genuine roll-time
   // context signal) stays first; the weapon fallback is now the canonical
   // branch authority instead of a raw meleeOrRanged-first read.
@@ -231,7 +233,12 @@ export function damageContextForReaction({ weapon = null, workflowContext = null
     sonic: damage.original.includes('sonic'),
     energy: damage.expanded.includes('energy'),
     force: damage.expanded.includes('force'),
-    sonicCannotBeDeflected: attackType === 'ranged' && damage.original.includes('sonic')
+    // Phase 5D-H: a canonical weapon DECLARES what its attacks cannot be negated with (CANNOT_NEGATE_ATTACK relation, joined on ability
+    // identity); the damage-type inference stays only for weapons without a canonical identity
+    cannotBeNegatedBy: attackType === 'ranged' ? (negated ?? []) : [],
+    sonicCannotBeDeflected: negated !== null
+      ? (attackType === 'ranged' && negated.includes('deflect'))
+      : (attackType === 'ranged' && damage.original.includes('sonic'))
   };
 }
 

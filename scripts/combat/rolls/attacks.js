@@ -371,6 +371,7 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
     damageTypes: damageContext.damageTypes,
     originalDamageTypes: damageContext.originalDamageTypes,
     sonicCannotBeDeflected: damageContext.sonicCannotBeDeflected,
+    cannotBeNegatedBy: damageContext.cannotBeNegatedBy,
     trigger: 'ON_ATTACK_DECLARED'
   });
 

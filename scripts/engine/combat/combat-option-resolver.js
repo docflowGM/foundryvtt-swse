@@ -1,6 +1,6 @@
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
-import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { canonicalFeatSlug, featKeyOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { weaponDeclaresAbility } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js";
 import { abilityProhibitedForShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 import {
@@ -267,8 +267,10 @@ function optionProhibitedByCanonicalShape(option, item, weapon, context = {}) {
   if (context.__probeDiscoveryGates === true && !option.expendsMultipleShots) return false;
   const shape = shapeOfWeapon(weapon, canonicalSelectionFromContext(context));
   if (shape.source !== "canonical") return false;
-  return !!(abilityProhibitedForShape(shape, item?.name, { expendsMultipleShots: option.expendsMultipleShots === true })
-    || abilityProhibitedForShape(shape, option.label, {}));
+  // Phase 5D-H: the PROHIBITED relation joins on ability IDENTITY (canonical slug; legacy base name only for items without one) and on the
+  // option id -- never on the feat's display name or the option's display label
+  return !!(abilityProhibitedForShape(shape, featKeyOf(item), { expendsMultipleShots: option.expendsMultipleShots === true })
+    || abilityProhibitedForShape(shape, option.id, {}));
 }
 function hydrateOption(raw, actor, weapon, context = {}) { const id = camelize(raw.option ?? raw.id ?? raw.key ?? raw.name); const defaults = DEFAULT_ATTACK_OPTIONS[id] ?? {}; const merged = foundry?.utils?.mergeObject ? foundry.utils.mergeObject(foundry.utils.deepClone(defaults), raw, { inplace: false }) : { ...defaults, ...raw }; merged.id = id; merged.label = merged.label ?? raw.label ?? id; merged.control = merged.control ?? raw.inputType ?? "toggle"; merged.attackType = getAttackType(weapon, context); if (merged.control === "slider") { const bab = actorBAB(actor); const ruleMax = Number(merged.max ?? merged.maximum ?? 5); merged.min = Number(merged.min ?? 0); merged.max = Math.max(0, Math.min(bab, Number.isFinite(ruleMax) ? ruleMax : bab)); merged.step = Number(merged.step ?? 1); merged.value = Math.max(merged.min, Math.min(Number(context?.combatOptions?.[id] ?? context?.attackOptions?.[id] ?? 0), merged.max)); merged.disabled = merged.max <= 0; } else if (merged.control === "toggle") merged.checked = Boolean(context?.combatOptions?.[id] ?? context?.attackOptions?.[id]); if (merged.requiresAim && !context?.aim) merged.warning = merged.warning ?? "Requires Aim."; if (merged.requiresCharge && !context?.charge) merged.warning = merged.warning ?? "Requires a charge context."; if (merged.requiresManeuver && contextManeuver(context) !== normalizeKey(merged.requiresManeuver)) merged.warning = merged.warning ?? `Requires ${merged.requiresManeuver}.`; if (merged.requiresAutofire && !weaponSupportsAutofire(weapon, context)) merged.warning = merged.warning ?? "Requires an autofire-capable weapon or autofire attack mode."; if (merged.control === "passive") { merged.checked = true; merged.value = 1; } return merged; }
 function selectedValue(options, id) { const combat = options?.combatOptions ?? options?.attackOptions ?? {}; const value = combat?.[id]; if (value === undefined || value === null || value === false || value === "") return 0; if (value === true) return 1; const numeric = Number(value); return Number.isFinite(numeric) ? numeric : 0; }

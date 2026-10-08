@@ -15,7 +15,8 @@ import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capa
 import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 import { shapeOfWeapon, canonicalProficiencyOf, doubleWeaponEnds, attackSelectionOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
-import { featChoiceSelectors, featChoiceMatchesShape, normalizeToken, sequenceConstraintViolation } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
+import { featChoiceSelectors, featChoiceMatchesShape, normalizeToken, sequenceConstraintViolation, groupTokenFromChoice } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
+import { featKeyOf, canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 
 /**
  * Weapon groups for Double/Triple Attack feats
@@ -243,9 +244,9 @@ export function actorHasMultiAttackFor(actor, kind, weapon, context = {}) {
   if (shape.source === 'canonical') {
     for (const item of actor?.items ?? []) {
       if (item?.type !== 'feat' || item.system?.disabled === true) {continue;}
-      const identity = String(item.flags?.swse?.canonicalFeat?.identityKey ?? '');
-      const base = normalizeToken(String(item.name ?? '').replace(/\([^)]*\)/g, ''));
-      if (!(identity.endsWith(`::${slug}`) || base === slug)) {continue;}
+      // Phase 5D-H: ability identity decides (canonical slug; the legacy base name only for an item with no canonical identity), so a
+      // same-named item that carries a different identity cannot impersonate Double/Triple Attack
+      if (featKeyOf(item) !== slug) {continue;}
       if (featChoiceMatchesShape(featChoiceSelectors(item, { actor, choiceKind: `${kind}_attack_weapon` }), shape)) {return true;}
     }
     return false;
@@ -404,6 +405,16 @@ export function getMultiattackReduction(actor, weaponGroup) {
   for (const item of actor.items ?? []) {
     if (item.type !== 'talent' && item.type !== 'feat') {continue;}
     const name = (item.name ?? '').toLowerCase();
+    // Phase 5D-H: canonical talents are recognised by identity slug (multiattack-proficiency-<group>); the display name is the legacy
+    // fallback only for abilities that carry no canonical identity
+    const slug = canonicalFeatSlug(item);
+    if (slug !== null) {
+      if (!slug.startsWith('multiattack-proficiency')) {continue;}
+      const g = groupTokenFromChoice(slug.slice('multiattack-proficiency'.length).replace(/^-+/, ''));
+      if (g !== normalizedGroup) {continue;}
+      scannedTotal += 2 * Math.max(1, Number(item.system?.quantity ?? item.system?.rank ?? item.system?.ranks ?? 1) || 1);
+      continue;
+    }
     if (!name.includes('multiattack proficiency')) {continue;}
     const matchesGroup = name.includes(normalizedGroup) ||
         (normalizedGroup === WEAPON_GROUPS.ADVANCED_MELEE && (name.includes('advanced melee') || name.includes('advanced-melee'))) ||

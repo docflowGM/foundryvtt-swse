@@ -45,6 +45,7 @@ const ALLOWED_RUNTIME_CONSUMERS = new Set([
   'scripts/engine/combat/features/combat-feature-handlers.js',
   'scripts/engine/feat/scoped-combat-feat-resolver.js', // 5D-G: Weapon Focus/Specialization selector join
   'scripts/engine/combat/fire-state-store.js', // 5D-G: owned fire state (readiness) for the selected form
+  'scripts/engine/combat/damage-type-rules.js', // 5D-H: CANNOT_NEGATE_ATTACK relation -> reaction negation exclusions
 ]);
 const refs = execFileSync('git', ['ls-files', 'scripts', 'index.js', 'system.json'], { cwd: ROOT }).toString().split('\n').filter((f) => f.endsWith('.js') && !f.startsWith('scripts/items/weapon-runtime/'));
 for (const f of refs) {

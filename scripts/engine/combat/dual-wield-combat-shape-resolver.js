@@ -5,6 +5,8 @@ import {
   isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly,
   isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon
 } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
+import { descriptorMatchesAny } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js';
 
 function normalizeKey(value) {
   return String(value ?? '')
@@ -122,6 +124,10 @@ function isLightWeapon(weapon, context = {}, actor = null) {
   if (!weapon) return false;
   const qualities = EffectiveWeaponQualityResolver.resolve(weapon, context);
   if (qualities.has('light') || qualities.has('light-weapon')) return true;
+  // Phase 5D-H: a canonical weapon is light when its selected form's structured size is below the wielder's -- not by Item text or name
+  { const shape = shapeOfWeapon(weapon, context);
+    if (shape.source === 'canonical') return descriptorMatchesAny(shape.descriptor, ['light'], { wielderSize: actor?.system?.size ?? 'medium' });
+    if (shape.source === 'error') return false; }
   const size = effectiveSize(weapon, context);
   if (size === 'tiny' || size === 'small') return true;
   return canonicalIsLightWeaponForActor(weapon, actor ?? {});
@@ -152,8 +158,10 @@ function dualWeaponMasteryLevel(actor) {
   let level = 0;
   for (const item of actorItems(actor)) {
     if (item?.type !== 'feat' || item.system?.disabled === true) continue;
-    const name = normalizeKey(item.name);
-    const slug = normalizeKey(item.system?.slug);
+    // Phase 5D-H: ability identity first (canonical slug); name/slug text only for an ability with no canonical identity
+    const canonical = canonicalFeatSlug(item);
+    const name = canonical ?? normalizeKey(item.name);
+    const slug = canonical ?? normalizeKey(item.system?.slug);
     const text = `${name} ${slug}`;
     if (text.includes('dual-weapon-mastery-iii') || text.includes('dual-weapon-mastery-3')) level = Math.max(level, 3);
     else if (text.includes('dual-weapon-mastery-ii') || text.includes('dual-weapon-mastery-2')) level = Math.max(level, 2);

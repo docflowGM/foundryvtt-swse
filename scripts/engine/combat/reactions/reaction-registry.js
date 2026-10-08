@@ -22,6 +22,7 @@ export class ReactionRegistry {
     // DEFENSIVE REACTIONS
     block: {
       key: 'block',
+      negationAbility: 'block',
       label: 'Block',
       trigger: 'ON_ATTACK_DECLARED',
       description: 'Reduce incoming damage',
@@ -57,6 +58,7 @@ export class ReactionRegistry {
 
     deflect: {
       key: 'deflect',
+      negationAbility: 'deflect',
       label: 'Deflect',
       trigger: 'ON_ATTACK_DECLARED',
       description: 'Deflect ranged energy attack; sonic attacks are energy but cannot be deflected.',

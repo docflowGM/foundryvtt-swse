@@ -15,6 +15,7 @@ import { resolveCanonicalResourceCost } from './canonical-resource.js';
 import { extractSpecialMechanics, damageShapeFromMechanics, summarizeMechanics } from './special-mechanics.js';
 import { resolveAttackShape } from './attack-shape.js';
 import { resolveAreaShape } from './area-shape.js';
+import { abilityKeysOfActor } from './ability-selector.js';
 
 const LEGACY = Object.freeze({ source: 'legacy' });
 const SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode', 'endId'];
@@ -85,7 +86,7 @@ export function resolveAttackWeaponRuntime(weapon, context = {}) {
   // Phase 5D-D: the selected form's canonical range facet travels with the runtime (one resolution for preview + roll); a
   // profile whose branch contradicts its own range mode is refused here, never guessed.
   const range = resolveCanonicalRange(resolved, profile);
-  return Object.freeze({ source: 'canonical', resolved, profile, branch: profile.branch ?? null, range, identityKey: resolvedIdentityKey, ...(hostIdentityKey ? { hostIdentityKey, endId } : {}), requested: Object.freeze(requested) });
+  return Object.freeze({ source: 'canonical', item: weapon, resolved, profile, branch: profile.branch ?? null, range, identityKey: resolvedIdentityKey, ...(hostIdentityKey ? { hostIdentityKey, endId } : {}), requested: Object.freeze(requested) });
 }
 
 /** Dynamic, profile-specific proficiency for a canonical runtime (delegates entirely to resolveProficiency). */
@@ -261,7 +262,9 @@ export function resolveAttackShapeFor(runtime, context = {}) {
   const registry = getSharedWeaponAuthorityRegistry();
   return resolveAttackShape(runtime, {
     context,
-    hostAugmentations: (rt, ctx) => registry ? resolverFor(registry).resolveHostAugmentations(rt.resolved, { ...ctx, configurationId: rt.resolved.selection.configurationId, answers: ctx?.answers }) : [],
+    // condition context: the wielder's owned abilities by canonical identity (hasFeat conditions join on identity, not display name)
+    feats: abilityKeysOfActor(runtime.item?.actor ?? context?.actor ?? null),
+    hostAugmentations: (rt, ctx) => registry ? resolverFor(registry).resolveHostAugmentations(rt.resolved, { feats: abilityKeysOfActor(rt.item?.actor ?? ctx?.actor ?? null), ...ctx, configurationId: rt.resolved.selection.configurationId, answers: ctx?.answers }) : [],
   });
 }
 
@@ -316,6 +319,11 @@ export function doubleWeaponEnds(weapon, context = {}) {
     return profileEnds.map((p) => ({ endId: p.id, via: 'profile', selection: { profileId: p.id, ...(cfg ? { configurationId: cfg } : {}) } }));
   }
   const shape = resolveAttackShapeFor(runtime, context);
+  if (shape.doubleWeapon?.via === 'conditional-quality') {
+    // the conditional quality (e.g. Long Haft Strike) turns the weapon's own melee profiles into the two ends
+    const ends = resolved.profiles.filter((p) => p.definition?.schemaFamily?.branch === 'melee' && (!p.availableIn || (cfg !== null && p.availableIn.includes(cfg))));
+    if (ends.length >= 2) return ends.map((p) => ({ endId: p.id, via: 'conditional-quality', selection: { profileId: p.id, ...(cfg ? { configurationId: cfg } : {}) } }));
+  }
   if (shape.doubleWeapon?.via === 'host-configuration') {
     return shape.doubleWeapon.hostEnds.map((e) => ({ endId: e.id, via: 'host-configuration', identityKey: e.identityKey, selection: { profileId: runtime.profile.id, ...(cfg ? { configurationId: cfg } : {}), endId: e.id } }));
   }
