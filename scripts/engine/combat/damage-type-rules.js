@@ -8,6 +8,8 @@
 
 import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { negationExclusions } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js';
+import { shapeOfWeapon } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
+import { canonicalSelectionFromContext } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js';
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -127,6 +129,16 @@ function splitTypedText(value = '') {
     .filter(Boolean);
 }
 
+// Phase 5D-H: a canonical weapon's damage types are its SELECTED form's structured damage types -- never its name/Item text
+function weaponDamageTypeSources(weapon = null, options = {}) {
+  if (weapon) {
+    const shape = shapeOfWeapon(weapon, canonicalSelectionFromContext(options ?? {}));
+    if (shape.source === 'canonical') return [...shape.damageTypes, ...(shape.stunCapability === 'native-stun' ? ['stun'] : [])];
+    if (shape.source === 'error') return [];
+  }
+  return weaponSystemDamageTypes(weapon);
+}
+
 function weaponSystemDamageTypes(weapon = null) {
   const system = weapon?.system ?? {};
   return [
@@ -177,7 +189,7 @@ export function damageTypesFromContext({ weapon = null, workflowContext = null, 
     attack.damageType,
     attack.damageTypes,
     tags,
-    ...weaponSystemDamageTypes(weapon)
+    ...weaponDamageTypeSources(weapon, options)
   ]);
 
   if (attack.isIon === true || options.ion === true || ruleData.ion === true) originals.push('ion');
