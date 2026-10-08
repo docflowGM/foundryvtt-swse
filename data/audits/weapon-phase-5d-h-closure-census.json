@@ -10,8 +10,8 @@
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 15,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 196,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 256,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 161,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 212,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 42,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 7,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
@@ -186,58 +186,37 @@
         "id": "3b.operation.area-splash-burst",
         "fieldPaths": 36,
         "status": "PARTIAL",
-        "consumedKeys": 3,
+        "consumedKeys": 7,
         "nonExecutable": {
           "STORE": 1
         },
         "executableUnconsumed": [
           "blastEffect",
-          "bracedAutofireAreaSquares",
-          "contactDetonation",
           "embeddedShrapnel",
-          "remoteDetonationSafetyRule",
-          "timerRounds"
+          "remoteDetonationSafetyRule"
         ],
         "owner": "area attack consumers"
       },
       {
         "id": "3b.operation.attack-modifiers-and-penalties",
-        "fieldPaths": 63,
+        "fieldPaths": 67,
         "status": "PARTIAL",
-        "consumedKeys": 3,
+        "consumedKeys": 10,
         "nonExecutable": {},
         "executableUnconsumed": [
           "allyAttackBonus",
           "allyEligibleWeapons",
           "attackOfOpportunityChoices",
           "attackTreatedAs",
-          "autofireEquipmentBonus",
           "canMakeAttackOfOpportunityEvenWithStockExtended",
           "canMakeAttacksOfOpportunity",
           "canMakeAttacksOfOpportunityWithoutFoldedStock",
-          "cannotBeThrownEffectively",
-          "cannotBraceWithoutTripodOrMount",
-          "conditionalAttackBonus",
           "detachedTreatAs",
-          "improvisedWeaponPenaltyReplacement",
           "lineOfSightOriginHeightSquares",
-          "maximumRangeIncrement",
-          "maximumRangeSquares",
-          "modeEnvironmentRule",
-          "mustAimImmediatelyBeforeAttackToAvoidPenalty",
           "preferredMode",
-          "rangePenaltyApplication",
-          "rangeStepReductionPreparation",
-          "rangedModeFunctionsAs",
           "repeatAttackEachRoundToMaintainDesignation",
-          "singleShotAttackPenalty",
-          "sniperPointBlankAttackPenalty",
-          "targetRule",
           "targetRules",
           "targeting",
-          "unAimedAttackPenalty",
-          "unbracedAdditionalAttackPenalty",
-          "underwaterUsableProfiles",
           "unregulatedAttackPenalty"
         ],
         "owner": "conditional attack-modifier evaluation (post-5D-H)"
@@ -368,17 +347,12 @@
         "id": "3b.operation.damage-modifiers",
         "fieldPaths": 13,
         "status": "PARTIAL",
-        "consumedKeys": 0,
+        "consumedKeys": 3,
         "nonExecutable": {},
         "executableUnconsumed": [
-          "adjacentBonusDamage",
           "damageThresholdAdjustment",
           "hurledObjectDamageRule",
-          "ignoresDRCondition",
-          "pointBlankDamageEquipmentBonus",
           "powerAttackExtraDamageAppliesToObjectsAndVehicles",
-          "shieldRatingStillApplies",
-          "strengthModifierAppliesToDamage",
           "twoHandedDamageChoice",
           "weaponDR",
           "weaponDRAppliesAgainstLightsabers",
@@ -475,20 +449,11 @@
         "id": "3b.operation.stun-ion-damage-modes",
         "fieldPaths": 22,
         "status": "PARTIAL",
-        "consumedKeys": 2,
+        "consumedKeys": 3,
         "nonExecutable": {},
         "executableUnconsumed": [
-          "burnoutDamage",
-          "convertsUnarmedMeleeAttackToStunDamage",
           "damageTypeAndBurstDeterminedByGrenade",
-          "dealsNoDamage",
-          "ongoingStunWhileTrapped",
-          "overchargeDamage",
-          "simultaneousDamageComponents",
-          "sonicDamageIsEnergy",
-          "stunChoiceTiming",
-          "stunShotsPerAttack",
-          "stunSwitchAction"
+          "ongoingStunWhileTrapped"
         ],
         "owner": "stun / ion special modes"
       },
@@ -540,16 +505,17 @@
         "fieldPaths": 42,
         "status": "PARTIAL",
         "consumer": "scripts/items/weapon-runtime/special-mechanics.js",
-        "probe": "conditionalModifiers",
-        "note": "conditional attack modifiers execute (AUTO/PROMPT); activationRequirements are reconciled but not enforced",
+        "probe": "resolveTargetRequirements",
+        "note": "5D-I-A: conditional attack modifiers evaluate through condition-policy, target requirements gate the attack, conditionalRangeRules scale ranges; the remaining requirement types need persisted activation / wielding / crew state",
         "consumed": [
-          "conditionalModifiers"
-        ],
-        "deferred": [
-          "activationRequirements",
+          "conditionalModifiers (condition-policy AUTO/PROMPT)",
+          "activationRequirements.target / target-rule",
           "conditionalRangeRules"
         ],
-        "owner": "conditional activation / range conditions (post-5D-H)"
+        "deferred": [
+          "activationRequirements.action / wielding / choice / feat / configuration / proficiency / usage-limit / operators"
+        ],
+        "owner": "5D-I-B (activation state, wielding, configuration, crew)"
       },
       {
         "id": "3b.profile.damage",
@@ -831,8 +797,8 @@
           "weapon-xerrol-nightstinger"
         ],
         "note": {
-          "reason": "grapple-feat allow/deny lists, crystal/tagger compatibility and upgrade restrictions need the grapple and upgrade subsystems",
-          "phase": "5D-I: remaining ability relations / grapple-Pin-Trip"
+          "reason": "residual keys are equipment / customization / reaction compatibilities, not attack resolution (see the 5D-I-A manifest)",
+          "phase": "5D-I-B/C/D by owner"
         },
         "status": "PARTIAL"
       },
@@ -904,12 +870,15 @@
         "consumed": [
           "area",
           "areaAttack",
-          "detonation"
+          "bracedAutofireAreaSquares",
+          "contactDetonation",
+          "defaultAutofireAreaSquares",
+          "detonation",
+          "timerRounds"
         ],
         "duplicates": {
           "burstRadiusSquares": "attackProfiles[].area",
           "coneLengthSquares": "attackProfiles[].area",
-          "defaultAutofireAreaSquares": "generic autofire 2x2 area (Core: Area Attacks / Autofire)",
           "nonadjacentSplashRadiusSquares": "attackProfiles[].area",
           "splashRadiusSquares": "attackProfiles[].area",
           "splashSquares": "attackProfiles[].area"
@@ -921,23 +890,19 @@
         },
         "executableUnconsumed": [
           "blastEffect",
-          "bracedAutofireAreaSquares",
-          "contactDetonation",
           "embeddedShrapnel",
-          "remoteDetonationSafetyRule",
-          "timerRounds"
+          "remoteDetonationSafetyRule"
         ],
         "owner": "area attack consumers",
-        "executableUnconsumedOccurrences": 6,
+        "executableUnconsumedOccurrences": 3,
         "representativeIdentities": [
           "weapon-adhesive-grenade",
-          "weapon-flash-canister",
           "weapon-remote-grenade",
           "weapon-ripper"
         ],
         "note": {
-          "reason": "detonation timing, blast effects, braced autofire area expansion and shrapnel are effects layered on the (already consumed) area geometry",
-          "phase": "5D-I: targeting / area effects"
+          "reason": "5D-I-A consumed detonation timing, contact detonation and the braced autofire area; the remaining blast / shrapnel effects are grapple / persistent effects, and the remote-detonation safety rule is prose only",
+          "phase": "5D-I-C: blast effects / shrapnel; 5D-I-D: remote detonation structure"
         },
         "status": "PARTIAL"
       },
@@ -946,19 +911,37 @@
         "identities": 38,
         "consumed": [
           "attackPenalty",
+          "autofireEquipmentBonus",
+          "cannotBraceWithoutTripodOrMount",
+          "improvisedWeaponPenaltyReplacement",
           "postShotResetAction",
-          "rangeTreatedAs"
+          "rangeStepReductionPreparation",
+          "rangeTreatedAs",
+          "singleShotAttackPenalty",
+          "unbracedAdditionalAttackPenalty",
+          "underwaterUsableProfiles"
         ],
         "duplicates": {
           "additionalAttackPenalty": "EXTRA_ATTACK_PENALTY relation / multi-attack conditionalModifiers",
           "additionalAttackPenaltyWith": "EXTRA_ATTACK_PENALTY relation / multi-attack conditionalModifiers",
           "attackPenaltyBelowMinimumStrength": "attackProfiles[].conditionalModifiers (\"wielder Strength below N\")",
           "braceRequiresExtendedStock": "firingConstraints.braceRule",
+          "cannotBeThrownEffectively": "attackProfiles[] (the weapon publishes no thrown profile)",
+          "conditionalAttackBonus": "attackProfiles[].conditionalModifiers (attack of opportunity while wielded one-handed, +1)",
           "longHaftFormDoubleWeapon": "configurationStates / modeProfiles / conditionalQualities",
+          "maximumRangeIncrement": "attackProfiles[].range.hardMaxSquares",
+          "maximumRangeSquares": "attackProfiles[].range.hardMaxSquares",
           "minimumStrengthWithoutPenalty": "attackProfiles[].conditionalModifiers (\"wielder Strength below N\")",
+          "modeEnvironmentRule": "attackProfiles[].conditionalRangeRules (scale-range 0.5 underwater / not-underwater)",
+          "mustAimImmediatelyBeforeAttackToAvoidPenalty": "attackProfiles[].conditionalModifiers (\"not-aimed-at-target-immediately-before-attack\", -5)",
           "primeAction": "attackProfiles[].preparedAttack",
           "primeTiming": "attackProfiles[].preparedAttack",
-          "targetSizeAttackPenalty": "attackProfiles[].conditionalModifiers (targetSize)"
+          "rangePenaltyApplication": "attackProfiles[].range.penaltyApplication (\"damage\")",
+          "rangedModeFunctionsAs": "attackProfiles[plasma-bolt] (rifle range family, no stun)",
+          "sniperPointBlankAttackPenalty": "attackProfiles[].conditionalModifiers (\"target at unmodified point-blank range\", -2)",
+          "targetRule": "attackProfiles[].activationRequirements (type: target-rule)",
+          "targetSizeAttackPenalty": "attackProfiles[].conditionalModifiers (targetSize)",
+          "unAimedAttackPenalty": "attackProfiles[].conditionalModifiers (\"not-aimed-at-target-immediately-before-attack\", -5)"
         },
         "nonExecutable": {},
         "executableUnconsumed": [
@@ -966,46 +949,28 @@
           "allyEligibleWeapons",
           "attackOfOpportunityChoices",
           "attackTreatedAs",
-          "autofireEquipmentBonus",
           "canMakeAttackOfOpportunityEvenWithStockExtended",
           "canMakeAttacksOfOpportunity",
           "canMakeAttacksOfOpportunityWithoutFoldedStock",
-          "cannotBeThrownEffectively",
-          "cannotBraceWithoutTripodOrMount",
-          "conditionalAttackBonus",
           "detachedTreatAs",
-          "improvisedWeaponPenaltyReplacement",
           "lineOfSightOriginHeightSquares",
-          "maximumRangeIncrement",
-          "maximumRangeSquares",
-          "modeEnvironmentRule",
-          "mustAimImmediatelyBeforeAttackToAvoidPenalty",
           "preferredMode",
-          "rangePenaltyApplication",
-          "rangeStepReductionPreparation",
-          "rangedModeFunctionsAs",
           "repeatAttackEachRoundToMaintainDesignation",
-          "singleShotAttackPenalty",
-          "sniperPointBlankAttackPenalty",
-          "targetRule",
           "targetRules",
           "targeting",
-          "unAimedAttackPenalty",
-          "unbracedAdditionalAttackPenalty",
-          "underwaterUsableProfiles",
           "unregulatedAttackPenalty"
         ],
         "owner": "conditional attack-modifier evaluation (post-5D-H)",
-        "executableUnconsumedOccurrences": 35,
+        "executableUnconsumedOccurrences": 17,
         "representativeIdentities": [
-          "lightsaber-chassis-dueling",
           "unmapped::Bayonet",
-          "unmapped::Energy Lance",
-          "unmapped::Entrenching Tool"
+          "unmapped::Garrote",
+          "unmapped::Vibrobayonet",
+          "weapon-blaster-carbine"
         ],
         "note": {
-          "reason": "conditional modifiers, aim/target rules, attacks of opportunity and range tweaks need a general conditional attack-modifier evaluator",
-          "phase": "5D-I: targeting / attack resolution"
+          "reason": "5D-I-A consumed the fire-state, aim, brace, range and environment attack modifiers; the remainder needs AoO eligibility, crew state, configuration, designation or the grab system",
+          "phase": "5D-I-B/C/D by owner (see the 5D-I-A manifest)"
         },
         "status": "PARTIAL"
       },
@@ -1196,36 +1161,37 @@
       "damage-modifiers": {
         "keys": 13,
         "identities": 22,
-        "consumed": [],
+        "consumed": [
+          "adjacentBonusDamage",
+          "pointBlankDamageEquipmentBonus",
+          "strengthModifierAppliesToDamage"
+        ],
         "duplicates": {
-          "cannotBeNegatedByDeflect": "CANNOT_NEGATE_ATTACK relation"
+          "cannotBeNegatedByDeflect": "CANNOT_NEGATE_ATTACK relation",
+          "ignoresDRCondition": "damageReductionInteraction (mode conditional, \"target is an unattended object\")",
+          "shieldRatingStillApplies": "damage mitigation stage order (Shield Rating is stage 1; bypass-dr only touches stage 2)"
         },
         "nonExecutable": {},
         "executableUnconsumed": [
-          "adjacentBonusDamage",
           "damageThresholdAdjustment",
           "hurledObjectDamageRule",
-          "ignoresDRCondition",
-          "pointBlankDamageEquipmentBonus",
           "powerAttackExtraDamageAppliesToObjectsAndVehicles",
-          "shieldRatingStillApplies",
-          "strengthModifierAppliesToDamage",
           "twoHandedDamageChoice",
           "weaponDR",
           "weaponDRAppliesAgainstLightsabers",
           "weaponDRValue"
         ],
         "owner": "damage modifier consumers (post-5D-H)",
-        "executableUnconsumedOccurrences": 20,
+        "executableUnconsumedOccurrences": 10,
         "representativeIdentities": [
           "lightsaber-chassis-longhandle",
-          "lightsaber-chassis-short",
-          "unmapped::Fire Blade",
-          "unmapped::Power Hammer"
+          "unmapped::Power Hammer",
+          "unmapped::Shockstaff",
+          "weapon-disruptor-pistol"
         ],
         "note": {
-          "reason": "object/vehicle damage rules, DR for the weapon as an object and damage-threshold tweaks need dedicated damage modifier consumers",
-          "phase": "5D-I: remaining damage modifiers"
+          "reason": "5D-I-A consumed the composition-stage terms (point-blank bonus, adjacent die, bow/sling Strength); the remainder are threshold, wielding, hurled-object and weapon-object durability",
+          "phase": "5D-I-B/C/D by owner (see the 5D-I-A manifest)"
         },
         "status": "PARTIAL"
       },
@@ -1405,40 +1371,38 @@
         "identities": 24,
         "consumed": [
           "overwhelmingStunRule",
-          "stunOnly"
+          "stunOnly",
+          "stunSwitchAction"
         ],
         "duplicates": {
           "alwaysStun": "attackProfiles[].stun.capability = native-stun",
+          "burnoutDamage": "attackProfiles[burnout].damage (2d4)",
+          "convertsUnarmedMeleeAttackToStunDamage": "attackProfiles[].stun.capability = native-stun",
+          "dealsNoDamage": "attackProfiles[].damage (no ordinary damage) -> NO_ORDINARY_DAMAGE",
           "ionDamage": "attackProfiles[].damageType (ion)",
           "ionDamageRulesApply": "attackProfiles[].damageType (ion)",
           "nativeStunDamage": "attackProfiles[].stun.capability = native-stun",
-          "nativeStunOnly": "attackProfiles[].stun.capability = native-stun"
+          "nativeStunOnly": "attackProfiles[].stun.capability = native-stun",
+          "overchargeDamage": "attackProfiles[overcharge].damage (2d10)",
+          "simultaneousDamageComponents": "attackProfiles[].damageComponents (stun + slashing rider)",
+          "sonicDamageIsEnergy": "attackProfiles[].damageType.types = [energy]",
+          "stunChoiceTiming": "attackProfiles[].stun.activation.timing = attack-declaration",
+          "stunShotsPerAttack": "attackProfiles[].resourceConsumption.stunUnits"
         },
         "nonExecutable": {},
         "executableUnconsumed": [
-          "burnoutDamage",
-          "convertsUnarmedMeleeAttackToStunDamage",
           "damageTypeAndBurstDeterminedByGrenade",
-          "dealsNoDamage",
-          "ongoingStunWhileTrapped",
-          "overchargeDamage",
-          "simultaneousDamageComponents",
-          "sonicDamageIsEnergy",
-          "stunChoiceTiming",
-          "stunShotsPerAttack",
-          "stunSwitchAction"
+          "ongoingStunWhileTrapped"
         ],
         "owner": "stun / ion special modes",
-        "executableUnconsumedOccurrences": 15,
+        "executableUnconsumedOccurrences": 2,
         "representativeIdentities": [
-          "lightsaber-chassis-retrosaber",
-          "unmapped::Neuronic Whip",
-          "unmapped::San-Ni Staff",
-          "unmapped::Shockboxing Gloves"
+          "weapon-electronet",
+          "weapon-grenade-launcher"
         ],
         "note": {
-          "reason": "remaining stun/ion special modes (overcharge, burnout, simultaneous components) need special-damage consumers",
-          "phase": "5D-I: special damage modes"
+          "reason": "5D-I-A consumed the stun switch and classified the dual-carried modes; payload delegation and trapped-target stun need ammo payloads / persistent effects",
+          "phase": "5D-I-B/C by owner (see the 5D-I-A manifest)"
         },
         "status": "PARTIAL"
       },
@@ -1495,42 +1459,21 @@
       "ammo-resource-reload.singleShot",
       "ammo-resource-reload.specialRateOfFire",
       "area-splash-burst.blastEffect",
-      "area-splash-burst.bracedAutofireAreaSquares",
-      "area-splash-burst.contactDetonation",
       "area-splash-burst.embeddedShrapnel",
       "area-splash-burst.remoteDetonationSafetyRule",
-      "area-splash-burst.timerRounds",
       "attack-modifiers-and-penalties.allyAttackBonus",
       "attack-modifiers-and-penalties.allyEligibleWeapons",
       "attack-modifiers-and-penalties.attackOfOpportunityChoices",
       "attack-modifiers-and-penalties.attackTreatedAs",
-      "attack-modifiers-and-penalties.autofireEquipmentBonus",
       "attack-modifiers-and-penalties.canMakeAttackOfOpportunityEvenWithStockExtended",
       "attack-modifiers-and-penalties.canMakeAttacksOfOpportunity",
       "attack-modifiers-and-penalties.canMakeAttacksOfOpportunityWithoutFoldedStock",
-      "attack-modifiers-and-penalties.cannotBeThrownEffectively",
-      "attack-modifiers-and-penalties.cannotBraceWithoutTripodOrMount",
-      "attack-modifiers-and-penalties.conditionalAttackBonus",
       "attack-modifiers-and-penalties.detachedTreatAs",
-      "attack-modifiers-and-penalties.improvisedWeaponPenaltyReplacement",
       "attack-modifiers-and-penalties.lineOfSightOriginHeightSquares",
-      "attack-modifiers-and-penalties.maximumRangeIncrement",
-      "attack-modifiers-and-penalties.maximumRangeSquares",
-      "attack-modifiers-and-penalties.modeEnvironmentRule",
-      "attack-modifiers-and-penalties.mustAimImmediatelyBeforeAttackToAvoidPenalty",
       "attack-modifiers-and-penalties.preferredMode",
-      "attack-modifiers-and-penalties.rangePenaltyApplication",
-      "attack-modifiers-and-penalties.rangeStepReductionPreparation",
-      "attack-modifiers-and-penalties.rangedModeFunctionsAs",
       "attack-modifiers-and-penalties.repeatAttackEachRoundToMaintainDesignation",
-      "attack-modifiers-and-penalties.singleShotAttackPenalty",
-      "attack-modifiers-and-penalties.sniperPointBlankAttackPenalty",
-      "attack-modifiers-and-penalties.targetRule",
       "attack-modifiers-and-penalties.targetRules",
       "attack-modifiers-and-penalties.targeting",
-      "attack-modifiers-and-penalties.unAimedAttackPenalty",
-      "attack-modifiers-and-penalties.unbracedAdditionalAttackPenalty",
-      "attack-modifiers-and-penalties.underwaterUsableProfiles",
       "attack-modifiers-and-penalties.unregulatedAttackPenalty",
       "concealment-stealth-sensing.alwaysDetermineNorth",
       "concealment-stealth-sensing.audibility",
@@ -1603,14 +1546,9 @@
       "crew-and-emplacement.operatorsRequired",
       "crew-and-emplacement.requiresSecondCrewRegulation",
       "crew-and-emplacement.tripodEffectiveSize",
-      "damage-modifiers.adjacentBonusDamage",
       "damage-modifiers.damageThresholdAdjustment",
       "damage-modifiers.hurledObjectDamageRule",
-      "damage-modifiers.ignoresDRCondition",
-      "damage-modifiers.pointBlankDamageEquipmentBonus",
       "damage-modifiers.powerAttackExtraDamageAppliesToObjectsAndVehicles",
-      "damage-modifiers.shieldRatingStillApplies",
-      "damage-modifiers.strengthModifierAppliesToDamage",
       "damage-modifiers.twoHandedDamageChoice",
       "damage-modifiers.weaponDR",
       "damage-modifiers.weaponDRAppliesAgainstLightsabers",
@@ -1649,21 +1587,12 @@
       "reach-and-threat.reachIncreaseSquares",
       "reach-and-threat.reachProfileIds",
       "reach-and-threat.reachSquares",
-      "stun-ion-damage-modes.burnoutDamage",
-      "stun-ion-damage-modes.convertsUnarmedMeleeAttackToStunDamage",
       "stun-ion-damage-modes.damageTypeAndBurstDeterminedByGrenade",
-      "stun-ion-damage-modes.dealsNoDamage",
       "stun-ion-damage-modes.ongoingStunWhileTrapped",
-      "stun-ion-damage-modes.overchargeDamage",
-      "stun-ion-damage-modes.simultaneousDamageComponents",
-      "stun-ion-damage-modes.sonicDamageIsEnergy",
-      "stun-ion-damage-modes.stunChoiceTiming",
-      "stun-ion-damage-modes.stunShotsPerAttack",
-      "stun-ion-damage-modes.stunSwitchAction",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 196,
-    "rawOccurrencesUnconsumed": 256,
+    "uniqueKeysUnconsumed": 161,
+    "rawOccurrencesUnconsumed": 212,
     "problems": []
   },
   "relations": {
@@ -1853,9 +1782,9 @@
     ]
   },
   "legacyRuleManifest": {
-    "records": 44,
+    "records": 45,
     "byGroup": {
-      "A": 38,
+      "A": 39,
       "B": 3,
       "C": 3,
       "D": 0
@@ -2761,6 +2690,26 @@
         }
       },
       {
+        "abilityType": "feat",
+        "ability": "Sport Hunter",
+        "abilityIdentity": "swse.feat.sport_hunter",
+        "canonicalIdentityAvailable": true,
+        "ruleType": "WEAPON_DAMAGE_DICE_REROLL",
+        "field": "weaponGroups",
+        "scope": [
+          "sporting-blaster-pistol"
+        ],
+        "mechanic": "WEAPON_DAMAGE_DICE_REROLL",
+        "group": "A",
+        "why": "canonical ability identity + structured weapon descriptor/relations",
+        "canonicalWeapons": {
+          "before": 1,
+          "after": 1,
+          "lost": [],
+          "gained": []
+        }
+      },
+      {
         "abilityType": "talent",
         "ability": "Strength of the Empire",
         "abilityIdentity": "swse.talent.strength_of_the_empire",
@@ -2929,9 +2878,9 @@
     ]
   },
   "heuristics": {
-    "totalSites": 171,
+    "totalSites": 175,
     "byClass": {
-      "DISPLAY": 85,
+      "DISPLAY": 89,
       "IDENTITY_FALLBACK": 14,
       "LEGACY_GATED": 58,
       "NON_COMBAT_DOMAIN": 5,
@@ -2973,10 +2922,9 @@
     "note": "SOURCE_SILENT = source-reviewed, no published geometry (never invented); FIRE_MODE_DERIVED = area comes from autofire (generic 2x2), no intrinsic geometry; MISSING_CANONICAL_DATA = published geometry absent from the corpus (must be empty)"
   },
   "relationConsistency": {
-    "consistent": 23,
+    "consistent": 24,
     "inconsistent": [
-      "lightsaber-chassis-pike <- Long Haft Strike (UNLOCKS_DOUBLE_WEAPON_MODE)",
-      "weapon-sporting-blaster-pistol <- Sport Hunter (EXPLICIT_WEAPON_BENEFIT)"
+      "lightsaber-chassis-pike <- Long Haft Strike (UNLOCKS_DOUBLE_WEAPON_MODE)"
     ],
     "unresolvedAbilities": [],
     "note": "inconsistent = the weapon declares the ability applicable but none of the ability rules/weaponPropertyRules scope tokens resolves to this weapon through the structured descriptor: ability-side scope data (or a missing selector) is the gap; the rule is NOT widened to compensate"

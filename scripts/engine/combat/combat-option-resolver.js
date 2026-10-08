@@ -190,6 +190,17 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
           result.breakdown.push({ label: rule.label || item.name, value, type: "damageDieStepIncrease" });
           break;
         }
+        case "WEAPON_DAMAGE_DICE_REROLL": {
+          // Phase 5D-I-A: "reroll damage-die results of N until a different result" on the WEAPON dice only (never talent / Force Point / rider dice).
+          // The rule's weapon scope joins the selected form's structured descriptor like every other weapon rule.
+          if (!ruleAppliesToWeapon(rule, item, weapon, context)) continue;
+          const values = (Array.isArray(rule.rerollValues) ? rule.rerollValues : []).map(Number).filter((v) => Number.isInteger(v) && v >= 1);
+          if (!values.length) continue;
+          const prior = Array.isArray(result.flags.weaponDiceRerollValues) ? result.flags.weaponDiceRerollValues : [];
+          result.flags.weaponDiceRerollValues = [...new Set([...prior, ...values])].sort((a, b) => a - b);
+          result.breakdown.push({ label: rule.label || item.name, value: 0, type: "weaponDiceReroll" });
+          break;
+        }
         case "WEAPON_PROPERTY_OVERRIDE": {
           if (!ruleAppliesToWeapon(rule, item, weapon, context)) continue;
           const property = normalizeKey(rule.property ?? rule.key ?? rule.flag ?? 'property');
@@ -253,12 +264,18 @@ function optionAllowedForWeapon(option, actor, weapon, context = {}) { const pro
 // Phase 5D-H: an option the WEAPON form itself grants (declared structure, never a name). Today: the matured optional prepared attack,
 // which only exists once rollAttack asserted it from owned fire state (combatOptions.preparedAttack) -- never offered as a free toggle.
 function weaponGrantedOptions(weapon, context = {}) {
-  const asserted = context?.combatOptions?.preparedAttack ?? context?.attackOptions?.preparedAttack;
-  if (!asserted) return [];
   const shape = shapeOfWeapon(weapon, canonicalSelectionFromContext(context));
-  const prep = shape.source === "canonical" ? shape.temporal.find((c) => c.family === "prepared-attack") : null;
-  if (!prep) return [];
-  return [{ id: "preparedAttack", label: "Prepared Attack", control: "toggle", damageExtraWeaponDice: prep.diceDelta, damageDiceStepBonus: 0, ammunitionCost: prep.resourceUnits ?? 0, expendsMultipleShots: false, sourceName: "weapon", summary: "Primed shot: the structured prepared-attack effect of the selected weapon form." }];
+  if (shape.source !== "canonical") return [];
+  const out = [];
+  const asserted = context?.combatOptions?.preparedAttack ?? context?.attackOptions?.preparedAttack;
+  const prep = asserted ? shape.temporal.find((c) => c.family === "prepared-attack") : null;
+  if (prep) out.push({ id: "preparedAttack", label: "Prepared Attack", control: "toggle", damageExtraWeaponDice: prep.diceDelta, damageDiceStepBonus: 0, ammunitionCost: prep.resourceUnits ?? 0, expendsMultipleShots: false, sourceName: "weapon", summary: "Primed shot: the structured prepared-attack effect of the selected weapon form." });
+  // Phase 5D-I-A: a published pre-attack preparation that shortens the target's range by whole bands (E-Web missile launcher). The player
+  // chooses it per attack; its structured action cost is paid through the existing action economy (FireStateStore.previewReadiness).
+  // Stacks with Far Shot (both are one-step-closer adjustments, summed by getRangePenaltyAdjustment).
+  const rp = shape.rangePreparation;
+  if (rp?.complete && rp.steps === 1) out.push({ id: "preparedRangeReduction", label: "Range Preparation", control: "toggle", requiresAttackType: "ranged", rangePenaltyAdjustment: "oneStepCloser", rangeSteps: rp.steps, expendsMultipleShots: false, sourceName: "weapon", summary: `Spend ${rp.requiredActions.map((a) => `${a.count} ${a.action}`).join(" + ")} before the attack: treat the target's range as ${rp.steps} step${rp.steps === 1 ? "" : "s"} shorter.` });
+  return out;
 }
 function optionProhibitedByCanonicalShape(option, item, weapon, context = {}) {
   if (context.__probeDiscoveryGates === true && !option.expendsMultipleShots) return false;

@@ -14,6 +14,8 @@
 //   DISPLAY_ONLY    purely informational (no mechanical effect on this single attack)
 //   VALIDATION_ONLY constrains legality (firing limits) -- checked, never "executed"
 
+import { policyFor, evaluateCondition, conditionContextKeys, SIZE_RANK } from './condition-policy.js';
+
 export const POLICY = Object.freeze({ AUTO: 'AUTO', PROMPT: 'PROMPT', DEFER: 'DEFER', DISPLAY_ONLY: 'DISPLAY_ONLY', VALIDATION_ONLY: 'VALIDATION_ONLY' });
 
 export const TIMING = Object.freeze({
@@ -46,6 +48,7 @@ export const FAMILIES = Object.freeze({
   'activation-effect':        { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'activated empowerment (Force Point / swift action) with own cost' },
   'return-recovery':          { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'return/recovery threshold with no structured effect or action' },
   'firing-constraint':        { policy: POLICY.VALIDATION_ONLY, timing: TIMING.ON_ATTACK, note: 'limits shots per round/reload; checked against the existing multi-attack/ammo rules (Phase 5D-F)' },
+  'conditional-damage':       { policy: POLICY.AUTO,     timing: TIMING.ON_DAMAGE_ROLL, note: 'weapon-declared damage term that applies under a structural attack fact (point-blank range / adjacent target); composed once in the existing damage composition' },
   'attack-resolution':        { policy: POLICY.AUTO,     timing: TIMING.ON_ATTACK,      note: 'selected form defense (reflex/fortitude/will) -- already consumed through targetContext.defenseType' },
   'display-note':             { policy: POLICY.DISPLAY_ONLY, timing: TIMING.CONTINUOUS, note: 'informational statement with no effect on resolving the single attack (e.g. concealed shot origin)' },
   'unclassified':             { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'structured mechanic with no recognized family; surfaced, never silently dropped' },
@@ -85,6 +88,19 @@ function classifyTriggeredEffect(e, index, formRefused) {
   return mech('unclassified', id, { source: src, trigger: e.trigger ?? null, data: e });
 }
 
+/** operation key -> structural condition (read against the observed attack context). */
+const OPERATION_ATTACK_MODIFIERS = Object.freeze([
+  ['singleShotAttackPenalty', Object.freeze({ fireMode: 'single' })],
+  ['autofireEquipmentBonus', Object.freeze({ fireMode: 'autofire' })],
+  ['unbracedAdditionalAttackPenalty', Object.freeze({ fireMode: 'autofire', braced: false })],
+]);
+
+/** operation key -> conditional damage term (the weapon declares it; the damage composition applies it). */
+const OPERATION_DAMAGE_TERMS = Object.freeze([
+  ['pointBlankDamageEquipmentBonus', (v) => (Number.isFinite(Number(v)) && Number(v) !== 0 ? { kind: 'flat', value: Number(v), bonusType: 'equipment', condition: Object.freeze({ rangeBand: 'pointBlank' }) } : null)],
+  ['adjacentBonusDamage', (v) => (/^\d+d\d+$/.test(String(v ?? '')) ? { kind: 'dice', formula: String(v), condition: Object.freeze({ distance: 'adjacent' }) } : null)],
+]);
+
 const USE_TOKENS = [[/double attack/i, 'double-attack'], [/triple attack/i, 'triple-attack'], [/rapid shot/i, 'rapid-shot'], [/rapid strike/i, 'rapid-strike']];
 /** Multi-attack abilities a conditional modifier names (structured `when.usesAny`, else the enumerated ability names in its condition). */
 function multiAttackUses(m) {
@@ -106,7 +122,10 @@ function classifyConditionalModifier(m, index) {
   if (m.target === 'attackRoll') {
     const c = m.condition;
     if (c && typeof c === 'object' && typeof c.targetSize === 'string') return mech('attack-modifier-auto', id, { source: src, value: Number(m.value), condition: { targetSize: c.targetSize }, data: m });
-    return mech('attack-modifier-prompt', id, { source: src, value: Number(m.value), question: condText || JSON.stringify(m.condition ?? null), data: m });
+    // Phase 5D-I-A: a condition registered in condition-policy is evaluated from the observed attack context at attack time (AUTO when
+    // every fact it reads is observed, otherwise the same stored PROMPT as before). `evaluable` records that registration.
+    const evaluable = c !== undefined && c !== null && policyFor(c).policy !== 'UNSUPPORTED';
+    return mech('attack-modifier-prompt', id, { source: src, value: Number(m.value), question: condText || JSON.stringify(m.condition ?? null), ...(evaluable ? { evaluable: true, conditionValue: c } : {}), data: m });
   }
   return mech('defensive-interaction', id, { source: src, data: m });
 }
@@ -159,6 +178,20 @@ export function extractSpecialMechanics(def, { damageProfile = null, operation =
     out.push(mech('return-recovery', 'return-on-attack-exceeds-reflex', { threshold: operation.returnOnAttackExceedsReflexBy, source: 'operation.returnOnAttackExceedsReflexBy',
       completeness: 'threshold is structured but the effect/action (return to hand) is not; recorded as a completeness issue, never invented' }));
   }
+  // Phase 5D-I-A: weapon-level operation attack modifiers whose condition is a structural fire-state fact (fire mode / braced). Same
+  // `attack-modifier-auto` family and attack-time evaluation as every other conditional attack modifier -- no second attack engine.
+  for (const [key, condition] of OPERATION_ATTACK_MODIFIERS) {
+    const v = Number(operation?.[key]);
+    if (operation && Number.isFinite(v) && v !== 0) out.push(mech('attack-modifier-auto', `operation.${key}`, { source: `operation.${key}`, value: v, condition, structural: true }));
+  }
+  // operation.attackPenalty: an inherent penalty of the weapon itself (Entrenching Tool -2). With operation.improvisedWeaponPenaltyReplacement it is
+  // the weapon's printed REPLACEMENT for the -5 improvised-weapon penalty (this runtime applies no improvised penalty of its own, so it is the only one).
+  const inherentPenalty = Number(operation?.attackPenalty);
+  if (operation && Number.isFinite(inherentPenalty) && inherentPenalty !== 0) out.push(mech('attack-modifier-auto', 'operation.attackPenalty', { source: 'operation.attackPenalty', value: inherentPenalty, condition: Object.freeze({}), structural: true, replacesImprovisedPenalty: operation.improvisedWeaponPenaltyReplacement === true }));
+  for (const [key, build] of OPERATION_DAMAGE_TERMS) {
+    const term = operation ? build(operation[key]) : null;
+    if (term) out.push(mech('conditional-damage', `operation.${key}`, { source: `operation.${key}`, ...term }));
+  }
   // the weapon-level target-size penalty duplicate (operation.targetSizeAttackPenalty) is NOT re-extracted: the profile's conditionalModifiers already carry it
   for (const [i, p] of asArray(payloadEffects).entries()) {
     if (typeof p === 'string') out.push(mech('display-note', `payload-note-${i}`, { source: 'payload.specialEffects', text: p })); // printed note without structure
@@ -180,7 +213,27 @@ export function damageShapeFromMechanics(mechanics) {
     criticalDieReplacements: Object.freeze(list.filter((m) => m.family === 'critical-die-replace').map((m) => ({ id: m.id, fromDieSize: m.fromDieSize, toDieSize: m.toDieSize }))),
     criticalBonusFormulas: Object.freeze(list.filter((m) => m.family === 'critical-bonus-damage').map((m) => ({ id: m.id, formula: m.formula }))),
     riders: Object.freeze(list.filter((m) => m.family === 'damage-rider')),
+    conditionalDamage: Object.freeze(list.filter((m) => m.family === 'conditional-damage')),
   });
+}
+
+/**
+ * Phase 5D-I-A: weapon-declared conditional damage terms for ONE damage roll. Pure. A term whose fact was not observed is reported
+ * unresolved and NOT applied (never guessed). The adjacent-target fact is the stored attack-stage answer (`answers[term.id]`).
+ * @returns {{flat:number, diceTerms:string[], applied:Array, unresolved:Array}}
+ */
+export function evaluateConditionalDamage(terms, { rangeBand = null, answers = {}, distance = undefined } = {}) {
+  const out = { flat: 0, diceTerms: [], applied: [], unresolved: [] };
+  for (const t of asArray(terms)) {
+    const stored = answers?.[t.id];
+    const dist = distance ?? (stored === true ? 'adjacent' : stored === false ? 'not-adjacent' : undefined);
+    const r = evaluateStructuralCondition(t.condition, { rangeBand: rangeBand ?? undefined, distance: dist });
+    if (r === true) {
+      if (t.kind === 'flat') out.flat += t.value; else out.diceTerms.push(t.formula);
+      out.applied.push({ id: t.id, kind: t.kind, ...(t.kind === 'flat' ? { value: t.value, bonusType: t.bonusType } : { formula: t.formula }) });
+    } else if (r === null) out.unresolved.push({ id: t.id, reason: 'condition-not-observed' });
+  }
+  return out;
 }
 
 /** Replace the base die size of a plain NdM[+k] formula when it equals `fromDieSize` (critical die upgrade). */
@@ -226,13 +279,37 @@ export function evaluateCtRiderAttackCondition(m, { hit, attackTotal = null, def
   return true;
 }
 
+/** Structural fire-state condition ({fireMode, braced}) against the observed attack context. true/false, or null when a needed fact was not observed. */
+export function evaluateStructuralCondition(condition, ctx = {}) {
+  let unknown = false;
+  for (const [k, want] of Object.entries(condition ?? {})) {
+    if (ctx[k] === undefined || ctx[k] === null) { unknown = true; continue; }
+    if (ctx[k] !== want) return false;
+  }
+  return unknown ? null : true;
+}
+
+/**
+ * A condition REGISTERED in condition-policy, evaluated from the observed attack context. AUTO only when every context fact the condition
+ * reads was observed (an unobserved fact is never read as false); otherwise null -> the caller asks the stored PROMPT.
+ */
+export function evaluateRegisteredCondition(condition, ctx = {}) {
+  if (policyFor(condition).policy === 'UNSUPPORTED') return null;
+  if (conditionContextKeys(condition).some((k) => ctx[k] === undefined || ctx[k] === null)) return null;
+  const r = evaluateCondition(condition, { events: [], ...ctx });
+  return r.pending.length || (r.value !== true && r.value !== false) ? null : r.value;
+}
+
+/** Size name -> the rank/label vocabulary condition-policy reads ("medium" -> "Medium"). */
+export const canonicalSizeName = (s) => { const t = String(s ?? '').trim().toLowerCase(); return Object.keys(SIZE_RANK).find((k) => k.toLowerCase() === t) ?? null; };
+
 /**
  * Attack-stage conditional attack modifiers (before the roll). AUTO when the target's size is observable; otherwise the
  * question is asked ONCE (stored in `answers`, never re-asked) -- and when nobody can answer the mechanic is reported
  * `unresolved` and NOT applied (never guessed).
  * @returns {Promise<{contributions:Array, answers:object, unresolved:Array, drIgnore:boolean}>}
  */
-export async function resolveAttackStageModifiers(mechanics, { targetSize = null, answers = {}, activeUses = [] } = {}) {
+export async function resolveAttackStageModifiers(mechanics, { targetSize = null, answers = {}, activeUses = [], attackContext = {} } = {}) {
   const contributions = [], unresolved = [], out = { ...answers };
   for (const m of asArray(mechanics)) {
     if (m.family === 'multi-attack-interaction') {
@@ -240,15 +317,25 @@ export async function resolveAttackStageModifiers(mechanics, { targetSize = null
       if (asArray(m.uses).some((u) => asArray(activeUses).includes(u))) contributions.push({ id: m.id, value: m.value, how: 'multi-attack-shape' });
       continue;
     }
+    if (m.family === 'conditional-damage' && m.condition?.distance !== undefined) {
+      // the adjacency of the target is asked ONCE at the attack and stored; the damage composition reads the stored answer
+      if (attackContext.distance === undefined && answerFor({ answers: out }, m.id) === undefined) {
+        const ans = await askSpecialQuestion({ id: m.id, family: m.family, question: `Is the target adjacent to the attacker? (+${m.formula} damage)` });
+        if (ans === true || ans === false) out[m.id] = ans;
+      } else if (attackContext.distance !== undefined && answerFor({ answers: out }, m.id) === undefined) out[m.id] = attackContext.distance === m.condition.distance;
+      continue;
+    }
     if (m.family !== 'attack-modifier-auto' && m.family !== 'attack-modifier-prompt') continue;
     let applies = null, how = 'auto';
-    if (m.family === 'attack-modifier-auto') applies = evaluateTargetSizeCondition(m.condition, targetSize);
+    if (m.family === 'attack-modifier-auto' && m.structural) { applies = evaluateStructuralCondition(m.condition, attackContext); how = 'fire-state'; }
+    else if (m.family === 'attack-modifier-auto') applies = evaluateTargetSizeCondition(m.condition, targetSize);
+    else if (m.evaluable) { applies = evaluateRegisteredCondition(m.conditionValue, attackContext); how = 'condition-policy'; }
     if (applies === null) {
       how = 'answer';
       const prior = answerFor({ answers: out }, m.id);
       if (prior === true || prior === false) applies = prior;
       else {
-        const question = m.family === 'attack-modifier-auto' ? `Does this apply to the target? (${m.condition.targetSize.replace(/-/g, ' ')}) ${m.value >= 0 ? '+' : ''}${m.value} attack` : `Does this apply to this attack? ${m.question} (${m.value >= 0 ? '+' : ''}${m.value} attack)`;
+        const question = m.structural ? `Does this apply to this attack? (${Object.entries(m.condition).map(([k, v]) => `${k}: ${v}`).join(', ')}) ${m.value >= 0 ? '+' : ''}${m.value} attack` : m.family === 'attack-modifier-auto' ? `Does this apply to the target? (${m.condition.targetSize.replace(/-/g, ' ')}) ${m.value >= 0 ? '+' : ''}${m.value} attack` : `Does this apply to this attack? ${m.question} (${m.value >= 0 ? '+' : ''}${m.value} attack)`;
         const ans = await askSpecialQuestion({ id: m.id, family: m.family, question });
         if (ans === true || ans === false) { out[m.id] = ans; applies = ans; }
       }
@@ -283,6 +370,27 @@ export function evaluateAttackOutcomeSpecials(mechanics, { hit, attackTotal = nu
     }
   }
   return records;
+}
+
+/**
+ * Phase 5D-I-A: target eligibility of the selected profile's STRUCTURED activation requirements (`type: 'target'` with a registered
+ * `requires` condition; `type: 'target-rule'` with a registered `normalDamageWhen` condition). No natural-language parsing, no weapon names.
+ * Each requirement is true / false / null (a needed fact was not observed). Only a definite false makes the attack illegal; null is
+ * returned with its prompt so the caller can ask ONCE and store the answer.
+ * @returns {{legal:boolean, evaluated:Array<{type:string, condition:string, result:boolean|null, prompt?:string}>}}
+ */
+export function resolveTargetRequirements(requirements, { context = {}, answers = {} } = {}) {
+  const evaluated = [];
+  for (const r of asArray(requirements)) {
+    const type = r?.type;
+    const condition = type === 'target' ? r.requires : type === 'target-rule' ? r.normalDamageWhen : null;
+    if (typeof condition !== 'string' || (type !== 'target' && type !== 'target-rule')) continue;
+    const stored = answers?.[`target-requirement:${condition}`];
+    let result = typeof stored === 'boolean' ? stored : evaluateRegisteredCondition(condition, { ...context, answers });
+    if (result === null && policyFor(condition).policy === 'UNSUPPORTED') result = null;
+    evaluated.push({ type, condition, result, ...(result === null ? { prompt: `target-requirement:${condition}` } : {}) });
+  }
+  return { legal: !evaluated.some((e) => e.result === false), evaluated };
 }
 
 /** Stored-answer lookup: prompts are asked once per (workflow, mechanic id). */

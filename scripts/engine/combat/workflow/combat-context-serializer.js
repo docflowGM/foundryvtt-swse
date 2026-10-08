@@ -157,6 +157,11 @@ function summarizeAttackShape(shape) {
     const area = { kind: shape.area.kind };
     for (const k of ['shape', 'onMiss']) if (typeof shape.area[k] === 'string') area[k] = shape.area[k];
     for (const k of ['radiusSquares', 'lengthSquares', 'widthSquares', 'widthAtEndSquares', 'heightSquares']) if (Number.isFinite(Number(shape.area[k]))) area[k] = Number(shape.area[k]);
+    const det = shape.area.detonation;
+    if (det && typeof det === 'object' && (det.timing === 'contact' || det.timing === 'timer')) {
+      area.detonation = { timing: det.timing };
+      for (const k of ['timerMin', 'timerMax', 'chosenRounds']) if (Number.isInteger(det[k])) area.detonation[k] = det[k];
+    }
     out.area = area;
   }
   return Object.keys(out).length ? out : undefined;

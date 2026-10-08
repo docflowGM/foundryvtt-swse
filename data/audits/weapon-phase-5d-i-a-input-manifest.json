@@ -1,0 +1,1355 @@
+{
+  "schemaVersion": 1,
+  "phase": "5D-I-A",
+  "purpose": "Input manifest of the core attack / damage / range residual convergence. Audit evidence only: no runtime module reads it; each row names the structured source field, the consumer and the policy.",
+  "counters": {
+    "I_A_INPUT_KEYS": 78,
+    "I_A_KEYS_CONSUMED": 17,
+    "I_A_KEYS_DUPLICATE_OF_CONSUMED_FIELD": 21,
+    "I_A_KEYS_DEFERRED_TO_OWNER": 34,
+    "I_A_KEYS_DEFERRED_I_B": 17,
+    "I_A_KEYS_DEFERRED_I_C": 8,
+    "I_A_KEYS_DEFERRED_I_D": 9,
+    "I_A_KEYS_DATA_COMPLETENESS": 3,
+    "I_A_KEYS_NOT_APPLICABLE": 3,
+    "I_A_UNCLASSIFIED_KEYS": 0
+  },
+  "globalCounters": {
+    "before": {
+      "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
+      "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 33,
+      "PARTIAL_EXECUTION_FIELD_FAMILIES": 14,
+      "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 10,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 15,
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 196,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 256
+    },
+    "after": {
+      "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
+      "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 33,
+      "PARTIAL_EXECUTION_FIELD_FAMILIES": 14,
+      "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 10,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 15,
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 161,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 212
+    }
+  },
+  "byFamily": {
+    "3b.operation.ability-compatibility": {
+      "DEFERRED_TO_OWNER": 5,
+      "DATA_COMPLETENESS": 1
+    },
+    "3b.operation.area-splash-burst": {
+      "DEFERRED_TO_OWNER": 2,
+      "IMPLEMENTED": 3,
+      "DATA_COMPLETENESS": 1
+    },
+    "3b.operation.attack-modifiers-and-penalties": {
+      "DEFERRED_TO_OWNER": 12,
+      "IMPLEMENTED": 7,
+      "DUPLICATE": 11,
+      "NOT_APPLICABLE": 2
+    },
+    "3b.operation.damage-modifiers": {
+      "IMPLEMENTED": 3,
+      "DEFERRED_TO_OWNER": 5,
+      "DUPLICATE": 2,
+      "NOT_APPLICABLE": 1,
+      "DATA_COMPLETENESS": 1
+    },
+    "3b.operation.stun-ion-damage-modes": {
+      "DUPLICATE": 8,
+      "DEFERRED_TO_OWNER": 2,
+      "IMPLEMENTED": 1
+    },
+    "3b.profile.conditional": {
+      "IMPLEMENTED": 3,
+      "DEFERRED_TO_OWNER": 8
+    }
+  },
+  "byMechanicFamily": {
+    "activation-choice": 1,
+    "activation-configuration": 1,
+    "activation-effect": 1,
+    "activation-feat": 1,
+    "activation-proficiency": 1,
+    "activation-resource": 1,
+    "activation-state": 1,
+    "aim-state": 2,
+    "alternate-damage-mode": 3,
+    "aoo-capability": 4,
+    "area-effect": 2,
+    "attack-classification-substitution": 4,
+    "braced-state": 3,
+    "conditional-attack-modifier": 5,
+    "conditional-damage-term": 2,
+    "crew-state": 2,
+    "damage-allowance": 1,
+    "damage-type-substitution": 1,
+    "defense-reaction-compat": 1,
+    "designation-maintenance": 3,
+    "detonation-timing": 3,
+    "dr-conditional": 1,
+    "environment-legality": 2,
+    "equipment-compat": 3,
+    "hurled-object": 1,
+    "mitigation-order": 1,
+    "mode-hint": 1,
+    "mode-switch-action": 2,
+    "no-damage-attack": 1,
+    "ongoing-effect": 1,
+    "payload-delegation": 1,
+    "range-override": 6,
+    "resource-cost": 1,
+    "simultaneous-components": 1,
+    "strength-damage": 1,
+    "target-eligibility": 5,
+    "target-threshold": 1,
+    "upgrade-restriction": 1,
+    "weapon-object-durability": 3,
+    "wielding": 1,
+    "wielding-damage-choice": 1
+  },
+  "rows": [
+    {
+      "family": "3b.operation.ability-compatibility",
+      "key": "darkSideEmpowerment",
+      "mechanicFamily": "activation-effect",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sith-sword"
+      ],
+      "structuredSourceField": "operation.darkSideEmpowerment",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-D",
+      "reason": "Sith sword: a swift-action Force Point empowerment (+1 Dark Side Score) for the next attack. A resource-cost activation with no owning subsystem; not attack legality."
+    },
+    {
+      "family": "3b.operation.ability-compatibility",
+      "key": "lightsaberTalentCompatibility",
+      "mechanicFamily": "defense-reaction-compat",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sith-sword"
+      ],
+      "structuredSourceField": "operation.lightsaberTalentCompatibility",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-C",
+      "reason": "Sith sword counts as a lightsaber for Block / Deflect / Redirect Shot: the reaction roll reads it (defense-and-reaction-interactions)."
+    },
+    {
+      "family": "3b.operation.ability-compatibility",
+      "key": "redirectionCrystalCompatibility",
+      "mechanicFamily": "equipment-compat",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "xerrol-nightstinger"
+      ],
+      "structuredSourceField": "operation.redirectionCrystalCompatibility",
+      "currentConsumer": null,
+      "proposedPolicy": "DATA_COMPLETENESS",
+      "disposition": "DATA_COMPLETENESS",
+      "owner": "I-D",
+      "reason": "Xerrol Nightstinger: a prose mention (\"remains a separate equipment record on p.67\"); no structured compatibility to execute."
+    },
+    {
+      "family": "3b.operation.ability-compatibility",
+      "key": "surveillanceTaggerCompatibility",
+      "mechanicFamily": "equipment-compat",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "darter"
+      ],
+      "structuredSourceField": "operation.surveillanceTaggerCompatibility",
+      "currentConsumer": null,
+      "proposedPolicy": "NOT_APPLICABLE_TO_I_A",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-D",
+      "reason": "Darter: surveillance-tagger compatibility belongs to the equipment authority (p.67); not attack resolution."
+    },
+    {
+      "family": "3b.operation.ability-compatibility",
+      "key": "surveillanceTaggerCompatible",
+      "mechanicFamily": "equipment-compat",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "darter"
+      ],
+      "structuredSourceField": "operation.surveillanceTaggerCompatible",
+      "currentConsumer": null,
+      "proposedPolicy": "NOT_APPLICABLE_TO_I_A",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-D",
+      "reason": "Duplicate boolean of the above equipment compatibility."
+    },
+    {
+      "family": "3b.operation.ability-compatibility",
+      "key": "upgradeRestrictions",
+      "mechanicFamily": "upgrade-restriction",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sniper-blaster-rifle"
+      ],
+      "structuredSourceField": "operation.upgradeRestrictions",
+      "currentConsumer": null,
+      "proposedPolicy": "NOT_APPLICABLE_TO_I_A",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-D",
+      "reason": "Sniper blaster rifle: the Rapid Recycler upgrade is excluded -- customization workbench rule (UpgradeSlotEngine), not attack resolution."
+    },
+    {
+      "family": "3b.operation.area-splash-burst",
+      "key": "blastEffect",
+      "mechanicFamily": "area-effect",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "adhesive-grenade"
+      ],
+      "structuredSourceField": "operation.blastEffect",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-C",
+      "reason": "Adhesive grenade: targets in the blast make a grapple check or cannot move for 3 rounds (grab/grapple state + persistent duration)."
+    },
+    {
+      "family": "3b.operation.area-splash-burst",
+      "key": "bracedAutofireAreaSquares",
+      "mechanicFamily": "braced-state",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "rotary-blaster-cannon"
+      ],
+      "structuredSourceField": "operation.bracedAutofireAreaSquares",
+      "currentConsumer": "scripts/items/weapon-runtime/area-shape.js (bracedAutofireAreaSquares)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "reason": "Rotary blaster cannon: braced Autofire covers the published 2x4 area instead of the generic 2x2 (resolveAutofireArea; the braced state of the Autofire attack selects it)."
+    },
+    {
+      "family": "3b.operation.area-splash-burst",
+      "key": "contactDetonation",
+      "mechanicFamily": "detonation-timing",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "flash-canister"
+      ],
+      "structuredSourceField": "operation.contactDetonation",
+      "currentConsumer": "scripts/items/weapon-runtime/area-shape.js (contactDetonation)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "reason": "R-9 flash canister: detonates on contact (separate from the 3-square burst geometry); a chosen timer is ignored."
+    },
+    {
+      "family": "3b.operation.area-splash-burst",
+      "key": "embeddedShrapnel",
+      "mechanicFamily": "area-effect",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "ripper"
+      ],
+      "structuredSourceField": "operation.embeddedShrapnel",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-C",
+      "reason": "Ripper: when damage exceeds the damage threshold and moves the target at least one step down the condition track, embedded shrapnel deals an extra 1d4 immediately. An Apply Damage condition-track follow-up (persistent-effects / threshold path)."
+    },
+    {
+      "family": "3b.operation.area-splash-burst",
+      "key": "remoteDetonationSafetyRule",
+      "mechanicFamily": "detonation-timing",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "remote-grenade"
+      ],
+      "structuredSourceField": "operation.remoteDetonationSafetyRule",
+      "currentConsumer": null,
+      "proposedPolicy": "DATA_COMPLETENESS",
+      "disposition": "DATA_COMPLETENESS",
+      "owner": "I-D",
+      "reason": "Remote grenade: the published rule (\"cannot be remotely detonated within 100 meters of the transmitter\") is prose only; the numeric distance is not structured and no remote-detonation workflow exists. A source-certified structured field is needed before anything can execute it."
+    },
+    {
+      "family": "3b.operation.area-splash-burst",
+      "key": "timerRounds",
+      "mechanicFamily": "detonation-timing",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "thermal-detonator"
+      ],
+      "structuredSourceField": "operation.timerRounds",
+      "currentConsumer": "scripts/items/weapon-runtime/area-shape.js (timerRounds)",
+      "proposedPolicy": "PROMPT",
+      "disposition": "IMPLEMENTED",
+      "reason": "Thermal detonator: the thrower's timer choice (1-3 rounds) is validated against the published range and carried in the workflow's area shape; the choice itself stays the player's."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "allyAttackBonus",
+      "mechanicFamily": "designation-maintenance",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-laser"
+      ],
+      "structuredSourceField": "operation.allyAttackBonus",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-D",
+      "reason": "The +2 is an ALLY's attack bonus against a target the wielder designated; it needs cross-actor designation state (who designated whom, repeated each round), not a modifier on this attack. No owning subsystem exists."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "allyEligibleWeapons",
+      "mechanicFamily": "designation-maintenance",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-laser"
+      ],
+      "structuredSourceField": "operation.allyEligibleWeapons",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-D",
+      "reason": "Eligible-weapon scope of the ally bonus above (missile launcher / grenade launcher / vehicle weapon); same cross-actor designation state."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "attackOfOpportunityChoices",
+      "mechanicFamily": "aoo-capability",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "siang-lance"
+      ],
+      "structuredSourceField": "operation.attackOfOpportunityChoices",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Which attack the wielder may use for an attack of opportunity (ranged shot / affixed bayonet). AoO eligibility is adjudicated manually today (combat-actions-mapper: \"GM/player confirms the selected weapon is AoO-eligible\") and the base SWSE rule for ranged-weapon AoOs is not automated here. Owner: reach-and-threat."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "attackTreatedAs",
+      "mechanicFamily": "attack-classification-substitution",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Garrote"
+      ],
+      "structuredSourceField": "operation.attackTreatedAs",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-C",
+      "reason": "Garrote: an attack with it is TREATED AS a grab attack (feat/talent grab bonuses apply). Needs the grab/grapple state machine (grab-grapple-restrain)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "autofireEquipmentBonus",
+      "mechanicFamily": "conditional-attack-modifier",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "espo-500-riot-gun"
+      ],
+      "structuredSourceField": "operation.autofireEquipmentBonus",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (autofireEquipmentBonus)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "reason": "Weapon-level attack modifier under the structural fire-state condition {fireMode: autofire}; evaluated by resolveAttackStageModifiers and fed through the existing typed situational-contribution pipeline (rollAttack and Autofire)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "canMakeAttackOfOpportunityEvenWithStockExtended",
+      "mechanicFamily": "aoo-capability",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "blaster-carbine"
+      ],
+      "structuredSourceField": "operation.canMakeAttackOfOpportunityEvenWithStockExtended",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Weapon-declared AoO capability exception tied to the stock state; no AoO eligibility enforcer exists (manual adjudication) and the stock-state model is I-B."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "canMakeAttacksOfOpportunity",
+      "mechanicFamily": "aoo-capability",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "siang-lance"
+      ],
+      "structuredSourceField": "operation.canMakeAttacksOfOpportunity",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Weapon-declared AoO capability. No AoO eligibility enforcer exists to apply it to (manual adjudication). Owner: reach-and-threat."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "canMakeAttacksOfOpportunityWithoutFoldedStock",
+      "mechanicFamily": "aoo-capability",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "double-barreled-blaster-carbine",
+        "hunting-blaster-carbine",
+        "sporting-blaster-carbine"
+      ],
+      "structuredSourceField": "operation.canMakeAttacksOfOpportunityWithoutFoldedStock",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Weapon-declared AoO capability tied to the folded-stock configuration state; no AoO eligibility enforcer exists and the stock/configuration model is I-B."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "cannotBeThrownEffectively",
+      "mechanicFamily": "attack-classification-substitution",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Vibrolance"
+      ],
+      "structuredSourceField": "attackProfiles[] (the weapon publishes no thrown profile)",
+      "currentConsumer": "scripts/items/weapon-runtime/weapon-runtime-resolver.js (profiles)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "The Vibrolance publishes no thrown attack profile, so selecting a thrown form fails closed (profile not found): the same fact as the operation key."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "cannotBraceWithoutTripodOrMount",
+      "mechanicFamily": "braced-state",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "heavy-repeating-blaster"
+      ],
+      "structuredSourceField": "operation.cannotBraceWithoutTripodOrMount",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (cannotBraceWithoutTripodOrMount)",
+      "proposedPolicy": "PROMPT",
+      "disposition": "IMPLEMENTED",
+      "reason": "Brace legality: a mount-only brace is refused only when the weapon is KNOWN not to be mounted; an unobserved mount state is asked once (never a blanket prohibition)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "conditionalAttackBonus",
+      "mechanicFamily": "conditional-attack-modifier",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightsaber-chassis-dueling"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers (attack of opportunity while wielded one-handed, +1)",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (evaluateRegisteredCondition)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "The profile conditional modifier carries the same +1; it is now evaluated through condition-policy (AUTO when the attack declares an attack of opportunity and its wielding, otherwise the stored prompt)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "detachedTreatAs",
+      "mechanicFamily": "attack-classification-substitution",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Bayonet",
+        "Vibrobayonet"
+      ],
+      "structuredSourceField": "operation.detachedTreatAs",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "A detached bayonet is treated as a Knife / Vibrodagger: configuration-and-wielding (host/attachment state)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "improvisedWeaponPenaltyReplacement",
+      "mechanicFamily": "conditional-attack-modifier",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Entrenching Tool"
+      ],
+      "structuredSourceField": "operation.improvisedWeaponPenaltyReplacement",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (improvisedWeaponPenaltyReplacement)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "reason": "Entrenching Tool: its published -2 (operation.attackPenalty) REPLACES the -5 improvised-weapon penalty. This runtime applies no improvised penalty, so the -2 is the weapon's inherent attack modifier. CONSUMER_DEFECT fixed: the 5D-H census counted operation.attackPenalty \"consumed\" only because the identifier exists elsewhere (actor.system.attackPenalty) -- the weapon's -2 was never applied."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "lineOfSightOriginHeightSquares",
+      "mechanicFamily": "environment-legality",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "mortar-launcher"
+      ],
+      "structuredSourceField": "operation.lineOfSightOriginHeightSquares",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-C",
+      "reason": "Mortar line-of-sight origin height (20 squares) needs a line-of-sight / sensing model (concealment-stealth-sensing); no LOS engine exists."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "maximumRangeIncrement",
+      "mechanicFamily": "range-override",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "darter"
+      ],
+      "structuredSourceField": "attackProfiles[].range.hardMaxSquares",
+      "currentConsumer": "scripts/items/weapon-runtime/canonical-range.js (withinHardMax)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "The Darter's \"maximum range Short\" is published as range.hardMaxSquares (40). CONSUMER_DEFECT fixed: hardMaxSquares was carried but never limited the allowed bands; canonical-range now drops every band that begins beyond it."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "maximumRangeSquares",
+      "mechanicFamily": "range-override",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "stun-pistol"
+      ],
+      "structuredSourceField": "attackProfiles[].range.hardMaxSquares",
+      "currentConsumer": "scripts/items/weapon-runtime/canonical-range.js (withinHardMax)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "The Stun Pistol's 20-square maximum is range.hardMaxSquares; only the bands that begin within 20 squares remain legal (same consumer fix as above)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "modeEnvironmentRule",
+      "mechanicFamily": "range-override",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sg-4-blaster-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalRangeRules (scale-range 0.5 underwater / not-underwater)",
+      "currentConsumer": "scripts/items/weapon-runtime/canonical-range.js (resolveRangeEnvironment)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "The SG-4 prose rule is carried structurally by the profiles' conditionalRangeRules; resolveRangeEnvironment evaluates them through condition-policy."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "mustAimImmediatelyBeforeAttackToAvoidPenalty",
+      "mechanicFamily": "aim-state",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sniper-blaster-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers (\"not-aimed-at-target-immediately-before-attack\", -5)",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (evaluateRegisteredCondition)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "The profile conditional modifier is evaluated through condition-policy against the attack's observed aim state (AUTO when the attack states aim, otherwise a stored prompt)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "preferredMode",
+      "mechanicFamily": "mode-hint",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "espo-500-riot-gun"
+      ],
+      "structuredSourceField": "operation.preferredMode",
+      "currentConsumer": null,
+      "proposedPolicy": "NOT_APPLICABLE_TO_I_A",
+      "disposition": "NOT_APPLICABLE",
+      "reason": "The riot gun \"favors autofire\": a UI default-selection hint with no legality or arithmetic effect (single and autofire are both legal and priced by singleShotAttackPenalty / autofireEquipmentBonus)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "rangedModeFunctionsAs",
+      "mechanicFamily": "attack-classification-substitution",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Energy Lance"
+      ],
+      "structuredSourceField": "attackProfiles[plasma-bolt] (rifle range family, no stun)",
+      "currentConsumer": "scripts/items/weapon-runtime/canonical-range.js (resolveCanonicalRange)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "The Energy Lance's plasma-bolt profile already uses the rifle range family and has no stun setting (\"functions as a blaster carbine without stun\")."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "rangePenaltyApplication",
+      "mechanicFamily": "range-override",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "cr-1-blast-cannon"
+      ],
+      "structuredSourceField": "attackProfiles[].range.penaltyApplication (\"damage\")",
+      "currentConsumer": "scripts/items/weapon-runtime/canonical-range.js (canonicalDamageRangePenalty)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "CR-1 blast cannon: the band penalty applies to the DAMAGE roll, not the attack roll. CONSUMER_DEFECT fixed: range.penaltyApplication was carried but never consumed (the attack roll took the penalty and damage took none)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "rangeStepReductionPreparation",
+      "mechanicFamily": "range-override",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "e-web-missile-launcher"
+      ],
+      "structuredSourceField": "operation.rangeStepReductionPreparation",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (rangeStepReductionPreparation)",
+      "proposedPolicy": "PROMPT",
+      "disposition": "IMPLEMENTED",
+      "reason": "E-Web missile launcher: a per-attack \"Range Preparation\" option (one band closer; stacks with Far Shot) whose structured two-swift-action cost is paid through the existing action economy. DATA_COMPLETENESS amendment: the cost was prose only; a structured requiredActions copy is added through the controlled amendment path."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "repeatAttackEachRoundToMaintainDesignation",
+      "mechanicFamily": "designation-maintenance",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-laser"
+      ],
+      "structuredSourceField": "operation.repeatAttackEachRoundToMaintainDesignation",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-D",
+      "reason": "Designation must be maintained by repeating the attack each round: cross-round, cross-actor designation state (see allyAttackBonus). No owning subsystem exists."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "singleShotAttackPenalty",
+      "mechanicFamily": "conditional-attack-modifier",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "espo-500-riot-gun"
+      ],
+      "structuredSourceField": "operation.singleShotAttackPenalty",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (singleShotAttackPenalty)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "reason": "Weapon-level attack modifier under the structural fire-state condition {fireMode: single}."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "sniperPointBlankAttackPenalty",
+      "mechanicFamily": "conditional-attack-modifier",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "interchangeable-weapon-system"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers (\"target at unmodified point-blank range\", -2)",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (evaluateRegisteredCondition)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "The profile conditional modifier is evaluated through condition-policy against the observed range band (AUTO)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "targeting",
+      "mechanicFamily": "target-eligibility",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sonic-stunner"
+      ],
+      "structuredSourceField": "operation.targeting",
+      "currentConsumer": null,
+      "proposedPolicy": "NOT_APPLICABLE_TO_I_A",
+      "disposition": "NOT_APPLICABLE",
+      "reason": "Sonic stunner: \"deaf targets can still be harmed\". The runtime models no deafness immunity, so there is nothing to override; informational only."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "targetRule",
+      "mechanicFamily": "target-eligibility",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "battering-ram"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements (type: target-rule)",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (resolveTargetRequirements)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "Battering ram: the prose rule is carried structurally as a target-rule requirement; resolveTargetRequirements evaluates it (a definite \"no\" refuses the attack before any cost)."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "targetRules",
+      "mechanicFamily": "target-eligibility",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "emp-grenade"
+      ],
+      "structuredSourceField": "operation.targetRules",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-C",
+      "reason": "EMP grenade: hit/miss damage fractions depend on whether the target is a droid / vehicle / electronic / cybernetic (target-type-dependent half-damage resolution). It shares the Evasion / half-damage-on-miss path owned by defense-and-reaction-interactions."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "unAimedAttackPenalty",
+      "mechanicFamily": "aim-state",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sniper-blaster-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers (\"not-aimed-at-target-immediately-before-attack\", -5)",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (evaluateRegisteredCondition)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "Sniper blaster rifle: the profile conditional modifier carries the -5 and is evaluated against the attack's observed aim state."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "unbracedAdditionalAttackPenalty",
+      "mechanicFamily": "braced-state",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "rotary-blaster-cannon"
+      ],
+      "structuredSourceField": "operation.unbracedAdditionalAttackPenalty",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (unbracedAdditionalAttackPenalty)",
+      "proposedPolicy": "PROMPT",
+      "disposition": "IMPLEMENTED",
+      "reason": "Rotary blaster cannon: the additional -5 applies to autofire that is not braced (structural condition {fireMode: autofire, braced: false}); the braced state of the Autofire attack is observed, otherwise asked once."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "underwaterUsableProfiles",
+      "mechanicFamily": "environment-legality",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Energy Lance"
+      ],
+      "structuredSourceField": "operation.underwaterUsableProfiles",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (underwaterUsableProfiles)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "reason": "Energy Lance: when the attack is explicitly underwater only the listed profiles are legal; an unknown environment never restricts anything."
+    },
+    {
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "key": "unregulatedAttackPenalty",
+      "mechanicFamily": "crew-state",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "e-web-repeating-blaster"
+      ],
+      "structuredSourceField": "operation.unregulatedAttackPenalty",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "E-Web repeating blaster: -2 unless a second crewman regulated the generator since the same initiative count last round. Needs the crew-and-emplacement model."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "adjacentBonusDamage",
+      "mechanicFamily": "conditional-damage-term",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "cr-1-blast-cannon"
+      ],
+      "structuredSourceField": "operation.adjacentBonusDamage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (adjacentBonusDamage)",
+      "proposedPolicy": "PROMPT",
+      "disposition": "IMPLEMENTED",
+      "damageStage": "ATTACK_DAMAGE_COMPOSITION",
+      "reason": "CR-1 blast cannon: +1d8 damage against an adjacent target. The adjacency of the target is asked once at the attack and stored; the damage composition adds the die after the weapon multiplier."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "damageThresholdAdjustment",
+      "mechanicFamily": "target-threshold",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "disruptor-pistol",
+        "disruptor-rifle",
+        "sonic-disruptor"
+      ],
+      "structuredSourceField": "operation.damageThresholdAdjustment",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-C",
+      "damageStage": "TARGET_THRESHOLD",
+      "reason": "Disruptors treat every target's damage threshold as 5 lower: a TARGET_THRESHOLD-stage fact applied at Apply Damage (existing pattern: options.thresholdMeasuredDamage as in grapple-feat-actions). Owner: defense-and-reaction-interactions."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "hurledObjectDamageRule",
+      "mechanicFamily": "hurled-object",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.hurledObjectDamageRule",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "damageStage": "OUT_OF_SCOPE",
+      "reason": "Tactical tractor beam: falling-object damage by object size for a hurled object. Needs the utility-and-movement (grabbed object) model."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "ignoresDRCondition",
+      "mechanicFamily": "dr-conditional",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Fire Blade"
+      ],
+      "structuredSourceField": "damageReductionInteraction (mode conditional, \"target is an unattended object\")",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (dr-conditional)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "damageStage": "MITIGATION",
+      "reason": "Fire Blade: the conditional DR exception is the structured damageReductionInteraction; the 5D-E dr-conditional PROMPT (asked once, stored) executes it."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "pointBlankDamageEquipmentBonus",
+      "mechanicFamily": "conditional-damage-term",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "pulse-wave-pistol",
+        "pulse-wave-rifle"
+      ],
+      "structuredSourceField": "operation.pointBlankDamageEquipmentBonus",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (pointBlankDamageEquipmentBonus)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "damageStage": "ATTACK_DAMAGE_COMPOSITION",
+      "reason": "Pulse-wave pistol/rifle: +4/+5 equipment bonus to damage at point-blank range, composed once in the existing damage composition from the observed range band."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "powerAttackExtraDamageAppliesToObjectsAndVehicles",
+      "mechanicFamily": "damage-allowance",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Power Hammer"
+      ],
+      "structuredSourceField": "operation.powerAttackExtraDamageAppliesToObjectsAndVehicles",
+      "currentConsumer": null,
+      "proposedPolicy": "NOT_APPLICABLE_TO_I_A",
+      "disposition": "NOT_APPLICABLE",
+      "damageStage": "ATTACK_DAMAGE_COMPOSITION",
+      "reason": "Power Hammer: Power Attack extra damage may be added against objects and vehicles. The composition adds Power Attack damage to every target type (no object/vehicle exclusion exists to lift); regression-tested."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "shieldRatingStillApplies",
+      "mechanicFamily": "mitigation-order",
+      "identityCount": 4,
+      "rawOccurrences": 4,
+      "representativeWeapons": [
+        "lightsaber-chassis-short",
+        "double-bladed-lightsaber",
+        "lightfoil",
+        "lightsaber"
+      ],
+      "structuredSourceField": "damage mitigation stage order (Shield Rating is stage 1; bypass-dr only touches stage 2)",
+      "currentConsumer": "scripts/engine/combat/damage-mitigation-manager.js (ShieldMitigationResolver)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "damageStage": "MITIGATION",
+      "reason": "Lightsaber chassis: SR still applies because the DR-ignore flag only affects the Damage Reduction stage; structural regression test on the stage order."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "strengthModifierAppliesToDamage",
+      "mechanicFamily": "strength-damage",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "bow",
+        "sling"
+      ],
+      "structuredSourceField": "operation.strengthModifierAppliesToDamage",
+      "currentConsumer": "scripts/engine/combat/combat-stat-rules.js (strengthModifierAppliesToDamage|strengthAppliesToDamage)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "damageStage": "ATTACK_DAMAGE_COMPOSITION",
+      "reason": "Bow and sling: the Strength modifier applies to damage once. CONSUMER_DEFECT fixed: getDamageAbilityContribution returned 0 for every non-thrown ranged weapon, so the published Strength damage was silently lost; the canonical operation flag now adds it exactly once (never doubled)."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "twoHandedDamageChoice",
+      "mechanicFamily": "wielding-damage-choice",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightsaber-chassis-longhandle"
+      ],
+      "structuredSourceField": "operation.twoHandedDamageChoice",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "damageStage": "ATTACK_DAMAGE_COMPOSITION",
+      "reason": "Long-handle lightsaber: wielded two-handed the wielder may forgo doubling the Strength bonus for a 2d10 base. Needs the wielding model (hands state) that I-B owns."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "weaponDR",
+      "mechanicFamily": "weapon-object-durability",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "electrostaff"
+      ],
+      "structuredSourceField": "operation.weaponDR",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-D",
+      "damageStage": "WEAPON_OBJECT_DURABILITY",
+      "reason": "Electrostaff DR 20 is the weapon's own damage reduction AS AN OBJECT (when struck); durability / object statistics."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "weaponDRAppliesAgainstLightsabers",
+      "mechanicFamily": "weapon-object-durability",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Shockstaff",
+        "electrostaff"
+      ],
+      "structuredSourceField": "operation.weaponDRAppliesAgainstLightsabers",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-D",
+      "damageStage": "WEAPON_OBJECT_DURABILITY",
+      "reason": "The weapon-object DR above is not ignored by lightsabers; durability / object statistics."
+    },
+    {
+      "family": "3b.operation.damage-modifiers",
+      "key": "weaponDRValue",
+      "mechanicFamily": "weapon-object-durability",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Shockstaff"
+      ],
+      "structuredSourceField": "operation.weaponDRValue",
+      "currentConsumer": null,
+      "proposedPolicy": "DATA_COMPLETENESS",
+      "disposition": "DATA_COMPLETENESS",
+      "owner": "I-D",
+      "damageStage": "WEAPON_OBJECT_DURABILITY",
+      "reason": "Shockstaff: the published value is \"not_stated_in_KOTOR_entry\" -- the source is silent; recorded, never invented."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "burnoutDamage",
+      "mechanicFamily": "alternate-damage-mode",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightsaber-chassis-retrosaber"
+      ],
+      "structuredSourceField": "attackProfiles[burnout].damage (2d4)",
+      "currentConsumer": "scripts/items/weapon-runtime/damage-profile-resolver.js (damageMultiplier)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "Retrosaber: the burnout dice are the burnout profile's damage. The overcharge -> burnout DURATION sequencing (until end of next turn; cannot dial up for a round) is persisted activation state: I-B (configuration / activation state)."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "convertsUnarmedMeleeAttackToStunDamage",
+      "mechanicFamily": "alternate-damage-mode",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Stunning Gauntlet"
+      ],
+      "structuredSourceField": "attackProfiles[].stun.capability = native-stun",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-consumer.js (native-stun)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "Stunning gauntlet: native-stun capability (5D-E) makes the stun damage mode effective."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "damageTypeAndBurstDeterminedByGrenade",
+      "mechanicFamily": "payload-delegation",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "grenade-launcher"
+      ],
+      "structuredSourceField": "operation.damageTypeAndBurstDeterminedByGrenade",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Grenade launcher: damage, damage type and burst come from the LOADED grenade (ammo payload delegation). Needs the ammunition/payload loading model (ammo-resource-reload)."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "dealsNoDamage",
+      "mechanicFamily": "no-damage-attack",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-laser"
+      ],
+      "structuredSourceField": "attackProfiles[].damage (no ordinary damage) -> NO_ORDINARY_DAMAGE",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-consumer.js (no-damage)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "Targeting laser: the attack roll resolves and the damage roll is refused (resolveCanonicalDamage status no-damage)."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "ongoingStunWhileTrapped",
+      "mechanicFamily": "ongoing-effect",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "electronet"
+      ],
+      "structuredSourceField": "operation.ongoingStunWhileTrapped",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-C",
+      "reason": "Electronet: a trapped target takes stun damage again at the start of the attacker's turn (persistent effect + grab state)."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "overchargeDamage",
+      "mechanicFamily": "alternate-damage-mode",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightsaber-chassis-retrosaber"
+      ],
+      "structuredSourceField": "attackProfiles[overcharge].damage (2d10)",
+      "currentConsumer": "scripts/items/weapon-runtime/damage-profile-resolver.js (damageMultiplier)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "Retrosaber: the overcharge dice are the overcharge profile's damage; the swift dial-up duration is activation state (I-B)."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "simultaneousDamageComponents",
+      "mechanicFamily": "simultaneous-components",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Neuronic Whip"
+      ],
+      "structuredSourceField": "attackProfiles[].damageComponents (stun + slashing rider)",
+      "currentConsumer": "scripts/items/weapon-runtime/damage-profile-resolver.js (components)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "Neuronic whip: stun damage plus a separately rolled slashing rider (5D-C components / 5D-E riders)."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "sonicDamageIsEnergy",
+      "mechanicFamily": "damage-type-substitution",
+      "identityCount": 5,
+      "rawOccurrences": 5,
+      "representativeWeapons": [
+        "aurial-blaster",
+        "heavy-sonic-pistol",
+        "sonic-disruptor",
+        "sonic-pistol"
+      ],
+      "structuredSourceField": "attackProfiles[].damageType.types = [energy]",
+      "currentConsumer": "scripts/items/weapon-runtime/damage-profile-resolver.js (damageType)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "All five sonic weapons publish damageType energy (never sonic), so DR/resistance/immunity decisions already see energy damage."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "stunChoiceTiming",
+      "mechanicFamily": "mode-switch-action",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "San-Ni Staff"
+      ],
+      "structuredSourceField": "attackProfiles[].stun.activation.timing = attack-declaration",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-consumer.js (effectiveDamageMode)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "San-Ni staff: stun is chosen per attack (damageMode on the attack), costing no action."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "stunShotsPerAttack",
+      "mechanicFamily": "resource-cost",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "bluebolt-blaster-pistol"
+      ],
+      "structuredSourceField": "attackProfiles[].resourceConsumption.stunUnits",
+      "currentConsumer": "scripts/items/weapon-runtime/canonical-resource.js (stunUnits)",
+      "proposedPolicy": "DUPLICATE_OF_CONSUMED_FIELD",
+      "disposition": "DUPLICATE",
+      "reason": "Bluebolt blaster pistol: a stun attack consumes two shots through the canonical per-attack resource cost (5D-D); regression-tested."
+    },
+    {
+      "family": "3b.operation.stun-ion-damage-modes",
+      "key": "stunSwitchAction",
+      "mechanicFamily": "mode-switch-action",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Shockboxing Gloves"
+      ],
+      "structuredSourceField": "operation.stunSwitchAction",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (stunSwitchAction)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "reason": "Shockboxing gloves: switching to the stun setting costs its published swift action ONCE; the setting persists on the owned item (fire state) until an attack uses the other setting. Only the switch to stun is priced (no cost is stated for switching back)."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.action",
+      "mechanicFamily": "activation-state",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "lightsaber-chassis-dual-phase",
+        "lightsaber-chassis-retrosaber",
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Dual-phase extended / retrosaber overcharge (swift) and Amphistaff venom spit (standard): the activation lasts across attacks (until the end of the next turn), so it needs persisted activation state, not a per-attack charge."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.choice",
+      "mechanicFamily": "activation-choice",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "lightsaber-chassis-longhandle",
+        "siang-lance"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Long-handle forgo-Strength choice (wielding) and the Siang lance bayonet attack-of-opportunity choice (reach-and-threat)."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.configuration",
+      "mechanicFamily": "activation-configuration",
+      "identityCount": 2,
+      "rawOccurrences": 8,
+      "representativeWeapons": [
+        "Amphistaff",
+        "Vibrobayonet"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Amphistaff quarterstaff / spear forms require that configuration (configuration-and-wielding)."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.feat",
+      "mechanicFamily": "activation-feat",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "lightsaber-chassis-longhandle",
+        "lightsaber-chassis-pike"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Haft-end forms require the feat \"Long Haft Form\", which is not an ability in the corpus (the unlocking ability is Long Haft Strike -- the 5D-H relation fix). A DATA_COMPLETENESS finding for I-B to correct from the source together with the wielding model."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.operators",
+      "mechanicFamily": "crew-state",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "battering-ram"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": null,
+      "proposedPolicy": "PROMPT",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Battering ram: two operators (stabilize + trigger) -- crew-and-emplacement."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.proficiency",
+      "mechanicFamily": "activation-proficiency",
+      "identityCount": 1,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Amphistaff whip forms require a proficient wielder; bound to the configuration state above."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.target",
+      "mechanicFamily": "target-eligibility",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "snare-pistol",
+        "snare-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (resolveTargetRequirements)",
+      "proposedPolicy": "AUTO",
+      "disposition": "IMPLEMENTED",
+      "reason": "Snare pistol / rifle: the structured target requirement (registered condition: hostile target at up to short range / a character at range) is evaluated from the observed range band, disposition and target type; a definite \"no\" refuses before any cost, an unobserved fact is asked once."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.target-rule",
+      "mechanicFamily": "target-eligibility",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "battering-ram"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (resolveTargetRequirements)",
+      "proposedPolicy": "PROMPT",
+      "disposition": "IMPLEMENTED",
+      "reason": "Battering ram: normal damage only against a stationary unattended object; the fact is asked once and a definite \"no\" refuses the attack."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.usage-limit",
+      "mechanicFamily": "activation-resource",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Amphistaff venom spit: once per 24 standard hours (a persisted usage counter -- resource owner)."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "activationRequirements.wielding",
+      "mechanicFamily": "wielding",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightsaber-chassis-longhandle"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": null,
+      "proposedPolicy": "AUTO",
+      "disposition": "DEFERRED_TO_OWNER",
+      "owner": "I-B",
+      "reason": "Long-handle two-handed base override: needs the wielding (hands) model."
+    },
+    {
+      "family": "3b.profile.conditional",
+      "key": "conditionalRangeRules",
+      "mechanicFamily": "range-override",
+      "identityCount": 1,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "sg-4-blaster-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalRangeRules",
+      "currentConsumer": "scripts/items/weapon-runtime/canonical-range.js (resolveRangeEnvironment)",
+      "proposedPolicy": "PROMPT",
+      "disposition": "IMPLEMENTED",
+      "reason": "SG-4: scale-range 0.5 underwater (blaster) / out of water (harpoon). Evaluated through condition-policy; an unobserved environment applies nothing (never a blanket restriction)."
+    }
+  ],
+  "problems": []
+}

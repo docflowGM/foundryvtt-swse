@@ -28,12 +28,14 @@ import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/syst
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { normalizeRangeBand } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
+import { SIZE_RANK } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/condition-policy.js";
 import { WeaponRuntimeError, ERROR_CODES, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
-import { summarizeAreaShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
+import { summarizeAreaShape, validateDetonationTimer } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
 import { abilityProhibitedForShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
-import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
+import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf, canonicalSizeName, resolveTargetRequirements, askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
 // ============================================
@@ -205,7 +207,7 @@ function withCanonicalWeaponRuntime(weapon, rollOptions) {
  * evaluated automatically and fed into the EXISTING typed-modifier pipeline as situational contributions.
  * Legacy/custom weapons: untouched.
  */
-async function prepareCanonicalSpecialMechanics(weapon, rollOptions) {
+async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = weapon?.actor ?? null) {
   const runtime = rollOptions.weaponRuntime;
   if (runtime?.source !== 'canonical') return { rollOptions, mechanics: [], answers: {}, unresolved: [], areaShape: null };
   let cd = null;
@@ -224,11 +226,32 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions) {
   if (rollOptions.packageType === 'tripleAttack') activeUses.push('triple-attack');
   if (optionActive(rollOptions, 'rapidShot')) activeUses.push('rapid-shot');
   if (optionActive(rollOptions, 'rapidStrike')) activeUses.push('rapid-strike');
-  const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried, activeUses });
+  const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried, activeUses, attackContext: buildAttackConditionContext(actor, target, rollOptions) });
   if (stage.unresolved.length) ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'}: ${stage.unresolved.length} conditional attack modifier(s) could not be evaluated and were not applied (GM adjudication).`);
+  // Phase 5D-I-A: target eligibility from the selected profile's structured activation requirements. Only a definite "no" refuses (before any
+  // cost); an unobserved fact is asked once and stored with the other special answers.
+  const targetReqs = runtime.profile?.definition?.activationRequirements ?? [];
+  let refusal = null;
+  const targetContext = (() => { const c = buildAttackConditionContext(actor, target, rollOptions); const t = String(target?.type ?? ''); const disp = rollOptions.targetDisposition ?? ((n) => (n === -1 ? 'hostile' : n === 1 ? 'friendly' : n === 0 ? 'neutral' : undefined))(target?.token?.disposition ?? target?.prototypeToken?.disposition);
+    return { ...c, ...(disp ? { targetDisposition: disp } : {}), ...(['character', 'npc', 'droid'].includes(t) ? { targetType: 'character' } : t === 'vehicle' ? { targetType: 'vehicle' } : {}) }; })();
+  let answersWithTarget = { ...stage.answers };
+  let tr = resolveTargetRequirements(targetReqs, { context: targetContext, answers: answersWithTarget });
+  for (const e of tr.evaluated.filter((x) => x.result === null)) {
+    const ans = await askSpecialQuestion({ id: e.prompt, family: 'target-requirement', question: `Does this attack meet the target requirement "${e.condition.replace(/[-_]/g, ' ')}"?` });
+    if (ans === true || ans === false) answersWithTarget[e.prompt] = ans;
+  }
+  tr = resolveTargetRequirements(targetReqs, { context: targetContext, answers: answersWithTarget });
+  if (!tr.legal) refusal = { reason: 'target-requirement-not-met', failed: tr.evaluated.filter((e) => e.result === false).map((e) => e.condition) };
+  else if (tr.evaluated.some((e) => e.result === null)) stage.unresolved.push(...tr.evaluated.filter((e) => e.result === null).map((e) => ({ id: e.prompt, family: 'target-requirement', reason: 'condition-not-observable-and-unanswered' })));
+  stage.answers = answersWithTarget;
   // Phase 5D-G: the selected form's (payload ?? profile) area shape drives the EXISTING area rules: attack.isArea, the miss rule
   // (half damage) and the no-critical-doubling rule read the workflow context, so the canonical shape is what sets them
-  const areaShape = cd.areaShape;
+  // Phase 5D-I-A: the thrower's chosen detonation timer rides in the carried area shape so every affected target / the later damage
+  // roll sees the same detonation (a contact-detonated form ignores any timer)
+  const timerChoice = validateDetonationTimer(cd.areaShape?.detonation, rollOptions.detonationTimer);
+  const areaShape = cd.areaShape && timerChoice.rounds !== null && timerChoice.rounds !== undefined
+    ? Object.freeze({ ...cd.areaShape, detonation: Object.freeze({ ...cd.areaShape.detonation, chosenRounds: timerChoice.rounds }) })
+    : cd.areaShape;
   let nextOptions = rollOptions;
   if (areaShape?.isArea) {
     nextOptions = { ...nextOptions, isAreaAttack: true, areaAttack: true, ruleData: { ...(nextOptions.ruleData ?? {}), areaAttack: true, ...(areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } };
@@ -240,7 +263,50 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions) {
     }));
     nextOptions = { ...nextOptions, situationalContributions: [...(Array.isArray(nextOptions.situationalContributions) ? nextOptions.situationalContributions : []), ...contributions] };
   }
-  return { rollOptions: nextOptions, mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore, areaShape };
+  return { rollOptions: nextOptions, mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore, areaShape, refusal };
+}
+
+/**
+ * Phase 5D-I-A: the facts of THIS attack that condition-policy conditions read. Only OBSERVED facts are present: an absent key means
+ * "not observed" (never "false"), so the condition is asked once as a stored PROMPT instead of being silently decided.
+ * Observable: fire mode, range band, explicit aim / brace / mounted / wielding / adjacency choices of the attack, the attacker's
+ * Strength score and size, the target's size, an attack of opportunity.
+ */
+export function buildAttackConditionContext(actor, target, rollOptions = {}) {
+  const ctx = {};
+  const fm = rollOptions.fireMode;
+  const autofire = rollOptions.autofire === true || rollOptions.attackMode === 'autofire' || fm === 'autofire' || fm === 'burst' || optionActive(rollOptions, 'burstFire');
+  ctx.fireMode = autofire ? 'autofire' : 'single';
+  const band = normalizeRangeBand(rollOptions.rangeBand);
+  if (band) ctx.rangeBand = band;
+  const aim = rollOptions.aim ?? rollOptions.isAiming ?? rollOptions.aimed;
+  if (typeof aim === 'boolean') ctx.aimedBeforeAttack = aim;
+  if (typeof rollOptions.braced === 'boolean') ctx.braced = rollOptions.braced;
+  if (typeof rollOptions.mounted === 'boolean') ctx.mounted = rollOptions.mounted;
+  if (Number.isFinite(Number(rollOptions.wieldedHands))) ctx.wieldedHands = Number(rollOptions.wieldedHands);
+  if (rollOptions.adjacent === true || rollOptions.distance === 'adjacent') ctx.distance = 'adjacent';
+  else if (rollOptions.adjacent === false || (typeof rollOptions.distance === 'string' && rollOptions.distance)) ctx.distance = rollOptions.distance ?? 'not-adjacent';
+  ctx.events = rollOptions.attackOfOpportunity === true ? ['attack-of-opportunity'] : [];
+  // Strength is observed only when the actor actually carries ability data (getAbilityScore answers 10 for an actor with none)
+  const hasStr = actor?.system?.derived?.attributes?.str?.total !== undefined || actor?.system?.attributes?.str !== undefined || actor?.system?.abilities?.str !== undefined;
+  const str = hasStr ? Number(SchemaAdapters.getAbilityScore?.(actor, 'str')) : NaN;
+  if (Number.isFinite(str) && str > 0) ctx.actorStr = str;
+  const size = canonicalSizeName(actor?.system?.size);
+  if (size) { ctx.actorSize = size; ctx.actorSizeRank = SIZE_RANK[size]; }
+  const tSize = canonicalSizeName(target?.system?.size);
+  if (tSize) ctx.targetSizeRank = SIZE_RANK[tSize];
+  return ctx;
+}
+
+/**
+ * Phase 5D-I-A: attack-stage special mechanics for a caller that composes its own attack (Autofire). Returns the situational
+ * contributions the existing typed-modifier pipeline folds into computeFinalAttackComposition() -- the same objects rollAttack builds.
+ */
+export async function resolveCanonicalAttackStage(actor, weapon, rollOptions = {}) {
+  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions);
+  if (canonical.error) return { situationalContributions: undefined, answers: {}, unresolved: [] };
+  const stage = await prepareCanonicalSpecialMechanics(weapon, canonical.rollOptions, actor);
+  return { situationalContributions: stage.rollOptions.situationalContributions, answers: stage.answers ?? {}, unresolved: stage.unresolved ?? [], areaShape: stage.areaShape ?? null };
 }
 
 const SHAPE_OPTION_ABILITIES = Object.freeze({ rapidShot: 'Rapid Shot', burstFire: 'Burst Fire' });
@@ -263,6 +329,13 @@ function assertAttackShapeLegal(shape, rollOptions) {
     if (bad) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `${ability} cannot be used with ${shape.identityKey}/${shape.profileId}: ${bad.reason}`, { identityKey: shape.identityKey, profileId: shape.profileId, ability, reason: bad.reason });
   }
   if (burst && !shape.fireModes.autofire) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `Burst Fire requires an autofire-capable form; ${shape.identityKey}/${shape.profileId} cannot autofire`, { identityKey: shape.identityKey, profileId: shape.profileId, ability: 'Burst Fire', reason: 'form-cannot-autofire' });
+  // Phase 5D-I-A: environment legality. A weapon that declares which profiles work underwater refuses the others ONLY when the attack is
+  // explicitly underwater; an unknown environment never restricts anything.
+  const usable = shape.environment?.underwaterUsableProfiles;
+  if (rollOptions.underwater === true && usable && !usable.includes(shape.profileId)) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `${shape.identityKey}/${shape.profileId} cannot be used underwater (usable: ${usable.join(', ')})`, { identityKey: shape.identityKey, profileId: shape.profileId, reason: 'profile-unusable-underwater', usable: [...usable] });
+  // Phase 5D-I-A: a timer-detonated grenade accepts the thrower's chosen timer only within the published range (the choice itself is the player's)
+  const timer = validateDetonationTimer(shape.area?.detonation, rollOptions.detonationTimer);
+  if (!timer.ok) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `${shape.identityKey}/${shape.profileId}: the detonation timer must be ${timer.min}-${timer.max} rounds`, { identityKey: shape.identityKey, profileId: shape.profileId, reason: timer.reason, min: timer.min, max: timer.max });
   if (shape.fireModes.autofireOnly && !autofireMode) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `${shape.identityKey}/${shape.profileId} can only fire in autofire mode`, { identityKey: shape.identityKey, profileId: shape.profileId, reason: 'autofire-only' });
 }
 
@@ -431,7 +504,11 @@ export async function rollAttack(actor, weapon, options = {}) {
     return null;
   }
   rollOptions = canonical.rollOptions;
-  const specialStage = await prepareCanonicalSpecialMechanics(weapon, rollOptions);
+  const specialStage = await prepareCanonicalSpecialMechanics(weapon, rollOptions, actor);
+  if (specialStage.refusal) {
+    ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'} cannot attack this target: ${specialStage.refusal.failed.map((c) => c.replace(/[-_]/g, ' ')).join('; ')}.`);
+    return null;
+  }
   rollOptions = specialStage.rollOptions;
 
   // Phase 5D-G: temporal firing state (cooldown / alternate rounds / reload / resets / preparation) of the selected canonical form.

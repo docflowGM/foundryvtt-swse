@@ -35,23 +35,23 @@
   "adapterExposureGaps": 0
  },
  "summary": {
-  "fieldPaths": 2217,
+  "fieldPaths": 2221,
   "byImplementationState": {
    "ADAPTER_REQUIRED": 58,
    "ALREADY_CONSUMED_CORRECTLY": 2,
    "DISPLAY_ONLY": 23,
    "EXISTING_CONSUMER_WRONG_INPUT": 539,
    "LEGACY_COMPATIBILITY_ONLY": 79,
-   "NEW_CONSUMER_REQUIRED": 1114,
+   "NEW_CONSUMER_REQUIRED": 1118,
    "RECOMMENDATION_ONLY": 248,
    "STORE_ONLY": 25,
    "VALIDATION_ONLY": 129
   },
   "byClassification": {
    "DISPLAY": 425,
-   "EXECUTION": 1552,
+   "EXECUTION": 1556,
    "INVENTORY": 122,
-   "PLAYER_CHOICE": 416,
+   "PLAYER_CHOICE": 420,
    "PLAYER_STATE": 304,
    "PROVENANCE": 97,
    "RECOMMENDATION": 253,
@@ -64,7 +64,7 @@
    "5B foundation / 5G stamp": 2,
    "5C": 142,
    "5C (retire with legacy projections)": 79,
-   "5C-5E": 82,
+   "5C-5E": 86,
    "5C/5D": 5,
    "5C/5E": 16,
    "5D": 294,
@@ -81,7 +81,7 @@
   "alreadyConsumedCorrectly": 2,
   "existingConsumerWrongInput": 539,
   "adapterRequired": 58,
-  "newConsumerRequired": 1114,
+  "newConsumerRequired": 1118,
   "nonRuntimeDisposition": 425
  },
  "entries": [
@@ -24928,6 +24928,90 @@
   },
   {
    "path": "3B:operation.rangeStepReductionPreparation.actions",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE"
+   ],
+   "consumers": [
+    "attack bonus composition",
+    "resolveRange",
+    "roll-config",
+    "AoO logic"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5C-5E",
+   "ruleId": "3b.operation.attack-modifiers-and-penalties",
+   "mechanicFamily": "attack-modifiers-and-penalties",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.rangeStepReductionPreparation.requiredActions",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE"
+   ],
+   "consumers": [
+    "attack bonus composition",
+    "resolveRange",
+    "roll-config",
+    "AoO logic"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5C-5E",
+   "ruleId": "3b.operation.attack-modifiers-and-penalties",
+   "mechanicFamily": "attack-modifiers-and-penalties",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.rangeStepReductionPreparation.requiredActions[]",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE"
+   ],
+   "consumers": [
+    "attack bonus composition",
+    "resolveRange",
+    "roll-config",
+    "AoO logic"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5C-5E",
+   "ruleId": "3b.operation.attack-modifiers-and-penalties",
+   "mechanicFamily": "attack-modifiers-and-penalties",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.rangeStepReductionPreparation.requiredActions[].action",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE"
+   ],
+   "consumers": [
+    "attack bonus composition",
+    "resolveRange",
+    "roll-config",
+    "AoO logic"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5C-5E",
+   "ruleId": "3b.operation.attack-modifiers-and-penalties",
+   "mechanicFamily": "attack-modifiers-and-penalties",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.rangeStepReductionPreparation.requiredActions[].count",
    "classification": [
     "EXECUTION",
     "PLAYER_CHOICE"

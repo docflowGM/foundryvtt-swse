@@ -176,8 +176,11 @@ export const statePrimed = (state, constraint, clock) => ({ v: 1, ...(state ?? {
  * firingConstraints.braceRule demands a stock state cannot be braced unless that state holds (owned state `stock`; unknown = not extended).
  * Forms that are not autofire-only keep the free `braced` flag they always had.
  */
-export function evaluateBrace(brace, state) {
+export function evaluateBrace(brace, state, ctx = {}) {
   if (!brace?.available) return { applies: false, legal: true, requiredActions: [] };
   if (brace.stockRule && state?.stock !== brace.stockRule) return { applies: true, legal: false, reason: 'stock-not-extended', requiredActions: [] };
-  return { applies: true, legal: true, requiredActions: brace.actions.map((a) => ({ action: a, count: 1, family: 'brace', reason: 'brace' })) };
+  // Phase 5D-I-A: a tripod/mount-only brace is refused only when the weapon is KNOWN not to be mounted; an unknown mount state is `pending`
+  // (the caller asks once) -- never a blanket prohibition
+  if (brace.mountRule && ctx.mounted === false) return { applies: true, legal: false, reason: 'tripod-or-mount-required', requiredActions: [] };
+  return { applies: true, legal: true, ...(brace.mountRule && typeof ctx.mounted !== 'boolean' ? { pending: 'mount-state' } : {}), requiredActions: brace.actions.map((a) => ({ action: a, count: 1, family: 'brace', reason: 'brace' })) };
 }

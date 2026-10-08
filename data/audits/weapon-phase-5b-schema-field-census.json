@@ -5,7 +5,7 @@
  "purpose": "Programmatic census of every field path present in the operational canonical weapons corpus (data/canonical/weapons.json). Paths normalise array indices to []; each path is attributed to its certified origin (Phase 3B / Phase 4H) or to the canonical-only wrapper (provenance/production). Audit-only roots not carried by the corpus are enumerated in auditOnlyRootsNotCarried.",
  "identities": 203,
  "inputs": {
-  "data/canonical/weapons.json": "d3e485422ca40022683bbfd7e6ecbfe224c29ea2158e5005d999034e06a8e4b3"
+  "data/canonical/weapons.json": "b19c5866b4551c2394070f777526c7846d527925281c079d766c35ed26a08783"
  },
  "auditOnlyRootsNotCarried": {
   "phase3B": [
@@ -21,10 +21,10 @@
   ]
  },
  "counts": {
-  "phase3BFieldPaths": 1464,
+  "phase3BFieldPaths": 1468,
   "phase4HFieldPaths": 662,
   "canonicalOnlyFieldPaths": 91,
-  "totalFieldPaths": 2217
+  "totalFieldPaths": 2221
  },
  "fields": [
   {
@@ -20462,6 +20462,66 @@
    "conditional": true
   },
   {
+   "canonicalPath": "operation.rangeStepReductionPreparation.requiredActions",
+   "fieldPath": "operation.rangeStepReductionPreparation.requiredActions",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "array"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.rangeStepReductionPreparation.requiredActions[]",
+   "fieldPath": "operation.rangeStepReductionPreparation.requiredActions[]",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.rangeStepReductionPreparation.requiredActions[].action",
+   "fieldPath": "operation.rangeStepReductionPreparation.requiredActions[].action",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"swift\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.rangeStepReductionPreparation.requiredActions[].count",
+   "fieldPath": "operation.rangeStepReductionPreparation.requiredActions[].count",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "number"
+   ],
+   "sampleValues": [
+    "2"
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
    "canonicalPath": "operation.rangeStepReductionPreparation.stacksWithFarShot",
    "fieldPath": "operation.rangeStepReductionPreparation.stacksWithFarShot",
    "namespace": "3B",
@@ -35794,8 +35854,8 @@
    "fieldPath": "provenance.postCertificationAmendments",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 16,
-   "identityCount": 16,
+   "occurrenceCount": 17,
+   "identityCount": 17,
    "valueTypes": [
     "array"
    ],
@@ -35808,8 +35868,8 @@
    "fieldPath": "provenance.postCertificationAmendments[]",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 20,
-   "identityCount": 16,
+   "occurrenceCount": 21,
+   "identityCount": 17,
    "valueTypes": [
     "string"
    ],

@@ -43,15 +43,39 @@ function context(actor, rollOptions) {
 }
 
 /**
+ * Phase 5D-I-A: switching a persistent stun setting costs its published action (Shockboxing Gloves: swift) -- once. While the setting is
+ * already in effect (the last attack with this weapon used this form) the next stun attack is free. Only the switch TO the costly form is
+ * priced; the source states no cost for switching back, so none is invented.
+ */
+function stunSwitchActions(shape, state) {
+  const ss = shape?.stunSetting;
+  if (!ss?.persistent || state?.settingProfile === shape.profileId) return [];
+  return [{ action: ss.action, count: 1, family: 'stun-switch', reason: 'stun-setting-switch' }];
+}
+
+/**
+ * Phase 5D-I-A: the structured actions of an ASSERTED range preparation (operation.rangeStepReductionPreparation, E-Web missile launcher):
+ * the player toggled the `preparedRangeReduction` option for this attack, so its published actions are paid before the shot.
+ */
+function rangePreparationActions(shape, rollOptions = {}) {
+  const rp = shape?.rangePreparation;
+  const on = rollOptions?.combatOptions?.preparedRangeReduction ?? rollOptions?.attackOptions?.preparedRangeReduction;
+  if (!rp?.complete || !on || on === '0') return [];
+  return rp.requiredActions.flatMap((a) => Array.from({ length: a.count }, () => ({ action: a.action, count: 1, family: 'range-preparation', reason: 'range-preparation' })));
+}
+
+/**
  * Non-mutating readiness of the selected canonical form. Safe for previews. Legacy weapons / unconstrained forms -> always ready.
  * @returns {{applies:boolean, ready:boolean, blockers:Array, requiredActions:Array, notes:Array, clock:object|null}}
  */
 export function previewReadiness(actor, weapon, runtime, rollOptions = {}) {
   const shape = resolveAttackShapeFor(runtime, rollOptions);
-  if (shape.source !== 'canonical' || !shape.temporal.length) return { applies: false, ready: true, blockers: [], requiredActions: [], notes: [], clock: null };
+  if (shape.source !== 'canonical') return { applies: false, ready: true, blockers: [], requiredActions: [], notes: [], clock: null };
+  const prepActions = [...rangePreparationActions(shape, rollOptions), ...stunSwitchActions(shape, readFireState(weapon))];
+  if (!shape.temporal.length) return { applies: prepActions.length > 0, ready: true, blockers: [], requiredActions: prepActions, notes: [], clock: null };
   const clock = currentClock(actor);
   const r = evaluateReadiness(shape.temporal, readFireState(weapon), clock, context(actor, rollOptions));
-  return { applies: true, ...r, clock };
+  return { applies: true, ...r, requiredActions: [...(r.requiredActions ?? []), ...prepActions], clock };
 }
 
 async function writeState(actor, weapon, state) {
@@ -89,10 +113,13 @@ export async function spendRequiredActions(actor, requiredActions = [], metadata
 /** Record that a shot was fired (after the attack resolved). No-op for unconstrained forms. */
 export async function commitFired(actor, weapon, runtime, rollOptions = {}, paid = []) {
   const shape = resolveAttackShapeFor(runtime, rollOptions);
-  if (shape.source !== 'canonical' || !shape.temporal.length) return null;
+  if (shape.source !== 'canonical') return null;
+  const settingChanged = shape.stunSetting?.weaponHasSwitch === true && readFireState(weapon)?.settingProfile !== shape.profileId;
+  if (!shape.temporal.length && !settingChanged) return null;
   // an optional prepared attack that is not currently primed adds no temporal state: an ordinary shot writes nothing
-  if (shape.temporal.every((c) => c.family === 'prepared-attack') && !readFireState(weapon)?.primed) return null;
-  const next = stateAfterFire(shape.temporal, readFireState(weapon), currentClock(actor), context(actor, rollOptions), paid);
+  if (shape.temporal.length && shape.temporal.every((c) => c.family === 'prepared-attack') && !readFireState(weapon)?.primed && !settingChanged) return null;
+  let next = shape.temporal.length ? stateAfterFire(shape.temporal, readFireState(weapon), currentClock(actor), context(actor, rollOptions), paid) : { ...(readFireState(weapon) ?? {}) };
+  if (shape.stunSetting?.weaponHasSwitch === true) next = { ...next, settingProfile: shape.profileId };
   await writeState(actor, weapon, next);
   // keep the in-memory Item consistent for callers that keep using the same object within this tick
   try { weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: next } }; } catch { /* frozen document: world copy updates on the next render */ }
@@ -138,9 +165,9 @@ export async function setStockState(actor, weapon, stockState) {
 }
 
 /** Non-mutating brace legality + the actions bracing costs for the selected autofire form. */
-export function previewBrace(weapon, shape) {
+export function previewBrace(weapon, shape, ctx = {}) {
   if (shape?.source !== 'canonical') return { applies: false, legal: true, requiredActions: [] };
-  return evaluateBrace(shape.brace, readFireState(weapon));
+  return evaluateBrace(shape.brace, readFireState(weapon), ctx);
 }
 
 export const FireStateStore = Object.freeze({ currentClock, readFireState, previewReadiness, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, previewBrace });

@@ -27798,18 +27798,21 @@
             "requiresAim": true,
             "attackModifier": 1,
             "summary": "+1 attack with Sporting Blaster Rifles when aiming."
-          }
-        ],
-        "riderRules": [
+          },
           {
-            "type": "DAMAGE_DIE_REROLL",
-            "requiresWeaponText": [
+            "type": "WEAPON_DAMAGE_DICE_REROLL",
+            "id": "sportHunterSportingBlasterPistolRerollOnes",
+            "label": "Sport Hunter (Sporting Blaster Pistol)",
+            "weaponGroups": [
               "sporting-blaster-pistol"
             ],
+            "requiresAttackType": "ranged",
             "rerollValues": [
               1
             ],
-            "description": "Sporting Blaster Pistol damage dice reroll 1s until no die shows 1. Metadata only until damage-die reroll UI exists."
+            "untilDifferent": true,
+            "appliesTo": "weapon-dice",
+            "description": "Sporting Blaster Pistol: reroll any result of 1 on the weapon damage dice until a result other than 1 is obtained (Galaxy at War p.25; Core Rulebook p.126)."
           }
         ]
       },

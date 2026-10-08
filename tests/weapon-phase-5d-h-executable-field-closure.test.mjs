@@ -282,8 +282,9 @@ const dexActor = (items, feats) => { const a = makeActor({ items, feats }); a.sy
   const mods = (A, w, extra = {}) => CombatOptionResolver.collectAttackModifiers(A, w, { weaponForm: { identityKey: w.flags.swse.canonicalWeapon.identityKey, profileId: 'primary' }, ...extra });
   for (const k of ['weapon-blaster-carbine', 'weapon-blaster-rifle', 'weapon-light-repeating-blaster']) assert.ok(relationsForAbility(canon(k), rifleDoc, {}).some((r) => r.relation === 'EXPLICIT_WEAPON_BENEFIT'), `${k} declares the Riflemaster benefit`);
   assert.ok(census.relationConsistency.consistent >= 20);
-  assert.deepEqual(census.relationConsistency.inconsistent, ['lightsaber-chassis-pike <- Long Haft Strike (UNLOCKS_DOUBLE_WEAPON_MODE)', 'weapon-sporting-blaster-pistol <- Sport Hunter (EXPLICIT_WEAPON_BENEFIT)']);
-  ok('EXPLICIT_* relations mirror the ability scope (23 consistent); the 2 inconsistent pairs are named (Long Haft Strike text scope, Sport Hunter sporting-blaster-pistol reroll)');
+  // Phase 5D-I-A: Sport Hunter now carries the structured sporting-blaster-pistol reroll rule, so that relation pair is consistent; only the Long Haft Strike text-scope pair remains
+  assert.deepEqual(census.relationConsistency.inconsistent, ['lightsaber-chassis-pike <- Long Haft Strike (UNLOCKS_DOUBLE_WEAPON_MODE)']);
+  ok('EXPLICIT_* relations mirror the ability scope (24 consistent); the 1 inconsistent pair is named (Long Haft Strike text scope); Sport Hunter sporting-blaster-pistol is consistent since 5D-I-A');
 
   // ---- Riflemaster / Sport Hunter damage semantics (Galaxy at War p.25): die-SIZE replacement is not an extra die ------------------
   const hbr = canon('weapon-heavy-blaster-rifle'), br = canon('weapon-blaster-rifle'), car = canon('weapon-blaster-carbine');
