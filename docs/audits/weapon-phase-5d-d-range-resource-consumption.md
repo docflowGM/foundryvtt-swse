@@ -58,7 +58,7 @@ Invalid identity/profile/configuration/mode/payload (5D-A/B/C), `range-branch-mi
 * Resource: free 127, cost 1 → 108, cost >1 → 5 (Variable Blaster medium ×5 / high ×10, Heavy Variable medium ×10 / high ×20, Double-Barreled double-shot ×2), untracked 4, pending 12.
 * Payload weapons 2 (offered with >1 payload) · mode-dependent forms 28 · configuration forms 17 · configuration-varying resource cost: **0**.
 * Ammunition-dependent damage still deferred: Grenade Launcher primary, Micro-Grenade Launcher primary (×2 configurations).
-* Contradictory profiles: **Darkstick `thrown`** and **Static Pike `thrown`** (schema branch `melee`, range mode `ranged`).
+* Contradictory profiles at the first 5D-D commit: **Darkstick `thrown`** and **Static Pike `thrown`** (schema branch `melee`, range mode `ranged`) — since corrected (see "Post-certification DATA_DEFECT correction"; census now 258 forms, 0 contradictions). Figures in this section are the first-commit census; the updated census is in the correction section.
 
 ## 16. Representative weapon tests
 Stun Baton (melee, free), Blaster Pistol (banded, cost 1), Gungan Electropole (cross-branch), Siang Lance (melee bayonet free / ranged cost 1), Vibrobayonet (configuration), Variable Blaster (modes 1/5/10), Double-Barreled Carbine (×2), Bluebolt (stun 2), Heavy Variable Blaster (untracked secondary), Rotary Blaster Cannon (pending autofire),
@@ -66,7 +66,7 @@ Wrist Rocket (7 payloads), Grenade/Micro-Grenade (deferred damage), a short-over
 
 ## 17. DATA_DEFECT vs CONSUMER_DEFECT
 * CONSUMER_DEFECTs fixed: range penalty ignored the selected profile's facet (and let stale Item `rangePenalty` override); ammo cost was always the Item heuristic (1), so Variable Blaster modes / double-shot / stun / bayonet forms spent the wrong amount; insufficient-ammo ordering.
-* **Suspected DATA_DEFECT (not changed, needs primary-source ruling):** `unmapped::Darkstick/thrown` and `unmapped::Static Pike/thrown` have `schemaFamily.branch = melee` but `range.mode = ranged` (thrown). Expected by the "thrown" range family: ranged branch. No source/page evidence was gathered in this phase. Consumer behavior: these two forms are refused (and not offered); all other forms of both weapons work. Flipping the branch (or the range mode) in the canonical record would restore them; it was intentionally not edited here.
+* **DATA_DEFECT (confirmed against primary sources after the first 5D-D commit; corrected — see "Post-certification DATA_DEFECT correction" below):** `unmapped::Darkstick/thrown` and `unmapped::Static Pike/thrown` carried `schemaFamily.branch = melee` with `range.mode = ranged`. The first 5D-D commit refused those two forms (fail-closed) pending a ruling.
 
 ## 18. Automated results
 New `weapon-phase-5d-d-range-resource-consumption.test.mjs` 21 checks (census; range ×6 scenarios; resource/ordering/payload/damage/config/regression; dialog wiring guard). Full rolling suite **327 passed / 0 failed** (326 after 5D-C + the new 5D-D test; 5 documented exclusions); 5D-A 14/14, 5D-B 14/14, 5D-C 10/10, 5D-D 21/21; registry/5B/5B-R `--check`s, validate-partials, validate-data, system.json pass.
@@ -89,3 +89,27 @@ multi-resource weapons (secondary resources untracked); `firingConstraints` (coo
 
 ## 21. Recommended Phase 5D-E scope
 Special attack/effect consumption on the retained form (damage multipliers, rider components, stun/flash/toxin/venom/Pin/Trip, special payload effects, `conditionalModifiers`/`criticalEffects`). Then 5D-F: multi-attack / double weapon / dual wield / autofire (+ `firingConstraints`, `autofireUnits`) convergence, including the Darkstick/Static Pike data ruling if still open.
+
+## Post-certification DATA_DEFECT correction
+
+**Ruling (primary-source check by the project owner):**
+* **Darkstick** — *Galaxy at War* p.36: "A darkstick can be thrown"; its table entry marks it throwable.
+* **Static Pike** — *Galaxy at War* table p.36 and description p.37: balanced so it can be thrown like a spear.
+* **Core Rulebook:** throwing a weapon is a **ranged attack** (attack roll uses Dexterity); thrown-weapon damage still uses Strength.
+
+| Identity | Field | Was | Now |
+|---|---|---|---|
+| `unmapped::Darkstick` | `canonicalStats.attackProfiles[id=thrown].schemaFamily.branch` | `melee` | `ranged` |
+| `unmapped::Static Pike` | `canonicalStats.attackProfiles[id=thrown].schemaFamily.branch` | `melee` | `ranged` |
+
+**Why the weapon-level group stays melee:** the *weapon* is still an Exotic Weapon (Darkstick, proficiency `exotic`, exotic identity Darkstick) / Advanced Melee Weapon (Static Pike, proficiency `advanced-melee`) and its native family/category is melee; its `melee` profile is unchanged. **Why the selected attack branch becomes ranged:** the *thrown profile* is a ranged attack — it already carried the global `thrown-weapons` ranged range block, which contradicted its branch. This is exactly the identity-vs-selected-form split established in 5D-A..D (the Electropole thrown profile is the same pattern). Unchanged on the thrown profiles: proficiency group, damage (Darkstick 1d6 slashing; Static Pike 2d6 energy AND piercing — one damage event), `thrown-weapons` range profile, lethal/stun capability and energy-cell requirement. Resulting behavior: thrown attack = DEX (5D-B provenance), thrown damage = STR (existing Item-level rule), range = canonical thrown-weapons table. The Darkstick *return-to-hand on beating Reflex by 5* is a special effect and is **not** implemented here (not structurally represented/consumed yet — 5D-E); the thrown attack itself is valid and no longer blocked.
+
+**Where the fix lives (generation chain):** audits → canonical corpus → generators. The certified Phase 3B/4H audits are frozen historical evidence: the 3C ledger and 3D freeze pin the 3B hash and the 4E census holds the Static Pike ranged-profile availability, and the 3C rebuild would rewrite 4,000 lines of pre-cutover evidence with the post-cutover reference scan. Editing 3B (a 5B-R-style amendment) was prototyped and **reverted**: it broke `verify-item-weapons-authority` (3C pin, 3D rebuild, 4E availability). Instead a **controlled canonical amendment** was added: `tools/lib/canonical-weapons-amendments.mjs` (pre-condition-asserting; applied by `tools/build-canonical-weapons.mjs`; verified by `--check` as *audit-derived fields + amendments*; logged in `data/canonical/weapons.json#postCertificationAmendments` with source/page/field/from/to/rule; stamped on the two records' `provenance.postCertificationAmendments`). One operational SSOT remains (`data/canonical/weapons.json`); `packs/weapons*.db` (only the two `canonicalWeapon` hash flags) and `data/weapons/canonical-weapon-registry.json` (the two records + hashes) and the projection report were regenerated by their normal builders — nothing hand-patched; no audit file changed.
+
+**Other thrown-melee candidates (census, not rewritten):** the check `range.mode=ranged ∧ branch=melee` (and the converse) now returns **0** profiles. Melee profiles that carry the `thrown` quality but have no separate thrown profile (completeness observation only — Knife, Lightsaber, Lightsaber Short chassis, Spear, Vibrodagger) were **not** changed: they have no ranged range block, so they are not branch/range contradictions, and adding thrown profiles needs its own source ruling.
+
+**Regression results:** new `tests/weapon-phase-5d-d-thrown-melee-correction.test.mjs` (8 check groups covering: melee profiles stay melee; thrown profiles ranged; DEX thrown attack; STR thrown damage; canonical `thrown-weapons` range; both offered by the 5D-B selector; not refused by the 5D-D guard; proficiency unchanged; melee profiles unaffected; legacy unaffected; census/provenance). The 5D-D suite's census and "refused forms" assertions were updated (the consistency guard is still tested with a synthetic contradictory profile).
+
+**Updated all-203 census (deterministic):** 203 weapons / **258** offered forms (was 256) — range: melee 107, **banded 140** (was 138), pending 11; resource: free **128** (was 127), cost 1 → **109** (was 108), cost > 1 → 5, untracked 4, pending 12; payload weapons 2, mode forms 28, configuration forms 17, configuration-varying cost 0; refused forms **0** (was 2). The two previously refused profiles moved into usable ranged/banded forms (Darkstick thrown: resource-free; Static Pike thrown: energy-cell, cost 1).
+
+**Validation after the correction:** full rolling suite **328 passed / 0 failed** (327 + the new correction test; 5 documented exclusions). 5D-A 14/14, 5D-B 14/14, 5D-C 10/10, 5D-D 21/21, correction 8/8. `build-canonical-weapons --check`, `build-weapon-production --check`, `build-weapon-runtime-registry --check`, 5B/5B-R `--check` (the 5B consumption/field-census artifacts were regenerated by their builder: new provenance field path only), `verify-canonical-production`, `verify-item-weapons-authority`, 3B/3D/4H `--check`, `validate-partials`, `validate-data`, `system.json` all pass. (The pre-existing 3C `--check` failure is unrelated — the frozen pre-cutover ledger, skipped post-cutover per the Phase 5C transition rules — and untouched.)

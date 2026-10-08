@@ -12,6 +12,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { applyPostCertificationAmendments } from './lib/canonical-weapons-amendments.mjs';
 import { ROOT, CANONICAL_WEAPONS, P3B, P4H, P3C, readText, readJson, sha, stable, clone, cmp, newProductionId, serializeCorpus, readPackLines } from './lib/canonical-weapons-shared.mjs';
 
 export const CORPUS_VERSION = '5C.1';
@@ -54,6 +55,9 @@ export function deriveAuditRecord(i, r) {
     },
   };
 }
+
+/** Audit-derived record plus the controlled post-certification canonical amendments (frozen audits are never rewritten). */
+function deriveCanonicalRecord(i, r, log = []) { return applyPostCertificationAmendments(deriveAuditRecord(i, r), log); }
 
 function auditInputs() {
   const t3b = readText(P3B), t4h = readText(P4H);
@@ -137,7 +141,8 @@ export function buildCorpus({ consolidate = false } = {}) {
     prodByKey = new Map(old.identities.map((r) => [r.identityKey, r.production]));
     retired = old.retiredProductionRecords; nonWeapon = old.nonWeaponPackRecords; extra = { productionCapture: old.productionCapture };
   }
-  const identities = A.pairs.map(([i, r]) => ({ ...deriveAuditRecord(i, r), production: prodByKey.get(i.identityKey) }))
+  const amendmentLog = [];
+  const identities = A.pairs.map(([i, r]) => ({ ...deriveCanonicalRecord(i, r, amendmentLog), production: prodByKey.get(i.identityKey) }))
     .sort((x, y) => cmp(x.canonicalName, y.canonicalName) || cmp(x.identityKey, y.identityKey));
   return {
     schemaVersion: CORPUS_VERSION,
@@ -146,6 +151,7 @@ export function buildCorpus({ consolidate = false } = {}) {
     purpose: 'The single operational authority for weapons. Production packs, the runtime registry and compatibility projections are generated from this file; audit files are provenance evidence only.',
     productionIdConvention: 'Existing ids are preserved; identities that had no production record get weapon-<slug(canonicalName)>.',
     inputs: { [P3B]: sha(A.t3b), [P4H]: sha(A.t4h) },
+    postCertificationAmendments: amendmentLog,
     ...extra,
     counts: { identities: identities.length, presentBeforeCutover: identities.filter((x) => x.production.presentBeforeCutover).length, createdByCutover: identities.filter((x) => !x.production.presentBeforeCutover).length, retiredProductionRecords: retired.length, nonWeaponPackRecords: nonWeapon.length },
     retiredProductionRecords: retired,
@@ -165,8 +171,10 @@ export function verifyLossless(corpus) {
     const c = byKey.get(i.identityKey);
     if (!c) { errs.push(`missing ${i.identityKey}`); continue; }
     const { production, ...rest } = c;
-    if (stable(rest) !== stable(deriveAuditRecord(i, r))) errs.push(`audit-derived fields of ${i.identityKey} differ from the certified authority`);
+    if (stable(rest) !== stable(deriveCanonicalRecord(i, r))) errs.push(`audit-derived fields of ${i.identityKey} differ from the certified authority plus the controlled amendments`);
   }
+  const expectedLog = []; for (const [i, r] of A.pairs) deriveCanonicalRecord(i, r, expectedLog);
+  if (stable(corpus.postCertificationAmendments ?? []) !== stable(expectedLog)) errs.push('postCertificationAmendments log differs from the amendment module');
   for (const k of byKey.keys()) if (!A.pairs.some(([i]) => i.identityKey === k)) errs.push(`unexpected canonical identity ${k}`);
   return errs;
 }

@@ -98,10 +98,10 @@ const census = { identities: 0, forms: 0, refusedForms: [], range: {}, resource:
     for (const set of Object.values(costsByProfile)) if (set.size > 1) census.configCostVaries += 1;
   }
   assert.equal(census.identities, 203);
-  assert.deepEqual(census.refusedForms.sort(), ['unmapped::Darkstick/thrown:range-branch-mismatch', 'unmapped::Static Pike/thrown:range-branch-mismatch'], 'only two canonical profiles contradict their own range mode');
+  assert.deepEqual(census.refusedForms, [], 'no canonical profile contradicts its own range mode (Darkstick/Static Pike thrown were corrected by the source-proven 5D-D amendment)');
   assert.ok(census.forms > 200);
   console.log('     census:', JSON.stringify({ forms: census.forms, range: census.range, resource: census.resource, payloadWeapons: census.payloadWeapons, modeForms: census.modeForms, configForms: census.configForms, nonUnitCost: census.nonUnitCost, ammoDependentDamage: census.ammoDependentDamage, configCostVaries: census.configCostVaries, refused: census.refusedForms }));
-  ok('all-203 census: every offered form resolves a range facet + resource class; contradictions limited to Darkstick/Static Pike thrown (refused); ammo-dependent damage + non-unit costs enumerated');
+  ok('all-203 census: every offered form resolves a range facet + resource class; no canonical profile contradicts its range mode; ammo-dependent damage + non-unit costs enumerated');
 }
 
 // ---- RANGE ----------------------------------------------------------------------------------------------------------------------
@@ -155,10 +155,14 @@ const census = { identities: 0, forms: 0, refusedForms: [], range: {}, resource:
   const bow = canon('weapon-bowcaster'); const bowRt = rt.resolveAttackWeaponRuntime(bow, {});
   assert.equal(bowRt.range.status, 'pending');
   assert.equal(getRangePenalty(bow, { weaponRuntime: bowRt, rangeBand: 'short' }), -2, 'unresolved canonical range keeps the generic band arithmetic (nothing invented)');
-  // contradictory canonical record is refused, not guessed (Darkstick thrown)
-  assert.throws(() => rt.resolveAttackWeaponRuntime(canon('unmapped::Darkstick'), { profileId: 'thrown' }), (e) => e.code === 'range-branch-mismatch');
-  assert.ok(!rt.buildAttackForms(canon('unmapped::Darkstick')).forms.some((f) => f.profileId === 'thrown'));
-  ok('pending range facets keep generic arithmetic; contradictory profile (Darkstick thrown) is refused and not offered');
+  // the consistency guard still refuses a contradictory profile (synthetic: a thrown-weapons ranged block on a melee-branch profile)
+  const axe = resolver.resolveIdentity('unmapped::Axe', null, { profileId: 'thrown' });
+  const axeThrown = axe.profiles.find((p) => p.id === 'thrown');
+  assert.doesNotThrow(() => rt.resolveCanonicalRange(axe, axeThrown));
+  assert.throws(() => rt.resolveCanonicalRange(axe, { ...axeThrown, branch: 'melee' }), (e) => e.code === 'range-branch-mismatch');
+  // the formerly contradictory records (Darkstick / Static Pike thrown) are now consistent, usable ranged forms
+  for (const k of ['unmapped::Darkstick', 'unmapped::Static Pike']) assert.ok(rt.buildAttackForms(canon(k)).forms.some((f) => f.profileId === 'thrown' && f.branch === 'ranged'), k);
+  ok('pending range facets keep generic arithmetic; the consistency guard still refuses a contradictory profile; corrected Darkstick/Static Pike thrown forms are offered');
 }
 
 // ---- RESOURCE: costs --------------------------------------------------------------------------------------------------------------
