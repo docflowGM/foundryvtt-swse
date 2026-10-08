@@ -1,0 +1,2048 @@
+{
+  "schemaVersion": 1,
+  "kind": "read_only_class_canonicalization_census",
+  "auditDate": "2026-10-08",
+  "repository": "docflowGM/foundryvtt-swse",
+  "ref": "e0717afffe7d20ec2a012f8d1900d6757cda81de",
+  "sourcePaths": [
+    "packs/classes.db",
+    "packs/skills.db",
+    "packs/talent_trees.db",
+    "data/prestige-class-prerequisites.json",
+    "data/generated/class-feat-list-bindings.json"
+  ],
+  "method": "Full static census of packs/classes.db and linked data; five base classes verified against printed Core Rulebook tables; Improviser Contraband table verified against printed Rebellion Era p41. Other prestige records not yet primary-source certified.",
+  "counts": {
+    "classes": 37,
+    "base": 5,
+    "prestige": 32,
+    "prerequisites": 32,
+    "talentTrees": 177,
+    "talentTreeSourceRefs": 178,
+    "unresolvedTalentTreeSourceRefs": 0,
+    "bonusFeatListBindings": 5,
+    "blankClassDescriptions": 37,
+    "babMetadataTableMismatches": 11,
+    "coreVerified": 5,
+    "prestigePartiallyVerified": 1
+  },
+  "anomalies": {
+    "coreTrainedSkillMismatch": [
+      {
+        "name": "Scoundrel",
+        "actual": 5,
+        "expected": 4
+      },
+      {
+        "name": "Scout",
+        "actual": 4,
+        "expected": 5
+      }
+    ],
+    "coreSkillListMismatch": [
+      {
+        "name": "Jedi",
+        "extra": [
+          "Jump",
+          "Mechanics"
+        ],
+        "missing": []
+      }
+    ],
+    "babMetadataTableMismatch": [
+      {
+        "name": "Sith Apprentice",
+        "metadata": "medium",
+        "table": "fast"
+      },
+      {
+        "name": "Officer",
+        "metadata": "medium",
+        "table": "fast"
+      },
+      {
+        "name": "Martial Arts Master",
+        "metadata": "medium",
+        "table": "fast"
+      },
+      {
+        "name": "Gladiator",
+        "metadata": "medium",
+        "table": "fast"
+      },
+      {
+        "name": "Assassin",
+        "metadata": "medium",
+        "table": "fast"
+      },
+      {
+        "name": "Droid Commander",
+        "metadata": "medium",
+        "table": "fast"
+      },
+      {
+        "name": "Noble",
+        "metadata": "slow",
+        "table": "medium"
+      },
+      {
+        "name": "Vanguard",
+        "metadata": "medium",
+        "table": "fast"
+      },
+      {
+        "name": "Melee Duelist",
+        "metadata": "medium",
+        "table": "fast"
+      },
+      {
+        "name": "Imperial Knight",
+        "metadata": "medium",
+        "table": "fast"
+      },
+      {
+        "name": "Master Privateer",
+        "metadata": "medium",
+        "table": "fast"
+      }
+    ],
+    "malformedFeatureLabels": [
+      {
+        "name": "Improviser",
+        "features": [
+          {
+            "level": 2,
+            "name": "Contraband (2",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 2,
+            "name": "000 credits)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 3,
+            "name": "Contraband (3",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 3,
+            "name": "000 credits)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 4,
+            "name": "Contraband (4",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 4,
+            "name": "000 credits)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 5,
+            "name": "Contraband (5",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 5,
+            "name": "000 credits)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 6,
+            "name": "Contraband (6",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 6,
+            "name": "000 credits)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 7,
+            "name": "Contraband (7",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 7,
+            "name": "000 credits)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 8,
+            "name": "Contraband (8",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 8,
+            "name": "000 credits)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 9,
+            "name": "Contraband (9",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 9,
+            "name": "000 credits)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 10,
+            "name": "Contraband (10",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 10,
+            "name": "000 credits)",
+            "type": "scaling_feature"
+          }
+        ]
+      },
+      {
+        "name": "Infiltrator",
+        "features": [
+          {
+            "level": 2,
+            "name": "Unarmed Stun (+1d_)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 6,
+            "name": "Unarmed Stun (+2d_)",
+            "type": "scaling_feature"
+          },
+          {
+            "level": 10,
+            "name": "Unarmed Stun (+3d_)",
+            "type": "scaling_feature"
+          }
+        ]
+      }
+    ],
+    "rawTreeNameInsteadOfId": [
+      {
+        "name": "Assassin",
+        "refs": [
+          {
+            "raw": "GenoHaradan",
+            "resolvedSourceId": "da7b731a3e434a7a",
+            "resolvedName": "GenoHaradan"
+          }
+        ]
+      },
+      {
+        "name": "Infiltrator",
+        "refs": [
+          {
+            "raw": "Bothan SpyNet",
+            "resolvedSourceId": "d20682671d035cef",
+            "resolvedName": "Bothan SpyNet"
+          }
+        ]
+      }
+    ]
+  },
+  "classes": [
+    {
+      "id": "06f4d9029debf827",
+      "name": "Medic",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 4,
+        "reflex": 0,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "9b06340233eb3cdd",
+        "61725c845d26ade0"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "07a64453f95e04f2",
+      "name": "Jedi Master",
+      "type": "prestige",
+      "levels": 5,
+      "hitDie": 10,
+      "baseHp": 30,
+      "babProgression": "fast",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 3,
+        "reflex": 3,
+        "will": 3
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "b3c5d90b5036f39b"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "162d866ba36fce69",
+      "name": "Gunslinger",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "fast",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 4,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "1c48d1cd9ab1f5c8",
+        "cee9b9398682b7d0",
+        "cb6f775cd227a3e3",
+        "ed77ab2e234089ed",
+        "1933731cc59f8463"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "19ee85a788380256",
+      "name": "Outlaw",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 4,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "7c47d36dc1f77d9c",
+        "9b06340233eb3cdd",
+        "64874e65579e4cf4",
+        "3caa80f6bef04200"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "1ba03b2d00245906",
+      "name": "Sith Apprentice",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "17cec542331cb4e4",
+        "b3c5d90b5036f39b",
+        "2359c05ff13f3feb",
+        "d1037bc7a08ea80b",
+        "a67faf2ae089ab5d",
+        "4d5ac20318ef56b6"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "21dfe84d159a1b7f",
+      "name": "Scoundrel",
+      "type": "base",
+      "levels": 20,
+      "hitDie": 6,
+      "baseHp": 18,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "reflex": 2,
+        "fortitude": 0,
+        "will": 1
+      },
+      "trainedSkills": 5,
+      "classSkills": [
+        "Acrobatics",
+        "Deception",
+        "Gather Information",
+        "Initiative",
+        "Knowledge(all skills, taken individually)",
+        "Mechanics",
+        "Perception",
+        "Persuasion",
+        "Pilot",
+        "Stealth",
+        "Use Computer"
+      ],
+      "startingFeatures": [
+        {
+          "name": "Point-Blank Shot",
+          "type": "class_feature"
+        },
+        {
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "startingCredits": "3d4 x 250",
+      "talentTreeSourceIds": [
+        "cee9b9398682b7d0",
+        "67b59e020c1660eb",
+        "64874e65579e4cf4",
+        "5ea8c79492d40713",
+        "f1657b1d23a4c7dc",
+        "c55b003333ff082d",
+        "6367600ed3c0cfae",
+        "9f7ca12cc084737a",
+        "bf3b07c1687a3ca2",
+        "4af97ad058b1b30f",
+        "33c3210fcac8c664"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [
+        "scoundrel_feats"
+      ],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": null,
+      "sourceVerification": {
+        "status": "PRIMARY_PDF_VERIFIED",
+        "book": "Saga Edition Core Rulebook",
+        "page": 45,
+        "expectedTrainedSkills": 4,
+        "expectedClassSkills": [
+          "Acrobatics",
+          "Deception",
+          "Gather Information",
+          "Initiative",
+          "Knowledge (all skills, taken individually)",
+          "Mechanics",
+          "Perception",
+          "Persuasion",
+          "Pilot",
+          "Stealth",
+          "Use Computer"
+        ],
+        "missingClassSkills": [],
+        "extraClassSkills": [],
+        "trainedSkillCountMatches": false
+      }
+    },
+    {
+      "id": "289fcf920ef0e184",
+      "name": "Force Adept",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "96ef43a3054dcb58",
+        "e35ee41362604227",
+        "01e443d93e47f9c4",
+        "a6ee1a0c534cbc73",
+        "ed899f9f41fc1391",
+        "a3d0b7c9a6d041f2",
+        "d25dc04b0e16f107"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "2f7cfdc115c640a5",
+      "name": "Sith Lord",
+      "type": "prestige",
+      "levels": 5,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "fast",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 3,
+        "reflex": 3,
+        "will": 3
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "d1037bc7a08ea80b"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "30b9cd24b80ebf46",
+      "name": "Officer",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 2,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "798ed0945cbdac1c",
+        "5964237d22681dc0",
+        "9253ace716c3e966",
+        "057a978a7dc1d5a7",
+        "61b74c82cb56876c",
+        "a2c6962521c29361"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "324631ca844a88be",
+      "name": "Crime Lord",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 2,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "c1be604242cb328f",
+        "8375b9b26b679901",
+        "560cc7994b357a0d"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "336bba6d1e517c92",
+      "name": "Bounty Hunter",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "fast",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 4,
+        "will": 0
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "1c48d1cd9ab1f5c8",
+        "a47ed82a822e3962",
+        "67b59e020c1660eb",
+        "022b31d355c840a9",
+        "29b16e48a3dbf165"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "3b1ed5f1038d49fb",
+      "name": "Independent Droid",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 12,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 2,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "9fe73a3703fa45fca628fd43cae6bf7f",
+        "cec49bc60d1646b1",
+        "b968ecab63bc4cf4"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "480a290aa128f683",
+      "name": "Martial Arts Master",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 4,
+        "reflex": 2,
+        "will": 0
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "1c48d1cd9ab1f5c8",
+        "ba726f623e42f849",
+        "8633ecbf7151fbb6",
+        "10738666e7ddcd1f"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "4ee81a6708a516cd",
+      "name": "Pathfinder",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 4,
+        "reflex": 2,
+        "will": 0
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "1c48d1cd9ab1f5c8",
+        "9b06340233eb3cdd",
+        "383ff8d392488cf8"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "533f1066362655c7",
+      "name": "Gladiator",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 4,
+        "will": 0
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "17cec542331cb4e4",
+        "1c48d1cd9ab1f5c8",
+        "12a2a02b0901605d"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "557e1a5ec72166fd",
+      "name": "Shaper",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 0,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "61725c845d26ade0",
+        "d8a71a6c5b2b7581",
+        "cdbee578d65154fc"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "61876f91a1633cdf",
+      "name": "Enforcer",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 4,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "9b06340233eb3cdd",
+        "2d164f62e17bed8c"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "74fa04f5afb5f6e1",
+      "name": "Assassin",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 4,
+        "will": 0
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "67b59e020c1660eb",
+        "c55b003333ff082d",
+        "186daeee7bd65a69",
+        "da7b731a3e434a7a"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [
+        {
+          "raw": "GenoHaradan",
+          "resolvedSourceId": "da7b731a3e434a7a",
+          "resolvedName": "GenoHaradan"
+        }
+      ],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "7c7d3aa972d968c8",
+      "name": "Droid Commander",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "72d32ebcbb607314",
+        "5964237d22681dc0",
+        "9688ed3500084dca"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "8c58016e587dd2c7",
+      "name": "Noble",
+      "type": "base",
+      "levels": 20,
+      "hitDie": 6,
+      "baseHp": 18,
+      "babProgression": "slow",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "reflex": 1,
+        "fortitude": 0,
+        "will": 2
+      },
+      "trainedSkills": 6,
+      "classSkills": [
+        "Deception",
+        "Gather Information",
+        "Initiative",
+        "Knowledge(all skills, taken individually)",
+        "Perception",
+        "Persuasion",
+        "Pilot",
+        "Ride",
+        "Treat Injury",
+        "Use Computer"
+      ],
+      "startingFeatures": [
+        {
+          "name": "Linguist*",
+          "type": "class_feature"
+        },
+        {
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "startingCredits": "3d4 x 400",
+      "talentTreeSourceIds": [
+        "8375b9b26b679901",
+        "72d32ebcbb607314",
+        "5964237d22681dc0",
+        "b5bb4154688c66ab",
+        "9df067790c87e6bc",
+        "d65a4816379802ee",
+        "e91cc675fbf9ba6e",
+        "4dc70f924e7794ac",
+        "be2e649cbb7332fa",
+        "da34105c875650ae",
+        "b7a1211d08826500",
+        "04a6f32128cc4b98",
+        "7ab8bd7bce901f85"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [
+        "noble_feats"
+      ],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": null,
+      "sourceVerification": {
+        "status": "PRIMARY_PDF_VERIFIED",
+        "book": "Saga Edition Core Rulebook",
+        "page": 43,
+        "expectedTrainedSkills": 6,
+        "expectedClassSkills": [
+          "Deception",
+          "Gather Information",
+          "Initiative",
+          "Knowledge (all skills, taken individually)",
+          "Perception",
+          "Persuasion",
+          "Pilot",
+          "Ride",
+          "Treat Injury",
+          "Use Computer"
+        ],
+        "missingClassSkills": [],
+        "extraClassSkills": [],
+        "trainedSkillCountMatches": true
+      }
+    },
+    {
+      "id": "8da58194b3d58041",
+      "name": "Charlatan",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 2,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "e91cc675fbf9ba6e",
+        "ab9b75bc19f8e983"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "9c9989c34714f920",
+      "name": "Ace Pilot",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 4,
+        "will": 0
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "b17c1515c06361d6",
+        "43ead399d82b8142",
+        "5ea8c79492d40713",
+        "dc1b8c5ce2a70394",
+        "296772ab8e69c9ef",
+        "5f355ad4093d2bf8"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "acd10710f000ae70",
+      "name": "Vanguard",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 4,
+        "reflex": 2,
+        "will": 0
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "1c48d1cd9ab1f5c8",
+        "9b06340233eb3cdd",
+        "ca304c9496f38747"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "b5bed5d1b5f42958",
+      "name": "Scout",
+      "type": "base",
+      "levels": 20,
+      "hitDie": 8,
+      "baseHp": 24,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "reflex": 2,
+        "fortitude": 1,
+        "will": 0
+      },
+      "trainedSkills": 4,
+      "classSkills": [
+        "Climb",
+        "Endurance",
+        "Initiative",
+        "Jump",
+        "Knowledge(all skills, taken individually)",
+        "Mechanics",
+        "Perception",
+        "Pilot",
+        "Ride",
+        "Stealth",
+        "Survival",
+        "Swim"
+      ],
+      "startingFeatures": [
+        {
+          "name": "Shake It Off*",
+          "type": "class_feature"
+        },
+        {
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "startingCredits": "3d4 x 250",
+      "talentTreeSourceIds": [
+        "1c48d1cd9ab1f5c8",
+        "3926d582d2077489",
+        "7c47d36dc1f77d9c",
+        "9b06340233eb3cdd",
+        "089933380b40ce20",
+        "7c42882a1347ef18",
+        "860fa1a66c837574",
+        "127a55c242e031f2",
+        "5a30489609182e8c",
+        "ab2c265c4b2f54f6",
+        "0c4ddea3c78ffc3d"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [
+        "scout_feats"
+      ],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": null,
+      "sourceVerification": {
+        "status": "PRIMARY_PDF_VERIFIED",
+        "book": "Saga Edition Core Rulebook",
+        "page": 48,
+        "expectedTrainedSkills": 5,
+        "expectedClassSkills": [
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Knowledge (all skills, taken individually)",
+          "Mechanics",
+          "Perception",
+          "Pilot",
+          "Ride",
+          "Stealth",
+          "Survival",
+          "Swim"
+        ],
+        "missingClassSkills": [],
+        "extraClassSkills": [],
+        "trainedSkillCountMatches": false
+      }
+    },
+    {
+      "id": "b85240cf77cf95eb",
+      "name": "Military Engineer",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "f1657b1d23a4c7dc",
+        "e32009b1b0aee8c9"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "c4dbedcf989cb6b2",
+      "name": "Elite Trooper",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 12,
+      "baseHp": 20,
+      "babProgression": "fast",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 4,
+        "reflex": 2,
+        "will": 0
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "3926d582d2077489",
+        "798ed0945cbdac1c",
+        "2f720d8b061f9bd0",
+        "ba726f623e42f849",
+        "4b8857716e056f62",
+        "71e99c646b18d85c",
+        "fad8118981c532f0",
+        "cb3751283ea8fa3d",
+        "c92c2cbc79b8a515",
+        "3b30dd12884bb2e4"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "d87c05d2a34f5627",
+      "name": "Melee Duelist",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 4,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "67fdd8dce9abd6c1",
+        "2e9265a596cc43f7",
+        "1381bb8c9a838279"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "db019dfbb271cdf6",
+      "name": "Improviser",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 2,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "f1657b1d23a4c7dc",
+        "a0d6323d6c1bf911",
+        "7f37422819d7be6f"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [
+        {
+          "level": 2,
+          "name": "Contraband (2",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 2,
+          "name": "000 credits)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 3,
+          "name": "Contraband (3",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 3,
+          "name": "000 credits)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 4,
+          "name": "Contraband (4",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 4,
+          "name": "000 credits)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 5,
+          "name": "Contraband (5",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 5,
+          "name": "000 credits)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 6,
+          "name": "Contraband (6",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 6,
+          "name": "000 credits)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 7,
+          "name": "Contraband (7",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 7,
+          "name": "000 credits)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 8,
+          "name": "Contraband (8",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 8,
+          "name": "000 credits)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 9,
+          "name": "Contraband (9",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 9,
+          "name": "000 credits)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 10,
+          "name": "Contraband (10",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 10,
+          "name": "000 credits)",
+          "type": "scaling_feature"
+        }
+      ],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "PARTIAL_PRIMARY_PDF_VERIFIED",
+        "book": "Rebellion Era Campaign Guide",
+        "page": 41,
+        "focus": "Contraband progression table"
+      }
+    },
+    {
+      "id": "de3f367749b82fcf",
+      "name": "Saboteur",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 2,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "67b59e020c1660eb",
+        "64874e65579e4cf4",
+        "8897a36d59662ee9",
+        "92b30151b9b21109"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "e647ee8f065e1d19",
+      "name": "Infiltrator",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 4,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "3926d582d2077489",
+        "d20682671d035cef",
+        "7c7a8730e1b4381a",
+        "7c42882a1347ef18"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [
+        {
+          "raw": "Bothan SpyNet",
+          "resolvedSourceId": "d20682671d035cef",
+          "resolvedName": "Bothan SpyNet"
+        }
+      ],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [
+        {
+          "level": 2,
+          "name": "Unarmed Stun (+1d_)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 6,
+          "name": "Unarmed Stun (+2d_)",
+          "type": "scaling_feature"
+        },
+        {
+          "level": 10,
+          "name": "Unarmed Stun (+3d_)",
+          "type": "scaling_feature"
+        }
+      ],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "ec505163e5647cc6",
+      "name": "Imperial Knight",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "17cec542331cb4e4",
+        "b3c5d90b5036f39b",
+        "2359c05ff13f3feb",
+        "ea01d740c91888b3",
+        "8048efd85ae61101"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "ef6fe8fdbbd884b4",
+      "name": "Force Disciple",
+      "type": "prestige",
+      "levels": 5,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 3,
+        "reflex": 3,
+        "will": 6
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "e35ee41362604227"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "f62ca2e639cab614",
+      "name": "Soldier",
+      "type": "base",
+      "levels": 20,
+      "hitDie": 10,
+      "baseHp": 30,
+      "babProgression": "fast",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "reflex": 1,
+        "fortitude": 2,
+        "will": 0
+      },
+      "trainedSkills": 3,
+      "classSkills": [
+        "Climb",
+        "Endurance",
+        "Initiative",
+        "Jump",
+        "Knowledge (Tactics)",
+        "Mechanics",
+        "Perception",
+        "Pilot",
+        "Swim",
+        "Treat Injury",
+        "Use Computer"
+      ],
+      "startingFeatures": [
+        {
+          "name": "Armor Proficiency (Light)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Armor Proficiency (Medium)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "startingCredits": "3d4 x 250",
+      "talentTreeSourceIds": [
+        "17cec542331cb4e4",
+        "67fdd8dce9abd6c1",
+        "798ed0945cbdac1c",
+        "2e9265a596cc43f7",
+        "1f50c63b6f08de10",
+        "4007fa87192b5884",
+        "781feba15dc9e42f",
+        "eff10782c1e56598",
+        "12027e0ad5e4d260",
+        "7bcd1d892f2e9ae7"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [
+        "soldier_feats"
+      ],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": null,
+      "sourceVerification": {
+        "status": "PRIMARY_PDF_VERIFIED",
+        "book": "Saga Edition Core Rulebook",
+        "page": 51,
+        "expectedTrainedSkills": 3,
+        "expectedClassSkills": [
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Knowledge (Tactics)",
+          "Mechanics",
+          "Perception",
+          "Pilot",
+          "Swim",
+          "Treat Injury",
+          "Use Computer"
+        ],
+        "missingClassSkills": [],
+        "extraClassSkills": [],
+        "trainedSkillCountMatches": true
+      }
+    },
+    {
+      "id": "fb5c2644f988e6bf",
+      "name": "Jedi Knight",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 30,
+      "babProgression": "fast",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 2
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "17cec542331cb4e4",
+        "b3c5d90b5036f39b",
+        "2359c05ff13f3feb",
+        "2bc2572e852832e4",
+        "dfc4142435b4356d",
+        "eab0d8bbee7e0f4f",
+        "77e3817ba5cfa0d5",
+        "152047d6ab7896ad",
+        "a2a7a376e4905da9",
+        "76ecaa09bb7619cb",
+        "303d91124d4548c0",
+        "44554c28675292b6",
+        "e303ddd025779062",
+        "7db97c2c7ebca579"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "fc815ae3ca4bf726",
+      "name": "Corporate Agent",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 8,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "medium",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 2,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "5964237d22681dc0",
+        "b5bb4154688c66ab",
+        "45c4007d09c01839"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "fcf8cc428a6eb01a",
+      "name": "Master Privateer",
+      "type": "prestige",
+      "levels": 10,
+      "hitDie": 10,
+      "baseHp": 20,
+      "babProgression": "medium",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": false,
+      "defenses": {
+        "fortitude": 0,
+        "reflex": 2,
+        "will": 4
+      },
+      "trainedSkills": 0,
+      "classSkills": [],
+      "startingFeatures": [],
+      "startingCredits": null,
+      "talentTreeSourceIds": [
+        "c1be604242cb328f",
+        "5ea8c79492d40713",
+        "df6678946610c554",
+        "61db5e2c0c44ef67"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": true,
+      "sourceVerification": {
+        "status": "NOT_YET_SOURCE_CERTIFIED"
+      }
+    },
+    {
+      "id": "fec1f8af44fcc35a",
+      "name": "Jedi",
+      "type": "base",
+      "levels": 20,
+      "hitDie": 10,
+      "baseHp": 30,
+      "babProgression": "fast",
+      "tableDerivedBab": "fast",
+      "babMetadataMatchesTable": true,
+      "defenses": {
+        "reflex": 1,
+        "fortitude": 1,
+        "will": 1
+      },
+      "trainedSkills": 2,
+      "classSkills": [
+        "Acrobatics",
+        "Endurance",
+        "Initiative",
+        "Jump",
+        "Knowledge(all skills, taken individually)",
+        "Mechanics",
+        "Perception",
+        "Pilot",
+        "Use the Force"
+      ],
+      "startingFeatures": [
+        {
+          "name": "Force Sensitivity",
+          "type": "class_feature"
+        },
+        {
+          "name": "Weapon Proficiency (Lightsabers)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "startingCredits": "3d4 x 100",
+      "talentTreeSourceIds": [
+        "e99cfa9db8493573",
+        "10c843cef8ce2798",
+        "36f18f3e974feb33",
+        "2359c05ff13f3feb"
+      ],
+      "unresolvedTalentTreeSourceIds": [],
+      "rawTreeNameInsteadOfId": [],
+      "progressionLevelSequenceValid": true,
+      "oddTalentCadenceValid": true,
+      "evenFeatCadenceValid": true,
+      "featChoiceLists": [
+        "jedi_feats"
+      ],
+      "malformedFeatureLabels": [],
+      "descriptionBlank": true,
+      "prereqEntryPresent": null,
+      "sourceVerification": {
+        "status": "PRIMARY_PDF_VERIFIED",
+        "book": "Saga Edition Core Rulebook",
+        "page": 38,
+        "expectedTrainedSkills": 2,
+        "expectedClassSkills": [
+          "Acrobatics",
+          "Endurance",
+          "Initiative",
+          "Knowledge (all skills, taken individually)",
+          "Perception",
+          "Pilot",
+          "Use the Force"
+        ],
+        "missingClassSkills": [],
+        "extraClassSkills": [
+          "Jump",
+          "Mechanics"
+        ],
+        "trainedSkillCountMatches": true
+      }
+    }
+  ]
+}
