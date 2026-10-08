@@ -89,9 +89,9 @@
       "note": "grapple/net/snare state machine (existing grapple system; multi-step workflow)"
     },
     "multi-attack-interaction": {
-      "policy": "DEFER",
+      "policy": "AUTO",
       "timing": "on-attack",
-      "note": "depends on Double/Triple Attack/Rapid Shot/Autofire (Phase 5D-F)"
+      "note": "attack modifier that applies while Double/Triple Attack, Rapid Shot or Rapid Strike is in use (Phase 5D-F: consumed at attack time from the active multi-attack shape)"
     },
     "native-stun": {
       "policy": "AUTO",
@@ -136,9 +136,9 @@
   },
   "totals": {
     "identities": 203,
-    "identitiesWithMechanics": 72,
+    "identitiesWithMechanics": 74,
     "forms": 265,
-    "formsWithMechanics": 96,
+    "formsWithMechanics": 99,
     "resolveErrors": 0
   },
   "mechanicsByFamily": {
@@ -158,7 +158,7 @@
     "dr-ignore": 24,
     "firing-constraint": 20,
     "grab-grapple": 12,
-    "multi-attack-interaction": 2,
+    "multi-attack-interaction": 5,
     "native-stun": 16,
     "payload-effect": 8,
     "persistent-effect": 2,
@@ -168,8 +168,8 @@
     "status-condition": 4
   },
   "mechanicsByPolicy": {
-    "AUTO": 58,
-    "DEFER": 44,
+    "AUTO": 63,
+    "DEFER": 42,
     "DISPLAY_ONLY": 3,
     "PROMPT": 8,
     "VALIDATION_ONLY": 20
@@ -470,7 +470,7 @@
     },
     "unmapped::Power Hammer": {
       "melee": [
-        "multi-attack-interaction:conditional-0:DEFER"
+        "multi-attack-interaction:conditional-0:AUTO"
       ]
     },
     "unmapped::Power Lance": {
@@ -496,6 +496,11 @@
         "status-condition:trip-substitution:DEFER"
       ]
     },
+    "unmapped::Shyarn": {
+      "primary": [
+        "multi-attack-interaction:remove-rapid-strike-penalty-0:AUTO"
+      ]
+    },
     "unmapped::Stunning Gauntlet": {
       "primary": [
         "native-stun:native-stun:AUTO"
@@ -509,6 +514,14 @@
     "unmapped::Vibro-Saw": {
       "primary": [
         "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "unmapped::Zhaboka": {
+      "end1": [
+        "multi-attack-interaction:remove-rapid-strike-penalty-0:AUTO"
+      ],
+      "end2": [
+        "multi-attack-interaction:remove-rapid-strike-penalty-0:AUTO"
       ]
     },
     "weapon-black-powder-pistol": {
@@ -626,7 +639,7 @@
     },
     "weapon-heavy-slugthrower-pistol": {
       "primary": [
-        "multi-attack-interaction:multi-shot-recoil-penalty:DEFER"
+        "multi-attack-interaction:multi-shot-recoil-penalty:AUTO"
       ]
     },
     "weapon-hunting-blaster-carbine": {

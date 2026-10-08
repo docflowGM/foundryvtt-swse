@@ -13,9 +13,10 @@ import { resolveDamageProfile } from './damage-profile-resolver.js';
 import { resolveCanonicalRange, assertRangeSelectionResolvable } from './canonical-range.js';
 import { resolveCanonicalResourceCost } from './canonical-resource.js';
 import { extractSpecialMechanics, damageShapeFromMechanics, summarizeMechanics } from './special-mechanics.js';
+import { resolveAttackShape } from './attack-shape.js';
 
 const LEGACY = Object.freeze({ source: 'legacy' });
-const SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode'];
+const SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode', 'endId'];
 
 // The resolver is stateless (registry is immutable); one instance per registry object.
 let resolverCache = { registry: null, resolver: null };
@@ -64,13 +65,26 @@ export function resolveAttackWeaponRuntime(weapon, context = {}) {
   const id = resolveCanonicalIdentity(weapon, registry);
   if (id.kind === 'legacy') return LEGACY;
   const ctx = {};
-  for (const k of SELECTION_KEYS) if (context?.[k] != null) ctx[k] = context[k];
-  const resolved = resolverFor(registry).resolveIdentity(id.identityKey, weapon, ctx, id.via);
+  for (const k of SELECTION_KEYS) if (k !== 'endId' && context?.[k] != null) ctx[k] = context[k];
+  let resolved = resolverFor(registry).resolveIdentity(id.identityKey, weapon, ctx, id.via);
+  let resolvedIdentityKey = id.identityKey, hostIdentityKey = null, endId = null;
+  if (context?.endId) {
+    // Phase 5D-F: a double-weapon END resolves to its own canonical definition. The host item contributes the configuration
+    // (e.g. Vibrobayonet mounted on a rifle); the end names the identity/profile that end attacks as. The state exists only
+    // while the host configuration is valid -- never a global flag on the host item.
+    const augs = resolverFor(registry).resolveHostAugmentations(resolved, { ...(context?.specialContext ?? {}), configurationId: resolved.selection.configurationId, answers: context?.answers });
+    const end = augs.filter((a) => a.active && a.available === true).flatMap((a) => a.doubleWeapon?.ends ?? []).find((e) => e.id === context.endId);
+    if (!end) {
+      throw new WeaponRuntimeError(ERROR_CODES.END_UNAVAILABLE, `double-weapon end ${context.endId} is not available for ${id.identityKey} in configuration ${resolved.selection.configurationId} (host configuration not valid or its conditions are unanswered)`, { identityKey: id.identityKey, endId: context.endId, configurationId: resolved.selection.configurationId });
+    }
+    hostIdentityKey = id.identityKey; endId = end.id; resolvedIdentityKey = end.identityKey;
+    resolved = resolverFor(registry).resolveIdentity(end.identityKey, weapon, { profileId: end.profileId, ...(context?.damageMode != null ? { damageMode: context.damageMode } : {}) }, 'host-end');
+  }
   const profile = getProfile(resolved);
   // Phase 5D-D: the selected form's canonical range facet travels with the runtime (one resolution for preview + roll); a
   // profile whose branch contradicts its own range mode is refused here, never guessed.
   const range = resolveCanonicalRange(resolved, profile);
-  return Object.freeze({ source: 'canonical', resolved, profile, branch: profile.branch ?? null, range, identityKey: id.identityKey, requested: Object.freeze(requested) });
+  return Object.freeze({ source: 'canonical', resolved, profile, branch: profile.branch ?? null, range, identityKey: resolvedIdentityKey, ...(hostIdentityKey ? { hostIdentityKey, endId } : {}), requested: Object.freeze(requested) });
 }
 
 /** Dynamic, profile-specific proficiency for a canonical runtime (delegates entirely to resolveProficiency). */
@@ -110,11 +124,12 @@ export function weaponFormRecord(runtime, damageMode = null) {
   if (runtime?.source !== 'canonical') return null;
   const sel = runtime.resolved.selection;
   const rec = { identityKey: runtime.identityKey, profileId: sel.profileId, configurationId: sel.configurationId, modeId: sel.modeId, payloadId: sel.payloadId, damageMode: effectiveDamageMode(runtime, damageMode) };
+  if (runtime.endId) { rec.endId = runtime.endId; rec.hostIdentityKey = runtime.hostIdentityKey; }
   for (const k of Object.keys(rec)) if (rec[k] === null || rec[k] === undefined || rec[k] === '') delete rec[k];
   return rec;
 }
 
-const FORM_SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId'];
+const FORM_SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId', 'endId'];
 
 /** Selection ids for damage: the carried attack form, overridden only by ids the caller explicitly supplies. */
 function damageSelectionContext(context = {}) {
@@ -122,6 +137,9 @@ function damageSelectionContext(context = {}) {
   const ctx = {};
   if (form) for (const k of FORM_SELECTION_KEYS) if (form[k] != null) ctx[k] = form[k];
   for (const k of FORM_SELECTION_KEYS) if (context[k] != null && context[k] !== '') ctx[k] = context[k];
+  // stored PROMPT answers (host-configuration conditions) travel in the workflow context; the same answers resolve the same end at damage time
+  const answers = context.answers ?? context.special?.answers ?? context.workflowContext?.special?.answers ?? context.combatContext?.special?.answers;
+  if (answers) ctx.answers = answers;
   return { form, ctx };
 }
 
@@ -210,7 +228,7 @@ export function resolveCanonicalDamage(weapon, context = {}) {
   // Phase 5D-E: every structured special mechanic of the selected form, classified (AUTO/PROMPT/DEFER/...) by structure
   const mechanics = extractSpecialMechanics(runtime.profile.definition, {
     damageProfile: dp, operation: runtime.resolved.operation ?? null, formRefused: status === 'no-damage' || status === 'special',
-    stunCapability: runtime.profile.definition?.stun?.capability ?? null, payloadEffects: dp.specialEffects, drInteraction: dp.damageReductionInteraction,
+    stunCapability: runtime.profile.definition?.stun?.capability ?? null, payloadEffects: dp.specialEffects, drInteraction: dp.damageReductionInteraction, abilityInteractions: runtime.resolved.abilityInteractions,
   });
   return Object.freeze({
     source: 'canonical', status, reason, base, damageMode: dp.damageMode,
@@ -228,4 +246,75 @@ export function resolveCanonicalDamage(weapon, context = {}) {
 export function summarizeCanonicalDamage(cd) {
   if (cd?.source !== 'canonical') return { source: cd?.source ?? 'legacy' };
   return { source: 'canonical', status: cd.status, reason: cd.reason, base: cd.base, selection: cd.selection, damageMode: cd.damageMode, damageTypes: [...cd.damageTypes], selectedDamageType: cd.selectedDamageType, payloadId: cd.payloadId, deferred: cd.deferred, mechanics: summarizeMechanics(cd.mechanics) };
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Phase 5D-F -- attack shape helpers. Pure, non-throwing unless noted.
+// ---------------------------------------------------------------------------------------------------------------------
+
+/** Canonical attack shape of an already-resolved runtime (host-configuration double weapons included). */
+export function resolveAttackShapeFor(runtime, context = {}) {
+  if (runtime?.source !== 'canonical') return Object.freeze({ source: runtime?.source ?? 'legacy' });
+  const registry = getSharedWeaponAuthorityRegistry();
+  return resolveAttackShape(runtime, {
+    context,
+    hostAugmentations: (rt, ctx) => registry ? resolverFor(registry).resolveHostAugmentations(rt.resolved, { ...ctx, configurationId: rt.resolved.selection.configurationId, answers: ctx?.answers }) : [],
+  });
+}
+
+/**
+ * Shape of an owned weapon for gates/planners that cannot throw. Legacy/custom weapons -> { source:'legacy' }; a canonical
+ * weapon whose selection cannot be resolved -> { source:'error', error } (callers fail closed, never guess from text).
+ */
+export function shapeOfWeapon(weapon, context = {}) {
+  try {
+    const runtime = resolveAttackWeaponRuntime(weapon, context);
+    return runtime.source === 'canonical' ? resolveAttackShapeFor(runtime, context) : LEGACY;
+  } catch (err) {
+    if (!(err instanceof WeaponRuntimeError)) throw err;
+    return Object.freeze({ source: 'error', error: err });
+  }
+}
+
+/** Selection record a plan entry carries so every attack of a sequence resolves the SAME canonical form. */
+export function attackSelectionOf(form) {
+  const out = {};
+  if (!form) return out;
+  for (const k of ['profileId', 'configurationId', 'modeId', 'payloadId', 'endId', 'damageMode']) if (form[k] != null) out[k] = form[k];
+  return out;
+}
+
+/** Proficiency of the actor with the selected canonical form: true/false, or null for legacy weapons (callers keep their legacy read). */
+export function canonicalProficiencyOf(weapon, actor, context = {}) {
+  try {
+    const runtime = resolveAttackWeaponRuntime(weapon, context);
+    if (runtime.source !== 'canonical') return null;
+    return resolveCanonicalAttackProficiency(runtime, actor).proficient === true;
+  } catch (err) {
+    if (!(err instanceof WeaponRuntimeError)) throw err;
+    return null;
+  }
+}
+
+/**
+ * The ends of a canonical double weapon in its current configuration, each as a form selection:
+ *   profile-level double weapon (native or configuration-specific profiles with the doubleWeapon quality) -> the profiles themselves
+ *   host configuration (rifle + mounted Vibrobayonet)                                                      -> the host's ends (own identity/profile each)
+ * Empty when the weapon is not a double weapon in this configuration.
+ */
+export function doubleWeaponEnds(weapon, context = {}) {
+  let runtime;
+  try { runtime = resolveAttackWeaponRuntime(weapon, context); } catch (err) { if (err instanceof WeaponRuntimeError) return []; throw err; }
+  if (runtime.source !== 'canonical') return [];
+  const resolved = runtime.resolved;
+  const cfg = resolved.selection.configurationId;
+  const profileEnds = resolved.profiles.filter((p) => p.definition?.qualities?.doubleWeapon === true && (!p.availableIn || (cfg !== null && p.availableIn.includes(cfg))));
+  if (profileEnds.length >= 2) {
+    return profileEnds.map((p) => ({ endId: p.id, via: 'profile', selection: { profileId: p.id, ...(cfg ? { configurationId: cfg } : {}) } }));
+  }
+  const shape = resolveAttackShapeFor(runtime, context);
+  if (shape.doubleWeapon?.via === 'host-configuration') {
+    return shape.doubleWeapon.hostEnds.map((e) => ({ endId: e.id, via: 'host-configuration', identityKey: e.identityKey, selection: { profileId: runtime.profile.id, ...(cfg ? { configurationId: cfg } : {}), endId: e.id } }));
+  }
+  return [];
 }

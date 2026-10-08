@@ -2,8 +2,7 @@ import { DualWieldCombatShapeResolver } from "/systems/foundryvtt-swse/scripts/e
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import {
   getWeaponGroup,
-  getDoubleAttackGroups,
-  getTripleAttackGroups,
+  actorHasMultiAttackFor,
   getMultiattackReduction
 } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 
@@ -64,7 +63,7 @@ function canUseDoubleAttack(actor, slot) {
   const weapon = weaponForSlot(slot);
   const group = getWeaponGroup(weapon);
   if (!group) return false;
-  if (getDoubleAttackGroups(actor).has(group)) return true;
+  if (actorHasMultiAttackFor(actor, 'double', weapon)) return true;
   return autoGrantByBabEnabled() && slotCanAutoQualify(actor, slot, 6);
 }
 
@@ -72,8 +71,9 @@ function canUseTripleAttack(actor, slot) {
   const weapon = weaponForSlot(slot);
   const group = getWeaponGroup(weapon);
   if (!group) return false;
-  const hasDouble = getDoubleAttackGroups(actor).has(group) || (autoGrantByBabEnabled() && slotCanAutoQualify(actor, slot, 6));
-  const hasTriple = getTripleAttackGroups(actor).has(group) || (autoGrantByBabEnabled() && slotCanAutoQualify(actor, slot, 11));
+  // Phase 5D-F: feat selector joined to the selected canonical form (legacy weapons keep the group-name path inside the helper)
+  const hasDouble = actorHasMultiAttackFor(actor, 'double', weapon) || (autoGrantByBabEnabled() && slotCanAutoQualify(actor, slot, 6));
+  const hasTriple = actorHasMultiAttackFor(actor, 'triple', weapon) || (autoGrantByBabEnabled() && slotCanAutoQualify(actor, slot, 11));
   return hasDouble && hasTriple;
 }
 

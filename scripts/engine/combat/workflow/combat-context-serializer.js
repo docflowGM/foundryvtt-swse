@@ -105,7 +105,7 @@ function mergeSelectedOptions(...sources) {
   return merged;
 }
 
-const WEAPON_FORM_KEYS = ['identityKey', 'profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode'];
+const WEAPON_FORM_KEYS = ['identityKey', 'profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode', 'endId', 'hostIdentityKey'];
 function summarizeWeaponForm(form) {
   if (!form || typeof form !== 'object') return undefined;
   const out = {};
@@ -143,6 +143,15 @@ function summarizeSpecial(special) {
     for (const [k, v] of Object.entries(special.riders)) if (v && Number.isFinite(Number(v.total))) riders[k] = { total: Number(v.total), formula: String(v.formula ?? ''), types: Array.isArray(v.types) ? v.types.map(String) : [] };
     if (Object.keys(riders).length) out.riders = riders;
   }
+  return Object.keys(out).length ? out : undefined;
+}
+
+// Phase 5D-F: per-attack shape record (fire mode, index/length in the sequence, package, hand role, double-weapon end)
+function summarizeAttackShape(shape) {
+  if (!shape || typeof shape !== 'object') return undefined;
+  const out = {};
+  for (const k of ['fireMode', 'sequenceId', 'packageType', 'handRole', 'endId']) if (typeof shape[k] === 'string' && shape[k]) out[k] = shape[k];
+  for (const k of ['attackIndex', 'sequenceLength']) if (Number.isFinite(Number(shape[k]))) out[k] = Number(shape[k]);
   return Object.keys(out).length ? out : undefined;
 }
 
@@ -227,6 +236,7 @@ export function summarizeCombatWorkflowContext(context = null, extra = {}) {
     // attack was made with, so a later (chat-card) Damage roll resolves the SAME form. Plain ids only; round-trips losslessly.
     weaponForm: summarizeWeaponForm(extra.weaponForm ?? context.weaponForm),
     special: summarizeSpecial(extra.special ?? context.special),
+    attackShape: summarizeAttackShape(extra.attackShape ?? context.attackShape),
     attack: {
       mode: extra.attackMode ?? attack.mode ?? context.attackMode ?? null,
       isArea: asBool(extra.isArea ?? attack.isArea ?? context.isAreaAttack ?? context.areaAttack),
@@ -308,6 +318,7 @@ export function mergeCombatWorkflowContextIntoRollOptions(options = {}, context 
     workflowContext,
     weaponForm: options.weaponForm ?? workflowContext.weaponForm ?? undefined,
     special: options.special ?? workflowContext.special ?? undefined,
+    attackShape: options.attackShape ?? workflowContext.attackShape ?? undefined,
     actionId: options.actionId ?? workflowContext.actionId ?? null,
     workflowId: options.workflowId ?? workflowContext.workflowId ?? null,
     contextTags: options.contextTags ?? workflowContext.contextTags ?? [],

@@ -14,6 +14,7 @@
  * math-integrity, weapons-engine-modifier-source-authority, attack-dialog-
  * context-authority, ...) re-passes unchanged, proving this.
  */
+import { shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import {
   isRangedWeapon as canonicalIsRangedWeapon,
   isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon
@@ -171,7 +172,21 @@ export function isTargetDeniedDexBonus(context = {}) {
     || target?.system?.derived?.deniedDexBonus === true || target?.system?.derived?.isFlatFooted === true;
 }
 
+// Phase 5D-F: the selected canonical form (carried form record or explicit selection ids) is the selection a gate evaluates.
+export function canonicalSelectionFromContext(context = {}) {
+  const form = context.weaponForm ?? context.workflowContext?.weaponForm ?? context.combatContext?.weaponForm ?? {};
+  const sel = {};
+  for (const k of ["profileId", "configurationId", "modeId", "payloadId", "endId"]) { const v = context[k] ?? form[k]; if (v != null && v !== "") sel[k] = v; }
+  if (context.answers) sel.answers = context.answers;
+  return sel;
+}
+
 export function weaponSupportsAutofire(weapon, context = {}) {
+  // Phase 5D-F: a canonical weapon's autofire capability is its selected form's structured rateOfFire / mode -- a context flag
+  // or text cannot grant it (Burst Fire must never appear for a form that cannot autofire).
+  const shape = shapeOfWeapon(weapon, canonicalSelectionFromContext(context));
+  if (shape.source === "canonical") return shape.fireModes.autofire === true;
+  if (shape.source === "error") return false;
   if (context.autofire === true || context.attackMode === "autofire") return true;
   const system = weapon?.system ?? {};
   if (system.autofire === true || system.properties?.autofire === true) return true;

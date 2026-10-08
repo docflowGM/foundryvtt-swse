@@ -29,6 +29,8 @@ export const ERROR_CODES = Object.freeze({
   FORM_IDENTITY_MISMATCH: 'weapon-form-identity-mismatch',
   RANGE_BRANCH_MISMATCH: 'range-branch-mismatch',
   RANGE_BAND_NOT_ALLOWED: 'range-band-not-allowed',
+  END_UNAVAILABLE: 'double-weapon-end-unavailable',
+  ATTACK_SHAPE_ILLEGAL: 'attack-shape-illegal',
 });
 
 /** GM-visible, non-silent reporting for runtime callers that cannot propagate a throw. */
