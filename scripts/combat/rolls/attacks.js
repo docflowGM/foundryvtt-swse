@@ -29,6 +29,8 @@ import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/com
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { WeaponRuntimeError, ERROR_CODES, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
+import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
+import { summarizeAreaShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
 import { abilityProhibitedForShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
@@ -164,7 +166,9 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
     buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
   ].filter(Boolean);
 
-  return { ok: true, atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, fightingDefensivelyPenalty, grappleStatePenalty, domainResolution };
+  // Phase 5D-G: non-mutating readiness of the selected form (cooldown / reload / reset / preparation) for previews
+  const readiness = FireStateStore.previewReadiness(actor, weapon, rollOptions.weaponRuntime, rollOptions);
+  return { ok: true, atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, fightingDefensivelyPenalty, grappleStatePenalty, domainResolution, readiness };
 }
 
 /**
@@ -203,7 +207,7 @@ function withCanonicalWeaponRuntime(weapon, rollOptions) {
  */
 async function prepareCanonicalSpecialMechanics(weapon, rollOptions) {
   const runtime = rollOptions.weaponRuntime;
-  if (runtime?.source !== 'canonical') return { rollOptions, mechanics: [], answers: {}, unresolved: [] };
+  if (runtime?.source !== 'canonical') return { rollOptions, mechanics: [], answers: {}, unresolved: [], areaShape: null };
   let cd = null;
   try {
     cd = resolveCanonicalDamage(weapon, { weaponForm: weaponFormRecord(runtime, rollOptions.damageMode ?? null), damageMode: rollOptions.damageMode ?? null, weaponRuntime: runtime });
@@ -222,15 +226,21 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions) {
   if (optionActive(rollOptions, 'rapidStrike')) activeUses.push('rapid-strike');
   const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried, activeUses });
   if (stage.unresolved.length) ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'}: ${stage.unresolved.length} conditional attack modifier(s) could not be evaluated and were not applied (GM adjudication).`);
-  if (!stage.contributions.length) return { rollOptions, mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore };
-  const contributions = stage.contributions.map((c) => createModifier({
-    source: ModifierSource.ITEM, sourceId: c.id, sourceName: `${weapon?.name ?? 'Weapon'} (${c.id})`,
-    target: 'global.attack', type: ModifierType.UNTYPED, value: c.value
-  }));
-  return {
-    rollOptions: { ...rollOptions, situationalContributions: [...(Array.isArray(rollOptions.situationalContributions) ? rollOptions.situationalContributions : []), ...contributions] },
-    mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore
-  };
+  // Phase 5D-G: the selected form's (payload ?? profile) area shape drives the EXISTING area rules: attack.isArea, the miss rule
+  // (half damage) and the no-critical-doubling rule read the workflow context, so the canonical shape is what sets them
+  const areaShape = cd.areaShape;
+  let nextOptions = rollOptions;
+  if (areaShape?.isArea) {
+    nextOptions = { ...nextOptions, isAreaAttack: true, areaAttack: true, ruleData: { ...(nextOptions.ruleData ?? {}), areaAttack: true, ...(areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } };
+  }
+  if (stage.contributions.length) {
+    const contributions = stage.contributions.map((c) => createModifier({
+      source: ModifierSource.ITEM, sourceId: c.id, sourceName: `${weapon?.name ?? 'Weapon'} (${c.id})`,
+      target: 'global.attack', type: ModifierType.UNTYPED, value: c.value
+    }));
+    nextOptions = { ...nextOptions, situationalContributions: [...(Array.isArray(nextOptions.situationalContributions) ? nextOptions.situationalContributions : []), ...contributions] };
+  }
+  return { rollOptions: nextOptions, mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore, areaShape };
 }
 
 const SHAPE_OPTION_ABILITIES = Object.freeze({ rapidShot: 'Rapid Shot', burstFire: 'Burst Fire' });
@@ -254,6 +264,15 @@ function assertAttackShapeLegal(shape, rollOptions) {
   }
   if (burst && !shape.fireModes.autofire) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `Burst Fire requires an autofire-capable form; ${shape.identityKey}/${shape.profileId} cannot autofire`, { identityKey: shape.identityKey, profileId: shape.profileId, ability: 'Burst Fire', reason: 'form-cannot-autofire' });
   if (shape.fireModes.autofireOnly && !autofireMode) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `${shape.identityKey}/${shape.profileId} can only fire in autofire mode`, { identityKey: shape.identityKey, profileId: shape.profileId, reason: 'autofire-only' });
+}
+
+function describeReadinessBlockers(blockers = []) {
+  return blockers.map((b) => {
+    if (b.reason === 'awaiting-reload') return `it must be reloaded${b.reloadAction ? ` (${b.reloadAction} action)` : ''}`;
+    if (b.reason === 'unavailable-this-round') return `it cannot fire in round ${b.currentRound}; it is ready again in round ${b.availableRound}`;
+    if (b.reason === 'round-shot-limit') return `it has already fired its limit (${b.maxShots}) this round`;
+    return b.reason;
+  }).join('; ');
 }
 
 function getFightingDefensivelyAttackPenalty(actor, options = {}) {
@@ -414,6 +433,14 @@ export async function rollAttack(actor, weapon, options = {}) {
   const specialStage = await prepareCanonicalSpecialMechanics(weapon, rollOptions);
   rollOptions = specialStage.rollOptions;
 
+  // Phase 5D-G: temporal firing state (cooldown / alternate rounds / reload / resets / preparation) of the selected canonical form.
+  // Read-only here and BEFORE every cost: a weapon on cooldown or awaiting reload fails closed with nothing mutated.
+  const readiness = FireStateStore.previewReadiness(actor, weapon, rollOptions.weaponRuntime, rollOptions);
+  if (!readiness.ready) {
+    ui?.notifications?.warn?.(`${weapon.name} cannot fire yet: ${describeReadinessBlockers(readiness.blockers)}`);
+    return null;
+  }
+
   const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? rollOptions, {
     actor,
     weapon,
@@ -433,10 +460,24 @@ export async function rollAttack(actor, weapon, options = {}) {
     ui?.notifications?.error?.(ammoPreflight.message || `${weapon.name} does not have enough ammunition.`);
     return null;
   }
-  const actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
+  let actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
   if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
     ui?.notifications?.warn?.(actionOptionSpend.reason || 'Selected attack option action cost could not be paid.');
     return null;
+  }
+  // Phase 5D-G: required preparation / reset actions (prime, brace, reset the trigger) are paid through the existing action economy;
+  // a failure here rolls back the option cost and stops before ammunition is touched. Later failures roll both back together.
+  const temporalSpend = readiness.requiredActions.length
+    ? await FireStateStore.spendRequiredActions(actor, readiness.requiredActions, { weaponName: weapon.name })
+    : { ok: true, paid: [], rollback: async () => {} };
+  if (!temporalSpend.ok) {
+    await actionOptionSpend?.rollback?.();
+    ui?.notifications?.warn?.(`${weapon.name} cannot fire: the required ${temporalSpend.failed?.action ?? ''} action (${temporalSpend.failed?.reason ?? 'reset'}) could not be paid.`);
+    return null;
+  }
+  if (readiness.requiredActions.length) {
+    const baseSpend = actionOptionSpend;
+    actionOptionSpend = { ...(baseSpend ?? {}), rollback: async () => { await temporalSpend.rollback(); await baseSpend?.rollback?.(); } };
   }
   let ammoSpend = null;
 
@@ -522,6 +563,8 @@ export async function rollAttack(actor, weapon, options = {}) {
   });
   const isHit = outcome.hit;
   const isCritical = outcome.critical;
+  // Phase 5D-G: the shot was fired -- record owned fire state (cooldown, reload, reset, preparation) for the next attack
+  await FireStateStore.commitFired(actor, weapon, rollOptions.weaponRuntime, rollOptions, temporalSpend.paid);
   const reactionContext = buildReactionContextForAttack(actor, target, weapon, roll.total);
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
     ...rollOptions,
@@ -556,7 +599,9 @@ export async function rollAttack(actor, weapon, options = {}) {
       attackIndex: Number.isFinite(rollOptions.sequenceIndex) ? rollOptions.sequenceIndex : 0,
       sequenceId: rollOptions.sequenceId ?? undefined, sequenceLength: Number.isFinite(rollOptions.sequenceLength) ? rollOptions.sequenceLength : 1,
       packageType: rollOptions.packageType ?? undefined, handRole: rollOptions.handRole ?? undefined, endId: rollOptions.weaponRuntime.endId ?? undefined,
+      area: summarizeAreaShape(specialStage.areaShape),
     } : undefined,
+    ...(specialStage.areaShape?.isArea ? { isArea: true, ruleData: { areaAttack: true, ...(specialStage.areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } } : {}),
     // Phase 5D-E: carry the special-mechanic state (classified mechanics, stored answers, evaluated CT riders) to Damage/Apply
     special: (specialStage.mechanics.length || Object.keys({ ...specialStage.answers, ...(rollOptions.answers ?? {}) }).length) ? {
       mechanics: summarizeMechanics(specialStage.mechanics), answers: { ...specialStage.answers, ...(rollOptions.answers ?? {}) }, unresolved: specialStage.unresolved, drInteraction: specialStage.drIgnore ? 'ignore' : undefined,

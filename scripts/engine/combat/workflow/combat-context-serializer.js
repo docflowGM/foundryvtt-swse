@@ -152,6 +152,13 @@ function summarizeAttackShape(shape) {
   const out = {};
   for (const k of ['fireMode', 'sequenceId', 'packageType', 'handRole', 'endId']) if (typeof shape[k] === 'string' && shape[k]) out[k] = shape[k];
   for (const k of ['attackIndex', 'sequenceLength']) if (Number.isFinite(Number(shape[k]))) out[k] = Number(shape[k]);
+  // Phase 5D-G: the selected form's area shape (kind + geometry + miss rule) -- carried so every affected target resolves the same shape
+  if (shape.area && typeof shape.area === 'object' && typeof shape.area.kind === 'string') {
+    const area = { kind: shape.area.kind };
+    for (const k of ['shape', 'onMiss']) if (typeof shape.area[k] === 'string') area[k] = shape.area[k];
+    for (const k of ['radiusSquares', 'lengthSquares', 'widthSquares', 'widthAtEndSquares', 'heightSquares']) if (Number.isFinite(Number(shape.area[k]))) area[k] = Number(shape.area[k]);
+    out.area = area;
+  }
   return Object.keys(out).length ? out : undefined;
 }
 

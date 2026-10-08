@@ -6,6 +6,8 @@ import { rollAttack as canonicalRollAttack } from "/systems/foundryvtt-swse/scri
 import { computeFinalAttackComposition } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { resolveAttackWeaponRuntime, resolveAttackShapeFor, weaponFormRecord, attackSelectionOf, buildAttackForms } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js";
 import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
+import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
+import { summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine.js";
 import { ActionEconomyPersistence } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js";
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, getEffectiveCritRange, getCriticalMultiplier } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
@@ -638,6 +640,7 @@ export class SWSERoll {
       // form, canonical range band penalty, typed modifiers); Burst Fire's -5 comes from its own attack option, so the separate
       // autofire penalty is not added a second time. Legacy weapons keep computeAttackBonus.
       let totalBonus;
+      let autofireTemporal = { ok: true, paid: [] };
       if (isCanonical) {
         const comp = await computeFinalAttackComposition(actor, weapon, {
           ...canon.selection,
@@ -653,6 +656,19 @@ export class SWSERoll {
           return null;
         }
         totalBonus = comp.atkBonus + fpBonus;
+        // Phase 5D-G: temporal firing state of the selected form (reload / cooldown / reset) gates Autofire like every other attack,
+        // before the roll and before any ammunition is consumed
+        if (comp.readiness && !comp.readiness.ready) {
+          ui.notifications.warn(`${weapon.name} cannot fire yet: ${comp.readiness.blockers.map((b) => b.reason).join('; ')}`);
+          return null;
+        }
+        autofireTemporal = comp.readiness?.requiredActions?.length
+          ? await FireStateStore.spendRequiredActions(actor, comp.readiness.requiredActions, { weaponName: weapon.name })
+          : { ok: true, paid: [], rollback: async () => {} };
+        if (!autofireTemporal.ok) {
+          ui.notifications.warn(`${weapon.name} cannot fire: a required ${autofireTemporal.failed?.action ?? ''} action could not be paid.`);
+          return null;
+        }
       } else {
         const atkBonus = computeAttackBonus(actor, weapon);
         totalBonus = atkBonus + autofirePenalty + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
@@ -667,6 +683,7 @@ export class SWSERoll {
       const roll = await this._safeRoll(formula);
       if (!roll) {return null;}
 
+      if (isCanonical) await FireStateStore.commitFired(actor, weapon, canon.runtime, canon.selection, autofireTemporal.paid);
       const d20 = roll.dice?.[0]?.results?.[0]?.result ?? null;
       const critRange = getEffectiveCritRange(actor, weapon);
       const critMultiplier = getCriticalMultiplier(actor, weapon);
@@ -697,8 +714,17 @@ export class SWSERoll {
           if (isCanonical) {
             // Phase 5D-F: canonical damage of the selected form; Burst Fire's +2 weapon dice come from the Burst Fire option through the
             // one damage composition (no virtual weapon with rewritten dice)
+            // Phase 5D-G: every affected target's damage keeps the ORIGINATING attack's canonical context (form, fire mode, area shape,
+            // that target's own hit/crit outcome); one attack roll and one ammunition expenditure serve all targets
+            const targetContext = summarizeCombatWorkflowContext({}, {
+              actor, weapon, target, targetId: target?.id ?? null, targetName: target?.name ?? '',
+              weaponForm: canon.form, hit: isHit, isCritical: critConfirmed, critMultiplier,
+              isArea: !options.burstFire, isAutofire: true, isBurstFire: options.burstFire === true,
+              attackShape: { fireMode: options.burstFire ? 'burst' : 'autofire', attackIndex: 0, sequenceLength: 1, area: options.burstFire ? undefined : { kind: 'autofire-area', widthSquares: 2, heightSquares: 2 } },
+              ruleData: options.burstFire ? { halfDamageOnMiss: true } : { areaAttack: true, halfDamageOnMiss: true },
+            });
             damageRoll = await rollDamage(actor, weapon, {
-              ...canon.selection, weaponForm: canon.form,
+              ...canon.selection, weaponForm: canon.form, target, combatContext: targetContext, workflowContext: targetContext,
               isCritical: critConfirmed, critMultiplier: critConfirmed ? critMultiplier : 1,
               autofire: true, attackMode: 'autofire',
               combatOptions: { ...(options.attackOptions ?? options.combatOptions ?? {}), ...(options.burstFire ? { burstFire: true } : {}) },
