@@ -105,7 +105,7 @@ function mergeSelectedOptions(...sources) {
   return merged;
 }
 
-const WEAPON_FORM_KEYS = ['identityKey', 'profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode', 'endId', 'hostIdentityKey'];
+const WEAPON_FORM_KEYS = ['identityKey', 'profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode', 'endId', 'hostIdentityKey', 'loadedIdentityKey'];
 function summarizeWeaponForm(form) {
   if (!form || typeof form !== 'object') return undefined;
   const out = {};
@@ -152,6 +152,19 @@ function summarizeAttackShape(shape) {
   const out = {};
   for (const k of ['fireMode', 'sequenceId', 'packageType', 'handRole', 'endId']) if (typeof shape[k] === 'string' && shape[k]) out[k] = shape[k];
   for (const k of ['attackIndex', 'sequenceLength']) if (Number.isFinite(Number(shape[k]))) out[k] = Number(shape[k]);
+  // Phase 5D-I-B: owned-state facts the attack was resolved with (hands, the attack-of-opportunity choice, the forgo-doubling choice)
+  if (shape.wieldedHands === 1 || shape.wieldedHands === 2) out.wieldedHands = shape.wieldedHands;
+  if (shape.forgoDoubleStrength === true) out.forgoDoubleStrength = true;
+  if (shape.reach && typeof shape.reach === 'object') {
+    const r = {};
+    for (const k of ['bonusSquares', 'absoluteSquares']) if (Number.isFinite(Number(shape.reach[k]))) r[k] = Number(shape.reach[k]);
+    if (Object.keys(r).length) out.reach = r;
+  }
+  if (shape.opportunity && typeof shape.opportunity === 'object') {
+    const o = {};
+    for (const k of ['choice', 'profileId']) if (typeof shape.opportunity[k] === 'string' && shape.opportunity[k]) o[k] = shape.opportunity[k];
+    out.opportunity = o;
+  }
   // Phase 5D-G: the selected form's area shape (kind + geometry + miss rule) -- carried so every affected target resolves the same shape
   if (shape.area && typeof shape.area === 'object' && typeof shape.area.kind === 'string') {
     const area = { kind: shape.area.kind };

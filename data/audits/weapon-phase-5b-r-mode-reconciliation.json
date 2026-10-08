@@ -92,10 +92,10 @@
  ],
  "counts": {
   "identities": 203,
-  "typedModes": 34,
+  "typedModes": 36,
   "byClassification": {
    "ATTACK_PROFILE": 15,
-   "CONFIGURATION": 7,
+   "CONFIGURATION": 9,
    "OPERATING_MODE": 10,
    "PROFICIENCY_ROUTE": 1,
    "SPECIAL_ACTION": 1
@@ -368,6 +368,32 @@
    "mappedProfileIds": [
     "launcher"
    ]
+  },
+  {
+   "identity": "unmapped::Bayonet",
+   "mode": "detached",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "detached"
+   ],
+   "mappedConfigurationId": "detached"
+  },
+  {
+   "identity": "unmapped::Bayonet",
+   "mode": "mounted-on-rifle",
+   "classification": "CONFIGURATION",
+   "authorityComplete": true,
+   "executableNow": true,
+   "futureConsumer": "configuration change action + profile availability by configuration (5E)",
+   "reason": "matches a Phase 3B configuration state by explicit id",
+   "mappedProfileIds": [
+    "primary"
+   ],
+   "mappedConfigurationId": "mounted-on-rifle"
   },
   {
    "identity": "unmapped::Cesta",

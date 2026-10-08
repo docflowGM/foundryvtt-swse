@@ -27,7 +27,7 @@ const CORE_RULE = 'Core Rulebook: throwing a weapon is a ranged attack (attack r
  * amended) record; `log` receives one entry per amendment actually applied.
  */
 export function applyPostCertificationAmendments(rec, log = []) {
-  return applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log);
+  return applyIBStructure(applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log), log);
 }
 
 function applyThrownRanged(rec, log) {
@@ -142,4 +142,85 @@ function applyOperationStructureBackfill(rec, log) {
     reason: 'The certified action cost was present only as a prose string; a structured copy of the same sentence lets the existing action-economy pipeline pay it.',
   });
   return out;
+}
+
+// ---- Phase 5D-I-B: structure for rules the source states in prose only -----------------------------------------------------------------
+// 1. Siang Lance attacks of opportunity: the weapon states that its wielder chooses a ranged shot OR the bayonet; the choice ids already
+//    exist (operation.attackOfOpportunityChoices) but nothing said WHICH attack profile each makes. A structured map is added.
+// 2. Long Haft Form identity: the Lightsaber Pike / Long-Handle Lightsaber entries (Jedi Academy Training Manual) name a "Long Haft Form
+//    feat (see page 23)". Page 23 prints one feat -- "Long Haft Strike", prerequisite "Proficient with weapon used", benefit "When you use a
+//    lightsaber pike or a long-handle lightsaber, you can attack with both ends of the weapon, treating it as a double weapon" -- which is
+//    exactly the cited rule; no other page-23 feat exists and the corpus has no feat named "Long Haft Form". The weapon entries therefore use
+//    a printed-name VARIANT of the page-23 feat. The relationship is stored explicitly (canonical feat identity + printed name); combat
+//    execution never substitutes by display name.
+// 3. Bayonet: "A bayonet detached from a rifle is treated as a knife" (Core Rulebook p.121). The Vibrobayonet already carries this as
+//    configuration states + operation.configurationResolution (detached -> Vibrodagger); the Bayonet carried only operation.detachedTreatAs
+//    prose. The same structure is added, resolving the detached configuration as the canonical Knife.
+export const IB_STRUCTURE_AMENDMENT_ID = '5D-I-B-structure-backfill';
+export const LONG_HAFT_FEAT_IDENTITY = 'feat::jedi-academy-training-manual::p23::long-haft-strike';
+const SIANG = { identityKey: 'weapon-siang-lance', map: { 'ranged-shot': 'ranged', 'affixed-bayonet': 'bayonet-aao' }, source: { book: 'Rebellion Era Campaign Guide', page: '50', evidence: 'A siang lance can be used to make attacks of opportunity. When you [make one], you can choose to fire the siang lance as a ranged weapon or to use the weapon\'s bayonet [as a melee weapon].' } };
+const HAFT = [
+  { identityKey: 'lightsaber-chassis-longhandle', profileId: 'haft-end', source: { book: 'Jedi Academy Training Manual', page: '53 (weapon entry citing "Long Haft Form feat (see page 23)"); 23 (feat "Long Haft Strike")', evidence: 'weapon entry: "a character with the Long Haft Form feat (see page 23) can use the long-handle lightsaber as a double weapon"; page 23 feat Long Haft Strike: "When you use a lightsaber pike or a long-handle lightsaber, you can attack with both ends of the weapon, treating it as a double weapon."' } },
+  { identityKey: 'lightsaber-chassis-pike', profileId: 'haft-end', source: { book: 'Jedi Academy Training Manual', page: '53 (weapon entry citing "Long Haft Form feat (see page 23)"); 23 (feat "Long Haft Strike")', evidence: 'weapon entry: "a character with the Long Haft Form feat (see page 23) can use the lightsaber pike as a double weapon"; page 23 feat Long Haft Strike: same benefit text.' } },
+];
+const BAYONET = { identityKey: 'unmapped::Bayonet', source: { book: 'Core Rulebook', page: '121', evidence: 'A bayonet detached from a rifle is treated as a knife; a mounted bayonet deals more damage than the knife because of the added leverage and bulk.' } };
+
+function applyIBStructure(rec, log) {
+  let out = rec;
+  const stamp = (r) => ({ ...r.provenance, postCertificationAmendments: [...(r.provenance.postCertificationAmendments ?? []), IB_STRUCTURE_AMENDMENT_ID] });
+  if (rec.identityKey === SIANG.identityKey) {
+    out = clone(rec);
+    need(JSON.stringify(out.operation.attackOfOpportunityChoices) === JSON.stringify(['ranged-shot', 'affixed-bayonet']), 'siang lance declares the two attack-of-opportunity choices');
+    need(out.operation.attackOfOpportunityProfiles === undefined, 'siang lance has no choice->profile map yet');
+    need(['ranged', 'bayonet-aao'].every((id) => out.canonicalStats.attackProfiles.some((p) => p.id === id)), 'siang lance has the ranged and bayonet-aao profiles');
+    out.operation.attackOfOpportunityProfiles = clone(SIANG.map);
+    out.provenance = stamp(out);
+    log.push({ id: IB_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-B', identityKey: rec.identityKey, field: 'operation.attackOfOpportunityProfiles', from: null, to: SIANG.map, source: SIANG.source,
+      rule: 'The runtime reads structured fields only: each declared attack-of-opportunity choice names the attack profile it makes.', reason: 'The choices were declared by id only; nothing said which profile each one resolves to.' });
+    return out;
+  }
+  const haft = HAFT.find((h) => h.identityKey === rec.identityKey);
+  if (haft) {
+    out = clone(rec);
+    const profile = out.canonicalStats.attackProfiles.find((p) => p.id === haft.profileId);
+    const req = profile?.activationRequirements?.find((r) => r.type === 'feat');
+    need(req && req.id === 'Long Haft Form' && req.identityKey === undefined, `${haft.identityKey}/${haft.profileId} requires the printed feat name "Long Haft Form"`);
+    const before = clone(req);
+    Object.assign(req, { identityKey: LONG_HAFT_FEAT_IDENTITY, printedAs: 'Long Haft Form', identityRuling: 'PRINTED_NAME_VARIANT_OF_PAGE_23_FEAT' });
+    out.provenance = stamp(out);
+    log.push({ id: IB_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-B', identityKey: rec.identityKey, field: `canonicalStats.attackProfiles[id=${haft.profileId}].activationRequirements[type=feat]`, from: before, to: clone(req), source: haft.source,
+      rule: 'Execution joins on the canonical feat identity; the printed name is recorded as provenance only and is never matched.', reason: 'The weapon cites "Long Haft Form (see page 23)"; the page-23 feat is the canonical "Long Haft Strike" -- the relationship is now explicit.' });
+    return out;
+  }
+  if (rec.identityKey === BAYONET.identityKey) {
+    out = clone(rec);
+    need(out.operation.detachedTreatAs === 'Knife' && out.operation.configurationResolution === undefined, 'bayonet carries only the detachedTreatAs prose');
+    need((out.canonicalStats.configurationStates ?? []).length === 0 && out.canonicalStats.attackProfiles.length === 1 && out.canonicalStats.attackProfiles[0].id === 'primary', 'bayonet has a single primary profile and no configuration states');
+    need((out.selectors.modes ?? []).length === 0, 'bayonet selectors carry no modes');
+    out.canonicalStats.configurationStates = [
+      { attackUsable: true, default: true, id: 'mounted-on-rifle', label: 'Mounted on a rifle' },
+      { attackUsable: true, default: false, id: 'detached', label: 'Detached (treated as a Knife)' },
+    ];
+    out.canonicalStats.attackProfiles[0].activationRequirements = [{ id: 'mounted-on-rifle', type: 'configuration' }];
+    out.operation.configurationResolution = { detached: { resolveAsIdentityKey: 'unmapped::Knife', resolveAsProfileId: 'primary' } };
+    out.selectors = { ...out.selectors, modes: [{ condition: 'rifle stock not folded; two-handed use', effect: 'mounted bayonet: Core bayonet damage', profile: 'mounted-on-rifle' }, { effect: 'treated as a Knife', profile: 'detached' }] };
+    out.provenance = stamp(out);
+    log.push({ id: IB_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-B', identityKey: rec.identityKey, field: 'canonicalStats.configurationStates + operation.configurationResolution + attackProfiles[primary].activationRequirements + selectors.modes',
+      from: { detachedTreatAs: 'Knife' }, to: { configurations: ['mounted-on-rifle', 'detached'], configurationResolution: out.operation.configurationResolution }, source: BAYONET.source,
+      rule: 'A detached weapon resolves as the referenced canonical weapon (no values are copied).', reason: 'The detached rule was prose only; the Vibrobayonet already uses this exact structure.' });
+    return out;
+  }
+  if (rec.identityKey === 'unmapped::Wan-Shen') {
+    out = clone(rec);
+    const assembled = out.canonicalStats.configurationStates.find((c) => c.id === 'assembled');
+    const disassembled = out.canonicalStats.configurationStates.find((c) => c.id === 'disassembled');
+    need(assembled && assembled.transitionAction === undefined && disassembled?.transitionAction === 'full-round', 'wan-shen prices only the disassembled state');
+    assembled.transitionAction = 'full-round';
+    out.provenance = stamp(out);
+    log.push({ id: IB_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-B', identityKey: rec.identityKey, field: 'canonicalStats.configurationStates[id=assembled].transitionAction', from: null, to: 'full-round',
+      source: { book: 'Jedi Academy Training Manual', page: '54', evidence: 'Assembling or disassembling a wan-shen is a full-round action.' },
+      rule: 'Each configuration states the action that enters it.', reason: 'The disassemble action was structured; the identical, source-stated assemble action was only in operation.assemblyAction.' });
+    return out;
+  }
+  return rec;
 }

@@ -184,6 +184,14 @@ export function extractSpecialMechanics(def, { damageProfile = null, operation =
     const v = Number(operation?.[key]);
     if (operation && Number.isFinite(v) && v !== 0) out.push(mech('attack-modifier-auto', `operation.${key}`, { source: `operation.${key}`, value: v, condition, structural: true }));
   }
+  // Phase 5D-I-B: crew regulation (E-Web repeating blaster unregulatedAttackPenalty, Tactical Tractor Beam crewRegulation): the penalty applies unless a
+  // second crewman regulated the generator since this initiative count last round. The fact is observed from the owned crew adjudication of the
+  // current round, else asked once.
+  const crewPenalty = Number(operation?.unregulatedAttackPenalty ?? operation?.crewRegulation?.unregulatedAttackPenalty);
+  if (operation && Number.isFinite(crewPenalty) && crewPenalty !== 0) {
+    out.push(mech('attack-modifier-auto', 'operation.unregulatedAttackPenalty', { source: operation.unregulatedAttackPenalty !== undefined ? 'operation.unregulatedAttackPenalty' : 'operation.crewRegulation.unregulatedAttackPenalty', value: crewPenalty, condition: Object.freeze({ crewRegulated: false }), structural: true,
+      fact: Object.freeze({ key: 'crewRegulated', question: 'Did a second crewman regulate the generator since this initiative count last round? (answer no to apply the unregulated penalty)' }) }));
+  }
   // operation.attackPenalty: an inherent penalty of the weapon itself (Entrenching Tool -2). With operation.improvisedWeaponPenaltyReplacement it is
   // the weapon's printed REPLACEMENT for the -5 improvised-weapon penalty (this runtime applies no improvised penalty of its own, so it is the only one).
   const inherentPenalty = Number(operation?.attackPenalty);
@@ -327,7 +335,17 @@ export async function resolveAttackStageModifiers(mechanics, { targetSize = null
     }
     if (m.family !== 'attack-modifier-auto' && m.family !== 'attack-modifier-prompt') continue;
     let applies = null, how = 'auto';
-    if (m.family === 'attack-modifier-auto' && m.structural) { applies = evaluateStructuralCondition(m.condition, attackContext); how = 'fire-state'; }
+    if (m.family === 'attack-modifier-auto' && m.structural) {
+      let ctx = attackContext;
+      // a structural condition that reads a crew/state FACT (m.fact) asks it once and stores the answer (reusable by any mechanic reading the same fact)
+      const fk = m.fact?.key;
+      if (fk && ctx[fk] === undefined && evaluateStructuralCondition(m.condition, { ...ctx, [fk]: false }) !== false) {
+        let ans = answerFor({ answers: out }, `fact:${fk}`);
+        if (ans !== true && ans !== false) { ans = await askSpecialQuestion({ id: `fact:${fk}`, family: 'attack-modifier-auto', question: m.fact.question }); if (ans === true || ans === false) out[`fact:${fk}`] = ans; }
+        if (ans === true || ans === false) ctx = { ...ctx, [fk]: ans };
+      }
+      applies = evaluateStructuralCondition(m.condition, ctx); how = 'fire-state';
+    }
     else if (m.family === 'attack-modifier-auto') applies = evaluateTargetSizeCondition(m.condition, targetSize);
     else if (m.evaluable) { applies = evaluateRegisteredCondition(m.conditionValue, attackContext); how = 'condition-policy'; }
     if (applies === null) {

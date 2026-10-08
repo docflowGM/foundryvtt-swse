@@ -1210,10 +1210,11 @@
       "family": "3b.profile.conditional",
       "key": "activationRequirements.configuration",
       "mechanicFamily": "activation-configuration",
-      "identityCount": 2,
-      "rawOccurrences": 8,
+      "identityCount": 3,
+      "rawOccurrences": 9,
       "representativeWeapons": [
         "Amphistaff",
+        "Bayonet",
         "Vibrobayonet"
       ],
       "structuredSourceField": "attackProfiles[].activationRequirements",

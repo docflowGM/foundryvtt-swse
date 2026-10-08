@@ -768,7 +768,7 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   }
 
   const halfLvl = getHalfLevelDamageBonus(actor, weapon, { ...context, weapon, isWeaponDamage: true });
-  const abilityMod = getDamageAbilityContribution(actor, weapon);
+  const abilityMod = getDamageAbilityContribution(actor, weapon, context);
   const enhancement = getWeaponFlatDamageBonus(weapon);
   const rageMod = RageEngine.collectAttackModifiers(actor, weapon, context).damageBonus || 0;
   const rapidAlchemyMod = rapidAlchemyDamageBonusInternal(actor, weapon);

@@ -13,7 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { I_A_LEDGER, I_A_OWNERS, I_A_POLICIES, I_A_DISPOSITIONS, I_A_BASELINE, I_A_OWNED_FAMILIES } from './lib/weapon-phase-5d-i-a-ledger.mjs';
+import { I_A_LEDGER, I_A_OWNERS, I_A_POLICIES, I_A_DISPOSITIONS, I_A_BASELINE, I_A_AFTER, I_A_OWNED_FAMILIES } from './lib/weapon-phase-5d-i-a-ledger.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const OUT_JSON = 'data/audits/weapon-phase-5d-i-a-input-manifest.json';
@@ -111,16 +111,7 @@ export function buildManifest() {
   };
   if (counters.I_A_KEYS_CONSUMED + counters.I_A_KEYS_DUPLICATE_OF_CONSUMED_FIELD + counters.I_A_KEYS_DEFERRED_TO_OWNER + counters.I_A_KEYS_DATA_COMPLETENESS + counters.I_A_KEYS_NOT_APPLICABLE !== counters.I_A_INPUT_KEYS) problems.push('counter arithmetic does not close');
 
-  const after = closure.counters;
-  const globalCounters = {
-    before: { ...I_A_BASELINE, I_A_INPUT_KEYS: undefined },
-    after: {
-      TOTAL_EXECUTION_FIELD_FAMILIES: after.TOTAL_EXECUTION_FIELD_FAMILIES, FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES: after.FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES,
-      PARTIAL_EXECUTION_FIELD_FAMILIES: after.PARTIAL_EXECUTION_FIELD_FAMILIES, UNCONSUMED_EXECUTION_FIELD_FAMILIES: after.UNCONSUMED_EXECUTION_FIELD_FAMILIES,
-      UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER: after.UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER,
-      UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER: after.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER, RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER: after.RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER,
-    },
-  };
+  const globalCounters = { before: { ...I_A_BASELINE, I_A_INPUT_KEYS: undefined }, after: { ...I_A_AFTER } };
   delete globalCounters.before.I_A_INPUT_KEYS;
 
   return {

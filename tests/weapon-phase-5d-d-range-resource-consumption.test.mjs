@@ -199,7 +199,8 @@ const census = { identities: 0, forms: 0, refusedForms: [], range: {}, resource:
   // melee form of a ranged weapon spends nothing; its ranged form spends the default
   const lance = () => canon('weapon-siang-lance', { pool: { current: 10, max: 10 }, system: { proficiency: 'exotic' } });
   const lA = makeActor({ feats: [{ name: 'Weapon Proficiency', flags: { swse: { choices: { weaponProficiency: { group: 'exotic', weaponIdentity: 'weapon-siang-lance' } } } } }, ...PROF.map((n) => n)].map((f) => (typeof f === 'string' ? f : f.name)) });
-  const l1 = lance(); updates = 0; assert.ok(await attack(lA, l1, { profileId: 'bayonet-aao' })); assert.equal(updates, 0, 'bayonet (melee) form spends no ammunition');
+  const l1 = lance(); updates = 0; assert.ok(await attack(lA, l1, { profileId: 'bayonet-aao', attackOfOpportunity: true })); // 5D-I-B: the bayonet profile is the attack-of-opportunity choice (its structured choice requirement)
+  void 0; assert.equal(updates, 0, 'bayonet (melee) form spends no ammunition');
   const l2 = lance(); assert.ok(await attack(lA, l2, { profileId: 'ranged' })); assert.equal(l2.system.ammunition.current, 9);
   ok('melee form of a ranged weapon spends 0; ranged form spends the existing default');
 

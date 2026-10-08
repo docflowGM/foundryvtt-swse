@@ -62,6 +62,7 @@ export const HEURISTIC_RULES = [
 // status: CONSUMED (probe string must appear in the cited consumer) | CONSUMED_VIA_DUPLICATE (the same fact is consumed through another
 // structured field) | OPERATION_FAMILY (derived from the per-key operation census) | PARTIAL (named residual) | DEFERRED (named reason + owner)
 import { I_A_LEDGER } from './weapon-phase-5d-i-a-ledger.mjs';
+import { I_B_LEDGER } from './weapon-phase-5d-i-b-ledger.mjs';
 
 const W = 'scripts/items/weapon-runtime/';
 export const FIELD_CONSUMERS = {
@@ -156,6 +157,8 @@ export const OPERATION_DUPLICATES = [
   [/^(allowedFeats|disallowedFeats)$/, 'PROHIBITED relation (multi-shot) ; grapple feats are the grapple phase', `${W}attack-shape.js`, 'abilityProhibitedForShape'],
   // Phase 5D-I-A: duplicates proven against the registry by tools/census-weapon-phase-5d-i-a-inputs.mjs (single source: the I-A ledger)
   ...I_A_LEDGER.filter((r) => r.disposition === 'DUPLICATE' && !r.key.includes('.')).map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
+  // Phase 5D-I-B: duplicates proven against the registry by tools/census-weapon-phase-5d-i-b-inputs.mjs (single source: the I-B ledger)
+  ...I_B_LEDGER.filter((r) => r.disposition === 'DUPLICATE' && !r.key.includes('.')).map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
 ];
 
 // manifest classification overrides (named, justified): scope vocabulary the deterministic rule cannot judge on its own

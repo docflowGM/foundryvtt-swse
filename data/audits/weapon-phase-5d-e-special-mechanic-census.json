@@ -141,14 +141,14 @@
   },
   "totals": {
     "identities": 203,
-    "identitiesWithMechanics": 80,
-    "forms": 265,
-    "formsWithMechanics": 106,
+    "identitiesWithMechanics": 82,
+    "forms": 266,
+    "formsWithMechanics": 108,
     "resolveErrors": 0
   },
   "mechanicsByFamily": {
     "activation-effect": 1,
-    "attack-modifier-auto": 8,
+    "attack-modifier-auto": 10,
     "attack-modifier-prompt": 7,
     "attack-resolution": 4,
     "conditional-damage": 3,
@@ -174,7 +174,7 @@
     "status-condition": 4
   },
   "mechanicsByPolicy": {
-    "AUTO": 72,
+    "AUTO": 74,
     "DEFER": 42,
     "DISPLAY_ONLY": 3,
     "PROMPT": 8,
@@ -618,6 +618,11 @@
         "firing-constraint:firing-constraints:VALIDATION_ONLY"
       ]
     },
+    "weapon-e-web-repeating-blaster": {
+      "primary": [
+        "attack-modifier-auto:operation.unregulatedAttackPenalty:AUTO"
+      ]
+    },
     "weapon-electronet": {
       "primary": [
         "grab-grapple:grab-on-hit:DEFER",
@@ -803,6 +808,11 @@
     "weapon-subrepeating-blaster": {
       "primary": [
         "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-tactical-tractor-beam": {
+      "tractor": [
+        "attack-modifier-auto:operation.unregulatedAttackPenalty:AUTO"
       ]
     },
     "weapon-verpine-shattergun": {

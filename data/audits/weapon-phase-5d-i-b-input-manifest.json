@@ -1,0 +1,976 @@
+{
+  "schemaVersion": 1,
+  "phase": "5D-I-B",
+  "purpose": "Input manifest of the wielding / activation-state / threat-reach / host-state convergence. Audit evidence only: no runtime module reads it; each row names the structured source field, the consumer and the disposition.",
+  "counters": {
+    "MANDATORY_I_B_INPUT_KEYS": 17,
+    "ADDITIONAL_SIBLING_KEYS_REVIEWED": 40,
+    "ADDITIONAL_SIBLING_KEYS_CONSUMED": 25,
+    "IMPLEMENTED": 23,
+    "DUPLICATE": 18,
+    "DATA_DEFECT": 0,
+    "DATA_COMPLETENESS": 0,
+    "BLOCKED_BY_SUBSYSTEM": 12,
+    "DEFERRED": 4,
+    "MANDATORY_IMPLEMENTED": 12,
+    "MANDATORY_DUPLICATE": 4,
+    "MANDATORY_BLOCKED": 1,
+    "I_B_UNCLASSIFIED_KEYS": 0
+  },
+  "globalCounters": {
+    "before": {
+      "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
+      "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 33,
+      "PARTIAL_EXECUTION_FIELD_FAMILIES": 14,
+      "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 10,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 15,
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 161,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 212
+    },
+    "after": {
+      "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
+      "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 33,
+      "PARTIAL_EXECUTION_FIELD_FAMILIES": 16,
+      "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 15,
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 133,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 178
+    }
+  },
+  "byMechanicFamily": {
+    "activation-choice": 1,
+    "activation-configuration": 1,
+    "activation-cost": 2,
+    "activation-feat": 1,
+    "activation-proficiency": 1,
+    "activation-state": 1,
+    "activation-usage": 1,
+    "aoo-capability": 3,
+    "aoo-choice": 1,
+    "configuration-cost": 6,
+    "configuration-setting": 1,
+    "configuration-state": 3,
+    "crew-state": 7,
+    "damage-outcome-effect": 1,
+    "descriptive-state": 1,
+    "detached-delegation": 1,
+    "dual-wield-count": 1,
+    "hurled-object": 1,
+    "inventory-encumbrance": 1,
+    "object-durability": 1,
+    "payload-delegation": 1,
+    "reach": 5,
+    "size-derived-wielding": 7,
+    "wielding": 4,
+    "wielding-damage-choice": 1,
+    "worn-equipment-slots": 3
+  },
+  "rows": [
+    {
+      "key": "activationRequirements.action",
+      "family": "3b.profile.conditional",
+      "mandatory": true,
+      "mechanicFamily": "activation-state",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "dual-phase",
+        "retrosaber",
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (state-transition|configuration-switch)",
+      "reason": "Persisted activation: Retrosaber overcharge (certified state machine: swift dial-up, until the end of the wielder's next turn, then one burnout round that locks the dial-up), Dual-Phase / Interchangeable settings (paid once per switch, persisted), Amphistaff configuration switches. A special attack's own action (Venom Spit) is the attack action itself."
+    },
+    {
+      "key": "activationRequirements.choice",
+      "family": "3b.profile.conditional",
+      "mandatory": true,
+      "mechanicFamily": "activation-choice",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "longhandle",
+        "siang-lance"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/items/weapon-runtime/activation-requirements.js (case 'choice')",
+      "reason": "Siang bayonet attack-of-opportunity choice is legal only for an attack of opportunity; the forgo-doubling choice is made by selecting its profile (with the wielding requirement)."
+    },
+    {
+      "key": "activationRequirements.configuration",
+      "family": "3b.profile.conditional",
+      "mandatory": true,
+      "mechanicFamily": "activation-configuration",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 3,
+      "rawOccurrences": 9,
+      "representativeWeapons": [
+        "Amphistaff",
+        "Bayonet",
+        "Vibrobayonet"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (configuration-switch)",
+      "reason": "A profile executes only in its configuration (5D-B availability, unchanged); the OWNED configuration is now remembered and switching pays the configuration's transitionAction once; an unusable (disassembled) configuration refuses the attack."
+    },
+    {
+      "key": "activationRequirements.feat",
+      "family": "3b.profile.conditional",
+      "mandatory": true,
+      "mechanicFamily": "activation-feat",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "longhandle",
+        "pike"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/items/weapon-runtime/activation-requirements.js (case 'feat')",
+      "reason": "Haft-end forms require the page-23 feat by canonical identity (Long Haft Strike); the printed name \"Long Haft Form\" is provenance only (see the identity reconciliation)."
+    },
+    {
+      "key": "activationRequirements.operators",
+      "family": "3b.profile.conditional",
+      "mandatory": true,
+      "mechanicFamily": "crew-state",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "battering-ram"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/items/weapon-runtime/activation-requirements.js (case 'operators')",
+      "reason": "Battering Ram: two operators (stabilize + trigger); a definite \"no\" refuses, an unobserved count is asked once and stored."
+    },
+    {
+      "key": "activationRequirements.proficiency",
+      "family": "3b.profile.conditional",
+      "mandatory": true,
+      "mechanicFamily": "activation-proficiency",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/items/weapon-runtime/activation-requirements.js (case 'proficiency')",
+      "reason": "Amphistaff whip Pin / Trip need a proficient wielder: decided by the canonical proficiency resolver (5D-A), never system.proficient or a name."
+    },
+    {
+      "key": "activationRequirements.usage-limit",
+      "family": "3b.profile.conditional",
+      "mandatory": true,
+      "mechanicFamily": "activation-usage",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (usage-exhausted)",
+      "reason": "Amphistaff Venom Spit once per 24 standard hours: a persisted usage ledger measured against the campaign clock (game.time.worldTime); with no clock the use stays used until a GM reset (never approximated)."
+    },
+    {
+      "key": "activationRequirements.wielding",
+      "family": "3b.profile.conditional",
+      "mandatory": true,
+      "mechanicFamily": "wielding",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "longhandle"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (resolveWielding)",
+      "reason": "Hands are the wielder's actual choice (attack option > owned state > a weapon that requires two hands); canonical data only constrains legality; an impossible wielding refuses before any cost."
+    },
+    {
+      "key": "attackOfOpportunityChoices",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mandatory": true,
+      "mechanicFamily": "aoo-choice",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "siang-lance"
+      ],
+      "structuredSourceField": "operation.attackOfOpportunityChoices",
+      "currentConsumer": "scripts/combat/rolls/attacks.js (resolveOpportunityChoice)",
+      "reason": "Siang Lance: an attack of opportunity makes the wielder pick a ranged shot or the bayonet; each choice names its attack profile through a structured map (DATA_COMPLETENESS amendment, Rebellion Era Campaign Guide p.50); the choice and profile persist in the workflow."
+    },
+    {
+      "key": "canMakeAttackOfOpportunityEvenWithStockExtended",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mandatory": true,
+      "mechanicFamily": "aoo-capability",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "blaster-carbine"
+      ],
+      "structuredSourceField": "Core Rulebook AoO rule: carbines can always make attacks of opportunity (weapon-family:blaster-carbine)",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (isCarbine)",
+      "reason": "DUPLICATE_OF_CORE_AOO_RULE: Core p.121 \"a blaster carbine can always be used to make an attack of opportunity even if its stock is not folded\"; the base eligibility rule admits every carbine regardless of stock."
+    },
+    {
+      "key": "canMakeAttacksOfOpportunity",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mandatory": true,
+      "mechanicFamily": "aoo-capability",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "siang-lance"
+      ],
+      "structuredSourceField": "operation.canMakeAttacksOfOpportunity",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (canMakeAttacksOfOpportunity)",
+      "reason": "Siang Lance (and the mounted Vibrobayonet block): a weapon-declared capability widens the Core base rule; nothing else is widened."
+    },
+    {
+      "key": "canMakeAttacksOfOpportunityWithoutFoldedStock",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mandatory": true,
+      "mechanicFamily": "aoo-capability",
+      "disposition": "DUPLICATE",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "double-barreled-blaster-carbine",
+        "hunting-blaster-carbine",
+        "sporting-blaster-carbine"
+      ],
+      "structuredSourceField": "Core Rulebook AoO rule: carbines can always make attacks of opportunity (weapon-family:blaster-carbine)",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (isCarbine)",
+      "reason": "DUPLICATE_OF_CORE_AOO_RULE: each carrier is a blaster carbine (\"like other blaster carbines, it can ... even if its stock is not folded\"): the same Core carbine rule."
+    },
+    {
+      "key": "damageTypeAndBurstDeterminedByGrenade",
+      "family": "3b.operation.stun-ion-damage-modes",
+      "mandatory": true,
+      "mechanicFamily": "payload-delegation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "grenade-launcher"
+      ],
+      "structuredSourceField": "operation.damageTypeAndBurstDeterminedByGrenade",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-consumer.js (delegateLoadedPayload)",
+      "reason": "Grenade Launcher: damage, damage type, burst and effects come from the LOADED canonical grenade (owned loaded identity or an explicit choice); the launcher keeps its own range, proficiency and cost; a launcher cannot fire a Thermal Detonator or a non-grenade (refused). With no loaded identity the earlier documented deferral stays (nothing is invented)."
+    },
+    {
+      "key": "detachedTreatAs",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mandatory": true,
+      "mechanicFamily": "detached-delegation",
+      "disposition": "DUPLICATE",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Bayonet",
+        "Vibrobayonet"
+      ],
+      "structuredSourceField": "operation.configurationResolution.detached -> canonical Knife / Vibrodagger",
+      "currentConsumer": "scripts/items/weapon-runtime/weapon-runtime-resolver.js (configurationResolution)",
+      "reason": "The prose is carried structurally by configuration states + configurationResolution (Vibrobayonet already; Bayonet added by a source-certified amendment, Core p.121); the runtime resolves the REFERENCED canonical weapon, copying nothing."
+    },
+    {
+      "key": "hurledObjectDamageRule",
+      "family": "3b.operation.damage-modifiers",
+      "mandatory": true,
+      "mechanicFamily": "hurled-object",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.hurledObjectDamageRule",
+      "currentConsumer": null,
+      "blockedBy": "utility / movement: grabbed-object model (object identity, size, grabbed and hurled state)",
+      "owner": "I-C",
+      "reason": "Tactical Tractor Beam: falling-object damage by object size needs a grabbed-object model that does not exist; object size or movement is never invented."
+    },
+    {
+      "key": "twoHandedDamageChoice",
+      "family": "3b.operation.damage-modifiers",
+      "mandatory": true,
+      "mechanicFamily": "wielding-damage-choice",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "longhandle"
+      ],
+      "structuredSourceField": "attackProfiles[two-handed-base-override].activationRequirements (wielding two-handed + choice forgo-double-strength-bonus-to-damage)",
+      "currentConsumer": "scripts/items/weapon-runtime/activation-requirements.js (forgoesDoubleStrength)",
+      "reason": "Long-Handle Lightsaber: the choice is the structured profile requirement pair, executed here: the profile is legal only while wielded two-handed, its 2d10 base replaces the blade damage and the Strength bonus is NOT doubled (the ordinary two-handed attack doubles it, Core p.141)."
+    },
+    {
+      "key": "unregulatedAttackPenalty",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mandatory": true,
+      "mechanicFamily": "crew-state",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "e-web-repeating-blaster"
+      ],
+      "structuredSourceField": "operation.unregulatedAttackPenalty",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (unregulatedAttackPenalty)",
+      "reason": "E-Web repeating blaster: -2 unless a second crewman regulated the generator since this initiative count last round. The fact is observed from the owned crew adjudication of THIS combat round, else asked once and stored for the round."
+    },
+    {
+      "key": "assemblyAction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-cost",
+      "disposition": "DUPLICATE",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Wan-Shen",
+        "targeting-blaster-rifle"
+      ],
+      "structuredSourceField": "configurationStates[assembled].transitionAction",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (configuration-switch)",
+      "reason": "Wan-Shen / Targeting Blaster Rifle: the assemble action is the assembled state's transitionAction (Wan-Shen's was added by a source-certified amendment, Jedi Academy Training Manual p.54)."
+    },
+    {
+      "key": "cannotBeWieldedTwoHanded",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "wielding",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightfoil"
+      ],
+      "structuredSourceField": "operation.cannotBeWieldedTwoHanded",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (cannotBeWieldedTwoHanded)",
+      "reason": "Lightfoil: a two-handed wielding is illegal (the same constraint, second spelling)."
+    },
+    {
+      "key": "cannotWieldTwoHanded",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "wielding",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "archaic-lightfoil",
+        "modern-lightfoil"
+      ],
+      "structuredSourceField": "operation.cannotWieldTwoHanded",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (cannotWieldTwoHanded)",
+      "reason": "Lightfoils: a two-handed wielding is illegal."
+    },
+    {
+      "key": "collapsedForm",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "descriptive-state",
+      "disposition": "DEFERRED_WITH_EXPLICIT_OWNER",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "snap-baton"
+      ],
+      "structuredSourceField": "operation.collapsedForm",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Snap Baton: the collapsed form is \"a small handle\" -- descriptive size/concealment of a state; no attack mechanic."
+    },
+    {
+      "key": "configurationSwitchAction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-setting",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "interchangeable-weapon-system"
+      ],
+      "structuredSourceField": "operation.configurationSwitchAction",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (configurationSwitchAction)",
+      "reason": "Interchangeable Weapon System: switching among its three modes costs the published standard action once; the setting persists on the owned weapon (the default mode is free)."
+    },
+    {
+      "key": "crewRegulation",
+      "family": "3b.operation.crew-and-emplacement",
+      "mandatory": false,
+      "mechanicFamily": "crew-state",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.crewRegulation",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (crewRegulation)",
+      "reason": "Tactical Tractor Beam: its -2 unregulated penalty is read through the same crew-regulation fact as the E-Web."
+    },
+    {
+      "key": "designedForTwoHandedUse",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "size-derived-wielding",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "vibrosword"
+      ],
+      "structuredSourceField": "operation.designedForTwoHandedUse",
+      "currentConsumer": null,
+      "blockedBy": "size-derived wielding",
+      "owner": "I-D",
+      "reason": "Vibrosword: \"designed for two-handed use\" is a descriptive wielding note with no stated mechanical effect beyond the size model."
+    },
+    {
+      "key": "dialUpAction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "activation-cost",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "retrosaber"
+      ],
+      "structuredSourceField": "attackProfiles[overcharge].activationRequirements (action swift) + stateMachine",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (state-transition)",
+      "reason": "Retrosaber: the dial-up action is the overcharge profile's activation action."
+    },
+    {
+      "key": "disassembleAction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-cost",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "adventurer-slugthrower"
+      ],
+      "structuredSourceField": "configurationStates[disassembled].transitionAction",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (configuration-switch)",
+      "reason": "Adventurer slugthrower: the disassemble action is the disassembled state's transitionAction."
+    },
+    {
+      "key": "disassembledComponents",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-state",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Wan-Shen"
+      ],
+      "structuredSourceField": "configurationStates[disassembled].components",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (configuration-switch)",
+      "reason": "Wan-Shen: the disassembled state carries the component count."
+    },
+    {
+      "key": "disassembledComponentSize",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-state",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Wan-Shen"
+      ],
+      "structuredSourceField": "configurationStates[disassembled].componentSize",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (configuration-switch)",
+      "reason": "Wan-Shen: the disassembled state carries the component size."
+    },
+    {
+      "key": "disassemblyAction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-cost",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-blaster-rifle"
+      ],
+      "structuredSourceField": "configurationStates[disassembled].transitionAction",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (configuration-switch)",
+      "reason": "Targeting Blaster Rifle: the disassemble action is the disassembled state's transitionAction."
+    },
+    {
+      "key": "disintegratesOnKillOrDestruction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "damage-outcome-effect",
+      "disposition": "DEFERRED_WITH_EXPLICIT_OWNER",
+      "identityCount": 4,
+      "rawOccurrences": 4,
+      "representativeWeapons": [
+        "disruptor-pistol",
+        "disruptor-rifle",
+        "incinerator-rifle",
+        "sonic-disruptor"
+      ],
+      "structuredSourceField": "operation.disintegratesOnKillOrDestruction",
+      "currentConsumer": null,
+      "owner": "I-C",
+      "reason": "Disruptors / incinerator rifle / sonic disruptor: a kill disintegrates the target -- an outcome effect applied at Apply Damage (persistent / status effects)."
+    },
+    {
+      "key": "encumbranceException",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "inventory-encumbrance",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "plx-2m-portable-missile-launcher"
+      ],
+      "structuredSourceField": "operation.encumbranceException",
+      "currentConsumer": null,
+      "blockedBy": "inventory / encumbrance",
+      "owner": "I-D",
+      "reason": "PLX-2M: ignores its weight while the active drawn weapon -- needs the encumbrance model."
+    },
+    {
+      "key": "expandCollapseAction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-cost",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "snap-baton"
+      ],
+      "structuredSourceField": "configurationStates[expanded|collapsed].transitionAction",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (configuration-switch)",
+      "reason": "Snap Baton: expanding or collapsing is each state's transitionAction."
+    },
+    {
+      "key": "extendedReachBonusSquares",
+      "family": "3b.operation.reach-and-threat",
+      "mandatory": false,
+      "mechanicFamily": "reach",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "dual-phase"
+      ],
+      "structuredSourceField": "operation.extendedReachBonusSquares",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (extendedReachBonusSquares)",
+      "reason": "resolveReach: the reach of the SELECTED form (weapon-wide bonus, absolute whip reach limited to its profiles, the extended setting's bonus only while its profile is selected); the two weapon-wide bonus keys echo one fact and are never summed."
+    },
+    {
+      "key": "forearmMounted",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "worn-equipment-slots",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-rocket-launcher"
+      ],
+      "structuredSourceField": "operation.forearmMounted",
+      "currentConsumer": null,
+      "blockedBy": "worn-equipment / inventory slots",
+      "owner": "I-D",
+      "reason": "Wrist Rocket Launcher: forearm mounting is an equipment-slot fact (no attack mechanic)."
+    },
+    {
+      "key": "fragile",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "object-durability",
+      "disposition": "DEFERRED_WITH_EXPLICIT_OWNER",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "verpine-shattergun"
+      ],
+      "structuredSourceField": "operation.fragile",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Verpine Shattergun: fragile -- weapon-object durability."
+    },
+    {
+      "key": "lacksEnergyLancePlasmaMode",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-state",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Power Lance"
+      ],
+      "structuredSourceField": "attackProfiles[] (the Power Lance publishes no plasma-bolt profile)",
+      "currentConsumer": "scripts/items/weapon-runtime/weapon-runtime-resolver.js (profiles)",
+      "reason": "Power Lance: it has no plasma mode because it has no plasma-bolt profile (selecting one fails closed)."
+    },
+    {
+      "key": "mayCountAsSmallWhenBeneficial",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "size-derived-wielding",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "archaic-lightfoil",
+        "modern-lightfoil"
+      ],
+      "structuredSourceField": "operation.mayCountAsSmallWhenBeneficial",
+      "currentConsumer": null,
+      "blockedBy": "size-derived wielding",
+      "owner": "I-D",
+      "reason": "Lightfoils: counted as Small when beneficial -- a size choice that only matters to the size-derived wielding model."
+    },
+    {
+      "key": "mayTreatAsSizeWhenBeneficial",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "size-derived-wielding",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightfoil"
+      ],
+      "structuredSourceField": "operation.mayTreatAsSizeWhenBeneficial",
+      "currentConsumer": null,
+      "blockedBy": "size-derived wielding",
+      "owner": "I-D",
+      "reason": "Lightfoil: treated as a stated size when beneficial -- same size model."
+    },
+    {
+      "key": "multipleHeldOneHandCountsAsOneWeapon",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "dual-wield-count",
+      "disposition": "DEFERRED_WITH_EXPLICIT_OWNER",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Darkstick"
+      ],
+      "structuredSourceField": "operation.multipleHeldOneHandCountsAsOneWeapon",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Darkstick: several held in one hand count as one weapon for dual-wield accounting; belongs with the dual-wield / thrown-weapon accounting, not hands state."
+    },
+    {
+      "key": "normallyRequiresTripod",
+      "family": "3b.operation.crew-and-emplacement",
+      "mandatory": false,
+      "mechanicFamily": "crew-state",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "e-web-repeating-blaster"
+      ],
+      "structuredSourceField": "operation.normallyRequiresTripod",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (normallyRequiresTripod)",
+      "reason": "E-Web repeating blaster: refused only when the weapon is KNOWN not to be mounted; an unknown mount is asked once and stored on the owned weapon."
+    },
+    {
+      "key": "operatorRoles",
+      "family": "3b.operation.crew-and-emplacement",
+      "mandatory": false,
+      "mechanicFamily": "crew-state",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "battering-ram"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements (type operators, roles)",
+      "currentConsumer": "scripts/items/weapon-runtime/activation-requirements.js (case 'operators')",
+      "reason": "Battering Ram: the roles are the structured operators requirement."
+    },
+    {
+      "key": "operatorsRequired",
+      "family": "3b.operation.crew-and-emplacement",
+      "mandatory": false,
+      "mechanicFamily": "crew-state",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "battering-ram"
+      ],
+      "structuredSourceField": "attackProfiles[].activationRequirements (type operators, minimum)",
+      "currentConsumer": "scripts/items/weapon-runtime/activation-requirements.js (case 'operators')",
+      "reason": "Battering Ram: the count is the structured operators requirement."
+    },
+    {
+      "key": "reachBonusSquares",
+      "family": "3b.operation.reach-and-threat",
+      "mandatory": false,
+      "mechanicFamily": "reach",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "pike",
+        "Wan-Shen"
+      ],
+      "structuredSourceField": "operation.reachBonusSquares",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (reachBonusSquares)",
+      "reason": "resolveReach: the reach of the SELECTED form (weapon-wide bonus, absolute whip reach limited to its profiles, the extended setting's bonus only while its profile is selected); the two weapon-wide bonus keys echo one fact and are never summed."
+    },
+    {
+      "key": "reachIncreaseSquares",
+      "family": "3b.operation.reach-and-threat",
+      "mandatory": false,
+      "mechanicFamily": "reach",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "pike",
+        "Neuronic Whip"
+      ],
+      "structuredSourceField": "operation.reachIncreaseSquares",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (reachIncreaseSquares)",
+      "reason": "resolveReach: the reach of the SELECTED form (weapon-wide bonus, absolute whip reach limited to its profiles, the extended setting's bonus only while its profile is selected); the two weapon-wide bonus keys echo one fact and are never summed."
+    },
+    {
+      "key": "reachProfileIds",
+      "family": "3b.operation.reach-and-threat",
+      "mandatory": false,
+      "mechanicFamily": "reach",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "operation.reachProfileIds",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (reachProfileIds)",
+      "reason": "resolveReach: the reach of the SELECTED form (weapon-wide bonus, absolute whip reach limited to its profiles, the extended setting's bonus only while its profile is selected); the two weapon-wide bonus keys echo one fact and are never summed."
+    },
+    {
+      "key": "reachSquares",
+      "family": "3b.operation.reach-and-threat",
+      "mandatory": false,
+      "mechanicFamily": "reach",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "lightwhip",
+        "Amphistaff",
+        "Shock Whip"
+      ],
+      "structuredSourceField": "operation.reachSquares",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (reachSquares)",
+      "reason": "resolveReach: the reach of the SELECTED form (weapon-wide bonus, absolute whip reach limited to its profiles, the extended setting's bonus only while its profile is selected); the two weapon-wide bonus keys echo one fact and are never summed."
+    },
+    {
+      "key": "reassembleAction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-cost",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "adventurer-slugthrower"
+      ],
+      "structuredSourceField": "configurationStates[assembled].transitionAction",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (configuration-switch)",
+      "reason": "Adventurer slugthrower: the reassemble action is the assembled state's transitionAction."
+    },
+    {
+      "key": "requiresSecondCrewRegulation",
+      "family": "3b.operation.crew-and-emplacement",
+      "mandatory": false,
+      "mechanicFamily": "crew-state",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "e-web-repeating-blaster"
+      ],
+      "structuredSourceField": "operation.unregulatedAttackPenalty (the penalty applies exactly when no second crewman regulated)",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (unregulatedAttackPenalty)",
+      "reason": "E-Web: \"requires a second crewman to regulate\" is the condition of the unregulated penalty."
+    },
+    {
+      "key": "requiresTwoHands",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "wielding",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Garrote"
+      ],
+      "structuredSourceField": "operation.requiresTwoHands",
+      "currentConsumer": "scripts/items/weapon-runtime/owned-state.js (requiresTwoHands)",
+      "reason": "Garrote: hands are two (a one-handed choice is illegal)."
+    },
+    {
+      "key": "sizeGate",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "size-derived-wielding",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "great"
+      ],
+      "structuredSourceField": "operation.sizeGate",
+      "currentConsumer": null,
+      "blockedBy": "size-derived wielding",
+      "owner": "I-D",
+      "reason": "Great Lightsaber: \"only Large or larger can use it with feats / talents affecting light weapons\" needs the size-derived wielding model."
+    },
+    {
+      "key": "sizeRule",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "size-derived-wielding",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Stunning Gauntlet",
+        "Vibroknucklers"
+      ],
+      "structuredSourceField": "operation.sizeRule",
+      "currentConsumer": null,
+      "blockedBy": "size-derived wielding",
+      "owner": "I-D",
+      "reason": "Stunning Gauntlet / Vibroknucklers: \"two sizes smaller than the wearer\" needs the size-derived wielding model."
+    },
+    {
+      "key": "switchAction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "activation-cost",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "dual-phase"
+      ],
+      "structuredSourceField": "attackProfiles[extended].activationRequirements (action swift) + modeProfiles[].switchAction",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (switchAction)",
+      "reason": "Dual-Phase Lightsaber: the switch action is the extended blade profile's activation action."
+    },
+    {
+      "key": "switchFormAction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "configuration-cost",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "configurationStates[].transitionAction",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (configuration-switch)",
+      "reason": "Amphistaff: switching form is each configuration's transitionAction (swift)."
+    },
+    {
+      "key": "tripodEffectiveSize",
+      "family": "3b.operation.crew-and-emplacement",
+      "mandatory": false,
+      "mechanicFamily": "size-derived-wielding",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "e-web-repeating-blaster"
+      ],
+      "structuredSourceField": "operation.tripodEffectiveSize",
+      "currentConsumer": null,
+      "blockedBy": "size-derived wielding (weapon size vs wielder size -> one-/two-handed / too large)",
+      "owner": "I-D",
+      "reason": "The tripod-mounted effective size only matters to a size-derived wielding model; the runtime deliberately never infers hands from size (hands are the wielder's choice, size only constrains)."
+    },
+    {
+      "key": "tripodTreatsAsOneSizeSmallerForWielding",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "size-derived-wielding",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "e-web-missile-launcher",
+        "flame-cannon",
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.tripodTreatsAsOneSizeSmallerForWielding",
+      "currentConsumer": null,
+      "blockedBy": "size-derived wielding (weapon size vs wielder size)",
+      "owner": "I-D",
+      "reason": "E-Web missile launcher, Flame Cannon, Tactical Tractor Beam: effective size when tripod-mounted needs a size-derived wielding model the runtime deliberately does not have (hands are the wielder's choice)."
+    },
+    {
+      "key": "wornAs",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "worn-equipment-slots",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-blaster"
+      ],
+      "structuredSourceField": "operation.wornAs",
+      "currentConsumer": null,
+      "blockedBy": "worn-equipment / inventory slots",
+      "owner": "I-D",
+      "reason": "Wrist Blaster: worn as a bracelet -- equipment-slot / jewelry fact."
+    },
+    {
+      "key": "wornOnWrist",
+      "family": "3b.operation.configuration-and-wielding",
+      "mandatory": false,
+      "mechanicFamily": "worn-equipment-slots",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "concealed-dart-launcher"
+      ],
+      "structuredSourceField": "operation.wornOnWrist",
+      "currentConsumer": null,
+      "blockedBy": "worn-equipment / inventory slots",
+      "owner": "I-D",
+      "reason": "Concealed Dart Launcher: worn on the wrist -- equipment-slot fact."
+    }
+  ],
+  "problems": []
+}

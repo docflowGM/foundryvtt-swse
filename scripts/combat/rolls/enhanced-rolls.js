@@ -665,6 +665,9 @@ export class SWSERoll {
           rangeBand: options.rangeBand ?? null,
           autofire: true, attackMode: 'autofire', fireMode: options.burstFire ? 'burst' : 'autofire',
           braced: options.braced === true,
+          // Phase 5D-I-B: owned-state facts the caller states for this attack (mount, crew regulation, operators, hands)
+          ...(typeof options.mounted === 'boolean' ? { mounted: options.mounted } : {}), ...(typeof options.crewRegulated === 'boolean' ? { crewRegulated: options.crewRegulated } : {}),
+          ...(options.operators !== undefined ? { operators: options.operators } : {}), ...(options.wieldedHands !== undefined ? { wieldedHands: options.wieldedHands } : {}),
           combatOptions: { ...(options.attackOptions ?? options.combatOptions ?? {}), ...(options.burstFire ? { burstFire: true } : {}) },
           sequencePenalty: options.burstFire ? 0 : autofirePenalty,
           customModifier: modifiers.customModifier, situationalBonus: modifiers.situationalBonus,
@@ -672,6 +675,11 @@ export class SWSERoll {
         // Phase 5D-I-A: the selected form's attack-stage mechanics (weapon-level fire-state modifiers such as the unbraced-autofire penalty,
         // registered conditional modifiers) are resolved exactly as rollAttack does and ride the same situational-contribution pipeline
         const autofireStage = await resolveCanonicalAttackStage(actor, weapon, autofireOptions);
+        // Phase 5D-I-B: the same owned-state / target / activation legality as every other attack, before anything is spent
+        if (autofireStage.refusal) {
+          ui.notifications.warn(`${weapon.name} cannot make this attack (${String(autofireStage.refusal.reason).replace(/-/g, ' ')}): ${autofireStage.refusal.failed.map((c) => String(c).replace(/[-_]/g, ' ')).join('; ')}.`);
+          return null;
+        }
         const comp = await computeFinalAttackComposition(actor, weapon, { ...autofireOptions, ...(autofireStage.situationalContributions ? { situationalContributions: autofireStage.situationalContributions } : {}) });
         if (!comp.ok) {
           if (comp.weaponRuntimeError) reportWeaponRuntimeError(comp.weaponRuntimeError, { notify: false });

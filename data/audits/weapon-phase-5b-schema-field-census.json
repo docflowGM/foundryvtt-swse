@@ -5,7 +5,7 @@
  "purpose": "Programmatic census of every field path present in the operational canonical weapons corpus (data/canonical/weapons.json). Paths normalise array indices to []; each path is attributed to its certified origin (Phase 3B / Phase 4H) or to the canonical-only wrapper (provenance/production). Audit-only roots not carried by the corpus are enumerated in auditOnlyRootsNotCarried.",
  "identities": 203,
  "inputs": {
-  "data/canonical/weapons.json": "b19c5866b4551c2394070f777526c7846d527925281c079d766c35ed26a08783"
+  "data/canonical/weapons.json": "a47c772086ca58cb7b7998c1fd895819ee7e7cc014987f0eae540fa53aade977"
  },
  "auditOnlyRootsNotCarried": {
   "phase3B": [
@@ -21,10 +21,10 @@
   ]
  },
  "counts": {
-  "phase3BFieldPaths": 1468,
+  "phase3BFieldPaths": 1474,
   "phase4HFieldPaths": 662,
   "canonicalOnlyFieldPaths": 91,
-  "totalFieldPaths": 2221
+  "totalFieldPaths": 2227
  },
  "fields": [
   {
@@ -860,8 +860,8 @@
    "fieldPath": "canonicalStats.attackProfiles[].activationRequirements[]",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 23,
-   "identityCount": 10,
+   "occurrenceCount": 24,
+   "identityCount": 11,
    "valueTypes": [
     "object"
    ],
@@ -956,8 +956,8 @@
    "fieldPath": "canonicalStats.attackProfiles[].activationRequirements[].id",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 10,
-   "identityCount": 4,
+   "occurrenceCount": 11,
+   "identityCount": 5,
    "valueTypes": [
     "string"
    ],
@@ -965,6 +965,38 @@
     "\"Long Haft Form\"",
     "\"mounted-on-rifle\"",
     "\"quarterstaff\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "canonicalStats.attackProfiles[].activationRequirements[].identityKey",
+   "fieldPath": "canonicalStats.attackProfiles[].activationRequirements[].identityKey",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 2,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"feat::jedi-academy-training-manual::p23::long-haft-strike\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "canonicalStats.attackProfiles[].activationRequirements[].identityRuling",
+   "fieldPath": "canonicalStats.attackProfiles[].activationRequirements[].identityRuling",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 2,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"PRINTED_NAME_VARIANT_OF_PAGE_23_FEAT\""
    ],
    "nullable": false,
    "conditional": true
@@ -1013,6 +1045,22 @@
    ],
    "sampleValues": [
     "\"24-standard-hours\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "canonicalStats.attackProfiles[].activationRequirements[].printedAs",
+   "fieldPath": "canonicalStats.attackProfiles[].activationRequirements[].printedAs",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 2,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"Long Haft Form\""
    ],
    "nullable": false,
    "conditional": true
@@ -1102,8 +1150,8 @@
    "fieldPath": "canonicalStats.attackProfiles[].activationRequirements[].type",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 23,
-   "identityCount": 10,
+   "occurrenceCount": 24,
+   "identityCount": 11,
    "valueTypes": [
     "string"
    ],
@@ -6687,8 +6735,8 @@
    "fieldPath": "canonicalStats.configurationStates[]",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 19,
-   "identityCount": 9,
+   "occurrenceCount": 21,
+   "identityCount": 10,
    "valueTypes": [
     "object"
    ],
@@ -6701,8 +6749,8 @@
    "fieldPath": "canonicalStats.configurationStates[].attackUsable",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 19,
-   "identityCount": 9,
+   "occurrenceCount": 21,
+   "identityCount": 10,
    "valueTypes": [
     "boolean",
     "null"
@@ -6751,8 +6799,8 @@
    "fieldPath": "canonicalStats.configurationStates[].default",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 9,
-   "identityCount": 4,
+   "occurrenceCount": 11,
+   "identityCount": 5,
    "valueTypes": [
     "boolean"
    ],
@@ -6768,8 +6816,8 @@
    "fieldPath": "canonicalStats.configurationStates[].id",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 19,
-   "identityCount": 9,
+   "occurrenceCount": 21,
+   "identityCount": 10,
    "valueTypes": [
     "string"
    ],
@@ -6786,8 +6834,8 @@
    "fieldPath": "canonicalStats.configurationStates[].label",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 19,
-   "identityCount": 9,
+   "occurrenceCount": 21,
+   "identityCount": 10,
    "valueTypes": [
     "string"
    ],
@@ -6898,7 +6946,7 @@
    "fieldPath": "canonicalStats.configurationStates[].transitionAction",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 10,
+   "occurrenceCount": 11,
    "identityCount": 5,
    "valueTypes": [
     "string"
@@ -16176,6 +16224,52 @@
    "conditional": true
   },
   {
+   "canonicalPath": "operation.attackOfOpportunityProfiles",
+   "fieldPath": "operation.attackOfOpportunityProfiles",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.attackOfOpportunityProfiles.affixed-bayonet",
+   "fieldPath": "operation.attackOfOpportunityProfiles.affixed-bayonet",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"bayonet-aao\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.attackOfOpportunityProfiles.ranged-shot",
+   "fieldPath": "operation.attackOfOpportunityProfiles.ranged-shot",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"ranged\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
    "canonicalPath": "operation.attackPenalty",
    "fieldPath": "operation.attackPenalty",
    "namespace": "3B",
@@ -17208,8 +17302,8 @@
    "fieldPath": "operation.configurationResolution",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "object"
    ],
@@ -17222,8 +17316,8 @@
    "fieldPath": "operation.configurationResolution.detached",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "object"
    ],
@@ -17236,12 +17330,13 @@
    "fieldPath": "operation.configurationResolution.detached.resolveAsIdentityKey",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
+    "\"unmapped::Knife\"",
     "\"weapon-vibrodagger\""
    ],
    "nullable": false,
@@ -17252,8 +17347,8 @@
    "fieldPath": "operation.configurationResolution.detached.resolveAsProfileId",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "string"
    ],
@@ -33567,8 +33662,8 @@
    "fieldPath": "selectors.modes[]",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 34,
-   "identityCount": 15,
+   "occurrenceCount": 36,
+   "identityCount": 16,
    "valueTypes": [
     "object"
    ],
@@ -33696,8 +33791,8 @@
    "fieldPath": "selectors.modes[].condition",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 3,
-   "identityCount": 3,
+   "occurrenceCount": 4,
+   "identityCount": 4,
    "valueTypes": [
     "string"
    ],
@@ -33714,8 +33809,8 @@
    "fieldPath": "selectors.modes[].effect",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 5,
-   "identityCount": 4,
+   "occurrenceCount": 7,
+   "identityCount": 5,
    "valueTypes": [
     "string"
    ],
@@ -33865,8 +33960,8 @@
    "fieldPath": "selectors.modes[].profile",
    "namespace": "4H",
    "sourceAuthority": "Phase 4H semantic/selector/proficiency",
-   "occurrenceCount": 10,
-   "identityCount": 5,
+   "occurrenceCount": 12,
+   "identityCount": 6,
    "valueTypes": [
     "string"
    ],
@@ -35854,8 +35949,8 @@
    "fieldPath": "provenance.postCertificationAmendments",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 17,
-   "identityCount": 17,
+   "occurrenceCount": 22,
+   "identityCount": 22,
    "valueTypes": [
     "array"
    ],
@@ -35868,8 +35963,8 @@
    "fieldPath": "provenance.postCertificationAmendments[]",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 21,
-   "identityCount": 17,
+   "occurrenceCount": 26,
+   "identityCount": 22,
    "valueTypes": [
     "string"
    ],
