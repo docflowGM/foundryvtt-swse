@@ -22,7 +22,16 @@ assert.throws(() => buildRegistry(mutateCanon((j) => { delete j.identities[0].pr
 assert.throws(() => buildRegistry(mutateCanon((j) => { j.identities[0].canonicalStats.attackProfiles = []; })), /no attackProfiles/);
 assert.throws(() => buildRegistry(mutateCanon((j) => { j.status = 'AUDIT_EVIDENCE'; })), /not the canonical weapons corpus/);
 
-// 5B introduces no consumer wiring: nothing outside the module imports it
+// Only the explicit Phase 5D-A live-attack consumers may import the weapon runtime (allow-list: new consumers need an explicit phase decision)
+const ALLOWED_RUNTIME_CONSUMERS = new Set([
+  'scripts/combat/rolls/attacks.js',
+  'scripts/engine/combat/combat-roll-math.js',
+  'scripts/infrastructure/hooks/init-hooks.js',
+]);
 const refs = execFileSync('git', ['ls-files', 'scripts', 'index.js', 'system.json'], { cwd: ROOT }).toString().split('\n').filter((f) => f.endsWith('.js') && !f.startsWith('scripts/items/weapon-runtime/'));
-for (const f of refs) assert.ok(!/weapon-runtime\//.test(fs.readFileSync(path.join(ROOT, f), 'utf8')), `${f} must not import the weapon runtime yet`);
+for (const f of refs) {
+  const imports = /weapon-runtime\//.test(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+  assert.ok(!imports || ALLOWED_RUNTIME_CONSUMERS.has(f), `${f} must not import the weapon runtime (not a Phase 5D-A consumer)`);
+}
+for (const f of ALLOWED_RUNTIME_CONSUMERS) assert.ok(/weapon-runtime\//.test(real(f)), `${f} is an expected 5D-A consumer`);
 console.log('weapon-runtime-builder-negative: ok');

@@ -38,6 +38,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
 import { getStackingRule } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
+import { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
@@ -197,6 +198,15 @@ function actorIsProficientForAttack(actor, weapon) {
   if (ImplantEffectRules.ignoresWeaponProficiencyPenalty(actor, weapon)) return true;
   if (actorHasTalentNamed(actor, 'Spacehound') && isVehicleWeapon(weapon)) return true;
   return actorHasWeaponProficiencyForWeapon(actor, weapon);
+}
+
+// Phase 5D-A: canonical weapons resolve proficiency per selected profile through the weapon-runtime resolver;
+// Implant / Spacehound are supplied as its explicit integration inputs, not reimplemented. Legacy path above is unchanged.
+function resolveCanonicalProficiencyForAttack(runtime, actor, weapon) {
+  return resolveCanonicalAttackProficiency(runtime, actor, {
+    ignoresProficiencyPenalty: ImplantEffectRules.ignoresWeaponProficiencyPenalty(actor, weapon) === true,
+    spacehoundVehicleWeapon: actorHasTalentNamed(actor, 'Spacehound') && isVehicleWeapon(weapon)
+  });
 }
 
 function shootingIntoMeleePenalty(actor, context = {}) {
@@ -423,9 +433,16 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const isFlatOverride = isStockDroidFlat || isNpcFlat;
   const flatOverrideValue = isStockDroidFlat ? stockAttackFlat : (isNpcFlat ? npcAttackFlat : 0);
 
+  // Phase 5D-A: resolve the canonical weapon/selected profile first (throws WeaponRuntimeError for a bad canonical
+  // identity/selection -- never a legacy fallback). For a canonical weapon the selected profile's branch is the attack
+  // type seen by everything downstream (combat options, scoped feats, effect-intent context, default ability).
+  const weaponRuntime = resolveAttackWeaponRuntime(weapon, context);
+  if (weaponRuntime.source === 'canonical') {
+    context = { ...context, weaponRuntime, ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) };
+  }
   const bab = isFlatOverride ? 0 : SchemaAdapters.getBAB(actor);
   const attackOptionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
-  const abilityKey = getWeaponAttackAbility(actor, weapon);
+  const abilityKey = getWeaponAttackAbility(actor, weapon, context);
   const abilityMod = isFlatOverride ? 0 : (SchemaAdapters.getAbilityMod(actor, abilityKey) + Number(attackOptionModifiers.attackAbilityBonus || 0));
 
   const miscBonus = isFlatOverride ? 0 : getWeaponFlatAttackBonus(weapon);
@@ -434,7 +451,10 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const rageModifiers = RageEngine.collectAttackModifiers(actor, weapon, context);
   const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ?? actor.system?.conditionTrack?.penalty ?? 0;
   const attackPenalty = actor.system?.attackPenalty ?? 0;
-  const proficient = actorIsProficientForAttack(actor, weapon);
+  // Flat-total (stock droid / NPC statblock) weapons never evaluate proficiency: the published total already bakes it in.
+  const canonicalProficiency = (weaponRuntime.source === 'canonical' && !isFlatOverride)
+    ? resolveCanonicalProficiencyForAttack(weaponRuntime, actor, weapon) : null;
+  const proficient = canonicalProficiency ? canonicalProficiency.proficient : actorIsProficientForAttack(actor, weapon);
   // A stock-statblock droid's or NPC's published total already assumes
   // whatever proficiency the printed creature has with its own weapon — a
   // proficiency penalty must not be layered on top of either flat total.
@@ -659,7 +679,7 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   // into Gunner BAB + Vehicle INT — preserved verbatim so that contract is
   // unaffected by this branch no longer being an unconditional early return.
   const flags = isStockDroidFlat ? { stockDroidFlat: true } : (isNpcFlat ? { npcFlat: true } : {});
-  return { total, components, flags, typedModifierLedger };
+  return { total, components, flags, typedModifierLedger, weaponRuntime: summarizeAttackRuntime(weaponRuntime, canonicalProficiency) };
 }
 
 // PHASE — Stock-Droid Damage Contract. The damage-side counterpart to the

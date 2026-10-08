@@ -32,7 +32,9 @@ const asArray = (v) => (Array.isArray(v) ? v : v instanceof Set ? [...v] : v == 
 
 /** Actor-side entitlement snapshot. Computed per call (never cached: planner ruling B). */
 export function extractActorEntitlements(actor) {
-  const groups = new Set(), exotic = new Set(), abilities = new Set();
+  // exoticIdentities: canonical weapon identityKeys (Phase 5C choice.weaponIdentity) -- the authority.
+  // exotic: normalized display names, compatibility fallback for pre-5C actor data that lacks a canonical identity.
+  const groups = new Set(), exotic = new Set(), exoticIdentities = new Set(), abilities = new Set();
   const addGroup = (v) => { const g = normalizeGroup(v); if (g) groups.add(g); };
   try {
     const sys = actor?.system ?? {};
@@ -49,20 +51,29 @@ export function extractActorEntitlements(actor) {
       const name = String(item?.name ?? '');
       if (item?.type === 'feat' || item?.type === 'talent') abilities.add(norm(name));
       if (item?.type !== 'feat') continue;
+      // Phase 5D-A: a stored canonical weaponIdentity is authoritative and is never converted back to a name; the feat
+      // title (display text) is the legacy fallback only when no canonical identity is stored.
+      const storedChoice = item?.flags?.swse?.choices?.weaponProficiency;
       let m = /^Exotic Weapon Proficiency\s*\((.+)\)\s*$/i.exec(name);
-      if (m) { exotic.add(norm(m[1])); continue; }
+      if (m) { if (!storedChoice?.weaponIdentity) exotic.add(norm(m[1])); }
+      if (storedChoice?.weaponIdentity) exoticIdentities.add(String(storedChoice.weaponIdentity));
+      if (m) continue;
       m = /^Weapon Proficiency\s*\((.+)\)\s*$/i.exec(name);
       if (m) addGroup(m[1]);
       // Phase 5C: explicit stored choice on the canonical Weapon Proficiency feat (name fallback above stays for legacy items)
       const stored = item?.flags?.swse?.choices?.weaponProficiency;
-      if (stored) { addGroup(typeof stored === 'string' ? stored : stored.group); if (stored.weapon) exotic.add(norm(stored.weapon)); }
+      if (stored) {
+        addGroup(typeof stored === 'string' ? stored : stored.group);
+        if (stored.weaponIdentity) exoticIdentities.add(String(stored.weaponIdentity));
+        else if (stored.weapon) exotic.add(norm(stored.weapon)); // legacy name-only choice (pre-5C actor data)
+      }
       if (norm(name) === 'advancedmeleeweaponproficiency') groups.add('advanced-melee');
       if (norm(name) === 'lightsaberproficiency') groups.add('lightsabers');
     }
   } catch (_e) { /* partial snapshot is returned */ }
   const sp = actor?.system?.species;
   const species = norm(typeof sp === 'string' ? sp : (sp?.name ?? actor?.system?.race ?? actor?.items?.find?.((i) => i.type === 'species')?.name ?? ''));
-  return { groups, exotic, abilities, species };
+  return { groups, exotic, exoticIdentities, abilities, species };
 }
 
 function exoticIdentityFor(resolved, profile) {
@@ -97,13 +108,19 @@ export function resolveProficiency(resolved, profile, actor, context = {}) {
   // normal route
   let normalHeld = false;
   if (requiredGroup === 'exotic') {
+    // Canonical authority: the exotic weapon this profile requires IS the canonical identity it resolves as (or the
+    // identity it delegates to). Verified 1:1 against every exotic profile in the 203-weapon registry.
+    const requiredKey = profile.delegatedFrom?.identityKey ?? resolved.identity?.identityKey ?? null;
     const identity = exoticIdentityFor(resolved, profile);
-    if (!identity) {
+    if (!requiredKey && !identity) {
       diagnostics.push({ code: ERROR_CODES.EXOTIC_IDENTITY_UNRESOLVED, profileId: profile.id });
       throw new WeaponRuntimeError(ERROR_CODES.EXOTIC_IDENTITY_UNRESOLVED, `exotic identity unresolved for ${resolved.identity.identityKey}/${profile.id}`, { identityKey: resolved.identity.identityKey, profileId: profile.id });
     }
-    normalHeld = ent.exotic.has(norm(identity));
-    considered.push({ kind: 'normal-exotic-feat', requires: `Exotic Weapon Proficiency (${identity})`, applicable: true, held: normalHeld });
+    const heldByIdentity = !!requiredKey && !!ent.exoticIdentities?.has(requiredKey);
+    // legacy name-only choices (no stored weaponIdentity) remain a compatibility fallback
+    const heldByLegacyName = !heldByIdentity && !!identity && ent.exotic.has(norm(identity));
+    normalHeld = heldByIdentity || heldByLegacyName;
+    considered.push({ kind: 'normal-exotic-feat', requires: `Exotic Weapon Proficiency (${identity ?? requiredKey})`, requiredIdentityKey: requiredKey, applicable: true, held: normalHeld, via: heldByIdentity ? 'canonical-identity' : heldByLegacyName ? 'legacy-name' : null });
   } else if (requiredGroup) {
     normalHeld = ent.groups.has(requiredGroup);
     considered.push({ kind: 'normal-group', requires: requiredGroup, applicable: true, held: normalHeld });

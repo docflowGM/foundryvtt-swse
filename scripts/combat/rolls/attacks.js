@@ -28,6 +28,8 @@ import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/syst
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
+import { resolveAttackWeaponRuntime } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -63,6 +65,12 @@ function hasFightingDefensivelyEffect(actor) {
  * @returns {Promise<{ok:true, atkBonus:number, attackDomain:string, isVehicleAttack:boolean, attackBonusResolution:Object, attackComponentLedger:Array, sequencePenalty:number, fightingDefensivelyPenalty:number, grappleStatePenalty:number} | {ok:false, reason:string, domainResolution:Object, attackBonusResolution?:Object}>}
  */
 export async function computeFinalAttackComposition(actor, weapon, rollOptions = {}) {
+  // Phase 5D-A: resolve the canonical weapon/selected profile ONCE here so the live preview and the real roll feed the
+  // identical runtime (profile branch + dynamic proficiency) into resolveAttackBonus(). A canonical identity/selection
+  // error fails closed (ok:false); legacy/custom weapons pass through untouched.
+  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions);
+  if (canonical.error) return { ok: false, reason: 'weapon-runtime-error', weaponRuntimeError: canonical.error };
+  rollOptions = canonical.rollOptions;
   const domainResolution = resolveAttackDomain({
     actor,
     item: weapon,
@@ -154,6 +162,22 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
   ].filter(Boolean);
 
   return { ok: true, atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, fightingDefensivelyPenalty, grappleStatePenalty, domainResolution };
+}
+
+/**
+ * Phase 5D-A: pure canonical weapon/profile resolution for an attack. Legacy/custom weapons return the options untouched;
+ * a canonical weapon returns options carrying the resolved weaponRuntime and the selected profile's branch as attackType.
+ * A canonical identity/selection error is returned (never thrown, never a legacy fallback) so callers fail closed.
+ */
+function withCanonicalWeaponRuntime(weapon, rollOptions) {
+  try {
+    const weaponRuntime = resolveAttackWeaponRuntime(weapon, rollOptions);
+    if (weaponRuntime.source !== 'canonical') return { rollOptions };
+    return { rollOptions: { ...rollOptions, weaponRuntime, ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) } };
+  } catch (err) {
+    if (!(err instanceof WeaponRuntimeError)) throw err;
+    return { error: err };
+  }
 }
 
 function getFightingDefensivelyAttackPenalty(actor, options = {}) {
@@ -296,11 +320,21 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
  *   gated by this function's cost transaction.
  */
 export async function rollAttack(actor, weapon, options = {}) {
-  const rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null));
+  let rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null));
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
+
+  // Phase 5D-A: canonical weapon/profile resolution is pure -- do it BEFORE any action-option or ammunition cost so an
+  // unresolvable canonical identity/selection never spends anything (and needs no rollback).
+  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions);
+  if (canonical.error) {
+    reportWeaponRuntimeError(canonical.error, { notify: false });
+    ui?.notifications?.error?.(`Attack could not be resolved: ${canonical.error.message}`);
+    return null;
+  }
+  rollOptions = canonical.rollOptions;
 
   const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? rollOptions, {
     actor,
@@ -352,8 +386,15 @@ export async function rollAttack(actor, weapon, options = {}) {
         : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
       return null;
     }
+    if (composition.weaponRuntimeError) {
+      // defensive: rollAttack pre-resolves, so this only fires if the registry changed mid-roll
+      if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      reportWeaponRuntimeError(composition.weaponRuntimeError, { notify: false });
+    }
     await actionOptionSpend?.rollback?.();
-    ui?.notifications?.error?.('Attack could not be resolved: no valid attack-domain context (' + composition.reason + ').');
+    ui?.notifications?.error?.(composition.weaponRuntimeError
+      ? `Attack could not be resolved: ${composition.weaponRuntimeError.message}`
+      : 'Attack could not be resolved: no valid attack-domain context (' + composition.reason + ').');
     return null;
   }
   const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = composition;

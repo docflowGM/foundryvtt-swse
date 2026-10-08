@@ -23,6 +23,7 @@ import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.
 import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/feats/feat-action-listeners.js";
 import { registerFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/register-feat-runtime.js";
 import { loadDefaultProfiles } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-profile-registry.js";
+import { loadWeaponAuthorityRegistry } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-authority-registry.js";
 
 /**
  * Register initialization hooks
@@ -74,6 +75,17 @@ export function registerInitHooks() {
             SWSELogger.log('Damage Profile Registry initialized');
         } catch (err) {
             SWSELogger.warn('Damage Profile Registry failed to initialize', err);
+        }
+
+        // Canonical weapon authority registry (Phase 5D-A): the live attack pipeline resolves canonical weapons/profiles/
+        // proficiency from it. A failed load is NOT downgraded to legacy -- the loader records the failure and the attack
+        // consumer fails closed for canonical weapons -- so surface it loudly here.
+        try {
+            const weaponRegistry = await loadWeaponAuthorityRegistry();
+            SWSELogger.log(`Weapon Authority Registry initialized (${weaponRegistry.size} identities)`);
+        } catch (err) {
+            SWSELogger.error('Weapon Authority Registry failed to load; canonical weapon attacks will be refused until it loads', err);
+            ui?.notifications?.error?.('SWSE: canonical weapon registry failed to load. Canonical weapon attacks are disabled until it is fixed.');
         }
 
         // Initialize feat action listeners (Sadistic Strike, Stay Up, etc.)
