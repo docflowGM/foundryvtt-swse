@@ -71,7 +71,9 @@ export async function buildCensus() {
   // weapon->ability links by relation (the weapon names the ability it modifies; the link is keyed by the canonical ability name)
   const relations = {};
   for (const rec of registryData.identities) for (const a of rec.abilityInteractions ?? []) inc(relations, a.relation ?? 'unspecified');
-  const consumedRelations = ['PROHIBITED', 'EXTRA_ATTACK_PENALTY', 'REMOVE_RAPID_STRIKE_ATTACK_PENALTY', 'TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT'];
+  // Phase 5D-H: every relation whose policy has a consumer (the 5D-H closure census owns the full classification)
+  const { RELATION_POLICY } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js');
+  const consumedRelations = Object.entries(RELATION_POLICY).filter(([, p]) => !p.deferred && p.class !== 'DISPLAY_ONLY').map(([k]) => k).sort();
 
   return {
     schemaVersion: 1, phase: '5D-G',

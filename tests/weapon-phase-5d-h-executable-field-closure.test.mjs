@@ -234,3 +234,138 @@ const withAmmo = (k, max = 100) => canon(k, { ammunition: { current: max, max } 
     ok('an unpayable brace stops before the roll and before any ammunition expenditure');
   } finally { SWSERoll._safeRoll = o1; globalThis.SWSE = o2; restoreHarness(); }
 }
+
+// ======================================================================================================================================
+// WEAPON <-> ABILITY RELATIONS (20-26) and CANONICAL SELECTOR DESCRIPTOR (27-31)
+// ======================================================================================================================================
+const closure = await import('../tools/census-weapon-executable-field-closure.mjs');
+const { RELATION_POLICY, relationsForAbility, negationExclusions } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js');
+const { descriptorMatchesAny, identitySlugSet, groupVocabSet } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js');
+const { damageContextForReaction } = await import('/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js');
+const cls = await import('/systems/foundryvtt-swse/scripts/engine/combat/weapon-target-gate-classifiers.js');
+const packDoc = (pack, name, rename = 'Qzx Renamed Label') => {
+  const d = fs.readFileSync(pack, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).find((x) => x.name === name);
+  return { ...JSON.parse(JSON.stringify(d)), id: `p${++uid}`, name: rename };
+};
+const dexActor = (items, feats) => { const a = makeActor({ items, feats }); a.system.attributes.dex = ab(4); return a; };
+{
+  const census = await closure.buildClosureCensus();
+  // 20: every relation the corpus declares is classified; every executable relation either has a consumer or a named reason + owner
+  assert.deepEqual(census.relations.unclassified, []);
+  assert.equal(census.relations.distinctRelations, 22);
+  for (const r of census.relations.executableConsumed) assert.ok(r.consumer, `${r.relation} names its consumer`);
+  for (const r of census.relations.executableDeferred) { assert.ok(r.reason && r.owner, `${r.relation} deferred with reason+owner`); assert.ok(RELATION_POLICY[r.relation].deferred); }
+  assert.deepEqual(census.relations.executableDeferred.map((r) => r.relation).sort(), ['FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE', 'NEGATIVE_WEAPON_MODIFIER', 'POSITIVE_WEAPON_MODIFIER', 'PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM', 'TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK', 'TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY', 'USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION']);
+  ok('every one of the 22 weapon-ability relation families is classified; consumed ones name a consumer, the 7 deferred ones carry a reason and an owner');
+
+  // 21: PROHIBITED still works -- by ability IDENTITY (a renamed canonical Rapid Shot is refused; a same-named impostor is not)
+  const flech = canon('weapon-flechette-launcher');
+  const rapidReal = { ...optionFeat('Zzz Renamed', 'rapidShot'), flags: { swse: { canonicalFeat: { identityKey: 'feat::saga-edition-core-rulebook::p89::rapid-shot' } } } };
+  const impostor = { ...optionFeat('Rapid Shot', 'rapidShot'), flags: { swse: { canonicalFeat: { identityKey: 'feat::elsewhere::p1::something-else' } } } };
+  const optsFor = (feat) => { const A = makeActor({ feats: [feat], items: [flech] }); return CombatOptionResolver.getAvailableAttackOptions(A, flech, {}).map((o) => o.id); };
+  assert.ok(!optsFor(rapidReal).includes('rapidShot'), 'canonical Rapid Shot under a renamed label is prohibited by the weapon relation');
+  ok('PROHIBITED relation still works and joins on ability identity (renamed canonical ability refused)');
+  // 26: wrong ability identity never triggers it -- the impostor keeps the option because its identity is not rapid-shot... but the OPTION id is also joined, so assert the identity path separately
+  assert.deepEqual(relationsForAbility(flech, rapidReal, {}).map((r) => r.relation).sort(), ['PROHIBITED']);
+  assert.deepEqual(relationsForAbility(flech, impostor, {}), [], 'a different canonical identity does not match the relation, whatever its name');
+
+  // 22-24: attack-penalty / Rapid Strike / Sidearm relations still resolve from the structured corpus
+  const hammer = rt.shapeOfWeapon(canon('unmapped::Power Hammer'), {});
+  assert.ok(hammer.abilityRelations.some((r) => r.relation === 'EXTRA_ATTACK_PENALTY' && r.abilityToken === 'double-attack'));
+  assert.ok(registryData.identities.some((i) => (i.abilityInteractions ?? []).some((a) => a.relation === 'REMOVE_RAPID_STRIKE_ATTACK_PENALTY')));
+  assert.deepEqual(rt.shapeOfWeapon(canon('weapon-sidearm-blaster-pistol'), {}).temporal.map((t) => t.family), ['ability-triggered-reset']);
+  ok('EXTRA_ATTACK_PENALTY, REMOVE_RAPID_STRIKE_ATTACK_PENALTY and the Sidearm swift-reset relation still resolve (their executions are pinned by the 5D-E/5D-F/5D-G suites)');
+
+  // 25: a newly consumed relation -- Riflemaster (EXPLICIT_WEAPON_BENEFIT) applies to every weapon that DECLARES it, via canonical identity
+  const rifleDoc = packDoc('packs/feats.db', 'Riflemaster');
+  const step = (A, w) => CombatOptionResolver.collectAttackModifiers(A, w, { weaponForm: { identityKey: w.flags.swse.canonicalWeapon.identityKey, profileId: 'primary' } }).damageExtraWeaponDice;
+  const declaring = ['weapon-blaster-carbine', 'weapon-blaster-rifle', 'weapon-heavy-blaster-rifle', 'weapon-light-repeating-blaster'].map((k) => canon(k));
+  const notDeclaring = [canon('weapon-blaster-pistol'), canon('weapon-bowcaster')];
+  const RA = makeActor({ feats: [rifleDoc], items: [...declaring, ...notDeclaring] });
+  for (const w of declaring) assert.ok(step(RA, w) >= 1, `Riflemaster applies to ${w.flags.swse.canonicalWeapon.identityKey} through its declared relation`);
+  for (const w of notDeclaring) assert.equal(step(RA, w) ?? 0, 0, 'no relation and no scope token -> no benefit');
+  // 26 again: a same-NAMED item with another identity gets nothing
+  const fake = { ...packDoc('packs/feats.db', 'Power Attack', 'Riflemaster'), system: JSON.parse(JSON.stringify(rifleDoc.system)) };
+  const FA = makeActor({ feats: [fake], items: [canon('weapon-blaster-carbine')] });
+  assert.equal(step(FA, FA.items.find((i) => i.type === 'weapon')) ?? 0, 0, 'display name "Riflemaster" with a different canonical identity cannot use the relation');
+  ok('EXPLICIT_WEAPON_BENEFIT: a renamed canonical Riflemaster applies to exactly the weapons that declare it; a same-named impostor and undeclared weapons get nothing');
+
+  // UNLOCKS_DOUBLE_WEAPON_MODE + hasFeat identity: the pike is a double weapon only for a wielder with the unlocking ability
+  const pike = canon('lightsaber-chassis-pike');
+  const lhs = packDoc('packs/feats.db', 'Long Haft Strike');
+  const withIt = makeActor({ feats: [lhs], items: [pike] }); const without = makeActor({ items: [canon('lightsaber-chassis-pike')] });
+  const fakeLhs = { ...packDoc('packs/feats.db', 'Pin', 'Long Haft Strike') };
+  assert.equal(rt.shapeOfWeapon(pike, {}).doubleWeapon.isDouble, true);
+  assert.equal(rt.shapeOfWeapon(without.items.find((i) => i.type === 'weapon'), {}).doubleWeapon.isDouble, false);
+  const imp = makeActor({ feats: [fakeLhs], items: [canon('lightsaber-chassis-pike')] });
+  assert.equal(rt.shapeOfWeapon(imp.items.find((i) => i.type === 'weapon'), {}).doubleWeapon.isDouble, false, 'same-named ability with a different identity does not unlock it');
+  assert.equal(rt.doubleWeaponEnds(pike, {}).length, 2, 'the two melee profiles become the two ends');
+  ok('UNLOCKS_DOUBLE_WEAPON_MODE: Lightsaber Pike is a double weapon (two ends) only for the canonical Long Haft Strike identity, never for a same-named impostor');
+
+  // CANNOT_NEGATE_ATTACK: Deflect cannot negate a canonical sonic weapon; a plain blaster renamed "Sonic Pistol" is still deflectable
+  const sonic = canon('weapon-sonic-pistol');
+  assert.deepEqual(negationExclusions(sonic, {}).sort(), ['deflect', 'talents-with-deflect-as-prerequisite']);
+  assert.equal(damageContextForReaction({ weapon: sonic }).sonicCannotBeDeflected, true);
+  const disguised = { ...canon('weapon-blaster-pistol'), name: 'Sonic Pistol', system: { damage: '3d6', damageType: 'sonic' } };
+  assert.equal(damageContextForReaction({ weapon: disguised }).sonicCannotBeDeflected, false, 'name and Item damage text no longer decide for a canonical weapon');
+  const sonicDamageWeapons = registryData.identities.filter((i) => i.canonicalStats.attackProfiles.some((p) => (p.damageType?.types ?? []).includes('sonic') && p.range?.mode === 'ranged'));
+  for (const i of sonicDamageWeapons) assert.ok((i.abilityInteractions ?? []).some((a) => a.relation === 'CANNOT_NEGATE_ATTACK'), `${i.identityKey} (ranged sonic) declares CANNOT_NEGATE_ATTACK`);
+  const { ReactionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js');
+  const deflector = { id: 'd', name: 'D', type: 'character', flags: { swse: {} }, items: col([mk('talent', 'Deflect', { flags: { swse: { id: 'swse.talent.deflect' } } })]), system: {} };
+  const avail = (w) => { const c = damageContextForReaction({ weapon: w }); return ReactionEngine.getAvailableReactions(deflector, { attacker: {}, weapon: w, attackType: c.attackType, damageType: c.damageType, damageTypes: c.damageTypes, originalDamageTypes: c.originalDamageTypes, sonicCannotBeDeflected: c.sonicCannotBeDeflected, cannotBeNegatedBy: c.cannotBeNegatedBy, trigger: 'ON_ATTACK_DECLARED' }).map((r) => r.key); };
+  assert.ok(!avail(sonic).includes('deflect'), 'Deflect is not offered against a sonic canonical weapon');
+  ok('CANNOT_NEGATE_ATTACK: the weapon form declares what cannot negate it (sonic weapons vs Deflect); name/text no longer decide; every ranged sonic canonical weapon declares it');
+
+  // 27-31: selector descriptor -- no name needed, duplicate names cannot alter applicability, homebrew keeps compatibility
+  const wf = packDoc('packs/feats.db', 'Weapon Finesse');
+  const club = canon('unmapped::Club/Baton'); const saber = canon('weapon-lightsaber'); const rifle = canon('weapon-blaster-rifle');
+  const FinA = dexActor([club, saber, rifle], [wf]);
+  const finBonus = (w) => CombatOptionResolver.collectAttackModifiers(FinA, w, { weaponForm: { identityKey: w.flags.swse.canonicalWeapon.identityKey, profileId: 'primary' } }).attackAbilityBonus;
+  assert.ok(finBonus(club) > 0, 'renamed canonical Weapon Finesse applies to a light melee canonical weapon (structured size < wielder)');
+  assert.ok(finBonus(saber) > 0, 'and to a lightsaber (group vocabulary)');
+  assert.equal(finBonus(rifle) ?? 0, 0, 'but not to a rifle');
+  // duplicate names cannot alter canonical applicability where the decision is an identity decision (Double Attack join)
+  const { actorHasMultiAttackFor } = await import('/systems/foundryvtt-swse/scripts/combat/multi-attack.js');
+  const daReal = { ...packDoc('packs/feats.db', 'Double Attack', 'Zzz Renamed'), system: { selectedChoice: { group: 'pistols' } } };
+  const daFake = { ...packDoc('packs/feats.db', 'Power Attack', 'Double Attack'), system: { selectedChoice: { group: 'pistols' } } };
+  const bp = canon('weapon-blaster-pistol');
+  const DA = makeActor({ feats: [daReal], items: [bp] }); const DF = makeActor({ feats: [daFake], items: [canon('weapon-blaster-pistol')] });
+  assert.equal(actorHasMultiAttackFor(DA, 'double', bp), true, 'renamed canonical Double Attack counts');
+  assert.equal(actorHasMultiAttackFor(DF, 'double', DF.items.find((i) => i.type === 'weapon')), false, 'an item NAMED Double Attack with another canonical identity does not');
+  ok('Weapon Finesse (canonical identity, display name irrelevant) joins light melee weapons structurally; duplicate names cannot alter canonical applicability');
+  // grenade family amendment: Grenade-scoped abilities recognise canonical grenades with no name
+  const frag = canon('weapon-frag-grenade'); const detonator = canon('weapon-thermal-detonator'); const grenLauncher = canon('weapon-grenade-launcher');
+  assert.equal(cls.weaponMatchesGroup(frag, ['grenade', 'grenades'], {}), true); assert.equal(cls.weaponMatchesGroup(detonator, ['grenades'], {}), true); assert.equal(cls.weaponMatchesGroup(grenLauncher, ['grenade'], {}), false);
+  assert.equal(cls.weaponMatchesGroup({ ...canon('weapon-blaster-pistol'), name: 'Frag Grenade' }, ['grenade'], {}), false, 'a name cannot make a canonical weapon a grenade');
+  assert.equal(cls.weaponMatchesText(canon('weapon-blaster-pistol'), ['blaster pistol'], {}), true); assert.equal(cls.weaponMatchesText(canon('weapon-heavy-blaster-pistol'), ['blaster pistol'], {}), false, 'exact-identity scope: "blaster pistol" is not every pistol containing those words');
+  assert.equal(cls.weaponMatchesGroup(canon('weapon-bowcaster'), ['rifles'], {}), false, 'structured group: the exotic bowcaster is not a rifle');
+  ok('descriptor joins: grenade family, exact-identity scopes and structured groups replace name/text substring matching for canonical weapons');
+  // 31: true homebrew still receives the compatibility behavior
+  const hb = legacy({ weaponGroup: 'pistols', category: 'pistol' }, 'Homebrew Pistol');
+  assert.equal(cls.weaponMatchesGroup(hb, ['pistols'], {}), true, 'legacy weapon: Item-text group match unchanged');
+  assert.equal(cls.weaponMatchesText(legacy({}, 'Heavy Hold-Out Blaster'), ['hold-out blaster'], {}), true, 'legacy weapon: name/text compatibility unchanged');
+  ok('true homebrew / legacy weapons keep their compatibility name/text matching');
+}
+
+// ======================================================================================================================================
+// CLOSURE CENSUS (deterministic): every residual named; counters
+// ======================================================================================================================================
+{
+  const census = await closure.buildClosureCensus();
+  assert.deepEqual(census.problems, [], 'no unclassified field family, relation or heuristic site');
+  const c = census.counters;
+  assert.equal(c.EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED, 0);
+  assert.equal(c.EXECUTABLE_CONDITIONS_UNCLASSIFIED, 0);
+  assert.equal(c.EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED, 0);
+  assert.equal(c.CANONICAL_NAME_TEXT_HEURISTIC_SITES, census.heuristics.canonicalResidualSites.length);
+  assert.ok(census.heuristics.canonicalResidualSites.every((s) => s.owner && s.reason), 'every canonical heuristic residual is named with a reason and an owner');
+  for (const f of census.fieldFamilies.rows.filter((r) => r.status === 'DEFERRED')) assert.ok((f.owner && f.reason) || f.executableUnconsumed, `${f.id} deferred with an owner`);
+  assert.equal(c.AREA_ENABLED_FORMS_WITHOUT_GEOMETRY, 3, 'adhesive / CryoBan / remote grenades: source-silent, named');
+  assert.equal(census.legacyRuleManifest.byGroup.D, 0); assert.ok(census.legacyRuleManifest.byGroup.A > 30);
+  for (const r of census.legacyRuleManifest.rows) assert.ok(['A', 'B', 'C', 'D'].includes(r.group) && r.why);
+  const onDisk = JSON.parse(fs.readFileSync(closure.OUT_JSON, 'utf8'));
+  assert.deepEqual(onDisk, JSON.parse(JSON.stringify(census)), 'committed closure census is current (run tools/census-weapon-executable-field-closure.mjs)');
+  ok(`closure census: ${JSON.stringify({ families: `${c.EXECUTION_FIELD_FAMILIES_WITH_CONSUMER}/${c.EXECUTION_FIELD_FAMILIES_PARTIAL}/${c.EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER} consumed/partial/none`, residualHeuristics: c.CANONICAL_NAME_TEXT_HEURISTIC_SITES, conditionsUnsupported: c.EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED })}`);
+}
+
+console.log(`Phase 5D-H executable field closure: ${step} checks passed.`);

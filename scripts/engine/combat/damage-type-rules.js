@@ -234,9 +234,13 @@ export function damageContextForReaction({ weapon = null, workflowContext = null
   // context signal) stays first; the weapon fallback is now the canonical
   // branch authority instead of a raw meleeOrRanged-first read.
   const explicitMode = String(options.attackType ?? '').toLowerCase();
+  // Phase 5D-H: a canonical weapon's attack type is its selected form's structured branch, not Item category text
+  const canonicalShape = weapon ? shapeOfWeapon(weapon, canonicalSelectionFromContext(options ?? {})) : null;
   const attackType = explicitMode
     ? (explicitMode.includes('range') ? 'ranged' : 'melee')
-    : (canonicalIsRangedWeapon(weapon) ? 'ranged' : 'melee');
+    : canonicalShape?.source === 'canonical'
+      ? (canonicalShape.descriptor.melee ? 'melee' : 'ranged')
+      : (canonicalIsRangedWeapon(weapon) ? 'ranged' : 'melee');
   return {
     attackType,
     damageType: damage.primary,

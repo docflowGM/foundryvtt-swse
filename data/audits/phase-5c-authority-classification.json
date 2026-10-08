@@ -18,7 +18,7 @@
   "GENERATED_RUNTIME_INDEX": 1,
   "GENERATED_COMPATIBILITY": 3,
   "MIGRATION_ALIAS_ONLY": 2,
-  "HISTORICAL_AUDIT_EVIDENCE": 230,
+  "HISTORICAL_AUDIT_EVIDENCE": 231,
   "DEAD_REMOVE": 0,
   "OTHER_DOMAIN_DATA": 11,
   "REFERENCE_BEARING_DOMAIN_DATA": 14
@@ -937,6 +937,11 @@
   },
   {
    "path": "data/audits/weapon-phase-5d-g-attack-form-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/weapon-phase-5d-h-closure-census.json",
    "class": "HISTORICAL_AUDIT_EVIDENCE",
    "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
   },

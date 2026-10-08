@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+globalThis.window = globalThis.window || {}; registerFoundryPathLoader(); installFoundryShimGlobals();
+const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');
+const sel = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js');
+const { registry } = await import('./helpers/weapon-runtime-fixture.mjs');
+rt.setSharedWeaponAuthorityRegistry(registry);
+const d = fs.readFileSync('packs/feats.db','utf8').split('\n').filter(Boolean).map(l=>JSON.parse(l)).find(x=>x.name==='Long Haft Strike');
+const feat = {...d, id:'f1', name:'Qzx'};
+console.log(feat.type, sel.canonicalFeatSlug(feat));
+const pike = { id:'p', name:'x', type:'weapon', flags:{swse:{canonicalWeapon:{identityKey:'lightsaber-chassis-pike'}}}, system:{} };
+const actor = { id:'a', items:[feat, pike], system:{} }; pike.actor = actor;
+console.log(sel.abilityKeysOfActor(actor), JSON.stringify(rt.shapeOfWeapon(pike,{}).doubleWeapon));
