@@ -4,14 +4,14 @@
   "purpose": "Audit/verification artifact only: executable-field closure of the canonical weapon runtime. Every residual is named with a reason and an owner. Not a gameplay authority.",
   "counters": {
     "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
-    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 33,
-    "PARTIAL_EXECUTION_FIELD_FAMILIES": 16,
+    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 34,
+    "PARTIAL_EXECUTION_FIELD_FAMILIES": 15,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
-    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 15,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 133,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 178,
+    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 14,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 126,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 167,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 42,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 7,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
@@ -30,8 +30,8 @@
     "counters": {
       "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
       "EXECUTION_FIELD_FAMILIES": 57,
-      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 33,
-      "EXECUTION_FIELD_FAMILIES_PARTIAL": 16,
+      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 34,
+      "EXECUTION_FIELD_FAMILIES_PARTIAL": 15,
       "EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER": 8
     },
     "familiesWithoutConsumer": [
@@ -56,7 +56,6 @@
       "3b.operation.damage-modifiers",
       "3b.operation.defense-and-reaction-interactions",
       "3b.operation.grab-grapple-restrain",
-      "3b.operation.reach-and-threat",
       "3b.operation.stun-ion-damage-modes",
       "3b.profile.conditional",
       "3b.profile.effects",
@@ -275,14 +274,12 @@
         "id": "3b.operation.configuration-and-wielding",
         "fieldPaths": 62,
         "status": "PARTIAL",
-        "consumedKeys": 7,
+        "consumedKeys": 10,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 2
         },
         "executableUnconsumed": [
-          "cannotBeWieldedTwoHanded",
-          "cannotWieldTwoHanded",
           "collapsedForm",
           "designedForTwoHandedUse",
           "disintegratesOnKillOrDestruction",
@@ -292,7 +289,6 @@
           "mayCountAsSmallWhenBeneficial",
           "mayTreatAsSizeWhenBeneficial",
           "multipleHeldOneHandCountsAsOneWeapon",
-          "requiresTwoHands",
           "sizeGate",
           "sizeRule",
           "tripodTreatsAsOneSizeSmallerForWielding",
@@ -407,15 +403,10 @@
       {
         "id": "3b.operation.reach-and-threat",
         "fieldPaths": 6,
-        "status": "PARTIAL",
-        "consumedKeys": 1,
+        "status": "CONSUMED",
+        "consumedKeys": 5,
         "nonExecutable": {},
-        "executableUnconsumed": [
-          "extendedReachBonusSquares",
-          "reachIncreaseSquares",
-          "reachProfileIds",
-          "reachSquares"
-        ],
+        "executableUnconsumed": [],
         "owner": "threat / reach phase"
       },
       {
@@ -1039,11 +1030,14 @@
         "keys": 40,
         "identities": 40,
         "consumed": [
+          "cannotBeWieldedTwoHanded",
+          "cannotWieldTwoHanded",
           "configurationResolution",
           "configurationSwitchAction",
           "doubleWeapon",
           "handsRemainFree",
           "hostWeaponAugmentation",
+          "requiresTwoHands",
           "switchAction",
           "wornNotHeld"
         ],
@@ -1072,8 +1066,6 @@
           ]
         },
         "executableUnconsumed": [
-          "cannotBeWieldedTwoHanded",
-          "cannotWieldTwoHanded",
           "collapsedForm",
           "designedForTwoHandedUse",
           "disintegratesOnKillOrDestruction",
@@ -1083,7 +1075,6 @@
           "mayCountAsSmallWhenBeneficial",
           "mayTreatAsSizeWhenBeneficial",
           "multipleHeldOneHandCountsAsOneWeapon",
-          "requiresTwoHands",
           "sizeGate",
           "sizeRule",
           "tripodTreatsAsOneSizeSmallerForWielding",
@@ -1091,7 +1082,7 @@
           "wornOnWrist"
         ],
         "owner": "wielding & configuration state (post-5D-H)",
-        "executableUnconsumedOccurrences": 25,
+        "executableUnconsumedOccurrences": 21,
         "representativeIdentities": [
           "lightsaber-chassis-archaic-lightfoil",
           "lightsaber-chassis-great",
@@ -1316,29 +1307,23 @@
         "keys": 5,
         "identities": 7,
         "consumed": [
-          "reachBonusSquares"
-        ],
-        "duplicates": {},
-        "nonExecutable": {},
-        "executableUnconsumed": [
           "extendedReachBonusSquares",
+          "reachBonusSquares",
           "reachIncreaseSquares",
           "reachProfileIds",
           "reachSquares"
         ],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [],
         "owner": "threat / reach phase",
-        "executableUnconsumedOccurrences": 7,
-        "representativeIdentities": [
-          "lightsaber-chassis-dual-phase",
-          "lightsaber-chassis-lightwhip",
-          "lightsaber-chassis-pike",
-          "unmapped::Amphistaff"
-        ],
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
         "note": {
           "reason": "reach and threatened squares need a threat/reach model",
           "phase": "5D-I: special movement / reach"
         },
-        "status": "PARTIAL"
+        "status": "CONSUMED"
       },
       "stun-ion-damage-modes": {
         "keys": 18,
@@ -1476,8 +1461,6 @@
       "condition-and-persistent-effects.survivalBasicForestJungleBonusWhenProficientAndCarried",
       "condition-and-persistent-effects.treatInjuryCureDC",
       "condition-and-persistent-effects.venomSpit",
-      "configuration-and-wielding.cannotBeWieldedTwoHanded",
-      "configuration-and-wielding.cannotWieldTwoHanded",
       "configuration-and-wielding.collapsedForm",
       "configuration-and-wielding.designedForTwoHandedUse",
       "configuration-and-wielding.disintegratesOnKillOrDestruction",
@@ -1487,7 +1470,6 @@
       "configuration-and-wielding.mayCountAsSmallWhenBeneficial",
       "configuration-and-wielding.mayTreatAsSizeWhenBeneficial",
       "configuration-and-wielding.multipleHeldOneHandCountsAsOneWeapon",
-      "configuration-and-wielding.requiresTwoHands",
       "configuration-and-wielding.sizeGate",
       "configuration-and-wielding.sizeRule",
       "configuration-and-wielding.tripodTreatsAsOneSizeSmallerForWielding",
@@ -1529,15 +1511,11 @@
       "proficiency-routes.alternateProficiency",
       "proficiency-routes.wookieeAdvancedMeleeProficiencyCounts",
       "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
-      "reach-and-threat.extendedReachBonusSquares",
-      "reach-and-threat.reachIncreaseSquares",
-      "reach-and-threat.reachProfileIds",
-      "reach-and-threat.reachSquares",
       "stun-ion-damage-modes.ongoingStunWhileTrapped",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 133,
-    "rawOccurrencesUnconsumed": 178,
+    "uniqueKeysUnconsumed": 126,
+    "rawOccurrencesUnconsumed": 167,
     "problems": []
   },
   "relations": {

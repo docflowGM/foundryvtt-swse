@@ -461,7 +461,7 @@ try {
   // 22: stun switch timing -- Shockboxing Gloves: switching to stun costs a swift action ONCE; the setting persists on the owned item
   const gl = canon('unmapped::Shockboxing Gloves'); const G = makeActor({ items: [gl] });
   const ss = (profileId) => rt.shapeOfWeapon(gl, { profileId }).stunSetting;
-  assert.deepEqual(ss('unarmed-stun'), { persistent: true, action: 'swift', weaponHasSwitch: true });
+  assert.deepEqual(ss('unarmed-stun'), { persistent: true, action: 'swift', weaponHasSwitch: true, baselineProfileId: 'unarmed-lethal' });
   assert.equal(ss('unarmed-lethal').persistent, false);
   const swiftCount = () => spent.actions.filter((a) => a === 'swift').length;
   reset(); assert.ok(await attack(G, gl, { profileId: 'unarmed-stun' })); assert.equal(swiftCount(), 1, 'first stun attack pays the swift action');

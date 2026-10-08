@@ -90,12 +90,12 @@ Builders `--check`, `verify-canonical-production`, feat production and 5B / 5B-R
 ## 10. Closure census (before → after I-B)
 | counter | I-A baseline | I-B |
 |---|---|---|
-| UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER | 161 | **133** |
-| RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER | 212 | **178** |
-| UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER | 15 | 15 |
-| execution field families fully / partial / unconsumed | 33 / 14 / 10 | 33 / 16 / 8 |
+| UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER | 161 | **126** |
+| RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER | 212 | **167** |
+| UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER | 15 | **14** |
+| execution field families fully / partial / unconsumed | 33 / 14 / 10 | 34 / 15 / 8 |
 
-Two families moved from unconsumed to partial (the remaining keys in them are owned by I-C / I-D or BLOCKED). The counters were not inflated: no key was relabelled to make them fall.
+One family became fully consumed (reach-and-threat) and two moved from unconsumed to partial; the remaining keys are owned by I-C / I-D or BLOCKED. The counters were not inflated: no key was relabelled to make them fall.
 
 ## 11. Findings recorded, not fixed here
 - **Power Attack object / vehicle exclusion is not enforced anywhere** (noted in I-A); out of I-B scope.
