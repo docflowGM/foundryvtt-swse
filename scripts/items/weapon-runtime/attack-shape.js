@@ -191,7 +191,9 @@ function stunSettingOf(def, resolved, op) {
   const modeOf = (p) => modes.find((m) => m?.attackProfileId === p?.id || asArray(m?.attackProfileIds).includes(p?.id)) ?? null;
   const modeAction = (p) => { const m = modes.length > 1 ? modeOf(p) : null; if (!m) return null; const a = costly({ action: m.switchAction }) ? m.switchAction : (costly({ action: op?.configurationSwitchAction }) ? op.configurationSwitchAction : null); return a; };
   const profileAction = (p) => asArray(p?.activationRequirements).find((r) => r?.type === 'action' && costly(r))?.action ?? null;
-  const settingAction = (p) => (noMachine && profiles.length > 1 && (p?.kind ?? 'attack') === 'attack' && !asArray(p?.activationRequirements).some((r) => r?.type === 'usage-limit')) ? (modeAction(p) ?? profileAction(p)) : null;
+  // a weapon whose setting is its stun activation (Shockboxing Gloves) is already handled by that structure: no second, profile-based setting
+  const stunSettingWeapon = profiles.some((p) => p?.stun?.activation?.timing === 'persistent-setting' && costly(p.stun.activation));
+  const settingAction = (p) => (noMachine && !stunSettingWeapon && profiles.length > 1 && (p?.kind ?? 'attack') === 'attack' && !asArray(p?.activationRequirements).some((r) => r?.type === 'usage-limit')) ? (modeAction(p) ?? profileAction(p)) : null;
   const selected = profiles.find((p) => p.id === resolved?.selection?.profileId) ?? null;
   // operation.stunSwitchAction is the weapon-level copy of the same published action; the profile activation is authoritative
   const stunPersistent = act?.timing === 'persistent-setting' && (costly(act) || COSTLY_ACTIONS.has(String(act?.action == null ? op?.stunSwitchAction ?? '' : '').toLowerCase()));
