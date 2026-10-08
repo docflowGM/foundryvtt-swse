@@ -10,6 +10,7 @@ import { normalizeArmorSystemAliases } from './armor-data-resolver.js';
 import { normalizeEquipmentSystem } from '../engine/equipment/equipment-normalizer.js';
 import { normalizePrereqClauses } from '../dialogs/entity-dialog/prereq-engine.js';
 import { normalizeWeaponForWrite } from './weapon-branch-resolver.js';
+import { attackAbilityOverrideFlagsFor } from './weapon-runtime/attack-ability-override.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -697,6 +698,12 @@ export function sanitizeItemSheetUpdate(item, submittedData = {}, form = null) {
   if (submittedData?.img) update.img = submittedData.img;
   if (submittedData?.flags && typeof submittedData.flags === 'object') {
     update.flags = submittedData.flags;
+  }
+  // Phase 5D-B attack-ability provenance: a CHANGED attackAttribute submitted from the item editor is a genuine player
+  // choice and is recorded as an explicit override (a projected/generated attackAttribute is not).
+  if (itemType === 'weapon') {
+    const overrideFlags = attackAbilityOverrideFlagsFor(currentSystem.attackAttribute, submittedSystem.attackAttribute);
+    if (overrideFlags) update.flags = { ...(update.flags ?? {}), swse: { ...(update.flags?.swse ?? {}), ...overrideFlags.swse } };
   }
 
   return update;

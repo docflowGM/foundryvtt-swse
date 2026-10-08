@@ -12,6 +12,7 @@
  * - Attack attribute selection
  */
 
+import { attackAbilityOverrideFlagsFor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-ability-override.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -192,6 +193,10 @@ export class WeaponConfigDialog extends BaseSWSEAppV2 {
           }
         }
       };
+
+      // Phase 5D-B: a CHANGED attack ability is a genuine player choice (explicit override); an unchanged one is not
+      const overrideFlags = attackAbilityOverrideFlagsFor(this.weapon.system?.attackAttribute, updates.system.attackAttribute);
+      if (overrideFlags) updates.flags = overrideFlags;
 
       // PHASE 5: Route through ActorEngine via updateOwnedItem
       const actor = this.weapon.parent;

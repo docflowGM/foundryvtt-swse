@@ -13,3 +13,4 @@ export { adaptLegacyWeapon } from './legacy-adapter.js';
 export { resolveHostAugmentations } from './host-augmentation.js';
 export { evaluateCondition, policyFor } from './condition-policy.js';
 export { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime } from './attack-consumer.js';
+export { buildAttackForms, findAttackForm, attackFormSelection, attackFormValue } from './attack-form-options.js';

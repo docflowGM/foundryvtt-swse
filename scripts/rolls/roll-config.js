@@ -13,6 +13,8 @@ import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/ite
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { resolveAttackBonus, getTargetActorFromOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { buildAttackForms, findAttackForm, attackFormSelection } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-form-options.js";
+import { WeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
 /* ============================================================================
@@ -766,7 +768,7 @@ function getDamageModifier(weapon) {
 
 function getRollBaseTotal(model) {
   if (model.rollType === 'skill' || model.rollType === 'force' || model.rollType === 'force-power') return getSkillTotal(model.actor, model.skillKey || 'useTheForce');
-  if (model.rollType === 'attack') return getWeaponAttackBonus(model.actor, model.weapon, { attackType: model.melee ? 'melee' : 'ranged' });
+  if (model.rollType === 'attack') return getWeaponAttackBonus(model.actor, model.weapon, model.attackSelection ?? { attackType: model.melee ? 'melee' : 'ranged' });
   if (model.rollType === 'damage') return getDamageModifier(model.weapon);
   if (model.rollType === 'initiative') return getSkillTotal(model.actor, 'initiative');
   return getAbilityModifier(model.actor, model.abilityKey);
@@ -920,6 +922,36 @@ function buildRollPreviewRail(model) {
   </aside>`;
 }
 
+// Phase 5D-B: canonical attack-form helpers. The dialog offers only forms derived from the canonical resolver
+// (attack-form-options.js); the submitted select value is looked up in that offered list, never parsed from labels.
+const ATTACK_SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId'];
+function requestedAttackSelection(options = {}) {
+  const out = {};
+  for (const k of ATTACK_SELECTION_KEYS) if (options[k] != null && options[k] !== '') out[k] = options[k];
+  return out;
+}
+
+/** Live selection from the form: the chosen canonical form (+ payload), or null for legacy / single-form weapons' default. */
+function readLiveAttackSelection(form, model) {
+  const forms = model?.attackForms ?? [];
+  if (!forms.length) return { form: null, payloadId: null, selection: {} };
+  const submitted = form.querySelector('[name="attackForm"]')?.value;
+  const chosen = (submitted && findAttackForm(forms, submitted)) || model.selectedAttackForm || null;
+  const payloadField = form.querySelector('[name="payloadId"]');
+  const payloadId = payloadField ? (payloadField.value || null) : (model.selectedPayloadId ?? null);
+  return { form: chosen, payloadId, selection: { ...attackFormSelection(chosen), ...(payloadId ? { payloadId } : {}) } };
+}
+
+/** Show only the branch-specific sections (ranged/melee) of the selected form; hidden sections are disabled so they never submit. */
+function syncAttackFormBranch(form, branch) {
+  if (!branch) return;
+  form.querySelectorAll('[data-rcd-branch]').forEach((el) => {
+    const active = el.dataset.rcdBranch === branch;
+    el.hidden = !active;
+    el.querySelectorAll('input,select,textarea').forEach((c) => { c.disabled = !active; });
+  });
+}
+
 function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'attack', model = null, sequencePenalty = 0 } = {}) {
   const root = html?.[0] ?? html;
   const form = root?.querySelector?.('.swse-roll-config-v2');
@@ -944,7 +976,11 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
   const update = async () => {
     const custom = Number(form.querySelector('[name="customModifier"]')?.value ?? 0) || 0;
     if (isLiveAttack) {
-      const melee = model?.melee ?? false;
+      // Phase 5D-B: the selected canonical attack form (profile/configuration/mode/payload) and its branch drive the preview
+      // through the SAME computeFinalAttackComposition() seam the real roll uses; legacy weapons keep the model's classification.
+      const live = readLiveAttackSelection(form, model);
+      const melee = live.form?.branch ? live.form.branch === 'melee' : (model?.melee ?? false);
+      syncAttackFormBranch(form, live.form?.branch ?? null);
       const { aim, charge, isPointBlank, situationalContributions } = computeAttackSituationalContext(form, melee);
       // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker
       // 3): thread the dialog's own Target Context selection (Selected
@@ -958,13 +994,14 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
       const targetActorIdField = form.querySelector('[name="targetActorId"]')?.value || null;
       const rollOptions = {
         attackType: melee ? 'melee' : 'ranged',
+        ...live.selection,
         weapon,
         aim,
         charge,
         isPointBlank,
         combatOptions: readNestedFormEntries(form, 'combatOptions'),
         attackOptions: readNestedFormEntries(form, 'attackOptions'),
-        rangeBand: form.querySelector('[name="rangeBand"]')?.value || null,
+        rangeBand: melee ? null : (form.querySelector('[name="rangeBand"]')?.value || null),
         targetTokenId,
         targetActorId: targetActorIdField,
         fightingDefensively: form.querySelector('[name="fightingDefensively"]')?.checked === true,
@@ -1048,8 +1085,24 @@ export async function buildRollConfigModel(options = {}) {
   const fp = getForcePointState(actor);
   const targetRows = selectedTargetRows();
   const rangeProfile = weapon ? await buildWeaponRangeProfile(weapon) : null;
-  const ranged = weapon ? isRangedWeapon(weapon) : false;
-  const melee = weapon ? isMeleeWeapon(weapon) : false;
+  // Phase 5D-B: a canonical weapon's selected attack form (profile branch) is authoritative for melee/ranged; the Item-level
+  // classification only applies to legacy/custom weapons. An invalid caller preselection is captured, not thrown, so the
+  // dialog can show it and the roll still fails closed in rollAttack().
+  let attackFormInfo = null;
+  let attackFormError = null;
+  if (rollType === 'attack' && weapon) {
+    try { attackFormInfo = buildAttackForms(weapon, requestedAttackSelection(options)); } catch (err) { if (!(err instanceof WeaponRuntimeError)) throw err; attackFormError = err; }
+  }
+  const canonicalForms = attackFormInfo?.source === 'canonical' ? attackFormInfo : null;
+  const selectedAttackForm = canonicalForms?.selected ?? null;
+  const formBranch = selectedAttackForm?.branch ?? null;
+  const ranged = formBranch ? formBranch === 'ranged' : (weapon ? isRangedWeapon(weapon) : false);
+  const melee = formBranch ? formBranch === 'melee' : (weapon ? isMeleeWeapon(weapon) : false);
+  const attackForms = canonicalForms?.forms ?? [];
+  const crossBranch = new Set(attackForms.map((f) => f.branch).filter(Boolean)).size > 1;
+  const payloads = canonicalForms?.payloads ?? [];
+  const selectedPayloadId = payloads.length ? (options.payloadId ?? canonicalForms.defaultPayloadId ?? payloads[0].value) : null;
+  const attackSelection = { attackType: melee ? 'melee' : 'ranged', ...attackFormSelection(selectedAttackForm), ...(selectedPayloadId ? { payloadId: selectedPayloadId } : {}) };
   // Math Integrity Freeze, Attack Bonus round 8 (Part 1, domain isolation):
   // actor-owned combat options and the generic attack-context authority are
   // an ATTACK-only concept -- a Damage roll passes the same weapon but must
@@ -1101,7 +1154,13 @@ export async function buildRollConfigModel(options = {}) {
   // that genuinely need to override the canonical total for a documented
   // special-case workflow must pass allowBaseBonusOverride: true.
   const isSkillLikeRoll = rollType === 'skill' || rollType === 'force' || rollType === 'force-power';
-  const canonicalBaseTotal = Number(getRollBaseTotal({ actor, weapon, rollType, skillKey, abilityKey, ranged, melee })) || 0;
+  let canonicalBaseTotal = 0;
+  try {
+    canonicalBaseTotal = Number(getRollBaseTotal({ actor, weapon, rollType, skillKey, abilityKey, ranged, melee, attackSelection })) || 0;
+  } catch (err) {
+    if (!(err instanceof WeaponRuntimeError)) throw err;
+    attackFormError = attackFormError ?? err; // canonical selection error: surfaced in the dialog; the roll itself fails closed
+  }
   let baseTotal;
   if (isSkillLikeRoll && options.allowBaseBonusOverride !== true) {
     const suppliedBaseBonus = options.baseBonus;
@@ -1134,7 +1193,7 @@ export async function buildRollConfigModel(options = {}) {
     // Same canonical resolver that produced baseTotal (via getRollBaseTotal
     // -> getWeaponAttackBonus), so the breakdown can never disagree with the
     // number it is a breakdown of.
-    const attackComponents = weapon ? (resolveAttackBonus(actor, weapon, null, { attackType: melee ? 'melee' : 'ranged' }).components ?? {}) : {};
+    const attackComponents = (weapon && !attackFormError) ? (resolveAttackBonus(actor, weapon, null, attackSelection).components ?? {}) : {};
     let accounted = 0;
     for (const [label, value] of Object.entries(attackComponents)) {
       const n = Number(value) || 0;
@@ -1161,6 +1220,13 @@ export async function buildRollConfigModel(options = {}) {
     weaponName: weapon?.name ?? '',
     ranged,
     melee,
+    attackForms,
+    selectedAttackForm,
+    crossBranch,
+    payloads,
+    selectedPayloadId,
+    attackSelection,
+    attackFormError,
     supportsAutofire: weaponSupportsAutofire(weapon),
     hasStunSetting: weaponHasStunSetting(weapon),
     stunOnly: weaponIsStunOnly(weapon),
@@ -1205,12 +1271,44 @@ export async function buildRollConfigModel(options = {}) {
   };
 }
 
+// Phase 5D-B: for a canonical weapon whose forms cross the melee/ranged boundary, branch-specific controls render for BOTH
+// branches wrapped in [data-rcd-branch]; syncAttackFormBranch() shows/enables only the selected form's branch.
+function branchSection(model, branch, html) {
+  if (!model.crossBranch || !html) return html;
+  const active = (branch === 'melee') === !!model.melee;
+  return `<div data-rcd-branch="${branch}" ${active ? '' : 'hidden'}>${html}</div>`;
+}
+
+/**
+ * Phase 5D-B: attack-form selector. Rendered ONLY when a canonical weapon has a genuine player decision (more than one legal
+ * form, or more than one payload); a single-form weapon gets no control. Option values are canonical ids (profile|configuration|mode),
+ * the visible text is display only.
+ */
+export function buildAttackFormPanel(model) {
+  if (!model?.isAttackRoll) return '';
+  const forms = model.attackForms ?? [];
+  const payloads = model.payloads ?? [];
+  const err = model.attackFormError ? `<p class="swse-roll-config-note swse-roll-config-note--error">${escapeHTML(model.attackFormError.message)}</p>` : '';
+  const formSelect = forms.length > 1 ? `<label>Attack Form
+        <select name="attackForm" data-rcd-attack-form>
+          ${forms.map(f => `<option value="${escapeHTML(f.value)}" data-branch="${escapeHTML(f.branch ?? '')}" ${f.value === model.selectedAttackForm?.value ? 'selected' : ''}>${escapeHTML(f.label)}</option>`).join('')}
+        </select>
+      </label>` : '';
+  const payloadSelect = payloads.length > 1 ? `<label>Payload
+        <select name="payloadId" data-rcd-payload>
+          ${payloads.map(p => `<option value="${escapeHTML(p.value)}" ${p.value === model.selectedPayloadId ? 'selected' : ''}>${escapeHTML(p.label)}</option>`).join('')}
+        </select>
+      </label>` : '';
+  if (!formSelect && !payloadSelect && !err) return '';
+  return `<div class="swse-roll-config-subpanel" data-rcd-attack-form-panel><h5>Attack Form</h5>${formSelect}${payloadSelect}${err}</div>`;
+}
+
 function buildTargetPanel(model) {
   const needsTarget = ['attack', 'force', 'force-power', 'save', 'damage', 'ability'].includes(String(model.rollType));
   if (!needsTarget) return '';
   const targetOptions = model.targetRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
   const combatantOptions = model.combatantRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
-  const rangeBandField = model.melee ? '' : `<label>Range Band
+  const rangeBandLabel = `<label>Range Band
         <select name="rangeBand">
           <option value="pointBlank">Point Blank</option>
           <option value="short">Short</option>
@@ -1219,6 +1317,7 @@ function buildTargetPanel(model) {
           <option value="custom">Custom / GM</option>
         </select>
       </label>`;
+  const rangeBandField = model.crossBranch ? branchSection(model, 'ranged', rangeBandLabel) : (model.melee ? '' : rangeBandLabel);
   return `<section class="swse-roll-config-panel">
     <h4>Target Context</h4>
     <div class="swse-roll-config-grid swse-roll-config-grid--target">
@@ -1268,16 +1367,16 @@ function buildWeaponPanel(model) {
   // cards below (see the model.hasBurstFire etc. removal comment in
   // buildRollConfigModel for the exact defect this closes).
   const optionCards = model.combatOptions.map(optionCard).join('');
-  const rangedPanel = (model.isAttackRoll && model.ranged) ? `<div class="swse-roll-config-subpanel">
+  const rangedPanel = branchSection(model, 'ranged', (model.isAttackRoll && (model.ranged || model.crossBranch)) ? `<div class="swse-roll-config-subpanel">
       <h5>Ranged Options</h5>
       ${rangeChips ? `<div class="swse-roll-config-chips">${rangeChips}</div>` : ''}
       <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.autofire" ${model.supportsAutofire ? '' : 'disabled'} /> <span><b>Autofire</b><small>${model.supportsAutofire ? 'Weapon supports autofire.' : 'Unavailable for this weapon.'}</small></span></label>
-    </div>` : '';
+    </div>` : '');
   const meleeAttackOptions = [
     model.hasDoubleStrike ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.doubleStrike" /> <span><b>Double Strike</b><small>Full-round multiattack.</small></span></label>` : '',
     model.hasTripleStrike ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.tripleStrike" /> <span><b>Triple Strike</b><small>Full-round multiattack.</small></span></label>` : ''
   ].filter(Boolean).join('');
-  const meleePanel = (model.isAttackRoll && model.melee) ? `<div class="swse-roll-config-subpanel">
+  const meleePanel = branchSection(model, 'melee', (model.isAttackRoll && (model.melee || model.crossBranch)) ? `<div class="swse-roll-config-subpanel">
       <h5>Melee Options</h5>
       <label>Grip
         <select name="grip">
@@ -1287,7 +1386,7 @@ function buildWeaponPanel(model) {
         </select>
       </label>
       ${meleeAttackOptions}
-    </div>` : '';
+    </div>` : '');
 
   const modeChoices = Array.isArray(model.damageModeChoices) ? model.damageModeChoices : [];
   const damageModePanel = (model.rollType === 'attack' || model.rollType === 'damage') && modeChoices.length
@@ -1304,6 +1403,7 @@ function buildWeaponPanel(model) {
   return `<section class="swse-roll-config-panel">
     <h4>Weapon Profile</h4>
     <div class="swse-roll-config-source"><b>${escapeHTML(model.weaponName)}</b><span>${model.ranged ? 'Ranged' : 'Melee'} · ${escapeHTML(model.weapon?.system?.weaponCategory ?? model.weapon?.system?.rangeProfileName ?? '')}</span></div>
+    ${buildAttackFormPanel(model)}
     ${damageModePanel}
     ${rangedPanel}${meleePanel}
     ${(model.isAttackRoll && optionCards) ? `<div class="swse-roll-config-subpanel" data-rcd-attack-options><h5>Your Attack Options</h5>${optionCards}</div>` : ''}
@@ -1311,7 +1411,13 @@ function buildWeaponPanel(model) {
 }
 
 function buildDefenseActionPanel(model) {
-  if (model.rollType !== 'attack' || model.melee) return '';
+  if (model.rollType !== 'attack') return '';
+  if (model.crossBranch) return branchSection(model, 'ranged', buildDefenseActionPanelFor({ ...model, melee: false }));
+  return buildDefenseActionPanelFor(model);
+}
+
+function buildDefenseActionPanelFor(model) {
+  if (model.melee) return '';
   const fdBonus = model.trainedAcrobatics ? 5 : 2;
   const tdBonus = model.trainedAcrobatics ? 10 : 5;
   const mode = model.fightDefensivelyMode || 'default';
@@ -1397,7 +1503,7 @@ export function computeAttackSituationalContext(form, melee) {
   // range is the single authority; no separate control exists to disagree
   // with it. The field does not render at all for a melee attack, so this
   // is correctly always false there.
-  const isPointBlank = form.querySelector('[name="rangeBand"]')?.value === 'pointBlank';
+  const isPointBlank = !melee && form.querySelector('[name="rangeBand"]')?.value === 'pointBlank';
   const situationalContributions = [];
   if (charging && melee) {
     situationalContributions.push(createModifier({
@@ -1551,7 +1657,7 @@ export async function showRollModifiersDialog(options = {}) {
           ${buildTargetPanel(model)}
           ${buildWeaponPanel(model)}
           ${buildDefenseActionPanel(model)}
-          ${showCover && rollType === 'attack' && !model.melee ? `<section class="swse-roll-config-panel"><h4>Cover / Concealment</h4><div class="swse-roll-config-grid"><label>Cover<select name="cover"><option value="none">No Cover</option><option value="partial">Partial Cover (+2 Ref)</option><option value="cover">Cover (+5 Ref)</option><option value="improved">Improved Cover (+10 Ref)</option></select></label>${showConcealment ? `<label>Concealment<select name="concealment"><option value="none">No Concealment</option><option value="partial">Concealment (20%)</option><option value="total">Total Concealment (50%)</option></select></label>` : ''}</div></section>` : ''}
+          ${(() => { const cover = showCover && rollType === 'attack' && (model.crossBranch || !model.melee) ? `<section class="swse-roll-config-panel"><h4>Cover / Concealment</h4><div class="swse-roll-config-grid"><label>Cover<select name="cover"><option value="none">No Cover</option><option value="partial">Partial Cover (+2 Ref)</option><option value="cover">Cover (+5 Ref)</option><option value="improved">Improved Cover (+10 Ref)</option></select></label>${showConcealment ? `<label>Concealment<select name="concealment"><option value="none">No Concealment</option><option value="partial">Concealment (20%)</option><option value="total">Total Concealment (50%)</option></select></label>` : ''}</div></section>` : ''; return model.crossBranch ? branchSection(model, 'ranged', cover) : cover; })()}
           ${buildResourceCards(model, showForcePoint)}
           ${buildRollModeRow(model)}
           <section class="swse-roll-config-panel">
@@ -1703,7 +1809,14 @@ export async function showRollModifiersDialog(options = {}) {
             // non-attack roll ever consumed result.situationalContributions,
             // an implicit invariant nothing enforced. Gated explicitly so
             // this dependency can never become load-bearing by accident.
-            if (rollType === 'attack') Object.assign(result, computeAttackSituationalContext(form, model.melee));
+            if (rollType === 'attack') {
+              // Phase 5D-B: submit exactly what the preview resolved -- the selected canonical form's ids (profile/configuration/mode)
+              // and payload reach rollAttack() -> computeFinalAttackComposition(); the branch is the selected profile's, not the Item's.
+              const live = readLiveAttackSelection(form, model);
+              Object.assign(result, live.selection);
+              const liveMelee = live.form?.branch ? live.form.branch === 'melee' : model.melee;
+              Object.assign(result, computeAttackSituationalContext(form, liveMelee));
+            }
             result.coverBonus = ROLL_MODIFIERS.cover[result.cover]?.value || 0;
             result.missChance = ROLL_MODIFIERS.concealment[result.concealment]?.missChance || 0;
             resolve(result);
