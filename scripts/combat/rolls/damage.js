@@ -129,6 +129,8 @@ export async function rollDamage(actor, weapon, context = {}) {
     const explicitType = context.damageType ?? null;
     rollContext = {
       ...rollContext,
+      // Phase 5D-F: option gating at damage time (Burst Fire / Deadeye / Rapid Shot dice) uses the SELECTED form's branch, like the attack side
+      attackType: rollContext.attackType ?? canonicalDamage.runtime.branch ?? undefined,
       damageType: explicitType ?? canonicalDamage.selectedDamageType ?? (canonicalDamage.requiresDamageTypeSelection ? rollContext.damageType : (types[0] ?? rollContext.damageType)),
       damageTypes: Array.isArray(context.damageTypes) && context.damageTypes.length ? context.damageTypes : (types.length ? [...types] : rollContext.damageTypes)
     };

@@ -3,6 +3,9 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
 import { rollAttack as canonicalRollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { computeFinalAttackComposition } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { resolveAttackWeaponRuntime, resolveAttackShapeFor, weaponFormRecord, attackSelectionOf, buildAttackForms } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js";
+import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine.js";
 import { ActionEconomyPersistence } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js";
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, getEffectiveCritRange, getCriticalMultiplier } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
@@ -160,6 +163,38 @@ function resolveTargetContext(options = {}, fallbackTarget = null, coverBonus = 
  * // Roll bulk attacks against multiple targets
  * const results = await SWSERoll.rollBulkAttack(actor, weapon, targets);
  */
+/**
+ * Phase 5D-F: resolve the canonical selected form an Autofire / Burst Fire attack is made with. Autofire consumes the same
+ * authority as every other attack (profile, branch, range, ammunition, damage, special mechanics) -- it never reconstructs the
+ * attack from the Item's default profile. When no explicit selection is carried and the default form cannot autofire, the
+ * weapon's unique autofire-capable form (structured rateOfFire / mode) is the selection; none -> refused.
+ *   legacy/custom weapon -> { source:'legacy' } (existing property-based capability check stays)
+ *   unresolvable / not autofire-capable canonical form -> { error } (refused before anything is spent)
+ */
+export function resolveAutofireForm(weapon, options = {}) {
+  const sel = { ...attackSelectionOf(options.weaponForm ?? options), ...(options.answers ? { answers: options.answers } : {}) };
+  try {
+    let runtime = resolveAttackWeaponRuntime(weapon, sel);
+    if (runtime.source !== 'canonical') return { source: 'legacy' };
+    let shape = resolveAttackShapeFor(runtime, sel);
+    if (!shape.fireModes.autofire) {
+      const explicit = !!(sel.profileId || sel.modeId);
+      const candidates = explicit ? [] : buildAttackForms(weapon, {}).forms.filter((f) => {
+        try { return resolveAttackShapeFor(resolveAttackWeaponRuntime(weapon, { ...sel, profileId: f.profileId, configurationId: f.configurationId ?? sel.configurationId, modeId: f.modeId ?? undefined }), sel).fireModes.autofire; } catch (err) { if (err instanceof WeaponRuntimeError) return false; throw err; }
+      });
+      if (candidates.length < 1) return { error: new WeaponRuntimeError('attack-shape-illegal', `${runtime.identityKey}/${runtime.profile.id} cannot autofire`, { identityKey: runtime.identityKey, profileId: runtime.profile.id, reason: 'form-cannot-autofire' }) };
+      const pick = candidates[0];
+      Object.assign(sel, { profileId: pick.profileId, ...(pick.configurationId ? { configurationId: pick.configurationId } : {}), ...(pick.modeId ? { modeId: pick.modeId } : {}) });
+      runtime = resolveAttackWeaponRuntime(weapon, sel);
+      shape = resolveAttackShapeFor(runtime, sel);
+    }
+    return { source: 'canonical', runtime, shape, selection: sel, form: weaponFormRecord(runtime, runtime.resolved.selection.damageMode) };
+  } catch (err) {
+    if (!(err instanceof WeaponRuntimeError)) throw err;
+    return { error: err };
+  }
+}
+
 export class SWSERoll {
 
   /* ========================================================================== */
@@ -519,8 +554,15 @@ export class SWSERoll {
     }
 
     try {
-      // Check if weapon has autofire capability
-      const hasAutofire = weapon.system?.properties?.includes('autofire') ||
+      // Check if weapon has autofire capability. Canonical weapons: the selected form's structured fire modes; legacy: Item properties.
+      const canon = resolveAutofireForm(weapon, options);
+      if (canon.error) {
+        reportWeaponRuntimeError(canon.error, { notify: false });
+        ui.notifications.warn(`${weapon.name} cannot autofire: ${canon.error.message}`);
+        return null;
+      }
+      const isCanonical = canon.source === 'canonical';
+      const hasAutofire = isCanonical || weapon.system?.properties?.includes('autofire') ||
                           weapon.system?.strippedFeatures?.autofire === true;
       if (!hasAutofire) {
         ui.notifications.warn(`${weapon.name} does not have autofire capability.`);
@@ -530,7 +572,8 @@ export class SWSERoll {
       // Get ammunition info. Ammo is enforced only when the Track Blaster
       // Charges house rule is enabled and the weapon has an ammo pool.
       const ammo = weapon.system?.ammunition;
-      const ammoRequired = options.burstFire ? 5 : 10;
+      // Phase 5D-F: canonical autofire units come from the selected form (Burst Fire's five shots are the feat's own cost)
+      const ammoRequired = options.burstFire ? 5 : (isCanonical && Number.isFinite(canon.shape.autofireUnits) ? canon.shape.autofireUnits : 10);
       const currentAmmo = ammo?.current ?? 0;
       const enforceAmmo = AmmoSystem.isTrackingEnabled() && AmmoSystem.weaponUsesAmmunition(weapon);
 
@@ -591,8 +634,29 @@ export class SWSERoll {
       const autofirePenalty = (options.braced && !options.burstFire) ? -2 : -5;
 
       // Calculate attack bonus
-      const atkBonus = computeAttackBonus(actor, weapon);
-      const totalBonus = atkBonus + autofirePenalty + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
+      // Phase 5D-F: a canonical autofire attack uses the SAME attack composition as every other attack (proficiency of the selected
+      // form, canonical range band penalty, typed modifiers); Burst Fire's -5 comes from its own attack option, so the separate
+      // autofire penalty is not added a second time. Legacy weapons keep computeAttackBonus.
+      let totalBonus;
+      if (isCanonical) {
+        const comp = await computeFinalAttackComposition(actor, weapon, {
+          ...canon.selection,
+          rangeBand: options.rangeBand ?? null,
+          autofire: true, attackMode: 'autofire', fireMode: options.burstFire ? 'burst' : 'autofire',
+          combatOptions: { ...(options.attackOptions ?? options.combatOptions ?? {}), ...(options.burstFire ? { burstFire: true } : {}) },
+          sequencePenalty: options.burstFire ? 0 : autofirePenalty,
+          customModifier: modifiers.customModifier, situationalBonus: modifiers.situationalBonus,
+        });
+        if (!comp.ok) {
+          if (comp.weaponRuntimeError) reportWeaponRuntimeError(comp.weaponRuntimeError, { notify: false });
+          ui.notifications.error(`Autofire could not be resolved: ${comp.weaponRuntimeError?.message ?? comp.reason}`);
+          return null;
+        }
+        totalBonus = comp.atkBonus + fpBonus;
+      } else {
+        const atkBonus = computeAttackBonus(actor, weapon);
+        totalBonus = atkBonus + autofirePenalty + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
+      }
       context.attackBonus = totalBonus;
 
       // Build formula
@@ -630,6 +694,16 @@ export class SWSERoll {
           // Roll damage
           let damageRoll = null;
 
+          if (isCanonical) {
+            // Phase 5D-F: canonical damage of the selected form; Burst Fire's +2 weapon dice come from the Burst Fire option through the
+            // one damage composition (no virtual weapon with rewritten dice)
+            damageRoll = await rollDamage(actor, weapon, {
+              ...canon.selection, weaponForm: canon.form,
+              isCritical: critConfirmed, critMultiplier: critConfirmed ? critMultiplier : 1,
+              autofire: true, attackMode: 'autofire',
+              combatOptions: { ...(options.attackOptions ?? options.combatOptions ?? {}), ...(options.burstFire ? { burstFire: true } : {}) },
+            });
+          } else
           // Burst Fire adds 2 extra damage dice (same type as weapon)
           if (options.burstFire) {
             // Extract the dice type from weapon damage (e.g., "3d10" -> "d10")
@@ -770,6 +844,12 @@ export class SWSERoll {
 
         </div>
       `;
+
+      // Phase 5D-F consumer-defect fix: this path referenced an `attackRerollOptions` that was never defined, so every Autofire/Burst Fire
+      // threw a ReferenceError AFTER consuming ammunition and rolling damage ("Autofire roll failed"). Built here exactly as rollAttack does.
+      const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
+        ...options, formula, weaponId: weapon.id, isHit: targetResults.length ? targetResults.some((t) => t.isHit) : null, target: context.targets?.[0] ?? null
+      });
 
       const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),

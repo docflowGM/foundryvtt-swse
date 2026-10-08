@@ -28,8 +28,9 @@ import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/syst
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
-import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
-import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { WeaponRuntimeError, ERROR_CODES, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
+import { abilityProhibitedForShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
+import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
@@ -182,9 +183,12 @@ function withCanonicalWeaponRuntime(weapon, rollOptions) {
     assertAttackFormResolvable(weaponRuntime, { damageMode: damageMode ?? null, rangeBand: rollOptions.rangeBand ?? null });
     // Phase 5D-D: the selected form's canonical per-attack resource units feed the existing AmmoSystem cost rule (read-only here;
     // spending still happens exactly once, in AmmoSystem.spendForWorkflow). 'pending' leaves the existing rule untouched.
+    // Phase 5D-F: attack-shape legality of the selected form (firing constraints / fire modes) -- refused BEFORE any cost is spent
+    const shape = resolveAttackShapeFor(weaponRuntime, rollOptions);
+    assertAttackShapeLegal(shape, rollOptions);
     const resource = resolveAttackResourceCost(weaponRuntime, { damageMode: damageMode ?? null });
     const canonicalAmmoUnits = resource && resource.status !== 'pending' ? resource.units : undefined;
-    return { rollOptions: { ...rollOptions, ...(damageMode === 'stun' ? { damageMode } : {}), weaponRuntime, canonicalResource: resource, ...(canonicalAmmoUnits !== undefined ? { canonicalAmmoUnits } : {}), ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) } };
+    return { rollOptions: { ...rollOptions, ...(damageMode === 'stun' ? { damageMode } : {}), weaponRuntime, canonicalResource: resource, canonicalAutofireUnits: shape.autofireUnits ?? undefined, ...(canonicalAmmoUnits !== undefined ? { canonicalAmmoUnits } : {}), ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) } };
   } catch (err) {
     if (!(err instanceof WeaponRuntimeError)) throw err;
     return { error: err };
@@ -210,7 +214,13 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions) {
   const mechanics = cd.mechanics ?? [];
   const carried = rollOptions.special?.answers ?? rollOptions.workflowContext?.special?.answers ?? {};
   const target = getTargetActorFromOptions(rollOptions);
-  const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried });
+  // Phase 5D-F: the multi-attack abilities actually in use on THIS attack (sequence package + active Rapid Shot/Strike option)
+  const activeUses = [];
+  if (rollOptions.packageType === 'doubleAttack') activeUses.push('double-attack');
+  if (rollOptions.packageType === 'tripleAttack') activeUses.push('triple-attack');
+  if (optionActive(rollOptions, 'rapidShot')) activeUses.push('rapid-shot');
+  if (optionActive(rollOptions, 'rapidStrike')) activeUses.push('rapid-strike');
+  const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried, activeUses });
   if (stage.unresolved.length) ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'}: ${stage.unresolved.length} conditional attack modifier(s) could not be evaluated and were not applied (GM adjudication).`);
   if (!stage.contributions.length) return { rollOptions, mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore };
   const contributions = stage.contributions.map((c) => createModifier({
@@ -221,6 +231,29 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions) {
     rollOptions: { ...rollOptions, situationalContributions: [...(Array.isArray(rollOptions.situationalContributions) ? rollOptions.situationalContributions : []), ...contributions] },
     mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore
   };
+}
+
+const SHAPE_OPTION_ABILITIES = Object.freeze({ rapidShot: 'Rapid Shot', burstFire: 'Burst Fire' });
+const optionActive = (rollOptions, id) => { const v = (rollOptions.combatOptions ?? rollOptions.attackOptions ?? {})[id]; return !!v && v !== '0' && v !== 0; };
+
+/**
+ * Phase 5D-F: structured firing constraints / fire modes of the selected canonical form decide whether this attack SHAPE is legal.
+ *   - Rapid Shot / Burst Fire (abilities that expend multiple shots) on a form that prohibits them (constraint or declared PROHIBITED)
+ *   - Burst Fire on a form that cannot autofire
+ *   - a normal single attack on an autofire-only form
+ * Throws a WeaponRuntimeError; rollAttack's existing canonical error path refuses before any ammunition/action cost.
+ */
+function assertAttackShapeLegal(shape, rollOptions) {
+  if (shape?.source !== 'canonical') return;
+  const burst = optionActive(rollOptions, 'burstFire');
+  const autofireMode = rollOptions.autofire === true || rollOptions.attackMode === 'autofire' || rollOptions.fireMode === 'autofire' || burst;
+  for (const [id, ability] of Object.entries(SHAPE_OPTION_ABILITIES)) {
+    if (!optionActive(rollOptions, id)) continue;
+    const bad = abilityProhibitedForShape(shape, ability, { expendsMultipleShots: true });
+    if (bad) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `${ability} cannot be used with ${shape.identityKey}/${shape.profileId}: ${bad.reason}`, { identityKey: shape.identityKey, profileId: shape.profileId, ability, reason: bad.reason });
+  }
+  if (burst && !shape.fireModes.autofire) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `Burst Fire requires an autofire-capable form; ${shape.identityKey}/${shape.profileId} cannot autofire`, { identityKey: shape.identityKey, profileId: shape.profileId, ability: 'Burst Fire', reason: 'form-cannot-autofire' });
+  if (shape.fireModes.autofireOnly && !autofireMode) throw new WeaponRuntimeError(ERROR_CODES.ATTACK_SHAPE_ILLEGAL, `${shape.identityKey}/${shape.profileId} can only fire in autofire mode`, { identityKey: shape.identityKey, profileId: shape.profileId, reason: 'autofire-only' });
 }
 
 function getFightingDefensivelyAttackPenalty(actor, options = {}) {
@@ -517,9 +550,16 @@ export async function rollAttack(actor, weapon, options = {}) {
     defense: resolvedTarget.defenseType ?? workflowContext?.attack?.defense ?? null,
     // Phase 5D-C: carry the exact canonical attack form to the later Damage roll (null/absent for legacy weapons)
     weaponForm: weaponFormRecord(rollOptions.weaponRuntime, rollOptions.damageMode ?? null) ?? undefined,
+    // Phase 5D-F: this attack's place in its sequence and the shape it was made with (damage clicked from attack #2 reads attack #2)
+    attackShape: rollOptions.weaponRuntime?.source === 'canonical' ? {
+      fireMode: rollOptions.fireMode ?? (optionActive(rollOptions, 'burstFire') ? 'burst' : (rollOptions.autofire === true || rollOptions.attackMode === 'autofire') ? 'autofire' : 'single'),
+      attackIndex: Number.isFinite(rollOptions.sequenceIndex) ? rollOptions.sequenceIndex : 0,
+      sequenceId: rollOptions.sequenceId ?? undefined, sequenceLength: Number.isFinite(rollOptions.sequenceLength) ? rollOptions.sequenceLength : 1,
+      packageType: rollOptions.packageType ?? undefined, handRole: rollOptions.handRole ?? undefined, endId: rollOptions.weaponRuntime.endId ?? undefined,
+    } : undefined,
     // Phase 5D-E: carry the special-mechanic state (classified mechanics, stored answers, evaluated CT riders) to Damage/Apply
-    special: specialStage.mechanics.length ? {
-      mechanics: summarizeMechanics(specialStage.mechanics), answers: specialStage.answers, unresolved: specialStage.unresolved, drInteraction: specialStage.drIgnore ? 'ignore' : undefined,
+    special: (specialStage.mechanics.length || Object.keys({ ...specialStage.answers, ...(rollOptions.answers ?? {}) }).length) ? {
+      mechanics: summarizeMechanics(specialStage.mechanics), answers: { ...specialStage.answers, ...(rollOptions.answers ?? {}) }, unresolved: specialStage.unresolved, drInteraction: specialStage.drIgnore ? 'ignore' : undefined,
       attackTotal: roll.total,
       records: evaluateAttackOutcomeSpecials(specialStage.mechanics, {
         hit: isHit, attackTotal: roll.total,

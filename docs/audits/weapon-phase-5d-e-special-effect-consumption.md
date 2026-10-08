@@ -24,6 +24,8 @@ Out of scope (→ 5D-F): dual wield, double-weapon full attacks, Multiattack/Dou
 | unclassified | 0 |
 | resolve errors | 0 |
 
+> **5D-F note:** the `multi-attack-interaction` family (and the weapon-declared Rapid Strike penalty removal) moved from DEFER to AUTO in Phase 5D-F, so the committed census now reads AUTO 63 / DEFER 42 / PROMPT 8 / VALIDATION_ONLY 20 / DISPLAY_ONLY 3. The counts below are the 5D-E state.
+
 ## 4. Taxonomy (family → policy → timing)
 
 Classification is by **schema structure** (field names / enumerated values), never by weapon name or description text. The single table is `FAMILIES` in `scripts/items/weapon-runtime/special-mechanics.js`; the census embeds it.

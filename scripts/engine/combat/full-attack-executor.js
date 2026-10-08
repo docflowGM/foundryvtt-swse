@@ -29,6 +29,8 @@
 
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
+import { resolveAttackWeaponRuntime, resolveAttackResourceCost, attackSelectionOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { WeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
 import { buildInitialAttackEntry, FULL_ATTACK_SCHEMA_VERSION } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-message-state.js";
 import { renderFullAttackCardContent } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-card-renderer.js";
@@ -40,6 +42,7 @@ import {
   getTripleAttackGroups as _getTripleAttackGroups,
   getWeaponGroup        as _getWeaponGroup,
   isDoubleWeapon        as _isDoubleWeapon,
+  collectPlanAnswers,
   FULL_ATTACK_PACKAGES,
 } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 
@@ -51,16 +54,29 @@ function _weaponKey(weapon) {
   return weapon?.id ?? weapon?._id ?? weapon?.uuid ?? weapon?.name ?? '';
 }
 
-function _aggregateFullAttackAmmo(actor, sequence, options = {}) {
+export function _aggregateFullAttackAmmo(actor, sequence, options = {}) {
   const byWeapon = new Map();
   for (const attack of sequence?.attacks ?? []) {
     const weapon = attack?.weapon;
     if (!weapon) continue;
+    // Phase 5D-F: each attack is costed from ITS OWN selected canonical form (a double-weapon end with no resource, a dual-wield weapon
+    // with its own pool, Variable Blaster modes...) -- the same cost rollAttack will spend, so the sequence can be preflighted whole
+    const selection = attackSelectionOf(attack.form);
+    let canonicalAmmoUnits;
+    try {
+      const runtime = resolveAttackWeaponRuntime(weapon, { ...selection, answers: options.answers });
+      const resource = resolveAttackResourceCost(runtime, { damageMode: selection.damageMode ?? null });
+      if (resource && resource.status !== 'pending') canonicalAmmoUnits = resource.units;
+    } catch (err) {
+      if (!(err instanceof WeaponRuntimeError)) throw err;
+      throw err; // an unresolvable canonical form refuses the whole sequence before anything is spent (caller reports)
+    }
     const amount = AmmoSystem.resolveAmmoCost({
       weapon,
       workflowContext: options.combatContext ?? null,
       options: {
         ...options,
+        ...(canonicalAmmoUnits !== undefined ? { canonicalAmmoUnits } : {}),
         sequencePenalty: attack.finalPenalty,
         actionId: options.actionId ?? 'full-attack'
       }
@@ -223,10 +239,15 @@ export class FullAttackExecutor {
     const equipped = getEquippedWeapons(actor);
 
     // 1. Show dialog — returns confirmed sequence or null
+    // Phase 5D-F: host-configuration conditions the runtime cannot observe (e.g. "is the host rifle's stock folded?") are asked ONCE
+    // here and carried as stored answers into planning, rolling and damage -- never re-asked per attack.
+    const answers = await collectPlanAnswers(options.primaryWeapon ?? equipped.primary, options);
+    const planOptions = { primaryForm: options.primaryForm, offhandForm: options.offhandForm, answers };
     const sequence = await showFullAttackDialog(actor, {
       requestedPackage: options.requestedPackage,
       primaryWeapon:    options.primaryWeapon ?? equipped.primary,
       offhandWeapon:    options.offhandWeapon ?? (equipped.isDoubleWeapon ? null : equipped.offhand),
+      ...planOptions,
     });
 
     if (!sequence || !sequence.legal) {
@@ -236,9 +257,16 @@ export class FullAttackExecutor {
 
     // 2. Preflight ammunition before spending action economy. Individual
     // rollAttack() calls perform the actual spend with rollback support.
-    const ammoChecks = _aggregateFullAttackAmmo(actor, sequence, options);
+    let ammoChecks;
+    try {
+      ammoChecks = _aggregateFullAttackAmmo(actor, sequence, { ...options, answers });
+    } catch (err) {
+      if (!(err instanceof WeaponRuntimeError)) throw err;
+      ui?.notifications?.error?.(`Full Attack could not be resolved: ${err.message}`);
+      return null;
+    }
     for (const check of ammoChecks) {
-      const preflight = AmmoSystem.preflightAmmunition(actor, check.weapon, check.amount, options);
+      const preflight = AmmoSystem.preflightAmmunition(actor, check.weapon, check.amount, { ...options, answers });
       if (preflight?.ok === false) {
         ui?.notifications?.error?.(preflight.message || `${check.weapon?.name ?? 'Weapon'} does not have enough ammunition.`);
         return null;
@@ -292,6 +320,13 @@ export class FullAttackExecutor {
       try {
         const result = await rollAttack(actor, attack.weapon, {
           ...rollOptions,
+          // Phase 5D-F: every attack of the sequence is rolled with ITS OWN selected canonical form (profile/configuration/mode/
+          // payload/end) -- never the Item's default profile -- and records its place in the sequence on its workflow context
+          ...attackSelectionOf(attack.form),
+          answers,
+          fireMode: attack.fireMode ?? 'single',
+          handRole: attack.handRole ?? null,
+          packageType: sequence.packageType,
           sequencePenalty: attack.finalPenalty,
           attackInstanceId: `${sequenceId}-${index}`,
           sequenceIndex: index,

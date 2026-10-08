@@ -35,6 +35,14 @@ const ALLOWED_RUNTIME_CONSUMERS = new Set([
   'scripts/ui/weapon-config-dialog.js',
   'scripts/combat/rolls/damage.js',
   'scripts/engine/combat/canonical-special-effects.js', // 5D-E: Apply-Damage execution of the selected form's special effects
+  // 5D-F attack-shape convergence: planners/executor/gates read the selected form's structured capabilities (no names)
+  'scripts/combat/multi-attack.js',
+  'scripts/engine/combat/full-attack-executor.js',
+  'scripts/engine/combat/dual-wield-combat-shape-resolver.js',
+  'scripts/engine/combat/combat-option-resolver.js',
+  'scripts/engine/combat/weapon-target-gate-classifiers.js',
+  'scripts/combat/rolls/enhanced-rolls.js',
+  'scripts/engine/combat/features/combat-feature-handlers.js',
 ]);
 const refs = execFileSync('git', ['ls-files', 'scripts', 'index.js', 'system.json'], { cwd: ROOT }).toString().split('\n').filter((f) => f.endsWith('.js') && !f.startsWith('scripts/items/weapon-runtime/'));
 for (const f of refs) {

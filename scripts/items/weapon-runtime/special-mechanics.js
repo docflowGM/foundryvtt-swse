@@ -35,7 +35,7 @@ export const FAMILIES = Object.freeze({
   'attack-modifier-auto':     { policy: POLICY.AUTO,     timing: TIMING.ON_ATTACK,      note: 'conditional attack modifier whose condition is observable from the actor/target' },
   'attack-modifier-prompt':   { policy: POLICY.PROMPT,   timing: TIMING.ON_ATTACK,      note: 'conditional attack modifier whose condition is not observable; answered once and stored' },
   'ct-rider-prompt':          { policy: POLICY.PROMPT,   timing: TIMING.AFTER_DAMAGE,   note: 'condition-track rider whose trigger cannot be evaluated automatically; answered once and stored' },
-  'multi-attack-interaction': { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'depends on Double/Triple Attack/Rapid Shot/Autofire (Phase 5D-F)' },
+  'multi-attack-interaction': { policy: POLICY.AUTO,     timing: TIMING.ON_ATTACK,      note: 'attack modifier that applies while Double/Triple Attack, Rapid Shot or Rapid Strike is in use (Phase 5D-F: consumed at attack time from the active multi-attack shape)' },
   'defensive-interaction':    { policy: POLICY.DEFER,    timing: TIMING.CONTINUOUS,     note: 'modifies the wielder\'s defenses/Use the Force checks rather than this single attack' },
   'grab-grapple':             { policy: POLICY.DEFER,    timing: TIMING.ON_HIT,         note: 'grapple/net/snare state machine (existing grapple system; multi-step workflow)' },
   'status-condition':         { policy: POLICY.DEFER,    timing: TIMING.AFTER_DAMAGE,   note: 'status condition (prone/disabled/concealment) with no single existing setter' },
@@ -85,11 +85,24 @@ function classifyTriggeredEffect(e, index, formRefused) {
   return mech('unclassified', id, { source: src, trigger: e.trigger ?? null, data: e });
 }
 
+const USE_TOKENS = [[/double attack/i, 'double-attack'], [/triple attack/i, 'triple-attack'], [/rapid shot/i, 'rapid-shot'], [/rapid strike/i, 'rapid-strike']];
+/** Multi-attack abilities a conditional modifier names (structured `when.usesAny`, else the enumerated ability names in its condition). */
+function multiAttackUses(m) {
+  const names = asArray(m.when?.usesAny).length ? asArray(m.when.usesAny) : [typeof m.condition === 'string' ? m.condition : ''];
+  const out = new Set();
+  for (const n of names) for (const [re, token] of USE_TOKENS) if (re.test(String(n))) out.add(token);
+  return [...out];
+}
+
 function classifyConditionalModifier(m, index) {
   const id = m.id ?? `conditional-${index}`;
   const src = `profile.conditionalModifiers[${index}]`;
   const condText = typeof m.condition === 'string' ? m.condition : '';
-  if (MULTI_ATTACK_RE.test(condText) || m.when?.usesAny) return mech('multi-attack-interaction', id, { source: src, data: m });
+  if (MULTI_ATTACK_RE.test(condText) || m.when?.usesAny) {
+    const uses = multiAttackUses(m);
+    if (m.target === 'attackRoll' && uses.length && Number.isFinite(Number(m.value))) return mech('multi-attack-interaction', id, { source: src, uses, value: Number(m.value), data: m });
+    return mech('defensive-interaction', id, { source: src, data: m, reason: 'multi-attack condition without a resolvable attack modifier' });
+  }
   if (m.target === 'attackRoll') {
     const c = m.condition;
     if (c && typeof c === 'object' && typeof c.targetSize === 'string') return mech('attack-modifier-auto', id, { source: src, value: Number(m.value), condition: { targetSize: c.targetSize }, data: m });
@@ -107,7 +120,7 @@ function classifyConditionalModifier(m, index) {
  * @param {boolean} [opts.formRefused]   the form has no ordinary damage (special action / effect-only payload)
  * @param {string}  [opts.stunCapability]
  */
-export function extractSpecialMechanics(def, { damageProfile = null, operation = null, formRefused = false, stunCapability = null, payloadEffects = [], drInteraction = null } = {}) {
+export function extractSpecialMechanics(def, { damageProfile = null, operation = null, formRefused = false, stunCapability = null, payloadEffects = [], drInteraction = null, abilityInteractions = [] } = {}) {
   const out = [];
   if (!def) return Object.freeze(out);
   const mult = Number(damageProfile?.damageMultiplier ?? def.damageMultiplier ?? 1);
@@ -127,6 +140,10 @@ export function extractSpecialMechanics(def, { damageProfile = null, operation =
   asArray(def.conditionalModifiers).forEach((m, i) => out.push(classifyConditionalModifier(m, i)));
   const defKey = def.attackResolution?.defense;
   if (defKey === 'fortitude' || defKey === 'will') out.push(mech('attack-resolution', `defense:${defKey}`, { defense: defKey, source: 'profile.attackResolution.defense' }));
+  // weapon-declared ability interaction that removes an ability's attack penalty (e.g. Rapid Strike): the weapon declares, the ability applies
+  asArray(abilityInteractions).forEach((a, i) => {
+    if (a?.relation === 'REMOVE_RAPID_STRIKE_ATTACK_PENALTY') out.push(mech('multi-attack-interaction', `remove-rapid-strike-penalty-${i}`, { source: 'weapon.abilityInteractions', uses: ['rapid-strike'], value: 2, data: a }));
+  });
   if (def.firingConstraints) out.push(mech('firing-constraint', 'firing-constraints', { source: 'profile.firingConstraints', data: def.firingConstraints }));
   if (def.preparedAttack) out.push(mech('prepared-attack', def.preparedAttack.id ?? 'prepared-attack', { source: 'profile.preparedAttack', data: def.preparedAttack }));
   if (drInteraction?.mode === 'ignore') out.push(mech('dr-ignore', 'dr-ignore', { source: 'weapon.damageReductionInteraction', exceptions: asArray(drInteraction.exceptions) }));
@@ -215,9 +232,14 @@ export function evaluateCtRiderAttackCondition(m, { hit, attackTotal = null, def
  * `unresolved` and NOT applied (never guessed).
  * @returns {Promise<{contributions:Array, answers:object, unresolved:Array, drIgnore:boolean}>}
  */
-export async function resolveAttackStageModifiers(mechanics, { targetSize = null, answers = {} } = {}) {
+export async function resolveAttackStageModifiers(mechanics, { targetSize = null, answers = {}, activeUses = [] } = {}) {
   const contributions = [], unresolved = [], out = { ...answers };
   for (const m of asArray(mechanics)) {
+    if (m.family === 'multi-attack-interaction') {
+      // AUTO from the active multi-attack shape: applies only while one of the abilities it names is actually in use on this attack
+      if (asArray(m.uses).some((u) => asArray(activeUses).includes(u))) contributions.push({ id: m.id, value: m.value, how: 'multi-attack-shape' });
+      continue;
+    }
     if (m.family !== 'attack-modifier-auto' && m.family !== 'attack-modifier-prompt') continue;
     let applies = null, how = 'auto';
     if (m.family === 'attack-modifier-auto') applies = evaluateTargetSizeCondition(m.condition, targetSize);

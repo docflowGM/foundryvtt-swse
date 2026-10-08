@@ -95,7 +95,8 @@ export class AmmoSystem {
     if (explicit > 0) return explicit;
 
     if (hasTruthyOption(options, 'burstFire') || tags.has('burstfire') || tags.has('burst-fire') || context?.attack?.isBurstFire === true) return 5;
-    if (hasTruthyOption(options, 'autofire') || tags.has('autofire') || context?.attack?.isAutofire === true) return 10;
+    // Phase 5D-F: a canonical autofire-capable form states its own autofire units; the legacy 10 remains the fallback
+    if (hasTruthyOption(options, 'autofire') || tags.has('autofire') || context?.attack?.isAutofire === true) return Number.isFinite(options?.canonicalAutofireUnits) ? Math.max(0, Math.floor(options.canonicalAutofireUnits)) : 10;
 
     // Phase 5D-D: a canonical weapon's selected attack form states its own per-attack units (e.g. Variable Blaster medium x5,
     // double-shot x2, a melee form of a ranged weapon 0). Supplied by the weapon-runtime attack consumer; absent for legacy

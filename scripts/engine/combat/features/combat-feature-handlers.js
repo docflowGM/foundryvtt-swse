@@ -1,6 +1,7 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js';
-import { buildFullAttackSequence, FULL_ATTACK_PACKAGES, getEquippedWeapons, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { buildFullAttackSequence, collectPlanAnswers, FULL_ATTACK_PACKAGES, getEquippedWeapons, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { attackSelectionOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
 import {
@@ -228,7 +229,8 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
   }
 
   const equipped = getEquippedWeapons(actor);
-  let plan = buildFullAttackSequence(actor, { requestedPackage: spec.packageType, primaryWeapon: equipped.primary });
+  const planAnswers = await collectPlanAnswers(equipped.primary, {});
+  let plan = buildFullAttackSequence(actor, { requestedPackage: spec.packageType, primaryWeapon: equipped.primary, answers: planAnswers });
   if (!plan?.legal) plan = fallbackMultiAttackPlan(actor, spec, equipped.primary);
   if (!plan?.legal || !plan.attacks?.length) {
     ui?.notifications?.warn?.(plan?.warnings?.join(' ') || 'No legal multiattack sequence is available.');
@@ -284,8 +286,19 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
       if (spend?.allowed === false || spend?.permitted === false) return;
     }
 
+    // Phase 5D-F: the planned canonical form of THIS attack seeds the roll (a selection the player made in the dialog wins); fire mode,
+    // hand role and package are recorded on the attack's own workflow context
+    const planned = attackSelectionOf(step.form);
+    const picked = { ...planned };
+    for (const k of Object.keys(planned)) if (options[k] != null) picked[k] = options[k];
     const result = await rollAttack(actor, weapon, {
+      ...planned,
       ...options,
+      ...picked,
+      answers: planAnswers,
+      fireMode: step.fireMode ?? 'single',
+      handRole: step.handRole ?? null,
+      packageType: spec.packageType,
       sourceElement: element,
       sequencePenalty: Number(step.finalPenalty ?? 0) + Number(options.sequencePenalty ?? 0),
       actionId: spec.actionId,

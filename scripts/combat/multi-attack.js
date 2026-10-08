@@ -13,6 +13,9 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
+import { shapeOfWeapon, canonicalProficiencyOf, doubleWeaponEnds, attackSelectionOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
+import { featChoiceSelectors, featChoiceMatchesShape, normalizeToken, sequenceConstraintViolation } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 
 /**
  * Weapon groups for Double/Triple Attack feats
@@ -45,8 +48,12 @@ export const MULTI_ATTACK_FEATS = Object.freeze({
  * @param {Item} weapon - The weapon item
  * @returns {string|null} The weapon group or null
  */
-export function getWeaponGroup(weapon) {
+export function getWeaponGroup(weapon, context = {}) {
   if (!weapon) {return null;}
+  // Phase 5D-F: a canonical weapon's group is its selected profile's structured proficiency family -- never its name/Item text.
+  const shape = shapeOfWeapon(weapon, context);
+  if (shape.source === 'canonical') {return shape.groupKey;}
+  if (shape.source === 'error') {return null;}
 
   const name = (weapon.name || '').toLowerCase();
   const proficiency = weapon.system?.proficiency?.toLowerCase() || '';
@@ -113,8 +120,13 @@ export function getWeaponGroup(weapon) {
  * @param {Item} weapon - The weapon item
  * @returns {boolean}
  */
-export function isDoubleWeapon(weapon) {
+export function isDoubleWeapon(weapon, context = {}) {
   if (!weapon) {return false;}
+  // Phase 5D-F: canonical double weapons are structural -- a profile-level doubleWeapon quality in the selected configuration
+  // (native double weapons, Amphistaff quarterstaff only) or a valid host configuration (rifle + mounted Vibrobayonet).
+  const shape = shapeOfWeapon(weapon, context);
+  if (shape.source === 'canonical') {return shape.doubleWeapon.isDouble === true;}
+  if (shape.source === 'error') {return false;}
 
   const name = (weapon.name || '').toLowerCase();
   const properties = weapon.system?.properties || [];
@@ -219,6 +231,32 @@ export function getTripleAttackGroups(actor) {
 }
 
 /**
+ * Phase 5D-F: does the actor have Double/Triple Attack for THIS weapon form?
+ *   canonical weapon -> the feat's own chosen selector (exotic weapon identity or proficiency group) joined to the selected
+ *                       canonical form's identity/group (no weapon name, no Item text)
+ *   legacy/homebrew  -> the existing group-name path, unchanged
+ * @param {'double'|'triple'} kind
+ */
+export function actorHasMultiAttackFor(actor, kind, weapon, context = {}) {
+  const slug = kind === 'triple' ? 'triple-attack' : 'double-attack';
+  const shape = shapeOfWeapon(weapon, context);
+  if (shape.source === 'canonical') {
+    for (const item of actor?.items ?? []) {
+      if (item?.type !== 'feat' || item.system?.disabled === true) {continue;}
+      const identity = String(item.flags?.swse?.canonicalFeat?.identityKey ?? '');
+      const base = normalizeToken(String(item.name ?? '').replace(/\([^)]*\)/g, ''));
+      if (!(identity.endsWith(`::${slug}`) || base === slug)) {continue;}
+      if (featChoiceMatchesShape(featChoiceSelectors(item, { actor, choiceKind: `${kind}_attack_weapon` }), shape)) {return true;}
+    }
+    return false;
+  }
+  if (shape.source === 'error') {return false;}
+  const group = getWeaponGroup(weapon);
+  const groups = kind === 'triple' ? getTripleAttackGroups(actor) : getDoubleAttackGroups(actor);
+  return !!group && groups.has(group);
+}
+
+/**
  * Get the actor's Dual Weapon Mastery level (0, 1, 2, or 3)
  * @param {Actor} actor - The actor
  * @returns {number} DWM level (0 = none, 1 = DWM I, 2 = DWM II, 3 = DWM III)
@@ -301,9 +339,11 @@ export function getEquippedWeapons(actor) {
     equipped.offhand = equipped.primary;
   } else {
     // Look for separate offhand weapon
-    equipped.offhand = equippedWeapons.find(w =>
-      w.system?.isOffhand || (w.id !== equipped.primary?.id && equippedWeapons.length > 1)
-    );
+    equipped.offhand = equippedWeapons.find(w => w.system?.isOffhand)
+      // Phase 5D-F: a canonical weapon that is structurally eligible as a second weapon (worn, hands stay free) is the off-hand
+      // when none is designated -- no feat or name involved
+      ?? equippedWeapons.find(w => w.id !== equipped.primary?.id && shapeOfWeapon(w).dualWield?.eligibleAsSecondWeapon === true)
+      ?? equippedWeapons.find(w => (w.id !== equipped.primary?.id && equippedWeapons.length > 1));
   }
 
   return equipped;
@@ -386,6 +426,39 @@ export function getMultiattackReduction(actor, weaponGroup) {
 // ============================================================================
 
 /**
+ * Phase 5D-F: host-configuration conditions the runtime cannot observe (e.g. "is the host rifle's stock folded?") are asked ONCE
+ * before a sequence is planned; the answers travel with the plan, every attack's roll and its damage -- never re-asked per attack.
+ * Returns the (possibly extended) answers map. Unanswered conditions stay unanswered (the double weapon then stays unavailable).
+ */
+export async function collectPlanAnswers(weapon, options = {}) {
+  const answers = { ...(options.answers ?? {}) };
+  if (!weapon) {return answers;}
+  const pending = shapeOfWeapon(weapon, { ...attackSelectionOf(options.primaryForm), answers }).doubleWeapon?.pendingConditions ?? [];
+  for (const cond of pending) {
+    if (typeof answers[cond.promptId] === 'boolean') {continue;}
+    const ans = await askSpecialQuestion({ id: cond.promptId, family: 'host-configuration-condition', question: `${weapon.name}: ${String(cond.text).replace(/-/g, ' ')}?` });
+    if (ans === true || ans === false) {answers[cond.promptId] = ans;}
+  }
+  return answers;
+}
+
+function selectionOptions(options, which) {
+  const form = which === 'offhand' ? options.offhandForm : options.primaryForm;
+  return { ...attackSelectionOf(form), ...(options.answers ? { answers: options.answers } : {}) };
+}
+
+/** Proficiency with a weapon for multi-attack penalty rules: canonical selected-form proficiency, else the legacy Item flag. */
+function proficientWith(actor, weapon, selection) {
+  const canonical = canonicalProficiencyOf(weapon, actor, selection);
+  return canonical !== null ? canonical : weapon?.system?.proficient !== false;
+}
+
+/** Every attack entry records the canonical selection it must be rolled with, its fire mode and its position in the sequence. */
+function entryExtras(selection, index, extra = {}) {
+  return { form: attackSelectionOf(selection), fireMode: 'single', attackIndex: index, ...extra };
+}
+
+/**
  * Valid package types for buildFullAttackSequence.
  * @readonly
  */
@@ -441,14 +514,16 @@ export function buildFullAttackSequence(actor, options = {}) {
   // ── Normal Full Attack ────────────────────────────────────────────────────
   if (pkg === FULL_ATTACK_PACKAGES.NORMAL) {
     result.legal = true;
+    const sel = selectionOptions(options, 'primary');
     result.attacks.push({
       weapon: primaryWeapon,
       label: `${primaryWeapon.name} — Attack 1`,
-      weaponGroup: getWeaponGroup(primaryWeapon),
+      weaponGroup: getWeaponGroup(primaryWeapon, sel),
       basePenalty: 0,
       reduction: 0,
       finalPenalty: 0,
       penaltySource: 'Normal Full Attack',
+      ...entryExtras(sel, 0),
     });
     result.breakdown.push('Normal Full Attack: no multiattack penalty.');
     return result;
@@ -456,13 +531,18 @@ export function buildFullAttackSequence(actor, options = {}) {
 
   // ── Double Attack ─────────────────────────────────────────────────────────
   if (pkg === FULL_ATTACK_PACKAGES.DOUBLE_ATTACK) {
-    const weaponGroup = getWeaponGroup(primaryWeapon);
-    const doubleGroups = getDoubleAttackGroups(actor);
+    const sel = selectionOptions(options, 'primary');
+    const weaponGroup = getWeaponGroup(primaryWeapon, sel);
 
-    if (!weaponGroup || !doubleGroups.has(weaponGroup)) {
+    if (!actorHasMultiAttackFor(actor, 'double', primaryWeapon, sel)) {
       result.warnings.push(
         `Double Attack: actor does not have Double Attack for ${weaponGroup ?? 'this weapon'}.`
       );
+      return result;
+    }
+    const violation = sequenceConstraintViolation(shapeOfWeapon(primaryWeapon, sel), 2);
+    if (violation) {
+      result.warnings.push(`Double Attack: ${violation}.`);
       return result;
     }
 
@@ -482,6 +562,7 @@ export function buildFullAttackSequence(actor, options = {}) {
         penaltySource: reduction > 0
           ? `Double Attack + Multiattack Proficiency (${weaponGroup})`
           : 'Double Attack',
+        ...entryExtras(sel, i),
       });
     }
     result.breakdown.push(`Double Attack (${weaponGroup}): base penalty ${basePenalty}`);
@@ -494,12 +575,11 @@ export function buildFullAttackSequence(actor, options = {}) {
 
   // ── Triple Attack ─────────────────────────────────────────────────────────
   if (pkg === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK) {
-    const weaponGroup = getWeaponGroup(primaryWeapon);
-    const doubleGroups = getDoubleAttackGroups(actor);
-    const tripleGroups = getTripleAttackGroups(actor);
+    const sel = selectionOptions(options, 'primary');
+    const weaponGroup = getWeaponGroup(primaryWeapon, sel);
 
-    const hasDouble = weaponGroup && doubleGroups.has(weaponGroup);
-    const hasTriple = weaponGroup && tripleGroups.has(weaponGroup);
+    const hasDouble = actorHasMultiAttackFor(actor, 'double', primaryWeapon, sel);
+    const hasTriple = actorHasMultiAttackFor(actor, 'triple', primaryWeapon, sel);
 
     if (!hasDouble) {
       result.warnings.push(`Triple Attack requires Double Attack (${weaponGroup ?? 'this weapon'}).`);
@@ -510,6 +590,11 @@ export function buildFullAttackSequence(actor, options = {}) {
       return result;
     }
 
+    const violation = sequenceConstraintViolation(shapeOfWeapon(primaryWeapon, sel), 3);
+    if (violation) {
+      result.warnings.push(`Triple Attack: ${violation}.`);
+      return result;
+    }
     const basePenalty = -10;
     const reduction = getMultiattackReduction(actor, weaponGroup);
     const finalPenalty = Math.min(0, basePenalty + reduction);
@@ -526,6 +611,7 @@ export function buildFullAttackSequence(actor, options = {}) {
         penaltySource: reduction > 0
           ? `Triple Attack + Multiattack Proficiency (${weaponGroup})`
           : 'Triple Attack',
+        ...entryExtras(sel, i),
       });
     }
     result.breakdown.push(`Triple Attack (${weaponGroup}): base penalty ${basePenalty}`);
@@ -544,8 +630,10 @@ export function buildFullAttackSequence(actor, options = {}) {
     }
 
     const dwmLevel = getDualWeaponMasteryLevel(actor);
-    const primaryProficient = primaryWeapon.system?.proficient !== false;
-    const offhandProficient = offhandWeapon.system?.proficient !== false;
+    const priSel = selectionOptions(options, 'primary');
+    const offSel = selectionOptions(options, 'offhand');
+    const primaryProficient = proficientWith(actor, primaryWeapon, priSel);
+    const offhandProficient = proficientWith(actor, offhandWeapon, offSel);
     const dwmEligible = primaryProficient && offhandProficient;
 
     const basePenalty = -10;
@@ -566,20 +654,22 @@ export function buildFullAttackSequence(actor, options = {}) {
     result.attacks.push({
       weapon: primaryWeapon,
       label: `${primaryWeapon.name} — Main Hand`,
-      weaponGroup: getWeaponGroup(primaryWeapon),
+      weaponGroup: getWeaponGroup(primaryWeapon, priSel),
       basePenalty,
       reduction: basePenalty - finalPenalty,
       finalPenalty,
       penaltySource,
+      ...entryExtras(priSel, 0, { handRole: 'main' }),
     });
     result.attacks.push({
       weapon: offhandWeapon,
       label: `${offhandWeapon.name} — Off Hand`,
-      weaponGroup: getWeaponGroup(offhandWeapon),
+      weaponGroup: getWeaponGroup(offhandWeapon, offSel),
       basePenalty,
       reduction: basePenalty - finalPenalty,
       finalPenalty,
       penaltySource,
+      ...entryExtras(offSel, 1, { handRole: 'offhand' }),
     });
 
     result.breakdown.push(`Two-Weapon Attack: base penalty ${basePenalty} to all attacks`);
@@ -591,13 +681,23 @@ export function buildFullAttackSequence(actor, options = {}) {
   // ── Double-Weapon Attack ──────────────────────────────────────────────────
   if (pkg === FULL_ATTACK_PACKAGES.DOUBLE_WEAPON) {
     const doubleWep = equipped.isDoubleWeapon ? equipped.primary : primaryWeapon;
-    if (!doubleWep || !isDoubleWeapon(doubleWep)) {
+    const dwSel = selectionOptions(options, 'primary');
+    if (!doubleWep || !isDoubleWeapon(doubleWep, dwSel)) {
       result.warnings.push('Double-Weapon Attack requires a double weapon to be equipped.');
+      return result;
+    }
+    // canonical double weapon: each END is its own canonical form (profile-level ends, or host-configuration ends that resolve as
+    // their own identity/profile). A weapon that is double in this configuration but exposes fewer than two ends is refused.
+    const canonicalEnds = shapeOfWeapon(doubleWep, dwSel).source === 'canonical' ? doubleWeaponEnds(doubleWep, dwSel) : null;
+    if (canonicalEnds && canonicalEnds.length < 2) {
+      result.warnings.push('Double-Weapon Attack: the selected configuration does not expose two usable ends.');
       return result;
     }
 
     const dwmLevel = getDualWeaponMasteryLevel(actor);
-    const proficient = doubleWep.system?.proficient !== false;
+    const proficient = canonicalEnds
+      ? canonicalEnds.every((e) => proficientWith(actor, doubleWep, { ...dwSel, ...e.selection }))
+      : doubleWep.system?.proficient !== false;
     const dwmEligible = proficient;
 
     const basePenalty = -10;
@@ -615,24 +715,22 @@ export function buildFullAttackSequence(actor, options = {}) {
     }
 
     result.legal = true;
-    result.attacks.push({
-      weapon: doubleWep,
-      label: `${doubleWep.name} — Primary End`,
-      weaponGroup: getWeaponGroup(doubleWep),
-      basePenalty,
-      reduction: basePenalty - finalPenalty,
-      finalPenalty,
-      penaltySource,
-    });
-    result.attacks.push({
-      weapon: doubleWep,
-      label: `${doubleWep.name} — Secondary End`,
-      weaponGroup: getWeaponGroup(doubleWep),
-      basePenalty,
-      reduction: basePenalty - finalPenalty,
-      finalPenalty,
-      penaltySource,
-    });
+    const endEntry = (index, label, endRole) => {
+      const end = canonicalEnds?.[index] ?? null;
+      const sel = end ? { ...dwSel, ...end.selection } : dwSel;
+      return {
+        weapon: doubleWep,
+        label: `${doubleWep.name} — ${label}`,
+        weaponGroup: getWeaponGroup(doubleWep, sel),
+        basePenalty,
+        reduction: basePenalty - finalPenalty,
+        finalPenalty,
+        penaltySource,
+        ...entryExtras(end ? end.selection : dwSel, index, { handRole: endRole, ...(end ? { endId: end.endId, endVia: end.via } : {}) }),
+      };
+    };
+    result.attacks.push(endEntry(0, 'Primary End', 'double-primary'));
+    result.attacks.push(endEntry(1, 'Secondary End', 'double-secondary'));
 
     result.breakdown.push(`Double-Weapon Attack: base penalty ${basePenalty} to all attacks`);
     if (dwmNote) {result.breakdown.push(dwmNote);}
@@ -681,8 +779,6 @@ export function calculateFullAttackConfig(actor, primaryWeapon, offhandWeapon = 
 
   const primaryGroup = getWeaponGroup(primaryWeapon);
   const offhandGroup = offhandWeapon ? getWeaponGroup(offhandWeapon) : null;
-  const doubleAttackGroups = getDoubleAttackGroups(actor);
-  const tripleAttackGroups = getTripleAttackGroups(actor);
   const dwmLevel = getDualWeaponMasteryLevel(actor);
 
   config.dwmLevel = dwmLevel;
@@ -705,8 +801,9 @@ export function calculateFullAttackConfig(actor, primaryWeapon, offhandWeapon = 
   const selectedWeapon = doubleAttackWeapon === 'offhand' && offhandWeapon ? offhandWeapon : primaryWeapon;
   const selectedGroup = doubleAttackWeapon === 'offhand' && offhandGroup ? offhandGroup : primaryGroup;
 
-  const hasDoubleAttack = selectedGroup && doubleAttackGroups.has(selectedGroup);
-  const hasTripleAttack = selectedGroup && tripleAttackGroups.has(selectedGroup) && hasDoubleAttack;
+  // Phase 5D-F: canonical weapons join the feat's chosen selector to the selected canonical form; legacy keeps the group-name path
+  const hasDoubleAttack = !!selectedGroup && actorHasMultiAttackFor(actor, 'double', selectedWeapon);
+  const hasTripleAttack = !!selectedGroup && hasDoubleAttack && actorHasMultiAttackFor(actor, 'triple', selectedWeapon);
 
   config.hasDoubleAttack = hasDoubleAttack;
   config.hasTripleAttack = hasTripleAttack;
@@ -892,9 +989,8 @@ export async function showFullAttackDialog(actor, options = {}) {
   }
 
   // Determine which packages are available to offer
-  const doubleGroups = getDoubleAttackGroups(actor);
-  const tripleGroups = getTripleAttackGroups(actor);
-  const primaryGroup = getWeaponGroup(primaryWeapon);
+  const planOptions = { primaryForm: options.primaryForm, offhandForm: options.offhandForm, answers: options.answers };
+  const primarySel = selectionOptions(options, 'primary');
 
   const packages = [];
 
@@ -902,9 +998,9 @@ export async function showFullAttackDialog(actor, options = {}) {
   packages.push({ value: FULL_ATTACK_PACKAGES.NORMAL, label: 'Normal Full Attack' });
 
   // Double / Triple Attack
-  if (primaryGroup && doubleGroups.has(primaryGroup)) {
+  if (actorHasMultiAttackFor(actor, 'double', primaryWeapon, primarySel)) {
     packages.push({ value: FULL_ATTACK_PACKAGES.DOUBLE_ATTACK, label: 'Double Attack' });
-    if (tripleGroups.has(primaryGroup)) {
+    if (actorHasMultiAttackFor(actor, 'triple', primaryWeapon, primarySel)) {
       packages.push({ value: FULL_ATTACK_PACKAGES.TRIPLE_ATTACK, label: 'Triple Attack' });
     }
   }
@@ -913,7 +1009,7 @@ export async function showFullAttackDialog(actor, options = {}) {
   if (offhandWeapon && offhandWeapon.id !== primaryWeapon.id) {
     packages.push({ value: FULL_ATTACK_PACKAGES.TWO_WEAPON, label: 'Two-Weapon Attack' });
   }
-  if (equipped.isDoubleWeapon || isDoubleWeapon(primaryWeapon)) {
+  if (equipped.isDoubleWeapon || isDoubleWeapon(primaryWeapon, primarySel)) {
     packages.push({ value: FULL_ATTACK_PACKAGES.DOUBLE_WEAPON, label: 'Double-Weapon Attack' });
   }
 
@@ -929,6 +1025,7 @@ export async function showFullAttackDialog(actor, options = {}) {
         requestedPackage: pkg,
         primaryWeapon,
         offhandWeapon,
+        ...planOptions,
       });
 
       const attackRows = seq.attacks.map((atk, i) => {
@@ -973,6 +1070,7 @@ export async function showFullAttackDialog(actor, options = {}) {
               requestedPackage: pkg,
               primaryWeapon,
               offhandWeapon,
+              ...planOptions,
             });
             if (!seq.legal) {
               ui.notifications.warn(seq.warnings.join(' '));
