@@ -909,6 +909,9 @@ export function getDamageAbilityContribution(actor, weapon) {
   if (explicit.includes('str')) return SchemaAdapters.getAbilityMod(actor, 'str');
   if (explicit.includes('dex')) return SchemaAdapters.getAbilityMod(actor, 'dex');
 
+  // Phase 5D-I-A: a ranged weapon whose canonical operation says the Strength modifier applies to its damage (bow, sling) adds it ONCE.
+  // CONSUMER_DEFECT fixed: every other ranged weapon contributes no ability modifier, and these two silently lost the published Strength damage.
+  { const sh = shapeOfWeapon(weapon); if (sh.source === 'canonical' && sh.strengthAppliesToDamage === true) return SchemaAdapters.getAbilityMod(actor, 'str'); }
   if (isRangedWeapon(weapon) && !isThrownMeleeWeapon(weapon)) return 0;
   const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
   if (system.twoHanded === true || system.wieldedTwoHanded === true) return Math.floor(strMod * 1.5);

@@ -40,7 +40,8 @@ import { getStackingRule } from "/systems/foundryvtt-swse/scripts/engine/effects
 import { buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime, resolveCanonicalDamage, summarizeCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { WeaponRuntimeError, ERROR_CODES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
-import { replaceBaseDieSize } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
+import { replaceBaseDieSize, evaluateConditionalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
+import { normalizeRangeBand, canonicalDamageRangePenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
@@ -1032,6 +1033,15 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // double-counted.
   const extraWeaponDice = Number(optionModifiers.damageExtraWeaponDice || 0);
 
+  // Phase 5D-I-A: weapon-declared conditional damage terms (point-blank equipment bonus, adjacent-target die) of the selected form
+  const conditionalDamage = shape
+    ? evaluateConditionalDamage(shape.conditionalDamage, { rangeBand: normalizeRangeBand(context.rangeBand ?? context.workflowContext?.rangeBand ?? context.range) ?? null, answers: context.special?.answers ?? context.workflowContext?.special?.answers ?? {}, distance: context.adjacent === true ? 'adjacent' : context.distance })
+    : { flat: 0, diceTerms: [], applied: [], unresolved: [] };
+  // Phase 5D-I-A: a form whose range penalty applies to DAMAGE (CR-1 blast cannon) takes the band penalty here; its attack roll takes none
+  const damageRangePenalty = canonicalDamage.source === 'canonical'
+    ? canonicalDamageRangePenalty(canonicalDamage.runtime?.range, context.rangeBand ?? context.workflowContext?.rangeBand ?? context.range)
+    : 0;
+  if (damageRangePenalty !== 0) conditionalDamage.flat += damageRangePenalty;
   const talentContributions = resolveTalentDamageContributions(actor, context);
   const otherDiceTerms = collectSharedDamageDiceTerms(actor, weapon, context);
 
@@ -1065,6 +1075,8 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
     ...(shape && shape.baseMultiplier > 1 ? [{ id: 'weapon-multiplier', label: 'Weapon Damage Multiplier', value: shape.baseMultiplier, category: 'weaponMultiplier', applied: true, stage: DAMAGE_STAGE.WEAPON_MULTIPLIER }] : []),
     ...talentContributions.breakdown.map((label, index) => ({ id: `talent-dice-${index}`, label, value: talentContributions.bonusDice[index] ?? null, category: 'additionalDice', applied: true, stage: POST })),
     ...otherDiceTerms.map((term, index) => ({ id: `other-dice-${index}`, label: 'Force Item / Inquisition', value: term, category: 'additionalDice', applied: true, stage: POST })),
+    ...(damageRangePenalty !== 0 ? [{ id: 'range-penalty-damage', label: 'Range Penalty (applies to damage)', value: damageRangePenalty, category: 'additive', sourceName: 'Range Penalty', applied: true, stage: PRE }] : []),
+    ...conditionalDamage.applied.map((a) => ({ id: `conditional-${a.id}`, label: a.kind === 'flat' ? `Weapon ${a.bonusType} bonus` : 'Weapon bonus die', value: a.kind === 'flat' ? a.value : a.formula, category: a.kind === 'flat' ? 'equipmentBonus' : 'additionalDice', applied: true, stage: a.kind === 'flat' ? PRE : POST })),
     ...(isCriticalRoll ? [{ id: 'critical-multiplier', label: 'Critical Multiplier', value: multiplier, category: 'criticalMultiplier', applied: true, stage: DAMAGE_STAGE.CRITICAL }] : []),
     ...(bonusFormula ? [{ id: 'critical-bonus', label: 'Critical Bonus Formula', value: bonusFormula, category: 'criticalAddition', applied: true, stage: DAMAGE_STAGE.CRITICAL }] : []),
     ...typedModifierLedger.map((entry) => ({ stage: PRE, ...entry })),
@@ -1081,7 +1093,10 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
       baseMultiplier: shape?.baseMultiplier ?? 1,
       talentDice: talentContributions.bonusDice,
       talentBreakdown: talentContributions.breakdown,
-      otherDiceTerms
+      otherDiceTerms,
+      conditionalFlat: conditionalDamage.flat,
+      conditionalDiceTerms: conditionalDamage.diceTerms,
+      rerollWeaponDiceResults: Array.isArray(optionModifiers.flags?.weaponDiceRerollValues) ? optionModifiers.flags.weaponDiceRerollValues : []
     },
     critical: { isCritical: isCriticalRoll, multiplier, bonusFormula },
     damageTypes: Array.isArray(context.damageTypes) ? context.damageTypes : [],
@@ -1157,6 +1172,16 @@ function getCriticalDamageBonusFormula(actor, weapon) {
  *   double damage on a critical.
  * @returns {string}
  */
+/** Foundry recursive-reroll modifier (rr) on every weapon die term: `3d4` -> `3d4rr1`; contiguous 1..n -> `rr<=n`. Unknown shapes are left untouched. */
+export function markRerollWeaponDice(formula, values) {
+  const list = (Array.isArray(values) ? values : []).map(Number).filter((v) => Number.isInteger(v) && v >= 1).sort((x, y) => x - y);
+  if (!list.length) return formula;
+  const contiguous = list.every((v, i) => v === i + 1);
+  const cmpExpr = list.length === 1 ? String(list[0]) : contiguous ? `<=${list.length}` : null;
+  if (cmpExpr === null) return formula;
+  return String(formula).replace(/(\d*d\d+)(?![\w(])/gi, (m, die) => (/^\d*d1$/i.test(die) ? m : `${die}rr${cmpExpr}`));
+}
+
 export function buildDamageFormula(composition, options = {}) {
   const { extraTerms = [], isAreaAttack: isArea = false } = options;
   const dice = composition?.dice ?? {};
@@ -1172,13 +1197,18 @@ export function buildDamageFormula(composition, options = {}) {
   // multiplier. The critical multiplier below then multiplies the whole result, so a x2 weapon on a critical is x4.
   // Stage per ledger entry: see DAMAGE_STAGE in resolveDamageComposition().
   const baseMult = Number(dice.baseMultiplier || 1);
-  const diceTerm = `${stepped}${extraDiceFormula}`;
-  const bonusTotal = Number(composition?.bonus?.total || 0);
+  // Phase 5D-I-A: an ability that rerolls weapon-die results (Sport Hunter / Sporting Blaster Pistol) marks ONLY the weapon dice term
+  // (stepped base + extra weapon dice). Talent / Force Item dice and invocation terms are appended later and are never rerolled.
+  const diceTerm = markRerollWeaponDice(`${stepped}${extraDiceFormula}`, dice.rerollWeaponDiceResults);
+  const bonusTotal = Number(composition?.bonus?.total || 0) + Number(dice.conditionalFlat || 0);
   const preMultiplier = bonusTotal !== 0 ? `${diceTerm} + ${bonusTotal}` : diceTerm;
   const parts = [baseMult > 1 ? `(${preMultiplier}) * ${baseMult}` : diceTerm];
   if (baseMult <= 1 && bonusTotal !== 0) parts.push(bonusTotal.toString());
 
   for (const term of dice.talentDice || []) {
+    if (term) parts.push(term);
+  }
+  for (const term of dice.conditionalDiceTerms || []) {
     if (term) parts.push(term);
   }
   for (const term of dice.otherDiceTerms || []) {

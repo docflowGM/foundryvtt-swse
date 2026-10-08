@@ -293,7 +293,9 @@ const fam = (mechs, f) => mechs.filter((m) => m.family === f);
   AmmoSystem.spendForWorkflow = async () => ({ success: true, spent: false });
   try {
     const attacker = makeActor({ feats: ['Weapon Proficiency (Advanced Melee Weapons)', 'Weapon Proficiency (Exotic Weapons)'] });
-    const arg = canon('unmapped::Arggarok');
+    // Phase 5D-I-A: the Arg'garok's "wielder Strength below 15" is now OBSERVABLE (the wielder's Strength score) and evaluated AUTO, so the stored-PROMPT
+    // lifecycle is exercised with a condition the runtime still cannot observe: the Energy Lance's "Medium wielder, not mounted" (the mounted state).
+    const arg = canon('unmapped::Energy Lance');
     const baselineBonus = async () => { posted.length = 0; await rollAttack(attacker, arg, { target: makeTarget() }); return posted.find((p) => p.context?.workflowContext); };
     await baselineBonus();
     assert.deepEqual(asked, ['conditional-0'], 'asked once');

@@ -3,7 +3,9 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
 import { rollAttack as canonicalRollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
-import { computeFinalAttackComposition } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { resolveAutofireArea } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
+import { askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
+import { computeFinalAttackComposition, resolveCanonicalAttackStage } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { resolveAttackWeaponRuntime, resolveAttackShapeFor, weaponFormRecord, attackSelectionOf, buildAttackForms } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js";
 import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
@@ -645,22 +647,32 @@ export class SWSERoll {
       // braceRule (retractable stock) cannot be braced unless that state holds; refused BEFORE anything is spent.
       let braceActions = [];
       if (isCanonical && options.braced && !options.burstFire) {
-        const brace = FireStateStore.previewBrace(weapon, canon.shape);
+        const brace = FireStateStore.previewBrace(weapon, canon.shape, { mounted: typeof options.mounted === 'boolean' ? options.mounted : undefined });
         if (!brace.legal) {
-          ui.notifications.warn(`${weapon.name} cannot be braced: ${brace.reason === 'stock-not-extended' ? 'its stock is not extended' : brace.reason}.`);
+          ui.notifications.warn(`${weapon.name} cannot be braced: ${brace.reason === 'stock-not-extended' ? 'its stock is not extended' : brace.reason === 'tripod-or-mount-required' ? 'it is not on a tripod or mount' : brace.reason}.`);
           return null;
+        }
+        // Phase 5D-I-A: a mount-only brace whose mount state is unobserved is asked once (stored); only a definite "no" refuses
+        if (brace.pending === 'mount-state') {
+          const mountedAnswer = await askSpecialQuestion({ id: 'brace-mount-state', family: 'brace-rule', question: `Is ${weapon.name} on a tripod or mount? (required to brace it)` });
+          if (mountedAnswer === false) { ui.notifications.warn(`${weapon.name} cannot be braced: it is not on a tripod or mount.`); return null; }
         }
         braceActions = brace.requiredActions;
       }
       if (isCanonical) {
-        const comp = await computeFinalAttackComposition(actor, weapon, {
+        const autofireOptions = {
           ...canon.selection,
           rangeBand: options.rangeBand ?? null,
           autofire: true, attackMode: 'autofire', fireMode: options.burstFire ? 'burst' : 'autofire',
+          braced: options.braced === true,
           combatOptions: { ...(options.attackOptions ?? options.combatOptions ?? {}), ...(options.burstFire ? { burstFire: true } : {}) },
           sequencePenalty: options.burstFire ? 0 : autofirePenalty,
           customModifier: modifiers.customModifier, situationalBonus: modifiers.situationalBonus,
-        });
+        };
+        // Phase 5D-I-A: the selected form's attack-stage mechanics (weapon-level fire-state modifiers such as the unbraced-autofire penalty,
+        // registered conditional modifiers) are resolved exactly as rollAttack does and ride the same situational-contribution pipeline
+        const autofireStage = await resolveCanonicalAttackStage(actor, weapon, autofireOptions);
+        const comp = await computeFinalAttackComposition(actor, weapon, { ...autofireOptions, ...(autofireStage.situationalContributions ? { situationalContributions: autofireStage.situationalContributions } : {}) });
         if (!comp.ok) {
           if (comp.weaponRuntimeError) reportWeaponRuntimeError(comp.weaponRuntimeError, { notify: false });
           ui.notifications.error(`Autofire could not be resolved: ${comp.weaponRuntimeError?.message ?? comp.reason}`);
@@ -732,7 +744,7 @@ export class SWSERoll {
               actor, weapon, target, targetId: target?.id ?? null, targetName: target?.name ?? '',
               weaponForm: canon.form, hit: isHit, isCritical: critConfirmed, critMultiplier,
               isArea: !options.burstFire, isAutofire: true, isBurstFire: options.burstFire === true,
-              attackShape: { fireMode: options.burstFire ? 'burst' : 'autofire', attackIndex: 0, sequenceLength: 1, area: options.burstFire ? undefined : { kind: 'autofire-area', widthSquares: 2, heightSquares: 2 } },
+              attackShape: { fireMode: options.burstFire ? 'burst' : 'autofire', attackIndex: 0, sequenceLength: 1, area: options.burstFire ? undefined : { kind: 'autofire-area', ...(({ widthSquares, heightSquares }) => ({ widthSquares, heightSquares }))(resolveAutofireArea(canon.runtime?.resolved?.operation, { braced: options.braced === true })) } },
               ruleData: options.burstFire ? { halfDamageOnMiss: true } : { areaAttack: true, halfDamageOnMiss: true },
             });
             damageRoll = await rollDamage(actor, weapon, {

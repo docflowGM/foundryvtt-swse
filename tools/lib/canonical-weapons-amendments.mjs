@@ -27,7 +27,7 @@ const CORE_RULE = 'Core Rulebook: throwing a weapon is a ranged attack (attack r
  * amended) record; `log` receives one entry per amendment actually applied.
  */
 export function applyPostCertificationAmendments(rec, log = []) {
-  return applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log);
+  return applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log);
 }
 
 function applyThrownRanged(rec, log) {
@@ -111,6 +111,35 @@ function applyGrenadeFamily(rec, log) {
     source: { book: 'Core Rulebook / Knights of the Old Republic Campaign Guide', page: '127-129 / 68, 180', evidence: 'Listed under the Grenades heading of the ranged-weapons tables; abilities (Angled Throw, Forceful Blast, Higher Yield, Mighty Throw) scope themselves to Grenades.' },
     rule: 'Weapons declare what they are: a grenade is declared structurally so abilities need not match a display name.',
     reason: 'The certified selectors had no grenade family, forcing name matching for every Grenade-scoped ability.',
+  });
+  return out;
+}
+
+// ---- Phase 5D-I-A: structured action cost for a published operation rule ----------------------------------------------------------------
+// operation.rangeStepReductionPreparation published its action cost only as free text ("two swift actions in same round immediately before
+// attack"); the runtime must not parse prose. The same certified source sentence is carried as a structured requiredActions list.
+export const OPERATION_STRUCTURE_AMENDMENT_ID = '5D-I-A-operation-structure-backfill';
+const OPERATION_STRUCTURE = [
+  {
+    identityKey: 'weapon-e-web-missile-launcher', key: 'rangeStepReductionPreparation', prose: 'two swift actions in same round immediately before attack',
+    add: { requiredActions: [{ action: 'swift', count: 2 }] },
+    source: { book: 'Force Unleashed Campaign Guide', page: '198', evidence: 'The wielder can spend two swift actions before an attack to treat the target\'s range as one step shorter.' },
+  },
+];
+function applyOperationStructureBackfill(rec, log) {
+  const spec = OPERATION_STRUCTURE.find((x) => x.identityKey === rec.identityKey);
+  if (!spec) return rec;
+  const out = clone(rec);
+  need(out.operation?.[spec.key]?.actions === spec.prose, `${spec.identityKey} operation.${spec.key}.actions is the published prose`);
+  need(out.operation[spec.key].requiredActions === undefined, `${spec.identityKey} operation.${spec.key} has no structured requiredActions yet`);
+  const before = clone(out.operation[spec.key]);
+  out.operation[spec.key] = { ...before, ...spec.add };
+  out.provenance = { ...out.provenance, postCertificationAmendments: [...(out.provenance.postCertificationAmendments ?? []), OPERATION_STRUCTURE_AMENDMENT_ID] };
+  log.push({
+    id: OPERATION_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-A', identityKey: spec.identityKey, field: `operation.${spec.key}.requiredActions`,
+    from: before, to: out.operation[spec.key], source: spec.source,
+    rule: 'The runtime reads structured fields only; prose action costs are never parsed.',
+    reason: 'The certified action cost was present only as a prose string; a structured copy of the same sentence lets the existing action-economy pipeline pay it.',
   });
   return out;
 }

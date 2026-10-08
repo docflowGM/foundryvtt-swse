@@ -86,10 +86,12 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
 
   const proficiency = runtime.profile.definition?.schemaFamily?.proficiency ?? null;
   const fireModes = Object.freeze({ single: !autofireOnly, autofire, autofireOnly, burstEligible: autofire });
-  const areaShape = resolveAreaShape(def.area, def.attackResolution, { rateOfFire: def.rateOfFire });
+  const areaShape = resolveAreaShape(def.area, def.attackResolution, { rateOfFire: def.rateOfFire, operation: op });
   return Object.freeze({
     // Phase 5D-H: what the selected form IS, as structured tokens (ability scopes join to this, never to a name)
     descriptor: buildWeaponDescriptor(resolved, def, { area: areaShape, fireModes }),
+    // Phase 5D-I-A: the selected form's area shape (geometry + detonation timing) so attack legality can validate the player's timer choice
+    area: areaShape,
     abilityRelations: Object.freeze(asArray(resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions).map((r) => Object.freeze({ ability: String(r?.ability ?? ''), abilityToken: normalizeToken(r?.ability), abilityType: r?.abilityType ?? null, relation: r?.relation ?? null }))),
     operation: op,
     damageTypes: Object.freeze(asArray(def.damageType?.types).map(normalizeToken)),
@@ -117,7 +119,18 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
       available: autofireOnly,
       actions: Object.freeze(['swift', 'swift']),
       stockRule: fc?.braceRule?.cannotBraceWhenStockNotExtended === true ? String(fc.braceRule.requiresRetractableStockState ?? 'extended') : null,
+      // Phase 5D-I-A: operation.cannotBraceWithoutTripodOrMount (Heavy Repeating Blaster): bracing needs a tripod / mount
+      mountRule: op.cannotBraceWithoutTripodOrMount === true ? 'tripod-or-mount' : null,
     }),
+    // Phase 5D-I-A: operation.rangeStepReductionPreparation (E-Web missile launcher): spend the structured actions before an attack to treat
+    // the target's range as `steps` band(s) shorter. The cost is the structured requiredActions list, never the prose.
+    // Phase 5D-I-A: operation.strengthModifierAppliesToDamage (bow, sling): the Strength modifier applies to this ranged weapon's damage
+    strengthAppliesToDamage: op.strengthModifierAppliesToDamage === true,
+    rangePreparation: rangePreparationOf(op),
+    // Phase 5D-I-A: profiles the weapon can use underwater (Energy Lance: melee + plasma-bolt). null = the weapon declares no restriction.
+    environment: Object.freeze({ underwaterUsableProfiles: Array.isArray(op.underwaterUsableProfiles) ? Object.freeze(op.underwaterUsableProfiles.map(String)) : null }),
+    // Phase 5D-I-A: a persistent stun SETTING that costs an action to switch to (Shockboxing Gloves: set to stun as a swift action)
+    stunSetting: stunSettingOf(def, resolved, op),
     // temporal firing constraints (families in fire-state.js); owned readiness state lives on the Item, never here
     temporal: resolveTemporalConstraints(def, op, resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions),
     dualWield: Object.freeze({
@@ -126,6 +139,28 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
       wornNotHeld: op.wornNotHeld === true,
     }),
   });
+}
+
+const COSTLY_ACTIONS = new Set(['swift', 'move', 'standard', 'full-round', 'full_round', 'fullround', 'reaction']);
+/**
+ * The stun-setting switch of the selected form. `action` is the structured stun.activation.action; `persistent` means the setting stays
+ * until changed (timing 'persistent-setting'). `weaponHasSwitch` = some profile of this weapon has such a costly persistent setting, so
+ * every attack with the weapon records which setting is in effect (a later stun attack is only free while the setting is still stun).
+ */
+function stunSettingOf(def, resolved, op) {
+  const act = def?.stun?.activation ?? null;
+  const costly = (a) => COSTLY_ACTIONS.has(String(a?.action ?? '').toLowerCase());
+  // operation.stunSwitchAction is the weapon-level copy of the same published action; the profile activation is authoritative
+  const persistent = act?.timing === 'persistent-setting' && (costly(act) || COSTLY_ACTIONS.has(String(act?.action == null ? op?.stunSwitchAction ?? '' : '').toLowerCase()));
+  const weaponHasSwitch = asArray(resolved?.canonicalStats?.attackProfiles).some((p) => p?.stun?.activation?.timing === 'persistent-setting' && costly(p.stun.activation));
+  return Object.freeze({ persistent, action: persistent ? String(act.action ?? op?.stunSwitchAction).toLowerCase() : null, weaponHasSwitch });
+}
+
+function rangePreparationOf(op) {
+  const rp = op?.rangeStepReductionPreparation;
+  if (!rp || !Number.isInteger(rp.steps) || rp.steps < 1) return null;
+  const actions = asArray(rp.requiredActions).filter((a) => a && typeof a.action === 'string' && Number.isInteger(a.count) && a.count > 0).map((a) => Object.freeze({ action: a.action, count: a.count }));
+  return Object.freeze({ steps: rp.steps, stacksWithFarShot: rp.stacksWithFarShot === true, requiredActions: Object.freeze(actions), complete: actions.length > 0 });
 }
 
 /** Is `abilityName` (feat/talent name or option id) a multi-shot ability this form cannot use? Structure-only: constraint flag or declared PROHIBITED relation. */

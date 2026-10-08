@@ -23,6 +23,11 @@
       "timing": "on-attack",
       "note": "selected form defense (reflex/fortitude/will) -- already consumed through targetContext.defenseType"
     },
+    "conditional-damage": {
+      "policy": "AUTO",
+      "timing": "on-damage-roll",
+      "note": "weapon-declared damage term that applies under a structural attack fact (point-blank range / adjacent target); composed once in the existing damage composition"
+    },
     "critical-bonus-damage": {
       "policy": "AUTO",
       "timing": "on-critical",
@@ -136,16 +141,17 @@
   },
   "totals": {
     "identities": 203,
-    "identitiesWithMechanics": 74,
+    "identitiesWithMechanics": 80,
     "forms": 265,
-    "formsWithMechanics": 99,
+    "formsWithMechanics": 106,
     "resolveErrors": 0
   },
   "mechanicsByFamily": {
     "activation-effect": 1,
-    "attack-modifier-auto": 2,
+    "attack-modifier-auto": 8,
     "attack-modifier-prompt": 7,
     "attack-resolution": 4,
+    "conditional-damage": 3,
     "critical-bonus-damage": 1,
     "critical-die-replace": 2,
     "ct-overwhelming-stun": 2,
@@ -168,7 +174,7 @@
     "status-condition": 4
   },
   "mechanicsByPolicy": {
-    "AUTO": 63,
+    "AUTO": 72,
     "DEFER": 42,
     "DISPLAY_ONLY": 3,
     "PROMPT": 8,
@@ -452,6 +458,11 @@
         "attack-modifier-prompt:conditional-0:PROMPT"
       ]
     },
+    "unmapped::Entrenching Tool": {
+      "melee": [
+        "attack-modifier-auto:operation.attackPenalty:AUTO"
+      ]
+    },
     "unmapped::Fire Blade": {
       "melee": [
         "dr-conditional:dr-conditional-0:PROMPT"
@@ -558,6 +569,11 @@
         "status-condition:knock-prone-on-hit:DEFER"
       ]
     },
+    "weapon-cr-1-blast-cannon": {
+      "primary": [
+        "conditional-damage:operation.adjacentBonusDamage:AUTO"
+      ]
+    },
     "weapon-crossbow": {
       "primary": [
         "firing-constraint:firing-constraints:VALIDATION_ONLY"
@@ -607,6 +623,16 @@
         "grab-grapple:grab-on-hit:DEFER",
         "grab-grapple:ongoing-net-shock:DEFER",
         "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-espo-500-riot-gun": {
+      "primary/autofire": [
+        "attack-modifier-auto:operation.autofireEquipmentBonus:AUTO",
+        "attack-modifier-auto:operation.singleShotAttackPenalty:AUTO"
+      ],
+      "primary/single-shot": [
+        "attack-modifier-auto:operation.autofireEquipmentBonus:AUTO",
+        "attack-modifier-auto:operation.singleShotAttackPenalty:AUTO"
       ]
     },
     "weapon-flash-canister": {
@@ -694,9 +720,24 @@
         "persistent-effect:persistent-neurotoxin:DEFER"
       ]
     },
+    "weapon-pulse-wave-pistol": {
+      "primary": [
+        "conditional-damage:operation.pointBlankDamageEquipmentBonus:AUTO"
+      ]
+    },
+    "weapon-pulse-wave-rifle": {
+      "primary": [
+        "conditional-damage:operation.pointBlankDamageEquipmentBonus:AUTO"
+      ]
+    },
     "weapon-radiation-grenade": {
       "primary": [
         "attack-resolution:defense:fortitude:AUTO"
+      ]
+    },
+    "weapon-rotary-blaster-cannon": {
+      "autofire": [
+        "attack-modifier-auto:operation.unbracedAdditionalAttackPenalty:AUTO"
       ]
     },
     "weapon-sg-4-blaster-rifle": {

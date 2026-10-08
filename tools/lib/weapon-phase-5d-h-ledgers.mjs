@@ -61,11 +61,13 @@ export const HEURISTIC_RULES = [
 // ---------------------------------------------------------------------------------------------------------------------------------
 // status: CONSUMED (probe string must appear in the cited consumer) | CONSUMED_VIA_DUPLICATE (the same fact is consumed through another
 // structured field) | OPERATION_FAMILY (derived from the per-key operation census) | PARTIAL (named residual) | DEFERRED (named reason + owner)
+import { I_A_LEDGER } from './weapon-phase-5d-i-a-ledger.mjs';
+
 const W = 'scripts/items/weapon-runtime/';
 export const FIELD_CONSUMERS = {
   '3b.stats.container': { status: 'CONSUMED', file: `${W}weapon-runtime-resolver.js`, probe: 'canonicalStats', note: 'resolver exposes the container to every consumer' },
   '3b.resource': { status: 'CONSUMED', file: `${W}resource-resolver.js`, probe: 'resourceProfiles', note: 'resource pools / capacity (5D-D)' },
-  '3b.profile.conditional': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'conditionalModifiers', consumed: ['conditionalModifiers'], deferred: ['activationRequirements', 'conditionalRangeRules'], owner: 'conditional activation / range conditions (post-5D-H)', note: 'conditional attack modifiers execute (AUTO/PROMPT); activationRequirements are reconciled but not enforced' },
+  '3b.profile.conditional': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'resolveTargetRequirements', consumed: ['conditionalModifiers (condition-policy AUTO/PROMPT)', 'activationRequirements.target / target-rule', 'conditionalRangeRules'], deferred: ['activationRequirements.action / wielding / choice / feat / configuration / proficiency / usage-limit / operators'], owner: '5D-I-B (activation state, wielding, configuration, crew)', note: '5D-I-A: conditional attack modifiers evaluate through condition-policy, target requirements gate the attack, conditionalRangeRules scale ranges; the remaining requirement types need persisted activation / wielding / crew state' },
   '3b.profile.area': { status: 'CONSUMED', file: `${W}area-shape.js`, probe: 'resolveAreaShape', note: '5D-G/5D-H' },
   '3b.profile.attackResolution': { status: 'CONSUMED', file: `${W}area-shape.js`, probe: 'attackResolution', note: 'defense + onMiss' },
   '3b.profile.effects': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'criticalEffects', consumed: ['criticalEffects', 'hit effects (ct-rider, status-condition, damage-rider)'], deferred: ['persistent-effect', 'return-recovery', 'special-action', 'activation-effect'], owner: 'persistent effects / special actions subsystem', note: 'AUTO families execute at Apply Damage; DEFER families are named in the 5D-E census' },
@@ -152,6 +154,8 @@ export const OPERATION_DUPLICATES = [
   [/^cannotBeNegatedByDeflect$/, 'CANNOT_NEGATE_ATTACK relation', `${W}ability-relations.js`, 'CANNOT_NEGATE_ATTACK'],
   [/^(configurations|configurationResolution|doubleWeapon|doubleWeaponFullRoundAttack|doubleWeaponFullRoundAttackPenaltyPerEnd|longHaftFormDoubleWeapon|hostWeaponAugmentation)$/, 'configurationStates / modeProfiles / conditionalQualities', `${W}attack-shape.js`, 'doubleWeapon'],
   [/^(allowedFeats|disallowedFeats)$/, 'PROHIBITED relation (multi-shot) ; grapple feats are the grapple phase', `${W}attack-shape.js`, 'abilityProhibitedForShape'],
+  // Phase 5D-I-A: duplicates proven against the registry by tools/census-weapon-phase-5d-i-a-inputs.mjs (single source: the I-A ledger)
+  ...I_A_LEDGER.filter((r) => r.disposition === 'DUPLICATE' && !r.key.includes('.')).map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
 ];
 
 // manifest classification overrides (named, justified): scope vocabulary the deterministic rule cannot judge on its own
@@ -168,19 +172,19 @@ export const SOURCE_SILENT_GEOMETRY = [
 
 // per operation topic family: why unconsumed keys remain and where they belong (the 5D-I input; no key is implemented to shrink a counter)
 export const OPERATION_FAMILY_NOTES = {
-  'ability-compatibility': { reason: 'grapple-feat allow/deny lists, crystal/tagger compatibility and upgrade restrictions need the grapple and upgrade subsystems', phase: '5D-I: remaining ability relations / grapple-Pin-Trip' },
+  'ability-compatibility': { reason: 'residual keys are equipment / customization / reaction compatibilities, not attack resolution (see the 5D-I-A manifest)', phase: '5D-I-B/C/D by owner' },
   'ammo-resource-reload': { reason: 'mounting, power-source requirements, single-load and reload special cases need inventory/reload rules beyond per-shot resource spending', phase: '5D-I: special reload / recovery + host-weapon augmentation' },
-  'area-splash-burst': { reason: 'detonation timing, blast effects, braced autofire area expansion and shrapnel are effects layered on the (already consumed) area geometry', phase: '5D-I: targeting / area effects' },
-  'attack-modifiers-and-penalties': { reason: 'conditional modifiers, aim/target rules, attacks of opportunity and range tweaks need a general conditional attack-modifier evaluator', phase: '5D-I: targeting / attack resolution' },
+  'area-splash-burst': { reason: '5D-I-A consumed detonation timing, contact detonation and the braced autofire area; the remaining blast / shrapnel effects are grapple / persistent effects, and the remote-detonation safety rule is prose only', phase: '5D-I-C: blast effects / shrapnel; 5D-I-D: remote detonation structure' },
+  'attack-modifiers-and-penalties': { reason: '5D-I-A consumed the fire-state, aim, brace, range and environment attack modifiers; the remainder needs AoO eligibility, crew state, configuration, designation or the grab system', phase: '5D-I-B/C/D by owner (see the 5D-I-A manifest)' },
   'concealment-stealth-sensing': { reason: 'weapon-driven concealment, silence and sensing belong to the stealth/sensing subsystem', phase: '5D-I: concealment / silent operation' },
   'condition-and-persistent-effects': { reason: 'poison delivery, persistent effects and venom need the persistent/status delivery subsystem', phase: '5D-I: persistent / status delivery' },
   'configuration-and-wielding': { reason: 'assembly/switch actions, two-hand rules and size gates need a wielding and configuration state model', phase: '5D-I: wielding constraints' },
   'crew-and-emplacement': { reason: 'crew roles/tripod rules belong to the heavy-weapon crew model', phase: '5D-I: crew / emplacement' },
-  'damage-modifiers': { reason: 'object/vehicle damage rules, DR for the weapon as an object and damage-threshold tweaks need dedicated damage modifier consumers', phase: '5D-I: remaining damage modifiers' },
+  'damage-modifiers': { reason: '5D-I-A consumed the composition-stage terms (point-blank bonus, adjacent die, bow/sling Strength); the remainder are threshold, wielding, hurled-object and weapon-object durability', phase: '5D-I-B/C/D by owner (see the 5D-I-A manifest)' },
   'defense-and-reaction-interactions': { reason: 'Block/Deflect Use the Force modifiers and disarm defenses need the reaction roll to read the wielded weapon', phase: '5D-I: reaction / defense workflow' },
   'grab-grapple-restrain': { reason: 'grab/grapple/net rules belong to the grapple subsystem', phase: '5D-I: grapple / snare / net' },
   'proficiency-routes': { reason: 'species/ability proficiency routes are consumed through selectors.speciesOverrides/abilityOverrides; these operation echoes have no separate consumer', phase: '5D-I: confirm duplicates, retire echoes' },
   'reach-and-threat': { reason: 'reach and threatened squares need a threat/reach model', phase: '5D-I: special movement / reach' },
-  'stun-ion-damage-modes': { reason: 'remaining stun/ion special modes (overcharge, burnout, simultaneous components) need special-damage consumers', phase: '5D-I: special damage modes' },
+  'stun-ion-damage-modes': { reason: '5D-I-A consumed the stun switch and classified the dual-carried modes; payload delegation and trapped-target stun need ammo payloads / persistent effects', phase: '5D-I-B/C by owner (see the 5D-I-A manifest)' },
   'utility-and-movement': { reason: 'utility actions (ascension) belong to special movement', phase: '5D-I: special movement / reach' },
 };

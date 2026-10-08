@@ -3,6 +3,7 @@
 // still turns a band into a number. Pure; never reads names or Item-level range fields.
 import { WeaponRuntimeError, ERROR_CODES } from './errors.js';
 import { resolveRange } from './range-resolver.js';
+import { evaluateRegisteredCondition } from './special-mechanics.js';
 
 const TREATED_AS_FAMILY = Object.freeze({ pistol: 'pistols', rifle: 'rifles', 'heavy weapon': 'heavy-weapons', 'simple weapon': 'simple-weapons' });
 export const RANGE_BANDS = Object.freeze(['pointBlank', 'short', 'medium', 'long']);
@@ -32,7 +33,11 @@ export function resolveCanonicalRange(resolved, profile) {
   const qe = r.qualityEffects ?? {};
   const flagAllows = { pointBlank: qe.pointBlankAllowed !== false, short: true, medium: qe.mediumAllowed !== false, long: qe.longAllowed !== false };
   const listed = Array.isArray(r.allowedBands) ? new Set(r.allowedBands) : null;
-  const allowedBands = RANGE_BANDS.filter((b) => flagAllows[b] && (!listed || listed.has(b)));
+  // Phase 5D-I-A: a stated maximum range (profile hardMaxSquares -- Stun Pistol 20 squares, Darter "maximum range Short" = 40) removes every
+  // band that begins beyond it. The same fact is also published as operation.maximumRangeSquares / maximumRangeIncrement (duplicate carriers).
+  const hardMax = Number.isFinite(r.hardMaxSquares) ? r.hardMaxSquares : null;
+  const withinHardMax = (b) => hardMax === null || !Array.isArray(r.bands?.[b]) || r.bands[b][0] <= hardMax;
+  const allowedBands = RANGE_BANDS.filter((b) => flagAllows[b] && (!listed || listed.has(b)) && withinHardMax(b));
   const banded = r.mode === 'ranged' && !!r.basePenalties;
   return Object.freeze({
     status: r.mode === 'melee' ? 'melee' : banded ? 'banded' : 'pending',
@@ -41,6 +46,9 @@ export function resolveCanonicalRange(resolved, profile) {
     basePenalties: banded ? r.basePenalties : null,
     shortPenaltyOverride: banded && Number.isFinite(qe.shortPenaltyOverride) ? qe.shortPenaltyOverride : null,
     bandSquares: r.bands ?? null, hardMaxSquares: r.hardMaxSquares ?? null,
+    // Phase 5D-I-A: where the band penalty lands -- 'attack' (default) or 'damage' (CR-1 blast cannon: range penalties apply to the damage roll)
+    penaltyApplication: r.penaltyApplication === 'damage' ? 'damage' : 'attack',
+    conditionalRangeRules: Object.freeze([...(r.conditionalRangeRules ?? [])]),
   });
 }
 
@@ -60,7 +68,42 @@ export function canonicalRangePenalty(range, rangeBand) {
   if (range.status !== 'banded') return null;
   const band = normalizeRangeBand(rangeBand);
   if (!band) return null;
+  if (range.penaltyApplication === 'damage') return 0; // the band penalty is a DAMAGE penalty for this form (canonicalDamageRangePenalty)
   if (band === 'short' && range.shortPenaltyOverride !== null) return range.shortPenaltyOverride;
   const v = range.basePenalties?.[band];
   return Number.isFinite(v) ? v : null;
+}
+
+/** Damage-roll range penalty (negative number or 0) for a form whose band penalty applies to damage rather than the attack roll. */
+export function canonicalDamageRangePenalty(range, rangeBand) {
+  if (!range || range.status !== 'banded' || range.penaltyApplication !== 'damage') return 0;
+  const band = normalizeRangeBand(rangeBand);
+  if (!band) return 0;
+  if (band === 'short' && range.shortPenaltyOverride !== null) return range.shortPenaltyOverride;
+  const v = range.basePenalties?.[band];
+  return Number.isFinite(v) ? v : 0;
+}
+
+/**
+ * Phase 5D-I-A: environment-conditional range rules of the selected profile (SG-4: blaster halves its range underwater, harpoon halves it
+ * out of water). Each rule's `when` is a condition REGISTERED in condition-policy (`{environment:'underwater'|'not-underwater'}`).
+ * The underwater fact is observed (a boolean on the attack) or unknown: an unknown environment applies NOTHING and the rule is reported
+ * `pending` (never a blanket restriction, never a guess). Returns scaled band/hard-max squares; penalties are unchanged (they belong to the band).
+ * @returns {{applied:Array, pending:Array, bandSquares:object|null, hardMaxSquares:number|null}}
+ */
+export function resolveRangeEnvironment(range, { underwater } = {}) {
+  const out = { applied: [], pending: [], bandSquares: range?.bandSquares ?? null, hardMaxSquares: range?.hardMaxSquares ?? null };
+  for (const rule of range?.conditionalRangeRules ?? []) {
+    if (rule?.operation !== 'scale-range' || !Number.isFinite(rule.multiplier) || rule.multiplier <= 0) { out.pending.push({ rule, reason: 'unsupported-range-rule' }); continue; }
+    const answers = typeof underwater === 'boolean' ? { underwater } : undefined;
+    const ok = evaluateRegisteredCondition(rule.when, answers ? { answers } : {});
+    // evaluateRegisteredCondition reads prompts from ctx.answers; absent answer -> null (pending)
+    if (ok === null) { out.pending.push({ rule, reason: 'environment-not-observed' }); continue; }
+    if (ok !== true) continue;
+    const m = rule.multiplier;
+    if (out.bandSquares) out.bandSquares = Object.fromEntries(Object.entries(out.bandSquares).map(([band, [lo, hi]]) => [band, [lo === 0 ? 0 : Math.ceil(lo * m), Math.floor(hi * m)]]));
+    if (out.hardMaxSquares !== null) out.hardMaxSquares = Math.floor(out.hardMaxSquares * m);
+    out.applied.push({ operation: rule.operation, multiplier: m, environment: rule.when?.environment ?? null });
+  }
+  return Object.freeze(out);
 }

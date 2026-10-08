@@ -54,7 +54,7 @@ add('mounted-on-rifle', eq('configurationId', 'mounted-on-rifle'));
 add('braced', has('braced'));
 add('not-braced', not(has('braced')));
 add('using-Weapon-Finesse-feat', all(feat('Weapon Finesse'), has('usingWeaponFinesse')));
-add('wielder-size-Large-or-larger', gte('actorSizeRank', 4));
+add('wielder-size-Large-or-larger', gte('actorSizeRank', 5)); // Large = 5 (Medium = 4): the earlier threshold 4 wrongly admitted Medium wielders
 add('active-drawn-weapon', has('activeDrawnWeapon'));
 add('while worn', eq('equipState', 'worn'));
 add({ wieldedHands: 2 }, eq('wieldedHands', 2));
@@ -136,6 +136,14 @@ export function policyFor(value) {
   return { policy: containsPrompt(pred) ? 'PROMPT' : 'AUTO', predicate: pred };
 }
 const containsPrompt = (p) => p.op === 'prompt' || (p.ps ?? (p.p ? [p.p] : [])).some(containsPrompt);
+/** Context keys a registered condition reads (leaf `key` of eq/neq/gte/lt/truthy/in). Used to tell "observed false" from "not observed". */
+export function conditionContextKeys(value) {
+  const { predicate } = policyFor(value);
+  const keys = new Set();
+  const walk = (p) => { if (!p) return; if (p.key) keys.add(p.key); (p.ps ?? (p.p ? [p.p] : [])).forEach(walk); };
+  walk(predicate);
+  return [...keys].sort();
+}
 export const registeredConditionCount = () => Object.keys(T).length;
 export const registeredConditionKeys = () => Object.keys(T).sort();
 

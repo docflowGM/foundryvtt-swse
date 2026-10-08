@@ -1212,7 +1212,7 @@
    "predicate": {
     "op": "gte",
     "key": "actorSizeRank",
-    "value": 4
+    "value": 5
    }
   },
   {
