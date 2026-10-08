@@ -15,6 +15,8 @@ import { resolveAttackBonus, getTargetActorFromOptions } from "/systems/foundryv
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { buildAttackForms, findAttackForm, attackFormSelection } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-form-options.js";
 import { WeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
+import { shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
 /* ============================================================================
@@ -343,7 +345,9 @@ function normalizeKey(value = '') {
 function actorHasNamedItem(actor, names = []) {
   const wanted = new Set(names.map(normalizeKey));
   for (const item of actor?.items ?? []) {
-    if (wanted.has(normalizeKey(item?.name))) return true;
+    // Phase 5D-H: canonical ability identity first; display name only for an ability without one
+    const canonicalId = canonicalFeatSlug(item);
+    if (canonicalId !== null ? wanted.has(normalizeKey(canonicalId)) : wanted.has(normalizeKey(item?.name))) return true;
     const stable = normalizeKey(item?.system?.slug ?? item?.system?.key ?? item?.flags?.swse?.stableKey ?? '');
     if (stable && wanted.has(stable)) return true;
   }
@@ -414,6 +418,8 @@ function weaponDamageTypeKey(weapon = {}) {
 function weaponHasStunSetting(weapon = {}) {
   const system = weapon?.system ?? {};
   if (!weapon) return false;
+  // Phase 5D-H: a canonical weapon's stun availability is its selected form's structured stun capability, not Item text or a name hint
+  { const shape = shapeOfWeapon(weapon); if (shape.source === 'canonical') return shape.stunCapability !== 'none'; if (shape.source === 'error') return false; }
   if (system.strippedFeatures?.stun === true) return false;
   if (system.stun === true || system.hasStunSetting === true || system.canStun === true) return true;
 

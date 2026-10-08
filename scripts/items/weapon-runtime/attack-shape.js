@@ -93,6 +93,7 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
     abilityRelations: Object.freeze(asArray(resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions).map((r) => Object.freeze({ ability: String(r?.ability ?? ''), abilityToken: normalizeToken(r?.ability), abilityType: r?.abilityType ?? null, relation: r?.relation ?? null }))),
     operation: op,
     damageTypes: Object.freeze(asArray(def.damageType?.types).map(normalizeToken)),
+    stunCapability: def.stun?.capability ?? 'none',
     source: 'canonical',
     identityKey: runtime.identityKey,
     profileId: runtime.profile.id,

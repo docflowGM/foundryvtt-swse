@@ -292,7 +292,8 @@ function actorHasTalentNamed(actor, names = []) {
   try {
     for (const item of Array.from(actor?.items ?? [])) {
       if (!item || item.type !== 'talent') continue;
-      if (wanted.has(normalizeSelector(item.name))) return true;
+      // Phase 5D-H: canonical ability identity first; display name only for an ability that carries none
+      if (wanted.has(normalizeSelector(canonicalFeatSlug(item) ?? item.name))) return true;
     }
   } catch {
     return false;
@@ -328,6 +329,7 @@ export function isThrownMeleeWeapon(weapon) {
 
 import { PROJECTED_ATTACK_ABILITIES, ATTACK_ABILITY_OVERRIDE_FLAG, readAttackAbilityOverride } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-ability-override.js";
 import { canonicalRangePenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
+import { canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
 
 // Attack-ability provenance (Phase 5D-B). Production/canonical weapons carry a PROJECTED system.attackAttribute (generated
 // from the item's branch; the projection vocabulary is only str/dex) that is not player intent. For a canonical weapon with a
