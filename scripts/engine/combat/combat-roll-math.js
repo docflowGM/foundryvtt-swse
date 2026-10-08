@@ -38,7 +38,8 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
 import { getStackingRule } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
-import { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime, resolveCanonicalDamage, summarizeCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { WeaponRuntimeError, ERROR_CODES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
@@ -982,6 +983,15 @@ function computeTypedDamageModifierPool(actor, weapon, context, optionModifiers)
 export function resolveDamageComposition(actor, weapon, context = {}) {
   const bonus = resolveDamageBonus(actor, weapon, context);
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
+  // Phase 5D-C: the canonical runtime supplies WHAT the selected attack form's base damage is (resolved once by the caller
+  // and passed as context.canonicalDamage, or resolved here from the carried/explicit form ids); everything below -- die
+  // steps, extra dice, ability/half-level/enhancement, typed stacking, critical -- is the unchanged certified arithmetic.
+  // An invalid canonical selection throws (never the Item default); a form with no ordinary damage cannot be composed.
+  const canonicalDamage = context.canonicalDamage ?? resolveCanonicalDamage(weapon, context);
+  if (canonicalDamage.source === 'canonical' && (canonicalDamage.status === 'no-damage' || canonicalDamage.status === 'special')) {
+    throw new WeaponRuntimeError(ERROR_CODES.NO_ORDINARY_DAMAGE, `${canonicalDamage.selection?.identityKey}/${canonicalDamage.selection?.profileId} has no ordinary damage roll (${canonicalDamage.reason})`, { ...canonicalDamage.selection, reason: canonicalDamage.reason });
+  }
+  const canonicalBase = (canonicalDamage.source === 'canonical' && canonicalDamage.status === 'ordinary') ? canonicalDamage.base : null;
   const isCriticalRoll = context?.critical === true || context?.isCritical === true;
 
   // ── Dice shape ────────────────────────────────────────────────────────
@@ -989,7 +999,8 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // resolveStockDroidDamageContract() above) already IS the base dice —
   // die-step/extra-dice still adjust it (R4-4, preserved verbatim), it is
   // simply the starting formula instead of weapon.system.damage.
-  const base = bonus.flags?.stockDamageFormula ?? String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
+  // precedence: stock-statblock published formula (flat contract) > canonical selected-form damage > legacy Item-level damage
+  const base = bonus.flags?.stockDamageFormula ?? canonicalBase ?? String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
   const criticalDieStepIncreases = isCriticalRoll ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
   const dieStepIncreases = Number(optionModifiers.damageDieStepIncreases || 0) + criticalDieStepIncreases;
   // Damage audit correction #1 "COLLAPSE damageExtraWeaponDice /
@@ -1052,6 +1063,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
     },
     flags: { ...bonus.flags },
     ledger,
+    canonicalDamage: summarizeCanonicalDamage(canonicalDamage),
     talentNotifications: talentContributions.notifications
   };
 }

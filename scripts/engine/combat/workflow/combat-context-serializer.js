@@ -105,6 +105,14 @@ function mergeSelectedOptions(...sources) {
   return merged;
 }
 
+const WEAPON_FORM_KEYS = ['identityKey', 'profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode'];
+function summarizeWeaponForm(form) {
+  if (!form || typeof form !== 'object') return undefined;
+  const out = {};
+  for (const key of WEAPON_FORM_KEYS) if (typeof form[key] === 'string' && form[key]) out[key] = form[key];
+  return Object.keys(out).length ? out : undefined;
+}
+
 function summarizeRuleData(context = {}, action = {}, extra = {}) {
   const ruleData = {
     ...(context?.ruleData ?? {}),
@@ -182,6 +190,9 @@ export function summarizeCombatWorkflowContext(context = null, extra = {}) {
     weaponName: extra.weaponName ?? nameOf(weapon) ?? context.weaponName ?? null,
     targetId: extra.targetId ?? idOf(target) ?? context.targetId ?? null,
     targetName: extra.targetName ?? nameOf(target) ?? context.targetName ?? null,
+    // Phase 5D-C: the exact canonical attack form (identityKey/profileId/configurationId/modeId/payloadId/damageMode) the
+    // attack was made with, so a later (chat-card) Damage roll resolves the SAME form. Plain ids only; round-trips losslessly.
+    weaponForm: summarizeWeaponForm(extra.weaponForm ?? context.weaponForm),
     attack: {
       mode: extra.attackMode ?? attack.mode ?? context.attackMode ?? null,
       isArea: asBool(extra.isArea ?? attack.isArea ?? context.isAreaAttack ?? context.areaAttack),
@@ -261,6 +272,7 @@ export function mergeCombatWorkflowContextIntoRollOptions(options = {}, context 
     ...options,
     combatContext: workflowContext,
     workflowContext,
+    weaponForm: options.weaponForm ?? workflowContext.weaponForm ?? undefined,
     actionId: options.actionId ?? workflowContext.actionId ?? null,
     workflowId: options.workflowId ?? workflowContext.workflowId ?? null,
     contextTags: options.contextTags ?? workflowContext.contextTags ?? [],

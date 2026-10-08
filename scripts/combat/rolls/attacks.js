@@ -29,7 +29,7 @@ import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/com
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
-import { resolveAttackWeaponRuntime } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackWeaponRuntime, assertDamageSelectionResolvable, weaponFormRecord } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -173,6 +173,8 @@ function withCanonicalWeaponRuntime(weapon, rollOptions) {
   try {
     const weaponRuntime = resolveAttackWeaponRuntime(weapon, rollOptions);
     if (weaponRuntime.source !== 'canonical') return { rollOptions };
+    // Phase 5D-C: refuse before any cost if the selected damage mode does not exist for the selected form
+    assertDamageSelectionResolvable(weaponRuntime, rollOptions.damageMode ?? null);
     return { rollOptions: { ...rollOptions, weaponRuntime, ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) } };
   } catch (err) {
     if (!(err instanceof WeaponRuntimeError)) throw err;
@@ -458,7 +460,9 @@ export async function rollAttack(actor, weapon, options = {}) {
     hit: isHit,
     natural1: outcome.automaticMiss,
     natural20: outcome.automaticHit,
-    defense: resolvedTarget.defenseType ?? workflowContext?.attack?.defense ?? null
+    defense: resolvedTarget.defenseType ?? workflowContext?.attack?.defense ?? null,
+    // Phase 5D-C: carry the exact canonical attack form to the later Damage roll (null/absent for legacy weapons)
+    weaponForm: weaponFormRecord(rollOptions.weaponRuntime, rollOptions.damageMode ?? null) ?? undefined
   });
 
   const attackMessage = rollOptions.suppressChat ? null : await SWSEChat.postRoll({
