@@ -113,6 +113,39 @@ function summarizeWeaponForm(form) {
   return Object.keys(out).length ? out : undefined;
 }
 
+// Phase 5D-E: the special-mechanic state of the selected canonical attack form that must survive Attack -> Chat Card ->
+// Damage -> Apply Damage: the classified mechanics (ids/family/policy only), stored PROMPT answers, the evaluated CT-rider /
+// overwhelming-stun records, and the attack total. Plain JSON only; whitelisted keys so nothing else rides along.
+function summarizeSpecial(special) {
+  if (!special || typeof special !== 'object') return undefined;
+  const out = {};
+  if (Array.isArray(special.mechanics)) out.mechanics = special.mechanics.filter((m) => m && typeof m.id === 'string').map((m) => ({ id: m.id, family: String(m.family ?? ''), policy: String(m.policy ?? ''), ...(m.timing ? { timing: String(m.timing) } : {}) }));
+  if (special.answers && typeof special.answers === 'object') {
+    const answers = {};
+    for (const [k, v] of Object.entries(special.answers)) if (v === true || v === false) answers[k] = v;
+    if (Object.keys(answers).length) out.answers = answers;
+  }
+  if (Array.isArray(special.records)) {
+    out.records = special.records.filter((r) => r && typeof r.id === 'string').map((r) => {
+      const rec = { id: r.id, kind: String(r.kind ?? ''), steps: Number(r.steps) || 0, fired: r.fired === true ? true : r.fired === false ? false : null, requiresDamage: r.requiresDamage === true };
+      if (r.direction) rec.direction = String(r.direction);
+      if (r.persistent === true) rec.persistent = true;
+      if (Array.isArray(r.defenses) && r.defenses.length) rec.defenses = r.defenses.map(String);
+      if (r.trigger) rec.trigger = String(r.trigger);
+      return rec;
+    });
+  }
+  if (Array.isArray(special.unresolved)) out.unresolved = special.unresolved.filter((u) => u && typeof u.id === 'string').map((u) => ({ id: u.id, reason: String(u.reason ?? '') }));
+  if (special.drInteraction === 'ignore') out.drInteraction = 'ignore';
+  if (special.attackTotal !== undefined && Number.isFinite(Number(special.attackTotal))) out.attackTotal = Number(special.attackTotal);
+  if (special.riders && typeof special.riders === 'object') {
+    const riders = {};
+    for (const [k, v] of Object.entries(special.riders)) if (v && Number.isFinite(Number(v.total))) riders[k] = { total: Number(v.total), formula: String(v.formula ?? ''), types: Array.isArray(v.types) ? v.types.map(String) : [] };
+    if (Object.keys(riders).length) out.riders = riders;
+  }
+  return Object.keys(out).length ? out : undefined;
+}
+
 function summarizeRuleData(context = {}, action = {}, extra = {}) {
   const ruleData = {
     ...(context?.ruleData ?? {}),
@@ -193,6 +226,7 @@ export function summarizeCombatWorkflowContext(context = null, extra = {}) {
     // Phase 5D-C: the exact canonical attack form (identityKey/profileId/configurationId/modeId/payloadId/damageMode) the
     // attack was made with, so a later (chat-card) Damage roll resolves the SAME form. Plain ids only; round-trips losslessly.
     weaponForm: summarizeWeaponForm(extra.weaponForm ?? context.weaponForm),
+    special: summarizeSpecial(extra.special ?? context.special),
     attack: {
       mode: extra.attackMode ?? attack.mode ?? context.attackMode ?? null,
       isArea: asBool(extra.isArea ?? attack.isArea ?? context.isAreaAttack ?? context.areaAttack),
@@ -273,6 +307,7 @@ export function mergeCombatWorkflowContextIntoRollOptions(options = {}, context 
     combatContext: workflowContext,
     workflowContext,
     weaponForm: options.weaponForm ?? workflowContext.weaponForm ?? undefined,
+    special: options.special ?? workflowContext.special ?? undefined,
     actionId: options.actionId ?? workflowContext.actionId ?? null,
     workflowId: options.workflowId ?? workflowContext.workflowId ?? null,
     contextTags: options.contextTags ?? workflowContext.contextTags ?? [],

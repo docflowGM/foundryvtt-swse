@@ -47,7 +47,7 @@ import { resolveCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/w
  */
 export async function rollDamage(actor, weapon, context = {}) {
   let rollContext = mergeCombatWorkflowContextIntoRollOptions(context, context?.combatContext ?? context?.workflowContext ?? null);
-  const workflowContext = summarizeCombatWorkflowContext(rollContext.combatContext ?? rollContext.workflowContext ?? rollContext, {
+  let workflowContext = summarizeCombatWorkflowContext(rollContext.combatContext ?? rollContext.workflowContext ?? rollContext, {
     actor,
     weapon,
     target: rollContext.target,
@@ -118,6 +118,12 @@ export async function rollDamage(actor, weapon, context = {}) {
       ui.notifications.warn(`${weapon.name}: the selected attack form has no ordinary damage roll (${canonicalDamage.reason}).`);
       return null;
     }
+    // Phase 5D-E native-stun: the structured stun capability makes stun the effective mode even when the caller never said so
+    // (e.g. a Damage roll started from the sheet); the workflow context/packet type must agree with the dice that were resolved.
+    if (canonicalDamage.damageMode === 'stun' && rollContext.damageMode !== 'stun') {
+      rollContext = { ...rollContext, damageMode: 'stun', stun: true };
+      workflowContext = summarizeCombatWorkflowContext(workflowContext, { damageMode: 'stun', isStun: true, contextTags: ['stun'] });
+    }
     // canonical structured damage types (never description text); an explicit caller-supplied type still wins
     const types = canonicalDamage.damageTypes;
     const explicitType = context.damageType ?? null;
@@ -187,9 +193,48 @@ export async function rollDamage(actor, weapon, context = {}) {
     });
   }
 
+  // Phase 5D-E: profile-owned damage riders (canonical damageComponents beyond the primary component) are SEPARATE damage events:
+  // rolled from their own dice (no ability/half-level/critical modifiers), typed by the canonical component, and posted as their
+  // own damage card that flows through the unchanged Apply Damage -> DamagePacket path with its own receipt.
+  if (roll && canonicalDamage.source === 'canonical' && rollContext.suppressChat !== true) {
+    for (const rider of canonicalDamage.damageShape?.riders ?? []) {
+      await postDamageRider({ actor, weapon, rider, workflowContext, rollContext, canonicalDamage });
+    }
+  }
+
   await clearRapidAlchemyDamageBonus(actor, weapon);
 
   return roll;
+}
+
+async function postDamageRider({ actor, weapon, rider, workflowContext, rollContext, canonicalDamage }) {
+  const formula = rider.damage?.formula ?? null;
+  if (typeof formula !== 'string' || !/^\d+d\d+([+-]\d+)?$/.test(formula.replace(/\s+/g, ''))) return null;
+  const riderRoll = await globalThis.SWSE.RollEngine.safeRoll(formula.replace(/\s+/g, ''));
+  if (!riderRoll) return null;
+  riderRoll.swseDamageFormula = formula;
+  const types = [...(rider.damageTypes ?? [])];
+  const baseCtx = workflowContext ?? {};
+  const riderWorkflow = summarizeCombatWorkflowContext({
+    ...baseCtx,
+    contextTags: (baseCtx.contextTags ?? []).filter((t) => t !== 'stun'),
+    attack: { ...(baseCtx.attack ?? {}), damageMode: 'normal', isStun: false },
+    damage: { ...(baseCtx.damage ?? {}), damageMode: 'normal', isStun: false, damageType: types[0] ?? null, damageTypes: types, damageComponents: [], crit: false },
+    // the rider card never re-executes the main card's CT/stun records (they execute once, on the main damage card)
+    special: { ...(baseCtx.special ?? {}), records: undefined, riders: { [rider.componentId]: { total: riderRoll.total, formula, types } } }
+  }, { damageMode: 'normal', isStun: false, damageType: types[0] ?? undefined, damageTypes: types });
+  await SWSEChat.postRoll({
+    roll: riderRoll,
+    actor,
+    flavor: `${weapon.name} — ${rider.componentId} (separate damage, ${types.join(' / ') || 'untyped'})`,
+    flags: { swse: { damageRoll: true, damageRider: true, riderOf: weapon.id, weaponId: weapon.id, workflowContext: riderWorkflow } },
+    context: {
+      type: 'damage', weaponId: weapon.id, weapon, isCritical: false, critMultiplier: 1, workflowContext: riderWorkflow,
+      target: rollContext.target ?? null, targetContext: rollContext.targetContext ?? null,
+      damageType: types[0] ?? 'normal', damageTypes: types, damageComponents: []
+    }
+  });
+  return riderRoll;
 }
 
 /**

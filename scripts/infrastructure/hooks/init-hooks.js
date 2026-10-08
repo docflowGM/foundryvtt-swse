@@ -24,6 +24,7 @@ import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/fea
 import { registerFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/register-feat-runtime.js";
 import { loadDefaultProfiles } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-profile-registry.js";
 import { loadWeaponAuthorityRegistry } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-authority-registry.js";
+import { setSpecialPromptProvider } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 
 /**
  * Register initialization hooks
@@ -87,6 +88,15 @@ export function registerInitHooks() {
             SWSELogger.error('Weapon Authority Registry failed to load; canonical weapon attacks will be refused until it loads', err);
             ui?.notifications?.error?.('SWSE: canonical weapon registry failed to load. Canonical weapon attacks are disabled until it is fixed.');
         }
+
+        // Phase 5D-E: canonical special mechanics whose condition the runtime cannot observe ask ONE yes/no question (the answer is
+        // stored in the workflow context / chat message and never re-asked). Closing the dialog leaves the mechanic unanswered.
+        setSpecialPromptProvider(async ({ question }) => {
+            const DialogV2 = foundry?.applications?.api?.DialogV2;
+            if (!DialogV2?.confirm) return null;
+            const escaped = foundry.utils?.escapeHTML ? foundry.utils.escapeHTML(String(question ?? '')) : String(question ?? '').replace(/[&<>"']/g, '');
+            return DialogV2.confirm({ window: { title: 'Weapon Special Rule' }, content: `<p>${escaped}</p>`, rejectClose: false });
+        });
 
         // Initialize feat action listeners (Sadistic Strike, Stay Up, etc.)
         FeatActionListeners.initialize();

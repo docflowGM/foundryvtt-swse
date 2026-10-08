@@ -40,6 +40,7 @@ import { getStackingRule } from "/systems/foundryvtt-swse/scripts/engine/effects
 import { buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime, resolveCanonicalDamage, summarizeCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { WeaponRuntimeError, ERROR_CODES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
+import { replaceBaseDieSize } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
@@ -1000,7 +1001,14 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // die-step/extra-dice still adjust it (R4-4, preserved verbatim), it is
   // simply the starting formula instead of weapon.system.damage.
   // precedence: stock-statblock published formula (flat contract) > canonical selected-form damage > legacy Item-level damage
-  const base = bonus.flags?.stockDamageFormula ?? canonicalBase ?? String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
+  // Phase 5D-E: AUTO damage mechanics of the selected canonical form (multiplier, critical die replacement / bonus formula, riders)
+  // are consumed HERE, in the one composition -- never by a second damage engine. A stock-statblock flat contract is untouched.
+  const shape = (canonicalBase !== null && !bonus.flags?.stockDamageFormula) ? (canonicalDamage.damageShape ?? null) : null;
+  let canonicalBaseForRoll = canonicalBase;
+  if (shape && isCriticalRoll) {
+    for (const r of shape.criticalDieReplacements) canonicalBaseForRoll = replaceBaseDieSize(canonicalBaseForRoll, r.fromDieSize, r.toDieSize);
+  }
+  const base = bonus.flags?.stockDamageFormula ?? canonicalBaseForRoll ?? String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
   const criticalDieStepIncreases = isCriticalRoll ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
   const dieStepIncreases = Number(optionModifiers.damageDieStepIncreases || 0) + criticalDieStepIncreases;
   // Damage audit correction #1 "COLLAPSE damageExtraWeaponDice /
@@ -1017,7 +1025,8 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
 
   // ── Critical state ───────────────────────────────────────────────────
   const multiplier = resolveCriticalMultiplier(actor, weapon, context, optionModifiers);
-  const bonusFormula = isCriticalRoll ? getCriticalDamageBonusFormula(actor, weapon) : '';
+  const mechanicBonusFormulas = (shape && isCriticalRoll) ? shape.criticalBonusFormulas.map((f) => f.formula) : [];
+  const bonusFormula = isCriticalRoll ? [getCriticalDamageBonusFormula(actor, weapon), ...mechanicBonusFormulas].filter(Boolean).join(' + ') : '';
 
   // ── Typed damage-modifier vocabulary unification ────────────────────
   // Damage SSOT correction (independent review of 4d05a80, "Blocker 2"):
@@ -1051,6 +1060,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
       extraWeaponDice,
       dieStepIncreases,
       criticalDieStepIncreases,
+      baseMultiplier: shape?.baseMultiplier ?? 1,
       talentDice: talentContributions.bonusDice,
       talentBreakdown: talentContributions.breakdown,
       otherDiceTerms
@@ -1059,7 +1069,8 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
     damageTypes: Array.isArray(context.damageTypes) ? context.damageTypes : [],
     riders: {
       onHit: optionModifiers.targetEffectsOnHit || [],
-      onCritical: optionModifiers.targetEffectsOnCritical || []
+      onCritical: optionModifiers.targetEffectsOnCritical || [],
+      canonicalDamage: shape?.riders ?? []
     },
     flags: { ...bonus.flags },
     ledger,
@@ -1135,7 +1146,12 @@ export function buildDamageFormula(composition, options = {}) {
   const stepped = stepDamageDieFormula(dice.base, dice.dieStepIncreases || 0);
   const extraDiceFormula = buildExtraWeaponDiceFormula(stepped, dice.extraWeaponDice || 0);
 
-  const parts = [`${stepped}${extraDiceFormula}`];
+  // Phase 5D-E: a canonical ×N weapon damage multiplier applies to the weapon's dice (steps/extra dice included); ability,
+  // half-level and other bonuses are added after it, exactly like the printed "NdMxK" notation. Composes with the critical
+  // multiplier below (both multiply; neither replaces the other).
+  const baseMult = Number(dice.baseMultiplier || 1);
+  const diceTerm = `${stepped}${extraDiceFormula}`;
+  const parts = [baseMult > 1 ? `(${diceTerm}) * ${baseMult}` : diceTerm];
 
   const bonusTotal = Number(composition?.bonus?.total || 0);
   if (bonusTotal !== 0) parts.push(bonusTotal.toString());

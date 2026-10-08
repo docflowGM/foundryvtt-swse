@@ -1,0 +1,793 @@
+{
+  "schemaVersion": 1,
+  "phase": "5D-E",
+  "purpose": "Deterministic classification of every structured special mechanic of every offered canonical attack form (by structure, not name).",
+  "taxonomy": {
+    "activation-effect": {
+      "policy": "DEFER",
+      "timing": "on-attack",
+      "note": "activated empowerment (Force Point / swift action) with own cost"
+    },
+    "attack-modifier-auto": {
+      "policy": "AUTO",
+      "timing": "on-attack",
+      "note": "conditional attack modifier whose condition is observable from the actor/target"
+    },
+    "attack-modifier-prompt": {
+      "policy": "PROMPT",
+      "timing": "on-attack",
+      "note": "conditional attack modifier whose condition is not observable; answered once and stored"
+    },
+    "attack-resolution": {
+      "policy": "AUTO",
+      "timing": "on-attack",
+      "note": "selected form defense (reflex/fortitude/will) -- already consumed through targetContext.defenseType"
+    },
+    "critical-bonus-damage": {
+      "policy": "AUTO",
+      "timing": "on-critical",
+      "note": "critical hit adds a formula after the critical multiplier (composition critical bonus)"
+    },
+    "critical-die-replace": {
+      "policy": "AUTO",
+      "timing": "on-critical",
+      "note": "critical hit replaces the base die size (composition base)"
+    },
+    "ct-overwhelming-stun": {
+      "policy": "AUTO",
+      "timing": "after-damage",
+      "note": "stun damage >= current HP shifts the condition track (existing CT infrastructure)"
+    },
+    "ct-rider": {
+      "policy": "AUTO",
+      "timing": "after-damage",
+      "note": "condition-track shift executed at Apply Damage through CombatTargetEffectAdapter"
+    },
+    "ct-rider-prompt": {
+      "policy": "PROMPT",
+      "timing": "after-damage",
+      "note": "condition-track rider whose trigger cannot be evaluated automatically; answered once and stored"
+    },
+    "damage-multiplier": {
+      "policy": "AUTO",
+      "timing": "on-damage-roll",
+      "note": "multiplies the weapon base damage dice through the existing damage composition"
+    },
+    "damage-rider": {
+      "policy": "AUTO",
+      "timing": "on-damage-roll",
+      "note": "separately rolled typed damage component applied in the same damage event"
+    },
+    "defensive-interaction": {
+      "policy": "DEFER",
+      "timing": "continuous",
+      "note": "modifies the wielder's defenses/Use the Force checks rather than this single attack"
+    },
+    "display-note": {
+      "policy": "DISPLAY_ONLY",
+      "timing": "continuous",
+      "note": "informational statement with no effect on resolving the single attack (e.g. concealed shot origin)"
+    },
+    "dr-conditional": {
+      "policy": "PROMPT",
+      "timing": "on-attack",
+      "note": "DR is ignored only under a stated condition the runtime cannot observe; answered once and stored"
+    },
+    "dr-ignore": {
+      "policy": "AUTO",
+      "timing": "on-damage-roll",
+      "note": "form ignores damage reduction: the packet component is tagged bypass-dr and the existing DR resolver honors it"
+    },
+    "firing-constraint": {
+      "policy": "VALIDATION_ONLY",
+      "timing": "on-attack",
+      "note": "limits shots per round/reload; checked against the existing multi-attack/ammo rules (Phase 5D-F)"
+    },
+    "grab-grapple": {
+      "policy": "DEFER",
+      "timing": "on-hit",
+      "note": "grapple/net/snare state machine (existing grapple system; multi-step workflow)"
+    },
+    "multi-attack-interaction": {
+      "policy": "DEFER",
+      "timing": "on-attack",
+      "note": "depends on Double/Triple Attack/Rapid Shot/Autofire (Phase 5D-F)"
+    },
+    "native-stun": {
+      "policy": "AUTO",
+      "timing": "on-attack",
+      "note": "form deals stun damage by default (damage mode)"
+    },
+    "payload-effect": {
+      "policy": "DEFER",
+      "timing": "on-hit",
+      "note": "effect-only payload (flash/gas/toxin) without complete structure"
+    },
+    "persistent-effect": {
+      "policy": "DEFER",
+      "timing": "turn-start",
+      "note": "delayed/recurring effect resolved at a later turn boundary"
+    },
+    "prepared-attack": {
+      "policy": "DEFER",
+      "timing": "on-attack",
+      "note": "swift-action preparation/bracing (action economy owner)"
+    },
+    "return-recovery": {
+      "policy": "DEFER",
+      "timing": "on-attack",
+      "note": "return/recovery threshold with no structured effect or action"
+    },
+    "special-action": {
+      "policy": "DEFER",
+      "timing": "on-attack",
+      "note": "replaces the attack with another action (Pin/Trip/Venom Spit) -- refused, not substituted"
+    },
+    "status-condition": {
+      "policy": "DEFER",
+      "timing": "after-damage",
+      "note": "status condition (prone/disabled/concealment) with no single existing setter"
+    },
+    "unclassified": {
+      "policy": "DEFER",
+      "timing": "on-attack",
+      "note": "structured mechanic with no recognized family; surfaced, never silently dropped"
+    }
+  },
+  "totals": {
+    "identities": 203,
+    "identitiesWithMechanics": 72,
+    "forms": 265,
+    "formsWithMechanics": 96,
+    "resolveErrors": 0
+  },
+  "mechanicsByFamily": {
+    "activation-effect": 1,
+    "attack-modifier-auto": 2,
+    "attack-modifier-prompt": 7,
+    "attack-resolution": 4,
+    "critical-bonus-damage": 1,
+    "critical-die-replace": 2,
+    "ct-overwhelming-stun": 2,
+    "ct-rider": 4,
+    "damage-multiplier": 2,
+    "damage-rider": 1,
+    "defensive-interaction": 5,
+    "display-note": 3,
+    "dr-conditional": 1,
+    "dr-ignore": 24,
+    "firing-constraint": 20,
+    "grab-grapple": 12,
+    "multi-attack-interaction": 2,
+    "native-stun": 16,
+    "payload-effect": 8,
+    "persistent-effect": 2,
+    "prepared-attack": 4,
+    "return-recovery": 2,
+    "special-action": 4,
+    "status-condition": 4
+  },
+  "mechanicsByPolicy": {
+    "AUTO": 58,
+    "DEFER": 44,
+    "DISPLAY_ONLY": 3,
+    "PROMPT": 8,
+    "VALIDATION_ONLY": 20
+  },
+  "refusedForms": [
+    {
+      "identityKey": "unmapped::Amphistaff",
+      "profileId": "venom-spit",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "unmapped::Amphistaff",
+      "profileId": "whip-pin",
+      "configurationId": "whip",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "unmapped::Amphistaff",
+      "profileId": "whip-trip",
+      "configurationId": "whip",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "weapon-adhesive-grenade",
+      "profileId": "primary",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "weapon-ascension-gun",
+      "profileId": "ascension",
+      "modeId": "ascension",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "weapon-flash-canister",
+      "profileId": "throw",
+      "status": "special",
+      "reason": "special-effect-damage"
+    },
+    {
+      "identityKey": "weapon-heavy-variable-blaster",
+      "profileId": "ascension",
+      "modeId": "ascension",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "weapon-net",
+      "profileId": "primary",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "weapon-smoke-grenade",
+      "profileId": "primary",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "weapon-targeting-laser",
+      "profileId": "targeting",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "weapon-wrist-rocket-launcher",
+      "profileId": "primary",
+      "payloadId": "flash",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    },
+    {
+      "identityKey": "weapon-wrist-rocket-launcher",
+      "profileId": "primary",
+      "payloadId": "hollow-tip-nerve-toxin",
+      "status": "special",
+      "reason": "special-effect-damage"
+    },
+    {
+      "identityKey": "weapon-wrist-rocket-launcher",
+      "profileId": "primary",
+      "payloadId": "hollow-tip-stun-gas",
+      "status": "no-damage",
+      "reason": "no-damage-definition"
+    }
+  ],
+  "unclassified": [],
+  "completenessIssues": [
+    {
+      "identityKey": "unmapped::Darkstick",
+      "form": "melee",
+      "id": "return-on-attack-exceeds-reflex",
+      "issue": "threshold is structured but the effect/action (return to hand) is not; recorded as a completeness issue, never invented"
+    },
+    {
+      "identityKey": "unmapped::Darkstick",
+      "form": "thrown",
+      "id": "return-on-attack-exceeds-reflex",
+      "issue": "threshold is structured but the effect/action (return to hand) is not; recorded as a completeness issue, never invented"
+    },
+    {
+      "identityKey": "weapon-adhesive-grenade",
+      "form": "primary",
+      "id": "form-without-damage-or-effect",
+      "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
+    },
+    {
+      "identityKey": "weapon-ascension-gun",
+      "form": "ascension/ascension",
+      "id": "form-without-damage-or-effect",
+      "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
+    },
+    {
+      "identityKey": "weapon-heavy-variable-blaster",
+      "form": "ascension/ascension",
+      "id": "form-without-damage-or-effect",
+      "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
+    },
+    {
+      "identityKey": "weapon-net",
+      "form": "primary",
+      "id": "form-without-damage-or-effect",
+      "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
+    },
+    {
+      "identityKey": "weapon-smoke-grenade",
+      "form": "primary",
+      "id": "form-without-damage-or-effect",
+      "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
+    },
+    {
+      "identityKey": "weapon-targeting-laser",
+      "form": "targeting",
+      "id": "form-without-damage-or-effect",
+      "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
+    },
+    {
+      "identityKey": "weapon-wrist-rocket-launcher",
+      "form": "primary/hollow-tip-stun-gas",
+      "id": "form-without-damage-or-effect",
+      "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
+    }
+  ],
+  "resolveErrors": [],
+  "identities": {
+    "lightsaber-chassis-archaic-lightfoil": {
+      "blade": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-archaic-lightsaber": {
+      "blade": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-crossguard": {
+      "blade": [
+        "defensive-interaction:conditional-0:DEFER",
+        "defensive-interaction:conditional-1:DEFER",
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-dual-phase": {
+      "default/default": [
+        "dr-ignore:dr-ignore:AUTO"
+      ],
+      "extended/extended": [
+        "defensive-interaction:conditional-0:DEFER",
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-dueling": {
+      "blade": [
+        "attack-modifier-prompt:conditional-0:PROMPT",
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-great": {
+      "blade": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-guard-shoto": {
+      "blade": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-lightwhip": {
+      "whip": [
+        "dr-ignore:dr-ignore:AUTO",
+        "grab-grapple:triggered-0:DEFER",
+        "grab-grapple:triggered-1:DEFER"
+      ]
+    },
+    "lightsaber-chassis-longhandle": {
+      "blade": [
+        "dr-ignore:dr-ignore:AUTO"
+      ],
+      "haft-end": [
+        "dr-ignore:dr-ignore:AUTO"
+      ],
+      "two-handed-base-override": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-modern-lightfoil": {
+      "blade": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-pike": {
+      "blade": [
+        "defensive-interaction:conditional-0:DEFER",
+        "defensive-interaction:conditional-1:DEFER",
+        "dr-ignore:dr-ignore:AUTO"
+      ],
+      "haft-end": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-retrosaber": {
+      "burnout": [
+        "dr-ignore:dr-ignore:AUTO"
+      ],
+      "normal": [
+        "dr-ignore:dr-ignore:AUTO"
+      ],
+      "overcharge": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "lightsaber-chassis-short": {
+      "primary": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "unmapped::Amphistaff": {
+      "spear-melee/spear": [
+        "ct-rider:spear-poison-condition-track:AUTO"
+      ],
+      "spear-thrown/spear": [
+        "ct-rider:spear-thrown-poison-condition-track:AUTO"
+      ],
+      "venom-spit": [
+        "special-action:venom-spit-condition-track:DEFER"
+      ],
+      "whip-melee/whip": [
+        "ct-rider:whip-poison-condition-track:AUTO"
+      ],
+      "whip-pin/whip": [
+        "special-action:pin-without-feat:DEFER"
+      ],
+      "whip-trip/whip": [
+        "special-action:trip-without-feat:DEFER"
+      ]
+    },
+    "unmapped::Arggarok": {
+      "primary": [
+        "attack-modifier-prompt:conditional-0:PROMPT"
+      ]
+    },
+    "unmapped::Darkstick": {
+      "melee": [
+        "return-recovery:return-on-attack-exceeds-reflex:DEFER"
+      ],
+      "thrown": [
+        "return-recovery:return-on-attack-exceeds-reflex:DEFER"
+      ]
+    },
+    "unmapped::Energy Lance": {
+      "melee": [
+        "attack-modifier-prompt:conditional-0:PROMPT"
+      ],
+      "plasma-bolt": [
+        "attack-modifier-prompt:conditional-0:PROMPT"
+      ]
+    },
+    "unmapped::Fire Blade": {
+      "melee": [
+        "dr-conditional:dr-conditional-0:PROMPT"
+      ]
+    },
+    "unmapped::Garrote": {
+      "melee": [
+        "grab-grapple:triggered-0:DEFER"
+      ]
+    },
+    "unmapped::Neuronic Whip": {
+      "melee": [
+        "damage-rider:slashing-rider:AUTO",
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "unmapped::Power Hammer": {
+      "melee": [
+        "multi-attack-interaction:conditional-0:DEFER"
+      ]
+    },
+    "unmapped::Power Lance": {
+      "melee": [
+        "attack-modifier-prompt:conditional-0:PROMPT"
+      ]
+    },
+    "unmapped::Shock Stick": {
+      "native-stun/handheld": [
+        "ct-overwhelming-stun:overwhelming-stun:AUTO",
+        "native-stun:native-stun:AUTO"
+      ],
+      "native-stun/mounted-bayonet": [
+        "ct-overwhelming-stun:overwhelming-stun:AUTO",
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "unmapped::Shock Whip": {
+      "primary": [
+        "grab-grapple:grabbed-target-shock:DEFER",
+        "grab-grapple:optional-grab-on-hit:DEFER",
+        "grab-grapple:weapon-locked-while-grabbing:DEFER",
+        "status-condition:trip-substitution:DEFER"
+      ]
+    },
+    "unmapped::Stunning Gauntlet": {
+      "primary": [
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "unmapped::Tehkla Blade": {
+      "primary": [
+        "persistent-effect:bleeding-follow-up:DEFER"
+      ]
+    },
+    "unmapped::Vibro-Saw": {
+      "primary": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "weapon-black-powder-pistol": {
+      "primary": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-bryar-pistol": {
+      "primary": [
+        "prepared-attack:prepared-attack:DEFER"
+      ]
+    },
+    "weapon-bryar-rifle": {
+      "primary": [
+        "prepared-attack:prepared-attack:DEFER"
+      ]
+    },
+    "weapon-carbonite-rifle": {
+      "primary": [
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-concealed-dart-launcher": {
+      "default-sedative-dart/contact-poison": [
+        "native-stun:native-stun:AUTO"
+      ],
+      "default-sedative-dart/sedative": [
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-concussion-rifle": {
+      "primary": [
+        "attack-resolution:defense:fortitude:AUTO",
+        "status-condition:knock-prone-on-hit:DEFER"
+      ]
+    },
+    "weapon-crossbow": {
+      "primary": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-darter": {
+      "primary": [
+        "payload-effect:poison-delivery:DEFER"
+      ]
+    },
+    "weapon-deck-sweeper": {
+      "primary": [
+        "native-stun:native-stun:AUTO",
+        "prepared-attack:prime:DEFER"
+      ]
+    },
+    "weapon-disruptor-pistol": {
+      "primary": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-disruptor-rifle": {
+      "primary": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-double-barreled-blaster-carbine": {
+      "double-shot/double-shot": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-double-bladed-lightsaber": {
+      "end1": [
+        "dr-ignore:dr-ignore:AUTO"
+      ],
+      "end2": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "weapon-e-web-missile-launcher": {
+      "primary": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-electronet": {
+      "primary": [
+        "grab-grapple:grab-on-hit:DEFER",
+        "grab-grapple:ongoing-net-shock:DEFER",
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-flash-canister": {
+      "throw": [
+        "special-action:triggered-0:DEFER"
+      ]
+    },
+    "weapon-flechette-launcher": {
+      "primary": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-gas-grenade": {
+      "primary": [
+        "attack-resolution:defense:fortitude:AUTO",
+        "native-stun:native-stun:AUTO",
+        "payload-effect:condition-track-effect:DEFER",
+        "status-condition:lingering-gas-concealment:DEFER"
+      ]
+    },
+    "weapon-heavy-assault-blaster": {
+      "primary": [
+        "critical-die-replace:critical-die-size-upgrade:AUTO"
+      ]
+    },
+    "weapon-heavy-blaster-cannon": {
+      "primary": [
+        "prepared-attack:brace:DEFER"
+      ]
+    },
+    "weapon-heavy-slugthrower-pistol": {
+      "primary": [
+        "multi-attack-interaction:multi-shot-recoil-penalty:DEFER"
+      ]
+    },
+    "weapon-hunting-blaster-carbine": {
+      "primary": [
+        "critical-die-replace:critical-die-size-upgrade:AUTO"
+      ]
+    },
+    "weapon-interchangeable-weapon-system": {
+      "sniper/sniper": [
+        "attack-modifier-prompt:conditional-0:PROMPT"
+      ]
+    },
+    "weapon-light-concussion-missile-launcher": {
+      "light-concussion-missile": [
+        "attack-modifier-auto:conditional-0:AUTO",
+        "damage-multiplier:damage-multiplier:AUTO",
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-lightfoil": {
+      "primary": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "weapon-lightsaber": {
+      "primary": [
+        "dr-ignore:dr-ignore:AUTO"
+      ]
+    },
+    "weapon-micro-grenade-launcher": {
+      "primary/rifle-mounted": [
+        "payload-effect:damage-dice-adjustment:DEFER",
+        "payload-effect:inherit-selected-grenade-normal-rules:DEFER"
+      ],
+      "primary/standalone": [
+        "payload-effect:damage-dice-adjustment:DEFER",
+        "payload-effect:inherit-selected-grenade-normal-rules:DEFER"
+      ]
+    },
+    "weapon-miniature-proton-torpedo-launcher": {
+      "area/area": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ],
+      "single-target/single-target": [
+        "attack-modifier-auto:conditional-0:AUTO",
+        "damage-multiplier:damage-multiplier:AUTO",
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-neural-inhibitor": {
+      "primary": [
+        "persistent-effect:persistent-neurotoxin:DEFER"
+      ]
+    },
+    "weapon-radiation-grenade": {
+      "primary": [
+        "attack-resolution:defense:fortitude:AUTO"
+      ]
+    },
+    "weapon-sg-4-blaster-rifle": {
+      "harpoon/harpoon": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-sith-sword": {
+      "melee": [
+        "activation-effect:dark-side-empowerment:DEFER"
+      ]
+    },
+    "weapon-snare-pistol": {
+      "primary": [
+        "grab-grapple:escape-options:DEFER",
+        "grab-grapple:stun-on-successful-grab:DEFER",
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-snare-rifle": {
+      "primary": [
+        "grab-grapple:escape-options:DEFER",
+        "grab-grapple:stun-on-successful-grab:DEFER",
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-sniper-blaster-rifle": {
+      "primary": [
+        "attack-modifier-prompt:conditional-0:PROMPT"
+      ]
+    },
+    "weapon-sonic-disruptor": {
+      "primary": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-sonic-stunner": {
+      "primary": [
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-squib-tensor-rifle": {
+      "primary": [
+        "attack-resolution:defense:fortitude:AUTO",
+        "ct-rider:condition-track-on-hit:AUTO"
+      ]
+    },
+    "weapon-stokhli-spray-stick": {
+      "primary": [
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-stun-grenade": {
+      "primary": [
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-stun-pistol": {
+      "native-stun": [
+        "native-stun:native-stun:AUTO"
+      ]
+    },
+    "weapon-subrepeating-blaster": {
+      "primary": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-verpine-shattergun": {
+      "primary": [
+        "critical-bonus-damage:critical-extra-damage-after-multiplication:AUTO",
+        "status-condition:fragile-disable-on-damage:DEFER"
+      ]
+    },
+    "weapon-wrist-rocket-launcher": {
+      "primary/antipersonnel": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ],
+      "primary/antivehicle": [
+        "display-note:payload-note-0:DISPLAY_ONLY",
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ],
+      "primary/flash": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY",
+        "payload-effect:blinded:DEFER"
+      ],
+      "primary/hollow-tip-empty": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ],
+      "primary/hollow-tip-nerve-toxin": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY",
+        "payload-effect:nerve-agent-injection:DEFER"
+      ],
+      "primary/hollow-tip-stun-gas": [
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ],
+      "primary/ion-blast": [
+        "display-note:payload-note-0:DISPLAY_ONLY",
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+      ]
+    },
+    "weapon-xerrol-nightstinger": {
+      "primary": [
+        "display-note:concealed-shot-origin:DISPLAY_ONLY"
+      ]
+    }
+  }
+}

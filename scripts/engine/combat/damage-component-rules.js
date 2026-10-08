@@ -137,6 +137,7 @@ function normalizeDamageComponent(component = {}, index = 0, env = {}) {
     bonus: asBool(component.bonus ?? component.isBonus ?? false),
     suppressed: false,
     suppressionReason: '',
+    tags: asArray(component.tags).map(String).filter(Boolean),
     notes: asArray(component.notes).map(String).filter(Boolean)
   };
 }
@@ -190,7 +191,7 @@ function addRemainderComponent(components = [], env = {}) {
   return [...components, fallback];
 }
 
-export function buildDamageComponents({
+function buildDamageComponentsBase({
   rawAmount = 0,
   amount = null,
   type = 'normal',
@@ -232,6 +233,17 @@ export function buildDamageComponents({
     .filter(component => component.rawAmount > 0 || component.amount > 0 || component.formula);
 
   return addRemainderComponent(components, env);
+}
+
+/**
+ * Phase 5D-E: a canonical form that ignores damage reduction (workflowContext.special.drInteraction === 'ignore', set from the
+ * structured damageReductionInteraction -- not from the weapon name) tags every component 'bypass-dr'. The EXISTING DR resolver
+ * (DamageReductionResolver.componentBypassesDamageReduction) already honors that tag at mitigation; no second DR path exists.
+ */
+export function buildDamageComponents(args = {}) {
+  const components = buildDamageComponentsBase(args);
+  if (args?.workflowContext?.special?.drInteraction !== 'ignore') return components;
+  return components.map((c) => ({ ...c, tags: [...new Set([...(c.tags ?? []), 'bypass-dr'])] }));
 }
 
 function protectionMatchesComponent(entry = {}, component = {}) {

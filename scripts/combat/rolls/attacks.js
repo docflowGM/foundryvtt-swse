@@ -29,7 +29,9 @@ import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/com
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
-import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
+import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -174,16 +176,51 @@ function withCanonicalWeaponRuntime(weapon, rollOptions) {
     const weaponRuntime = resolveAttackWeaponRuntime(weapon, rollOptions);
     if (weaponRuntime.source !== 'canonical') return { rollOptions };
     // Phase 5D-C/5D-D: refuse before any cost if the selected damage mode or range band does not exist for the selected form
-    assertAttackFormResolvable(weaponRuntime, { damageMode: rollOptions.damageMode ?? null, rangeBand: rollOptions.rangeBand ?? null });
+    // Phase 5D-E: a native-stun form deals stun damage only (structured stun capability) -- the effective mode is what is
+    // validated, costed, recorded in the carried form and tagged on the workflow context
+    const damageMode = effectiveDamageMode(weaponRuntime, rollOptions.damageMode ?? null);
+    assertAttackFormResolvable(weaponRuntime, { damageMode: damageMode ?? null, rangeBand: rollOptions.rangeBand ?? null });
     // Phase 5D-D: the selected form's canonical per-attack resource units feed the existing AmmoSystem cost rule (read-only here;
     // spending still happens exactly once, in AmmoSystem.spendForWorkflow). 'pending' leaves the existing rule untouched.
-    const resource = resolveAttackResourceCost(weaponRuntime, { damageMode: rollOptions.damageMode ?? null });
+    const resource = resolveAttackResourceCost(weaponRuntime, { damageMode: damageMode ?? null });
     const canonicalAmmoUnits = resource && resource.status !== 'pending' ? resource.units : undefined;
-    return { rollOptions: { ...rollOptions, weaponRuntime, canonicalResource: resource, ...(canonicalAmmoUnits !== undefined ? { canonicalAmmoUnits } : {}), ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) } };
+    return { rollOptions: { ...rollOptions, ...(damageMode === 'stun' ? { damageMode } : {}), weaponRuntime, canonicalResource: resource, ...(canonicalAmmoUnits !== undefined ? { canonicalAmmoUnits } : {}), ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) } };
   } catch (err) {
     if (!(err instanceof WeaponRuntimeError)) throw err;
     return { error: err };
   }
+}
+
+/**
+ * Phase 5D-E: attack-stage special mechanics of the selected canonical form. Pure resolution + at most one stored answer per
+ * PROMPT mechanic (answers ride in the workflow context and are never re-asked). Observable conditions (target size) are
+ * evaluated automatically and fed into the EXISTING typed-modifier pipeline as situational contributions.
+ * Legacy/custom weapons: untouched.
+ */
+async function prepareCanonicalSpecialMechanics(weapon, rollOptions) {
+  const runtime = rollOptions.weaponRuntime;
+  if (runtime?.source !== 'canonical') return { rollOptions, mechanics: [], answers: {}, unresolved: [] };
+  let cd = null;
+  try {
+    cd = resolveCanonicalDamage(weapon, { weaponForm: weaponFormRecord(runtime, rollOptions.damageMode ?? null), damageMode: rollOptions.damageMode ?? null, weaponRuntime: runtime });
+  } catch (err) {
+    if (!(err instanceof WeaponRuntimeError)) throw err;
+    return { rollOptions, mechanics: [], answers: {}, unresolved: [] }; // form-level errors are reported by the existing validators
+  }
+  const mechanics = cd.mechanics ?? [];
+  const carried = rollOptions.special?.answers ?? rollOptions.workflowContext?.special?.answers ?? {};
+  const target = getTargetActorFromOptions(rollOptions);
+  const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried });
+  if (stage.unresolved.length) ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'}: ${stage.unresolved.length} conditional attack modifier(s) could not be evaluated and were not applied (GM adjudication).`);
+  if (!stage.contributions.length) return { rollOptions, mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore };
+  const contributions = stage.contributions.map((c) => createModifier({
+    source: ModifierSource.ITEM, sourceId: c.id, sourceName: `${weapon?.name ?? 'Weapon'} (${c.id})`,
+    target: 'global.attack', type: ModifierType.UNTYPED, value: c.value
+  }));
+  return {
+    rollOptions: { ...rollOptions, situationalContributions: [...(Array.isArray(rollOptions.situationalContributions) ? rollOptions.situationalContributions : []), ...contributions] },
+    mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore
+  };
 }
 
 function getFightingDefensivelyAttackPenalty(actor, options = {}) {
@@ -341,6 +378,8 @@ export async function rollAttack(actor, weapon, options = {}) {
     return null;
   }
   rollOptions = canonical.rollOptions;
+  const specialStage = await prepareCanonicalSpecialMechanics(weapon, rollOptions);
+  rollOptions = specialStage.rollOptions;
 
   const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? rollOptions, {
     actor,
@@ -415,8 +454,12 @@ export async function rollAttack(actor, weapon, options = {}) {
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
 
-  const targetContextOptions = optionModifiers.targetDefenseType && !rollOptions.targetContext
-    ? { ...rollOptions, targetContext: { defenseType: optionModifiers.targetDefenseType } }
+  // Phase 5D-E: the selected canonical form's structured attack-resolution defense (Fortitude/Will) is the defense the roll is
+  // compared to, through the existing target-defense authority; Reflex stays the default. An explicit targetContext still wins.
+  const canonicalDefense = alternateDefenseOf(specialStage.mechanics);
+  const resolvedDefenseType = canonicalDefense ?? optionModifiers.targetDefenseType ?? null;
+  const targetContextOptions = resolvedDefenseType && !rollOptions.targetContext
+    ? { ...rollOptions, targetContext: { defenseType: resolvedDefenseType } }
     : rollOptions;
   const resolvedTarget = resolveTargetContext(targetContextOptions, getTargetActorFromOptions(rollOptions));
   const target = resolvedTarget.target;
@@ -473,7 +516,16 @@ export async function rollAttack(actor, weapon, options = {}) {
     natural20: outcome.automaticHit,
     defense: resolvedTarget.defenseType ?? workflowContext?.attack?.defense ?? null,
     // Phase 5D-C: carry the exact canonical attack form to the later Damage roll (null/absent for legacy weapons)
-    weaponForm: weaponFormRecord(rollOptions.weaponRuntime, rollOptions.damageMode ?? null) ?? undefined
+    weaponForm: weaponFormRecord(rollOptions.weaponRuntime, rollOptions.damageMode ?? null) ?? undefined,
+    // Phase 5D-E: carry the special-mechanic state (classified mechanics, stored answers, evaluated CT riders) to Damage/Apply
+    special: specialStage.mechanics.length ? {
+      mechanics: summarizeMechanics(specialStage.mechanics), answers: specialStage.answers, unresolved: specialStage.unresolved, drInteraction: specialStage.drIgnore ? 'ignore' : undefined,
+      attackTotal: roll.total,
+      records: evaluateAttackOutcomeSpecials(specialStage.mechanics, {
+        hit: isHit, attackTotal: roll.total,
+        defenses: { reflex: getTargetDefense(target, 'reflex'), fortitude: getTargetDefense(target, 'fortitude'), will: getTargetDefense(target, 'will'), ...(Number.isFinite(resolvedTarget.defenseValue) ? { [resolvedTarget.defenseType]: resolvedTarget.defenseValue } : {}) }
+      })
+    } : undefined
   });
 
   const attackMessage = rollOptions.suppressChat ? null : await SWSEChat.postRoll({
