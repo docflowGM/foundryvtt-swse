@@ -20,6 +20,9 @@ import { DamageSystem } from '/systems/foundryvtt-swse/scripts/combat/damage-sys
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { resolveGrappleBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js';
 import ModifierUtils from '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js';
+import { abilityKeysOfActor, canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
+import { grabAttackPenalty } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/control-rules.js';
+import { controlManeuverLegality, escapeOptionsFor } from '/systems/foundryvtt-swse/scripts/engine/combat/weapon-control-effects.js';
 import { ModifierType, ModifierSource, createModifier } from '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js';
 
 function swseNormalizeName(value) {
@@ -120,11 +123,15 @@ function collectContextualGrappleModifiers(actor, mode) {
   return modifiers;
 }
 
+// Phase 5D-I-C-B: Grabber / Entangler are resolved by canonical ability identity (a renamed canonical talent still counts); a legacy talent without a
+// canonical identity keeps the name match. One penalty rule (control-rules.grabAttackPenalty) serves the unarmed grab and the weapon-declared grab alike.
 function swseGrabAttackPenalty(actor) {
-  if (swseActorHasTalent(actor, 'Grabber')) return 0;
-  if (swseActorHasTalent(actor, 'Entangler')) return -2;
-  return -5;
+  const keys = new Set(abilityKeysOfActor(actor));
+  if (swseActorHasTalent(actor, 'Grabber')) keys.add('grabber');
+  if (swseActorHasTalent(actor, 'Entangler')) keys.add('entangler');
+  return grabAttackPenalty([...keys]);
 }
+const swseSlug = (v) => String(v ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
 
 const ADVANCED_GRAPPLE_MANEUVERS = Object.freeze({
@@ -160,7 +167,21 @@ const ADVANCED_GRAPPLE_MANEUVERS = Object.freeze({
   }
 });
 
+// Phase 5D-I-C-B: ability ownership is IDENTITY-FIRST. An owned ability with a canonical identity is the ability its identity says (display name
+// irrelevant); an owned ability without one (legacy / homebrew) keeps the name match. A canonical ability merely NAMED like the wanted one never
+// impersonates it. The registry-name path below survives only for feats the actor holds without a canonical Item.
+function swseNameImpostor(actor, name) {
+  const wanted = swseNormalizeName(name), slug = swseSlug(name);
+  return swseActorItems(actor).some((item) => {
+    if (item?.type !== 'feat' && item?.type !== 'talent') return false;
+    const canonical = canonicalFeatSlug(item);
+    return canonical !== null && canonical !== slug && swseNormalizeName(item.name) === wanted;
+  });
+}
+
 function swseActorHasFeatExact(actor, name) {
+  if (abilityKeysOfActor(actor).includes(swseSlug(name))) return true;
+  if (swseNameImpostor(actor, name)) return false;
   const wanted = swseNormalizeName(name);
   return ActorAbilityBridge.getFeats(actor).some(feat => {
     const names = [feat?.name, feat?.system?.slug, feat?.system?.key, feat?.system?.id].map(swseNormalizeName).filter(Boolean);
@@ -381,7 +402,12 @@ export class SWSEGrappling {
       return null;
     }
 
-    if (!this._hasFeat(attacker, 'Pin')) {
+    const pinControl = controlManeuverLegality(attacker, defender, 'pin');
+    if (pinControl.legal === false) {
+      ui?.notifications?.warn?.(`${attacker.name}'s weapon does not allow Pin (${pinControl.reason}).`);
+      return null;
+    }
+    if (!this._hasFeat(attacker, 'Pin') && !this._weaponEntitles(options, 'pin')) {
       ui?.notifications?.warn?.(`${attacker.name} lacks the Pin feat.`);
       return null;
     }
@@ -419,10 +445,12 @@ export class SWSEGrappling {
     const rows = [];
 
     for (const maneuver of Object.values(ADVANCED_GRAPPLE_MANEUVERS)) {
-      if (!swseActorHasFeatExact(actor, maneuver.feat)) continue;
+      if (!swseActorHasFeatExact(actor, maneuver.feat) && !this._weaponEntitles(options, maneuver.key)) continue;
       let legal = true;
       let reason = '';
-      if (maneuver.requiresState === 'grappled' && !(actorGrappled && targetGrappled)) {
+      const controlLegality = controlManeuverLegality(actor, target, maneuver.key);
+      if (controlLegality.legal === false) { legal = false; reason = `The weapon holding the target does not allow ${maneuver.label}.`; }
+      if (legal && maneuver.requiresState === 'grappled' && !(actorGrappled && targetGrappled)) {
         legal = false;
         reason = 'Both creatures must be Grappled.';
       }
@@ -553,7 +581,12 @@ export class SWSEGrappling {
       ui?.notifications?.warn?.('A creature cannot use a grapple maneuver on itself.');
       return false;
     }
-    if (!swseActorHasFeatExact(attacker, maneuver.feat)) {
+    const controlLegality = controlManeuverLegality(attacker, defender, mode);
+    if (controlLegality.legal === false) {
+      ui?.notifications?.warn?.(`${attacker.name}'s weapon does not allow ${maneuver.label} (${controlLegality.reason}).`);
+      return false;
+    }
+    if (!swseActorHasFeatExact(attacker, maneuver.feat) && !this._weaponEntitles(options, mode)) {
       ui?.notifications?.warn?.(`${attacker.name} lacks the ${maneuver.feat} feat.`);
       return false;
     }
@@ -639,9 +672,16 @@ export class SWSEGrappling {
     const escapeMode = await this._resolveEscapeMode(escaper, options);
     if (!escapeMode) return null;
 
-    const result = escapeMode === 'acrobatics'
-      ? await this._escapeWithAcrobatics(escaper, grappler, options)
-      : await this._escapeWithGrapple(escaper, grappler, options);
+    // Phase 5D-I-C-B: a weapon control declares DC escape routes (Net / Snare Acrobatics 15 or Strength 20; Lightwhip Acrobatics 15). The opposed
+    // grapple escape stays legal; a declared route replaces the opposed roll of the same method with its DC.
+    const route = escapeOptionsFor(escaper).find((o) => o.mode === escapeMode && Number.isFinite(o.dc)) ?? null;
+    const result = route
+      ? await this._escapeAgainstDc(escaper, grappler, route, options)
+      : escapeMode === 'acrobatics'
+        ? await this._escapeWithAcrobatics(escaper, grappler, options)
+        : escapeMode === 'strength' ? null
+          : await this._escapeWithGrapple(escaper, grappler, options);
+    if (escapeMode === 'strength' && !route) ui?.notifications?.warn?.('No Strength escape DC is declared for this hold.');
 
     if (result?.escaped) {
       await GrappleStateEngine.clearPair(escaper, grappler, { quiet: true });
@@ -655,7 +695,7 @@ export class SWSEGrappling {
 
   static async _resolveEscapeMode(actor, options = {}) {
     const requested = String(options.escapeMode ?? options.mode ?? '').trim().toLowerCase();
-    if (['grapple', 'acrobatics'].includes(requested)) return requested;
+    if (['grapple', 'acrobatics', 'strength'].includes(requested)) return requested;
     if (options.promptEscapeMode === false) return 'grapple';
     if (typeof Dialog === 'undefined') return 'grapple';
 
@@ -675,12 +715,37 @@ export class SWSEGrappling {
           acrobatics: {
             label: acrobaticsHint,
             callback: () => resolve('acrobatics')
-          }
+          },
+          // Phase 5D-I-C-B: the DC routes a weapon control declares (e.g. Net / Snare: Strength DC 20) are offered by the uniform escape-options query
+          ...Object.fromEntries(escapeOptionsFor(actor).filter((o) => o.mode === 'strength').map((o) => ['strength', { label: o.label, callback: () => resolve('strength') }]))
         },
         default: 'grapple',
         close: () => resolve(null)
       }).render(true);
     });
+  }
+
+  /** Phase 5D-I-C-B: escape a weapon control against its declared DC (skill check for Acrobatics, Strength check for the break-free route). */
+  static async _escapeAgainstDc(escaper, grappler, route, options = {}) {
+    let total = null;
+    if (route.mode === 'acrobatics') {
+      const skillResult = await SWSERoll.rollSkill(escaper, 'acrobatics', { showDialog: options.showDialog !== false, actionType: options.actionType ?? 'standard', sourceType: 'combat.grapple.escape', sourceLabel: 'Escape Hold', skillUse: { key: 'escape-grapple', label: 'Escape Hold' }, useKey: 'escape-grapple' });
+      if (!skillResult) return null;
+      total = Number(skillResult.total ?? skillResult.roll?.total ?? 0);
+    } else {
+      const mod = Number(escaper?.system?.derived?.attributes?.str?.mod ?? escaper?.system?.attributes?.str?.mod ?? 0) || 0;
+      const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${mod}`, {}, { domain: 'combat.grapple.escape.strength' });
+      total = Number(roll?.total ?? 0);
+    }
+    const escaped = total >= route.dc;
+    const result = { escaper, grappler, escapeMode: route.mode, escaperRoll: { total }, grapplerRoll: { total: route.dc }, escaped, dc: route.dc, isTie: false, viaControl: route.controlId };
+    await this._createEscapeMessage(result);
+    return result;
+  }
+
+  /** Phase 5D-I-C-B: does the weapon form used for this maneuver entitle it without the feat (Amphistaff whip form)? Declaration + proficiency; no feat Item. */
+  static _weaponEntitles(options, maneuver) {
+    return Array.isArray(options?.weaponEntitlement?.maneuvers) && options.weaponEntitlement.maneuvers.includes(maneuver);
   }
 
   static async _escapeWithGrapple(escaper, grappler, options = {}) {
@@ -800,6 +865,9 @@ export class SWSEGrappling {
 
   static _hasFeat(actor, name) {
     const wanted = swseNormalizeName(name);
+    // Phase 5D-I-C-B: identity-first (see swseNameImpostor); the fuzzy name match is the legacy fallback only
+    if (abilityKeysOfActor(actor).includes(swseSlug(name))) return true;
+    if (swseNameImpostor(actor, name)) return false;
     return ActorAbilityBridge.getFeats(actor).some(f => {
       const normalized = swseNormalizeName(f?.name);
       return normalized === wanted || normalized.startsWith(`${wanted} `) || normalized.endsWith(` ${wanted}`);

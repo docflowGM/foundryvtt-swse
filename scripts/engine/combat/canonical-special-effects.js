@@ -200,6 +200,31 @@ export async function applyCanonicalSpecialEffects({ special, target, attacker =
       const { PoisonEngine } = await import('/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js');
       result = await PoisonEngine.applyPoison({ sourceActor: attacker, targetActor: target, poisonDefinition: built.definition, delivery: 'injected', sourceItem: weapon, immediate: true });
       if (result?.blocked || result?.success === false && !result?.instance) { skipped.push({ id: rec.id, reason: result?.reason ?? 'poison-blocked' }); continue; }
+    } else if (rec.kind === 'weapon-control') {
+      // Phase 5D-I-C-B: weapon control (grab / grapple / restrain / net / snare / tractor / entitled Pin or Trip). Executed through the existing grapple
+      // state machine by weapon-control-effects; the optional choices are asked once and stored with the other answers.
+      const { applyWeaponControlRecord } = await import('/systems/foundryvtt-swse/scripts/engine/combat/weapon-control-effects.js');
+      const out = await applyWeaponControlRecord(rec, {
+        target, attacker, weapon, message, weaponLabel, special, rangeBand: special?.rangeBand ?? null,
+        ask: async (id, question) => {
+          const prior = storedAnswer(message, special, id);
+          if (prior === true || prior === false) return prior;
+          const ans = await askSpecialQuestion({ id, family: 'grab-grapple', question });
+          if (ans === true || ans === false) { await rememberAnswer(message, id, ans); return ans; }
+          return null;
+        },
+        bonusFor: async (actor, w) => { const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js'); return (await computeFinalAttackComposition(actor, w, {}))?.atkBonus; },
+        grappleBonusFor: async (actor) => { const { SWSEGrappling } = await import('/systems/foundryvtt-swse/scripts/combat/systems/grappling-system.js'); return SWSEGrappling._rollGrappleBonus(actor, { mode: 'resistGrapple' }); },
+        proficientWith: async (actor, w, profileId) => {
+          try {
+            const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');
+            const runtime = rt.resolveAttackWeaponRuntime(w, { profileId });
+            return rt.resolveCanonicalAttackProficiency(runtime, actor).proficient === true;
+          } catch (_err) { return false; }
+        },
+      });
+      if (!out.applied) { skipped.push({ id: rec.id, reason: out.reason ?? 'not-applied' }); continue; }
+      result = out.result;
     } else if (rec.kind === 'poison-delivery') {
       const { PoisonEngine } = await import('/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js');
       result = await PoisonEngine.applyWeaponPoisonFromAttack({ attacker, target, weapon, damage: damageDealt ?? 0, attackTotal: special?.attackTotal ?? null });

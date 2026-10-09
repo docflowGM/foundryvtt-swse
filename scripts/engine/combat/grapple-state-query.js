@@ -80,3 +80,21 @@ export function getGrappleStateInfo(actor) {
   }
   return best;
 }
+
+/**
+ * Phase 5D-I-C-B: the weapon CONTROL records carried by an actor's grapple-state effects (`flags.swse.grappleState.control`). The control record is
+ * not a second state store: it rides on the same ActiveEffect that is the grabbed / grappled / pinned state, so it ends when that state ends.
+ * @returns {Array<{effect:object, state:string|null, control:object}>}
+ */
+export function getControlRecords(actor, { controllerId = null, targetId = null } = {}) {
+  const out = [];
+  for (const effect of getGrappleEffects(actor)) {
+    const flag = getGrappleFlag(effect);
+    const control = flag?.control;
+    if (!control || control.ended === true) continue;
+    if (controllerId && String(control.controllerId) !== String(controllerId)) continue;
+    if (targetId && String(control.targetId) !== String(targetId)) continue;
+    out.push({ effect, state: normalizeGrappleState(flag.state ?? flag), control });
+  }
+  return out;
+}

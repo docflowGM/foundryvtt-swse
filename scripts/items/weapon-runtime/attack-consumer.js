@@ -233,7 +233,7 @@ export function resolveCanonicalDamage(weapon, context = {}) {
   // Phase 5D-E: every structured special mechanic of the selected form, classified (AUTO/PROMPT/DEFER/...) by structure
   const mechanics = extractSpecialMechanics(runtime.profile.definition, {
     damageProfile: dp, operation: runtime.resolved.operation ?? null, formRefused: status === 'no-damage' || status === 'special',
-    stunCapability: runtime.profile.definition?.stun?.capability ?? null, payloadEffects: dp.specialEffects, drInteraction: dp.damageReductionInteraction, abilityInteractions: runtime.resolved.abilityInteractions,
+    stunCapability: runtime.profile.definition?.stun?.capability ?? null, payloadEffects: dp.specialEffects, drInteraction: dp.damageReductionInteraction, abilityInteractions: runtime.resolved.abilityInteractions, identityKey: runtime.identityKey ?? null,
   });
   return Object.freeze({
     source: 'canonical', status, reason, base, damageMode: dp.damageMode,

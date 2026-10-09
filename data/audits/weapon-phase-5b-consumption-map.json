@@ -35,21 +35,21 @@
   "adapterExposureGaps": 0
  },
  "summary": {
-  "fieldPaths": 2276,
+  "fieldPaths": 2308,
   "byImplementationState": {
    "ADAPTER_REQUIRED": 58,
    "ALREADY_CONSUMED_CORRECTLY": 2,
    "DISPLAY_ONLY": 23,
    "EXISTING_CONSUMER_WRONG_INPUT": 539,
    "LEGACY_COMPATIBILITY_ONLY": 79,
-   "NEW_CONSUMER_REQUIRED": 1173,
+   "NEW_CONSUMER_REQUIRED": 1205,
    "RECOMMENDATION_ONLY": 248,
    "STORE_ONLY": 25,
    "VALIDATION_ONLY": 129
   },
   "byClassification": {
    "DISPLAY": 425,
-   "EXECUTION": 1611,
+   "EXECUTION": 1643,
    "INVENTORY": 122,
    "PLAYER_CHOICE": 450,
    "PLAYER_STATE": 317,
@@ -69,8 +69,8 @@
    "5C/5E": 16,
    "5D": 294,
    "5D/5E": 154,
-   "5E": 538,
-   "5E/5F": 132,
+   "5E": 548,
+   "5E/5F": 154,
    "5E/5H": 162,
    "5F": 104,
    "5G": 46,
@@ -81,7 +81,7 @@
   "alreadyConsumedCorrectly": 2,
   "existingConsumerWrongInput": 539,
   "adapterRequired": 58,
-  "newConsumerRequired": 1173,
+  "newConsumerRequired": 1205,
   "nonRuntimeDisposition": 425
  },
  "entries": [
@@ -20248,6 +20248,196 @@
    "note": null
   },
   {
+   "path": "3B:operation.blastEffect.structure",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.blastEffect.structure.afterBreakingFree",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.blastEffect.structure.afterBreakingFree.furtherCheck",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.blastEffect.structure.check",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.blastEffect.structure.check.against",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.blastEffect.structure.check.comparison",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.blastEffect.structure.check.kind",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.blastEffect.structure.onFailure",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.blastEffect.structure.onFailure.durationRounds",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.blastEffect.structure.onFailure.status",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "area targeting geometry",
+    "attack resolution",
+    "Evasion"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E",
+   "ruleId": "3b.operation.area-splash-burst",
+   "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
    "path": "3B:operation.blindCreaturesImmune",
    "classification": [
     "EXECUTION",
@@ -27988,6 +28178,402 @@
    "migrationPhase": "5E",
    "ruleId": "3b.operation.area-splash-burst",
    "mechanicFamily": "area-splash-burst",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.acquisition",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.acquisition.attack",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.acquisition.comparison",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.acquisition.defense",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.acquisition.then",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.hurl",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.hurl.attack",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.hurl.comparison",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.hurl.damageAuthority",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.hurl.defense",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.hurl.rangeSquares",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.maintain",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.maintain.check",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.maintain.onLoss",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.maintain.timing",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.move",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.move.direction",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.tractorControl.move.squares",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.treatControlAs",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.treatControlAs.identityKey",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.treatControlAs.via",
+   "classification": [
+    "EXECUTION"
+   ],
+   "consumers": [
+    "grapple-state-engine",
+    "grab/pin/trip workflow"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.grab-grapple-restrain",
+   "mechanicFamily": "grab-grapple-restrain",
    "registryField": "operation",
    "resolvedProperty": "operation",
    "runtimeCarried": true,

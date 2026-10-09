@@ -1,0 +1,804 @@
+{
+  "schemaVersion": 1,
+  "phase": "5D-I-C-B",
+  "purpose": "Input manifest of the weapon control convergence (grab / grapple / restrain / net / snare / tractor / hurl). Audit evidence only: no runtime module reads it; each row names the structured source field, trigger / timing, consumer and disposition.",
+  "counters": {
+    "I_C_B_INPUT_MECHANICS": 48,
+    "I_C_B_OPERATION_KEYS": 25,
+    "I_C_B_SPECIAL_MECHANICS": 22,
+    "I_C_B_RELATIONS": 1,
+    "I_C_B_IMPLEMENTED": 44,
+    "I_C_B_DUPLICATES": 3,
+    "I_C_B_DATA_DEFECT": 0,
+    "I_C_B_DATA_COMPLETENESS": 1,
+    "I_C_B_DEFERRED_I_C_C": 0,
+    "I_C_B_DEFERRED_I_D": 0,
+    "I_C_B_BLOCKED": 0,
+    "I_C_B_UNCLASSIFIED": 0
+  },
+  "globalCounters": {
+    "before": {
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 109,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 144,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 14,
+      "EXECUTABLE_FORM_MECHANICS_DEFERRED": 25,
+      "SPECIAL_DEFER_I_C_B": 15,
+      "SPECIAL_DEFER_I_C_C": 7,
+      "SPECIAL_DEFER_I_D": 3,
+      "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 7,
+      "GRAB_GRAPPLE_RESTRAIN_UNCONSUMED_KEYS": 14
+    },
+    "after": {
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 88,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 115,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 12,
+      "EXECUTABLE_FORM_MECHANICS_DEFERRED": 10,
+      "SPECIAL_DEFER_I_C_B": 0,
+      "SPECIAL_DEFER_I_C_C": 7,
+      "SPECIAL_DEFER_I_D": 3,
+      "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 6,
+      "GRAB_GRAPPLE_RESTRAIN_UNCONSUMED_KEYS": 0
+    }
+  },
+  "specialMechanicDeferredByOwner": {
+    "I-C-C": 7,
+    "I-D": 3
+  },
+  "byMechanicFamily": {
+    "delegation": 3,
+    "entitlement": 1,
+    "escape-route": 4,
+    "falling-object-damage": 2,
+    "grab-initiation": 9,
+    "grab-stun": 2,
+    "grabbed-target-effect": 1,
+    "identity-preserved-grab": 2,
+    "maneuver-entitlement": 3,
+    "maneuver-legality": 6,
+    "range-gate": 1,
+    "recurring-held-damage": 3,
+    "restraint": 2,
+    "size-gate": 1,
+    "swift-shock": 1,
+    "tractor": 2,
+    "tractor-hurl": 1,
+    "tractor-move": 1,
+    "trapped-effect": 1,
+    "trip-substitution": 1,
+    "weapon-lock": 1
+  },
+  "rows": [
+    {
+      "kind": "operation-key",
+      "key": "allowedFeats",
+      "family": "3b.operation.ability-compatibility",
+      "mechanicFamily": "maneuver-legality",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "snare-pistol",
+        "snare-rifle"
+      ],
+      "structuredSourceField": "operation.allowedFeats",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (allowedFeats)",
+      "reason": "Snare Pistol / Rifle spell the allowed grapple maneuvers (Pin, Trip) as allowedFeats. The 5D-H duplicate mapping of this key to the multi-shot PROHIBITED relation holds for multi-shot weapons only; the sole carriers are the snares, whose list is read here as the allowed-maneuver list."
+    },
+    {
+      "kind": "operation-key",
+      "key": "allowedGrappleFeats",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "maneuver-legality",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "lightwhip",
+        "Amphistaff"
+      ],
+      "structuredSourceField": "operation.allowedGrappleFeats",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (allowedGrappleFeats)",
+      "reason": "Lightwhip / Amphistaff: Pin and Trip may be used with the weapon. Read by the control declaration as the allowed-maneuver list; the held target's control record carries it and SWSEGrappling gates Pin / Trip through controlManeuverLegality."
+    },
+    {
+      "kind": "operation-key",
+      "key": "attackTreatedAs",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mechanicFamily": "identity-preserved-grab",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Garrote"
+      ],
+      "structuredSourceField": "operation.attackTreatedAs",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (attackTreatedAs)",
+      "reason": "Garrote: an attack with it is treated as a grab attack (normal grab penalty by canonical Grabber / Entangler identity; weapon identity preserved)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "blastEffect",
+      "family": "3b.operation.area-splash-burst",
+      "mechanicFamily": "restraint",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "adhesive-grenade"
+      ],
+      "structuredSourceField": "operation.blastEffect",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (blastEffect)",
+      "reason": "Adhesive Grenade: every target in the blast makes a grapple check against the attacker's ranged attack roll; failure leaves it immobilized for 3 rounds. An equipment restraint: the attacker is not grappling, there is no grab state and no further check."
+    },
+    {
+      "kind": "operation-key",
+      "key": "breakStrengthDC",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "escape-route",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "net",
+        "snare-pistol",
+        "snare-rifle"
+      ],
+      "structuredSourceField": "operation.breakStrengthDC",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (breakStrengthDC)",
+      "reason": "Net / Snare: break free with Strength DC 20 (a declared escape route; the Strength check is made against the DC)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "canInitiateGrabOrGrappleAtRange",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "grab-initiation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "stokhli-spray-stick"
+      ],
+      "structuredSourceField": "operation.canInitiateGrabOrGrappleAtRange",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (canInitiateGrabOrGrappleAtRange)",
+      "reason": "Stokhli Spray Stick: may initiate a grab / grapple at range (delegated to the Net declaration)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "crushAndThrowDisallowed",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "maneuver-legality",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "net"
+      ],
+      "structuredSourceField": "operation.crushAndThrowDisallowed",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (crushAndThrowDisallowed)",
+      "reason": "Net: Crush and Throw disallowed (same declaration path as prohibitedGrappleFeats)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "disallowedFeats",
+      "family": "3b.operation.ability-compatibility",
+      "mechanicFamily": "maneuver-legality",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "snare-pistol",
+        "snare-rifle"
+      ],
+      "structuredSourceField": "operation.disallowedFeats",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (disallowedFeats)",
+      "reason": "Snare Pistol / Rifle: Crush and Throw are disallowed (the Pistol also lists Bone Crusher, kept as data: it only modifies Crush, which is already prohibited)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "escapeAcrobaticsDC",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "escape-route",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 4,
+      "rawOccurrences": 4,
+      "representativeWeapons": [
+        "lightwhip",
+        "net",
+        "snare-pistol",
+        "snare-rifle"
+      ],
+      "structuredSourceField": "operation.escapeAcrobaticsDC",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (escapeAcrobaticsDC)",
+      "reason": "Net / Snare / Lightwhip: escape with Acrobatics DC 15. A declared escape route of the control record; SWSEGrappling._escapeAgainstDc resolves it."
+    },
+    {
+      "kind": "operation-key",
+      "key": "fallingObjectDamageTable",
+      "family": "3b.operation.damage-modifiers",
+      "mechanicFamily": "falling-object-damage",
+      "disposition": "DATA_COMPLETENESS",
+      "identityCount": 0,
+      "rawOccurrences": 0,
+      "representativeWeapons": [],
+      "structuredSourceField": "operation.fallingObjectDamageTable",
+      "currentConsumer": null,
+      "owner": "final-certification",
+      "virtual": true,
+      "reason": "Core Rulebook Table 14-2 (falling-object damage by size): the damage column is not legible in the repo text layer, so no damage value is certified; fallingObjectDamage refuses with falling-object-table-uncertified rather than invent values. Needs the PDF-certified table."
+    },
+    {
+      "kind": "operation-key",
+      "key": "featTalentBonusesTreatGrabAsGarroteAttack",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mechanicFamily": "identity-preserved-grab",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Garrote"
+      ],
+      "structuredSourceField": "operation.featTalentBonusesTreatGrabAsGarroteAttack",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (featTalentBonusesTreatGrabAsGarroteAttack)",
+      "reason": "Garrote: bonuses from talents and feats that apply to the garrote apply to its grab attack. The grab attack IS the canonical garrote attack (identity preserved), so the ordinary selector join applies them; the declaration records the treatment."
+    },
+    {
+      "kind": "operation-key",
+      "key": "hurledObjectDamageRule",
+      "family": "3b.operation.damage-modifiers",
+      "mechanicFamily": "falling-object-damage",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.tractorControl.hurl.damageAuthority = falling-object-by-object-size",
+      "currentConsumer": "scripts/engine/combat/falling-object-rules.js (fallingObjectDamage)",
+      "reason": "Hurled objects deal FALLING-OBJECT damage by object size (never the beam's own 3d6). The authority mechanism is implemented; see the falling-object table row."
+    },
+    {
+      "kind": "operation-key",
+      "key": "hurlGrabbedObjectRangeSquares",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "tractor-hurl",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.hurlGrabbedObjectRangeSquares",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (hurlGrabbedObjectRangeSquares)",
+      "reason": "Tactical Tractor Beam: hurl at a target within 10 squares with a new ranged attack against Reflex."
+    },
+    {
+      "kind": "operation-key",
+      "key": "maximumGrabRangeIncrement",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "range-gate",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "snare-pistol",
+        "snare-rifle"
+      ],
+      "structuredSourceField": "operation.maximumGrabRangeIncrement",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (maximumGrabRangeIncrement)",
+      "reason": "Snare Pistol / Rifle: a ranged grab is made no farther than Short range (the Rifle value is a source-cited backfill, Scum and Villainy p.51). Refused before any cost in the attack stage."
+    },
+    {
+      "kind": "operation-key",
+      "key": "maxTargetSize",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "size-gate",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.maxTargetSize",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (maxTargetSize)",
+      "reason": "Tactical Tractor Beam: affects only Huge or smaller targets (the one generic size gate, canonical size rank)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "moveGrabbedObjectSquares",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "tractor-move",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.moveGrabbedObjectSquares",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (moveGrabbedObjectSquares)",
+      "reason": "Tactical Tractor Beam: a grabbed object can be moved up to 10 squares in any direction (structured movement intent; the token move stays GM / player adjudicated)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "ongoingEffect",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "grabbed-target-effect",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Garrote"
+      ],
+      "structuredSourceField": "operation.ongoingEffect",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (ongoingEffect)",
+      "reason": "Garrote: at the START of the grabbed target's turn, before it acts, repeat the garrote's base damage and move -1 CT, in addition to the grab. Bound to the control record, idempotent per turn slot, ended with the grab."
+    },
+    {
+      "kind": "operation-key",
+      "key": "ongoingStunWhileTrapped",
+      "family": "3b.operation.stun-ion-damage-modes",
+      "mechanicFamily": "trapped-effect",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "electronet"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects[ongoing-net-shock]",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (ongoing-net-shock)",
+      "reason": "Electronet: the weapon-level flag duplicates the profile triggered effect (3d8 stun at the beginning of the ATTACKER's turn while the target is still trapped, no damage modifiers), which the control declaration reads."
+    },
+    {
+      "kind": "operation-key",
+      "key": "pinAndTripAllowed",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "maneuver-legality",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "net"
+      ],
+      "structuredSourceField": "operation.pinAndTripAllowed",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (pinAndTripAllowed)",
+      "reason": "Net: Pin and Trip allowed (same declaration path as allowedGrappleFeats)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "pinTripSubstitution",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "maneuver-entitlement",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "operation.pinTripSubstitution",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (pinTripSubstitution)",
+      "reason": "Amphistaff whip form: Pin / Trip without owning the feat. Entitlement is the weapon declaration plus canonical proficiency; no feat Item is created."
+    },
+    {
+      "kind": "operation-key",
+      "key": "prohibitedGrappleFeats",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "maneuver-legality",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightwhip"
+      ],
+      "structuredSourceField": "operation.prohibitedGrappleFeats",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (prohibitedGrappleFeats)",
+      "reason": "Lightwhip: Crush and Throw are prohibited while the lightwhip holds the target. Prohibition wins over any feat the holder owns."
+    },
+    {
+      "kind": "operation-key",
+      "key": "rangedGrabOrGrapple",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "grab-initiation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "net",
+        "snare-pistol",
+        "snare-rifle"
+      ],
+      "structuredSourceField": "operation.rangedGrabOrGrapple",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (rangedGrabOrGrapple)",
+      "reason": "Net / Snare Pistol / Snare Rifle: the weapon's ranged attack initiates the grab / grapple."
+    },
+    {
+      "kind": "operation-key",
+      "key": "tractorControl",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "tractor",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.tractorControl (acquisition / maintain / move / hurl)",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (tractorControl)",
+      "reason": "Tactical Tractor Beam structure backfill (Galaxy at War p.42 / Core p.174): the structured carrier is the control declaration source itself."
+    },
+    {
+      "kind": "operation-key",
+      "key": "treatControlAs",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "delegation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "electronet",
+        "stokhli-spray-stick"
+      ],
+      "structuredSourceField": "operation.treatControlAs",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (treatControlAs)",
+      "dataAction": "DATA_COMPLETENESS backfilled into the canonical SSOT amendments (source-cited)",
+      "reason": "I-C-B structure backfill: the Stokhli Spray Stick's \"functions as a net\" (FUCG p.100) and the Electronet's \"grabs the target as with a normal net\" (Scum and Villainy p.51) as structured delegations to weapon-net (grab, maneuvers, escape); the delegating weapon keeps its own identity and its own control-bound effects."
+    },
+    {
+      "kind": "operation-key",
+      "key": "webbingFunctionsAsNet",
+      "family": "3b.operation.grab-grapple-restrain",
+      "mechanicFamily": "delegation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "stokhli-spray-stick"
+      ],
+      "structuredSourceField": "operation.webbingFunctionsAsNet",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (webbingFunctionsAsNet)",
+      "reason": "Stokhli Spray Stick webbing functions as a net: delegated through operation.treatControlAs to the NET identity's own control declaration (nothing cloned onto the Stokhli)."
+    },
+    {
+      "kind": "relation",
+      "key": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM",
+      "family": "ability-relation",
+      "mechanicFamily": "entitlement",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 0,
+      "rawOccurrences": 2,
+      "representativeWeapons": [],
+      "structuredSourceField": "abilityInteractions[].relation = PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (entitlementOf)",
+      "reason": "Amphistaff whip form: a proficient wielder may use Pin / Trip as though possessing the feat. The deferral marker is removed: the relation is consumed by the control entitlement (no feat Item created)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "lightsaber-chassis-lightwhip::triggered-0",
+      "family": "special-mechanic",
+      "mechanicFamily": "grab-initiation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightwhip"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (initiateControl)",
+      "reason": "Lightwhip hit: may initiate a grab (grapple through the ordinary opposed check); DC 15 Acrobatics escape."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "lightsaber-chassis-lightwhip::triggered-1",
+      "family": "special-mechanic",
+      "mechanicFamily": "recurring-held-damage",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightwhip"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (processControlTurnEvent)",
+      "reason": "Lightwhip: a creature ENDING its turn held takes the weapon's base damage only (no Strength / half level / other modifiers / critical)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Amphistaff::pin-without-feat",
+      "family": "special-mechanic",
+      "mechanicFamily": "maneuver-entitlement",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (performEntitledManeuver)",
+      "reason": "Amphistaff whip-pin: resolves as Pin without the feat."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Amphistaff::trip-without-feat",
+      "family": "special-mechanic",
+      "mechanicFamily": "maneuver-entitlement",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (performEntitledManeuver)",
+      "reason": "Amphistaff whip-trip: resolves as Trip without the feat."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Garrote::operation.control",
+      "family": "special-mechanic",
+      "mechanicFamily": "grab-initiation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Garrote"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (initiateControl)",
+      "reason": "Garrote: the attack is a grab (weapon identity preserved)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Garrote::triggered-0",
+      "family": "special-mechanic",
+      "mechanicFamily": "recurring-held-damage",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Garrote"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (processControlTurnEvent)",
+      "reason": "Garrote: base damage and -1 CT at the start of the grabbed target's turn; cancelled when the grab ends. Whether Strength / other modifiers apply is NOT stated by the certified entry: base dice only (documented uncertainty, never silently automated further)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Shock Whip::grabbed-target-shock",
+      "family": "special-mechanic",
+      "mechanicFamily": "swift-shock",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Shock Whip"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (shockHeldTarget)",
+      "reason": "Shock Whip: once per turn, swift action, 2d6 energy on the held target with no attack roll."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Shock Whip::optional-grab-on-hit",
+      "family": "special-mechanic",
+      "mechanicFamily": "grab-initiation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Shock Whip"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (secondAttack)",
+      "reason": "Shock Whip: optional free second attack roll at the normal attack bonus (no -5), target at most one size larger."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Shock Whip::trip-substitution",
+      "family": "special-mechanic",
+      "mechanicFamily": "trip-substitution",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Shock Whip"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (tripSubstitution)",
+      "reason": "Shock Whip: with the Trip feat (canonical identity) the whip may knock the target prone instead of the grab attack."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Shock Whip::weapon-locked-while-grabbing",
+      "family": "special-mechanic",
+      "mechanicFamily": "weapon-lock",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Shock Whip"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (weaponLockFor)",
+      "reason": "Shock Whip: while holding a target the weapon cannot attack other targets."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-adhesive-grenade::operation.blastEffect",
+      "family": "special-mechanic",
+      "mechanicFamily": "restraint",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "adhesive-grenade"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (applyRestraint)",
+      "reason": "Adhesive Grenade restraint blast (per-target grapple check against the ranged attack roll; immobilized 3 rounds)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-electronet::grab-on-hit",
+      "family": "special-mechanic",
+      "mechanicFamily": "grab-initiation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "electronet"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (initiateControl)",
+      "reason": "Electronet hit: grabs as a normal net; its stun damage (3d8) is the weapon's ordinary damage on the same card (alsoDealStun is carried by that damage, never rolled twice)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-electronet::ongoing-net-shock",
+      "family": "special-mechanic",
+      "mechanicFamily": "recurring-held-damage",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "electronet"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (processControlTurnEvent)",
+      "reason": "Electronet: 3d8 stun at the beginning of the ATTACKER's turn while the target is still trapped; ends when the target escapes."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-net::operation.control",
+      "family": "special-mechanic",
+      "mechanicFamily": "grab-initiation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "net"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (initiateControl)",
+      "reason": "Net: ranged grab / grapple with Pin / Trip allowed and Crush / Throw disallowed."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-snare-pistol::escape-options",
+      "family": "special-mechanic",
+      "mechanicFamily": "escape-route",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "snare-pistol"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/combat/systems/grappling-system.js (escapeOptionsFor)",
+      "reason": "Snare: Acrobatics DC 15 or Strength DC 20 escape (the uniform escape-options contract)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-snare-pistol::operation.control",
+      "family": "special-mechanic",
+      "mechanicFamily": "grab-initiation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "snare-pistol"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (initiateControl)",
+      "reason": "Snare Pistol: ranged grab no farther than Short range."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-snare-pistol::stun-on-successful-grab",
+      "family": "special-mechanic",
+      "mechanicFamily": "grab-stun",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "snare-pistol"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (carriedByBaseDamage)",
+      "reason": "Snare Pistol: 1d4 stun on a successful grab with no further attack roll. It IS the weapon's ordinary (native stun) damage, rolled and applied by the card's normal Damage / Apply Damage path; the declaration records carriedByBaseDamage so the control never rolls it again."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-snare-rifle::escape-options",
+      "family": "special-mechanic",
+      "mechanicFamily": "escape-route",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "snare-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/combat/systems/grappling-system.js (escapeOptionsFor)",
+      "reason": "Snare: Acrobatics DC 15 or Strength DC 20 escape."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-snare-rifle::operation.control",
+      "family": "special-mechanic",
+      "mechanicFamily": "grab-initiation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "snare-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (initiateControl)",
+      "reason": "Snare Rifle: ranged grab no farther than Short range (source-cited backfill)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-snare-rifle::stun-on-successful-grab",
+      "family": "special-mechanic",
+      "mechanicFamily": "grab-stun",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "snare-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/items/weapon-runtime/control-rules.js (carriedByBaseDamage)",
+      "reason": "Snare Rifle: 1d6 stun on a successful grab with no further attack roll; the weapon's ordinary native stun damage (carriedByBaseDamage), never rolled twice."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-stokhli-spray-stick::operation.control",
+      "family": "special-mechanic",
+      "mechanicFamily": "delegation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "stokhli-spray-stick"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (initiateControl)",
+      "reason": "Stokhli Spray Stick webbing: the NET's control declaration through delegation."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-tactical-tractor-beam::operation.tractorControl",
+      "family": "special-mechanic",
+      "mechanicFamily": "tractor",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | operation",
+      "currentConsumer": "scripts/engine/combat/weapon-control-effects.js (acquireTractor)",
+      "reason": "Tactical Tractor Beam: acquisition (attack vs Reflex, then opposed grapple check), maintenance each operator turn, move up to 10 squares, hurl up to 10 squares."
+    }
+  ],
+  "problems": []
+}

@@ -92,6 +92,16 @@ export function registerCombatHooks() {
         enabled: true
     });
 
+    // Phase 5D-I-C-B: control-bound recurring effects (Lightwhip / Garrote / Electronet) and tractor maintenance at the turn boundaries, through the one
+    // existing combat turn hook (idempotent per control + effect + turn slot; no timers, no custom hooks)
+    HooksRegistry.register('combatTurn', handleWeaponControlTurn, {
+        id: 'combat-turn-weapon-control',
+        priority: 2,
+        description: 'Process weapon control recurring effects and tractor maintenance',
+        category: 'combat',
+        enabled: true
+    });
+
     // Combat turn - condition recovery (AFTER turn tracking)
     HooksRegistry.register('combatTurn', handleConditionRecovery, {
         id: 'combat-turn-condition-recovery',
@@ -242,6 +252,16 @@ function handleCombatTurn(combat, updateData, updateOptions) {
         SWSELogger.log(`Turn: ${combatant.actor.name}`);
     }
     void postCombatBanner(combat);
+}
+
+async function handleWeaponControlTurn(combat, updateData, updateOptions) {
+    if (game?.user?.isGM !== true) return;
+    try {
+        const { handleControlTurnChange } = await import('/systems/foundryvtt-swse/scripts/engine/combat/weapon-control-effects.js');
+        await handleControlTurnChange(combat, updateData, updateOptions);
+    } catch (err) {
+        SWSELogger.warn('[CombatHooks] Weapon control turn processing failed', err);
+    }
 }
 
 async function handleBasicEffectLifecycle(combat, updateData, updateOptions) {

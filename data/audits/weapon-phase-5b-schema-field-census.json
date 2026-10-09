@@ -5,7 +5,7 @@
  "purpose": "Programmatic census of every field path present in the operational canonical weapons corpus (data/canonical/weapons.json). Paths normalise array indices to []; each path is attributed to its certified origin (Phase 3B / Phase 4H) or to the canonical-only wrapper (provenance/production). Audit-only roots not carried by the corpus are enumerated in auditOnlyRootsNotCarried.",
  "identities": 203,
  "inputs": {
-  "data/canonical/weapons.json": "a9acaafb0145a082ae3a96bacd98fb5cc97bfd2e97583ffbceaf2722bcc5dd94"
+  "data/canonical/weapons.json": "531ebc40a75ea6f46b46464d6ad8dd4c892236c7d4ca1c185ab3daf069ef7f80"
  },
  "auditOnlyRootsNotCarried": {
   "phase3B": [
@@ -21,10 +21,10 @@
   ]
  },
  "counts": {
-  "phase3BFieldPaths": 1523,
+  "phase3BFieldPaths": 1555,
   "phase4HFieldPaths": 662,
   "canonicalOnlyFieldPaths": 91,
-  "totalFieldPaths": 2276
+  "totalFieldPaths": 2308
  },
  "fields": [
   {
@@ -16737,6 +16737,158 @@
    "conditional": true
   },
   {
+   "canonicalPath": "operation.blastEffect.structure",
+   "fieldPath": "operation.blastEffect.structure",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.blastEffect.structure.afterBreakingFree",
+   "fieldPath": "operation.blastEffect.structure.afterBreakingFree",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.blastEffect.structure.afterBreakingFree.furtherCheck",
+   "fieldPath": "operation.blastEffect.structure.afterBreakingFree.furtherCheck",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "boolean"
+   ],
+   "sampleValues": [
+    "false"
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.blastEffect.structure.check",
+   "fieldPath": "operation.blastEffect.structure.check",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.blastEffect.structure.check.against",
+   "fieldPath": "operation.blastEffect.structure.check.against",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"attacker-ranged-attack-roll\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.blastEffect.structure.check.comparison",
+   "fieldPath": "operation.blastEffect.structure.check.comparison",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"equals-or-exceeds\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.blastEffect.structure.check.kind",
+   "fieldPath": "operation.blastEffect.structure.check.kind",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"grapple\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.blastEffect.structure.onFailure",
+   "fieldPath": "operation.blastEffect.structure.onFailure",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.blastEffect.structure.onFailure.durationRounds",
+   "fieldPath": "operation.blastEffect.structure.onFailure.durationRounds",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "number"
+   ],
+   "sampleValues": [
+    "3"
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.blastEffect.structure.onFailure.status",
+   "fieldPath": "operation.blastEffect.structure.onFailure.status",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"immobilized\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
    "canonicalPath": "operation.blindCreaturesImmune",
    "fieldPath": "operation.blindCreaturesImmune",
    "namespace": "3B",
@@ -19761,8 +19913,8 @@
    "fieldPath": "operation.maximumGrabRangeIncrement",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "string"
    ],
@@ -22818,6 +22970,347 @@
    ],
    "sampleValues": [
     "1"
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl",
+   "fieldPath": "operation.tractorControl",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.acquisition",
+   "fieldPath": "operation.tractorControl.acquisition",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.acquisition.attack",
+   "fieldPath": "operation.tractorControl.acquisition.attack",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"ranged\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.acquisition.comparison",
+   "fieldPath": "operation.tractorControl.acquisition.comparison",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"equals-or-exceeds\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.acquisition.defense",
+   "fieldPath": "operation.tractorControl.acquisition.defense",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"reflex\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.acquisition.then",
+   "fieldPath": "operation.tractorControl.acquisition.then",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"opposed-grapple-check\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.hurl",
+   "fieldPath": "operation.tractorControl.hurl",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.hurl.attack",
+   "fieldPath": "operation.tractorControl.hurl.attack",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"ranged-with-this-weapon\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.hurl.comparison",
+   "fieldPath": "operation.tractorControl.hurl.comparison",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"equals-or-exceeds\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.hurl.damageAuthority",
+   "fieldPath": "operation.tractorControl.hurl.damageAuthority",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"falling-object-by-object-size\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.hurl.defense",
+   "fieldPath": "operation.tractorControl.hurl.defense",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"reflex\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.hurl.rangeSquares",
+   "fieldPath": "operation.tractorControl.hurl.rangeSquares",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "number"
+   ],
+   "sampleValues": [
+    "10"
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.maintain",
+   "fieldPath": "operation.tractorControl.maintain",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.maintain.check",
+   "fieldPath": "operation.tractorControl.maintain.check",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"opposed-grapple-check\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.maintain.onLoss",
+   "fieldPath": "operation.tractorControl.maintain.onLoss",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"release\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.maintain.timing",
+   "fieldPath": "operation.tractorControl.maintain.timing",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"start-of-controller-turn\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.move",
+   "fieldPath": "operation.tractorControl.move",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.move.direction",
+   "fieldPath": "operation.tractorControl.move.direction",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"any\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.tractorControl.move.squares",
+   "fieldPath": "operation.tractorControl.move.squares",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "number"
+   ],
+   "sampleValues": [
+    "10"
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.treatControlAs",
+   "fieldPath": "operation.treatControlAs",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 2,
+   "valueTypes": [
+    "object"
+   ],
+   "sampleValues": [],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.treatControlAs.identityKey",
+   "fieldPath": "operation.treatControlAs.identityKey",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 2,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"weapon-net\""
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.treatControlAs.via",
+   "fieldPath": "operation.treatControlAs.via",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 2,
+   "identityCount": 2,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"normal-net-grab-rules\"",
+    "\"webbingFunctionsAsNet\""
    ],
    "nullable": false,
    "conditional": true
@@ -36707,8 +37200,8 @@
    "fieldPath": "provenance.postCertificationAmendments",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 27,
-   "identityCount": 27,
+   "occurrenceCount": 31,
+   "identityCount": 31,
    "valueTypes": [
     "array"
    ],
@@ -36721,8 +37214,8 @@
    "fieldPath": "provenance.postCertificationAmendments[]",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 34,
-   "identityCount": 27,
+   "occurrenceCount": 39,
+   "identityCount": 31,
    "valueTypes": [
     "string"
    ],

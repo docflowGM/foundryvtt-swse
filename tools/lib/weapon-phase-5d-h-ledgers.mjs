@@ -21,6 +21,10 @@ const any = /./;
 export const HEURISTIC_RULES = [
   [any, /notifications|flavor:|title:|label:|label \|\||sourceName|narration|<h3>|<div|\bsource: (weapon|item)\?\.name|speaker|weaponName:|\.description\)|breakdown\.push|ActionChat|question:|swseLogger|console\.|`[^`]*\$\{[^}]*name[^}]*\}[^`]*`|name: weapon\.name|id: `\$\{|source: item\.name|return weapon\?\.id|weapon\?\.name \?\? ''|weapon\?\.name \?\? null|\.description \|\| item\.name/, 'DISPLAY', 'message/label/log text'],
   [/weapon-runtime\/attack-consumer\.js$/, /refusing to treat/, 'DISPLAY', 'error message text'],
+  // Phase 5D-I-C-B: the existing grapple adapter now resolves feats / talents by canonical identity FIRST (abilityKeysOfActor / canonicalFeatSlug); the name
+  // match survives only as the legacy fallback for an ability that carries no canonical identity (ordinary-grapple talents such as Grapple Resistance included)
+  [/combat\/systems\/grappling-system\.js$/, /sourceId: item\.id \?\? item\.name/, 'DISPLAY', 'modifier source label fallback (not a decision)'],
+  [/combat\/systems\/grappling-system\.js$/, /swseNormalizeName\(item\.name\) === wanted|swseNormalizeName\(f\?\.name\)|feat\?\.name, feat\?\.system\?\.slug/, 'IDENTITY_FALLBACK', 'ability display-name match used only when the ability carries no canonical identity (canonical identity decides first)'],
   [/weapon-runtime\/legacy-adapter\.js$/, any, 'LEGACY_GATED', 'the legacy adapter exists only for weapons without a canonical identity'],
   [/weapon-runtime\/weapon-descriptor\.js$/, /subcategory/, 'WEAPON_DEFINITION', 'reads the structured canonical schemaFamily'],
   [/weapon-runtime\/(ability-selector|ability-relations)\.js$/, /legacyBase|legacyKeys|\.name/, 'IDENTITY_FALLBACK', 'ability display-name keys used only when the item carries no canonical identity'],
@@ -64,6 +68,7 @@ export const HEURISTIC_RULES = [
 import { I_A_LEDGER } from './weapon-phase-5d-i-a-ledger.mjs';
 import { I_B_LEDGER } from './weapon-phase-5d-i-b-ledger.mjs';
 import { I_C_A_ROWS } from './weapon-phase-5d-i-c-a-ledger.mjs';
+import { I_C_B_ROWS } from './weapon-phase-5d-i-c-b-ledger.mjs';
 
 const W = 'scripts/items/weapon-runtime/';
 export const FIELD_CONSUMERS = {
@@ -72,7 +77,7 @@ export const FIELD_CONSUMERS = {
   '3b.profile.conditional': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'resolveTargetRequirements', consumed: ['conditionalModifiers (condition-policy AUTO/PROMPT)', 'activationRequirements.target / target-rule', 'conditionalRangeRules'], deferred: ['activationRequirements.action / wielding / choice / feat / configuration / proficiency / usage-limit / operators'], owner: '5D-I-B (activation state, wielding, configuration, crew)', note: '5D-I-A: conditional attack modifiers evaluate through condition-policy, target requirements gate the attack, conditionalRangeRules scale ranges; the remaining requirement types need persisted activation / wielding / crew state' },
   '3b.profile.area': { status: 'CONSUMED', file: `${W}area-shape.js`, probe: 'resolveAreaShape', note: '5D-G/5D-H' },
   '3b.profile.attackResolution': { status: 'CONSUMED', file: `${W}area-shape.js`, probe: 'attackResolution', note: 'defense + onMiss' },
-  '3b.profile.effects': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'criticalEffects', consumed: ['criticalEffects', 'hit effects (ct-rider, status-effect, damage-rider, delayed-damage, persistent-poison, poison-delivery: Phase 5D-I-C-A)'], deferred: ['return-recovery (I-C-C)', 'special-action Pin / Trip (I-C-B)', 'activation-effect (I-D)', 'gas-cloud concealment + weapon-object fragile (I-D)', 'grab-grapple (I-C-B)'], owner: 'grab / reaction / sensing subsystems (I-C-B / I-C-C / I-D)', note: 'AUTO families execute at Apply Damage; every remaining DEFER mechanic has a named owner in the 5D-E census (deferredByOwner)' },
+  '3b.profile.effects': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'criticalEffects', consumed: ['criticalEffects', 'hit effects (ct-rider, status-effect, damage-rider, delayed-damage, persistent-poison, poison-delivery: Phase 5D-I-C-A)'], deferred: ['return-recovery (I-C-C)', 'activation-effect (I-D)', 'gas-cloud concealment + weapon-object fragile (I-D)'], owner: 'reaction / sensing subsystems (I-C-C / I-D)', note: 'AUTO families execute at Apply Damage; every remaining DEFER mechanic has a named owner in the 5D-E census (deferredByOwner)' },
   '3b.profile.damage': { status: 'CONSUMED', file: `${W}damage-profile-resolver.js`, probe: 'damageMultiplier', note: '5D-C/5D-E' },
   '3b.profile.damageComponents': { status: 'CONSUMED', file: `${W}damage-profile-resolver.js`, probe: 'components', note: '5D-C' },
   '3b.profile.firing': { status: 'CONSUMED', file: `${W}fire-state.js`, probe: 'firingConstraints', note: '5D-G temporal families' },
@@ -97,7 +102,7 @@ export const FIELD_CONSUMERS = {
   '3b.rateOfFire': { status: 'CONSUMED', file: `${W}attack-shape.js`, probe: 'rateOfFire', note: '5D-F' },
   '3b.size': { status: 'CONSUMED', file: `${W}weapon-descriptor.js`, probe: 'sizeIndex', note: 'light-weapon join (5D-H)' },
   '3b.stun': { status: 'CONSUMED', file: `${W}attack-consumer.js`, probe: 'effectiveDamageMode', note: '5D-E' },
-  '3b.triggered': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'triggeredEffects', consumed: ['triggeredEffects (AUTO families incl. the 5D-I-C-A outcome families)'], deferred: ['return-recovery triggered effects (I-C-C)', 'grab / net / snare triggered effects (I-C-B)'], owner: 'grab / reaction subsystems (I-C-B / I-C-C)', note: 'AUTO riders execute; every remaining DEFER mechanic has a named owner in the 5D-E census (deferredByOwner)' },
+  '3b.triggered': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'triggeredEffects', consumed: ['triggeredEffects (AUTO families incl. the 5D-I-C-A outcome families and the 5D-I-C-B weapon-control family)'], deferred: ['return-recovery triggered effects (I-C-C)'], owner: 'reaction subsystem (I-C-C)', note: 'AUTO riders execute; every remaining DEFER mechanic has a named owner in the 5D-E census (deferredByOwner)' },
   '3b.wielding': { status: 'DEFERRED', owner: 'wielding / two-hand state (post-5D-H)', reason: 'wieldingRules (15 identities, e.g. requires-two-hands when mounted) need a wielding state model; the mounted-on-rifle condition is evaluated for double-weapon availability only', populatedIdentities: 15 },
   '3b.qualityParameters': { status: 'DEFERRED', owner: 'quality parameter consumers (post-5D-H)', reason: 'qualityParameters are passed through the resolver; reach/thrown/etc. parameter values have no dedicated consumer beyond canonical-range qualityEffects', populatedIdentities: null },
   '3b.operation.container': { status: 'OPERATION_FAMILY' },
@@ -162,6 +167,8 @@ export const OPERATION_DUPLICATES = [
   ...I_B_LEDGER.filter((r) => r.disposition === 'DUPLICATE' && !r.key.includes('.')).map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
   // Phase 5D-I-C-A: duplicates proven against the registry by tools/census-weapon-phase-5d-i-c-a-inputs.mjs (single source: the I-C-A ledger)
   ...I_C_A_ROWS.filter((r) => r.kind === 'operation-key' && r.disposition === 'DUPLICATE').map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
+  // Phase 5D-I-C-B: duplicates proven against the registry by tools/census-weapon-phase-5d-i-c-b-inputs.mjs (single source: the I-C-B ledger)
+  ...I_C_B_ROWS.filter((r) => r.kind === 'operation-key' && r.disposition === 'DUPLICATE').map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
 ];
 
 // manifest classification overrides (named, justified): scope vocabulary the deterministic rule cannot judge on its own
@@ -188,7 +195,7 @@ export const OPERATION_FAMILY_NOTES = {
   'crew-and-emplacement': { reason: 'crew roles/tripod rules belong to the heavy-weapon crew model', phase: '5D-I: crew / emplacement' },
   'damage-modifiers': { reason: '5D-I-A consumed the composition-stage terms (point-blank bonus, adjacent die, bow/sling Strength); the remainder are threshold, wielding, hurled-object and weapon-object durability', phase: '5D-I-B/C/D by owner (see the 5D-I-A manifest)' },
   'defense-and-reaction-interactions': { reason: 'Block/Deflect Use the Force modifiers and disarm defenses need the reaction roll to read the wielded weapon', phase: '5D-I: reaction / defense workflow' },
-  'grab-grapple-restrain': { reason: 'grab/grapple/net rules belong to the grapple subsystem', phase: '5D-I: grapple / snare / net' },
+  'grab-grapple-restrain': { reason: '5D-I-C-B consumed every key through the declarative control contract (control-rules) executed by the existing grapple state machine; none remains', phase: '5D-I-C-B (see the 5D-I-C-B manifest)' },
   'proficiency-routes': { reason: 'species/ability proficiency routes are consumed through selectors.speciesOverrides/abilityOverrides; these operation echoes have no separate consumer', phase: '5D-I: confirm duplicates, retire echoes' },
   'reach-and-threat': { reason: 'reach and threatened squares need a threat/reach model', phase: '5D-I: special movement / reach' },
   'stun-ion-damage-modes': { reason: '5D-I-A consumed the stun switch and classified the dual-carried modes; payload delegation and trapped-target stun need ammo payloads / persistent effects', phase: '5D-I-B/C by owner (see the 5D-I-A manifest)' },

@@ -28,7 +28,7 @@ const CORE_RULE = 'Core Rulebook: throwing a weapon is a ranged attack (attack r
  * amended) record; `log` receives one entry per amendment actually applied.
  */
 export function applyPostCertificationAmendments(rec, log = []) {
-  return applyICAStructure(applyIBStructure(applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log), log), log);
+  return applyICBStructure(applyICAStructure(applyIBStructure(applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log), log), log), log);
 }
 
 function applyThrownRanged(rec, log) {
@@ -325,6 +325,61 @@ function applyICAStructure(rec, log) {
     log.push({ id: ICA_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-C-A', identityKey: rec.identityKey, field: 'operation.damageTypeAndBurstDeterminedByGrenade + operation.payloadDamageDiceAdjustment + canonicalStats.ammo.acceptedPayloadFamily',
       from: before, to: { damageTypeAndBurstDeterminedByGrenade: true, payloadDamageDiceAdjustment: -2, acceptedPayloadFamily: 'grenade' }, source: ICA_MICRO.source,
       rule: 'A launcher delegates its payload to the loaded canonical grenade and applies only its own source-defined adjustment (no grenade rules are cloned).', reason: 'The launcher accepted a family no certified identity carries; micro grenades are the ordinary grenade types with two fewer dice.' });
+  }
+  return out;
+}
+
+// ---- Phase 5D-I-C-B: structure for weapon control mechanics the source states in prose only -------------------------------------------------
+// 1. Snare Rifle: "fires weighted cord at targets within short range": the Snare Pistol carries this as operation.maximumGrabRangeIncrement; the rifle did not.
+// 2. Adhesive Grenade: blastEffect carried its resolution / failure / aftermath only as prose; the same sentences are added as a structure.
+// 3. Stokhli Spray Stick: "Its webbing functions as a net": operation.webbingFunctionsAsNet is a boolean; the delegation to the canonical Net is made explicit
+//    (control rules are resolved from the referenced identity, never copied).
+// 4. Tactical Tractor Beam: "functions like a tractor beam on a starship, but it can affect only Huge or smaller targets ... can move the object up to 10
+//    squares in any direction ... can hurl a grabbed object at another target within 10 squares, making a ranged attack roll ... If the attack roll equals or
+//    exceeds the target's Reflex Defense, the target takes damage based on the size of the object hurled (Table 14-2)". The starship tractor beam rule
+//    (Core Rulebook, Tractor Beams): the attack hits if it equals or exceeds Reflex; a hit starts an opposed grapple check; winning grabs the target; each round on
+//    the operator's turn another opposed grapple check holds / moves it, and losing it lets the target slip free.
+export const ICB_STRUCTURE_AMENDMENT_ID = '5D-I-C-B-control-structure-backfill';
+function applyICBStructure(rec, log) {
+  const id = rec.identityKey;
+  if (!['weapon-snare-rifle', 'weapon-adhesive-grenade', 'weapon-stokhli-spray-stick', 'weapon-electronet', 'weapon-tactical-tractor-beam'].includes(id)) return rec;
+  const out = clone(rec);
+  const stampIt = () => { out.provenance = { ...out.provenance, postCertificationAmendments: [...(out.provenance.postCertificationAmendments ?? []), ICB_STRUCTURE_AMENDMENT_ID] }; };
+  const entry = (field, from, to, source, reason) => log.push({ id: ICB_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-C-B', identityKey: id, field, from, to, source,
+    rule: 'The runtime reads structured fields only; prose rules are never parsed, and control rules are resolved from the referenced identity rather than copied.', reason });
+  if (id === 'weapon-snare-rifle') {
+    need(out.operation.maximumGrabRangeIncrement === undefined && out.operation.rangedGrabOrGrapple === true, 'snare rifle declares a ranged grab but no maximum grab range');
+    out.operation.maximumGrabRangeIncrement = 'short'; stampIt();
+    entry('operation.maximumGrabRangeIncrement', null, 'short', { book: 'Scum and Villainy', page: '51', evidence: 'A snare rifle fires weighted cord at targets within short range and can initiate a grab or grapple at range.' },
+      'The Snare Pistol carries its maximum grab range structurally; the rifle\'s identical statement was prose only.');
+  } else if (id === 'weapon-adhesive-grenade') {
+    const cur = out.operation.blastEffect;
+    need(cur?.durationRounds === 3 && cur.failure === 'unable to move' && cur.structure === undefined, 'adhesive grenade blastEffect is the published prose');
+    out.operation.blastEffect = { ...cur, structure: { check: { kind: 'grapple', against: 'attacker-ranged-attack-roll', comparison: 'equals-or-exceeds' }, onFailure: { status: 'immobilized', durationRounds: 3 }, afterBreakingFree: { furtherCheck: false } } };
+    stampIt();
+    entry('operation.blastEffect.structure', cur, out.operation.blastEffect, { book: 'Knights of the Old Republic Campaign Guide', page: '67', evidence: 'Every target in an adhesive grenade\'s blast radius must make a grapple check against the attacker\'s ranged attack roll or be unable to move. The adhesive lasts for 3 rounds. Once a character breaks free, that character does not need another grapple check to move through the affected area.' },
+      'The check, failure result and aftermath were prose only.');
+  } else if (id === 'weapon-stokhli-spray-stick') {
+    need(out.operation.webbingFunctionsAsNet === true && out.operation.treatControlAs === undefined, 'stokhli declares only the webbingFunctionsAsNet boolean');
+    out.operation.treatControlAs = { identityKey: 'weapon-net', via: 'webbingFunctionsAsNet' }; stampIt();
+    entry('operation.treatControlAs', null, out.operation.treatControlAs, { book: 'Force Unleashed Campaign Guide', page: '100', evidence: 'Its webbing functions as a net, allowing the attacker to initiate a grab or grapple at range.' },
+      'The boolean did not say WHICH rules the webbing follows; the delegation to the canonical Net is explicit.');
+  } else if (id === 'weapon-electronet') {
+    need(out.operation.ongoingStunWhileTrapped === true && out.operation.treatControlAs === undefined, 'electronet declares only ongoingStunWhileTrapped');
+    out.operation.treatControlAs = { identityKey: 'weapon-net', via: 'normal-net-grab-rules' }; stampIt();
+    entry('operation.treatControlAs', null, out.operation.treatControlAs, { book: 'Scum and Villainy', page: '51', evidence: 'A hit deals the electronet\'s stun damage and grabs the target as with a normal net.' },
+      'The grab "as with a normal net" (escape DCs, allowed / disallowed maneuvers) is delegated to the canonical Net rather than copied.');
+  } else if (id === 'weapon-tactical-tractor-beam') {
+    need(out.operation.moveGrabbedObjectSquares === 10 && out.operation.hurlGrabbedObjectRangeSquares === 10 && out.operation.maxTargetSize === 'Huge' && out.operation.tractorControl === undefined, 'tractor beam carries the move / hurl squares and the size limit only');
+    out.operation.tractorControl = {
+      acquisition: { attack: 'ranged', defense: 'reflex', comparison: 'equals-or-exceeds', then: 'opposed-grapple-check' },
+      maintain: { timing: 'start-of-controller-turn', check: 'opposed-grapple-check', onLoss: 'release' },
+      move: { squares: 10, direction: 'any' },
+      hurl: { attack: 'ranged-with-this-weapon', defense: 'reflex', comparison: 'equals-or-exceeds', rangeSquares: 10, damageAuthority: 'falling-object-by-object-size' },
+    };
+    stampIt();
+    entry('operation.tractorControl', null, out.operation.tractorControl, { book: 'Galaxy at War / Core Rulebook', page: '42 / 174', evidence: 'The tactical tractor beam functions like a tractor beam on a starship, but it can affect only Huge or smaller targets. If it has successfully grabbed an object, it can move the object up to 10 squares in any direction. A tactical tractor beam operator can hurl a grabbed object at another target within 10 squares, making a ranged attack roll with the weapon against the new target. If the attack roll equals or exceeds the target\'s Reflex Defense, the target takes damage based on the size of the object hurled (Table 14-2: Damage from Falling Objects). Starship tractor beam (Core): the attack hits if you equal or exceed the target\'s Reflex Defense; if you hit, make an opposed grapple check; if you win, the target is grabbed; each round on your turn you must make another opposed grapple check.' },
+      'The acquisition / maintenance / hurl sequence was prose only and referenced the starship rules.');
   }
   return out;
 }

@@ -46,6 +46,11 @@ const ALLOWED_RUNTIME_CONSUMERS = new Set([
   'scripts/engine/feat/scoped-combat-feat-resolver.js', // 5D-G: Weapon Focus/Specialization selector join
   'scripts/engine/combat/fire-state-store.js', // 5D-G: owned fire state (readiness) for the selected form
   'scripts/engine/combat/damage-type-rules.js', // 5D-H: CANNOT_NEGATE_ATTACK relation -> reaction negation exclusions
+  // 5D-I-C-B weapon control: the declarative control contract is read by the control executor, the falling-object authority and the existing grapple
+  // adapter (canonical feat identity + weapon entitlement); no builder / census / manifest is ever read at runtime
+  'scripts/engine/combat/weapon-control-effects.js',
+  'scripts/engine/combat/falling-object-rules.js',
+  'scripts/combat/systems/grappling-system.js',
 ]);
 const refs = execFileSync('git', ['ls-files', 'scripts', 'index.js', 'system.json'], { cwd: ROOT }).toString().split('\n').filter((f) => f.endsWith('.js') && !f.startsWith('scripts/items/weapon-runtime/'));
 for (const f of refs) {
