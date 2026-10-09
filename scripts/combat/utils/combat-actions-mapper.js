@@ -521,4 +521,4 @@ export class CombatActionsMapper {
 }
 
 // Expose globally
-window.CombatActionsMapper = CombatActionsMapper;
+if (typeof window !== "undefined") window.CombatActionsMapper = CombatActionsMapper;

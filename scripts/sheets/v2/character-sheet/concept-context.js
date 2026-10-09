@@ -1,8 +1,8 @@
 import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
-import { resolveAttackWeaponRuntime } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
@@ -379,12 +379,12 @@ function readOwnedWeaponFireState(weapon) {
 function buildWeaponConfigurationView(weapon) {
   if (!weapon) return null;
   try {
-    const runtime = resolveAttackWeaponRuntime(weapon, {});
-    if (runtime?.source !== 'canonical') return null;
-    const configurations = asArray(runtime.resolved?.canonicalStats?.configurationStates ?? runtime.resolved?.configurationStates);
+    const options = FireStateStore.configurationOptions(weapon);
+    if (!options.canonical) return null;
+    const configurations = options.states;
     if (configurations.length < 2) return null;
     const storedId = readOwnedWeaponFireState(weapon)?.configurationId ?? null;
-    const defaultId = runtime.resolved?.selection?.configurationId ?? configurations.find((entry) => entry?.default === true)?.id ?? configurations[0]?.id ?? null;
+    const defaultId = options.defaultId;
     const currentId = configurations.some((entry) => entry?.id === storedId) ? storedId : defaultId;
     const current = configurations.find((entry) => entry?.id === currentId) ?? null;
     return { currentId, currentLabel: normalizeText(current?.label || titleCase(currentId || 'Configuration')), optionCount: configurations.length };

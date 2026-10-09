@@ -5,7 +5,6 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
-import { resolveAttackWeaponRuntime } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { handleSetDarkSideScore } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/dsp-click-handler.js";
@@ -3677,8 +3676,7 @@ const forcePoints = [];
 
   /** Weapon configuration chooser. Reads the canonical configuration states and the owned configuration; applies ONLY through FireStateStore.setConfiguration. */
   async _openWeaponConfigurationDialog(weapon) {
-    let states = [];
-    try { states = Array.from(resolveAttackWeaponRuntime(weapon, {})?.resolved?.canonicalStats?.configurationStates ?? []); } catch (_err) { states = []; }
+    const states = FireStateStore.configurationOptions(weapon).states;
     if (states.length < 2) return;
     const owned = (() => { try { return weapon.flags?.swse?.fireState ?? weapon.getFlag?.("swse", "fireState") ?? null; } catch (_err) { return null; } })();
     const defaultId = states.find((c) => c?.default === true)?.id ?? states[0]?.id;
