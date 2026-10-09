@@ -1035,10 +1035,11 @@
       "family": "3b.operation.stun-ion-damage-modes",
       "key": "damageTypeAndBurstDeterminedByGrenade",
       "mechanicFamily": "payload-delegation",
-      "identityCount": 1,
-      "rawOccurrences": 1,
+      "identityCount": 2,
+      "rawOccurrences": 2,
       "representativeWeapons": [
-        "grenade-launcher"
+        "grenade-launcher",
+        "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.damageTypeAndBurstDeterminedByGrenade",
       "currentConsumer": null,

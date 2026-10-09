@@ -116,10 +116,11 @@ function summarizeWeaponForm(form) {
 // Phase 5D-E: the special-mechanic state of the selected canonical attack form that must survive Attack -> Chat Card ->
 // Damage -> Apply Damage: the classified mechanics (ids/family/policy only), stored PROMPT answers, the evaluated CT-rider /
 // overwhelming-stun records, and the attack total. Plain JSON only; whitelisted keys so nothing else rides along.
+const plainJson = (v) => { try { return JSON.parse(JSON.stringify(v)); } catch (_err) { return undefined; } };
 function summarizeSpecial(special) {
   if (!special || typeof special !== 'object') return undefined;
   const out = {};
-  if (Array.isArray(special.mechanics)) out.mechanics = special.mechanics.filter((m) => m && typeof m.id === 'string').map((m) => ({ id: m.id, family: String(m.family ?? ''), policy: String(m.policy ?? ''), ...(m.timing ? { timing: String(m.timing) } : {}) }));
+  if (Array.isArray(special.mechanics)) out.mechanics = special.mechanics.filter((m) => m && typeof m.id === 'string').map((m) => ({ id: m.id, family: String(m.family ?? ''), policy: String(m.policy ?? ''), ...(m.timing ? { timing: String(m.timing) } : {}), ...(m.effectOnly === true ? { effectOnly: true } : {}) }));
   if (special.answers && typeof special.answers === 'object') {
     const answers = {};
     for (const [k, v] of Object.entries(special.answers)) if (v === true || v === false) answers[k] = v;
@@ -132,9 +133,15 @@ function summarizeSpecial(special) {
       if (r.persistent === true) rec.persistent = true;
       if (Array.isArray(r.defenses) && r.defenses.length) rec.defenses = r.defenses.map(String);
       if (r.trigger) rec.trigger = String(r.trigger);
+      // Phase 5D-I-C-A: outcome records carry their apply-time condition, structured payload and canonical provenance (plain JSON only)
+      if (r.applyCondition) rec.applyCondition = String(r.applyCondition);
+      if (r.payload && typeof r.payload === 'object') rec.payload = plainJson(r.payload);
+      if (r.source && typeof r.source === 'object') rec.source = plainJson(r.source);
       return rec;
     });
   }
+  if (Number.isFinite(Number(special.thresholdAdjustment)) && Number(special.thresholdAdjustment) !== 0) out.thresholdAdjustment = Number(special.thresholdAdjustment);
+  if (special.targetRules && typeof special.targetRules === 'object') out.targetRules = plainJson(special.targetRules);
   if (Array.isArray(special.unresolved)) out.unresolved = special.unresolved.filter((u) => u && typeof u.id === 'string').map((u) => ({ id: u.id, reason: String(u.reason ?? '') }));
   if (special.drInteraction === 'ignore') out.drInteraction = 'ignore';
   if (special.attackTotal !== undefined && Number.isFinite(Number(special.attackTotal))) out.attackTotal = Number(special.attackTotal);

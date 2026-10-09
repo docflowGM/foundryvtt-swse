@@ -86,11 +86,12 @@ const fam = (mechs, f) => mechs.filter((m) => m.family === f);
   const pay = (payloadId) => form('weapon-wrist-rocket-launcher', { profileId: 'primary', payloadId });
   const nerve = rt.resolveCanonicalDamage(wr, pay('hollow-tip-nerve-toxin'));
   assert.deepEqual(nerve.specialEffects.map((e) => e.effect), ['nerve-agent-injection']);
-  assert.deepEqual(fam(nerve.mechanics, 'payload-effect').map((m) => m.policy), ['DEFER'], 'incomplete payload effect: DEFER, surfaced');
+  // 5D-I-C-A: the structured nerve-agent effect is a stored PROMPT condition-track rider (the corpus carries no secondary attack bonus, so the secondary result is asked once)
+  assert.deepEqual(fam(nerve.mechanics, 'ct-rider-prompt').map((m) => m.policy), ['PROMPT'], 'nerve-agent injection: secondary result asked once, never invented');
   assert.equal(nerve.base, null, 'no ordinary dice fabricated for an effect-only payload');
   const flash = rt.resolveCanonicalDamage(wr, pay('flash'));
   assert.equal(flash.status, 'no-damage'); assert.deepEqual(flash.specialEffects.map((e) => e.effect), ['blinded']);
-  assert.deepEqual(fam(flash.mechanics, 'payload-effect').map((m) => m.policy), ['DEFER'], 'area + status effect: complete structure but multi-target/status owner is a later phase');
+  assert.deepEqual(fam(flash.mechanics, 'status-effect').map((m) => m.policy), ['AUTO'], '5D-I-C-A: blinded is a structured status effect executed at Apply Damage (area hit, 1d4 rounds)');
   const gas = rt.resolveCanonicalDamage(wr, pay('hollow-tip-stun-gas'));
   assert.equal(gas.status, 'no-damage'); assert.equal(gas.specialEffects.length, 0, 'stun-gas payload carries no structured effect: a completeness issue, not invented behavior');
   assert.deepEqual(fam(rt.resolveCanonicalDamage(wr, pay('antivehicle')).mechanics, 'display-note').map((m) => m.policy), ['DISPLAY_ONLY'], 'unstructured printed note is display-only');
@@ -271,7 +272,10 @@ const fam = (mechs, f) => mechs.filter((m) => m.family === f);
     assert.equal(rt.resolveCanonicalDamage(amph, f).status, 'no-damage');
     assert.throws(() => comp(A, amph, f), (e) => e.code === 'no-ordinary-damage');
     const m = mechOf(amph, f);
-    assert.ok(m.every((x) => x.family === 'special-action' && x.policy === 'DEFER'), `${profileId}: DEFER (special action), never ordinary damage`);
+    if (profileId === 'venom-spit') {
+      // 5D-I-C-A: Venom Spit's structured condition-track outcome (attack roll equals or exceeds BOTH Reflex and Fortitude) is an AUTO effect-only rider; it still has no damage
+      assert.ok(m.every((x) => x.family === 'ct-rider' && x.policy === 'AUTO' && x.effectOnly === true), 'venom-spit: effect-only AUTO condition-track rider, never ordinary damage');
+    } else assert.ok(m.every((x) => x.family === 'special-action' && x.policy === 'DEFER'), `${profileId}: DEFER (special action), never ordinary damage`);
   }
   const posted = []; const origPost = SWSEChat.postRoll, origRE = RollEngine.safeRoll, origSWSE = globalThis.SWSE; const rolls = [];
   globalThis.SWSE = { ...(globalThis.SWSE ?? {}), RollEngine: { safeRoll: async (f) => { rolls.push(f); return { total: 5, formula: f, dice: [] }; } } };

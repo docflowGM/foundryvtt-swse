@@ -266,8 +266,21 @@ function delegateLoadedPayload(runtime, loadedKey, context, form) {
   const payloadItem = { id: `loaded-${loadedKey}`, type: 'weapon', name: loadedKey, flags: { swse: { canonicalWeapon: { identityKey: loadedKey } } }, system: {} };
   const inner = resolveCanonicalDamage(payloadItem, { weaponForm: { identityKey: loadedKey, profileId: rec.canonicalStats.attackProfiles[0].id }, damageMode: context.damageMode ?? form?.damageMode ?? null, damageType: context.damageType ?? null });
   const launcherForm = { ...weaponFormRecord(runtime, inner.damageMode), loadedIdentityKey: loadedKey };
+  // Phase 5D-I-C-A: the launcher's OWN source-defined adjustment (Micro Grenade Launcher: "two fewer dice on a successful hit"). Only the dice count of the
+  // delegated grenade's formula changes; nothing else of the grenade is copied or altered. A miss (hit === false) keeps the grenade's ordinary dice.
+  let adjusted = inner;
+  const delta = Number(runtime.resolved.operation?.payloadDamageDiceAdjustment);
+  if (Number.isFinite(delta) && delta !== 0 && context.hit !== false && typeof inner.base === 'string') {
+    const m = /^(\d+)d(\d+)(.*)$/.exec(inner.base.replace(/\s+/g, ''));
+    if (m) {
+      const dice = Number(m[1]) + delta;
+      adjusted = dice >= 1
+        ? { ...inner, base: `${dice}d${m[2]}${m[3]}`, payloadDiceAdjusted: Object.freeze({ delta, from: inner.base }) }
+        : { ...inner, base: null, status: 'no-damage', reason: 'payload-dice-adjusted-to-zero' };
+    }
+  }
   return Object.freeze({
-    ...inner, runtime, selection: launcherForm,
+    ...adjusted, runtime, selection: launcherForm,
     delegatedFrom: Object.freeze({ launcher: runtime.identityKey, payload: loadedKey }),
     areaShape: inner.areaShape?.isArea ? Object.freeze({ ...inner.areaShape, detonation: Object.freeze({ timing: 'contact', timerRounds: null }) }) : inner.areaShape,
   });

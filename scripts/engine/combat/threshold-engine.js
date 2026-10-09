@@ -159,16 +159,23 @@ export class ThresholdEngine {
       ? [{ label: 'Nerve Reinforcement Implant', value: implantStunBonus }]
       : [];
 
+    // Phase 5D-I-C-A: an attack-specific adjustment (Disruptor: "as though its damage threshold were 5 lower") shapes the EFFECTIVE threshold of
+    // THIS damage event only; the actor's stored / derived Damage Threshold is never modified.
+    const attackAdjustment = Number(context?.thresholdAdjustment);
+    const adjustment = Number.isFinite(attackAdjustment) ? attackAdjustment : 0;
+    const adjustmentBreakdown = adjustment ? [{ label: 'Attack threshold adjustment', value: adjustment }] : [];
+
     return {
       base,
-      modifierTotal: modifierTotal + implantStunBonus,
-      total: base + modifierTotal + implantStunBonus,
+      modifierTotal: modifierTotal + implantStunBonus + adjustment,
+      total: Math.max(0, base + modifierTotal + implantStunBonus + adjustment),
       breakdown: [
         ...modifiers.map(m => ({
           label: m.label,
           value: m.value
         })),
-        ...implantBreakdown
+        ...implantBreakdown,
+        ...adjustmentBreakdown
       ]
     };
   }
@@ -290,10 +297,12 @@ export class ThresholdEngine {
    * @param {Actor} [params.attacker] - Attacker actor (for logging)
    * @returns {ThresholdResult}
    */
-  static evaluateThreshold({ target, damage, isStun = false, isIon = false, attacker = null }) {
+  static evaluateThreshold({ target, damage, isStun = false, isIon = false, attacker = null, thresholdAdjustment = 0 }) {
     if (!target) return ThresholdResult.empty();
 
-    const dt = this.calculateDamageThreshold(target);
+    // Phase 5D-I-C-A: effective threshold of this damage event = stored threshold + the attack's own adjustment (never persisted)
+    const adjustment = Number(thresholdAdjustment);
+    const dt = Math.max(0, this.calculateDamageThreshold(target) + (Number.isFinite(adjustment) ? adjustment : 0));
     const result = new ThresholdResult(target, damage, dt);
 
     // RAW threshold check (always applies)

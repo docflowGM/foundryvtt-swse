@@ -21,6 +21,8 @@ export const POLICY = Object.freeze({ AUTO: 'AUTO', PROMPT: 'PROMPT', DEFER: 'DE
 export const TIMING = Object.freeze({
   ON_ATTACK: 'on-attack', ON_HIT: 'on-hit', ON_MISS: 'on-miss', ON_DAMAGE_ROLL: 'on-damage-roll', ON_CRITICAL: 'on-critical',
   AFTER_DAMAGE: 'after-damage', AFTER_MITIGATION: 'after-mitigation', TURN_START: 'turn-start', TURN_END: 'turn-end', CONTINUOUS: 'continuous',
+  // Phase 5D-I-C-A: outcome / persistent-effect timings (no ambiguous generic "after")
+  AFTER_THRESHOLD: 'after-threshold', TIME_DELAY: 'time-delay', UNTIL_CURED: 'until-cured',
 });
 
 /** family id -> default policy/timing/description. The census and the runtime share this single table. */
@@ -44,14 +46,38 @@ export const FAMILIES = Object.freeze({
   'persistent-effect':        { policy: POLICY.DEFER,    timing: TIMING.TURN_START,     note: 'delayed/recurring effect resolved at a later turn boundary' },
   'special-action':           { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'replaces the attack with another action (Pin/Trip/Venom Spit) -- refused, not substituted' },
   'payload-effect':           { policy: POLICY.DEFER,    timing: TIMING.ON_HIT,         note: 'effect-only payload (flash/gas/toxin) without complete structure' },
-  'prepared-attack':          { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'swift-action preparation/bracing (action economy owner)' },
+  'prepared-attack':          { policy: POLICY.AUTO,     timing: TIMING.ON_ATTACK,      note: 'swift-action preparation / bracing: CONSUMED by the owned fire-state (FireStateStore.primePreparedAttack / previewReadiness, Phase 5D-G / 5D-I-A); classified AUTO so the census stops reporting a superseded deferral' },
   'activation-effect':        { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'activated empowerment (Force Point / swift action) with own cost' },
   'return-recovery':          { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'return/recovery threshold with no structured effect or action' },
   'firing-constraint':        { policy: POLICY.VALIDATION_ONLY, timing: TIMING.ON_ATTACK, note: 'limits shots per round/reload; checked against the existing multi-attack/ammo rules (Phase 5D-F)' },
   'conditional-damage':       { policy: POLICY.AUTO,     timing: TIMING.ON_DAMAGE_ROLL, note: 'weapon-declared damage term that applies under a structural attack fact (point-blank range / adjacent target); composed once in the existing damage composition' },
   'attack-resolution':        { policy: POLICY.AUTO,     timing: TIMING.ON_ATTACK,      note: 'selected form defense (reflex/fortitude/will) -- already consumed through targetContext.defenseType' },
   'display-note':             { policy: POLICY.DISPLAY_ONLY, timing: TIMING.CONTINUOUS, note: 'informational statement with no effect on resolving the single attack (e.g. concealed shot origin)' },
+  // Phase 5D-I-C-A: attack-outcome / threshold / status / persistent-effect families (executed at Apply Damage by the existing pipeline)
+  'threshold-adjustment':     { policy: POLICY.AUTO,     timing: TIMING.AFTER_MITIGATION, note: 'the attack lowers/raises the target\'s EFFECTIVE damage threshold for this damage event only (stored threshold untouched)' },
+  'bonus-damage-rider':       { policy: POLICY.AUTO,     timing: TIMING.AFTER_THRESHOLD,  note: 'separate immediate damage event dealt after the triggering damage proves its threshold / condition-track result; never re-triggers riders' },
+  'target-class-damage':      { policy: POLICY.AUTO,     timing: TIMING.AFTER_DAMAGE,     note: 'per-target damage scaling by structural target class (droid / vehicle / device / object vs organic) at packet finalization; composes with the existing area hit / miss / Evasion path' },
+  'status-effect':            { policy: POLICY.AUTO,     timing: TIMING.AFTER_DAMAGE,     note: 'status / timed effect created on the target through ActorEngine.createActiveEffects with weapon provenance and a turn-owner lifecycle' },
+  'delayed-damage':           { policy: POLICY.AUTO,     timing: TIMING.TIME_DELAY,       note: 'one delayed damage instance queued through the existing RecurringDamageEngine (start of the target\'s next turn)' },
+  'persistent-poison':        { policy: POLICY.AUTO,     timing: TIMING.UNTIL_CURED,      note: 'persistent secondary-attack toxin run by the existing PoisonEngine (instance, recurrence, treatment, termination)' },
+  'poison-delivery':          { policy: POLICY.AUTO,     timing: TIMING.AFTER_DAMAGE,     note: 'a poison coating selected on the owned weapon is delivered by PoisonEngine only when the attack deals damage; the weapon capability alone creates no poison' },
+  'payload-delegation':       { policy: POLICY.AUTO,     timing: TIMING.ON_DAMAGE_ROLL,   note: 'payload rules come from the loaded canonical grenade (delegateLoadedPayload); the launcher applies only its own adjustment' },
   'unclassified':             { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'structured mechanic with no recognized family; surfaced, never silently dropped' },
+});
+
+/**
+ * Phase 5D-I-C-A: the OWNER of every mechanic that is still DEFER (the census reports deferrals by owner; none is an unowned defect).
+ *   I-C-B grab / grapple / restrain / net / snare / Pin / Trip / hurled objects     I-C-C Block / Deflect / reaction / defense interactions / return-on-reaction
+ *   I-D   stealth & sensing consumption, weapon-object durability, activation empowerment with its own cost
+ * A per-mechanic-id entry wins over the per-family one.
+ */
+export const DEFER_OWNER_BY_FAMILY = Object.freeze({
+  'defensive-interaction': 'I-C-C', 'grab-grapple': 'I-C-B', 'special-action': 'I-C-B', 'return-recovery': 'I-C-C', 'status-condition': 'I-D', 'activation-effect': 'I-D',
+});
+export const DEFER_OWNER_BY_ID = Object.freeze({
+  'trip-substitution': 'I-C-B',
+  'lingering-gas-concealment': 'I-D',   // the cloud is canonical structure; visibility / Stealth consumption is the sensing subsystem
+  'fragile-disable-on-damage': 'I-D',   // "if the WEAPON takes any damage" is weapon-object durability, not a target outcome
 });
 
 const CT_HIT_TRIGGERS = new Set(['successful-hit', 'on-hit', 'hit']);
@@ -61,18 +87,62 @@ const MULTI_ATTACK_RE = /double attack|triple attack|rapid (shot|strike)|multi-?
 const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 const mech = (family, id, extra = {}) => Object.freeze({ family, id, policy: FAMILIES[family].policy, timing: FAMILIES[family].timing, ...extra });
 
-function classifyTriggeredEffect(e, index, formRefused) {
+// "N steps" token of a structured duration ("until-end-of-attacker-next-turn" -> {owner:'attacker', through:'end-of-next-turn'})
+function durationOwner(token) {
+  const m = /^until-(start|end)-of-(attacker|target)-next-turn$/.exec(String(token ?? ''));
+  return m ? { owner: m[2], through: `${m[1]}-of-next-turn` } : null;
+}
+
+/**
+ * Phase 5D-I-C-A: structured outcome effects of a profile's triggeredEffects (status / delayed damage / persistent poison / poison delivery / gas CT
+ * hit). Every branch keys on an ENUMERATED effect id or structured field of the canonical schema -- never a weapon name or description text.
+ * Returns null when the entry is not an outcome effect (the older classification continues).
+ */
+function classifyOutcomeEffect(e, id, src, operation) {
+  const eff = typeof e.effect === 'string' ? e.effect : null;
+  const trigger = e.trigger ?? null;
+  // area attack that moves the target on the condition track (Gas Grenade): a miss has no effect; Evasion lowers the shift; atmospheric protection is immune
+  if (e.effect && typeof e.effect === 'object' && Number.isFinite(Number(e.effect.conditionTrackSteps)) && trigger === 'area-attack-hit') {
+    const steps = Number(e.effect.conditionTrackSteps);
+    const ev = Number(e.evasionEffect?.conditionTrackSteps);
+    return mech('ct-rider', id, { source: src, trigger, steps: Math.abs(steps), direction: steps < 0 ? 'down' : 'up', persistent: false, defenses: [], requiresDamage: false, regardlessOfDamage: true,
+      ...(Number.isFinite(ev) ? { evasionSteps: Math.abs(ev) } : {}), ...(typeof e.immunity === 'string' ? { immunity: e.immunity } : {}), data: e });
+  }
+  if (eff === 'target-knocked-prone' && trigger === 'successful-hit') {
+    return mech('status-effect', id, { source: src, trigger, attackCondition: 'hit', status: 'prone', data: e });
+  }
+  if (eff === 'total-concealment-against-affected-creature' && trigger === 'area-attack-resolution') {
+    const d = durationOwner(e.duration);
+    if (d) return mech('status-effect', id, { source: src, trigger, attackCondition: 'hit', status: 'total-concealment-against-bearer', duration: d, immunity: e.blindCreaturesImmune === true ? 'blind-creatures' : null, data: e });
+  }
+  if (e.timing === 'start-of-target-next-turn' && trigger === 'attack-roll-equals-or-exceeds-both-defenses' && typeof e.damage?.formula === 'string' && asArray(e.defenses).length) {
+    return mech('delayed-damage', id, { source: src, trigger, defenses: asArray(e.defenses).map(String), formula: e.damage.formula, qualifiers: asArray(e.damageType?.qualifiers).map(String), data: e });
+  }
+  if (e.effectType === 'persistent-secondary-attack' && e.persistentCondition === true) {
+    return mech('persistent-poison', id, { source: src, trigger, data: e });
+  }
+  if (eff === 'deliver-loaded-toxin' && trigger === 'successful-damage-with-poison-carrying-dart') {
+    return mech('poison-delivery', id, { source: src, trigger, requiresDamage: operation?.poisonDeliveryRequiresDamage === true, data: e });
+  }
+  return null;
+}
+
+function classifyTriggeredEffect(e, index, formRefused, operation = null) {
   const id = e.id ?? `triggered-${index}`;
   const eff = typeof e.effect === 'string' ? e.effect : null;
   const src = `profile.triggeredEffects[${index}]`;
-  if (formRefused) return mech('special-action', id, { source: src, reason: 'form-has-no-ordinary-damage', trigger: e.trigger ?? null, data: e });
+  const outcome = classifyOutcomeEffect(e, id, src, operation);
+  if (outcome) return formRefused ? Object.freeze({ ...outcome, effectOnly: true }) : outcome;
+  if (formRefused && !(eff === 'move-target-condition-track' && (CT_HIT_TRIGGERS.has(e.trigger) || e.trigger === CT_BOTH_DEFENSE_TRIGGER || e.trigger === CT_DEFENSE_TRIGGER))) {
+    return mech('special-action', id, { source: src, reason: 'form-has-no-ordinary-damage', trigger: e.trigger ?? null, data: e });
+  }
   if (eff === 'move-target-condition-track') {
     const steps = Number(e.steps);
     const t = e.trigger ?? null;
     if (Number.isFinite(steps) && steps !== 0 && (CT_HIT_TRIGGERS.has(t) || t === CT_DEFENSE_TRIGGER || t === CT_BOTH_DEFENSE_TRIGGER)) {
       return mech('ct-rider', id, { source: src, trigger: t, steps: Math.abs(steps), direction: steps < 0 ? 'down' : 'up', persistent: e.persistent === true,
         defenses: t === CT_BOTH_DEFENSE_TRIGGER ? asArray(e.defenses) : t === CT_DEFENSE_TRIGGER && e.defense ? [e.defense] : [],
-        requiresDamage: t === CT_DEFENSE_TRIGGER, regardlessOfDamage: e.regardlessOfDamageRoll === true, data: e });
+        requiresDamage: t === CT_DEFENSE_TRIGGER, regardlessOfDamage: e.regardlessOfDamageRoll === true, ...(formRefused ? { effectOnly: true } : {}), data: e });
     }
     return mech('ct-rider-prompt', id, { source: src, trigger: t, data: e });
   }
@@ -155,7 +225,7 @@ export function extractSpecialMechanics(def, { damageProfile = null, operation =
     if (c.kind !== 'profile-component') continue;
     out.push(mech('damage-rider', c.id, { componentId: c.id, damage: c.damage, damageTypes: [...(c.damageTypes ?? [])], resolution: c.resolution ?? 'normal', source: 'profile.damageComponents' }));
   }
-  asArray(def.triggeredEffects).forEach((e, i) => out.push(classifyTriggeredEffect(e, i, formRefused)));
+  asArray(def.triggeredEffects).forEach((e, i) => out.push(classifyTriggeredEffect(e, i, formRefused, operation)));
   asArray(def.conditionalModifiers).forEach((m, i) => out.push(classifyConditionalModifier(m, i)));
   const defKey = def.attackResolution?.defense;
   if (defKey === 'fortitude' || defKey === 'will') out.push(mech('attack-resolution', `defense:${defKey}`, { defense: defKey, source: 'profile.attackResolution.defense' }));
@@ -203,9 +273,49 @@ export function extractSpecialMechanics(def, { damageProfile = null, operation =
   // the weapon-level target-size penalty duplicate (operation.targetSizeAttackPenalty) is NOT re-extracted: the profile's conditionalModifiers already carry it
   for (const [i, p] of asArray(payloadEffects).entries()) {
     if (typeof p === 'string') out.push(mech('display-note', `payload-note-${i}`, { source: 'payload.specialEffects', text: p })); // printed note without structure
+    else if (p?.structure?.status === 'blinded' && p.structure.trigger === 'area-attack-hit') out.push(mech('status-effect', `payload:${p.effect}`, { source: 'payload.specialEffects', trigger: p.structure.trigger, attackCondition: 'hit', status: 'blinded', duration: p.structure.duration, data: p }));
+    else if (p?.structure?.trigger === 'hit-then-secondary-attack' && Number.isFinite(Number(p.structure.onSecondarySuccess?.conditionTrackSteps))) {
+      // the secondary attack bonus is not carried by the corpus (DATA_COMPLETENESS): the secondary result is asked once and stored, never invented
+      const steps = Number(p.structure.onSecondarySuccess.conditionTrackSteps);
+      out.push(mech('ct-rider-prompt', `payload:${p.effect}`, { source: 'payload.specialEffects', trigger: p.structure.trigger, steps: Math.abs(steps), direction: steps < 0 ? 'down' : 'up', secondaryDefense: p.structure.secondaryDefense ?? null, data: p }));
+    }
+    else if (p?.effect === 'inherit-selected-grenade-normal-rules') out.push(mech('payload-delegation', 'payload:inherit-selected-grenade-normal-rules', { source: 'payload.specialEffects', data: p }));
+    else if (p?.effect === 'damage-dice-adjustment' && Number.isFinite(Number(p.diceCountDelta))) out.push(mech('payload-delegation', 'payload:damage-dice-adjustment', { source: 'payload.specialEffects', diceCountDelta: Number(p.diceCountDelta), data: p }));
     else out.push(mech('payload-effect', p?.effect ?? `payload-${i}`, { source: 'payload.specialEffects', data: p }));
   }
+  for (const m of operationOutcomeMechanics(operation)) out.push(m);
   return Object.freeze(out);
+}
+
+/** Phase 5D-I-C-A: weapon-level `operation` outcome mechanics. Structured carriers only (the amendment-backfilled `structure` objects); prose is never read. */
+function operationOutcomeMechanics(op) {
+  const out = [];
+  if (!op || typeof op !== 'object') return out;
+  const adj = Number(op.damageThresholdAdjustment);
+  if (Number.isFinite(adj) && adj !== 0) out.push(mech('threshold-adjustment', 'operation.damageThresholdAdjustment', { source: 'operation.damageThresholdAdjustment', value: adj }));
+  const sh = op.embeddedShrapnel;
+  if (sh?.structure?.trigger === 'damage-exceeds-threshold-and-moves-target-down-condition-track' && sh.timing === 'immediate' && typeof sh.bonusDamage?.formula === 'string') {
+    out.push(mech('bonus-damage-rider', 'operation.embeddedShrapnel', { source: 'operation.embeddedShrapnel', formula: sh.bonusDamage.formula, minimumConditionSteps: Number(sh.structure.minimumConditionSteps) || 1, applyCondition: 'threshold-exceeded-and-condition-track-moved' }));
+  }
+  const tr = op.targetRules?.structure;
+  if (tr?.electronic && tr?.nonCybernetic) out.push(mech('target-class-damage', 'operation.targetRules', { source: 'operation.targetRules', rules: tr }));
+  const ctr = op.conditionTrackRider?.structure;
+  if (ctr?.trigger === 'target-moved-down-condition-track-by-this-damage' && ctr.status) {
+    out.push(mech('status-effect', 'operation.conditionTrackRider', { source: 'operation.conditionTrackRider', trigger: ctr.trigger, attackCondition: 'hit', applyCondition: 'target-moved-down-condition-track', status: ctr.status, duration: ctr.duration }));
+  }
+  const fr = op.fortitudeRider?.structure;
+  if (fr?.trigger === 'hit-and-attack-total-exceeds-defense' && fr.defense && (fr.skillPenalty || Number.isFinite(Number(fr.speedSetSquares)))) {
+    out.push(mech('status-effect', 'operation.fortitudeRider', { source: 'operation.fortitudeRider', trigger: fr.trigger, attackCondition: 'hit-and-total-exceeds', defense: String(fr.defense), comparison: fr.comparison ?? 'exceeds',
+      status: fr.skillPenalty ? 'skill-penalty' : 'speed-set', skillPenalty: fr.skillPenalty ?? null, speedSetSquares: Number.isFinite(Number(fr.speedSetSquares)) ? Number(fr.speedSetSquares) : null, duration: fr.duration }));
+  }
+  // "A creature killed, or an object, droid, or vehicle destroyed, by it is disintegrated": a status on the target once Apply Damage PROVES the killed / destroyed
+  // state (resolution.dead / resolution.destroyed). Nothing is deleted: the Actor / Token stay, the gameplay state is recorded.
+  if (op.disintegratesOnKillOrDestruction === true) {
+    out.push(mech('status-effect', 'operation.disintegratesOnKillOrDestruction', { source: 'operation.disintegratesOnKillOrDestruction', trigger: 'target-killed-or-destroyed-by-this-damage', attackCondition: 'hit', applyCondition: 'target-killed-or-destroyed', status: 'disintegrated' }));
+  }
+  // capability only: the weapon MAY carry a contact poison; a poison is delivered only when one is selected on the owned weapon (PoisonEngine coating) and damage is dealt
+  if (op.ammunitionMayCarryContactPoison === true) out.push(mech('poison-delivery', 'operation.ammunitionMayCarryContactPoison', { source: 'operation.ammunitionMayCarryContactPoison', requiresDamage: true, capabilityOnly: true }));
+  return out;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -376,15 +486,50 @@ export async function resolveAttackStageModifiers(mechanics, { targetSize = null
   return { contributions, answers: out, unresolved, drIgnore };
 }
 
-/** After the attack roll: the CT-rider / overwhelming-stun records carried to Apply Damage (self-contained, JSON-safe). */
-export function evaluateAttackOutcomeSpecials(mechanics, { hit, attackTotal = null, defenses = {} } = {}) {
+/**
+ * After the attack roll: the apply-time records carried to Apply Damage (self-contained, JSON-safe). Phase 5D-I-C-A adds the outcome kinds
+ * (status-effect, bonus-damage, delayed-damage, persistent-poison, poison-delivery, zero-hp-ct-disable); each carries the canonical provenance
+ * (identity / profile / payload) it was selected with. `fired` is the ATTACK-time part of the trigger (true / false / null = unobserved);
+ * anything that depends on damage actually dealt is the record's `applyCondition` / `requiresDamage`, decided at Apply Damage.
+ */
+export function evaluateAttackOutcomeSpecials(mechanics, { hit, attackTotal = null, defenses = {}, provenance = null } = {}) {
   const records = [];
+  const source = provenance && typeof provenance === 'object' ? { ...(provenance.identityKey ? { identityKey: provenance.identityKey } : {}), ...(provenance.profileId ? { profileId: provenance.profileId } : {}), ...(provenance.payloadId ? { payloadId: provenance.payloadId } : {}) } : null;
+  const withSource = (rec) => (source && Object.keys(source).length ? { ...rec, source } : rec);
+  const hitFired = hit === true ? true : hit === false ? false : null;
   for (const m of asArray(mechanics)) {
     if (m.family === 'ct-rider') {
-      records.push({ id: m.id, kind: 'ct-rider', steps: m.steps, direction: m.direction, persistent: m.persistent, requiresDamage: m.requiresDamage === true && m.regardlessOfDamage !== true,
-        fired: evaluateCtRiderAttackCondition(m, { hit, attackTotal, defenses }), trigger: m.trigger, defenses: [...(m.defenses ?? [])] });
+      records.push(withSource({ id: m.id, kind: 'ct-rider', steps: m.steps, direction: m.direction, persistent: m.persistent, requiresDamage: m.requiresDamage === true && m.regardlessOfDamage !== true,
+        fired: evaluateCtRiderAttackCondition(m, { hit, attackTotal, defenses }), trigger: m.trigger, defenses: [...(m.defenses ?? [])],
+        ...(Number.isFinite(m.evasionSteps) || m.immunity ? { payload: { ...(Number.isFinite(m.evasionSteps) ? { evasionSteps: m.evasionSteps } : {}), ...(m.immunity ? { immunity: m.immunity } : {}) } } : {}) }));
+    } else if (m.family === 'ct-rider-prompt' && Number.isFinite(m.steps) && m.secondaryDefense !== undefined) {
+      // a hit starts a secondary attack the corpus gives no bonus for: its result is asked once at Apply Damage
+      records.push(withSource({ id: m.id, kind: 'ct-rider', steps: m.steps, direction: m.direction, requiresDamage: false, fired: hit === false ? false : null, trigger: m.trigger, defenses: [], payload: { secondaryDefense: m.secondaryDefense } }));
     } else if (m.family === 'ct-overwhelming-stun') {
-      records.push({ id: m.id, kind: 'overwhelming-stun', steps: m.steps, fired: hit === true ? true : hit === false ? false : null, requiresDamage: true });
+      records.push({ id: m.id, kind: 'overwhelming-stun', steps: m.steps, fired: hitFired, requiresDamage: true });
+    } else if (m.family === 'status-effect') {
+      let fired = hitFired;
+      if (m.attackCondition === 'hit-and-total-exceeds') {
+        const d = defenses?.[String(m.defense).toLowerCase()];
+        if (hit !== true) fired = hitFired;
+        else if (!Number.isFinite(attackTotal) || !Number.isFinite(d)) fired = null;
+        else fired = m.comparison === 'equals-or-exceeds' ? attackTotal >= d : attackTotal > d;
+      }
+      records.push(withSource({ id: m.id, kind: 'status-effect', steps: 0, fired, requiresDamage: false, trigger: m.trigger ?? undefined, ...(m.applyCondition ? { applyCondition: m.applyCondition } : {}),
+        payload: { status: m.status, ...(m.duration ? { duration: m.duration } : {}), ...(m.skillPenalty ? { skillPenalty: m.skillPenalty } : {}), ...(Number.isFinite(m.speedSetSquares) ? { speedSetSquares: m.speedSetSquares } : {}), ...(m.immunity ? { immunity: m.immunity } : {}) } }));
+    } else if (m.family === 'bonus-damage-rider') {
+      records.push(withSource({ id: m.id, kind: 'bonus-damage', steps: 0, fired: hitFired, requiresDamage: true, applyCondition: m.applyCondition, payload: { formula: m.formula, minimumConditionSteps: m.minimumConditionSteps } }));
+    } else if (m.family === 'delayed-damage') {
+      records.push(withSource({ id: m.id, kind: 'delayed-damage', steps: 0, fired: evaluateCtRiderAttackCondition({ trigger: CT_BOTH_DEFENSE_TRIGGER, defenses: m.defenses }, { hit, attackTotal, defenses }), requiresDamage: false, trigger: m.trigger, defenses: [...(m.defenses ?? [])],
+        payload: { formula: m.formula, qualifiers: [...(m.qualifiers ?? [])], timing: m.data?.timing ?? 'start-of-target-next-turn' } }));
+    } else if (m.family === 'persistent-poison') {
+      records.push(withSource({ id: m.id, kind: 'persistent-poison', steps: 0, fired: hitFired, requiresDamage: false, trigger: m.trigger, payload: { effect: JSON.parse(JSON.stringify(m.data ?? {})) } }));
+    } else if (m.family === 'poison-delivery') {
+      records.push(withSource({ id: m.id, kind: 'poison-delivery', steps: 0, fired: hitFired, requiresDamage: m.requiresDamage === true, trigger: m.trigger ?? undefined, payload: { capabilityOnly: m.capabilityOnly === true } }));
+    } else if (m.family === 'target-class-damage') {
+      // Evaluated per target at Apply Damage: pre-halving damage that would reduce an electronic-class target to 0 HP -> -5 CT and disabled
+      const z = m.rules?.electronic?.zeroHpPreHalving;
+      if (z && Number.isFinite(Number(z.conditionTrackSteps))) records.push(withSource({ id: 'operation.targetRules.zero-hp', kind: 'zero-hp-ct-disable', steps: Math.abs(Number(z.conditionTrackSteps)), fired: true, requiresDamage: true, payload: { disabled: z.disabled === true, categories: [...(m.rules.electronic.categories ?? [])] } }));
     }
   }
   return records;
@@ -417,9 +562,16 @@ export const answerFor = (special, id) => (special?.answers && Object.prototype.
 /** The non-default defense the selected form attacks (Fortitude/Will), from the mechanics -- null means the ordinary Reflex Defense. */
 export const alternateDefenseOf = (mechanics) => asArray(mechanics).find((m) => m.family === 'attack-resolution')?.defense ?? null;
 
+/** Phase 5D-I-C-A: the attack-specific effective-threshold adjustment (sum of the selected form's threshold-adjustment mechanics; 0 = none). */
+export const thresholdAdjustmentOf = (mechanics) => asArray(mechanics).filter((m) => m.family === 'threshold-adjustment').reduce((acc, m) => acc + (Number(m.value) || 0), 0);
+/** Phase 5D-I-C-A: the structured per-target-class damage rules of the selected form (EMP Grenade), or null. */
+export const targetRulesOf = (mechanics) => asArray(mechanics).find((m) => m.family === 'target-class-damage')?.rules ?? null;
+/** Phase 5D-I-C-A: the selected form deals no ordinary damage and acts only through its outcome effects (Venom Spit, Flash Canister, Flash Rocket). */
+export const isEffectOnlyForm = (mechanics) => asArray(mechanics).some((m) => m.effectOnly === true);
+
 /** Compact, JSON-safe record of the selected form's mechanics for the workflow context (no definitions, no dice). */
 export function summarizeMechanics(mechanics) {
-  return asArray(mechanics).map((m) => ({ id: m.id, family: m.family, policy: m.policy, timing: m.timing }));
+  return asArray(mechanics).map((m) => ({ id: m.id, family: m.family, policy: m.policy, timing: m.timing, ...(m.effectOnly === true ? { effectOnly: true } : {}) }));
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

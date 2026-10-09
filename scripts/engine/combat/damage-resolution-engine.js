@@ -274,9 +274,11 @@ export class DamageResolutionEngine {
     }
 
     try {
+      const thresholdAdjustment = Number(options?.thresholdAdjustment);
       const thresholdData = await ThresholdEngine.getDamageThreshold(actor, {
         damageType,
-        source
+        source,
+        thresholdAdjustment: Number.isFinite(thresholdAdjustment) ? thresholdAdjustment : 0
       });
 
       result.thresholdTotal = thresholdData.total;
@@ -292,7 +294,8 @@ export class DamageResolutionEngine {
         damage: thresholdDamage,
         isStun: damageType === 'stun',
         isIon: damageType === 'ion',
-        attacker: source
+        attacker: source,
+        thresholdAdjustment: Number.isFinite(thresholdAdjustment) ? thresholdAdjustment : 0
       });
 
       result.thresholdExceeded = result.thresholdRuleResult?.thresholdExceeded === true;

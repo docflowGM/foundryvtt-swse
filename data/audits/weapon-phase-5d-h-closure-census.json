@@ -10,9 +10,9 @@
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 14,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 126,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 167,
-    "EXECUTABLE_FORM_MECHANICS_DEFERRED": 42,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 109,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 144,
+    "EXECUTABLE_FORM_MECHANICS_DEFERRED": 25,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 7,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
     "EXECUTABLE_CONDITIONS_AUTO": 99,
@@ -181,24 +181,23 @@
       },
       {
         "id": "3b.operation.area-splash-burst",
-        "fieldPaths": 36,
+        "fieldPaths": 40,
         "status": "PARTIAL",
-        "consumedKeys": 7,
+        "consumedKeys": 8,
         "nonExecutable": {
           "STORE": 1
         },
         "executableUnconsumed": [
           "blastEffect",
-          "embeddedShrapnel",
           "remoteDetonationSafetyRule"
         ],
         "owner": "area attack consumers"
       },
       {
         "id": "3b.operation.attack-modifiers-and-penalties",
-        "fieldPaths": 70,
+        "fieldPaths": 84,
         "status": "PARTIAL",
-        "consumedKeys": 14,
+        "consumedKeys": 15,
         "nonExecutable": {},
         "executableUnconsumed": [
           "allyAttackBonus",
@@ -207,7 +206,6 @@
           "lineOfSightOriginHeightSquares",
           "preferredMode",
           "repeatAttackEachRoundToMaintainDesignation",
-          "targetRules",
           "targeting"
         ],
         "owner": "conditional attack-modifier evaluation (post-5D-H)"
@@ -216,14 +214,13 @@
         "id": "3b.operation.concealment-stealth-sensing",
         "fieldPaths": 36,
         "status": "PARTIAL",
-        "consumedKeys": 1,
+        "consumedKeys": 2,
         "nonExecutable": {
           "DISPLAY": 1
         },
         "executableUnconsumed": [
           "alwaysDetermineNorth",
           "audibility",
-          "blindCreaturesImmune",
           "builtInDigitalCompass",
           "concealmentContext",
           "concealmentDesign",
@@ -248,25 +245,14 @@
       },
       {
         "id": "3b.operation.condition-and-persistent-effects",
-        "fieldPaths": 31,
+        "fieldPaths": 48,
         "status": "PARTIAL",
-        "consumedKeys": 1,
+        "consumedKeys": 5,
         "nonExecutable": {},
         "executableUnconsumed": [
-          "ammunitionMayCarryContactPoison",
-          "conditionTrackOnHit",
-          "conditionTrackRider",
-          "conditionTrackWithEvasion",
-          "fortitudeRider",
           "grievousWound",
           "ongoingEffect",
-          "persistentUntilCured",
-          "poisonDeliveryRequiresDamage",
-          "secondaryPoisonAttackBaseBonus",
-          "secondaryPoisonDefense",
-          "survivalBasicForestJungleBonusWhenProficientAndCarried",
-          "treatInjuryCureDC",
-          "venomSpit"
+          "survivalBasicForestJungleBonusWhenProficientAndCarried"
         ],
         "owner": "persistent effects / poison subsystem"
       },
@@ -274,7 +260,7 @@
         "id": "3b.operation.configuration-and-wielding",
         "fieldPaths": 62,
         "status": "PARTIAL",
-        "consumedKeys": 10,
+        "consumedKeys": 12,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 2
@@ -282,10 +268,8 @@
         "executableUnconsumed": [
           "collapsedForm",
           "designedForTwoHandedUse",
-          "disintegratesOnKillOrDestruction",
           "encumbranceException",
           "forearmMounted",
-          "fragile",
           "mayCountAsSmallWhenBeneficial",
           "mayTreatAsSizeWhenBeneficial",
           "multipleHeldOneHandCountsAsOneWeapon",
@@ -316,12 +300,11 @@
       },
       {
         "id": "3b.operation.damage-modifiers",
-        "fieldPaths": 13,
+        "fieldPaths": 14,
         "status": "PARTIAL",
-        "consumedKeys": 3,
+        "consumedKeys": 5,
         "nonExecutable": {},
         "executableUnconsumed": [
-          "damageThresholdAdjustment",
           "hurledObjectDamageRule",
           "powerAttackExtraDamageAppliesToObjectsAndVehicles",
           "weaponDR",
@@ -433,7 +416,7 @@
       },
       {
         "id": "3b.payload",
-        "fieldPaths": 59,
+        "fieldPaths": 72,
         "status": "CONSUMED",
         "consumer": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads",
@@ -502,18 +485,19 @@
         "status": "PARTIAL",
         "consumer": "scripts/items/weapon-runtime/special-mechanics.js",
         "probe": "criticalEffects",
-        "note": "AUTO families execute at Apply Damage; DEFER families are named in the 5D-E census",
+        "note": "AUTO families execute at Apply Damage; every remaining DEFER mechanic has a named owner in the 5D-E census (deferredByOwner)",
         "consumed": [
           "criticalEffects",
-          "hit effects (ct-rider, status-condition, damage-rider)"
+          "hit effects (ct-rider, status-effect, damage-rider, delayed-damage, persistent-poison, poison-delivery: Phase 5D-I-C-A)"
         ],
         "deferred": [
-          "persistent-effect",
-          "return-recovery",
-          "special-action",
-          "activation-effect"
+          "return-recovery (I-C-C)",
+          "special-action Pin / Trip (I-C-B)",
+          "activation-effect (I-D)",
+          "gas-cloud concealment + weapon-object fragile (I-D)",
+          "grab-grapple (I-C-B)"
         ],
-        "owner": "persistent effects / special actions subsystem"
+        "owner": "grab / reaction / sensing subsystems (I-C-B / I-C-C / I-D)"
       },
       {
         "id": "3b.profile.firing",
@@ -665,14 +649,15 @@
         "status": "PARTIAL",
         "consumer": "scripts/items/weapon-runtime/special-mechanics.js",
         "probe": "triggeredEffects",
-        "note": "17 identities; AUTO riders execute, DEFER families are named in the 5D-E census",
+        "note": "AUTO riders execute; every remaining DEFER mechanic has a named owner in the 5D-E census (deferredByOwner)",
         "consumed": [
-          "triggeredEffects (AUTO families)"
+          "triggeredEffects (AUTO families incl. the 5D-I-C-A outcome families)"
         ],
         "deferred": [
-          "persistent / return-recovery triggered effects"
+          "return-recovery triggered effects (I-C-C)",
+          "grab / net / snare triggered effects (I-C-B)"
         ],
-        "owner": "persistent effects / special actions subsystem"
+        "owner": "grab / reaction subsystems (I-C-B / I-C-C)"
       },
       {
         "id": "3b.wielding",
@@ -837,6 +822,7 @@
           "contactDetonation",
           "defaultAutofireAreaSquares",
           "detonation",
+          "embeddedShrapnel",
           "timerRounds"
         ],
         "duplicates": {
@@ -853,15 +839,13 @@
         },
         "executableUnconsumed": [
           "blastEffect",
-          "embeddedShrapnel",
           "remoteDetonationSafetyRule"
         ],
         "owner": "area attack consumers",
-        "executableUnconsumedOccurrences": 3,
+        "executableUnconsumedOccurrences": 2,
         "representativeIdentities": [
           "weapon-adhesive-grenade",
-          "weapon-remote-grenade",
-          "weapon-ripper"
+          "weapon-remote-grenade"
         ],
         "note": {
           "reason": "5D-I-A consumed detonation timing, contact detonation and the braced autofire area; the remaining blast / shrapnel effects are grapple / persistent effects, and the remote-detonation safety rule is prose only",
@@ -884,6 +868,7 @@
           "rangeStepReductionPreparation",
           "rangeTreatedAs",
           "singleShotAttackPenalty",
+          "targetRules",
           "unbracedAdditionalAttackPenalty",
           "underwaterUsableProfiles",
           "unregulatedAttackPenalty"
@@ -921,16 +906,15 @@
           "lineOfSightOriginHeightSquares",
           "preferredMode",
           "repeatAttackEachRoundToMaintainDesignation",
-          "targetRules",
           "targeting"
         ],
         "owner": "conditional attack-modifier evaluation (post-5D-H)",
-        "executableUnconsumedOccurrences": 8,
+        "executableUnconsumedOccurrences": 7,
         "representativeIdentities": [
           "unmapped::Garrote",
-          "weapon-emp-grenade",
           "weapon-espo-500-riot-gun",
-          "weapon-mortar-launcher"
+          "weapon-mortar-launcher",
+          "weapon-sonic-stunner"
         ],
         "note": {
           "reason": "5D-I-A consumed the fire-state, aim, brace, range and environment attack modifiers; the remainder needs AoO eligibility, crew state, configuration, designation or the grab system",
@@ -942,6 +926,7 @@
         "keys": 24,
         "identities": 19,
         "consumed": [
+          "blindCreaturesImmune",
           "concealment"
         ],
         "duplicates": {},
@@ -953,7 +938,6 @@
         "executableUnconsumed": [
           "alwaysDetermineNorth",
           "audibility",
-          "blindCreaturesImmune",
           "builtInDigitalCompass",
           "concealmentContext",
           "concealmentDesign",
@@ -975,7 +959,7 @@
           "snipingStealthEquipmentBonus"
         ],
         "owner": "stealth / sensing subsystem",
-        "executableUnconsumedOccurrences": 25,
+        "executableUnconsumedOccurrences": 24,
         "representativeIdentities": [
           "unmapped::Contact Stunner",
           "unmapped::Survival Knife",
@@ -992,33 +976,33 @@
         "keys": 15,
         "identities": 12,
         "consumed": [
+          "ammunitionMayCarryContactPoison",
+          "conditionTrackRider",
+          "fortitudeRider",
+          "poisonDeliveryRequiresDamage",
           "returnOnAttackExceedsReflexBy"
         ],
-        "duplicates": {},
+        "duplicates": {
+          "conditionTrackOnHit": "attackProfiles[].triggeredEffects[condition-track-effect].effect.conditionTrackSteps (area-attack-hit)",
+          "conditionTrackWithEvasion": "attackProfiles[].triggeredEffects[condition-track-effect].evasionEffect.conditionTrackSteps",
+          "persistentUntilCured": "attackProfiles[].triggeredEffects[persistent-secondary-attack].{persistentCondition, termination[poison-cured]}",
+          "secondaryPoisonAttackBaseBonus": "attackProfiles[].triggeredEffects[persistent-secondary-attack].initialSecondaryAttack.roll (1d20+N)",
+          "secondaryPoisonDefense": "attackProfiles[].triggeredEffects[persistent-secondary-attack].initialSecondaryAttack.defense",
+          "treatInjuryCureDC": "attackProfiles[].triggeredEffects[persistent-secondary-attack].cure.dc",
+          "venomSpit": "attackProfiles[venom-spit].activationRequirements (action + usage-limit) + triggeredEffects[venom-spit-condition-track]"
+        },
         "nonExecutable": {},
         "executableUnconsumed": [
-          "ammunitionMayCarryContactPoison",
-          "conditionTrackOnHit",
-          "conditionTrackRider",
-          "conditionTrackWithEvasion",
-          "fortitudeRider",
           "grievousWound",
           "ongoingEffect",
-          "persistentUntilCured",
-          "poisonDeliveryRequiresDamage",
-          "secondaryPoisonAttackBaseBonus",
-          "secondaryPoisonDefense",
-          "survivalBasicForestJungleBonusWhenProficientAndCarried",
-          "treatInjuryCureDC",
-          "venomSpit"
+          "survivalBasicForestJungleBonusWhenProficientAndCarried"
         ],
         "owner": "persistent effects / poison subsystem",
-        "executableUnconsumedOccurrences": 15,
+        "executableUnconsumedOccurrences": 3,
         "representativeIdentities": [
-          "unmapped::Amphistaff",
           "unmapped::Fira",
           "unmapped::Garrote",
-          "weapon-aurial-blaster"
+          "weapon-wookiee-ryyk-blade"
         ],
         "note": {
           "reason": "poison delivery, persistent effects and venom need the persistent/status delivery subsystem",
@@ -1034,7 +1018,9 @@
           "cannotWieldTwoHanded",
           "configurationResolution",
           "configurationSwitchAction",
+          "disintegratesOnKillOrDestruction",
           "doubleWeapon",
+          "fragile",
           "handsRemainFree",
           "hostWeaponAugmentation",
           "requiresTwoHands",
@@ -1068,10 +1054,8 @@
         "executableUnconsumed": [
           "collapsedForm",
           "designedForTwoHandedUse",
-          "disintegratesOnKillOrDestruction",
           "encumbranceException",
           "forearmMounted",
-          "fragile",
           "mayCountAsSmallWhenBeneficial",
           "mayTreatAsSizeWhenBeneficial",
           "multipleHeldOneHandCountsAsOneWeapon",
@@ -1082,7 +1066,7 @@
           "wornOnWrist"
         ],
         "owner": "wielding & configuration state (post-5D-H)",
-        "executableUnconsumedOccurrences": 21,
+        "executableUnconsumedOccurrences": 16,
         "representativeIdentities": [
           "lightsaber-chassis-archaic-lightfoil",
           "lightsaber-chassis-great",
@@ -1123,10 +1107,12 @@
         "status": "PARTIAL"
       },
       "damage-modifiers": {
-        "keys": 13,
-        "identities": 22,
+        "keys": 14,
+        "identities": 23,
         "consumed": [
           "adjacentBonusDamage",
+          "damageThresholdAdjustment",
+          "payloadDamageDiceAdjustment",
           "pointBlankDamageEquipmentBonus",
           "strengthModifierAppliesToDamage"
         ],
@@ -1138,7 +1124,6 @@
         },
         "nonExecutable": {},
         "executableUnconsumed": [
-          "damageThresholdAdjustment",
           "hurledObjectDamageRule",
           "powerAttackExtraDamageAppliesToObjectsAndVehicles",
           "weaponDR",
@@ -1146,12 +1131,12 @@
           "weaponDRValue"
         ],
         "owner": "damage modifier consumers (post-5D-H)",
-        "executableUnconsumedOccurrences": 9,
+        "executableUnconsumedOccurrences": 6,
         "representativeIdentities": [
           "unmapped::Power Hammer",
           "unmapped::Shockstaff",
-          "weapon-disruptor-pistol",
-          "weapon-disruptor-rifle"
+          "weapon-electrostaff",
+          "weapon-tactical-tractor-beam"
         ],
         "note": {
           "reason": "5D-I-A consumed the composition-stage terms (point-blank bonus, adjacent die, bow/sling Strength); the remainder are threshold, wielding, hurled-object and weapon-object durability",
@@ -1327,7 +1312,7 @@
       },
       "stun-ion-damage-modes": {
         "keys": 18,
-        "identities": 24,
+        "identities": 25,
         "consumed": [
           "damageTypeAndBurstDeterminedByGrenade",
           "overwhelmingStunRule",
@@ -1415,7 +1400,6 @@
       "ammo-resource-reload.singleShot",
       "ammo-resource-reload.specialRateOfFire",
       "area-splash-burst.blastEffect",
-      "area-splash-burst.embeddedShrapnel",
       "area-splash-burst.remoteDetonationSafetyRule",
       "attack-modifiers-and-penalties.allyAttackBonus",
       "attack-modifiers-and-penalties.allyEligibleWeapons",
@@ -1423,11 +1407,9 @@
       "attack-modifiers-and-penalties.lineOfSightOriginHeightSquares",
       "attack-modifiers-and-penalties.preferredMode",
       "attack-modifiers-and-penalties.repeatAttackEachRoundToMaintainDesignation",
-      "attack-modifiers-and-penalties.targetRules",
       "attack-modifiers-and-penalties.targeting",
       "concealment-stealth-sensing.alwaysDetermineNorth",
       "concealment-stealth-sensing.audibility",
-      "concealment-stealth-sensing.blindCreaturesImmune",
       "concealment-stealth-sensing.builtInDigitalCompass",
       "concealment-stealth-sensing.concealmentContext",
       "concealment-stealth-sensing.concealmentDesign",
@@ -1447,26 +1429,13 @@
       "concealment-stealth-sensing.silentInUse",
       "concealment-stealth-sensing.snipingSkill",
       "concealment-stealth-sensing.snipingStealthEquipmentBonus",
-      "condition-and-persistent-effects.ammunitionMayCarryContactPoison",
-      "condition-and-persistent-effects.conditionTrackOnHit",
-      "condition-and-persistent-effects.conditionTrackRider",
-      "condition-and-persistent-effects.conditionTrackWithEvasion",
-      "condition-and-persistent-effects.fortitudeRider",
       "condition-and-persistent-effects.grievousWound",
       "condition-and-persistent-effects.ongoingEffect",
-      "condition-and-persistent-effects.persistentUntilCured",
-      "condition-and-persistent-effects.poisonDeliveryRequiresDamage",
-      "condition-and-persistent-effects.secondaryPoisonAttackBaseBonus",
-      "condition-and-persistent-effects.secondaryPoisonDefense",
       "condition-and-persistent-effects.survivalBasicForestJungleBonusWhenProficientAndCarried",
-      "condition-and-persistent-effects.treatInjuryCureDC",
-      "condition-and-persistent-effects.venomSpit",
       "configuration-and-wielding.collapsedForm",
       "configuration-and-wielding.designedForTwoHandedUse",
-      "configuration-and-wielding.disintegratesOnKillOrDestruction",
       "configuration-and-wielding.encumbranceException",
       "configuration-and-wielding.forearmMounted",
-      "configuration-and-wielding.fragile",
       "configuration-and-wielding.mayCountAsSmallWhenBeneficial",
       "configuration-and-wielding.mayTreatAsSizeWhenBeneficial",
       "configuration-and-wielding.multipleHeldOneHandCountsAsOneWeapon",
@@ -1476,7 +1445,6 @@
       "configuration-and-wielding.wornAs",
       "configuration-and-wielding.wornOnWrist",
       "crew-and-emplacement.tripodEffectiveSize",
-      "damage-modifiers.damageThresholdAdjustment",
       "damage-modifiers.hurledObjectDamageRule",
       "damage-modifiers.powerAttackExtraDamageAppliesToObjectsAndVehicles",
       "damage-modifiers.weaponDR",
@@ -1514,8 +1482,8 @@
       "stun-ion-damage-modes.ongoingStunWhileTrapped",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 126,
-    "rawOccurrencesUnconsumed": 167,
+    "uniqueKeysUnconsumed": 109,
+    "rawOccurrencesUnconsumed": 144,
     "problems": []
   },
   "relations": {

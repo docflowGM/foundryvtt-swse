@@ -467,9 +467,12 @@ try {
   for (const k of ['weapon-thermal-detonator', 'weapon-blaster-pistol', 'weapon-vibroblade']) {
     assert.throws(() => rt.resolveCanonicalDamage(canon('weapon-grenade-launcher'), L(k)), (e) => e.code === 'payload-not-accepted', k);
   }
-  // a launcher that does not declare the delegation (micro launcher) never borrows a loaded identity: its damage stays deferred
+  // 5D-I-C-A: the Micro Grenade Launcher now declares the delegation (source-certified amendment): it delegates to the loaded grenade and applies only its own
+  // "two fewer dice" adjustment; a launcher that declares nothing (any other weapon) never borrows a loaded identity
   const micro = rt.resolveCanonicalDamage(canon('weapon-micro-grenade-launcher'), { weaponForm: { identityKey: 'weapon-micro-grenade-launcher', profileId: 'primary', loadedIdentityKey: 'weapon-frag-grenade' } });
-  assert.equal(micro.delegatedFrom, undefined); assert.equal(micro.status, 'deferred');
+  assert.deepEqual(micro.delegatedFrom, { launcher: 'weapon-micro-grenade-launcher', payload: 'weapon-frag-grenade' }); assert.equal(micro.base, '2d6');
+  const notALauncher = rt.resolveCanonicalDamage(canon('weapon-blaster-pistol'), { weaponForm: { identityKey: 'weapon-blaster-pistol', profileId: 'primary', loadedIdentityKey: 'weapon-frag-grenade' } });
+  assert.equal(notALauncher.delegatedFrom, undefined);
   // no loaded identity -> deferred (BLOCKED honestly), never a guessed grenade
   const none = rt.resolveCanonicalDamage(canon('weapon-grenade-launcher'), { weaponForm: { identityKey: 'weapon-grenade-launcher', profileId: 'primary' } });
   assert.equal(none.status, 'deferred'); assert.equal(none.reason, 'loaded-ammo-identity-unavailable');
@@ -478,7 +481,7 @@ try {
   reset(); assert.ok(await attack(A, w)); assert.equal(wfOf()?.weaponForm?.loadedIdentityKey, 'weapon-frag-grenade');
   [A, w] = mkG(); await FS.setLoadedPayload(A, w, 'weapon-thermal-detonator'); reset();
   assert.equal(await attack(A, w), null); assert.equal(spent.rolls + spent.ammo + spent.actions.length, 0, 'a refused payload spends nothing');
-  ok('Grenade launcher: damage / type / burst delegate to the loaded canonical grenade (frag area burst, contact detonation); Thermal Detonator, non-grenades are refused, a launcher without the declaration never delegates; no loaded identity stays deferred; owned loaded state flows into the workflow and a refused payload spends nothing');
+  ok('Grenade launcher: damage / type / burst delegate to the loaded canonical grenade (frag area burst, contact detonation); Thermal Detonator, non-grenades are refused, the Micro Grenade Launcher delegates with its own two-dice reduction, and a weapon without the declaration never delegates; no loaded identity stays deferred; owned loaded state flows into the workflow and a refused payload spends nothing');
 }
 
 // ======================================================================================================================================

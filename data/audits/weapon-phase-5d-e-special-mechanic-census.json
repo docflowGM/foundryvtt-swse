@@ -23,6 +23,11 @@
       "timing": "on-attack",
       "note": "selected form defense (reflex/fortitude/will) -- already consumed through targetContext.defenseType"
     },
+    "bonus-damage-rider": {
+      "policy": "AUTO",
+      "timing": "after-threshold",
+      "note": "separate immediate damage event dealt after the triggering damage proves its threshold / condition-track result; never re-triggers riders"
+    },
     "conditional-damage": {
       "policy": "AUTO",
       "timing": "on-damage-roll",
@@ -68,6 +73,11 @@
       "timing": "continuous",
       "note": "modifies the wielder's defenses/Use the Force checks rather than this single attack"
     },
+    "delayed-damage": {
+      "policy": "AUTO",
+      "timing": "time-delay",
+      "note": "one delayed damage instance queued through the existing RecurringDamageEngine (start of the target's next turn)"
+    },
     "display-note": {
       "policy": "DISPLAY_ONLY",
       "timing": "continuous",
@@ -103,6 +113,11 @@
       "timing": "on-attack",
       "note": "form deals stun damage by default (damage mode)"
     },
+    "payload-delegation": {
+      "policy": "AUTO",
+      "timing": "on-damage-roll",
+      "note": "payload rules come from the loaded canonical grenade (delegateLoadedPayload); the launcher applies only its own adjustment"
+    },
     "payload-effect": {
       "policy": "DEFER",
       "timing": "on-hit",
@@ -113,10 +128,20 @@
       "timing": "turn-start",
       "note": "delayed/recurring effect resolved at a later turn boundary"
     },
+    "persistent-poison": {
+      "policy": "AUTO",
+      "timing": "until-cured",
+      "note": "persistent secondary-attack toxin run by the existing PoisonEngine (instance, recurrence, treatment, termination)"
+    },
+    "poison-delivery": {
+      "policy": "AUTO",
+      "timing": "after-damage",
+      "note": "a poison coating selected on the owned weapon is delivered by PoisonEngine only when the attack deals damage; the weapon capability alone creates no poison"
+    },
     "prepared-attack": {
-      "policy": "DEFER",
+      "policy": "AUTO",
       "timing": "on-attack",
-      "note": "swift-action preparation/bracing (action economy owner)"
+      "note": "swift-action preparation / bracing: CONSUMED by the owned fire-state (FireStateStore.primePreparedAttack / previewReadiness, Phase 5D-G / 5D-I-A); classified AUTO so the census stops reporting a superseded deferral"
     },
     "return-recovery": {
       "policy": "DEFER",
@@ -133,6 +158,21 @@
       "timing": "after-damage",
       "note": "status condition (prone/disabled/concealment) with no single existing setter"
     },
+    "status-effect": {
+      "policy": "AUTO",
+      "timing": "after-damage",
+      "note": "status / timed effect created on the target through ActorEngine.createActiveEffects with weapon provenance and a turn-owner lifecycle"
+    },
+    "target-class-damage": {
+      "policy": "AUTO",
+      "timing": "after-damage",
+      "note": "per-target damage scaling by structural target class (droid / vehicle / device / object vs organic) at packet finalization; composes with the existing area hit / miss / Evasion path"
+    },
+    "threshold-adjustment": {
+      "policy": "AUTO",
+      "timing": "after-mitigation",
+      "note": "the attack lowers/raises the target's EFFECTIVE damage threshold for this damage event only (stored threshold untouched)"
+    },
     "unclassified": {
       "policy": "DEFER",
       "timing": "on-attack",
@@ -141,9 +181,9 @@
   },
   "totals": {
     "identities": 203,
-    "identitiesWithMechanics": 82,
+    "identitiesWithMechanics": 88,
     "forms": 266,
-    "formsWithMechanics": 108,
+    "formsWithMechanics": 114,
     "resolveErrors": 0
   },
   "mechanicsByFamily": {
@@ -151,14 +191,17 @@
     "attack-modifier-auto": 10,
     "attack-modifier-prompt": 7,
     "attack-resolution": 4,
+    "bonus-damage-rider": 1,
     "conditional-damage": 3,
     "critical-bonus-damage": 1,
     "critical-die-replace": 2,
     "ct-overwhelming-stun": 2,
-    "ct-rider": 4,
+    "ct-rider": 6,
+    "ct-rider-prompt": 1,
     "damage-multiplier": 2,
     "damage-rider": 1,
     "defensive-interaction": 5,
+    "delayed-damage": 1,
     "display-note": 3,
     "dr-conditional": 1,
     "dr-ignore": 24,
@@ -166,20 +209,30 @@
     "grab-grapple": 12,
     "multi-attack-interaction": 5,
     "native-stun": 16,
-    "payload-effect": 8,
-    "persistent-effect": 2,
+    "payload-delegation": 4,
+    "persistent-poison": 1,
+    "poison-delivery": 2,
     "prepared-attack": 4,
     "return-recovery": 2,
-    "special-action": 4,
-    "status-condition": 4
+    "special-action": 2,
+    "status-condition": 3,
+    "status-effect": 10,
+    "target-class-damage": 1,
+    "threshold-adjustment": 3
   },
   "mechanicsByPolicy": {
-    "AUTO": 74,
-    "DEFER": 42,
+    "AUTO": 103,
+    "DEFER": 25,
     "DISPLAY_ONLY": 3,
-    "PROMPT": 8,
+    "PROMPT": 9,
     "VALIDATION_ONLY": 20
   },
+  "deferredByOwner": {
+    "I-C-B": 15,
+    "I-C-C": 7,
+    "I-D": 3
+  },
+  "deferredWithoutOwner": [],
   "refusedForms": [
     {
       "identityKey": "unmapped::Amphistaff",
@@ -425,7 +478,7 @@
         "ct-rider:spear-thrown-poison-condition-track:AUTO"
       ],
       "venom-spit": [
-        "special-action:venom-spit-condition-track:DEFER"
+        "ct-rider:venom-spit-condition-track:AUTO"
       ],
       "whip-melee/whip": [
         "ct-rider:whip-poison-condition-track:AUTO"
@@ -519,7 +572,7 @@
     },
     "unmapped::Tehkla Blade": {
       "primary": [
-        "persistent-effect:bleeding-follow-up:DEFER"
+        "delayed-damage:bleeding-follow-up:AUTO"
       ]
     },
     "unmapped::Vibro-Saw": {
@@ -535,6 +588,11 @@
         "multi-attack-interaction:remove-rapid-strike-penalty-0:AUTO"
       ]
     },
+    "weapon-aurial-blaster": {
+      "primary": [
+        "status-effect:operation.fortitudeRider:AUTO"
+      ]
+    },
     "weapon-black-powder-pistol": {
       "primary": [
         "firing-constraint:firing-constraints:VALIDATION_ONLY"
@@ -542,17 +600,18 @@
     },
     "weapon-bryar-pistol": {
       "primary": [
-        "prepared-attack:prepared-attack:DEFER"
+        "prepared-attack:prepared-attack:AUTO"
       ]
     },
     "weapon-bryar-rifle": {
       "primary": [
-        "prepared-attack:prepared-attack:DEFER"
+        "prepared-attack:prepared-attack:AUTO"
       ]
     },
     "weapon-carbonite-rifle": {
       "primary": [
-        "native-stun:native-stun:AUTO"
+        "native-stun:native-stun:AUTO",
+        "status-effect:operation.conditionTrackRider:AUTO"
       ]
     },
     "weapon-concealed-dart-launcher": {
@@ -566,7 +625,7 @@
     "weapon-concussion-rifle": {
       "primary": [
         "attack-resolution:defense:fortitude:AUTO",
-        "status-condition:knock-prone-on-hit:DEFER"
+        "status-effect:knock-prone-on-hit:AUTO"
       ]
     },
     "weapon-cr-1-blast-cannon": {
@@ -579,25 +638,34 @@
         "firing-constraint:firing-constraints:VALIDATION_ONLY"
       ]
     },
+    "weapon-cryoban-grenade": {
+      "primary": [
+        "status-effect:operation.fortitudeRider:AUTO"
+      ]
+    },
     "weapon-darter": {
       "primary": [
-        "payload-effect:poison-delivery:DEFER"
+        "poison-delivery:poison-delivery:AUTO"
       ]
     },
     "weapon-deck-sweeper": {
       "primary": [
         "native-stun:native-stun:AUTO",
-        "prepared-attack:prime:DEFER"
+        "prepared-attack:prime:AUTO"
       ]
     },
     "weapon-disruptor-pistol": {
       "primary": [
-        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+        "firing-constraint:firing-constraints:VALIDATION_ONLY",
+        "status-effect:operation.disintegratesOnKillOrDestruction:AUTO",
+        "threshold-adjustment:operation.damageThresholdAdjustment:AUTO"
       ]
     },
     "weapon-disruptor-rifle": {
       "primary": [
-        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+        "firing-constraint:firing-constraints:VALIDATION_ONLY",
+        "status-effect:operation.disintegratesOnKillOrDestruction:AUTO",
+        "threshold-adjustment:operation.damageThresholdAdjustment:AUTO"
       ]
     },
     "weapon-double-barreled-blaster-carbine": {
@@ -630,6 +698,11 @@
         "native-stun:native-stun:AUTO"
       ]
     },
+    "weapon-emp-grenade": {
+      "primary": [
+        "target-class-damage:operation.targetRules:AUTO"
+      ]
+    },
     "weapon-espo-500-riot-gun": {
       "primary/autofire": [
         "attack-modifier-auto:operation.autofireEquipmentBonus:AUTO",
@@ -642,7 +715,7 @@
     },
     "weapon-flash-canister": {
       "throw": [
-        "special-action:triggered-0:DEFER"
+        "status-effect:triggered-0:AUTO"
       ]
     },
     "weapon-flechette-launcher": {
@@ -653,8 +726,8 @@
     "weapon-gas-grenade": {
       "primary": [
         "attack-resolution:defense:fortitude:AUTO",
+        "ct-rider:condition-track-effect:AUTO",
         "native-stun:native-stun:AUTO",
-        "payload-effect:condition-track-effect:DEFER",
         "status-condition:lingering-gas-concealment:DEFER"
       ]
     },
@@ -665,7 +738,7 @@
     },
     "weapon-heavy-blaster-cannon": {
       "primary": [
-        "prepared-attack:brace:DEFER"
+        "prepared-attack:brace:AUTO"
       ]
     },
     "weapon-heavy-slugthrower-pistol": {
@@ -676,6 +749,11 @@
     "weapon-hunting-blaster-carbine": {
       "primary": [
         "critical-die-replace:critical-die-size-upgrade:AUTO"
+      ]
+    },
+    "weapon-incinerator-rifle": {
+      "primary": [
+        "status-effect:operation.disintegratesOnKillOrDestruction:AUTO"
       ]
     },
     "weapon-interchangeable-weapon-system": {
@@ -702,12 +780,12 @@
     },
     "weapon-micro-grenade-launcher": {
       "primary/rifle-mounted": [
-        "payload-effect:damage-dice-adjustment:DEFER",
-        "payload-effect:inherit-selected-grenade-normal-rules:DEFER"
+        "payload-delegation:payload:damage-dice-adjustment:AUTO",
+        "payload-delegation:payload:inherit-selected-grenade-normal-rules:AUTO"
       ],
       "primary/standalone": [
-        "payload-effect:damage-dice-adjustment:DEFER",
-        "payload-effect:inherit-selected-grenade-normal-rules:DEFER"
+        "payload-delegation:payload:damage-dice-adjustment:AUTO",
+        "payload-delegation:payload:inherit-selected-grenade-normal-rules:AUTO"
       ]
     },
     "weapon-miniature-proton-torpedo-launcher": {
@@ -720,9 +798,14 @@
         "firing-constraint:firing-constraints:VALIDATION_ONLY"
       ]
     },
+    "weapon-needler": {
+      "primary": [
+        "poison-delivery:operation.ammunitionMayCarryContactPoison:AUTO"
+      ]
+    },
     "weapon-neural-inhibitor": {
       "primary": [
-        "persistent-effect:persistent-neurotoxin:DEFER"
+        "persistent-poison:persistent-neurotoxin:AUTO"
       ]
     },
     "weapon-pulse-wave-pistol": {
@@ -738,6 +821,11 @@
     "weapon-radiation-grenade": {
       "primary": [
         "attack-resolution:defense:fortitude:AUTO"
+      ]
+    },
+    "weapon-ripper": {
+      "primary": [
+        "bonus-damage-rider:operation.embeddedShrapnel:AUTO"
       ]
     },
     "weapon-rotary-blaster-cannon": {
@@ -776,7 +864,9 @@
     },
     "weapon-sonic-disruptor": {
       "primary": [
-        "firing-constraint:firing-constraints:VALIDATION_ONLY"
+        "firing-constraint:firing-constraints:VALIDATION_ONLY",
+        "status-effect:operation.disintegratesOnKillOrDestruction:AUTO",
+        "threshold-adjustment:operation.damageThresholdAdjustment:AUTO"
       ]
     },
     "weapon-sonic-stunner": {
@@ -831,14 +921,14 @@
       ],
       "primary/flash": [
         "firing-constraint:firing-constraints:VALIDATION_ONLY",
-        "payload-effect:blinded:DEFER"
+        "status-effect:payload:blinded:AUTO"
       ],
       "primary/hollow-tip-empty": [
         "firing-constraint:firing-constraints:VALIDATION_ONLY"
       ],
       "primary/hollow-tip-nerve-toxin": [
-        "firing-constraint:firing-constraints:VALIDATION_ONLY",
-        "payload-effect:nerve-agent-injection:DEFER"
+        "ct-rider-prompt:payload:nerve-agent-injection:PROMPT",
+        "firing-constraint:firing-constraints:VALIDATION_ONLY"
       ],
       "primary/hollow-tip-stun-gas": [
         "firing-constraint:firing-constraints:VALIDATION_ONLY"
