@@ -38,6 +38,7 @@ import { resolveWielding, resolveOpportunityEligibility, crewRegulationFor } fro
 import { evaluateProfileRequirements, forgoesDoubleStrength, slugOfIdentity } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/activation-requirements.js";
 import { abilityKeysOfActor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { rangeGate, grabAttackPenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/control-rules.js";
 import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf, canonicalSizeName, resolveTargetRequirements, askSpecialQuestion, thresholdAdjustmentOf, targetRulesOf, isEffectOnlyForm } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
@@ -307,6 +308,26 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   reqs = evaluateProfileRequirements(targetReqs, requirementCtx());
   if (!reqs.legal) refuseOnce('activation-requirement-not-met', reqs.evaluated.filter((e) => e.result === false).map((e) => `${e.type}: ${e.key}`));
   else for (const e of reqs.evaluated.filter((x) => x.result === null)) stage.unresolved.push({ id: e.prompt ?? `${e.type}:${e.key}`, family: 'activation-requirement', reason: e.detail ?? 'condition-not-observable-and-unanswered' });
+  // Phase 5D-I-C-B: weapon CONTROL gates, resolved before any cost (a definite "no" refuses; nothing is guessed):
+  //   weapon lock  -- a weapon holding a target (Shock Whip) cannot attack anything else
+  //   range gate   -- a ranged grab weapon with a maximum grab range (Snare Pistol / Rifle: Short) refuses a longer band
+  //   grab penalty -- an attack the weapon declares is treated as a grab (Garrote) takes the grab attack penalty (Grabber / Entangler by canonical identity)
+  const controlMech = mechanics.find((m) => m.family === 'grab-grapple' && m.declaration);
+  if (controlMech) {
+    const decl = controlMech.declaration;
+    if (decl.lockWeapon) {
+      const { weaponLockFor } = await import('/systems/foundryvtt-swse/scripts/engine/combat/weapon-control-effects.js');
+      const lock = weaponLockFor(actor, weapon, target?.id ?? null);
+      if (lock.locked) refuseOnce('weapon-locked', 'weapon: holding another target');
+    }
+    if (decl.grab?.ranged && decl.grab.maxBand && rollOptions.rangeBand) {
+      const g = rangeGate(decl, normalizeRangeBand(rollOptions.rangeBand));
+      if (!g.ok) refuseOnce('beyond-maximum-grab-range', `range: ${g.reason}`);
+    }
+    if (decl.treatedAs?.attack === 'grab' && decl.grab && !decl.grab.noGrabPenalty) {
+      stage.contributions.push({ id: 'grab-attack-penalty', value: grabAttackPenalty(abilityKeysOfActor(actor)), how: 'weapon-control' });
+    }
+  }
   const ownedExtras = {
     ...(wield.hands ? { wieldedHands: wield.hands } : {}),
     ...(rollOptions.attackOfOpportunity === true ? { opportunity: { choice: rollOptions.aooChoice ?? undefined, profileId: runtime.profile.id } } : {}),
@@ -784,6 +805,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     special: (specialStage.mechanics.length || Object.keys({ ...specialStage.answers, ...(rollOptions.answers ?? {}) }).length) ? {
       mechanics: summarizeMechanics(specialStage.mechanics), answers: { ...specialStage.answers, ...(rollOptions.answers ?? {}) }, unresolved: specialStage.unresolved, drInteraction: specialStage.drIgnore ? 'ignore' : undefined,
       attackTotal: roll.total,
+      ...(normalizeRangeBand(rollOptions.rangeBand) ? { rangeBand: normalizeRangeBand(rollOptions.rangeBand) } : {}),
       // Phase 5D-I-C-A: attack-specific threshold-stage adjustment and per-target-class damage rules travel to Apply Damage (the stored DT is never touched)
       ...(thresholdAdjustmentOf(specialStage.mechanics) ? { thresholdAdjustment: thresholdAdjustmentOf(specialStage.mechanics) } : {}),
       ...(targetRulesOf(specialStage.mechanics) ? { targetRules: targetRulesOf(specialStage.mechanics) } : {}),

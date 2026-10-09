@@ -76,7 +76,8 @@ const fam = (mechs, f) => mechs.filter((m) => m.family === f);
   const spear = mechOf(amph, form('unmapped::Amphistaff', { profileId: 'spear-melee', configurationId: 'spear' }));
   const pin = mechOf(amph, form('unmapped::Amphistaff', { profileId: 'whip-pin', configurationId: 'whip' }));
   assert.equal(fam(spear, 'ct-rider').length, 1); assert.equal(fam(pin, 'ct-rider').length, 0);
-  assert.deepEqual(fam(pin, 'special-action').map((m) => m.id), ['pin-without-feat']);
+  // Phase 5D-I-C-B: the Pin-without-feat form is now an executable weapon-control mechanic (grab-grapple family, entitled-maneuver role), no longer a deferred special-action
+  assert.deepEqual(fam(pin, 'special-action').map((m) => m.id), []); assert.deepEqual(fam(pin, 'grab-grapple').map((m) => `${m.id}:${m.role}:${m.maneuver}`), ['pin-without-feat:entitled-maneuver:pin']);
   ok('selected profile mechanics resolve (multiplier, size penalty, CT rider); a sibling profile does not inherit them');
 }
 
@@ -275,7 +276,7 @@ const fam = (mechs, f) => mechs.filter((m) => m.family === f);
     if (profileId === 'venom-spit') {
       // 5D-I-C-A: Venom Spit's structured condition-track outcome (attack roll equals or exceeds BOTH Reflex and Fortitude) is an AUTO effect-only rider; it still has no damage
       assert.ok(m.every((x) => x.family === 'ct-rider' && x.policy === 'AUTO' && x.effectOnly === true), 'venom-spit: effect-only AUTO condition-track rider, never ordinary damage');
-    } else assert.ok(m.every((x) => x.family === 'special-action' && x.policy === 'DEFER'), `${profileId}: DEFER (special action), never ordinary damage`);
+    } else assert.ok(m.every((x) => x.family === 'grab-grapple' && x.policy === 'AUTO' && x.role === 'entitled-maneuver' && x.effectOnly === true), `${profileId}: effect-only AUTO weapon-control maneuver (Phase 5D-I-C-B), never ordinary damage`);
   }
   const posted = []; const origPost = SWSEChat.postRoll, origRE = RollEngine.safeRoll, origSWSE = globalThis.SWSE; const rolls = [];
   globalThis.SWSE = { ...(globalThis.SWSE ?? {}), RollEngine: { safeRoll: async (f) => { rolls.push(f); return { total: 5, formula: f, dice: [] }; } } };

@@ -31,6 +31,8 @@ export function durationPlan(duration, { rolledRounds = null, attackerId = null,
     if (!phase) return { key: null, reason: 'unsupported-duration' };
     return { key: phase === 'start' ? 'until-start-next-turn' : 'until-end-next-turn', turnOwnerActorId: String(owner), phase };
   }
+  // Phase 5D-I-C-B: a fixed number of rounds ("immobilized for 3 rounds")
+  if (Number.isFinite(Number(duration.rounds)) && Number(duration.rounds) >= 1 && !duration.dice) return { key: `${Math.floor(Number(duration.rounds))}-rounds`, turnOwnerActorId: null, phase: null };
   if (duration.dice && duration.unit === 'rounds') {
     const n = Number(rolledRounds);
     if (!Number.isFinite(n) || n < 1) return { key: null, reason: 'duration-not-rolled' };

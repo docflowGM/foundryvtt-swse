@@ -450,6 +450,27 @@ async function handleGrappleActionButton(event, button) {
     return;
   }
 
+  // Phase 5D-I-C-B: weapon control actions (Shock Whip swift shock, Tractor Beam move / hurl). They are weapon actions on a control the wielder already
+  // holds -- not grapple maneuvers -- so the grapple legality dialog does not apply; the control record itself is the legality.
+  if (action.startsWith('control-')) {
+    const wc = await import('/systems/foundryvtt-swse/scripts/engine/combat/weapon-control-effects.js');
+    const weapon = actor.items?.get?.(button.dataset.weaponId) ?? null;
+    const squares = Number(button.dataset.squares);
+    let out = null;
+    if (action === 'control-shock') {
+      const { ActionEconomyConsumption } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js');
+      out = await wc.shockHeldTarget({ controller: actor, target, weapon, spendAction: (a, type) => ActionEconomyConsumption.spend(a, type) });
+    } else if (action === 'control-move') {
+      out = await wc.moveTractoredObject({ controller: actor, target, squares });
+    } else if (action === 'control-hurl') {
+      const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+      const attackBonus = (await computeFinalAttackComposition(actor, weapon, {}))?.atkBonus;
+      out = await wc.hurlTractoredObject({ controller: actor, target, weapon, squares, attackBonus });
+    } else ui?.notifications?.warn?.('Unknown weapon control action.');
+    if (out && out.ok === false) ui?.notifications?.warn?.(`Control action refused: ${String(out.reason).replace(/-/g, ' ')}.`);
+    return;
+  }
+
   const checkLegality = action === 'release' || action === 'escape'
     ? GrappleLegalityEngine.validateTargetPair(actor, target)
     : action === 'grapple-check' || ['pin', 'trip', 'throw', 'crush'].includes(action)

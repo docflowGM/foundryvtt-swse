@@ -673,13 +673,16 @@
     "pinTripSubstitution",
     "prohibitedGrappleFeats",
     "rangedGrabOrGrapple",
+    "tractorControl",
+    "treatControlAs",
     "webbingFunctionsAsNet"
    ],
-   "identityCount": 8,
+   "identityCount": 9,
    "identities": [
     "lightsaber-chassis-lightwhip",
     "unmapped::Amphistaff",
     "unmapped::Garrote",
+    "weapon-electronet",
     "weapon-net",
     "weapon-snare-pistol",
     "weapon-snare-rifle",

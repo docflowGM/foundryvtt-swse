@@ -4,16 +4,16 @@
   "purpose": "Audit/verification artifact only: executable-field closure of the canonical weapon runtime. Every residual is named with a reason and an owner. Not a gameplay authority.",
   "counters": {
     "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
-    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 34,
-    "PARTIAL_EXECUTION_FIELD_FAMILIES": 15,
+    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 36,
+    "PARTIAL_EXECUTION_FIELD_FAMILIES": 13,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
-    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 14,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 109,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 144,
-    "EXECUTABLE_FORM_MECHANICS_DEFERRED": 25,
-    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 7,
+    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 12,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 88,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 115,
+    "EXECUTABLE_FORM_MECHANICS_DEFERRED": 10,
+    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 6,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
     "EXECUTABLE_CONDITIONS_AUTO": 99,
     "EXECUTABLE_CONDITIONS_PROMPT": 11,
@@ -21,7 +21,7 @@
     "EXECUTABLE_CONDITIONS_UNCLASSIFIED": 0,
     "EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED": 0,
     "CANONICAL_NAME_TEXT_HEURISTIC_USAGE": 0,
-    "LEGACY_ONLY_NAME_TEXT_HEURISTIC_USAGE": 72,
+    "LEGACY_ONLY_NAME_TEXT_HEURISTIC_USAGE": 76,
     "AREA_FORMS_SOURCE_SILENT": 3,
     "AREA_FORMS_FIRE_MODE_DERIVED": 1,
     "AREA_FORMS_MISSING_CANONICAL_DATA": 0
@@ -30,8 +30,8 @@
     "counters": {
       "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
       "EXECUTION_FIELD_FAMILIES": 57,
-      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 34,
-      "EXECUTION_FIELD_FAMILIES_PARTIAL": 15,
+      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 36,
+      "EXECUTION_FIELD_FAMILIES_PARTIAL": 13,
       "EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER": 8
     },
     "familiesWithoutConsumer": [
@@ -55,8 +55,6 @@
       "3b.operation.crew-and-emplacement",
       "3b.operation.damage-modifiers",
       "3b.operation.defense-and-reaction-interactions",
-      "3b.operation.grab-grapple-restrain",
-      "3b.operation.stun-ion-damage-modes",
       "3b.profile.conditional",
       "3b.profile.effects",
       "3b.triggered"
@@ -130,7 +128,7 @@
         "id": "3b.operation.ability-compatibility",
         "fieldPaths": 35,
         "status": "PARTIAL",
-        "consumedKeys": 3,
+        "consumedKeys": 5,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 1
@@ -181,14 +179,13 @@
       },
       {
         "id": "3b.operation.area-splash-burst",
-        "fieldPaths": 40,
+        "fieldPaths": 50,
         "status": "PARTIAL",
-        "consumedKeys": 8,
+        "consumedKeys": 9,
         "nonExecutable": {
           "STORE": 1
         },
         "executableUnconsumed": [
-          "blastEffect",
           "remoteDetonationSafetyRule"
         ],
         "owner": "area attack consumers"
@@ -197,12 +194,11 @@
         "id": "3b.operation.attack-modifiers-and-penalties",
         "fieldPaths": 84,
         "status": "PARTIAL",
-        "consumedKeys": 15,
+        "consumedKeys": 16,
         "nonExecutable": {},
         "executableUnconsumed": [
           "allyAttackBonus",
           "allyEligibleWeapons",
-          "attackTreatedAs",
           "lineOfSightOriginHeightSquares",
           "preferredMode",
           "repeatAttackEachRoundToMaintainDesignation",
@@ -214,7 +210,7 @@
         "id": "3b.operation.concealment-stealth-sensing",
         "fieldPaths": 36,
         "status": "PARTIAL",
-        "consumedKeys": 2,
+        "consumedKeys": 3,
         "nonExecutable": {
           "DISPLAY": 1
         },
@@ -229,7 +225,6 @@
           "concealmentStealthBonus",
           "concealmentStealthPenalty",
           "createsSmokeHazard",
-          "durationRounds",
           "firingDoesNotRevealShooterPosition",
           "gasConcealmentDuration",
           "protectedAtmosphereImmune",
@@ -247,11 +242,10 @@
         "id": "3b.operation.condition-and-persistent-effects",
         "fieldPaths": 48,
         "status": "PARTIAL",
-        "consumedKeys": 5,
+        "consumedKeys": 6,
         "nonExecutable": {},
         "executableUnconsumed": [
           "grievousWound",
-          "ongoingEffect",
           "survivalBasicForestJungleBonusWhenProficientAndCarried"
         ],
         "owner": "persistent effects / poison subsystem"
@@ -260,7 +254,7 @@
         "id": "3b.operation.configuration-and-wielding",
         "fieldPaths": 62,
         "status": "PARTIAL",
-        "consumedKeys": 12,
+        "consumedKeys": 13,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 2
@@ -273,7 +267,6 @@
           "mayCountAsSmallWhenBeneficial",
           "mayTreatAsSizeWhenBeneficial",
           "multipleHeldOneHandCountsAsOneWeapon",
-          "sizeGate",
           "sizeRule",
           "tripodTreatsAsOneSizeSmallerForWielding",
           "wornAs",
@@ -305,7 +298,6 @@
         "consumedKeys": 5,
         "nonExecutable": {},
         "executableUnconsumed": [
-          "hurledObjectDamageRule",
           "powerAttackExtraDamageAppliesToObjectsAndVehicles",
           "weaponDR",
           "weaponDRAppliesAgainstLightsabers",
@@ -339,26 +331,11 @@
       },
       {
         "id": "3b.operation.grab-grapple-restrain",
-        "fieldPaths": 21,
-        "status": "PARTIAL",
-        "consumedKeys": 1,
+        "fieldPaths": 43,
+        "status": "CONSUMED",
+        "consumedKeys": 17,
         "nonExecutable": {},
-        "executableUnconsumed": [
-          "allowedGrappleFeats",
-          "breakStrengthDC",
-          "canInitiateGrabOrGrappleAtRange",
-          "crushAndThrowDisallowed",
-          "escapeAcrobaticsDC",
-          "featTalentBonusesTreatGrabAsGarroteAttack",
-          "hurlGrabbedObjectRangeSquares",
-          "maxTargetSize",
-          "maximumGrabRangeIncrement",
-          "moveGrabbedObjectSquares",
-          "pinAndTripAllowed",
-          "prohibitedGrappleFeats",
-          "rangedGrabOrGrapple",
-          "webbingFunctionsAsNet"
-        ],
+        "executableUnconsumed": [],
         "owner": "grapple / Pin / Trip phase"
       },
       {
@@ -395,12 +372,10 @@
       {
         "id": "3b.operation.stun-ion-damage-modes",
         "fieldPaths": 22,
-        "status": "PARTIAL",
-        "consumedKeys": 4,
+        "status": "CONSUMED",
+        "consumedKeys": 5,
         "nonExecutable": {},
-        "executableUnconsumed": [
-          "ongoingStunWhileTrapped"
-        ],
+        "executableUnconsumed": [],
         "owner": "stun / ion special modes"
       },
       {
@@ -492,12 +467,10 @@
         ],
         "deferred": [
           "return-recovery (I-C-C)",
-          "special-action Pin / Trip (I-C-B)",
           "activation-effect (I-D)",
-          "gas-cloud concealment + weapon-object fragile (I-D)",
-          "grab-grapple (I-C-B)"
+          "gas-cloud concealment + weapon-object fragile (I-D)"
         ],
-        "owner": "grab / reaction / sensing subsystems (I-C-B / I-C-C / I-D)"
+        "owner": "reaction / sensing subsystems (I-C-C / I-D)"
       },
       {
         "id": "3b.profile.firing",
@@ -651,13 +624,12 @@
         "probe": "triggeredEffects",
         "note": "AUTO riders execute; every remaining DEFER mechanic has a named owner in the 5D-E census (deferredByOwner)",
         "consumed": [
-          "triggeredEffects (AUTO families incl. the 5D-I-C-A outcome families)"
+          "triggeredEffects (AUTO families incl. the 5D-I-C-A outcome families and the 5D-I-C-B weapon-control family)"
         ],
         "deferred": [
-          "return-recovery triggered effects (I-C-C)",
-          "grab / net / snare triggered effects (I-C-B)"
+          "return-recovery triggered effects (I-C-C)"
         ],
-        "owner": "grab / reaction subsystems (I-C-B / I-C-C)"
+        "owner": "reaction subsystem (I-C-C)"
       },
       {
         "id": "3b.wielding",
@@ -708,14 +680,14 @@
         "keys": 17,
         "identities": 15,
         "consumed": [
+          "allowedFeats",
+          "disallowedFeats",
           "eligibleAsSecondWeaponForTwoWeaponFighting",
           "prohibitsMultiShotAbilities",
           "weaponFinesseCountsAsLight"
         ],
         "duplicates": {
-          "allowedFeats": "PROHIBITED relation (multi-shot) ; grapple feats are the grapple phase",
           "cannotUseAbilitiesConsumingMoreThanOneShotPerRound": "firingConstraints.prohibitsMultiShotAbilities + PROHIBITED relation",
-          "disallowedFeats": "PROHIBITED relation (multi-shot) ; grapple feats are the grapple phase",
           "multiShotAbilitiesProhibited": "firingConstraints.prohibitsMultiShotAbilities + PROHIBITED relation",
           "rapidShotAllowed": "firingConstraints.prohibitsMultiShotAbilities + PROHIBITED relation",
           "rapidShotReset": "operation.rapidShotReset.requiredActionBeforeNextShot (read directly)"
@@ -818,6 +790,7 @@
         "consumed": [
           "area",
           "areaAttack",
+          "blastEffect",
           "bracedAutofireAreaSquares",
           "contactDetonation",
           "defaultAutofireAreaSquares",
@@ -838,13 +811,11 @@
           ]
         },
         "executableUnconsumed": [
-          "blastEffect",
           "remoteDetonationSafetyRule"
         ],
         "owner": "area attack consumers",
-        "executableUnconsumedOccurrences": 2,
+        "executableUnconsumedOccurrences": 1,
         "representativeIdentities": [
-          "weapon-adhesive-grenade",
           "weapon-remote-grenade"
         ],
         "note": {
@@ -860,6 +831,7 @@
           "attackOfOpportunityChoices",
           "attackOfOpportunityProfiles",
           "attackPenalty",
+          "attackTreatedAs",
           "autofireEquipmentBonus",
           "canMakeAttacksOfOpportunity",
           "cannotBraceWithoutTripodOrMount",
@@ -902,19 +874,18 @@
         "executableUnconsumed": [
           "allyAttackBonus",
           "allyEligibleWeapons",
-          "attackTreatedAs",
           "lineOfSightOriginHeightSquares",
           "preferredMode",
           "repeatAttackEachRoundToMaintainDesignation",
           "targeting"
         ],
         "owner": "conditional attack-modifier evaluation (post-5D-H)",
-        "executableUnconsumedOccurrences": 7,
+        "executableUnconsumedOccurrences": 6,
         "representativeIdentities": [
-          "unmapped::Garrote",
           "weapon-espo-500-riot-gun",
           "weapon-mortar-launcher",
-          "weapon-sonic-stunner"
+          "weapon-sonic-stunner",
+          "weapon-targeting-laser"
         ],
         "note": {
           "reason": "5D-I-A consumed the fire-state, aim, brace, range and environment attack modifiers; the remainder needs AoO eligibility, crew state, configuration, designation or the grab system",
@@ -927,7 +898,8 @@
         "identities": 19,
         "consumed": [
           "blindCreaturesImmune",
-          "concealment"
+          "concealment",
+          "durationRounds"
         ],
         "duplicates": {},
         "nonExecutable": {
@@ -946,7 +918,6 @@
           "concealmentStealthBonus",
           "concealmentStealthPenalty",
           "createsSmokeHazard",
-          "durationRounds",
           "firingDoesNotRevealShooterPosition",
           "gasConcealmentDuration",
           "protectedAtmosphereImmune",
@@ -959,7 +930,7 @@
           "snipingStealthEquipmentBonus"
         ],
         "owner": "stealth / sensing subsystem",
-        "executableUnconsumedOccurrences": 24,
+        "executableUnconsumedOccurrences": 23,
         "representativeIdentities": [
           "unmapped::Contact Stunner",
           "unmapped::Survival Knife",
@@ -979,6 +950,7 @@
           "ammunitionMayCarryContactPoison",
           "conditionTrackRider",
           "fortitudeRider",
+          "ongoingEffect",
           "poisonDeliveryRequiresDamage",
           "returnOnAttackExceedsReflexBy"
         ],
@@ -994,14 +966,12 @@
         "nonExecutable": {},
         "executableUnconsumed": [
           "grievousWound",
-          "ongoingEffect",
           "survivalBasicForestJungleBonusWhenProficientAndCarried"
         ],
         "owner": "persistent effects / poison subsystem",
-        "executableUnconsumedOccurrences": 3,
+        "executableUnconsumedOccurrences": 2,
         "representativeIdentities": [
           "unmapped::Fira",
-          "unmapped::Garrote",
           "weapon-wookiee-ryyk-blade"
         ],
         "note": {
@@ -1024,6 +994,7 @@
           "handsRemainFree",
           "hostWeaponAugmentation",
           "requiresTwoHands",
+          "sizeGate",
           "switchAction",
           "wornNotHeld"
         ],
@@ -1059,19 +1030,18 @@
           "mayCountAsSmallWhenBeneficial",
           "mayTreatAsSizeWhenBeneficial",
           "multipleHeldOneHandCountsAsOneWeapon",
-          "sizeGate",
           "sizeRule",
           "tripodTreatsAsOneSizeSmallerForWielding",
           "wornAs",
           "wornOnWrist"
         ],
         "owner": "wielding & configuration state (post-5D-H)",
-        "executableUnconsumedOccurrences": 16,
+        "executableUnconsumedOccurrences": 15,
         "representativeIdentities": [
           "lightsaber-chassis-archaic-lightfoil",
-          "lightsaber-chassis-great",
           "lightsaber-chassis-modern-lightfoil",
-          "unmapped::Darkstick"
+          "unmapped::Darkstick",
+          "unmapped::Stunning Gauntlet"
         ],
         "note": {
           "reason": "assembly/switch actions, two-hand rules and size gates need a wielding and configuration state model",
@@ -1118,25 +1088,24 @@
         ],
         "duplicates": {
           "cannotBeNegatedByDeflect": "CANNOT_NEGATE_ATTACK relation",
+          "hurledObjectDamageRule": "operation.tractorControl.hurl.damageAuthority = falling-object-by-object-size",
           "ignoresDRCondition": "damageReductionInteraction (mode conditional, \"target is an unattended object\")",
           "shieldRatingStillApplies": "damage mitigation stage order (Shield Rating is stage 1; bypass-dr only touches stage 2)",
           "twoHandedDamageChoice": "attackProfiles[two-handed-base-override].activationRequirements (wielding two-handed + choice forgo-double-strength-bonus-to-damage)"
         },
         "nonExecutable": {},
         "executableUnconsumed": [
-          "hurledObjectDamageRule",
           "powerAttackExtraDamageAppliesToObjectsAndVehicles",
           "weaponDR",
           "weaponDRAppliesAgainstLightsabers",
           "weaponDRValue"
         ],
         "owner": "damage modifier consumers (post-5D-H)",
-        "executableUnconsumedOccurrences": 6,
+        "executableUnconsumedOccurrences": 5,
         "representativeIdentities": [
           "unmapped::Power Hammer",
           "unmapped::Shockstaff",
-          "weapon-electrostaff",
-          "weapon-tactical-tractor-beam"
+          "weapon-electrostaff"
         ],
         "note": {
           "reason": "5D-I-A consumed the composition-stage terms (point-blank bonus, adjacent die, bow/sling Strength); the remainder are threshold, wielding, hurled-object and weapon-object durability",
@@ -1211,14 +1180,9 @@
         "status": "CONSUMED"
       },
       "grab-grapple-restrain": {
-        "keys": 15,
-        "identities": 8,
+        "keys": 17,
+        "identities": 9,
         "consumed": [
-          "pinTripSubstitution"
-        ],
-        "duplicates": {},
-        "nonExecutable": {},
-        "executableUnconsumed": [
           "allowedGrappleFeats",
           "breakStrengthDC",
           "canInitiateGrabOrGrappleAtRange",
@@ -1230,23 +1194,24 @@
           "maximumGrabRangeIncrement",
           "moveGrabbedObjectSquares",
           "pinAndTripAllowed",
+          "pinTripSubstitution",
           "prohibitedGrappleFeats",
           "rangedGrabOrGrapple",
+          "tractorControl",
+          "treatControlAs",
           "webbingFunctionsAsNet"
         ],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [],
         "owner": "grapple / Pin / Trip phase",
-        "executableUnconsumedOccurrences": 22,
-        "representativeIdentities": [
-          "lightsaber-chassis-lightwhip",
-          "unmapped::Amphistaff",
-          "unmapped::Garrote",
-          "weapon-net"
-        ],
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
         "note": {
-          "reason": "grab/grapple/net rules belong to the grapple subsystem",
-          "phase": "5D-I: grapple / snare / net"
+          "reason": "5D-I-C-B consumed every key through the declarative control contract (control-rules) executed by the existing grapple state machine; none remains",
+          "phase": "5D-I-C-B (see the 5D-I-C-B manifest)"
         },
-        "status": "PARTIAL"
+        "status": "CONSUMED"
       },
       "prepared-attacks": {
         "keys": 1,
@@ -1315,6 +1280,7 @@
         "identities": 25,
         "consumed": [
           "damageTypeAndBurstDeterminedByGrenade",
+          "ongoingStunWhileTrapped",
           "overwhelmingStunRule",
           "stunOnly",
           "stunSwitchAction"
@@ -1335,19 +1301,15 @@
           "stunShotsPerAttack": "attackProfiles[].resourceConsumption.stunUnits"
         },
         "nonExecutable": {},
-        "executableUnconsumed": [
-          "ongoingStunWhileTrapped"
-        ],
+        "executableUnconsumed": [],
         "owner": "stun / ion special modes",
-        "executableUnconsumedOccurrences": 1,
-        "representativeIdentities": [
-          "weapon-electronet"
-        ],
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
         "note": {
           "reason": "5D-I-A consumed the stun switch and classified the dual-carried modes; payload delegation and trapped-target stun need ammo payloads / persistent effects",
           "phase": "5D-I-B/C by owner (see the 5D-I-A manifest)"
         },
-        "status": "PARTIAL"
+        "status": "CONSUMED"
       },
       "utility-and-movement": {
         "keys": 1,
@@ -1399,11 +1361,9 @@
       "ammo-resource-reload.secondCrewReloadAction",
       "ammo-resource-reload.singleShot",
       "ammo-resource-reload.specialRateOfFire",
-      "area-splash-burst.blastEffect",
       "area-splash-burst.remoteDetonationSafetyRule",
       "attack-modifiers-and-penalties.allyAttackBonus",
       "attack-modifiers-and-penalties.allyEligibleWeapons",
-      "attack-modifiers-and-penalties.attackTreatedAs",
       "attack-modifiers-and-penalties.lineOfSightOriginHeightSquares",
       "attack-modifiers-and-penalties.preferredMode",
       "attack-modifiers-and-penalties.repeatAttackEachRoundToMaintainDesignation",
@@ -1418,7 +1378,6 @@
       "concealment-stealth-sensing.concealmentStealthBonus",
       "concealment-stealth-sensing.concealmentStealthPenalty",
       "concealment-stealth-sensing.createsSmokeHazard",
-      "concealment-stealth-sensing.durationRounds",
       "concealment-stealth-sensing.firingDoesNotRevealShooterPosition",
       "concealment-stealth-sensing.gasConcealmentDuration",
       "concealment-stealth-sensing.protectedAtmosphereImmune",
@@ -1430,7 +1389,6 @@
       "concealment-stealth-sensing.snipingSkill",
       "concealment-stealth-sensing.snipingStealthEquipmentBonus",
       "condition-and-persistent-effects.grievousWound",
-      "condition-and-persistent-effects.ongoingEffect",
       "condition-and-persistent-effects.survivalBasicForestJungleBonusWhenProficientAndCarried",
       "configuration-and-wielding.collapsedForm",
       "configuration-and-wielding.designedForTwoHandedUse",
@@ -1439,13 +1397,11 @@
       "configuration-and-wielding.mayCountAsSmallWhenBeneficial",
       "configuration-and-wielding.mayTreatAsSizeWhenBeneficial",
       "configuration-and-wielding.multipleHeldOneHandCountsAsOneWeapon",
-      "configuration-and-wielding.sizeGate",
       "configuration-and-wielding.sizeRule",
       "configuration-and-wielding.tripodTreatsAsOneSizeSmallerForWielding",
       "configuration-and-wielding.wornAs",
       "configuration-and-wielding.wornOnWrist",
       "crew-and-emplacement.tripodEffectiveSize",
-      "damage-modifiers.hurledObjectDamageRule",
       "damage-modifiers.powerAttackExtraDamageAppliesToObjectsAndVehicles",
       "damage-modifiers.weaponDR",
       "damage-modifiers.weaponDRAppliesAgainstLightsabers",
@@ -1462,28 +1418,13 @@
       "defense-and-reaction-interactions.rapidStrikeAttackPenaltyWaived",
       "defense-and-reaction-interactions.returnToHand",
       "defense-and-reaction-interactions.standaloneDefenseBonus",
-      "grab-grapple-restrain.allowedGrappleFeats",
-      "grab-grapple-restrain.breakStrengthDC",
-      "grab-grapple-restrain.canInitiateGrabOrGrappleAtRange",
-      "grab-grapple-restrain.crushAndThrowDisallowed",
-      "grab-grapple-restrain.escapeAcrobaticsDC",
-      "grab-grapple-restrain.featTalentBonusesTreatGrabAsGarroteAttack",
-      "grab-grapple-restrain.hurlGrabbedObjectRangeSquares",
-      "grab-grapple-restrain.maxTargetSize",
-      "grab-grapple-restrain.maximumGrabRangeIncrement",
-      "grab-grapple-restrain.moveGrabbedObjectSquares",
-      "grab-grapple-restrain.pinAndTripAllowed",
-      "grab-grapple-restrain.prohibitedGrappleFeats",
-      "grab-grapple-restrain.rangedGrabOrGrapple",
-      "grab-grapple-restrain.webbingFunctionsAsNet",
       "proficiency-routes.alternateProficiency",
       "proficiency-routes.wookieeAdvancedMeleeProficiencyCounts",
       "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
-      "stun-ion-damage-modes.ongoingStunWhileTrapped",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 109,
-    "rawOccurrencesUnconsumed": 144,
+    "uniqueKeysUnconsumed": 88,
+    "rawOccurrencesUnconsumed": 115,
     "problems": []
   },
   "relations": {
@@ -1578,6 +1519,13 @@
         "consumer": "weapon-descriptor join of the ability's own rule scope; the ability has no canonical id so its display name is the legacy fallback; validated by the 5D-H census relation-consistency check"
       },
       {
+        "relation": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM",
+        "instances": 2,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "control-rules#controlDeclarationOf entitlement (operation.pinTripSubstitution) -> weapon-control-effects#entitlementOf -> SWSEGrappling Pin/Trip (weaponEntitlement); requires canonical proficiency, creates no feat Item"
+      },
+      {
         "relation": "PROHIBITED",
         "instances": 9,
         "class": "VALIDATION",
@@ -1641,13 +1589,6 @@
         "policy": "AUTO",
         "reason": "modifies the wielder's Block/Deflect Use the Force check; the value lives in operation.* keys (BlockCumulativePenalty, DeflectPenalty, blockDeflectUseTheForceEquipmentBonus, ...) and the consumer is the reaction roll, which does not yet read the wielded weapon",
         "owner": "reaction/defense workflow (Block, Deflect rolls)"
-      },
-      {
-        "relation": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM",
-        "instances": 2,
-        "policy": "AUTO",
-        "reason": "Amphistaff whip form Pin/Trip substitution (operation.pinTripSubstitution) belongs to the grapple/Pin/Trip subsystem, which this phase must not widen into",
-        "owner": "grapple / Pin / Trip phase"
       },
       {
         "relation": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
@@ -2769,10 +2710,10 @@
     ]
   },
   "heuristics": {
-    "totalSites": 180,
+    "totalSites": 195,
     "byClass": {
-      "DISPLAY": 94,
-      "IDENTITY_FALLBACK": 14,
+      "DISPLAY": 105,
+      "IDENTITY_FALLBACK": 18,
       "LEGACY_GATED": 58,
       "NON_COMBAT_DOMAIN": 5,
       "PROJECTION": 4,

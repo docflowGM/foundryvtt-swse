@@ -99,9 +99,9 @@
       "note": "limits shots per round/reload; checked against the existing multi-attack/ammo rules (Phase 5D-F)"
     },
     "grab-grapple": {
-      "policy": "DEFER",
+      "policy": "AUTO",
       "timing": "on-hit",
-      "note": "grapple/net/snare state machine (existing grapple system; multi-step workflow)"
+      "note": "weapon control (grab / grapple / restrain / net / snare / tractor): initiated through the existing grapple state machine; control-bound effects ride on its state"
     },
     "multi-attack-interaction": {
       "policy": "AUTO",
@@ -181,9 +181,9 @@
   },
   "totals": {
     "identities": 203,
-    "identitiesWithMechanics": 88,
+    "identitiesWithMechanics": 90,
     "forms": 266,
-    "formsWithMechanics": 114,
+    "formsWithMechanics": 116,
     "resolveErrors": 0
   },
   "mechanicsByFamily": {
@@ -206,7 +206,7 @@
     "dr-conditional": 1,
     "dr-ignore": 24,
     "firing-constraint": 20,
-    "grab-grapple": 12,
+    "grab-grapple": 22,
     "multi-attack-interaction": 5,
     "native-stun": 16,
     "payload-delegation": 4,
@@ -214,21 +214,19 @@
     "poison-delivery": 2,
     "prepared-attack": 4,
     "return-recovery": 2,
-    "special-action": 2,
-    "status-condition": 3,
+    "status-condition": 2,
     "status-effect": 10,
     "target-class-damage": 1,
     "threshold-adjustment": 3
   },
   "mechanicsByPolicy": {
-    "AUTO": 103,
-    "DEFER": 25,
+    "AUTO": 125,
+    "DEFER": 10,
     "DISPLAY_ONLY": 3,
     "PROMPT": 9,
     "VALIDATION_ONLY": 20
   },
   "deferredByOwner": {
-    "I-C-B": 15,
     "I-C-C": 7,
     "I-D": 3
   },
@@ -335,12 +333,6 @@
       "issue": "threshold is structured but the effect/action (return to hand) is not; recorded as a completeness issue, never invented"
     },
     {
-      "identityKey": "weapon-adhesive-grenade",
-      "form": "primary",
-      "id": "form-without-damage-or-effect",
-      "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
-    },
-    {
       "identityKey": "weapon-ascension-gun",
       "form": "ascension/ascension",
       "id": "form-without-damage-or-effect",
@@ -349,12 +341,6 @@
     {
       "identityKey": "weapon-heavy-variable-blaster",
       "form": "ascension/ascension",
-      "id": "form-without-damage-or-effect",
-      "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
-    },
-    {
-      "identityKey": "weapon-net",
-      "form": "primary",
       "id": "form-without-damage-or-effect",
       "issue": "form has no ordinary damage and no structured effect; refused, nothing is invented"
     },
@@ -424,8 +410,8 @@
     "lightsaber-chassis-lightwhip": {
       "whip": [
         "dr-ignore:dr-ignore:AUTO",
-        "grab-grapple:triggered-0:DEFER",
-        "grab-grapple:triggered-1:DEFER"
+        "grab-grapple:triggered-0:AUTO",
+        "grab-grapple:triggered-1:AUTO"
       ]
     },
     "lightsaber-chassis-longhandle": {
@@ -484,10 +470,10 @@
         "ct-rider:whip-poison-condition-track:AUTO"
       ],
       "whip-pin/whip": [
-        "special-action:pin-without-feat:DEFER"
+        "grab-grapple:pin-without-feat:AUTO"
       ],
       "whip-trip/whip": [
-        "special-action:trip-without-feat:DEFER"
+        "grab-grapple:trip-without-feat:AUTO"
       ]
     },
     "unmapped::Arggarok": {
@@ -523,7 +509,8 @@
     },
     "unmapped::Garrote": {
       "melee": [
-        "grab-grapple:triggered-0:DEFER"
+        "grab-grapple:operation.control:AUTO",
+        "grab-grapple:triggered-0:AUTO"
       ]
     },
     "unmapped::Neuronic Whip": {
@@ -554,10 +541,10 @@
     },
     "unmapped::Shock Whip": {
       "primary": [
-        "grab-grapple:grabbed-target-shock:DEFER",
-        "grab-grapple:optional-grab-on-hit:DEFER",
-        "grab-grapple:weapon-locked-while-grabbing:DEFER",
-        "status-condition:trip-substitution:DEFER"
+        "grab-grapple:grabbed-target-shock:AUTO",
+        "grab-grapple:optional-grab-on-hit:AUTO",
+        "grab-grapple:trip-substitution:AUTO",
+        "grab-grapple:weapon-locked-while-grabbing:AUTO"
       ]
     },
     "unmapped::Shyarn": {
@@ -586,6 +573,11 @@
       ],
       "end2": [
         "multi-attack-interaction:remove-rapid-strike-penalty-0:AUTO"
+      ]
+    },
+    "weapon-adhesive-grenade": {
+      "primary": [
+        "grab-grapple:operation.blastEffect:AUTO"
       ]
     },
     "weapon-aurial-blaster": {
@@ -693,8 +685,8 @@
     },
     "weapon-electronet": {
       "primary": [
-        "grab-grapple:grab-on-hit:DEFER",
-        "grab-grapple:ongoing-net-shock:DEFER",
+        "grab-grapple:grab-on-hit:AUTO",
+        "grab-grapple:ongoing-net-shock:AUTO",
         "native-stun:native-stun:AUTO"
       ]
     },
@@ -803,6 +795,11 @@
         "poison-delivery:operation.ammunitionMayCarryContactPoison:AUTO"
       ]
     },
+    "weapon-net": {
+      "primary": [
+        "grab-grapple:operation.control:AUTO"
+      ]
+    },
     "weapon-neural-inhibitor": {
       "primary": [
         "persistent-poison:persistent-neurotoxin:AUTO"
@@ -845,15 +842,17 @@
     },
     "weapon-snare-pistol": {
       "primary": [
-        "grab-grapple:escape-options:DEFER",
-        "grab-grapple:stun-on-successful-grab:DEFER",
+        "grab-grapple:escape-options:AUTO",
+        "grab-grapple:operation.control:AUTO",
+        "grab-grapple:stun-on-successful-grab:AUTO",
         "native-stun:native-stun:AUTO"
       ]
     },
     "weapon-snare-rifle": {
       "primary": [
-        "grab-grapple:escape-options:DEFER",
-        "grab-grapple:stun-on-successful-grab:DEFER",
+        "grab-grapple:escape-options:AUTO",
+        "grab-grapple:operation.control:AUTO",
+        "grab-grapple:stun-on-successful-grab:AUTO",
         "native-stun:native-stun:AUTO"
       ]
     },
@@ -882,6 +881,7 @@
     },
     "weapon-stokhli-spray-stick": {
       "primary": [
+        "grab-grapple:operation.control:AUTO",
         "native-stun:native-stun:AUTO"
       ]
     },
@@ -902,7 +902,8 @@
     },
     "weapon-tactical-tractor-beam": {
       "tractor": [
-        "attack-modifier-auto:operation.unregulatedAttackPenalty:AUTO"
+        "attack-modifier-auto:operation.unregulatedAttackPenalty:AUTO",
+        "grab-grapple:operation.tractorControl:AUTO"
       ]
     },
     "weapon-verpine-shattergun": {

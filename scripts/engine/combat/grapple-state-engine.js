@@ -4,7 +4,8 @@ import {
   normalizeGrappleState as normalizeState,
   getGrappleEffects as queryGrappleEffects,
   actorHasGrappleState,
-  getGrappleStateInfo
+  getGrappleStateInfo,
+  getControlRecords as queryControlRecords
 } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-query.js";
 import {
   isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon,
@@ -308,7 +309,9 @@ function buildEffectData(actor, state, sourceActor = null, options = {}) {
           targetUuid: actorUuid(actor),
           appliedAt: Date.now(),
           actionId: options.actionId ?? null,
-          workflowId: options.workflowId ?? null
+          workflowId: options.workflowId ?? null,
+          // Phase 5D-I-C-B: the weapon control record (controller, source weapon, constraints, escape, recurring) rides on the state effect itself
+          ...(options.control ? { control: { ...options.control, state: config.state } } : {})
         }
       }
     }
@@ -326,6 +329,11 @@ export class GrappleStateEngine {
 
   static getState(actor) {
     return getGrappleStateInfo(actor);
+  }
+
+  /** Phase 5D-I-C-B: weapon control records on this actor's grapple-state effects (optionally of one controller / target). */
+  static getControlRecords(actor, filters = {}) {
+    return queryControlRecords(actor, filters);
   }
 
   static hasState(actor, state = null) {
@@ -542,6 +550,13 @@ export class GrappleStateEngine {
   static async advancePair(attacker, defender, state, options = {}) {
     const normalized = normalizeState(state);
     if (!attacker || !defender || !normalized) return null;
+
+    // Phase 5D-I-C-B: a weapon control survives grab -> grapple -> pin escalation. The record is read from the state effect about to be replaced
+    // (controller = this attacker) so Pin / grapple checks never drop the source weapon, constraints, escape routes or recurring effects.
+    if (!options.control) {
+      const inherited = this.getControlRecords(defender, { controllerId: actorId(attacker) })[0]?.control ?? null;
+      if (inherited) options = { ...options, control: inherited };
+    }
 
     if (normalized === 'grabbed') {
       return await this.setState(defender, 'grabbed', attacker, options);

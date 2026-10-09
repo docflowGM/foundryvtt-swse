@@ -15,6 +15,8 @@
 //   VALIDATION_ONLY constrains legality (firing limits) -- checked, never "executed"
 
 import { policyFor, evaluateCondition, conditionContextKeys, SIZE_RANK } from './condition-policy.js';
+import { controlDeclarationOf } from './control-rules.js';
+import { getSharedWeaponAuthorityRegistry } from './weapon-authority-registry.js';
 
 export const POLICY = Object.freeze({ AUTO: 'AUTO', PROMPT: 'PROMPT', DEFER: 'DEFER', DISPLAY_ONLY: 'DISPLAY_ONLY', VALIDATION_ONLY: 'VALIDATION_ONLY' });
 
@@ -41,7 +43,10 @@ export const FAMILIES = Object.freeze({
   'ct-rider-prompt':          { policy: POLICY.PROMPT,   timing: TIMING.AFTER_DAMAGE,   note: 'condition-track rider whose trigger cannot be evaluated automatically; answered once and stored' },
   'multi-attack-interaction': { policy: POLICY.AUTO,     timing: TIMING.ON_ATTACK,      note: 'attack modifier that applies while Double/Triple Attack, Rapid Shot or Rapid Strike is in use (Phase 5D-F: consumed at attack time from the active multi-attack shape)' },
   'defensive-interaction':    { policy: POLICY.DEFER,    timing: TIMING.CONTINUOUS,     note: 'modifies the wielder\'s defenses/Use the Force checks rather than this single attack' },
-  'grab-grapple':             { policy: POLICY.DEFER,    timing: TIMING.ON_HIT,         note: 'grapple/net/snare state machine (existing grapple system; multi-step workflow)' },
+  // Phase 5D-I-C-B: weapon control is CONSUMED by the existing grapple state machine (GrappleStateEngine / SWSEGrappling) through the declarative control
+  // contract (control-rules) and weapon-control-effects; each mechanic carries a `role` (initiate / restraint / tractor / entitled-maneuver are executable
+  // records; recurring / shock / weapon-lock / escape / grab-stun / trip-substitution are parts of the control declaration those records carry).
+  'grab-grapple':             { policy: POLICY.AUTO,     timing: TIMING.ON_HIT,         note: 'weapon control (grab / grapple / restrain / net / snare / tractor): initiated through the existing grapple state machine; control-bound effects ride on its state' },
   'status-condition':         { policy: POLICY.DEFER,    timing: TIMING.AFTER_DAMAGE,   note: 'status condition (prone/disabled/concealment) with no single existing setter' },
   'persistent-effect':        { policy: POLICY.DEFER,    timing: TIMING.TURN_START,     note: 'delayed/recurring effect resolved at a later turn boundary' },
   'special-action':           { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'replaces the attack with another action (Pin/Trip/Venom Spit) -- refused, not substituted' },
@@ -72,10 +77,9 @@ export const FAMILIES = Object.freeze({
  * A per-mechanic-id entry wins over the per-family one.
  */
 export const DEFER_OWNER_BY_FAMILY = Object.freeze({
-  'defensive-interaction': 'I-C-C', 'grab-grapple': 'I-C-B', 'special-action': 'I-C-B', 'return-recovery': 'I-C-C', 'status-condition': 'I-D', 'activation-effect': 'I-D',
+  'defensive-interaction': 'I-C-C', 'special-action': 'I-C-B', 'return-recovery': 'I-C-C', 'status-condition': 'I-D', 'activation-effect': 'I-D',
 });
 export const DEFER_OWNER_BY_ID = Object.freeze({
-  'trip-substitution': 'I-C-B',
   'lingering-gas-concealment': 'I-D',   // the cloud is canonical structure; visibility / Stealth consumption is the sensing subsystem
   'fragile-disable-on-damage': 'I-D',   // "if the WEAPON takes any damage" is weapon-object durability, not a target outcome
 });
@@ -127,12 +131,36 @@ function classifyOutcomeEffect(e, id, src, operation) {
   return null;
 }
 
+/**
+ * Phase 5D-I-C-B: the CONTROL role of a triggered effect, from enumerated ids / effects / triggers of the canonical schema (never names or prose).
+ *   initiate           the weapon may grab / grapple on a hit (executable record)
+ *   entitled-maneuver  Pin / Trip made with the weapon without owning the feat (executable record)
+ *   trip-substitution  a Trip the weapon substitutes for its optional grab (declaration part)
+ *   recurring | shock | weapon-lock | escape | grab-stun   declaration parts bound to the held target
+ */
+function controlRoleOf(e) {
+  const eff = typeof e.effect === 'string' ? e.effect : '';
+  const id = String(e.id ?? '');
+  if (eff === 'resolve-as-pin-feat-without-feat') return { role: 'entitled-maneuver', maneuver: 'pin' };
+  if (eff === 'resolve-as-trip-feat-without-feat') return { role: 'entitled-maneuver', maneuver: 'trip' };
+  if (id === 'trip-substitution' && e.replaces === 'optional-grab-on-hit') return { role: 'trip-substitution' };
+  if (eff === 'may-initiate-grab-or-grapple' || eff === 'target-grabbed' || id === 'optional-grab-on-hit') return { role: 'initiate' };
+  if (id === 'grabbed-target-shock') return { role: 'shock' };
+  if (id === 'weapon-locked-while-grabbing' || eff === 'cannot-attack-other-targets-with-this-weapon') return { role: 'weapon-lock' };
+  if (id === 'ongoing-net-shock' || eff === 'repeat-weapon-base-damage-and-move-condition-track' || (eff === 'damage' && /target-ends-turn-grabbed-or-grappled/.test(String(e.trigger ?? '')))) return { role: 'recurring' };
+  if (id === 'stun-on-successful-grab') return { role: 'grab-stun' };
+  if (id === 'escape-options' || eff === 'snare-escape-options') return { role: 'escape' };
+  return null;
+}
+
 function classifyTriggeredEffect(e, index, formRefused, operation = null) {
   const id = e.id ?? `triggered-${index}`;
   const eff = typeof e.effect === 'string' ? e.effect : null;
   const src = `profile.triggeredEffects[${index}]`;
   const outcome = classifyOutcomeEffect(e, id, src, operation);
   if (outcome) return formRefused ? Object.freeze({ ...outcome, effectOnly: true }) : outcome;
+  const control = controlRoleOf(e);
+  if (control) return mech('grab-grapple', id, { source: src, trigger: e.trigger ?? null, ...control, ...(formRefused ? { effectOnly: true } : {}), data: e });
   if (formRefused && !(eff === 'move-target-condition-track' && (CT_HIT_TRIGGERS.has(e.trigger) || e.trigger === CT_BOTH_DEFENSE_TRIGGER || e.trigger === CT_DEFENSE_TRIGGER))) {
     return mech('special-action', id, { source: src, reason: 'form-has-no-ordinary-damage', trigger: e.trigger ?? null, data: e });
   }
@@ -209,7 +237,7 @@ function classifyConditionalModifier(m, index) {
  * @param {boolean} [opts.formRefused]   the form has no ordinary damage (special action / effect-only payload)
  * @param {string}  [opts.stunCapability]
  */
-export function extractSpecialMechanics(def, { damageProfile = null, operation = null, formRefused = false, stunCapability = null, payloadEffects = [], drInteraction = null, abilityInteractions = [] } = {}) {
+export function extractSpecialMechanics(def, { damageProfile = null, operation = null, formRefused = false, stunCapability = null, payloadEffects = [], drInteraction = null, abilityInteractions = [], identityKey = null } = {}) {
   const out = [];
   if (!def) return Object.freeze(out);
   const mult = Number(damageProfile?.damageMultiplier ?? def.damageMultiplier ?? 1);
@@ -284,7 +312,33 @@ export function extractSpecialMechanics(def, { damageProfile = null, operation =
     else out.push(mech('payload-effect', p?.effect ?? `payload-${i}`, { source: 'payload.specialEffects', data: p }));
   }
   for (const m of operationOutcomeMechanics(operation)) out.push(m);
+  for (const m of operationControlMechanics(operation, def, out, { formRefused, identityKey })) out.push(m);
+  // the executable control mechanics all carry the ONE declaration of this form (self-contained, JSON-safe; built from structure only)
+  if (out.some((m) => m.family === 'grab-grapple' && !m.declaration)) {
+    const declaration = controlDeclarationOf({ identityKey, operation, definition: def }, { resolveIdentity: (key) => getSharedWeaponAuthorityRegistry()?.getByIdentityKey?.(key) ?? null });
+    return Object.freeze(out.map((m) => (m.family === 'grab-grapple' && !m.declaration && declaration ? Object.freeze({ ...m, declaration }) : m)));
+  }
   return Object.freeze(out);
+}
+
+/**
+ * Phase 5D-I-C-B: control mechanics declared on the weapon-level `operation` (ranged grab / grapple, attack-treated-as-grab, delegation to Net, the
+ * Adhesive Grenade restraint blast, the Tactical Tractor Beam). The executable ones carry the CONTROL DECLARATION (control-rules) so the record is
+ * self-contained; a profile triggered effect that already initiates control makes the operation-level initiation redundant (never doubled).
+ */
+function operationControlMechanics(op, def, existing, { formRefused = false, identityKey = null } = {}) {
+  const out = [];
+  if (!op || typeof op !== 'object') return out;
+  const resolveIdentity = (key) => getSharedWeaponAuthorityRegistry()?.getByIdentityKey?.(key) ?? null;
+  const declaration = controlDeclarationOf({ identityKey, operation: op, definition: def }, { resolveIdentity });
+  if (!declaration) return out;
+  const effectOnly = formRefused ? { effectOnly: true } : {};
+  const hasInitiate = existing.some((m) => m.family === 'grab-grapple' && m.role === 'initiate');
+  const opInitiates = op.rangedGrabOrGrapple === true || op.canInitiateGrabOrGrappleAtRange === true || op.webbingFunctionsAsNet === true || op.attackTreatedAs === 'grab' || !!op.treatControlAs;
+  if (opInitiates && !hasInitiate && declaration.grab) out.push(mech('grab-grapple', 'operation.control', { source: 'operation', role: 'initiate', declaration, ...effectOnly }));
+  if (declaration.restraint) out.push(mech('grab-grapple', 'operation.blastEffect', { source: 'operation.blastEffect', role: 'restraint', declaration, ...effectOnly }));
+  if (declaration.tractor) out.push(mech('grab-grapple', 'operation.tractorControl', { source: 'operation.tractorControl', role: 'tractor', declaration, ...effectOnly }));
+  return out;
 }
 
 /** Phase 5D-I-C-A: weapon-level `operation` outcome mechanics. Structured carriers only (the amendment-backfilled `structure` objects); prose is never read. */
@@ -526,6 +580,12 @@ export function evaluateAttackOutcomeSpecials(mechanics, { hit, attackTotal = nu
       records.push(withSource({ id: m.id, kind: 'persistent-poison', steps: 0, fired: hitFired, requiresDamage: false, trigger: m.trigger, payload: { effect: JSON.parse(JSON.stringify(m.data ?? {})) } }));
     } else if (m.family === 'poison-delivery') {
       records.push(withSource({ id: m.id, kind: 'poison-delivery', steps: 0, fired: hitFired, requiresDamage: m.requiresDamage === true, trigger: m.trigger ?? undefined, payload: { capabilityOnly: m.capabilityOnly === true } }));
+    } else if (m.family === 'grab-grapple' && ['initiate', 'restraint', 'tractor', 'entitled-maneuver'].includes(m.role)) {
+      // Phase 5D-I-C-B: control records. `fired` is the ATTACK-time part of the trigger (a hit); what happens next (size / range gates, the opposed grapple
+      // check, state creation) is decided at Apply time by weapon-control-effects through the existing grapple system.
+      const declaration = m.declaration ?? null;
+      records.push(withSource({ id: m.id, kind: 'weapon-control', role: m.role, steps: 0, fired: m.role === 'restraint' ? true : hitFired, requiresDamage: false, trigger: m.trigger ?? undefined,
+        payload: { role: m.role, ...(m.maneuver ? { maneuver: m.maneuver } : {}), ...(declaration ? { declaration: JSON.parse(JSON.stringify(declaration)) } : {}), attackTotal } }));
     } else if (m.family === 'target-class-damage') {
       // Evaluated per target at Apply Damage: pre-halving damage that would reduce an electronic-class target to 0 HP -> -5 CT and disabled
       const z = m.rules?.electronic?.zeroHpPreHalving;

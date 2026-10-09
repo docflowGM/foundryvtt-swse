@@ -135,6 +135,8 @@ function summarizeSpecial(special) {
       if (r.trigger) rec.trigger = String(r.trigger);
       // Phase 5D-I-C-A: outcome records carry their apply-time condition, structured payload and canonical provenance (plain JSON only)
       if (r.applyCondition) rec.applyCondition = String(r.applyCondition);
+      // Phase 5D-I-C-B: a weapon-control record names its role (initiate / restraint / tractor / entitled-maneuver)
+      if (r.role) rec.role = String(r.role);
       if (r.payload && typeof r.payload === 'object') rec.payload = plainJson(r.payload);
       if (r.source && typeof r.source === 'object') rec.source = plainJson(r.source);
       return rec;
@@ -144,6 +146,8 @@ function summarizeSpecial(special) {
   if (special.targetRules && typeof special.targetRules === 'object') out.targetRules = plainJson(special.targetRules);
   if (Array.isArray(special.unresolved)) out.unresolved = special.unresolved.filter((u) => u && typeof u.id === 'string').map((u) => ({ id: u.id, reason: String(u.reason ?? '') }));
   if (special.drInteraction === 'ignore') out.drInteraction = 'ignore';
+  // Phase 5D-I-C-B: the range band the attack was made at (a ranged grab with a maximum grab range is gated by it at Apply time)
+  if (typeof special.rangeBand === 'string' && special.rangeBand) out.rangeBand = special.rangeBand;
   if (special.attackTotal !== undefined && Number.isFinite(Number(special.attackTotal))) out.attackTotal = Number(special.attackTotal);
   if (special.riders && typeof special.riders === 'object') {
     const riders = {};
