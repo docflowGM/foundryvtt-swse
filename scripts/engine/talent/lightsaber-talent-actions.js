@@ -6,6 +6,8 @@ import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { accruedPenalty, withRecordedUse, withCreditedBackUse } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/reaction-rules.js";
+import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveReactionWeapon, selectedReactionModifiers, canonicalLightsaberGroupOf } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js";
 
 // seam for the two roll collaborators (a test injects its own; production uses the real roll dialog and skill roll)
@@ -349,6 +351,12 @@ export class LightsaberTalentActions {
   static async promptLightsaberDefense(actor) {
     if (!hasTalent(actor, 'Lightsaber Defense')) {
       ui?.notifications?.warn?.('Lightsaber Defense talent required.');
+      return null;
+    }
+    // the lightsaber must actually be drawn AND ignited (canonical group first; the legacy name test only for a weapon with no canonical identity)
+    const readySaber = weaponOptions(actor).some((w) => ['weapon', 'lightsaber'].includes(String(w?.type ?? '').toLowerCase()) && isLightsaberLike(w, String(w?.name ?? '')) && isItemEquipped(w, actor) && isItemActivated(w));
+    if (!readySaber) {
+      ui?.notifications?.warn?.('Lightsaber Defense requires a drawn and ignited lightsaber.');
       return null;
     }
     const bonus = this._lightsaberDefenseBonus(actor);

@@ -1,0 +1,143 @@
+/* ==========================================================================
+   SWSE V2 — Weapon Operations (presentation only)
+   Draw/Stow, activation, configuration, fire mode, reload, ammo, payload,
+   stock, brace, prepared state and resources. RULES DO NOT LIVE HERE:
+   runtime/view-model state chooses the classes; CSS only renders them.
+   ========================================================================== */
+
+.swse-sheet--concept {
+  --swse-weapon-control-bg: color-mix(in srgb, var(--swse-concept-panel-2, #16263c) 58%, transparent);
+  --swse-weapon-ready: #8dffbf;
+  --swse-weapon-activation: #78e8ff;
+  --swse-weapon-config: #d5a7ff;
+  --swse-weapon-mode: #8fb8ff;
+  --swse-weapon-ammo: #ffd980;
+  --swse-weapon-payload: #ffb97a;
+  --swse-weapon-prepared: #b7ffa1;
+  --swse-weapon-warning: #ff9b9b;
+  --swse-weapon-muted: #8294a6;
+}
+
+/* control rail */
+.swse-weapon-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.swse-weapon-operation-group { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.swse-weapon-operation-group + .swse-weapon-operation-group { padding-left: 7px; margin-left: 1px; border-left: 1px solid color-mix(in srgb, var(--swse-concept-line, #70e2ff) 45%, transparent); }
+
+/* base control */
+.swse-sheet--concept .swse-weapon-control {
+  --weapon-control-accent: var(--swse-accent, #70e2ff);
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 30px; padding: 6px 11px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--weapon-control-accent) 38%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--weapon-control-accent) 7%, var(--swse-weapon-control-bg)), var(--swse-weapon-control-bg));
+  color: var(--swse-concept-text, #f2fbff);
+  font-family: inherit; font-size: 10px; font-weight: 600; line-height: 1; letter-spacing: 0.09em; text-transform: uppercase; cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, color 120ms ease, opacity 120ms ease, transform 80ms ease;
+}
+.swse-sheet--concept .swse-weapon-control:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--weapon-control-accent) 78%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--weapon-control-accent) 16%, var(--swse-weapon-control-bg)), var(--swse-weapon-control-bg));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--weapon-control-accent) 16%, transparent);
+}
+.swse-sheet--concept .swse-weapon-control:active:not(:disabled) { transform: translateY(1px); }
+.swse-sheet--concept .swse-weapon-control:focus-visible { outline: 2px solid color-mix(in srgb, var(--weapon-control-accent) 82%, white 18%); outline-offset: 2px; }
+
+/* filled = "this currently describes the weapon state" (not "more powerful") */
+.swse-sheet--concept .swse-weapon-control.is-active,
+.swse-sheet--concept .swse-weapon-control.is-selected,
+.swse-sheet--concept .swse-weapon-control.is-ready {
+  border-color: color-mix(in srgb, var(--weapon-control-accent) 82%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--weapon-control-accent) 26%, rgba(10, 20, 31, 0.94)), color-mix(in srgb, var(--weapon-control-accent) 10%, rgba(6, 13, 22, 0.96)));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--weapon-control-accent) 14%, transparent), 0 0 14px color-mix(in srgb, var(--weapon-control-accent) 12%, transparent);
+}
+.swse-sheet--concept .swse-weapon-control:disabled,
+.swse-sheet--concept .swse-weapon-control.is-disabled { cursor: not-allowed; opacity: 0.38; filter: saturate(0.4); box-shadow: none; }
+.swse-sheet--concept .swse-weapon-control.is-required,
+.swse-sheet--concept .swse-weapon-control.is-warning { --weapon-control-accent: var(--swse-weapon-warning); }
+
+/* roles */
+.swse-sheet--concept .swse-weapon-control--attack { --weapon-control-accent: var(--swse-accent, #70e2ff); font-weight: 700; }
+.swse-sheet--concept .swse-weapon-control--readiness { --weapon-control-accent: var(--swse-weapon-ready); }
+.swse-sheet--concept .swse-weapon-control--readiness.is-inactive { --weapon-control-accent: var(--swse-weapon-muted); }
+.swse-sheet--concept .swse-weapon-control--activation { --weapon-control-accent: var(--swse-weapon-activation); }
+.swse-sheet--concept .swse-weapon-control--activation.is-active { text-shadow: 0 0 8px color-mix(in srgb, var(--swse-weapon-activation) 38%, transparent); }
+.swse-sheet--concept .swse-weapon-control--configuration,
+.swse-sheet--concept .swse-weapon-control--stock { --weapon-control-accent: var(--swse-weapon-config); }
+.swse-sheet--concept .swse-weapon-control--mode,
+.swse-sheet--concept .swse-weapon-control--brace { --weapon-control-accent: var(--swse-weapon-mode); }
+.swse-sheet--concept .swse-weapon-control--reload,
+.swse-sheet--concept .swse-weapon-control--ammo,
+.swse-sheet--concept .swse-weapon-control--resource { --weapon-control-accent: var(--swse-weapon-ammo); }
+.swse-sheet--concept .swse-weapon-control--payload { --weapon-control-accent: var(--swse-weapon-payload); }
+.swse-sheet--concept .swse-weapon-control--prepared { --weapon-control-accent: var(--swse-weapon-prepared); }
+.swse-sheet--concept .swse-weapon-control--utility { --weapon-control-accent: var(--swse-concept-text-dim); }
+.swse-sheet--concept .swse-weapon-control--warning { --weapon-control-accent: var(--swse-weapon-warning); }
+.swse-sheet--concept .swse-weapon-control--reload.is-required { animation: swse-weapon-reload-needed 1.8s ease-in-out infinite; }
+@keyframes swse-weapon-reload-needed {
+  0%, 100% { box-shadow: 0 0 4px color-mix(in srgb, var(--swse-weapon-ammo) 10%, transparent); }
+  50% { box-shadow: 0 0 14px color-mix(in srgb, var(--swse-weapon-ammo) 28%, transparent); }
+}
+
+/* state chips */
+.swse-weapon-state {
+  --weapon-state-accent: var(--swse-accent, #70e2ff);
+  display: inline-flex; align-items: center; gap: 5px; min-height: 22px; padding: 3px 8px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--weapon-state-accent) 34%, transparent);
+  background: color-mix(in srgb, var(--weapon-state-accent) 7%, rgba(5, 11, 18, 0.76));
+  color: color-mix(in srgb, var(--weapon-state-accent) 74%, white 26%);
+  font-size: 9px; font-weight: 600; line-height: 1; letter-spacing: 0.09em; text-transform: uppercase;
+}
+.swse-weapon-state::before { content: ""; display: inline-block; width: 5px; height: 5px; flex: 0 0 5px; border-radius: 50%; background: var(--weapon-state-accent); box-shadow: 0 0 6px color-mix(in srgb, var(--weapon-state-accent) 50%, transparent); }
+.swse-weapon-state--ready { --weapon-state-accent: var(--swse-weapon-ready); }
+.swse-weapon-state--stowed,
+.swse-weapon-state--inactive { --weapon-state-accent: var(--swse-weapon-muted); }
+.swse-weapon-state--active { --weapon-state-accent: var(--swse-weapon-activation); }
+.swse-weapon-state--mode { --weapon-state-accent: var(--swse-weapon-mode); }
+.swse-weapon-state--ammo { --weapon-state-accent: var(--swse-weapon-ammo); }
+.swse-weapon-state--payload { --weapon-state-accent: var(--swse-weapon-payload); }
+.swse-weapon-state--prepared { --weapon-state-accent: var(--swse-weapon-prepared); }
+.swse-weapon-state--warning { --weapon-state-accent: var(--swse-weapon-warning); }
+.swse-weapon-state-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 7px; }
+
+/* resource readouts */
+.swse-weapon-resource {
+  --weapon-resource-accent: var(--swse-weapon-ammo);
+  display: inline-flex; align-items: center; gap: 7px; min-height: 24px; padding: 3px 8px; border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--weapon-resource-accent) 24%, transparent);
+  background: rgba(5, 11, 18, 0.62); color: var(--swse-concept-text-dim); font-size: 10px;
+}
+.swse-weapon-resource__label { color: var(--swse-concept-text-faint); text-transform: uppercase; letter-spacing: 0.08em; }
+.swse-weapon-resource__value { color: var(--swse-concept-text); font-weight: 700; }
+.swse-weapon-resource.is-low { --weapon-resource-accent: var(--swse-weapon-ammo); }
+.swse-weapon-resource.is-empty { --weapon-resource-accent: var(--swse-weapon-warning); }
+
+/* compact variant (Combat tab) */
+.swse-weapon-controls--compact { gap: 4px; }
+.swse-sheet--concept .swse-weapon-controls--compact .swse-weapon-control,
+.swse-sheet--concept .swse-weapon-control.swse-weapon-controls--compact { min-height: 25px; padding: 4px 8px; font-size: 9px; letter-spacing: 0.07em; }
+.swse-weapon-controls--compact .swse-weapon-state { min-height: 19px; padding: 2px 6px; font-size: 8px; }
+
+/* dialog choices (configuration / fire mode / ammo / payload) */
+.swse-weapon-choice-list { display: flex; flex-direction: column; gap: 7px; }
+.swse-weapon-choice {
+  --weapon-choice-accent: var(--swse-weapon-config);
+  width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--weapon-choice-accent) 24%, transparent); background: rgba(6, 12, 20, 0.72); color: var(--swse-concept-text); text-align: left;
+}
+.swse-weapon-choice:hover { border-color: color-mix(in srgb, var(--weapon-choice-accent) 64%, transparent); background: color-mix(in srgb, var(--weapon-choice-accent) 8%, rgba(6, 12, 20, 0.82)); }
+.swse-weapon-choice.is-selected { border-color: color-mix(in srgb, var(--weapon-choice-accent) 78%, transparent); background: color-mix(in srgb, var(--weapon-choice-accent) 14%, rgba(6, 12, 20, 0.86)); }
+.swse-weapon-choice__name { font-weight: 600; }
+.swse-weapon-choice__cost, .swse-weapon-choice__meta { color: var(--swse-concept-text-faint); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; }
+.swse-weapon-choice--mode { --weapon-choice-accent: var(--swse-weapon-mode); }
+.swse-weapon-choice--ammo { --weapon-choice-accent: var(--swse-weapon-ammo); }
+.swse-weapon-choice--payload { --weapon-choice-accent: var(--swse-weapon-payload); }
+
+@media (max-width: 1080px) {
+  .swse-weapon-controls { gap: 5px; }
+  .swse-sheet--concept .swse-weapon-control { padding-inline: 9px; }
+  .swse-weapon-operation-group + .swse-weapon-operation-group { padding-left: 0; margin-left: 0; border-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .swse-sheet--concept .swse-weapon-control,
+  .swse-sheet--concept .swse-weapon-control--reload.is-required { transition: none; animation: none; }
+}

@@ -186,7 +186,7 @@ const reactor = ({ weapons = [], talents = TALENTS(), proficient = true, extra =
   a.getFlag = (ns, k) => store[`${ns}.${k}`]; a.setFlag = async (ns, k, v) => { store[`${ns}.${k}`] = v; return v; }; a.__flags = store;
   return a;
 };
-const ls = (key, extra = {}) => canon(key, { equipped: true, ...extra });
+const ls = (key, extra = {}) => canon(key, { equipped: true, activated: true, ...extra });
 const counter = (a) => a.__flags['swse.blockDeflectUseState'];
 const lastMod = () => rolled.at(-1).customModifier;
 const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflect(a); const redirect = (a) => LTA.promptRedirectShot(a);
@@ -479,7 +479,7 @@ const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflec
   // 64: identity-first talents: canonical talents under wrong names work; a canonical talent merely NAMED Block is not Block
   const wrong = reactor({ talents: [canonTalent('block', 'Zzz'), canonTalent('deflect', 'Yyy')] }); resetReaction(); assert.ok(await block(wrong)); assert.ok(await deflect(wrong));
   const imp = reactor({ talents: [canonTalent('deflect', 'Block')] }); resetReaction(); assert.equal(await block(imp), null); assert.ok(notes.warn.some((m) => /Block talent required/.test(m)));
-  const wf = canon('lightsaber-chassis-crossguard'); wf.name = 'Totally Not A Weapon'; const wr = reactor({ weapons: [wf], talents: [canonTalent('block', 'Q1')] }); resetReaction(); await block(wr); await block(wr); assert.equal(lastMod(), -2);
+  const wf = ls('lightsaber-chassis-crossguard'); wf.name = 'Totally Not A Weapon'; const wr = reactor({ weapons: [wf], talents: [canonTalent('block', 'Q1')] }); resetReaction(); await block(wr); await block(wr); assert.equal(lastMod(), -2);
   ok('canonical wrong-name talents and weapons work; a canonical Deflect talent named "Block" is not Block');
   // 65: manifest
   const m = manifestICC.buildManifest(); assert.deepEqual(m.problems, []); assert.equal(m.counters.I_C_C_UNCLASSIFIED, 0); assert.equal(fs.readFileSync(manifestICC.OUT_JSON, 'utf8'), `${JSON.stringify(m, null, 2)}\n`);
@@ -510,6 +510,26 @@ const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflec
   const eligOnly = RR.reactionDeclarationOf({ identityKey: 'y', operation: { mayUseBlockAsLightsaber: true }, abilityInteractions: [], selectors: { group: 'weapon-group:simple' } });
   assert.equal(RR.reactionEligibility(eligOnly, 'block').eligible, true); assert.deepEqual(RR.reactionModifiers(eligOnly, 'block'), { flat: 0, equipmentBonus: 0, increment: 5, notes: [] });
   ok('eligibility and modifiers are separate: a modifier never grants a reaction (Crossguard / Shoto numbers do not make a weapon Block-eligible) and eligibility never implies a number (Sith Sword / San-Ni inherit none)');
+}
+
+// ======================================================================================================================================
+// N. LIGHTSABER READINESS (drawn AND ignited) -- weapon-readiness UI pass                                              [points 71-73]
+// ======================================================================================================================================
+{
+  const states = { stowed: { equipped: false, activated: false }, inactive: { equipped: true, activated: false }, active: { equipped: true, activated: true } };
+  for (const [reaction, call] of [['block', block], ['deflect', deflect]]) {
+    const out = {};
+    for (const [label, sys] of Object.entries(states)) { const a = reactor({ weapons: [ls('weapon-lightsaber', sys)] }); resetReaction(); out[label] = await call(a); }
+    assert.equal(out.stowed, null); assert.equal(out.inactive, null); assert.equal(out.active.reactionWeapon, 'weapon-lightsaber');
+    ok(`${reaction}: a stowed lightsaber and a drawn-but-inactive lightsaber cannot be used; a drawn and active one can`);
+  }
+  // alternate source-backed reaction weapons keep their own declaration as authority (no lightsaber activation state required)
+  const alt = reactor({ weapons: [ls('weapon-sith-sword', { activated: undefined })] }); resetReaction(); assert.equal((await block(alt)).reactionWeapon, 'weapon-sith-sword');
+  const stowedAlt = reactor({ weapons: [ls('weapon-sith-sword', { equipped: false })] }); resetReaction(); assert.equal(await block(stowedAlt), null);
+  // Lightsaber Defense: requires a drawn and ignited lightsaber before any effect exists
+  const ld = async (sys) => { const a = reactor({ weapons: [ls('weapon-lightsaber', sys)], talents: [canonTalent('lightsaber-defense', 'Zz')] }); notes.warn.length = 0; try { await LTA.promptLightsaberDefense(a); } catch (_err) { /* effect creation needs the live document API */ } return notes.warn.some((m) => /requires a drawn and ignited lightsaber/.test(m)); };
+  assert.equal(await ld(states.stowed), true); assert.equal(await ld(states.inactive), true); assert.equal(await ld(states.active), false);
+  ok('alternate reaction weapons are not rejected for lacking lightsaber activation (but must be drawn); Lightsaber Defense refuses a stowed / inactive lightsaber and proceeds with a drawn, active one');
 }
 
 // small helpers used above
