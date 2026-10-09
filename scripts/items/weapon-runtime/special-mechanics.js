@@ -25,6 +25,8 @@ export const TIMING = Object.freeze({
   AFTER_DAMAGE: 'after-damage', AFTER_MITIGATION: 'after-mitigation', TURN_START: 'turn-start', TURN_END: 'turn-end', CONTINUOUS: 'continuous',
   // Phase 5D-I-C-A: outcome / persistent-effect timings (no ambiguous generic "after")
   AFTER_THRESHOLD: 'after-threshold', TIME_DELAY: 'time-delay', UNTIL_CURED: 'until-cured',
+  // Phase 5D-I-C-C: the defender's reaction roll (Block / Deflect) -- a different moment from this weapon's own attack
+  ON_REACTION: 'on-reaction',
 });
 
 /** family id -> default policy/timing/description. The census and the runtime share this single table. */
@@ -42,6 +44,10 @@ export const FAMILIES = Object.freeze({
   'attack-modifier-prompt':   { policy: POLICY.PROMPT,   timing: TIMING.ON_ATTACK,      note: 'conditional attack modifier whose condition is not observable; answered once and stored' },
   'ct-rider-prompt':          { policy: POLICY.PROMPT,   timing: TIMING.AFTER_DAMAGE,   note: 'condition-track rider whose trigger cannot be evaluated automatically; answered once and stored' },
   'multi-attack-interaction': { policy: POLICY.AUTO,     timing: TIMING.ON_ATTACK,      note: 'attack modifier that applies while Double/Triple Attack, Rapid Shot or Rapid Strike is in use (Phase 5D-F: consumed at attack time from the active multi-attack shape)' },
+  // Phase 5D-I-C-C: profile-level MIRRORS of the weapon's reaction / passive-defense numbers. The numeric authority is the operation field, resolved once by
+  // reaction-rules; these mechanics make the mirror classified (and census-verified to agree) instead of an anonymous deferral.
+  'reaction-modifier':        { policy: POLICY.AUTO,     timing: TIMING.ON_REACTION,    note: 'modifier to the wielder\'s Use the Force check made with Block / Deflect: consumed by the reaction roll through reaction-rules (operation field = numeric authority)' },
+  'passive-defense':          { policy: POLICY.AUTO,     timing: TIMING.CONTINUOUS,     note: 'contextual Reflex Defense penalty of the wielder against adjacent attackers while the persistent setting is in effect: consumed by the attack pipeline\'s target-side defense stage' },
   'defensive-interaction':    { policy: POLICY.DEFER,    timing: TIMING.CONTINUOUS,     note: 'modifies the wielder\'s defenses/Use the Force checks rather than this single attack' },
   // Phase 5D-I-C-B: weapon control is CONSUMED by the existing grapple state machine (GrappleStateEngine / SWSEGrappling) through the declarative control
   // contract (control-rules) and weapon-control-effects; each mechanic carries a `role` (initiate / restraint / tractor / entitled-maneuver are executable
@@ -53,7 +59,8 @@ export const FAMILIES = Object.freeze({
   'payload-effect':           { policy: POLICY.DEFER,    timing: TIMING.ON_HIT,         note: 'effect-only payload (flash/gas/toxin) without complete structure' },
   'prepared-attack':          { policy: POLICY.AUTO,     timing: TIMING.ON_ATTACK,      note: 'swift-action preparation / bracing: CONSUMED by the owned fire-state (FireStateStore.primePreparedAttack / previewReadiness, Phase 5D-G / 5D-I-A); classified AUTO so the census stops reporting a superseded deferral' },
   'activation-effect':        { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'activated empowerment (Force Point / swift action) with own cost' },
-  'return-recovery':          { policy: POLICY.DEFER,    timing: TIMING.ON_ATTACK,      note: 'return/recovery threshold with no structured effect or action' },
+  // Phase 5D-I-C-C: a weapon-NATIVE recovery rule (Darkstick: a thrown attack that exceeds Reflex by 5 or more returns to the wielder's hand). Not a feat, not a reaction.
+  'return-recovery':          { policy: POLICY.AUTO,     timing: TIMING.ON_HIT,         note: 'weapon-native return on an attack margin over the target defense (thrown form only): a recovery record applied through the rider stage; nothing is removed from the owned weapon' },
   'firing-constraint':        { policy: POLICY.VALIDATION_ONLY, timing: TIMING.ON_ATTACK, note: 'limits shots per round/reload; checked against the existing multi-attack/ammo rules (Phase 5D-F)' },
   'conditional-damage':       { policy: POLICY.AUTO,     timing: TIMING.ON_DAMAGE_ROLL, note: 'weapon-declared damage term that applies under a structural attack fact (point-blank range / adjacent target); composed once in the existing damage composition' },
   'attack-resolution':        { policy: POLICY.AUTO,     timing: TIMING.ON_ATTACK,      note: 'selected form defense (reflex/fortitude/will) -- already consumed through targetContext.defenseType' },
@@ -77,7 +84,7 @@ export const FAMILIES = Object.freeze({
  * A per-mechanic-id entry wins over the per-family one.
  */
 export const DEFER_OWNER_BY_FAMILY = Object.freeze({
-  'defensive-interaction': 'I-C-C', 'special-action': 'I-C-B', 'return-recovery': 'I-C-C', 'status-condition': 'I-D', 'activation-effect': 'I-D',
+  'defensive-interaction': 'I-C-C', 'special-action': 'I-C-B', 'status-condition': 'I-D', 'activation-effect': 'I-D',
 });
 export const DEFER_OWNER_BY_ID = Object.freeze({
   'lingering-gas-concealment': 'I-D',   // the cloud is canonical structure; visibility / Stealth consumption is the sensing subsystem
@@ -225,6 +232,10 @@ function classifyConditionalModifier(m, index) {
     const evaluable = c !== undefined && c !== null && policyFor(c).policy !== 'UNSUPPORTED';
     return mech('attack-modifier-prompt', id, { source: src, value: Number(m.value), question: condText || JSON.stringify(m.condition ?? null), ...(evaluable ? { evaluable: true, conditionValue: c } : {}), data: m });
   }
+  // Phase 5D-I-C-C: structured reaction / passive-defense targets of the canonical schema (enumerated target vocabulary, never prose)
+  const rx = /^useTheForceCheck\.(Block|Deflect)(\.cumulativePenaltyPerAdditionalCheck)?$/.exec(String(m.target ?? ''));
+  if (rx && Number.isFinite(Number(m.value))) return mech('reaction-modifier', id, { source: src, reaction: rx[1].toLowerCase(), value: Number(m.value), cumulative: !!rx[2], replacesDefault: Number.isFinite(Number(m.replacesDefault)) ? Number(m.replacesDefault) : null, data: m });
+  if (m.target === 'reflexDefense' && Number.isFinite(Number(m.value)) && /adjacent/.test(String(m.condition ?? ''))) return mech('passive-defense', id, { source: src, defense: 'reflex', value: Number(m.value), against: 'adjacent-attackers', data: m });
   return mech('defensive-interaction', id, { source: src, data: m });
 }
 
@@ -272,9 +283,10 @@ export function extractSpecialMechanics(def, { damageProfile = null, operation =
   if (osr?.comparePreHalvingStunDamageToCurrentHP && osr.onEqualOrExceed && Number.isFinite(osr.onEqualOrExceed.conditionTrackSteps)) {
     out.push(mech('ct-overwhelming-stun', 'overwhelming-stun', { steps: Math.abs(osr.onEqualOrExceed.conditionTrackSteps), source: 'operation.overwhelmingStunRule' }));
   }
-  if (Number.isFinite(operation?.returnOnAttackExceedsReflexBy)) {
-    out.push(mech('return-recovery', 'return-on-attack-exceeds-reflex', { threshold: operation.returnOnAttackExceedsReflexBy, source: 'operation.returnOnAttackExceedsReflexBy',
-      completeness: 'threshold is structured but the effect/action (return to hand) is not; recorded as a completeness issue, never invented' }));
+  // Phase 5D-I-C-C: weapon-native return, THROWN form only ("a darkstick can be thrown, and if the attack exceeds Reflex Defense by 5 or more it returns").
+  // The melee form of the same weapon never returns; the field is not a feat or a reaction and says nothing about Discblade / Returning Bug (their own rules).
+  if (Number.isFinite(operation?.returnOnAttackExceedsReflexBy) && def.range?.mode === 'ranged') {
+    out.push(mech('return-recovery', 'return-on-attack-exceeds-reflex', { threshold: operation.returnOnAttackExceedsReflexBy, defense: 'reflex', source: 'operation.returnOnAttackExceedsReflexBy' }));
   }
   // Phase 5D-I-A: weapon-level operation attack modifiers whose condition is a structural fire-state fact (fire mode / braced). Same
   // `attack-modifier-auto` family and attack-time evaluation as every other conditional attack modifier -- no second attack engine.
@@ -586,6 +598,11 @@ export function evaluateAttackOutcomeSpecials(mechanics, { hit, attackTotal = nu
       const declaration = m.declaration ?? null;
       records.push(withSource({ id: m.id, kind: 'weapon-control', role: m.role, steps: 0, fired: m.role === 'restraint' ? true : hitFired, requiresDamage: false, trigger: m.trigger ?? undefined,
         payload: { role: m.role, ...(m.maneuver ? { maneuver: m.maneuver } : {}), ...(declaration ? { declaration: JSON.parse(JSON.stringify(declaration)) } : {}), attackTotal } }));
+    } else if (m.family === 'return-recovery') {
+      // attack-time margin over the named defense: hit AND total - defense >= threshold (an unobserved total / defense is asked once at Apply)
+      const d = defenses?.[String(m.defense ?? 'reflex').toLowerCase()];
+      const fired = hit === false ? false : hit !== true ? null : (!Number.isFinite(attackTotal) || !Number.isFinite(d)) ? null : (attackTotal - d) >= m.threshold;
+      records.push(withSource({ id: m.id, kind: 'weapon-recovery', steps: 0, fired, requiresDamage: false, trigger: 'attack-exceeds-reflex-by-threshold', payload: { effect: 'returns-to-wielder-hand', threshold: m.threshold, defense: m.defense ?? 'reflex', ...(Number.isFinite(attackTotal) && Number.isFinite(d) ? { margin: attackTotal - d } : {}) } }));
     } else if (m.family === 'target-class-damage') {
       // Evaluated per target at Apply Damage: pre-halving damage that would reduce an electronic-class target to 0 HP -> -5 CT and disabled
       const z = m.rules?.electronic?.zeroHpPreHalving;

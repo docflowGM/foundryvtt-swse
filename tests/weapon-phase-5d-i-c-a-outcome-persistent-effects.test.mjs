@@ -694,7 +694,8 @@ try {
   assert.deepEqual(census.deferredWithoutOwner, []); assert.ok(census.mechanicsByPolicy.DEFER < 42);
   assert.equal(census.taxonomy['prepared-attack'].policy, 'AUTO');
   // Phase 5D-I-C-B consumed every I-C-B deferral: only the I-C-C and I-D owners remain
-  assert.deepEqual(Object.keys(census.deferredByOwner).sort(), ['I-C-C', 'I-D']);
+  // Phase 5D-I-C-C consumed the I-C-C owner's deferrals too: only the I-D owner remains
+  assert.ok(!Object.keys(census.deferredByOwner).includes('I-C-B')); assert.equal(census.deferredByOwner['I-D'], 3);
   // 78: the I-A / I-B manifests (earlier phase records) remain current and fully classified; the canonical-name heuristic count stays zero
   assert.equal(manifestIA.buildManifest().counters.I_A_UNCLASSIFIED_KEYS, 0); assert.equal(manifestIB.buildManifest().counters.I_B_UNCLASSIFIED_KEYS, 0);
   const closure = JSON.parse(fs.readFileSync('data/audits/weapon-phase-5d-h-closure-census.json', 'utf8'));

@@ -225,6 +225,11 @@ export async function applyCanonicalSpecialEffects({ special, target, attacker =
       });
       if (!out.applied) { skipped.push({ id: rec.id, reason: out.reason ?? 'not-applied' }); continue; }
       result = out.result;
+    } else if (rec.kind === 'weapon-recovery') {
+      // Phase 5D-I-C-C: weapon-native recovery (Darkstick). The result is recorded on the card; the owned weapon is neither consumed nor removed (there is no
+      // item-location model to move it), and one receipt per card + target makes the return fire once.
+      result = { returned: true, effect: rec.payload?.effect ?? 'returns-to-wielder-hand', margin: rec.payload?.margin ?? null, weaponId: weapon?.id ?? null };
+      try { await ChatMessage?.create?.({ content: `<section class="swse-chat-card swse-weapon-recovery-card"><strong>${String(weaponLabel).replace(/[<>&]/g, '')}</strong> returns to ${String(attacker?.name ?? 'the wielder').replace(/[<>&]/g, '')}'s hand.</section>`, speaker: ChatMessage.getSpeaker?.({ actor: attacker }) ?? {} }); } catch (_err) { /* the recovery result is still recorded */ }
     } else if (rec.kind === 'poison-delivery') {
       const { PoisonEngine } = await import('/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js');
       result = await PoisonEngine.applyWeaponPoisonFromAttack({ attacker, target, weapon, damage: damageDealt ?? 0, attackTotal: special?.attackTotal ?? null });

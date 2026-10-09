@@ -38,6 +38,7 @@ import { resolveWielding, resolveOpportunityEligibility, crewRegulationFor } fro
 import { evaluateProfileRequirements, forgoesDoubleStrength, slugOfIdentity } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/activation-requirements.js";
 import { abilityKeysOfActor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { passiveDefenseAdjustment, resolveDisarmProtection } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js";
 import { rangeGate, grabAttackPenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/control-rules.js";
 import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf, canonicalSizeName, resolveTargetRequirements, askSpecialQuestion, thresholdAdjustmentOf, targetRulesOf, isEffectOnlyForm } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
@@ -393,6 +394,39 @@ export function buildAttackConditionContext(actor, target, rollOptions = {}, ext
 }
 
 /**
+ * Phase 5D-I-C-C: the TARGET-side defense stage of an attack, resolved BEFORE any cost:
+ *   disarm  -- a held weapon that cannot be disarmed / dropped refuses the disarm attack categorically; a disarm-defense equipment bonus raises Reflex
+ *   passive -- a held weapon whose persistent setting imposes a Reflex penalty against ADJACENT attackers (Dual-Phase, extended blade)
+ * Never mutates the target. An unobserved adjacency is asked once; an unanswered fact applies nothing (never read as true).
+ * @returns {Promise<{refusal?:{reason:string,detail:string}, rollOptions:object}>}
+ */
+async function resolveTargetSideDefense(actor, weapon, rollOptions) {
+  const target = getTargetActorFromOptions(rollOptions);
+  if (!target) return { rollOptions };
+  let adjustment = 0;
+  const maneuver = String(rollOptions.maneuver ?? rollOptions.actionId ?? '').trim().toLowerCase();
+  if (maneuver === 'disarm') {
+    const ask = async (id, question) => askSpecialQuestion({ id, family: 'disarm-target', question });
+    const d = await resolveDisarmProtection(target, { itemId: rollOptions.disarmItemId ?? null, ask });
+    if (d.refused) return { refusal: { reason: 'disarm-refused', detail: String(d.reason).replace(/-/g, ' ') }, rollOptions };
+    adjustment += d.defenseBonus;
+    if (d.unresolved.length) ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'}: which item the disarm is aimed at was not stated; its protections were not applied (GM adjudication).`);
+  }
+  const defenseKey = normalizeDefenseKey(rollOptions.targetContext?.defenseType ?? 'reflex');
+  if (defenseKey === 'reflex') {
+    const adjacent = rollOptions.adjacent === true || rollOptions.distance === 'adjacent' ? true : (rollOptions.adjacent === false || (typeof rollOptions.distance === 'string' && rollOptions.distance)) ? false : null;
+    let passive = passiveDefenseAdjustment(target, { defenseType: 'reflex', attackerAdjacent: adjacent });
+    if (passive.applies === null) {
+      const ans = await askSpecialQuestion({ id: `passive-defense:adjacent:${target.id ?? ''}`, family: 'passive-defense', question: `Is ${actor?.name ?? 'the attacker'} adjacent to ${target.name ?? 'the target'}? (its extended blade imposes a Reflex Defense penalty against adjacent attackers)` });
+      if (ans === true || ans === false) passive = passiveDefenseAdjustment(target, { defenseType: 'reflex', attackerAdjacent: ans });
+      else ui?.notifications?.warn?.(`${target.name ?? 'Target'}: whether the attacker is adjacent was not stated; the contextual Reflex penalty was not applied.`);
+    }
+    adjustment += passive.adjustment;
+  }
+  return { rollOptions: adjustment ? { ...rollOptions, passiveDefenseAdjustment: adjustment } : rollOptions };
+}
+
+/**
  * Phase 5D-I-A: attack-stage special mechanics for a caller that composes its own attack (Autofire). Returns the situational
  * contributions the existing typed-modifier pipeline folds into computeFinalAttackComposition() -- the same objects rollAttack builds.
  */
@@ -523,7 +557,10 @@ export function resolveTargetContext(options = {}, fallbackTarget = null) {
   // is unaffected. Returned as `adjustment` so callers (see
   // roll.swseAttackContext.defenseAdjustment below) can report truthfully
   // what was actually applied, rather than a hardcoded 0.
-  const adjustment = Number(ctx?.defenseAdjustment ?? 0) || 0;
+  // Phase 5D-I-C-C: attack-contextual PASSIVE defense of the target's held weapon (Dual-Phase extended blade vs an adjacent attacker, a disarm-defense
+  // equipment bonus against a disarm attack). Reflex only, computed once per attack by resolveTargetSideDefense; the target's stored defense is never changed.
+  const passive = defenseType === 'reflex' ? (Number(options.passiveDefenseAdjustment ?? 0) || 0) : 0;
+  const adjustment = (Number(ctx?.defenseAdjustment ?? 0) || 0) + passive;
   const defenseValue = Number.isFinite(base) ? base + adjustment : base;
   return { target, targetName: target?.name ?? '', defenseType, defenseValue, mode: target ? 'token' : 'none', adjustment };
 }
@@ -606,6 +643,9 @@ export async function rollAttack(actor, weapon, options = {}) {
     return null;
   }
   rollOptions = canonical.rollOptions;
+  const targetSide = await resolveTargetSideDefense(actor, weapon, rollOptions);
+  if (targetSide.refusal) { ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'} cannot make this attack (${targetSide.refusal.detail}).`); return null; }
+  rollOptions = targetSide.rollOptions;
   const specialStage = await prepareCanonicalSpecialMechanics(weapon, rollOptions, actor);
   if (specialStage.refusal) {
     ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'} cannot make this attack (${String(specialStage.refusal.reason).replace(/-/g, ' ')}): ${specialStage.refusal.failed.map((c) => String(c).replace(/[-_]/g, ' ')).join('; ')}.`);

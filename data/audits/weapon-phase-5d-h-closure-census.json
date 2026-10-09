@@ -4,16 +4,16 @@
   "purpose": "Audit/verification artifact only: executable-field closure of the canonical weapon runtime. Every residual is named with a reason and an owner. Not a gameplay authority.",
   "counters": {
     "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
-    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 36,
-    "PARTIAL_EXECUTION_FIELD_FAMILIES": 13,
+    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 37,
+    "PARTIAL_EXECUTION_FIELD_FAMILIES": 12,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
-    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 12,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 88,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 115,
-    "EXECUTABLE_FORM_MECHANICS_DEFERRED": 10,
-    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 6,
+    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 11,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 75,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 95,
+    "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
+    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 4,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
     "EXECUTABLE_CONDITIONS_AUTO": 99,
     "EXECUTABLE_CONDITIONS_PROMPT": 11,
@@ -21,7 +21,7 @@
     "EXECUTABLE_CONDITIONS_UNCLASSIFIED": 0,
     "EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED": 0,
     "CANONICAL_NAME_TEXT_HEURISTIC_USAGE": 0,
-    "LEGACY_ONLY_NAME_TEXT_HEURISTIC_USAGE": 76,
+    "LEGACY_ONLY_NAME_TEXT_HEURISTIC_USAGE": 81,
     "AREA_FORMS_SOURCE_SILENT": 3,
     "AREA_FORMS_FIRE_MODE_DERIVED": 1,
     "AREA_FORMS_MISSING_CANONICAL_DATA": 0
@@ -30,8 +30,8 @@
     "counters": {
       "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
       "EXECUTION_FIELD_FAMILIES": 57,
-      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 36,
-      "EXECUTION_FIELD_FAMILIES_PARTIAL": 13,
+      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 37,
+      "EXECUTION_FIELD_FAMILIES_PARTIAL": 12,
       "EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER": 8
     },
     "familiesWithoutConsumer": [
@@ -54,7 +54,6 @@
       "3b.operation.configuration-and-wielding",
       "3b.operation.crew-and-emplacement",
       "3b.operation.damage-modifiers",
-      "3b.operation.defense-and-reaction-interactions",
       "3b.profile.conditional",
       "3b.profile.effects",
       "3b.triggered"
@@ -128,14 +127,13 @@
         "id": "3b.operation.ability-compatibility",
         "fieldPaths": 35,
         "status": "PARTIAL",
-        "consumedKeys": 5,
+        "consumedKeys": 6,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 1
         },
         "executableUnconsumed": [
           "darkSideEmpowerment",
-          "lightsaberTalentCompatibility",
           "redirectionCrystalCompatibility",
           "surveillanceTaggerCompatibility",
           "surveillanceTaggerCompatible",
@@ -308,25 +306,13 @@
       {
         "id": "3b.operation.defense-and-reaction-interactions",
         "fieldPaths": 17,
-        "status": "PARTIAL",
-        "consumedKeys": 4,
+        "status": "CONSUMED",
+        "consumedKeys": 13,
         "nonExecutable": {
+          "DESCRIPTIVE": 2,
           "DISPLAY": 1
         },
-        "executableUnconsumed": [
-          "BlockPenalty",
-          "adjacentReflexPenalty",
-          "blockDeflectUseTheForcePenalty",
-          "cannotBeDisarmed",
-          "cannotBeDropped",
-          "disarmDefense",
-          "disarmDefenseEquipmentBonus",
-          "forceImbuedLightsaberBlockEligible",
-          "mayUseBlockAsLightsaber",
-          "rapidStrikeAttackPenaltyWaived",
-          "returnToHand",
-          "standaloneDefenseBonus"
-        ],
+        "executableUnconsumed": [],
         "owner": "reaction/defense workflow (Block, Deflect rolls)"
       },
       {
@@ -683,6 +669,7 @@
           "allowedFeats",
           "disallowedFeats",
           "eligibleAsSecondWeaponForTwoWeaponFighting",
+          "lightsaberTalentCompatibility",
           "prohibitsMultiShotAbilities",
           "weaponFinesseCountsAsLight"
         ],
@@ -702,14 +689,13 @@
         },
         "executableUnconsumed": [
           "darkSideEmpowerment",
-          "lightsaberTalentCompatibility",
           "redirectionCrystalCompatibility",
           "surveillanceTaggerCompatibility",
           "surveillanceTaggerCompatible",
           "upgradeRestrictions"
         ],
         "owner": "grapple / Pin / Trip phase (allowedFeats/disallowedFeats) and ability-compatibility consumers",
-        "executableUnconsumedOccurrences": 6,
+        "executableUnconsumedOccurrences": 5,
         "representativeIdentities": [
           "weapon-darter",
           "weapon-sith-sword",
@@ -1118,43 +1104,40 @@
         "identities": 16,
         "consumed": [
           "BlockCumulativePenalty",
-          "DeflectPenalty",
-          "blockDeflectUseTheForceEquipmentBonus",
-          "evasion"
-        ],
-        "duplicates": {},
-        "nonExecutable": {
-          "DISPLAY": [
-            "flavorMentionsDeflectingMeleeAttacks"
-          ]
-        },
-        "executableUnconsumed": [
           "BlockPenalty",
+          "DeflectPenalty",
           "adjacentReflexPenalty",
+          "blockDeflectUseTheForceEquipmentBonus",
           "blockDeflectUseTheForcePenalty",
           "cannotBeDisarmed",
           "cannotBeDropped",
           "disarmDefense",
           "disarmDefenseEquipmentBonus",
+          "evasion",
           "forceImbuedLightsaberBlockEligible",
-          "mayUseBlockAsLightsaber",
-          "rapidStrikeAttackPenaltyWaived",
-          "returnToHand",
-          "standaloneDefenseBonus"
+          "mayUseBlockAsLightsaber"
         ],
-        "owner": "reaction/defense workflow (Block, Deflect rolls)",
-        "executableUnconsumedOccurrences": 19,
-        "representativeIdentities": [
-          "lightsaber-chassis-dual-phase",
-          "lightsaber-chassis-pike",
-          "unmapped::Combat Gloves",
-          "unmapped::Felucian Skullblade"
-        ],
-        "note": {
-          "reason": "Block/Deflect Use the Force modifiers and disarm defenses need the reaction roll to read the wielded weapon",
-          "phase": "5D-I: reaction / defense workflow"
+        "duplicates": {
+          "rapidStrikeAttackPenaltyWaived": "abilityInteractions[].relation = REMOVE_RAPID_STRIKE_ATTACK_PENALTY"
         },
-        "status": "PARTIAL"
+        "nonExecutable": {
+          "DISPLAY": [
+            "flavorMentionsDeflectingMeleeAttacks"
+          ],
+          "DESCRIPTIVE": [
+            "returnToHand",
+            "standaloneDefenseBonus"
+          ]
+        },
+        "executableUnconsumed": [],
+        "owner": "reaction/defense workflow (Block, Deflect rolls)",
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
+        "note": {
+          "reason": "5D-I-C-C consumed every executable key through the reaction-weapon context (eligibility, active modifiers, passive defense, disarm protection) and classified the attack-side / non-executable ones; none remains",
+          "phase": "5D-I-C-C (see the 5D-I-C-C manifest)"
+        },
+        "status": "CONSUMED"
       },
       "economics-and-variants": {
         "keys": 6,
@@ -1335,7 +1318,6 @@
     },
     "executableKeysUnconsumed": [
       "ability-compatibility.darkSideEmpowerment",
-      "ability-compatibility.lightsaberTalentCompatibility",
       "ability-compatibility.redirectionCrystalCompatibility",
       "ability-compatibility.surveillanceTaggerCompatibility",
       "ability-compatibility.surveillanceTaggerCompatible",
@@ -1406,25 +1388,13 @@
       "damage-modifiers.weaponDR",
       "damage-modifiers.weaponDRAppliesAgainstLightsabers",
       "damage-modifiers.weaponDRValue",
-      "defense-and-reaction-interactions.BlockPenalty",
-      "defense-and-reaction-interactions.adjacentReflexPenalty",
-      "defense-and-reaction-interactions.blockDeflectUseTheForcePenalty",
-      "defense-and-reaction-interactions.cannotBeDisarmed",
-      "defense-and-reaction-interactions.cannotBeDropped",
-      "defense-and-reaction-interactions.disarmDefense",
-      "defense-and-reaction-interactions.disarmDefenseEquipmentBonus",
-      "defense-and-reaction-interactions.forceImbuedLightsaberBlockEligible",
-      "defense-and-reaction-interactions.mayUseBlockAsLightsaber",
-      "defense-and-reaction-interactions.rapidStrikeAttackPenaltyWaived",
-      "defense-and-reaction-interactions.returnToHand",
-      "defense-and-reaction-interactions.standaloneDefenseBonus",
       "proficiency-routes.alternateProficiency",
       "proficiency-routes.wookieeAdvancedMeleeProficiencyCounts",
       "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 88,
-    "rawOccurrencesUnconsumed": 115,
+    "uniqueKeysUnconsumed": 75,
+    "rawOccurrencesUnconsumed": 95,
     "problems": []
   },
   "relations": {
@@ -1519,6 +1489,20 @@
         "consumer": "weapon-descriptor join of the ability's own rule scope; the ability has no canonical id so its display name is the legacy fallback; validated by the 5D-H census relation-consistency check"
       },
       {
+        "relation": "NEGATIVE_WEAPON_MODIFIER",
+        "instances": 3,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "reaction-rules#reactionDeclarationOf (relation = the SELECTOR naming the reaction) -> reaction-weapon-context#selectedReactionModifiers -> LightsaberTalentActions Block / Deflect roll; the numeric rule lives once in the operation field (BlockCumulativePenalty, BlockPenalty, DeflectPenalty, blockDeflectUseTheForcePenalty, blockDeflectUseTheForceEquipmentBonus)"
+      },
+      {
+        "relation": "POSITIVE_WEAPON_MODIFIER",
+        "instances": 3,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "reaction-rules#reactionDeclarationOf (relation = the SELECTOR naming the reaction) -> reaction-weapon-context#selectedReactionModifiers -> LightsaberTalentActions Block / Deflect roll; the numeric rule lives once in the operation field (BlockCumulativePenalty, BlockPenalty, DeflectPenalty, blockDeflectUseTheForcePenalty, blockDeflectUseTheForceEquipmentBonus)"
+      },
+      {
         "relation": "PROFICIENT_WIELDER_MAY_USE_AS_THOUGH_POSSESSING_FEAT_IN_WHIP_FORM",
         "instances": 2,
         "class": "EXECUTION",
@@ -1575,20 +1559,6 @@
         "policy": "AUTO",
         "reason": "Discblade Arc is a talent-granted full-round attack MODE; the relation id encodes the effect (no structured parameters) and the talent has no canonical identity",
         "owner": "talent canonical corpus (identity + structured Discblade Arc mode)"
-      },
-      {
-        "relation": "NEGATIVE_WEAPON_MODIFIER",
-        "instances": 3,
-        "policy": "AUTO",
-        "reason": "same as POSITIVE_WEAPON_MODIFIER (Block/Deflect Use the Force check penalty carried by the wielded lightsaber chassis)",
-        "owner": "reaction/defense workflow (Block, Deflect rolls)"
-      },
-      {
-        "relation": "POSITIVE_WEAPON_MODIFIER",
-        "instances": 3,
-        "policy": "AUTO",
-        "reason": "modifies the wielder's Block/Deflect Use the Force check; the value lives in operation.* keys (BlockCumulativePenalty, DeflectPenalty, blockDeflectUseTheForceEquipmentBonus, ...) and the consumer is the reaction roll, which does not yet read the wielded weapon",
-        "owner": "reaction/defense workflow (Block, Deflect rolls)"
       },
       {
         "relation": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
@@ -2710,10 +2680,10 @@
     ]
   },
   "heuristics": {
-    "totalSites": 195,
+    "totalSites": 208,
     "byClass": {
-      "DISPLAY": 105,
-      "IDENTITY_FALLBACK": 18,
+      "DISPLAY": 113,
+      "IDENTITY_FALLBACK": 23,
       "LEGACY_GATED": 58,
       "NON_COMBAT_DOMAIN": 5,
       "PROJECTION": 4,

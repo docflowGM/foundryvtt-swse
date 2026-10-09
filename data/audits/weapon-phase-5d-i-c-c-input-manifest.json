@@ -1,0 +1,523 @@
+{
+  "schemaVersion": 1,
+  "phase": "5D-I-C-C",
+  "purpose": "Input manifest of the reaction / defense / disarm / recovery convergence. Audit evidence only: no runtime module reads it; each row names the structured source field, trigger / timing, consumer and disposition.",
+  "counters": {
+    "I_C_C_INPUT_OPERATION_KEYS": 19,
+    "I_C_C_INPUT_SPECIAL_MECHANICS": 6,
+    "I_C_C_INPUT_RELATIONS": 2,
+    "I_C_C_INPUT_ABILITY_COMPATIBILITY": 2,
+    "I_C_C_INPUT_TOTAL": 29,
+    "I_C_C_IMPLEMENTED": 23,
+    "I_C_C_DUPLICATES": 1,
+    "I_C_C_NON_EXECUTABLE": 2,
+    "I_C_C_DATA_DEFECT": 0,
+    "I_C_C_DATA_COMPLETENESS": 1,
+    "I_C_C_BLOCKED": 0,
+    "I_C_C_DEFERRED_I_D": 2,
+    "I_C_C_UNCLASSIFIED": 0
+  },
+  "globalCounters": {
+    "before": {
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 88,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 115,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 12,
+      "EXECUTABLE_FORM_MECHANICS_DEFERRED": 10,
+      "SPECIAL_DEFER_I_C_C": 7,
+      "SPECIAL_DEFER_I_D": 3,
+      "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 6,
+      "DEFENSE_REACTION_UNCONSUMED_KEYS": 12,
+      "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 36,
+      "PARTIAL_EXECUTION_FIELD_FAMILIES": 13,
+      "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8
+    },
+    "after": {
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 75,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 95,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 11,
+      "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
+      "SPECIAL_DEFER_I_C_C": 0,
+      "SPECIAL_DEFER_I_D": 3,
+      "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 4,
+      "DEFENSE_REACTION_UNCONSUMED_KEYS": 0,
+      "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 37,
+      "PARTIAL_EXECUTION_FIELD_FAMILIES": 12,
+      "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8
+    }
+  },
+  "familyStatus": {
+    "defense-and-reaction-interactions": "CONSUMED"
+  },
+  "specialMechanicDeferredByOwner": {
+    "I-D": 3
+  },
+  "stillDeferredRelations": [
+    "FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE",
+    "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
+    "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
+    "USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION"
+  ],
+  "byMechanicFamily": {
+    "active-reaction-modifier": 5,
+    "adjacent-reflex-penalty": 1,
+    "area-evasion": 1,
+    "attack-side-waiver": 1,
+    "block-penalty": 1,
+    "cumulative-block-increment": 1,
+    "deflect-penalty": 2,
+    "disarm-defense": 2,
+    "disarm-protection": 2,
+    "external-recall-technique": 1,
+    "null-defense-bonus": 1,
+    "passive-defense": 1,
+    "reaction-eligibility": 5,
+    "reaction-selector": 2,
+    "return-not-base-quality": 1,
+    "weapon-native-return": 2
+  },
+  "rows": [
+    {
+      "kind": "ability-compatibility",
+      "key": "lightsaberTalentCompatibility",
+      "family": "3b.operation.ability-compatibility",
+      "mechanicFamily": "reaction-eligibility",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sith-sword"
+      ],
+      "structuredSourceField": "operation.lightsaberTalentCompatibility",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (lightsaberTalentCompatibility)",
+      "reason": "Sith Sword (Threats of the Galaxy): a proficient wielder can treat it as a lightsaber for Block, Deflect and Redirect Shot. Reaction ELIGIBILITY only (requires canonical proficiency): the weapon stays a Sith Sword, gains no lightsaber group / proficiency / Item, and inherits no modifier."
+    },
+    {
+      "kind": "ability-compatibility",
+      "key": "lightsaberTalentCompatibility.dependentTalents",
+      "family": "3b.operation.ability-compatibility",
+      "mechanicFamily": "reaction-eligibility",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 0,
+      "rawOccurrences": 0,
+      "representativeWeapons": [],
+      "structuredSourceField": "operation.lightsaberTalentCompatibility.dependentTalents",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "virtual": true,
+      "reason": "\"...and talents that use those abilities as prerequisites\": the corpus carries no structured list of those dependent talents (talent canonical corpus). Recorded as an unstructured part of the declaration; no talent is guessed."
+    },
+    {
+      "kind": "operation-key",
+      "key": "adjacentReflexPenalty",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "passive-defense",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "dual-phase"
+      ],
+      "structuredSourceField": "operation.adjacentReflexPenalty",
+      "currentConsumer": "scripts/engine/combat/reactions/reaction-weapon-context.js (adjacentReflexPenalty)",
+      "reason": "Dual-Phase (JATM): while the extended blade setting is in effect the wielder takes -2 Reflex Defense against attacks from ADJACENT targets. PASSIVE and attack-contextual: applied in the attack's target-side defense stage, never written to the actor."
+    },
+    {
+      "kind": "operation-key",
+      "key": "BlockCumulativePenalty",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "active-reaction-modifier",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "crossguard"
+      ],
+      "structuredSourceField": "operation.BlockCumulativePenalty",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (BlockCumulativePenalty)",
+      "reason": "Crossguard (JATM): each successive Block check takes a cumulative -2 instead of the normal -5. Changes only the INCREMENT its own weapon contributes to the existing Block / Deflect counter; the counter's owner is unchanged and earlier uses are never re-priced."
+    },
+    {
+      "kind": "operation-key",
+      "key": "blockDeflectUseTheForceEquipmentBonus",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "active-reaction-modifier",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "guard-shoto"
+      ],
+      "structuredSourceField": "operation.blockDeflectUseTheForceEquipmentBonus",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (blockDeflectUseTheForceEquipmentBonus)",
+      "reason": "Guard Shoto: +2 EQUIPMENT bonus on Use the Force checks made with Block or Deflect, for a proficient wielder; only the excess over the equipment bonus already applying counts (equipment bonuses do not stack)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "blockDeflectUseTheForcePenalty",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "active-reaction-modifier",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "pike"
+      ],
+      "structuredSourceField": "operation.blockDeflectUseTheForcePenalty",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (blockDeflectUseTheForcePenalty)",
+      "reason": "Pike: the COMBINED statement of the same -2 (Block or Deflect). The per-reaction key wins when present; the two are never added (documented anti-double-count rule)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "BlockPenalty",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "active-reaction-modifier",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "pike"
+      ],
+      "structuredSourceField": "operation.BlockPenalty",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (BlockPenalty)",
+      "reason": "Lightsaber Pike (JATM): -2 on Use the Force checks made with Block (flat, every check). Resolved by the reaction modifier consumer for the selected reaction weapon only; the combined key below is the same penalty, never added."
+    },
+    {
+      "kind": "operation-key",
+      "key": "cannotBeDisarmed",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "disarm-protection",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 4,
+      "rawOccurrences": 4,
+      "representativeWeapons": [
+        "Combat Gloves",
+        "Shockboxing Gloves",
+        "Stunning Gauntlet",
+        "Vibroknucklers"
+      ],
+      "structuredSourceField": "operation.cannotBeDisarmed",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (cannotBeDisarmed)",
+      "reason": "Combat Gloves, Shockboxing Gloves, Stunning Gauntlet, Vibroknucklers: categorically immune to Disarm -- the disarm attack is refused before any roll or cost."
+    },
+    {
+      "kind": "operation-key",
+      "key": "cannotBeDropped",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "disarm-protection",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 4,
+      "rawOccurrences": 4,
+      "representativeWeapons": [
+        "Combat Gloves",
+        "Shockboxing Gloves",
+        "Stunning Gauntlet",
+        "Vibroknucklers"
+      ],
+      "structuredSourceField": "operation.cannotBeDropped",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (cannotBeDropped)",
+      "reason": "Same carriers: the combat-forced drop (Disarm) is refused. Voluntary dropping / unequipping is an inventory concern and is deliberately untouched."
+    },
+    {
+      "kind": "operation-key",
+      "key": "DeflectPenalty",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "active-reaction-modifier",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "crossguard",
+        "pike"
+      ],
+      "structuredSourceField": "operation.DeflectPenalty",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (DeflectPenalty)",
+      "reason": "Pike -2 / Crossguard -2 on Use the Force checks made with Deflect (flat). Consumed through the same modifier resolver (previously only named in a deferral note)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "disarmDefense",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "disarm-defense",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "dlt-20a-longblaster"
+      ],
+      "structuredSourceField": "operation.disarmDefense",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (disarmDefense)",
+      "reason": "DLT-20A Long Blaster: the defense a disarm attack is made against is Reflex Defense (CWCG)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "disarmDefenseEquipmentBonus",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "disarm-defense",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "dlt-20a-longblaster"
+      ],
+      "structuredSourceField": "operation.disarmDefenseEquipmentBonus",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (disarmDefenseEquipmentBonus)",
+      "reason": "DLT-20A: +1 EQUIPMENT bonus to Reflex Defense when the wielder is the target of a disarm attack (adds only the excess over an equipment bonus already applying)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "evasion",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "area-evasion",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "emp-grenade"
+      ],
+      "structuredSourceField": "operation.evasion",
+      "currentConsumer": "scripts/engine/combat/damage-packet-rules.js (evasion)",
+      "reason": "EMP Grenade: \"half damage on a hit, none on a miss\" is the existing area Evasion rule already executed by the damage-packet rules (Phase 5D-I-C-A target-class damage); classified here because the key sits in this family by name only."
+    },
+    {
+      "kind": "operation-key",
+      "key": "forceImbuedLightsaberBlockEligible",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "reaction-eligibility",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Felucian Skullblade"
+      ],
+      "structuredSourceField": "operation.forceImbuedLightsaberBlockEligible",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (forceImbuedLightsaberBlockEligible)",
+      "dataNote": "DATA_COMPLETENESS: no representation of a Force-imbued weapon state exists",
+      "reason": "Felucian Skullblade: \"when imbued with Force energy it can block lightsaber strikes\". Block eligibility only while imbued; the runtime has no Force-imbued weapon state, so the fact is a stored PROMPT per reaction and an unanswered fact is never read as false-by-default or true."
+    },
+    {
+      "kind": "operation-key",
+      "key": "forceImbuedWeaponState",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "reaction-eligibility",
+      "disposition": "DATA_COMPLETENESS",
+      "identityCount": 0,
+      "rawOccurrences": 0,
+      "representativeWeapons": [],
+      "structuredSourceField": "operation.forceImbuedWeaponState",
+      "currentConsumer": null,
+      "owner": "final-certification",
+      "virtual": true,
+      "reason": "The runtime (and the canonical schema) has no representation of a Force-imbued weapon state. Skullblade Block eligibility therefore asks the fact once per reaction (stored PROMPT); no default is assumed (a Force-sensitive wielder is never read as imbued). A persistent imbued state needs a source-backed model."
+    },
+    {
+      "kind": "operation-key",
+      "key": "mayUseBlockAsLightsaber",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "reaction-eligibility",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "San-Ni Staff"
+      ],
+      "structuredSourceField": "operation.mayUseBlockAsLightsaber",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (mayUseBlockAsLightsaber)",
+      "reason": "San-Ni Staff (JATM): can be used with Block as though it were a lightsaber. Block eligibility only: it is not a lightsaber for any other mechanic and does not gain Deflect / Redirect Shot."
+    },
+    {
+      "kind": "operation-key",
+      "key": "rapidStrikeAttackPenaltyWaived",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "attack-side-waiver",
+      "disposition": "DUPLICATE",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Shyarn",
+        "Zhaboka"
+      ],
+      "structuredSourceField": "abilityInteractions[].relation = REMOVE_RAPID_STRIKE_ATTACK_PENALTY",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (remove-rapid-strike-penalty)",
+      "reason": "Shyarn / Zhaboka (KotOR CG): no attack penalty when using Rapid Strike. ATTACK-SIDE, trapped in this family by name only: the structured carrier is the weapon's REMOVE_RAPID_STRIKE_ATTACK_PENALTY ability interaction, already consumed by the attack-stage multi-attack consumer (no Rapid Strike math in the reaction engine)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "returnOnAttackExceedsReflexBy",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mechanicFamily": "weapon-native-return",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Darkstick"
+      ],
+      "structuredSourceField": "operation.returnOnAttackExceedsReflexBy",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (returnOnAttackExceedsReflexBy)",
+      "reason": "Darkstick (Galaxy at War): a THROWN attack that exceeds Reflex Defense by 5 or more returns to the wielder's hand. Weapon-native: no feat, no reaction. Executed as a recovery record at Apply; the owned weapon is neither removed nor consumed (no item-location model)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "returnToHand",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "return-not-base-quality",
+      "disposition": "NON_EXECUTABLE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "discblade"
+      ],
+      "structuredSourceField": "operation.returnToHand",
+      "currentConsumer": null,
+      "nonExecutableClass": "DESCRIPTIVE",
+      "reason": "Discblade: the value states \"external-Zeison-Sha-Force-technique-not-base-quality\" -- a certified NEGATIVE statement that return is not a property of the weapon (a trained Zeison Sha uses the Force; Recall Discblade is talent-corpus work). It must not become unconditional Discblade return, so it is not executable; the Darkstick return is a different, weapon-native rule."
+    },
+    {
+      "kind": "operation-key",
+      "key": "returnToHand.recallDiscblade",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "external-recall-technique",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 0,
+      "rawOccurrences": 0,
+      "representativeWeapons": [],
+      "structuredSourceField": "operation.returnToHand.recallDiscblade",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "virtual": true,
+      "reason": "Recall Discblade / Distant Discblade Throw / Discblade Arc are Zeison Sha talent mechanics with no canonical talent identities (the four remaining talent-corpus relations stay deferred). Returning Bug is a separate FEAT for razor / thud bugs and is not inferred from any weapon flag."
+    },
+    {
+      "kind": "operation-key",
+      "key": "standaloneDefenseBonus",
+      "family": "3b.operation.defense-and-reaction-interactions",
+      "mechanicFamily": "null-defense-bonus",
+      "disposition": "NON_EXECUTABLE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Short Sword"
+      ],
+      "structuredSourceField": "operation.standaloneDefenseBonus",
+      "currentConsumer": null,
+      "nonExecutableClass": "DESCRIPTIVE",
+      "reason": "Short Sword: value null -- \"useful for deflecting melee attacks but grants no standalone numerical defense bonus\". No mechanical value exists to execute; none is invented."
+    },
+    {
+      "kind": "relation",
+      "key": "NEGATIVE_WEAPON_MODIFIER",
+      "family": "ability-relation",
+      "mechanicFamily": "reaction-selector",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 0,
+      "rawOccurrences": 3,
+      "representativeWeapons": [],
+      "structuredSourceField": "abilityInteractions[].relation = NEGATIVE_WEAPON_MODIFIER",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (NEGATIVE_WEAPON_MODIFIER)",
+      "reason": "3 instances (Crossguard Deflect, Pike Block and Deflect): same selector role as the positive relation."
+    },
+    {
+      "kind": "relation",
+      "key": "POSITIVE_WEAPON_MODIFIER",
+      "family": "ability-relation",
+      "mechanicFamily": "reaction-selector",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 0,
+      "rawOccurrences": 3,
+      "representativeWeapons": [],
+      "structuredSourceField": "abilityInteractions[].relation = POSITIVE_WEAPON_MODIFIER",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (POSITIVE_WEAPON_MODIFIER)",
+      "reason": "3 instances (Crossguard Block, Guard Shoto Block and Deflect): the SELECTOR naming which reaction an operation number belongs to. The numeric rule is executed once from the operation field; the relation never executes a second copy."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "lightsaber-chassis-crossguard::conditional-0",
+      "family": "special-mechanic",
+      "mechanicFamily": "cumulative-block-increment",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "crossguard"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers | operation",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (cumulativeIncrement)",
+      "reason": "Crossguard profile mirror of BlockCumulativePenalty (successive Block checks -2 instead of -5): classified and verified equal to the operation field; the operation field is the one executed."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "lightsaber-chassis-crossguard::conditional-1",
+      "family": "special-mechanic",
+      "mechanicFamily": "deflect-penalty",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "crossguard"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers | operation",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (DeflectPenalty)",
+      "reason": "Crossguard profile mirror of DeflectPenalty (all Deflect checks -2): verified equal to the operation field."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "lightsaber-chassis-dual-phase::conditional-0",
+      "family": "special-mechanic",
+      "mechanicFamily": "adjacent-reflex-penalty",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "dual-phase"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers | operation",
+      "currentConsumer": "scripts/engine/combat/reactions/reaction-weapon-context.js (passiveDefenseAdjustment)",
+      "reason": "Dual-Phase extended-profile mirror of the adjacent-attacker Reflex penalty: verified equal to the operation field and the certified mode profile."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "lightsaber-chassis-pike::conditional-0",
+      "family": "special-mechanic",
+      "mechanicFamily": "block-penalty",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "pike"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers | operation",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (BlockPenalty)",
+      "reason": "Pike profile mirror of BlockPenalty (all Block checks -2, flat): verified equal."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "lightsaber-chassis-pike::conditional-1",
+      "family": "special-mechanic",
+      "mechanicFamily": "deflect-penalty",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "pike"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers | operation",
+      "currentConsumer": "scripts/items/weapon-runtime/reaction-rules.js (DeflectPenalty)",
+      "reason": "Pike profile mirror of DeflectPenalty (all Deflect checks -2, flat): verified equal."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Darkstick::return-on-attack-exceeds-reflex",
+      "family": "special-mechanic",
+      "mechanicFamily": "weapon-native-return",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Darkstick"
+      ],
+      "structuredSourceField": "attackProfiles[].conditionalModifiers | operation",
+      "currentConsumer": "scripts/engine/combat/canonical-special-effects.js (weapon-recovery)",
+      "reason": "Darkstick thrown form: return when the attack exceeds Reflex Defense by 5 or more (exactly +5 qualifies; the melee form never returns)."
+    }
+  ],
+  "problems": []
+}

@@ -379,9 +379,11 @@ const fam = (mechs, f) => mechs.filter((m) => m.family === f);
     assert.ok(thrown, `${k}: thrown form offered`); assert.equal(thrown.branch, 'ranged');
   }
   const dark = mechOf(canon('unmapped::Darkstick'), form('unmapped::Darkstick', { profileId: 'thrown' }));
-  assert.deepEqual(fam(dark, 'return-recovery').map((m) => m.policy), ['DEFER'], 'Darkstick return: threshold structured, effect not -> DEFER, never invented');
-  assert.ok(fam(dark, 'return-recovery')[0].completeness.length > 0);
-  ok('corrected Darkstick / Static Pike thrown forms stay available and ranged; Darkstick return recorded as a completeness issue');
+  // Phase 5D-I-C-C: the return is the weapon-native "thrown attack exceeding Reflex by 5 or more returns to the hand" rule -- an AUTO recovery mechanic of the
+  // THROWN form only (the melee form carries none); the effect is the stated one, nothing is invented
+  assert.deepEqual(fam(dark, 'return-recovery').map((m) => [m.policy, m.threshold]), [['AUTO', 5]], 'Darkstick thrown return: AUTO weapon-native recovery');
+  assert.deepEqual(fam(mechOf(canon('unmapped::Darkstick'), form('unmapped::Darkstick', { profileId: 'melee' })), 'return-recovery'), []);
+  ok('corrected Darkstick / Static Pike thrown forms stay available and ranged; the Darkstick return is an AUTO thrown-form recovery (Phase 5D-I-C-C)');
 }
 
 // ---- census: deterministic, current, complete ------------------------------------------------------------------------------------------

@@ -21,6 +21,9 @@ const any = /./;
 export const HEURISTIC_RULES = [
   [any, /notifications|flavor:|title:|label:|label \|\||sourceName|narration|<h3>|<div|\bsource: (weapon|item)\?\.name|speaker|weaponName:|\.description\)|breakdown\.push|ActionChat|question:|swseLogger|console\.|`[^`]*\$\{[^}]*name[^}]*\}[^`]*`|name: weapon\.name|id: `\$\{|source: item\.name|return weapon\?\.id|weapon\?\.name \?\? ''|weapon\?\.name \?\? null|\.description \|\| item\.name/, 'DISPLAY', 'message/label/log text'],
   [/weapon-runtime\/attack-consumer\.js$/, /refusing to treat/, 'DISPLAY', 'error message text'],
+  // Phase 5D-I-C-C: the live Block / Deflect / Redirect Shot executor resolves talents and lightsaber weapons by canonical identity / structured group FIRST
+  // (canonicalFeatSlug, selectors.group); the display-name match survives only for an ability / weapon that carries no canonical identity
+  [/talent\/lightsaber-talent-actions\.js$/, /normalizedTalentName\(item\?\.name\)|String\(item\?\.name \?\? ''\)\.trim\(\)\.toLowerCase\(\)|isLightsaberLike|\/lightsaber\/i\.test/, 'IDENTITY_FALLBACK', 'ability / weapon display-name match used only when the item carries no canonical identity (canonical identity or structured group decides first)'],
   // Phase 5D-I-C-B: the existing grapple adapter now resolves feats / talents by canonical identity FIRST (abilityKeysOfActor / canonicalFeatSlug); the name
   // match survives only as the legacy fallback for an ability that carries no canonical identity (ordinary-grapple talents such as Grapple Resistance included)
   [/combat\/systems\/grappling-system\.js$/, /sourceId: item\.id \?\? item\.name/, 'DISPLAY', 'modifier source label fallback (not a decision)'],
@@ -69,6 +72,7 @@ import { I_A_LEDGER } from './weapon-phase-5d-i-a-ledger.mjs';
 import { I_B_LEDGER } from './weapon-phase-5d-i-b-ledger.mjs';
 import { I_C_A_ROWS } from './weapon-phase-5d-i-c-a-ledger.mjs';
 import { I_C_B_ROWS } from './weapon-phase-5d-i-c-b-ledger.mjs';
+import { I_C_C_ROWS } from './weapon-phase-5d-i-c-c-ledger.mjs';
 
 const W = 'scripts/items/weapon-runtime/';
 export const FIELD_CONSUMERS = {
@@ -138,6 +142,8 @@ export const OPERATION_OWNERS = {
 // operation keys that are NOT executable (the family classification above is by topic; these keys are store/display/provenance facts)
 export const OPERATION_NON_EXECUTABLE = [
   [/(Credits|Cost|Availability|Pricing|gearTemplate|constructionDC|namedCharacterVariant|optionalCommercialVariants|variantPricing|commonAccessoriesNotIncludedInListedCost)$/i, 'STORE'],
+  // Phase 5D-I-C-C: keys whose certified VALUE states no mechanical effect (null / an explicit "not a base quality"), proven by tools/census-weapon-phase-5d-i-c-c-inputs.mjs
+  ...I_C_C_ROWS.filter((r) => r.kind === 'operation-key' && r.disposition === 'NON_EXECUTABLE').map((r) => [new RegExp(`^${r.key}$`), r.nonExecutableClass]),
   [/^(sourceInternalNote|flavorMentionsDeflectingMeleeAttacks|twoHandedStrengthRuleExplicitlyHighlighted|ordinaryCommercialAvailability|shellsStatisticallyIdenticalToGrenades|laterVersionConcealment)$/, 'DISPLAY'],
 ];
 
@@ -169,6 +175,8 @@ export const OPERATION_DUPLICATES = [
   ...I_C_A_ROWS.filter((r) => r.kind === 'operation-key' && r.disposition === 'DUPLICATE').map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
   // Phase 5D-I-C-B: duplicates proven against the registry by tools/census-weapon-phase-5d-i-c-b-inputs.mjs (single source: the I-C-B ledger)
   ...I_C_B_ROWS.filter((r) => r.kind === 'operation-key' && r.disposition === 'DUPLICATE').map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
+  // Phase 5D-I-C-C: duplicates proven against the registry by tools/census-weapon-phase-5d-i-c-c-inputs.mjs (single source: the I-C-C ledger)
+  ...I_C_C_ROWS.filter((r) => r.kind === 'operation-key' && r.disposition === 'DUPLICATE').map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
 ];
 
 // manifest classification overrides (named, justified): scope vocabulary the deterministic rule cannot judge on its own
@@ -194,7 +202,7 @@ export const OPERATION_FAMILY_NOTES = {
   'configuration-and-wielding': { reason: 'assembly/switch actions, two-hand rules and size gates need a wielding and configuration state model', phase: '5D-I: wielding constraints' },
   'crew-and-emplacement': { reason: 'crew roles/tripod rules belong to the heavy-weapon crew model', phase: '5D-I: crew / emplacement' },
   'damage-modifiers': { reason: '5D-I-A consumed the composition-stage terms (point-blank bonus, adjacent die, bow/sling Strength); the remainder are threshold, wielding, hurled-object and weapon-object durability', phase: '5D-I-B/C/D by owner (see the 5D-I-A manifest)' },
-  'defense-and-reaction-interactions': { reason: 'Block/Deflect Use the Force modifiers and disarm defenses need the reaction roll to read the wielded weapon', phase: '5D-I: reaction / defense workflow' },
+  'defense-and-reaction-interactions': { reason: '5D-I-C-C consumed every executable key through the reaction-weapon context (eligibility, active modifiers, passive defense, disarm protection) and classified the attack-side / non-executable ones; none remains', phase: '5D-I-C-C (see the 5D-I-C-C manifest)' },
   'grab-grapple-restrain': { reason: '5D-I-C-B consumed every key through the declarative control contract (control-rules) executed by the existing grapple state machine; none remains', phase: '5D-I-C-B (see the 5D-I-C-B manifest)' },
   'proficiency-routes': { reason: 'species/ability proficiency routes are consumed through selectors.speciesOverrides/abilityOverrides; these operation echoes have no separate consumer', phase: '5D-I: confirm duplicates, retire echoes' },
   'reach-and-threat': { reason: 'reach and threatened squares need a threat/reach model', phase: '5D-I: special movement / reach' },
