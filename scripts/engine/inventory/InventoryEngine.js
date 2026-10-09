@@ -12,6 +12,10 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
+import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
+import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
 const NON_STACKABLE_TYPES = ["weapon", "armor", "shield", "lightsaber"];
@@ -22,6 +26,22 @@ function isTruthyState(value) {
     return isTruthyState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
   }
   return ["true", "1", "yes", "equipped", "worn", "held", "readied", "ready", "on", "active"].includes(String(value || "").toLowerCase());
+}
+
+async function spendItemAction(actor, actionType, item, reason) {
+  const result = await ActionEconomyConsumption.spend(actor, actionType, { source: "inventory-item-state", actionName: `${item?.name ?? "Item"}: ${reason}`, itemId: item?.id ?? null }, { notify: true });
+  if (result?.allowed === false || result?.permitted === false) return { ok: false, result, rollback: async () => {} };
+  return { ok: true, result, rollback: result?.rollback ?? (async () => {}) };
+}
+
+const isWeaponItem = (item) => ["weapon", "lightsaber"].includes(String(item?.type ?? "").toLowerCase());
+
+function equipMirrors(item, update, next) {
+  update["system.equipped"] = next;
+  if (item.system?.isEquipped !== undefined) update["system.isEquipped"] = next;
+  if (item.system?.equippable && typeof item.system.equippable === "object") update["system.equippable.equipped"] = next;
+  if (item.flags?.swse?.equipped !== undefined) update["flags.swse.equipped"] = next;
+  return update;
 }
 
 function isEnergyShield(item) {
@@ -106,19 +126,28 @@ export class InventoryEngine {
    * mutation. Lightsaber token light remains a visual consumer of item state,
    * not a sheet-side effect.
    */
-  static async toggleActivated(actor, itemId) {
+  static async toggleActivated(actor, itemId, options = {}) {
     const item = actor?.items?.get?.(itemId);
-    if (!actor || !item) return;
+    if (!item) return { ok: false, reason: "missing-item" };
+    return this.setActivated(actor, itemId, !isItemActivated(item), options);
+  }
 
-    const current = item.system?.activated === true || item.system?.active === true;
-    const next = !current;
-    const update = {
-      _id: itemId,
-      "system.activated": next
-    };
+  /**
+   * Set an item's active state. A player-requested change is a Swift Action through the existing action economy;
+   * `free: true` is for future automatic state changes. A failed spend mutates nothing.
+   */
+  static async setActivated(actor, itemId, activated, { free = false } = {}) {
+    const item = actor?.items?.get?.(itemId);
+    if (!actor || !item) return { ok: false, reason: "missing-item" };
+    const next = activated === true;
+    if (isItemActivated(item) === next) return { ok: true, changed: false, activated: next };
 
+    const update = { _id: itemId, "system.activated": next };
     const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
     const shield = isEnergyShield(item);
+
+    if (next && visualProfile.isLightsaber && !isItemEquipped(item, actor)) return { ok: false, reason: "draw-before-activating" };
+    if (next && shield && !isItemEquipped(item, actor)) return { ok: false, reason: "equip-before-activating" };
 
     if (visualProfile.isLightsaber && next) {
       update["flags.foundryvtt-swse.emitLight"] = true;
@@ -132,11 +161,11 @@ export class InventoryEngine {
       if (next) {
         if (shieldRating <= 0) {
           ui?.notifications?.warn?.(`${item.name} has no Shield Rating to activate.`);
-          return;
+          return { ok: false, reason: "no-shield-rating" };
         }
         if (currentCharges <= 0) {
           ui?.notifications?.warn?.(`${item.name} has no charges remaining.`);
-          return;
+          return { ok: false, reason: "no-charges" };
         }
         update["system.currentSR"] = shieldRating;
         update["system.charges.current"] = Math.max(0, currentCharges - 1);
@@ -145,13 +174,78 @@ export class InventoryEngine {
       }
     }
 
-    await ActorEngine.updateOwnedItems(actor, [update], {
-      source: "InventoryEngine.toggleActivated"
-    });
-
-    if (visualProfile.isLightsaber) {
-      await LightsaberLightSync.syncActorTokenLight(actor, item);
+    let spend = { ok: true, rollback: async () => {} };
+    if (!free && (visualProfile.isLightsaber || shield)) {
+      spend = await spendItemAction(actor, "swift", item, next ? "Activate" : "Deactivate");
+      if (!spend.ok) return { ok: false, reason: "action-unavailable", actionType: "swift" };
     }
+
+    try {
+      await ActorEngine.updateOwnedItems(actor, [update], { source: "InventoryEngine.toggleActivated" });
+    } catch (err) {
+      await spend.rollback?.();
+      throw err;
+    }
+
+    if (visualProfile.isLightsaber) await LightsaberLightSync.syncActorTokenLight(actor, item);
+    return { ok: true, changed: true, activated: next };
+  }
+
+  /** Draw / stow a weapon (the owned Item's equipped state is the drawn state). Move Action, Swift with Quick Draw (existing feat metadata). */
+  static async setWeaponReadied(actor, itemId, readied) {
+    const item = actor?.items?.get?.(itemId);
+    if (!actor || !item) return { ok: false, reason: "missing-item" };
+    if (!isWeaponItem(item)) return { ok: false, reason: "not-weapon" };
+    const next = readied === true;
+    const current = isItemEquipped(item, actor);
+    if (current === next) return { ok: true, changed: false, readied: current };
+
+    const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
+    if (!next && visualProfile?.isLightsaber === true && isItemActivated(item)) return { ok: false, reason: "deactivate-before-stowing" };
+
+    const mutation = resolveActionCost(actor, "drawOrHolsterWeapon", { workflowValidated: true, weaponId: item.id, direction: next ? "draw" : "holster" });
+    const actionType = mutation?.mutatedActionCost ?? mutation?.baseActionCost ?? "move";
+    const spend = await spendItemAction(actor, actionType, item, next ? "Draw" : "Stow");
+    if (!spend.ok) return { ok: false, reason: "action-unavailable", actionType };
+
+    try {
+      await ActorEngine.updateOwnedItems(actor, [equipMirrors(item, { _id: item.id }, next)], { source: "InventoryEngine.setWeaponReadied" });
+    } catch (err) {
+      await spend.rollback?.();
+      throw err;
+    }
+    if (visualProfile?.isLightsaber === true) await LightsaberLightSync.syncActorTokenLight(actor, item);
+    return { ok: true, changed: true, readied: next, actionType };
+  }
+
+  static async toggleWeaponReadied(actor, itemId) {
+    const item = actor?.items?.get?.(itemId);
+    if (!item) return { ok: false, reason: "missing-item" };
+    return this.setWeaponReadied(actor, itemId, !isItemEquipped(item, actor));
+  }
+
+  /** Quick Draw + Weapon Proficiency (Lightsabers): draw AND ignite as ONE Swift Action, only when the existing feat resolver exposes the combined effect. */
+  static async drawAndActivateLightsaber(actor, itemId) {
+    const item = actor?.items?.get?.(itemId);
+    if (!actor || !item) return { ok: false, reason: "missing-item" };
+    const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
+    if (!visualProfile?.isLightsaber) return { ok: false, reason: "not-lightsaber" };
+    if (isItemEquipped(item, actor) || isItemActivated(item)) return { ok: false, reason: "not-stowed-and-inactive" };
+    const mutation = resolveActionCost(actor, "drawOrHolsterWeapon", { workflowValidated: true, weaponId: item.id, direction: "draw" });
+    const combined = mutation?.combinedEffects?.find((effect) => effect?.actionId === "drawAndIgniteLightsaber");
+    if (!combined) return { ok: false, reason: "combined-action-unavailable" };
+    const actionType = combined.actionCost ?? "swift";
+    const spend = await spendItemAction(actor, actionType, item, "Draw & Ignite");
+    if (!spend.ok) return { ok: false, reason: "action-unavailable", actionType };
+    const update = equipMirrors(item, { _id: item.id, "system.activated": true, "flags.foundryvtt-swse.emitLight": true, "flags.foundryvtt-swse.bladeColor": visualProfile.bladeColor }, true);
+    try {
+      await ActorEngine.updateOwnedItems(actor, [update], { source: "InventoryEngine.drawAndActivateLightsaber" });
+    } catch (err) {
+      await spend.rollback?.();
+      throw err;
+    }
+    await LightsaberLightSync.syncActorTokenLight(actor, item);
+    return { ok: true, changed: true, readied: true, activated: true, actionType };
   }
 
 

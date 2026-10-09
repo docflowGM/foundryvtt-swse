@@ -1,4 +1,8 @@
+import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
+import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
@@ -339,6 +343,62 @@ function buildCombatStatusStrip(context, combat) {
   return chips;
 }
 
+/** Weapon readiness (drawn / stowed, blade state) read from the live owned Item; presentation only. */
+function buildWeaponReadinessView(item, actor, { isNaturalWeapon = false } = {}) {
+  if (!item) return null;
+  if (!['weapon', 'lightsaber'].includes(String(item.type ?? '').toLowerCase())) return null;
+  const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
+  const drawn = isItemEquipped(item, actor);
+  const activated = isItemActivated(item);
+  const isLightsaber = visualProfile?.isLightsaber === true;
+  let combinedEffects = [];
+  try {
+    const mutation = resolveActionCost(actor, 'drawOrHolsterWeapon', { workflowValidated: true, weaponId: item.id, direction: drawn ? 'holster' : 'draw' });
+    combinedEffects = Array.isArray(mutation?.combinedEffects) ? mutation.combinedEffects : [];
+  } catch (_err) { combinedEffects = []; }
+  return {
+    drawn, activated, isLightsaber,
+    stateLabel: isNaturalWeapon ? 'Natural' : drawn ? 'Drawn' : 'Stowed',
+    bladeStateLabel: isLightsaber ? (activated ? 'Active' : 'Inactive') : '',
+    canDrawStow: !isNaturalWeapon,
+    drawStowLabel: drawn ? 'Stow' : 'Draw',
+    stowBlocked: drawn && isLightsaber && activated,
+    canToggleActivated: isLightsaber && drawn,
+    activationLabel: activated ? 'Deactivate' : 'Activate',
+    canDrawAndIgnite: isLightsaber && !drawn && !activated && combinedEffects.some((effect) => effect?.actionId === 'drawAndIgniteLightsaber')
+  };
+}
+
+function readOwnedWeaponFireState(weapon) {
+  const direct = weapon?.flags?.swse?.fireState;
+  if (direct) return direct;
+  try { return weapon?.getFlag?.('swse', 'fireState') ?? null; } catch (_err) { return null; }
+}
+
+/** Current / available configuration of a canonical weapon (null when it has fewer than two). Never throws into sheet rendering. */
+function buildWeaponConfigurationView(weapon) {
+  if (!weapon) return null;
+  try {
+    const options = FireStateStore.configurationOptions(weapon);
+    if (!options.canonical) return null;
+    const configurations = options.states;
+    if (configurations.length < 2) return null;
+    const storedId = readOwnedWeaponFireState(weapon)?.configurationId ?? null;
+    const defaultId = options.defaultId;
+    const currentId = configurations.some((entry) => entry?.id === storedId) ? storedId : defaultId;
+    const current = configurations.find((entry) => entry?.id === currentId) ?? null;
+    return { currentId, currentLabel: normalizeText(current?.label || titleCase(currentId || 'Configuration')), optionCount: configurations.length };
+  } catch (_err) { return null; }
+}
+
+/** live-Item weapon readiness + configuration views for one inventory entry (empty for non-weapons / the virtual unarmed entry) */
+function weaponStateViews(entry, isWeaponRow, actor) {
+  if (!isWeaponRow || !actor || entry?.isVirtual || entry?.virtual) return {};
+  const liveItem = actor.items?.get?.(entry?.id) ?? null;
+  if (!liveItem) return {};
+  return { weaponReadiness: buildWeaponReadinessView(liveItem, actor, { isNaturalWeapon: entry?.isNaturalWeapon === true }), weaponConfiguration: buildWeaponConfigurationView(liveItem) };
+}
+
 function buildInventoryGroups(inventoryPanel) {
   const grouped = inventoryPanel?.grouped ?? {};
   const order = ['Weapons', 'Armor', 'Equipment'];
@@ -374,7 +434,8 @@ function buildInventoryGroups(inventoryPanel) {
             ? (entry?.isEnergyShield ? 'Shield Active' : 'Blade Active')
             : (entry?.isEnergyShield ? 'Shield Inactive' : 'Blade Inactive'),
           bladeColor: visualProfile?.bladeColor || null,
-          bladeHex: visualProfile?.bladeHex || null
+          bladeHex: visualProfile?.bladeHex || null,
+          ...weaponStateViews(entry, label === 'Weapons', inventoryPanel?.actor)
         };
       });
 
@@ -1705,6 +1766,8 @@ export function buildConceptSheetViewModel(context = {}) {
       ammoLabel,
       damageType,
       visualKind: visualProfile?.kind || '',
+      weaponReadiness: item ? buildWeaponReadinessView(item, actor) : null,
+      weaponConfiguration: item ? buildWeaponConfigurationView(item) : null,
       visualColorHex: railHex,
       weaponRailStyle: railHex ? `--weapon-rail: ${railHex};` : ''
     };
@@ -1730,7 +1793,7 @@ export function buildConceptSheetViewModel(context = {}) {
   } : null;
   const equippedEntries = [
     ...(virtualUnarmedLoadoutEntry ? [virtualUnarmedLoadoutEntry] : []),
-    ...inventoryEntries.filter((entry) => entry?.equipped)
+    ...inventoryEntries.filter((entry) => entry?.equipped).map((entry) => ({ ...entry, ...weaponStateViews(entry, String(entry?.type ?? '').toLowerCase() === 'weapon' || String(entry?.type ?? '').toLowerCase() === 'lightsaber', actor) }))
   ];
   const totalWeight = Number(context.inventoryPanel?.totalWeight) || 0;
   const credits = Number(actor?.system?.credits) || 0;

@@ -79,12 +79,19 @@
                   {{else}}
                     <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{entry.id}}">Inspect</button>
                   {{/if}}
+{{#if entry.weaponReadiness}}
+  {{#if entry.weaponReadiness.canDrawAndIgnite}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation" data-action="draw-and-ignite-lightsaber" data-item-id="{{entry.id}}">Draw &amp; Ignite</button>{{/if}}
+  {{#if entry.weaponReadiness.canToggleActivated}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.weaponReadiness.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}">{{entry.weaponReadiness.activationLabel}}</button>{{/if}}
+  {{#if entry.weaponConfiguration}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--configuration" data-action="change-weapon-configuration" data-item-id="{{entry.id}}">Configure</button>{{/if}}
+  {{#if entry.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--readiness {{#if entry.weaponReadiness.drawn}}is-ready{{else}}is-inactive{{/if}}" data-action="toggle-weapon-readiness" data-item-id="{{entry.id}}"{{#if entry.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}>{{entry.weaponReadiness.drawStowLabel}}</button>{{/if}}
+{{else}}
                   {{#if entry.canToggleActivated}}
-                    <button type="button" class="swse-concept-btn" data-action="toggle-activated" data-item-id="{{entry.id}}" title="{{entry.activationTitle}}">{{entry.activationLabel}}</button>
+                    <button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}" title="{{entry.activationTitle}}">{{entry.activationLabel}}</button>
                   {{/if}}
                   {{#if entry.canToggleEquip}}
                     <button type="button" class="swse-concept-btn" data-action="equip" data-item-id="{{entry.id}}">Unequip</button>
                   {{/if}}
+{{/if}}
                   {{#if entry.canOpenForceAlchemy}}
                     <button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>
                   {{/if}}
@@ -211,12 +218,19 @@
               {{else}}
                 <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{entry.id}}">Inspect</button>
               {{/if}}
+{{#if entry.weaponReadiness}}
+  {{#if entry.weaponReadiness.canDrawAndIgnite}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation" data-action="draw-and-ignite-lightsaber" data-item-id="{{entry.id}}">Draw &amp; Ignite</button>{{/if}}
+  {{#if entry.weaponReadiness.canToggleActivated}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.weaponReadiness.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}">{{entry.weaponReadiness.activationLabel}}</button>{{/if}}
+  {{#if entry.weaponConfiguration}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--configuration" data-action="change-weapon-configuration" data-item-id="{{entry.id}}">Configure</button>{{/if}}
+  {{#if entry.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--readiness {{#if entry.weaponReadiness.drawn}}is-ready{{else}}is-inactive{{/if}}" data-action="toggle-weapon-readiness" data-item-id="{{entry.id}}"{{#if entry.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}>{{entry.weaponReadiness.drawStowLabel}}</button>{{/if}}
+{{else}}
               {{#if entry.canToggleActivated}}
-                <button type="button" class="swse-concept-btn" data-action="toggle-activated" data-item-id="{{entry.id}}" title="{{entry.activationTitle}}">{{entry.activationLabel}}</button>
+                <button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}" title="{{entry.activationTitle}}">{{entry.activationLabel}}</button>
               {{/if}}
               {{#if entry.canToggleEquip}}
                 <button type="button" class="swse-concept-btn" data-action="equip" data-item-id="{{entry.id}}">{{#if entry.equipped}}Unequip{{else}}Equip{{/if}}</button>
               {{/if}}
+{{/if}}
               {{#if entry.canEdit}}
                 <button type="button" class="swse-concept-btn swse-edit-only" data-action="configure" data-item-id="{{entry.id}}">Customize</button>
                 {{#if entry.canOpenForceAlchemy}}<button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>{{/if}}

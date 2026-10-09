@@ -316,5 +316,14 @@ export function previewBrace(weapon, shape, ctx = {}) {
   return evaluateBrace(shape.brace, readFireState(weapon), ctx);
 }
 
-export const FireStateStore = Object.freeze({ currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, setWielding, setMounted, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
+/** Canonical configuration choices of an owned weapon for UI (read-only): `{canonical, states, defaultId}`; never throws. */
+function configurationOptions(item) {
+  try {
+    const runtime = resolveAttackWeaponRuntime(item, {});
+    const states = Array.from(runtime?.resolved?.canonicalStats?.configurationStates ?? runtime?.resolved?.configurationStates ?? []);
+    return { canonical: runtime?.source === 'canonical', states, defaultId: runtime?.resolved?.selection?.configurationId ?? states.find((c) => c?.default === true)?.id ?? states[0]?.id ?? null };
+  } catch (_err) { return { canonical: false, states: [], defaultId: null }; }
+}
+
+export const FireStateStore = Object.freeze({ configurationOptions, currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, setWielding, setMounted, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
 export default FireStateStore;
