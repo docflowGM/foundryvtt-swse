@@ -196,6 +196,9 @@ export function resolveCanonicalDamage(weapon, context = {}) {
   if (form?.identityKey && form.identityKey !== runtime0.identityKey) {
     throw new WeaponRuntimeError(ERROR_CODES.FORM_IDENTITY_MISMATCH, `attack form belongs to ${form.identityKey} but the weapon is ${runtime0.identityKey}`, { identityKey: runtime0.identityKey, formIdentityKey: form.identityKey });
   }
+  // Phase 5D-I-B: a launcher whose damage, damage type and burst are "determined by the grenade" delegates them to the LOADED canonical grenade
+  const loadedKey = context.loadedIdentityKey ?? form?.loadedIdentityKey ?? null;
+  if (loadedKey && runtime0.resolved.operation?.damageTypeAndBurstDeterminedByGrenade === true) return delegateLoadedPayload(runtime0, loadedKey, context, form);
   const damageMode = effectiveDamageMode(runtime0, context.damageMode ?? form?.damageMode ?? null) ?? 'normal';
   let runtime = runtime0;
   let dp = resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode, damageType: context.damageType ?? null });
@@ -244,6 +247,29 @@ export function resolveCanonicalDamage(weapon, context = {}) {
     mechanics, damageShape: damageShapeFromMechanics(mechanics),
     // what the damage path still does NOT consume (Phase 5D-E consumes multiplier, critical effects and riders)
     deferred: Object.freeze({ extraComponents: dp.components.slice(1).map((c) => c.id), damageMultiplier: dp.damageMultiplier, conditionalModifiers: dp.conditionalModifiers?.length ?? 0, criticalEffects: dp.criticalEffects?.length ?? 0 }),
+  });
+}
+
+/**
+ * Phase 5D-I-B: payload delegation. The launcher keeps its own identity, range, proficiency and resource cost; the damage, damage type, area
+ * geometry and special effects are the LOADED grenade's own canonical profile (nothing is copied into the launcher, nothing is invented). A
+ * grenade fired from a launcher "always explodes on impact regardless of timers" (Core Rulebook), so its detonation is contact.
+ * The loaded identity must be a canonical weapon of the launcher's accepted payload family and not one the launcher is stated unable to fire.
+ */
+function delegateLoadedPayload(runtime, loadedKey, context, form) {
+  const registry = getSharedWeaponAuthorityRegistry();
+  const rec = registry?.getByIdentityKey?.(loadedKey);
+  const family = runtime.resolved.canonicalStats?.ammo?.acceptedPayloadFamily ?? null;
+  const excluded = runtime.resolved.operation?.cannotFireThermalDetonators === true ? ['weapon-thermal-detonator'] : [];
+  const accepted = !!rec && !!family && (rec.selectors?.families ?? []).includes(`weapon-family:${family}`) && !excluded.includes(loadedKey);
+  if (!accepted) throw new WeaponRuntimeError(ERROR_CODES.PAYLOAD_NOT_ACCEPTED, `${runtime.identityKey} cannot fire ${loadedKey}`, { identityKey: runtime.identityKey, loadedIdentityKey: loadedKey, acceptedFamily: family });
+  const payloadItem = { id: `loaded-${loadedKey}`, type: 'weapon', name: loadedKey, flags: { swse: { canonicalWeapon: { identityKey: loadedKey } } }, system: {} };
+  const inner = resolveCanonicalDamage(payloadItem, { weaponForm: { identityKey: loadedKey, profileId: rec.canonicalStats.attackProfiles[0].id }, damageMode: context.damageMode ?? form?.damageMode ?? null, damageType: context.damageType ?? null });
+  const launcherForm = { ...weaponFormRecord(runtime, inner.damageMode), loadedIdentityKey: loadedKey };
+  return Object.freeze({
+    ...inner, runtime, selection: launcherForm,
+    delegatedFrom: Object.freeze({ launcher: runtime.identityKey, payload: loadedKey }),
+    areaShape: inner.areaShape?.isArea ? Object.freeze({ ...inner.areaShape, detonation: Object.freeze({ timing: 'contact', timerRounds: null }) }) : inner.areaShape,
   });
 }
 

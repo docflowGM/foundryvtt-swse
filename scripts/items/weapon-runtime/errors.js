@@ -32,6 +32,7 @@ export const ERROR_CODES = Object.freeze({
   RANGE_FAMILY_MISMATCH: 'range-family-mismatch',
   END_UNAVAILABLE: 'double-weapon-end-unavailable',
   ATTACK_SHAPE_ILLEGAL: 'attack-shape-illegal',
+  PAYLOAD_NOT_ACCEPTED: 'payload-not-accepted',
 });
 
 /** GM-visible, non-silent reporting for runtime callers that cannot propagate a throw. */

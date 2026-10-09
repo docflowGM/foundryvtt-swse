@@ -4,7 +4,7 @@
   "purpose": "Audit/verification artifact only: attack shape, temporal constraints and selector capability of every offered canonical attack form. Not a gameplay authority.",
   "totals": {
     "identities": 203,
-    "forms": 265
+    "forms": 266
   },
   "attackShape": {
     "areaKinds": {
@@ -17,13 +17,13 @@
       "cone": 4,
       "other": 2,
       "rectangle": 1,
-      "single": 227,
+      "single": 228,
       "splash": 4,
       "square": 2
     },
     "fireModes": {
       "autofire-only": 7,
-      "single": 238,
+      "single": 239,
       "single+autofire": 20
     },
     "areaEnabledWithoutGeometry": [
@@ -36,7 +36,7 @@
     "families": {
       "ability-triggered-reset": 1,
       "alternate-round": 3,
-      "none": 240,
+      "none": 241,
       "per-round-limit": 20,
       "post-shot-reset": 2,
       "prepared-attack": 2,

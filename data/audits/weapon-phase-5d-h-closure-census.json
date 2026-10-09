@@ -4,14 +4,14 @@
   "purpose": "Audit/verification artifact only: executable-field closure of the canonical weapon runtime. Every residual is named with a reason and an owner. Not a gameplay authority.",
   "counters": {
     "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
-    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 33,
-    "PARTIAL_EXECUTION_FIELD_FAMILIES": 14,
-    "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 10,
+    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 34,
+    "PARTIAL_EXECUTION_FIELD_FAMILIES": 15,
+    "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
-    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 15,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 161,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 212,
+    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 14,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 126,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 167,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 42,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 7,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
@@ -30,16 +30,14 @@
     "counters": {
       "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
       "EXECUTION_FIELD_FAMILIES": 57,
-      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 33,
-      "EXECUTION_FIELD_FAMILIES_PARTIAL": 14,
-      "EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER": 10
+      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 34,
+      "EXECUTION_FIELD_FAMILIES_PARTIAL": 15,
+      "EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER": 8
     },
     "familiesWithoutConsumer": [
       "3b.defensive",
       "3b.durability",
-      "3b.operation.crew-and-emplacement",
       "3b.operation.proficiency-routes",
-      "3b.operation.reach-and-threat",
       "3b.operation.utility-and-movement",
       "3b.profile.wielding",
       "3b.qualityParameters",
@@ -54,6 +52,7 @@
       "3b.operation.concealment-stealth-sensing",
       "3b.operation.condition-and-persistent-effects",
       "3b.operation.configuration-and-wielding",
+      "3b.operation.crew-and-emplacement",
       "3b.operation.damage-modifiers",
       "3b.operation.defense-and-reaction-interactions",
       "3b.operation.grab-grapple-restrain",
@@ -150,7 +149,7 @@
         "id": "3b.operation.ammo-resource-reload",
         "fieldPaths": 46,
         "status": "PARTIAL",
-        "consumedKeys": 5,
+        "consumedKeys": 7,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 1
@@ -159,13 +158,11 @@
           "canMountOnRifle",
           "canSingleLoadShell",
           "canUseStandalone",
-          "cannotFireThermalDetonators",
           "capacityGrenades",
           "hasFoldingStock",
           "mountMechanicsDC",
           "mountTimeMinutes",
           "mountableOnMinimumWeaponSize",
-          "mountedOnRifle",
           "oneShotCapacity",
           "powerCordDisconnectRule",
           "powerLevelSwitchAction",
@@ -199,25 +196,19 @@
       },
       {
         "id": "3b.operation.attack-modifiers-and-penalties",
-        "fieldPaths": 67,
+        "fieldPaths": 70,
         "status": "PARTIAL",
-        "consumedKeys": 10,
+        "consumedKeys": 14,
         "nonExecutable": {},
         "executableUnconsumed": [
           "allyAttackBonus",
           "allyEligibleWeapons",
-          "attackOfOpportunityChoices",
           "attackTreatedAs",
-          "canMakeAttackOfOpportunityEvenWithStockExtended",
-          "canMakeAttacksOfOpportunity",
-          "canMakeAttacksOfOpportunityWithoutFoldedStock",
-          "detachedTreatAs",
           "lineOfSightOriginHeightSquares",
           "preferredMode",
           "repeatAttackEachRoundToMaintainDesignation",
           "targetRules",
-          "targeting",
-          "unregulatedAttackPenalty"
+          "targeting"
         ],
         "owner": "conditional attack-modifier evaluation (post-5D-H)"
       },
@@ -283,38 +274,23 @@
         "id": "3b.operation.configuration-and-wielding",
         "fieldPaths": 62,
         "status": "PARTIAL",
-        "consumedKeys": 5,
+        "consumedKeys": 10,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 2
         },
         "executableUnconsumed": [
-          "assemblyAction",
-          "cannotBeWieldedTwoHanded",
-          "cannotWieldTwoHanded",
           "collapsedForm",
-          "configurationSwitchAction",
           "designedForTwoHandedUse",
-          "dialUpAction",
-          "disassembleAction",
-          "disassembledComponentSize",
-          "disassembledComponents",
-          "disassemblyAction",
           "disintegratesOnKillOrDestruction",
           "encumbranceException",
-          "expandCollapseAction",
           "forearmMounted",
           "fragile",
-          "lacksEnergyLancePlasmaMode",
           "mayCountAsSmallWhenBeneficial",
           "mayTreatAsSizeWhenBeneficial",
           "multipleHeldOneHandCountsAsOneWeapon",
-          "reassembleAction",
-          "requiresTwoHands",
           "sizeGate",
           "sizeRule",
-          "switchAction",
-          "switchFormAction",
           "tripodTreatsAsOneSizeSmallerForWielding",
           "wornAs",
           "wornOnWrist"
@@ -330,15 +306,10 @@
       {
         "id": "3b.operation.crew-and-emplacement",
         "fieldPaths": 10,
-        "status": "DEFERRED",
-        "consumedKeys": 0,
+        "status": "PARTIAL",
+        "consumedKeys": 3,
         "nonExecutable": {},
         "executableUnconsumed": [
-          "crewRegulation",
-          "normallyRequiresTripod",
-          "operatorRoles",
-          "operatorsRequired",
-          "requiresSecondCrewRegulation",
           "tripodEffectiveSize"
         ],
         "owner": "heavy-weapon crew / emplacement phase"
@@ -353,7 +324,6 @@
           "damageThresholdAdjustment",
           "hurledObjectDamageRule",
           "powerAttackExtraDamageAppliesToObjectsAndVehicles",
-          "twoHandedDamageChoice",
           "weaponDR",
           "weaponDRAppliesAgainstLightsabers",
           "weaponDRValue"
@@ -433,26 +403,19 @@
       {
         "id": "3b.operation.reach-and-threat",
         "fieldPaths": 6,
-        "status": "DEFERRED",
-        "consumedKeys": 0,
+        "status": "CONSUMED",
+        "consumedKeys": 5,
         "nonExecutable": {},
-        "executableUnconsumed": [
-          "extendedReachBonusSquares",
-          "reachBonusSquares",
-          "reachIncreaseSquares",
-          "reachProfileIds",
-          "reachSquares"
-        ],
+        "executableUnconsumed": [],
         "owner": "threat / reach phase"
       },
       {
         "id": "3b.operation.stun-ion-damage-modes",
         "fieldPaths": 22,
         "status": "PARTIAL",
-        "consumedKeys": 3,
+        "consumedKeys": 4,
         "nonExecutable": {},
         "executableUnconsumed": [
-          "damageTypeAndBurstDeterminedByGrenade",
           "ongoingStunWhileTrapped"
         ],
         "owner": "stun / ion special modes"
@@ -502,7 +465,7 @@
       },
       {
         "id": "3b.profile.conditional",
-        "fieldPaths": 42,
+        "fieldPaths": 45,
         "status": "PARTIAL",
         "consumer": "scripts/items/weapon-runtime/special-mechanics.js",
         "probe": "resolveTargetRequirements",
@@ -808,8 +771,10 @@
         "consumed": [
           "autofireOnly",
           "bayonetMount",
+          "cannotFireThermalDetonators",
           "firingConstraints",
           "maxShotsPerRound",
+          "mountedOnRifle",
           "reloadAction"
         ],
         "duplicates": {
@@ -829,13 +794,11 @@
           "canMountOnRifle",
           "canSingleLoadShell",
           "canUseStandalone",
-          "cannotFireThermalDetonators",
           "capacityGrenades",
           "hasFoldingStock",
           "mountMechanicsDC",
           "mountTimeMinutes",
           "mountableOnMinimumWeaponSize",
-          "mountedOnRifle",
           "oneShotCapacity",
           "powerCordDisconnectRule",
           "powerLevelSwitchAction",
@@ -851,7 +814,7 @@
           "specialRateOfFire"
         ],
         "owner": "resource / reload rules (inventory phase)",
-        "executableUnconsumedOccurrences": 34,
+        "executableUnconsumedOccurrences": 31,
         "representativeIdentities": [
           "lightsaber-chassis-archaic-lightfoil",
           "lightsaber-chassis-archaic-lightsaber",
@@ -907,11 +870,14 @@
         "status": "PARTIAL"
       },
       "attack-modifiers-and-penalties": {
-        "keys": 44,
+        "keys": 45,
         "identities": 38,
         "consumed": [
+          "attackOfOpportunityChoices",
+          "attackOfOpportunityProfiles",
           "attackPenalty",
           "autofireEquipmentBonus",
+          "canMakeAttacksOfOpportunity",
           "cannotBraceWithoutTripodOrMount",
           "improvisedWeaponPenaltyReplacement",
           "postShotResetAction",
@@ -919,15 +885,19 @@
           "rangeTreatedAs",
           "singleShotAttackPenalty",
           "unbracedAdditionalAttackPenalty",
-          "underwaterUsableProfiles"
+          "underwaterUsableProfiles",
+          "unregulatedAttackPenalty"
         ],
         "duplicates": {
           "additionalAttackPenalty": "EXTRA_ATTACK_PENALTY relation / multi-attack conditionalModifiers",
           "additionalAttackPenaltyWith": "EXTRA_ATTACK_PENALTY relation / multi-attack conditionalModifiers",
           "attackPenaltyBelowMinimumStrength": "attackProfiles[].conditionalModifiers (\"wielder Strength below N\")",
           "braceRequiresExtendedStock": "firingConstraints.braceRule",
+          "canMakeAttackOfOpportunityEvenWithStockExtended": "Core Rulebook AoO rule: carbines can always make attacks of opportunity (weapon-family:blaster-carbine)",
+          "canMakeAttacksOfOpportunityWithoutFoldedStock": "Core Rulebook AoO rule: carbines can always make attacks of opportunity (weapon-family:blaster-carbine)",
           "cannotBeThrownEffectively": "attackProfiles[] (the weapon publishes no thrown profile)",
           "conditionalAttackBonus": "attackProfiles[].conditionalModifiers (attack of opportunity while wielded one-handed, +1)",
+          "detachedTreatAs": "operation.configurationResolution.detached -> canonical Knife / Vibrodagger",
           "longHaftFormDoubleWeapon": "configurationStates / modeProfiles / conditionalQualities",
           "maximumRangeIncrement": "attackProfiles[].range.hardMaxSquares",
           "maximumRangeSquares": "attackProfiles[].range.hardMaxSquares",
@@ -947,26 +917,20 @@
         "executableUnconsumed": [
           "allyAttackBonus",
           "allyEligibleWeapons",
-          "attackOfOpportunityChoices",
           "attackTreatedAs",
-          "canMakeAttackOfOpportunityEvenWithStockExtended",
-          "canMakeAttacksOfOpportunity",
-          "canMakeAttacksOfOpportunityWithoutFoldedStock",
-          "detachedTreatAs",
           "lineOfSightOriginHeightSquares",
           "preferredMode",
           "repeatAttackEachRoundToMaintainDesignation",
           "targetRules",
-          "targeting",
-          "unregulatedAttackPenalty"
+          "targeting"
         ],
         "owner": "conditional attack-modifier evaluation (post-5D-H)",
-        "executableUnconsumedOccurrences": 17,
+        "executableUnconsumedOccurrences": 8,
         "representativeIdentities": [
-          "unmapped::Bayonet",
           "unmapped::Garrote",
-          "unmapped::Vibrobayonet",
-          "weapon-blaster-carbine"
+          "weapon-emp-grenade",
+          "weapon-espo-500-riot-gun",
+          "weapon-mortar-launcher"
         ],
         "note": {
           "reason": "5D-I-A consumed the fire-state, aim, brace, range and environment attack modifiers; the remainder needs AoO eligibility, crew state, configuration, designation or the grab system",
@@ -1064,18 +1028,33 @@
       },
       "configuration-and-wielding": {
         "keys": 40,
-        "identities": 39,
+        "identities": 40,
         "consumed": [
+          "cannotBeWieldedTwoHanded",
+          "cannotWieldTwoHanded",
           "configurationResolution",
+          "configurationSwitchAction",
           "doubleWeapon",
           "handsRemainFree",
           "hostWeaponAugmentation",
+          "requiresTwoHands",
+          "switchAction",
           "wornNotHeld"
         ],
         "duplicates": {
+          "assemblyAction": "configurationStates[assembled].transitionAction",
           "configurations": "configurationStates / modeProfiles / conditionalQualities",
+          "dialUpAction": "attackProfiles[overcharge].activationRequirements (action swift) + stateMachine",
+          "disassembleAction": "configurationStates[disassembled].transitionAction",
+          "disassembledComponentSize": "configurationStates[disassembled].componentSize",
+          "disassembledComponents": "configurationStates[disassembled].components",
+          "disassemblyAction": "configurationStates[disassembled].transitionAction",
           "doubleWeaponFullRoundAttack": "configurationStates / modeProfiles / conditionalQualities",
-          "doubleWeaponFullRoundAttackPenaltyPerEnd": "configurationStates / modeProfiles / conditionalQualities"
+          "doubleWeaponFullRoundAttackPenaltyPerEnd": "configurationStates / modeProfiles / conditionalQualities",
+          "expandCollapseAction": "configurationStates[expanded|collapsed].transitionAction",
+          "lacksEnergyLancePlasmaMode": "attackProfiles[] (the Power Lance publishes no plasma-bolt profile)",
+          "reassembleAction": "configurationStates[assembled].transitionAction",
+          "switchFormAction": "configurationStates[].transitionAction"
         },
         "nonExecutable": {
           "STORE": [
@@ -1087,43 +1066,28 @@
           ]
         },
         "executableUnconsumed": [
-          "assemblyAction",
-          "cannotBeWieldedTwoHanded",
-          "cannotWieldTwoHanded",
           "collapsedForm",
-          "configurationSwitchAction",
           "designedForTwoHandedUse",
-          "dialUpAction",
-          "disassembleAction",
-          "disassembledComponentSize",
-          "disassembledComponents",
-          "disassemblyAction",
           "disintegratesOnKillOrDestruction",
           "encumbranceException",
-          "expandCollapseAction",
           "forearmMounted",
           "fragile",
-          "lacksEnergyLancePlasmaMode",
           "mayCountAsSmallWhenBeneficial",
           "mayTreatAsSizeWhenBeneficial",
           "multipleHeldOneHandCountsAsOneWeapon",
-          "reassembleAction",
-          "requiresTwoHands",
           "sizeGate",
           "sizeRule",
-          "switchAction",
-          "switchFormAction",
           "tripodTreatsAsOneSizeSmallerForWielding",
           "wornAs",
           "wornOnWrist"
         ],
         "owner": "wielding & configuration state (post-5D-H)",
-        "executableUnconsumedOccurrences": 38,
+        "executableUnconsumedOccurrences": 21,
         "representativeIdentities": [
           "lightsaber-chassis-archaic-lightfoil",
-          "lightsaber-chassis-dual-phase",
           "lightsaber-chassis-great",
-          "lightsaber-chassis-modern-lightfoil"
+          "lightsaber-chassis-modern-lightfoil",
+          "unmapped::Darkstick"
         ],
         "note": {
           "reason": "assembly/switch actions, two-hand rules and size gates need a wielding and configuration state model",
@@ -1134,29 +1098,29 @@
       "crew-and-emplacement": {
         "keys": 6,
         "identities": 3,
-        "consumed": [],
-        "duplicates": {},
-        "nonExecutable": {},
-        "executableUnconsumed": [
+        "consumed": [
           "crewRegulation",
           "normallyRequiresTripod",
-          "operatorRoles",
-          "operatorsRequired",
-          "requiresSecondCrewRegulation",
+          "requiresSecondCrewRegulation"
+        ],
+        "duplicates": {
+          "operatorRoles": "attackProfiles[].activationRequirements (type operators, roles)",
+          "operatorsRequired": "attackProfiles[].activationRequirements (type operators, minimum)"
+        },
+        "nonExecutable": {},
+        "executableUnconsumed": [
           "tripodEffectiveSize"
         ],
         "owner": "heavy-weapon crew / emplacement phase",
-        "executableUnconsumedOccurrences": 6,
+        "executableUnconsumedOccurrences": 1,
         "representativeIdentities": [
-          "weapon-battering-ram",
-          "weapon-e-web-repeating-blaster",
-          "weapon-tactical-tractor-beam"
+          "weapon-e-web-repeating-blaster"
         ],
         "note": {
           "reason": "crew roles/tripod rules belong to the heavy-weapon crew model",
           "phase": "5D-I: crew / emplacement"
         },
-        "status": "DEFERRED"
+        "status": "PARTIAL"
       },
       "damage-modifiers": {
         "keys": 13,
@@ -1169,25 +1133,25 @@
         "duplicates": {
           "cannotBeNegatedByDeflect": "CANNOT_NEGATE_ATTACK relation",
           "ignoresDRCondition": "damageReductionInteraction (mode conditional, \"target is an unattended object\")",
-          "shieldRatingStillApplies": "damage mitigation stage order (Shield Rating is stage 1; bypass-dr only touches stage 2)"
+          "shieldRatingStillApplies": "damage mitigation stage order (Shield Rating is stage 1; bypass-dr only touches stage 2)",
+          "twoHandedDamageChoice": "attackProfiles[two-handed-base-override].activationRequirements (wielding two-handed + choice forgo-double-strength-bonus-to-damage)"
         },
         "nonExecutable": {},
         "executableUnconsumed": [
           "damageThresholdAdjustment",
           "hurledObjectDamageRule",
           "powerAttackExtraDamageAppliesToObjectsAndVehicles",
-          "twoHandedDamageChoice",
           "weaponDR",
           "weaponDRAppliesAgainstLightsabers",
           "weaponDRValue"
         ],
         "owner": "damage modifier consumers (post-5D-H)",
-        "executableUnconsumedOccurrences": 10,
+        "executableUnconsumedOccurrences": 9,
         "representativeIdentities": [
-          "lightsaber-chassis-longhandle",
           "unmapped::Power Hammer",
           "unmapped::Shockstaff",
-          "weapon-disruptor-pistol"
+          "weapon-disruptor-pistol",
+          "weapon-disruptor-rifle"
         ],
         "note": {
           "reason": "5D-I-A consumed the composition-stage terms (point-blank bonus, adjacent die, bow/sling Strength); the remainder are threshold, wielding, hurled-object and weapon-object durability",
@@ -1342,34 +1306,30 @@
       "reach-and-threat": {
         "keys": 5,
         "identities": 7,
-        "consumed": [],
-        "duplicates": {},
-        "nonExecutable": {},
-        "executableUnconsumed": [
+        "consumed": [
           "extendedReachBonusSquares",
           "reachBonusSquares",
           "reachIncreaseSquares",
           "reachProfileIds",
           "reachSquares"
         ],
+        "duplicates": {},
+        "nonExecutable": {},
+        "executableUnconsumed": [],
         "owner": "threat / reach phase",
-        "executableUnconsumedOccurrences": 9,
-        "representativeIdentities": [
-          "lightsaber-chassis-dual-phase",
-          "lightsaber-chassis-lightwhip",
-          "lightsaber-chassis-pike",
-          "unmapped::Amphistaff"
-        ],
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
         "note": {
           "reason": "reach and threatened squares need a threat/reach model",
           "phase": "5D-I: special movement / reach"
         },
-        "status": "DEFERRED"
+        "status": "CONSUMED"
       },
       "stun-ion-damage-modes": {
         "keys": 18,
         "identities": 24,
         "consumed": [
+          "damageTypeAndBurstDeterminedByGrenade",
           "overwhelmingStunRule",
           "stunOnly",
           "stunSwitchAction"
@@ -1391,14 +1351,12 @@
         },
         "nonExecutable": {},
         "executableUnconsumed": [
-          "damageTypeAndBurstDeterminedByGrenade",
           "ongoingStunWhileTrapped"
         ],
         "owner": "stun / ion special modes",
-        "executableUnconsumedOccurrences": 2,
+        "executableUnconsumedOccurrences": 1,
         "representativeIdentities": [
-          "weapon-electronet",
-          "weapon-grenade-launcher"
+          "weapon-electronet"
         ],
         "note": {
           "reason": "5D-I-A consumed the stun switch and classified the dual-carried modes; payload delegation and trapped-target stun need ammo payloads / persistent effects",
@@ -1438,13 +1396,11 @@
       "ammo-resource-reload.canMountOnRifle",
       "ammo-resource-reload.canSingleLoadShell",
       "ammo-resource-reload.canUseStandalone",
-      "ammo-resource-reload.cannotFireThermalDetonators",
       "ammo-resource-reload.capacityGrenades",
       "ammo-resource-reload.hasFoldingStock",
       "ammo-resource-reload.mountMechanicsDC",
       "ammo-resource-reload.mountTimeMinutes",
       "ammo-resource-reload.mountableOnMinimumWeaponSize",
-      "ammo-resource-reload.mountedOnRifle",
       "ammo-resource-reload.oneShotCapacity",
       "ammo-resource-reload.powerCordDisconnectRule",
       "ammo-resource-reload.powerLevelSwitchAction",
@@ -1463,18 +1419,12 @@
       "area-splash-burst.remoteDetonationSafetyRule",
       "attack-modifiers-and-penalties.allyAttackBonus",
       "attack-modifiers-and-penalties.allyEligibleWeapons",
-      "attack-modifiers-and-penalties.attackOfOpportunityChoices",
       "attack-modifiers-and-penalties.attackTreatedAs",
-      "attack-modifiers-and-penalties.canMakeAttackOfOpportunityEvenWithStockExtended",
-      "attack-modifiers-and-penalties.canMakeAttacksOfOpportunity",
-      "attack-modifiers-and-penalties.canMakeAttacksOfOpportunityWithoutFoldedStock",
-      "attack-modifiers-and-penalties.detachedTreatAs",
       "attack-modifiers-and-penalties.lineOfSightOriginHeightSquares",
       "attack-modifiers-and-penalties.preferredMode",
       "attack-modifiers-and-penalties.repeatAttackEachRoundToMaintainDesignation",
       "attack-modifiers-and-penalties.targetRules",
       "attack-modifiers-and-penalties.targeting",
-      "attack-modifiers-and-penalties.unregulatedAttackPenalty",
       "concealment-stealth-sensing.alwaysDetermineNorth",
       "concealment-stealth-sensing.audibility",
       "concealment-stealth-sensing.blindCreaturesImmune",
@@ -1511,45 +1461,24 @@
       "condition-and-persistent-effects.survivalBasicForestJungleBonusWhenProficientAndCarried",
       "condition-and-persistent-effects.treatInjuryCureDC",
       "condition-and-persistent-effects.venomSpit",
-      "configuration-and-wielding.assemblyAction",
-      "configuration-and-wielding.cannotBeWieldedTwoHanded",
-      "configuration-and-wielding.cannotWieldTwoHanded",
       "configuration-and-wielding.collapsedForm",
-      "configuration-and-wielding.configurationSwitchAction",
       "configuration-and-wielding.designedForTwoHandedUse",
-      "configuration-and-wielding.dialUpAction",
-      "configuration-and-wielding.disassembleAction",
-      "configuration-and-wielding.disassembledComponentSize",
-      "configuration-and-wielding.disassembledComponents",
-      "configuration-and-wielding.disassemblyAction",
       "configuration-and-wielding.disintegratesOnKillOrDestruction",
       "configuration-and-wielding.encumbranceException",
-      "configuration-and-wielding.expandCollapseAction",
       "configuration-and-wielding.forearmMounted",
       "configuration-and-wielding.fragile",
-      "configuration-and-wielding.lacksEnergyLancePlasmaMode",
       "configuration-and-wielding.mayCountAsSmallWhenBeneficial",
       "configuration-and-wielding.mayTreatAsSizeWhenBeneficial",
       "configuration-and-wielding.multipleHeldOneHandCountsAsOneWeapon",
-      "configuration-and-wielding.reassembleAction",
-      "configuration-and-wielding.requiresTwoHands",
       "configuration-and-wielding.sizeGate",
       "configuration-and-wielding.sizeRule",
-      "configuration-and-wielding.switchAction",
-      "configuration-and-wielding.switchFormAction",
       "configuration-and-wielding.tripodTreatsAsOneSizeSmallerForWielding",
       "configuration-and-wielding.wornAs",
       "configuration-and-wielding.wornOnWrist",
-      "crew-and-emplacement.crewRegulation",
-      "crew-and-emplacement.normallyRequiresTripod",
-      "crew-and-emplacement.operatorRoles",
-      "crew-and-emplacement.operatorsRequired",
-      "crew-and-emplacement.requiresSecondCrewRegulation",
       "crew-and-emplacement.tripodEffectiveSize",
       "damage-modifiers.damageThresholdAdjustment",
       "damage-modifiers.hurledObjectDamageRule",
       "damage-modifiers.powerAttackExtraDamageAppliesToObjectsAndVehicles",
-      "damage-modifiers.twoHandedDamageChoice",
       "damage-modifiers.weaponDR",
       "damage-modifiers.weaponDRAppliesAgainstLightsabers",
       "damage-modifiers.weaponDRValue",
@@ -1582,17 +1511,11 @@
       "proficiency-routes.alternateProficiency",
       "proficiency-routes.wookieeAdvancedMeleeProficiencyCounts",
       "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
-      "reach-and-threat.extendedReachBonusSquares",
-      "reach-and-threat.reachBonusSquares",
-      "reach-and-threat.reachIncreaseSquares",
-      "reach-and-threat.reachProfileIds",
-      "reach-and-threat.reachSquares",
-      "stun-ion-damage-modes.damageTypeAndBurstDeterminedByGrenade",
       "stun-ion-damage-modes.ongoingStunWhileTrapped",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 161,
-    "rawOccurrencesUnconsumed": 212,
+    "uniqueKeysUnconsumed": 126,
+    "rawOccurrencesUnconsumed": 167,
     "problems": []
   },
   "relations": {
@@ -2878,9 +2801,9 @@
     ]
   },
   "heuristics": {
-    "totalSites": 175,
+    "totalSites": 180,
     "byClass": {
-      "DISPLAY": 89,
+      "DISPLAY": 94,
       "IDENTITY_FALLBACK": 14,
       "LEGACY_GATED": 58,
       "NON_COMBAT_DOMAIN": 5,

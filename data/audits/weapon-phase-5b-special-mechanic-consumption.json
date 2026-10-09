@@ -206,6 +206,7 @@
     "allyAttackBonus",
     "allyEligibleWeapons",
     "attackOfOpportunityChoices",
+    "attackOfOpportunityProfiles",
     "attackPenalty",
     "attackPenaltyBelowMinimumStrength",
     "attackTreatedAs",
@@ -446,7 +447,7 @@
     "wornNotHeld",
     "wornOnWrist"
    ],
-   "identityCount": 39,
+   "identityCount": 40,
    "identities": [
     "lightsaber-chassis-archaic-lightfoil",
     "lightsaber-chassis-dual-phase",
@@ -454,6 +455,7 @@
     "lightsaber-chassis-modern-lightfoil",
     "lightsaber-chassis-retrosaber",
     "unmapped::Amphistaff",
+    "unmapped::Bayonet",
     "unmapped::Darkstick",
     "unmapped::Dire Vibroblade",
     "unmapped::Entrenching Tool",
@@ -1026,13 +1028,14 @@
   {
    "mechanic": "activation-requirements",
    "source": "structured attack-profile / canonicalStats field",
-   "identityCount": 10,
+   "identityCount": 11,
    "identities": [
     "lightsaber-chassis-dual-phase",
     "lightsaber-chassis-longhandle",
     "lightsaber-chassis-pike",
     "lightsaber-chassis-retrosaber",
     "unmapped::Amphistaff",
+    "unmapped::Bayonet",
     "unmapped::Vibrobayonet",
     "weapon-battering-ram",
     "weapon-siang-lance",
@@ -1156,11 +1159,12 @@
   {
    "mechanic": "configuration-states-and-state-machines",
    "source": "structured attack-profile / canonicalStats field",
-   "identityCount": 10,
+   "identityCount": 11,
    "identities": [
     "lightsaber-chassis-archaic-lightsaber",
     "lightsaber-chassis-retrosaber",
     "unmapped::Amphistaff",
+    "unmapped::Bayonet",
     "unmapped::Shock Stick",
     "unmapped::Vibrobayonet",
     "unmapped::Wan-Shen",

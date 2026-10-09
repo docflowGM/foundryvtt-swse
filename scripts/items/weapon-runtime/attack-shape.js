@@ -11,6 +11,7 @@ const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 import { resolveTemporalConstraints } from './fire-state.js';
 import { resolveAreaShape } from './area-shape.js';
 import { buildWeaponDescriptor } from './weapon-descriptor.js';
+import { wieldingConstraintsOf, opportunityChoices, resolveReach } from './owned-state.js';
 import { evaluateCondition } from './condition-policy.js';
 export const normalizeToken = (v) => String(v ?? '').trim().replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
@@ -87,9 +88,37 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
   const proficiency = runtime.profile.definition?.schemaFamily?.proficiency ?? null;
   const fireModes = Object.freeze({ single: !autofireOnly, autofire, autofireOnly, burstEligible: autofire });
   const areaShape = resolveAreaShape(def.area, def.attackResolution, { rateOfFire: def.rateOfFire, operation: op });
+  const descriptor = buildWeaponDescriptor(resolved, def, { area: areaShape, fireModes });
+  const cs = resolved.canonicalStats ?? {};
+  const profileIds = asArray(cs.attackProfiles).map((p) => p.id);
+  const configurationId = resolved.selection?.configurationId ?? null;
   return Object.freeze({
+    // Phase 5D-I-B: facts the OWNED weapon state is read against (hands, attacks of opportunity, reach, configuration, state machine, usage, crew).
+    // Pure structure of the selected form; the CURRENT state lives on the owned Item (fire-state-store), never here.
+    wielding: wieldingConstraintsOf(op),
+    opportunity: Object.freeze({
+      branch: runtime.branch ?? null,
+      isPistol: descriptor.tokens.includes('pistol'),
+      isCarbine: descriptor.families.includes('blaster-carbine'),
+      // the weapon's own declaration: top-level, or the mounted-on-rifle block while that configuration is selected (Vibrobayonet)
+      declared: op.canMakeAttacksOfOpportunity === true || (configurationId === 'mounted-on-rifle' && op.mountedOnRifle?.canMakeAttacksOfOpportunity === true),
+      choices: Object.freeze(opportunityChoices(op.attackOfOpportunityChoices, op.attackOfOpportunityProfiles, profileIds)),
+    }),
+    reach: resolveReach(op, { profileId: runtime.profile.id, configurationId, assembled: configurationId !== 'disassembled', extendedProfileId: asArray(cs.modeProfiles).find((m) => Number.isFinite(m?.reachBonusSquares))?.attackProfileId ?? null }),
+    configuration: Object.freeze({
+      id: configurationId,
+      defaultId: asArray(cs.configurationStates).find((c) => c.default === true)?.id ?? null,
+      transitionAction: asArray(cs.configurationStates).find((c) => c.id === configurationId)?.transitionAction ?? null,
+      // a configuration that states attackUsable:false (a disassembled weapon) cannot be attacked with; null / absent = not stated
+      usable: asArray(cs.configurationStates).find((c) => c.id === configurationId)?.attackUsable !== false,
+      ids: Object.freeze(asArray(cs.configurationStates).map((c) => c.id)),
+    }),
+    machine: cs.stateMachine ?? null,
+    requirements: Object.freeze(asArray(def.activationRequirements)),
+    crew: Object.freeze({ regulation: op.crewRegulation ?? null, requiresSecondCrewRegulation: op.requiresSecondCrewRegulation === true, normallyRequiresTripod: op.normallyRequiresTripod === true }),
+    loadedPayload: Object.freeze({ delegates: op.damageTypeAndBurstDeterminedByGrenade === true, family: cs.ammo?.acceptedPayloadFamily ?? null, excludes: op.cannotFireThermalDetonators === true ? ['weapon-thermal-detonator'] : [] }),
+    descriptor,
     // Phase 5D-H: what the selected form IS, as structured tokens (ability scopes join to this, never to a name)
-    descriptor: buildWeaponDescriptor(resolved, def, { area: areaShape, fireModes }),
     // Phase 5D-I-A: the selected form's area shape (geometry + detonation timing) so attack legality can validate the player's timer choice
     area: areaShape,
     abilityRelations: Object.freeze(asArray(resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions).map((r) => Object.freeze({ ability: String(r?.ability ?? ''), abilityToken: normalizeToken(r?.ability), abilityType: r?.abilityType ?? null, relation: r?.relation ?? null }))),
@@ -150,10 +179,32 @@ const COSTLY_ACTIONS = new Set(['swift', 'move', 'standard', 'full-round', 'full
 function stunSettingOf(def, resolved, op) {
   const act = def?.stun?.activation ?? null;
   const costly = (a) => COSTLY_ACTIONS.has(String(a?.action ?? '').toLowerCase());
+  const cs = resolved?.canonicalStats ?? {};
+  const profiles = asArray(cs.attackProfiles);
+  // Phase 5D-I-B: a persistent SETTING can also be an attack profile of a weapon that has other attack profiles and no timed state machine:
+  //   - its mode states a switch action (modeProfiles[].switchAction; operation.configurationSwitchAction is the weapon-level copy):
+  //     Interchangeable Weapon System "switches among ... modes as a standard action"; Dual-Phase Lightsaber's blade settings
+  //   - or the profile's own activation is a costly action (Dual-Phase extended blade: swift)
+  // A weapon with a state machine (Retrosaber) uses the machine; a special attack (Venom Spit) is its own action, not a setting.
+  const noMachine = !cs.stateMachine;
+  const modes = asArray(cs.modeProfiles);
+  const modeOf = (p) => modes.find((m) => m?.attackProfileId === p?.id || asArray(m?.attackProfileIds).includes(p?.id)) ?? null;
+  const modeAction = (p) => { const m = modes.length > 1 ? modeOf(p) : null; if (!m) return null; const a = costly({ action: m.switchAction }) ? m.switchAction : (costly({ action: op?.configurationSwitchAction }) ? op.configurationSwitchAction : null); return a; };
+  const profileAction = (p) => asArray(p?.activationRequirements).find((r) => r?.type === 'action' && costly(r))?.action ?? null;
+  // a weapon whose setting is its stun activation (Shockboxing Gloves) is already handled by that structure: no second, profile-based setting
+  const stunSettingWeapon = profiles.some((p) => p?.stun?.activation?.timing === 'persistent-setting' && costly(p.stun.activation));
+  const settingAction = (p) => (noMachine && !stunSettingWeapon && profiles.length > 1 && (p?.kind ?? 'attack') === 'attack' && !asArray(p?.activationRequirements).some((r) => r?.type === 'usage-limit')) ? (modeAction(p) ?? profileAction(p)) : null;
+  const selected = profiles.find((p) => p.id === resolved?.selection?.profileId) ?? null;
   // operation.stunSwitchAction is the weapon-level copy of the same published action; the profile activation is authoritative
-  const persistent = act?.timing === 'persistent-setting' && (costly(act) || COSTLY_ACTIONS.has(String(act?.action == null ? op?.stunSwitchAction ?? '' : '').toLowerCase()));
-  const weaponHasSwitch = asArray(resolved?.canonicalStats?.attackProfiles).some((p) => p?.stun?.activation?.timing === 'persistent-setting' && costly(p.stun.activation));
-  return Object.freeze({ persistent, action: persistent ? String(act.action ?? op?.stunSwitchAction).toLowerCase() : null, weaponHasSwitch });
+  const stunPersistent = act?.timing === 'persistent-setting' && (costly(act) || COSTLY_ACTIONS.has(String(act?.action == null ? op?.stunSwitchAction ?? '' : '').toLowerCase()));
+  const profileSetting = selected ? settingAction(selected) : null;
+  const persistent = stunPersistent || !!profileSetting;
+  const weaponHasSwitch = profiles.some((p) => (p?.stun?.activation?.timing === 'persistent-setting' && costly(p.stun.activation)) || !!settingAction(p));
+  const action = stunPersistent ? String(act.action ?? op?.stunSwitchAction).toLowerCase() : profileSetting ? String(profileSetting).toLowerCase() : null;
+  // a profile-based setting starts in the weapon's default mode: that profile is free until another setting has been used
+  const defaultMode = modes.find((m) => m?.id === cs.operatingModes?.default) ?? null;
+  const baselineProfileId = profiles.some((p) => settingAction(p)) ? (defaultMode?.attackProfileId ?? profiles[0]?.id ?? null) : null;
+  return Object.freeze({ persistent, action, weaponHasSwitch, baselineProfileId });
 }
 
 function rangePreparationOf(op) {

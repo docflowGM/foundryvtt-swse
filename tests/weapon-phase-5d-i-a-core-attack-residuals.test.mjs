@@ -132,7 +132,9 @@ try {
   assert.equal(aooTwo - base, 0, 'AoO but two-handed: no bonus');
   assert.deepEqual(asked, [], 'every fact was observed: nothing was asked');
   // the unobserved wielding is asked ONCE (stored), then applied
-  const unknownHands = await bonusOf(A, duel, { attackOfOpportunity: true });
+  // (5D-I-B: the weapon REMEMBERS the hands an earlier attack stated, so the unobserved case needs a weapon with no recorded state)
+  const duel2 = canon('lightsaber-chassis-dueling'); const A2 = makeActor({ items: [duel2] });
+  const unknownHands = await bonusOf(A2, duel2, { attackOfOpportunity: true });
   assert.deepEqual(asked, ['conditional-0'], 'unobserved wielding -> one stored prompt');
   assert.equal(unknownHands - base, 1, 'answered yes -> +1');
   assert.equal(wfOf().special.answers['conditional-0'], true, 'the answer persists in the workflow context');
@@ -286,7 +288,7 @@ try {
   const snare = withAmmo('weapon-snare-pistol', 50); const Sn = makeActor({ items: [snare] });
   const asked = []; rt.setSpecialPromptProvider(async (q) => { asked.push(q.id); return false; });
   reset(); assert.equal(await attack(Sn, snare, { rangeBand: 'short', targetDisposition: 'friendly' }), null, 'a friendly target: illegal, refused before any cost'); assert.equal(spent.rolls, 0); assert.equal(spent.ammo, 0);
-  assert.ok(notes.warn.some((m) => /cannot attack this target/.test(m)));
+  assert.ok(notes.warn.some((m) => /cannot make this attack/.test(m)));
   reset(); assert.ok(await attack(Sn, snare, { rangeBand: 'short', targetDisposition: 'hostile' }), 'hostile at short range is legal'); assert.deepEqual(asked, []);
   reset(); assert.equal(await attack(Sn, snare, { rangeBand: 'short' }), null, 'unobserved disposition asked once; a "no" answer refuses'); assert.equal(asked.length, 1);
   rt.setSpecialPromptProvider(null);
@@ -459,7 +461,7 @@ try {
   // 22: stun switch timing -- Shockboxing Gloves: switching to stun costs a swift action ONCE; the setting persists on the owned item
   const gl = canon('unmapped::Shockboxing Gloves'); const G = makeActor({ items: [gl] });
   const ss = (profileId) => rt.shapeOfWeapon(gl, { profileId }).stunSetting;
-  assert.deepEqual(ss('unarmed-stun'), { persistent: true, action: 'swift', weaponHasSwitch: true });
+  assert.deepEqual(ss('unarmed-stun'), { persistent: true, action: 'swift', weaponHasSwitch: true, baselineProfileId: null });
   assert.equal(ss('unarmed-lethal').persistent, false);
   const swiftCount = () => spent.actions.filter((a) => a === 'swift').length;
   reset(); assert.ok(await attack(G, gl, { profileId: 'unarmed-stun' })); assert.equal(swiftCount(), 1, 'first stun attack pays the swift action');
@@ -613,8 +615,8 @@ try {
   const closure = await import('../tools/census-weapon-executable-field-closure.mjs');
   const census = await closure.buildClosureCensus();
   assert.deepEqual(census.problems, []);
-  assert.equal(census.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER, g.after.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER);
-  ok('closure census agrees with the I-A manifest and reports no unclassified residual');
+  assert.ok(census.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER <= g.after.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER, 'later phases may only shrink the live residual below the pinned end-of-I-A value');
+  ok('closure census reports no unclassified residual and is never above the pinned end-of-I-A counters');
 }
 
 } finally { restoreHarness(); unstubRolls(); rt.setSpecialPromptProvider(null); }

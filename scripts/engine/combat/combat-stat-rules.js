@@ -347,7 +347,7 @@ export function isThrownMeleeWeapon(weapon) {
 import { PROJECTED_ATTACK_ABILITIES, ATTACK_ABILITY_OVERRIDE_FLAG, readAttackAbilityOverride } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-ability-override.js";
 import { canonicalRangePenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
 import { canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
-import { shapeOfWeapon } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
+import { shapeOfWeapon, attackSelectionOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
 import { descriptorMatchesAny } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js';
 
 // Attack-ability provenance (Phase 5D-B). Production/canonical weapons carry a PROJECTED system.attackAttribute (generated
@@ -893,7 +893,7 @@ export function getHalfLevelDamageBonus(actor, item = null, context = {}) {
   return level;
 }
 
-export function getDamageAbilityContribution(actor, weapon) {
+export function getDamageAbilityContribution(actor, weapon, context = {}) {
   // Same vehicle-domain fix as getHalfLevelDamageBonus() above: a gunner's
   // own STR/DEX ability modifier does not apply to vehicle weapon damage.
   if (isVehicleWeapon(weapon)) return 0;
@@ -912,6 +912,24 @@ export function getDamageAbilityContribution(actor, weapon) {
   // Phase 5D-I-A: a ranged weapon whose canonical operation says the Strength modifier applies to its damage (bow, sling) adds it ONCE.
   // CONSUMER_DEFECT fixed: every other ranged weapon contributes no ability modifier, and these two silently lost the published Strength damage.
   { const sh = shapeOfWeapon(weapon); if (sh.source === 'canonical' && sh.strengthAppliesToDamage === true) return SchemaAdapters.getAbilityMod(actor, 'str'); }
+  // Phase 5D-I-B: Core Rulebook, Damage: "When you hit with a melee weapon that you are wielding two-handed, you add double your Strength bonus to
+  // the damage. This higher Strength modifier does not apply to two-handed melee attacks with light weapons." The hands are the WIELDER'S ACTUAL
+  // choice carried by the attack (never inferred from weapon size); a profile that embodies "forgo doubling the Strength bonus" (Long-Handle
+  // Lightsaber's 2d10 base) adds the ordinary single Strength bonus instead. Canonical melee forms only -- legacy weapons keep the rules below.
+  {
+    const hands = Number(context?.wieldedHands ?? context?.attackShape?.wieldedHands);
+    const form = context?.weaponForm ?? null;
+    if (hands === 2 && form) {
+      let sh;
+      try { sh = shapeOfWeapon(weapon, attackSelectionOf(form)); } catch { sh = null; }
+      if (sh?.source === 'canonical' && sh.branch === 'melee') {
+        const str = SchemaAdapters.getAbilityMod(actor, 'str');
+        const forgo = context?.forgoDoubleStrength === true || context?.attackShape?.forgoDoubleStrength === true;
+        const light = descriptorMatchesAny(sh.descriptor, ['light'], { wielderSize: actor?.system?.size ?? 'medium' });
+        return !forgo && !light && str > 0 ? str * 2 : str;
+      }
+    }
+  }
   if (isRangedWeapon(weapon) && !isThrownMeleeWeapon(weapon)) return 0;
   const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
   if (system.twoHanded === true || system.wieldedTwoHanded === true) return Math.floor(strMod * 1.5);

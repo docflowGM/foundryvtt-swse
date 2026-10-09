@@ -100,7 +100,8 @@ export class AttackOfOpportunityFeatRules {
 
   static getEligibility(actor) {
     return {
-      eligibleWeaponCategories: ['melee', 'natural', 'pistol', 'foldedRetractableStock'],
+      // Core Rulebook, Attacks of Opportunity: melee weapons, natural weapons, pistols, carbines and any weapon with a folded stock (carbine added in 5D-I-B)
+      eligibleWeaponCategories: ['melee', 'natural', 'pistol', 'carbine', 'foldedRetractableStock'],
       unarmedAllowed: this.hasMartialArtsI(actor),
       unarmedRequiresFeat: 'Martial Arts I',
       cannotUseWhileFlatFooted: !this.hasCombatReflexes(actor),

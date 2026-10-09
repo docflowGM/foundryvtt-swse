@@ -1,7 +1,7 @@
 {
  "schemaVersion": "5C.1",
  "role": "GENERATED_REPORT",
- "corpusSha256": "b19c5866b4551c2394070f777526c7846d527925281c079d766c35ed26a08783",
+ "corpusSha256": "a47c772086ca58cb7b7998c1fd895819ee7e7cc014987f0eae540fa53aade977",
  "projectionTable": [
   {
    "legacy": "name",
@@ -92,7 +92,7 @@
  },
  "limitationCounts": {
   "conditional": 33,
-  "configuration": 10,
+  "configuration": 11,
   "damageTypeRelation": 45,
   "multiProfile": 36,
   "nonDice": 24,
@@ -163,7 +163,9 @@
   "unmapped::Axe": [
    "multiProfile"
   ],
-  "unmapped::Bayonet": [],
+  "unmapped::Bayonet": [
+   "configuration"
+  ],
   "unmapped::Blastsword": [],
   "unmapped::Cesta": [
    "multiProfile"

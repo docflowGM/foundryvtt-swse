@@ -34,7 +34,10 @@ import { WeaponRuntimeError, ERROR_CODES, reportWeaponRuntimeError } from "/syst
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
 import { summarizeAreaShape, validateDetonationTimer } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
 import { abilityProhibitedForShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
-import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveWielding, resolveOpportunityEligibility, crewRegulationFor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/owned-state.js";
+import { evaluateProfileRequirements, forgoesDoubleStrength, slugOfIdentity } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/activation-requirements.js";
+import { abilityKeysOfActor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf, canonicalSizeName, resolveTargetRequirements, askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
@@ -75,6 +78,8 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
   // Phase 5D-A: resolve the canonical weapon/selected profile ONCE here so the live preview and the real roll feed the
   // identical runtime (profile branch + dynamic proficiency) into resolveAttackBonus(). A canonical identity/selection
   // error fails closed (ok:false); legacy/custom weapons pass through untouched.
+  // Phase 5D-I-B: an attack that names no configuration / profile uses the state the OWNED weapon is in (the weapon remembers it)
+  rollOptions = FireStateStore.applyOwnedSelection(actor, weapon, rollOptions);
   const canonical = withCanonicalWeaponRuntime(weapon, rollOptions);
   if (canonical.error) return { ok: false, reason: 'weapon-runtime-error', weaponRuntimeError: canonical.error };
   rollOptions = canonical.rollOptions;
@@ -174,6 +179,27 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
 }
 
 /**
+ * Phase 5D-I-B: a weapon that declares attack-of-opportunity CHOICES (Siang Lance: a ranged shot or its bayonet) makes the wielder pick one when
+ * the attack is an attack of opportunity. The choice names the attack profile it makes (structured map on the weapon); the selected profile is
+ * what the whole workflow uses afterwards -- nothing is rebuilt later from Item defaults. An unnamed choice is asked once; an unanswered one refuses.
+ */
+async function resolveOpportunityChoice(weapon, rollOptions) {
+  if (rollOptions.attackOfOpportunity !== true) return { rollOptions };
+  let shape;
+  try { shape = shapeOfWeapon(weapon, attackSelectionOf(rollOptions)); } catch { return { rollOptions }; }
+  const choices = shape.source === 'canonical' ? shape.opportunity.choices : [];
+  if (!choices.length) return { rollOptions };
+  let picked = choices.find((c) => c.choice === rollOptions.aooChoice) ?? choices.find((c) => c.profileId === rollOptions.profileId);
+  if (!picked) {
+    const alternate = choices[1] ?? choices[0];
+    const ans = await askSpecialQuestion({ id: 'aoo-choice', family: 'opportunity-choice', question: `Make this attack of opportunity with the ${alternate.choice.replace(/-/g, ' ')}? (no: ${choices[0].choice.replace(/-/g, ' ')})` });
+    if (ans !== true && ans !== false) return { rollOptions, refusal: 'choose which attack to make as the attack of opportunity.' };
+    picked = ans === true ? alternate : choices[0];
+  }
+  return { rollOptions: { ...rollOptions, profileId: picked.profileId, aooChoice: picked.choice } };
+}
+
+/**
  * Phase 5D-A: pure canonical weapon/profile resolution for an attack. Legacy/custom weapons return the options untouched;
  * a canonical weapon returns options carrying the resolved weaponRuntime and the selected profile's branch as attackType.
  * A canonical identity/selection error is returned (never thrown, never a legacy fallback) so callers fail closed.
@@ -211,10 +237,13 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   const runtime = rollOptions.weaponRuntime;
   if (runtime?.source !== 'canonical') return { rollOptions, mechanics: [], answers: {}, unresolved: [], areaShape: null };
   let cd = null;
+  // Phase 5D-I-B: a payload-delegating launcher fires the LOADED canonical grenade (explicit choice, else the owned loaded identity)
+  const loadedIdentityKey = rollOptions.loadedIdentityKey ?? FireStateStore.readFireState(weapon)?.loadedIdentityKey ?? undefined;
   try {
-    cd = resolveCanonicalDamage(weapon, { weaponForm: weaponFormRecord(runtime, rollOptions.damageMode ?? null), damageMode: rollOptions.damageMode ?? null, weaponRuntime: runtime });
+    cd = resolveCanonicalDamage(weapon, { weaponForm: { ...weaponFormRecord(runtime, rollOptions.damageMode ?? null), ...(loadedIdentityKey ? { loadedIdentityKey } : {}) }, damageMode: rollOptions.damageMode ?? null, weaponRuntime: runtime });
   } catch (err) {
     if (!(err instanceof WeaponRuntimeError)) throw err;
+    if (err.code === ERROR_CODES.PAYLOAD_NOT_ACCEPTED) return { rollOptions, mechanics: [], answers: {}, unresolved: [], refusal: { reason: 'payload-not-accepted', failed: [`loaded payload: ${loadedIdentityKey}`] } };
     return { rollOptions, mechanics: [], answers: {}, unresolved: [] }; // form-level errors are reported by the existing validators
   }
   const mechanics = cd.mechanics ?? [];
@@ -226,7 +255,13 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   if (rollOptions.packageType === 'tripleAttack') activeUses.push('triple-attack');
   if (optionActive(rollOptions, 'rapidShot')) activeUses.push('rapid-shot');
   if (optionActive(rollOptions, 'rapidStrike')) activeUses.push('rapid-strike');
-  const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried, activeUses, attackContext: buildAttackConditionContext(actor, target, rollOptions) });
+  // Phase 5D-I-B: what the OWNED weapon state already says (hands, mount, this round's crew adjudication) -- read once, never rediscovered later
+  const shape = resolveAttackShapeFor(runtime, rollOptions);
+  const owned = FireStateStore.readFireState(weapon) ?? {};
+  const wield = resolveWielding(shape.wielding, { option: rollOptions.wieldedHands, state: owned });
+  const ownedFacts = { wieldedHands: wield.hands, mounted: typeof owned.mounted === 'boolean' ? owned.mounted : undefined, crewRegulated: FireStateStore.storedCrewRegulation(actor, weapon) };
+  const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried, activeUses, attackContext: buildAttackConditionContext(actor, target, rollOptions, ownedFacts) });
+  if (typeof stage.answers['fact:crewRegulated'] === 'boolean' && carried['fact:crewRegulated'] === undefined) await FireStateStore.recordCrewRegulation(actor, weapon, stage.answers['fact:crewRegulated']);
   if (stage.unresolved.length) ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'}: ${stage.unresolved.length} conditional attack modifier(s) could not be evaluated and were not applied (GM adjudication).`);
   // Phase 5D-I-A: target eligibility from the selected profile's structured activation requirements. Only a definite "no" refuses (before any
   // cost); an unobserved fact is asked once and stored with the other special answers.
@@ -243,6 +278,41 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   tr = resolveTargetRequirements(targetReqs, { context: targetContext, answers: answersWithTarget });
   if (!tr.legal) refusal = { reason: 'target-requirement-not-met', failed: tr.evaluated.filter((e) => e.result === false).map((e) => e.condition) };
   else if (tr.evaluated.some((e) => e.result === null)) stage.unresolved.push(...tr.evaluated.filter((e) => e.result === null).map((e) => ({ id: e.prompt, family: 'target-requirement', reason: 'condition-not-observable-and-unanswered' })));
+  // Phase 5D-I-B: owned-state legality of the selected form, resolved in the documented order and BEFORE any cost:
+  //   hands -> attack-of-opportunity eligibility -> tripod / mount -> the profile's remaining activation requirements (feat identity,
+  //   proficiency, wielding, choice, operators). Only a definite "no" refuses; an unobserved fact is asked once and stored.
+  const refuseOnce = (reason, failed) => { refusal ??= { reason, failed: [].concat(failed) }; };
+  if (!wield.legal) refuseOnce('wielding', `wielding: ${wield.reason}`);
+  if (rollOptions.attackOfOpportunity === true) {
+    const keys = abilityKeysOfActor(actor);
+    const eligibility = resolveOpportunityEligibility({ ...shape.opportunity, stock: owned.stock, isNatural: false, isUnarmed: false, hasMartialArtsI: keys.includes('martial-arts-i') });
+    if (!eligibility.eligible) refuseOnce('attack-of-opportunity', `attack of opportunity: ${eligibility.reason}`);
+  }
+  if (shape.crew?.normallyRequiresTripod) {
+    let mountedNow = typeof rollOptions.mounted === 'boolean' ? rollOptions.mounted : (typeof owned.mounted === 'boolean' ? owned.mounted : undefined);
+    if (mountedNow === undefined) {
+      const ans = await askSpecialQuestion({ id: 'requirement:mounted', family: 'activation-requirement', question: `Is ${weapon?.name ?? 'the weapon'} mounted on a tripod? (it can normally be fired only when mounted)` });
+      if (ans === true || ans === false) { mountedNow = ans; await FireStateStore.setMounted(actor, weapon, ans); }
+    }
+    if (mountedNow === false) refuseOnce('tripod-required', 'mount: tripod-required');
+  }
+  const abilityKeys = abilityKeysOfActor(actor);
+  const proficientNow = (() => { try { return resolveCanonicalAttackProficiency(runtime, actor).proficient === true; } catch { return false; } })();
+  const requirementCtx = () => ({ hands: wield.hands, aoo: rollOptions.attackOfOpportunity === true, proficient: proficientNow, abilityKeys, operators: Number.isFinite(Number(rollOptions.operators)) ? Number(rollOptions.operators) : undefined, answers: answersWithTarget });
+  let reqs = evaluateProfileRequirements(targetReqs, requirementCtx());
+  for (const e of reqs.evaluated.filter((x) => x.result === null && x.prompt)) {
+    const ans = await askSpecialQuestion({ id: e.prompt, family: 'activation-requirement', question: e.question });
+    if (ans === true || ans === false) answersWithTarget[e.prompt] = ans;
+  }
+  reqs = evaluateProfileRequirements(targetReqs, requirementCtx());
+  if (!reqs.legal) refuseOnce('activation-requirement-not-met', reqs.evaluated.filter((e) => e.result === false).map((e) => `${e.type}: ${e.key}`));
+  else for (const e of reqs.evaluated.filter((x) => x.result === null)) stage.unresolved.push({ id: e.prompt ?? `${e.type}:${e.key}`, family: 'activation-requirement', reason: e.detail ?? 'condition-not-observable-and-unanswered' });
+  const ownedExtras = {
+    ...(wield.hands ? { wieldedHands: wield.hands } : {}),
+    ...(rollOptions.attackOfOpportunity === true ? { opportunity: { choice: rollOptions.aooChoice ?? undefined, profileId: runtime.profile.id } } : {}),
+    ...(forgoesDoubleStrength(targetReqs) ? { forgoDoubleStrength: true } : {}),
+    ...(shape.reach && (shape.reach.bonusSquares > 0 || shape.reach.absoluteSquares !== null) ? { reach: { bonusSquares: shape.reach.bonusSquares, ...(shape.reach.absoluteSquares !== null ? { absoluteSquares: shape.reach.absoluteSquares } : {}) } } : {}),
+  };
   stage.answers = answersWithTarget;
   // Phase 5D-G: the selected form's (payload ?? profile) area shape drives the EXISTING area rules: attack.isArea, the miss rule
   // (half damage) and the no-critical-doubling rule read the workflow context, so the canonical shape is what sets them
@@ -263,7 +333,7 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
     }));
     nextOptions = { ...nextOptions, situationalContributions: [...(Array.isArray(nextOptions.situationalContributions) ? nextOptions.situationalContributions : []), ...contributions] };
   }
-  return { rollOptions: nextOptions, mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore, areaShape, refusal };
+  return { rollOptions: nextOptions, mechanics, answers: stage.answers, unresolved: stage.unresolved, drIgnore: stage.drIgnore, areaShape, refusal, ownedExtras, loadedIdentityKey: cd.delegatedFrom ? loadedIdentityKey : undefined };
 }
 
 /**
@@ -272,7 +342,7 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
  * Observable: fire mode, range band, explicit aim / brace / mounted / wielding / adjacency choices of the attack, the attacker's
  * Strength score and size, the target's size, an attack of opportunity.
  */
-export function buildAttackConditionContext(actor, target, rollOptions = {}) {
+export function buildAttackConditionContext(actor, target, rollOptions = {}, extras = {}) {
   const ctx = {};
   const fm = rollOptions.fireMode;
   const autofire = rollOptions.autofire === true || rollOptions.attackMode === 'autofire' || fm === 'autofire' || fm === 'burst' || optionActive(rollOptions, 'burstFire');
@@ -283,7 +353,10 @@ export function buildAttackConditionContext(actor, target, rollOptions = {}) {
   if (typeof aim === 'boolean') ctx.aimedBeforeAttack = aim;
   if (typeof rollOptions.braced === 'boolean') ctx.braced = rollOptions.braced;
   if (typeof rollOptions.mounted === 'boolean') ctx.mounted = rollOptions.mounted;
+  if (typeof rollOptions.crewRegulated === 'boolean') ctx.crewRegulated = rollOptions.crewRegulated;
   if (Number.isFinite(Number(rollOptions.wieldedHands))) ctx.wieldedHands = Number(rollOptions.wieldedHands);
+  // Phase 5D-I-B: facts the OWNED weapon state observes (mounted, hands, this round's crew adjudication) fill what the attack did not state
+  for (const [k, v] of Object.entries(extras)) if (v !== undefined && ctx[k] === undefined) ctx[k] = v;
   if (rollOptions.adjacent === true || rollOptions.distance === 'adjacent') ctx.distance = 'adjacent';
   else if (rollOptions.adjacent === false || (typeof rollOptions.distance === 'string' && rollOptions.distance)) ctx.distance = rollOptions.distance ?? 'not-adjacent';
   ctx.events = rollOptions.attackOfOpportunity === true ? ['attack-of-opportunity'] : [];
@@ -306,7 +379,7 @@ export async function resolveCanonicalAttackStage(actor, weapon, rollOptions = {
   const canonical = withCanonicalWeaponRuntime(weapon, rollOptions);
   if (canonical.error) return { situationalContributions: undefined, answers: {}, unresolved: [] };
   const stage = await prepareCanonicalSpecialMechanics(weapon, canonical.rollOptions, actor);
-  return { situationalContributions: stage.rollOptions.situationalContributions, answers: stage.answers ?? {}, unresolved: stage.unresolved ?? [], areaShape: stage.areaShape ?? null };
+  return { situationalContributions: stage.rollOptions.situationalContributions, answers: stage.answers ?? {}, unresolved: stage.unresolved ?? [], areaShape: stage.areaShape ?? null, refusal: stage.refusal ?? null };
 }
 
 const SHAPE_OPTION_ABILITIES = Object.freeze({ rapidShot: 'Rapid Shot', burstFire: 'Burst Fire' });
@@ -344,6 +417,9 @@ function describeReadinessBlockers(blockers = []) {
     if (b.reason === 'awaiting-reload') return `it must be reloaded${b.reloadAction ? ` (${b.reloadAction} action)` : ''}`;
     if (b.reason === 'unavailable-this-round') return `it cannot fire in round ${b.currentRound}; it is ready again in round ${b.availableRound}`;
     if (b.reason === 'round-shot-limit') return `it has already fired its limit (${b.maxShots}) this round`;
+    if (b.reason === 'configuration-not-usable') return `it is in the ${b.configurationId} configuration and cannot attack until it is changed`;
+    if (b.reason === 'state-machine') return `it is in the ${b.from} state and cannot change to ${b.to} (${b.detail === 'locked' ? 'locked' : 'no such transition'})`;
+    if (b.reason === 'usage-exhausted') return b.detail === 'manual-reset-required' ? `its ${b.per ?? 'usage'} limit is used and needs a GM reset` : `its ${b.per ?? 'usage'} limit is used until ${b.resetsAt}`;
     return b.reason;
   }).join('; ');
 }
@@ -497,6 +573,11 @@ export async function rollAttack(actor, weapon, options = {}) {
 
   // Phase 5D-A: canonical weapon/profile resolution is pure -- do it BEFORE any action-option or ammunition cost so an
   // unresolvable canonical identity/selection never spends anything (and needs no rollback).
+  // Phase 5D-I-B: owned state selection (configuration / persistent setting / machine state), then the attack-of-opportunity choice
+  rollOptions = FireStateStore.applyOwnedSelection(actor, weapon, rollOptions);
+  const opportunity = await resolveOpportunityChoice(weapon, rollOptions);
+  if (opportunity.refusal) { ui?.notifications?.warn?.(`${weapon.name}: ${opportunity.refusal}`); return null; }
+  rollOptions = opportunity.rollOptions;
   const canonical = withCanonicalWeaponRuntime(weapon, rollOptions);
   if (canonical.error) {
     reportWeaponRuntimeError(canonical.error, { notify: false });
@@ -506,7 +587,7 @@ export async function rollAttack(actor, weapon, options = {}) {
   rollOptions = canonical.rollOptions;
   const specialStage = await prepareCanonicalSpecialMechanics(weapon, rollOptions, actor);
   if (specialStage.refusal) {
-    ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'} cannot attack this target: ${specialStage.refusal.failed.map((c) => c.replace(/[-_]/g, ' ')).join('; ')}.`);
+    ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'} cannot make this attack (${String(specialStage.refusal.reason).replace(/-/g, ' ')}): ${specialStage.refusal.failed.map((c) => String(c).replace(/[-_]/g, ' ')).join('; ')}.`);
     return null;
   }
   rollOptions = specialStage.rollOptions;
@@ -687,7 +768,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     natural20: outcome.automaticHit,
     defense: resolvedTarget.defenseType ?? workflowContext?.attack?.defense ?? null,
     // Phase 5D-C: carry the exact canonical attack form to the later Damage roll (null/absent for legacy weapons)
-    weaponForm: weaponFormRecord(rollOptions.weaponRuntime, rollOptions.damageMode ?? null) ?? undefined,
+    weaponForm: weaponFormRecord(rollOptions.weaponRuntime, rollOptions.damageMode ?? null) ? { ...weaponFormRecord(rollOptions.weaponRuntime, rollOptions.damageMode ?? null), ...(specialStage.loadedIdentityKey ? { loadedIdentityKey: specialStage.loadedIdentityKey } : {}) } : undefined,
     // Phase 5D-F: this attack's place in its sequence and the shape it was made with (damage clicked from attack #2 reads attack #2)
     attackShape: rollOptions.weaponRuntime?.source === 'canonical' ? {
       fireMode: rollOptions.fireMode ?? (optionActive(rollOptions, 'burstFire') ? 'burst' : (rollOptions.autofire === true || rollOptions.attackMode === 'autofire') ? 'autofire' : 'single'),
@@ -695,6 +776,8 @@ export async function rollAttack(actor, weapon, options = {}) {
       sequenceId: rollOptions.sequenceId ?? undefined, sequenceLength: Number.isFinite(rollOptions.sequenceLength) ? rollOptions.sequenceLength : 1,
       packageType: rollOptions.packageType ?? undefined, handRole: rollOptions.handRole ?? undefined, endId: rollOptions.weaponRuntime.endId ?? undefined,
       area: summarizeAreaShape(specialStage.areaShape),
+      // Phase 5D-I-B: the owned-state facts this attack was resolved with (damage must not rediscover them from a possibly changed Item)
+      ...(specialStage.ownedExtras ?? {}),
     } : undefined,
     ...(specialStage.areaShape?.isArea ? { isArea: true, ruleData: { areaAttack: true, ...(specialStage.areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } } : {}),
     // Phase 5D-E: carry the special-mechanic state (classified mechanics, stored answers, evaluated CT riders) to Damage/Apply
