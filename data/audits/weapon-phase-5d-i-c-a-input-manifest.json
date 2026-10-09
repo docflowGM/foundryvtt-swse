@@ -1,0 +1,871 @@
+{
+  "schemaVersion": 1,
+  "phase": "5D-I-C-A",
+  "purpose": "Input manifest of the attack outcome / threshold / status / persistent-effect convergence. Audit evidence only: no runtime module reads it; each row names the structured source field, trigger / timing, consumer and disposition.",
+  "counters": {
+    "I_C_A_INPUT_MECHANICS": 49,
+    "I_C_A_OPERATION_KEYS": 28,
+    "I_C_A_SPECIAL_MECHANICS": 21,
+    "I_C_A_IMPLEMENTED": 23,
+    "I_C_A_DUPLICATES": 7,
+    "I_C_A_DATA_DEFECT": 0,
+    "I_C_A_DATA_COMPLETENESS": 3,
+    "I_C_A_DEFERRED_I_C_B": 6,
+    "I_C_A_DEFERRED_I_C_C": 1,
+    "I_C_A_DEFERRED_I_D": 8,
+    "I_C_A_BLOCKED": 1,
+    "I_C_A_UNCLASSIFIED": 0
+  },
+  "globalCounters": {
+    "before": {
+      "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
+      "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 34,
+      "PARTIAL_EXECUTION_FIELD_FAMILIES": 15,
+      "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 14,
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 126,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 167,
+      "SPECIAL_MECHANICS_DEFER": 42
+    },
+    "after": {
+      "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
+      "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 34,
+      "PARTIAL_EXECUTION_FIELD_FAMILIES": 15,
+      "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
+      "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 14,
+      "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 109,
+      "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 144,
+      "SPECIAL_MECHANICS_DEFER": 25
+    }
+  },
+  "specialMechanicDeferredByOwner": {
+    "I-C-B": 15,
+    "I-C-C": 7,
+    "I-D": 3
+  },
+  "byMechanicFamily": {
+    "activation-effect": 1,
+    "carried-item-skill-bonus": 1,
+    "ct-outcome": 2,
+    "ct-rider": 2,
+    "ct-rider-prompt": 1,
+    "delayed-damage": 2,
+    "grabbed-target-effect": 1,
+    "grapple-state": 1,
+    "grapple-treatment": 1,
+    "hurled-object": 1,
+    "kill-outcome": 1,
+    "line-of-sight": 1,
+    "payload-delegation": 2,
+    "persistent-poison": 6,
+    "poison-delivery": 3,
+    "post-threshold-damage": 1,
+    "power-attack-exclusion": 1,
+    "prepared-attack": 4,
+    "reaction-compatibility": 1,
+    "remote-detonation": 1,
+    "status-condition": 3,
+    "status-effect": 3,
+    "status-outcome": 2,
+    "target-class-damage": 1,
+    "threshold-stage": 1,
+    "trapped-state": 1,
+    "usage-and-outcome": 1,
+    "weapon-object-dr": 3
+  },
+  "rows": [
+    {
+      "kind": "operation-key",
+      "key": "attackTreatedAs",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mechanicFamily": "grapple-treatment",
+      "disposition": "DEFERRED_TO_I_C_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Garrote"
+      ],
+      "structuredSourceField": "operation.attackTreatedAs",
+      "currentConsumer": null,
+      "owner": "I-C-B",
+      "reason": "Garrote: feat / talent bonuses treat the grab as a garrote attack -- grapple treatment."
+    },
+    {
+      "kind": "operation-key",
+      "key": "blastEffect",
+      "family": "3b.operation.area-splash-burst",
+      "mechanicFamily": "grapple-state",
+      "disposition": "DEFERRED_TO_I_C_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "adhesive-grenade"
+      ],
+      "structuredSourceField": "operation.blastEffect",
+      "currentConsumer": null,
+      "owner": "I-C-B",
+      "reason": "Adhesive Grenade: every target in the blast makes a GRAPPLE check against the attacker's ranged attack roll (movement denied for 3 rounds). A restrain / grapple state, owned by the grab-grapple-restrain seam."
+    },
+    {
+      "kind": "operation-key",
+      "key": "conditionTrackOnHit",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "ct-outcome",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "gas-grenade"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects[condition-track-effect].effect.conditionTrackSteps (area-attack-hit)",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (classifyOutcomeEffect)",
+      "reason": "Gas Grenade: the weapon-level -2 repeats the structured triggered effect, which is what executes (ct-rider, once per message + target)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "conditionTrackRider",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "status-outcome",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "carbonite-rifle"
+      ],
+      "structuredSourceField": "operation.conditionTrackRider",
+      "seam": "apply-damage",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (conditionTrackRider)",
+      "reason": "Carbonite Rifle: a target moved down the condition track by the weapon is also immobilized until the end of ITS next turn. Executes only when the resolved damage event proves the condition-track movement; the immobilized status is a turn-owned timed effect."
+    },
+    {
+      "kind": "operation-key",
+      "key": "conditionTrackWithEvasion",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "ct-outcome",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "gas-grenade"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects[condition-track-effect].evasionEffect.conditionTrackSteps",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (evasionSteps)",
+      "reason": "Gas Grenade: the weapon-level -1 repeats the structured evasionEffect; a target with Evasion takes that smaller shift."
+    },
+    {
+      "kind": "operation-key",
+      "key": "damageThresholdAdjustment",
+      "family": "3b.operation.damage-modifiers",
+      "mechanicFamily": "threshold-stage",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "disruptor-pistol",
+        "disruptor-rifle",
+        "sonic-disruptor"
+      ],
+      "structuredSourceField": "operation.damageThresholdAdjustment",
+      "seam": "threshold",
+      "timing": "after-mitigation",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (damageThresholdAdjustment)",
+      "reason": "Disruptor pistol / rifle, Sonic Disruptor: \"treats every target as though its damage threshold were 5 lower\". A threshold-stage adjustment of THIS damage event only: the stored Damage Threshold is never changed (ThresholdEngine.evaluateThreshold / getDamageThreshold take it as an event parameter)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "disintegratesOnKillOrDestruction",
+      "family": "3b.operation.configuration-and-wielding",
+      "mechanicFamily": "kill-outcome",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 4,
+      "rawOccurrences": 4,
+      "representativeWeapons": [
+        "disruptor-pistol",
+        "disruptor-rifle",
+        "incinerator-rifle",
+        "sonic-disruptor"
+      ],
+      "structuredSourceField": "operation.disintegratesOnKillOrDestruction",
+      "seam": "apply-damage",
+      "timing": "after-threshold",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (disintegratesOnKillOrDestruction)",
+      "reason": "Disruptor pistol / rifle, Incinerator Rifle, Sonic Disruptor: \"a creature killed, or an object, droid, or vehicle destroyed, by it is disintegrated\". Executes only after Apply Damage PROVES the state (resolution.dead for a creature / resolution.destroyed for an object, droid or vehicle; stun never kills). The Actor / Token are NOT deleted: a Disintegrated status effect records the gameplay state."
+    },
+    {
+      "kind": "operation-key",
+      "key": "embeddedShrapnel",
+      "family": "3b.operation.area-splash-burst",
+      "mechanicFamily": "post-threshold-damage",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "ripper"
+      ],
+      "structuredSourceField": "operation.embeddedShrapnel",
+      "seam": "apply-damage",
+      "timing": "after-threshold",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (embeddedShrapnel)",
+      "reason": "Ripper: if its damage exceeds the target's damage threshold AND moves the target at least 1 step down the condition track, embedded shrapnel immediately deals an additional 1d4. A separate immediate damage event after the triggering one (full mitigation, no riders of its own, so it cannot recurse); trigger and timing are structured (source-certified amendment)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "fortitudeRider",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "status-outcome",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "aurial-blaster",
+        "cryoban-grenade"
+      ],
+      "structuredSourceField": "operation.fortitudeRider",
+      "seam": "apply-damage",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (fortitudeRider)",
+      "reason": "Aurial Blaster (-5 Perception until the end of the attacker's next turn) and CryoBan Grenade (speed becomes 2 squares until the end of the target's next turn): both when the hit's attack roll EXCEEDS the target's Fortitude Defense (strict, as the sources state). Executed as timed effects with the ModifierEngine intents the effect system already consumes."
+    },
+    {
+      "kind": "operation-key",
+      "key": "grievousWound",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "delayed-damage",
+      "disposition": "DATA_COMPLETENESS",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Fira"
+      ],
+      "structuredSourceField": "operation.grievousWound",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Fira: the target \"takes half the attack's damage again on the following round\". The trigger and effect are prose only and the source does not say whose round / which turn boundary \"the following round\" is; the runtime does not guess a timing for an unstated rule. Needs a source ruling + structured trigger / timing before it can execute."
+    },
+    {
+      "kind": "operation-key",
+      "key": "hurledObjectDamageRule",
+      "family": "3b.operation.damage-modifiers",
+      "mechanicFamily": "hurled-object",
+      "disposition": "DEFERRED_TO_I_C_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.hurledObjectDamageRule",
+      "currentConsumer": null,
+      "owner": "I-C-B",
+      "reason": "Tactical Tractor Beam: falling-object damage by object size needs the grabbed / hurled object model (object identity, size, grabbed and hurled state) of the grab seam."
+    },
+    {
+      "kind": "operation-key",
+      "key": "lightsaberTalentCompatibility",
+      "family": "3b.operation.ability-compatibility",
+      "mechanicFamily": "reaction-compatibility",
+      "disposition": "DEFERRED_TO_I_C_C",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sith-sword"
+      ],
+      "structuredSourceField": "operation.lightsaberTalentCompatibility",
+      "currentConsumer": null,
+      "owner": "I-C-C",
+      "reason": "Sith Sword: lightsaber-talent compatibility for reaction talents (Block / Deflect eligibility)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "lineOfSightOriginHeightSquares",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mechanicFamily": "line-of-sight",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "mortar-launcher"
+      ],
+      "structuredSourceField": "operation.lineOfSightOriginHeightSquares",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Line-of-sight origin height -- the stealth / sensing / cover subsystem."
+    },
+    {
+      "kind": "operation-key",
+      "key": "ongoingEffect",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "grabbed-target-effect",
+      "disposition": "DEFERRED_TO_I_C_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Garrote"
+      ],
+      "structuredSourceField": "operation.ongoingEffect",
+      "currentConsumer": null,
+      "owner": "I-C-B",
+      "reason": "Garrote: repeat base weapon damage and move -1 CT at the start of the GRABBED target's turn, in addition to the normal grab effects. Depends on the grab state."
+    },
+    {
+      "kind": "operation-key",
+      "key": "ongoingStunWhileTrapped",
+      "family": "3b.operation.stun-ion-damage-modes",
+      "mechanicFamily": "trapped-state",
+      "disposition": "DEFERRED_TO_I_C_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "electronet"
+      ],
+      "structuredSourceField": "operation.ongoingStunWhileTrapped",
+      "currentConsumer": null,
+      "owner": "I-C-B",
+      "reason": "Electronet: stun damage each round while the target is trapped in the net. Needs the net / trapped state of the grapple seam; there is no trapped-state authority to key it to."
+    },
+    {
+      "kind": "operation-key",
+      "key": "persistentUntilCured",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "persistent-poison",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "neural-inhibitor"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects[persistent-secondary-attack].{persistentCondition, termination[poison-cured]}",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (persistent-poison)",
+      "reason": "Neural Inhibitor: the weapon-level flag repeats the structured persistent effect (PoisonEngine instance until treated / dissipated)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "poisonDeliveryRequiresDamage",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "poison-delivery",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "darter"
+      ],
+      "structuredSourceField": "operation.poisonDeliveryRequiresDamage",
+      "seam": "apply-damage",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (poisonDeliveryRequiresDamage)",
+      "reason": "Darter: a poison-carrying dart delivers its toxin only if the attack successfully deals damage (post-mitigation damage actually dealt > 0). The weapon capability alone creates no poison; a poison must be selected on the owned weapon (PoisonEngine coating)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "powerAttackExtraDamageAppliesToObjectsAndVehicles",
+      "family": "3b.operation.damage-modifiers",
+      "mechanicFamily": "power-attack-exclusion",
+      "disposition": "DATA_COMPLETENESS",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Power Hammer"
+      ],
+      "structuredSourceField": "operation.powerAttackExtraDamageAppliesToObjectsAndVehicles",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Power Hammer: Power Attack extra damage CAN be added against objects and vehicles. The weapon states an EXCEPTION to a general Power Attack exclusion the certified feat record does not carry (the corpus Power Attack text has no object / vehicle clause), so there is no rule to apply or lift: no behaviour changes. Needs the general exclusion added to the feat corpus first."
+    },
+    {
+      "kind": "operation-key",
+      "key": "remoteDetonationSafetyRule",
+      "family": "3b.operation.area-splash-burst",
+      "mechanicFamily": "remote-detonation",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "remote-grenade"
+      ],
+      "structuredSourceField": "operation.remoteDetonationSafetyRule",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Remote Grenade: cannot be detonated within 100 meters of the transmitter -- a remote-detonation structure / range model owned by the area-timing seam (I-D)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "secondaryPoisonAttackBaseBonus",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "persistent-poison",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "neural-inhibitor"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects[persistent-secondary-attack].initialSecondaryAttack.roll (1d20+N)",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (persistent-poison)",
+      "reason": "Neural Inhibitor: the +5 is the structured secondary-attack roll the PoisonEngine definition is built from."
+    },
+    {
+      "kind": "operation-key",
+      "key": "secondaryPoisonDefense",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "persistent-poison",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "neural-inhibitor"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects[persistent-secondary-attack].initialSecondaryAttack.defense",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (persistent-poison)",
+      "reason": "Neural Inhibitor: Fortitude is the structured defense of the secondary attack."
+    },
+    {
+      "kind": "operation-key",
+      "key": "survivalBasicForestJungleBonusWhenProficientAndCarried",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "carried-item-skill-bonus",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wookiee-ryyk-blade"
+      ],
+      "structuredSourceField": "operation.survivalBasicForestJungleBonusWhenProficientAndCarried",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Wookiee Ryyk Blade: +2 to a Survival use while the wielder is proficient and carries it. A passive carried-item skill modifier, not an attack outcome; it belongs with equipment / skill modifier consumption (I-D), not Apply Damage."
+    },
+    {
+      "kind": "operation-key",
+      "key": "targetRules",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "mechanicFamily": "target-class-damage",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "emp-grenade"
+      ],
+      "structuredSourceField": "operation.targetRules",
+      "seam": "packet-finalization",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (targetRules)",
+      "reason": "EMP Grenade: droids, vehicles, electronic devices and cybernetically enhanced creatures take full ion damage on a hit or half on a miss (and -5 CT / disabled if the pre-halving damage would reduce them to 0 HP); non-cybernetic creatures take half on a hit and none on a miss. The class is structural (droid / vehicle / device / object) or the one stored \"cybernetically enhanced?\" answer; it composes with the area attack and Evasion rules (no second area engine)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "treatInjuryCureDC",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "persistent-poison",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "neural-inhibitor"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects[persistent-secondary-attack].cure.dc",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (persistent-poison)",
+      "reason": "Neural Inhibitor: the DC 20 Treat Injury cure is the structured cure the PoisonEngine definition carries (PoisonEngine.treatPoison)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "venomSpit",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "mechanicFamily": "usage-and-outcome",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[venom-spit].activationRequirements (action + usage-limit) + triggeredEffects[venom-spit-condition-track]",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (effectOnly)",
+      "reason": "Amphistaff Venom Spit: the standard action and once-per-24-hours usage are the profile's structured requirements (5D-I-B owned the usage ledger); the target outcome (-1 persistent CT when the attack equals or exceeds BOTH Reflex and Fortitude) is the structured triggered effect, now an effect-only AUTO rider."
+    },
+    {
+      "kind": "operation-key",
+      "key": "weaponDR",
+      "family": "3b.operation.damage-modifiers",
+      "mechanicFamily": "weapon-object-dr",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "electrostaff"
+      ],
+      "structuredSourceField": "operation.weaponDR",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Electrostaff: the WEAPON's own DR 20 (applies against lightsabers) is a weapon-as-object durability stat, not an attack outcome on a target."
+    },
+    {
+      "kind": "operation-key",
+      "key": "weaponDRAppliesAgainstLightsabers",
+      "family": "3b.operation.damage-modifiers",
+      "mechanicFamily": "weapon-object-dr",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Shockstaff",
+        "electrostaff"
+      ],
+      "structuredSourceField": "operation.weaponDRAppliesAgainstLightsabers",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Electrostaff / Shockstaff: the weapon-object DR applies against lightsabers -- weapon durability."
+    },
+    {
+      "kind": "operation-key",
+      "key": "weaponDRValue",
+      "family": "3b.operation.damage-modifiers",
+      "mechanicFamily": "weapon-object-dr",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Shockstaff"
+      ],
+      "structuredSourceField": "operation.weaponDRValue",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Shockstaff: weapon-object DR whose value the source entry does not state (not_stated_in_KOTOR_entry): durability, and a data gap."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Amphistaff::venom-spit-condition-track",
+      "family": "special-mechanic",
+      "mechanicFamily": "ct-rider",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Amphistaff"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (effectOnly)",
+      "reason": "Amphistaff Venom Spit: attack roll equals or exceeds BOTH Reflex and Fortitude -> -1 persistent CT. Effect-only form: its card action applies the effect (no damage roll); the standard action and once-per-24-hours usage are owned by 5D-I-B and untouched."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Shock Whip::trip-substitution",
+      "family": "special-mechanic",
+      "mechanicFamily": "status-condition",
+      "disposition": "DEFERRED_TO_I_C_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Shock Whip"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "currentConsumer": null,
+      "owner": "I-C-B",
+      "reason": "Shock Whip: a trip substitution is a grapple-seam maneuver (grabbed target), reviewed here only because it shares the status-condition family."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "unmapped::Tehkla Blade::bleeding-follow-up",
+      "family": "special-mechanic",
+      "mechanicFamily": "delayed-damage",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Tehkla Blade"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "time-delay",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (delayed-damage)",
+      "reason": "Tehk'la Blade: attack roll equals or exceeds BOTH Reflex and Fortitude -> an additional 1d6 bleeding damage at the start of the target's next turn. One RecurringDamageEngine instance (trigger start of turn, one trigger); the entry establishes no duration beyond that instance, so none is invented and nothing stacks."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-bryar-pistol::prepared-attack",
+      "family": "special-mechanic",
+      "mechanicFamily": "prepared-attack",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "bryar-pistol"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "currentConsumer": "scripts/items/weapon-runtime/fire-state.js (preparedAttack)",
+      "priorPhase": "5D-I-A",
+      "reason": "Stale deferral reconciled: the optional prepared attack was consumed by the owned fire-state in 5D-G / 5D-H / 5D-I-A (FireStateStore.primePreparedAttack); the 5D-E census still listed it DEFER and now classifies it AUTO."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-bryar-rifle::prepared-attack",
+      "family": "special-mechanic",
+      "mechanicFamily": "prepared-attack",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "bryar-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "currentConsumer": "scripts/items/weapon-runtime/fire-state.js (preparedAttack)",
+      "priorPhase": "5D-I-A",
+      "reason": "Stale deferral reconciled (see Bryar Pistol)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-concussion-rifle::knock-prone-on-hit",
+      "family": "special-mechanic",
+      "mechanicFamily": "status-effect",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "concussion-rifle"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (target-knocked-prone)",
+      "reason": "Concussion Rifle: the attack is made against Fortitude Defense; on a successful attack the target is knocked prone (in addition to damage). The Prone status uses the same ActiveEffect status the system already creates for Force Slam."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-darter::poison-delivery",
+      "family": "special-mechanic",
+      "mechanicFamily": "poison-delivery",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "darter"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (deliver-loaded-toxin)",
+      "reason": "Darter: a poison-carrying dart delivers its toxin if the attack successfully deals damage. No poison selected on the weapon -> no poison effect."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-deck-sweeper::prime",
+      "family": "special-mechanic",
+      "mechanicFamily": "prepared-attack",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "deck-sweeper"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "currentConsumer": "scripts/items/weapon-runtime/fire-state.js (preparedAttack)",
+      "priorPhase": "5D-I-A",
+      "reason": "Stale deferral reconciled: prime is the structured prepared attack consumed by the owned fire-state."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-flash-canister::triggered-0",
+      "family": "special-mechanic",
+      "mechanicFamily": "status-effect",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "flash-canister"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (total-concealment-against-affected-creature)",
+      "reason": "Flash Canister (effect-only, no damage): each creature hit has the \"total concealment against the affected creature\" effect until the start of the attacker's next turn, unless blind (asked once / structural Blinded). The effect is created with its turn-owned lifecycle; consuming total concealment for visibility is the sensing subsystem (I-D)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-gas-grenade::condition-track-effect",
+      "family": "special-mechanic",
+      "mechanicFamily": "ct-rider",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "gas-grenade"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (classifyOutcomeEffect)",
+      "reason": "Gas Grenade: an area-attack hit moves the target -2 CT (-1 with Evasion); a miss has no effect; creatures protected from atmospheric hazards are immune (asked once and stored: the actor does not state it structurally)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-gas-grenade::lingering-gas-concealment",
+      "family": "special-mechanic",
+      "mechanicFamily": "status-condition",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "gas-grenade"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "The 4-square gas cloud (concealment inside and across its boundary until the end of the attacker's next turn) is canonical structure on the profile; creating a scene area and consuming it for visibility / Stealth is the sensing subsystem (I-D). I-C-A's boundary: the attack's impact outcome (CT shift) is executed; the cloud descriptor stays on the canonical triggered effect for I-D to place."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-heavy-blaster-cannon::brace",
+      "family": "special-mechanic",
+      "mechanicFamily": "prepared-attack",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "heavy-blaster-cannon"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "currentConsumer": "scripts/items/weapon-runtime/fire-state.js (preparedAttack)",
+      "priorPhase": "5D-I-A",
+      "reason": "Stale deferral reconciled: brace is the structured prepared attack consumed by the owned fire-state."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-micro-grenade-launcher::payload:damage-dice-adjustment",
+      "family": "special-mechanic",
+      "mechanicFamily": "payload-delegation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "micro-grenade-launcher"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "on-damage-roll",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-consumer.js (payloadDamageDiceAdjustment)",
+      "reason": "Micro Grenade Launcher: micro grenades deal two fewer dice of damage on a successful hit. Applied by delegateLoadedPayload to the delegated grenade's dice count only (a miss keeps the grenade's ordinary dice)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-micro-grenade-launcher::payload:inherit-selected-grenade-normal-rules",
+      "family": "special-mechanic",
+      "mechanicFamily": "payload-delegation",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "micro-grenade-launcher"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "on-damage-roll",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-consumer.js (delegateLoadedPayload)",
+      "reason": "Micro Grenade Launcher: micro grenades use the normal rules for their grenade type. The launcher declares the I-B payload delegation (source-certified amendment): damage type, area and effects come from the loaded canonical grenade; no grenade rules are copied."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-needler::operation.ammunitionMayCarryContactPoison",
+      "family": "special-mechanic",
+      "mechanicFamily": "poison-delivery",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "needler"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (ammunitionMayCarryContactPoison)",
+      "reason": "Needler: ammunition MAY be laced with a contact poison. Capability only: a poison is delivered only when one is selected on the owned weapon (PoisonEngine coating) and damage is dealt."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-neural-inhibitor::persistent-neurotoxin",
+      "family": "special-mechanic",
+      "mechanicFamily": "persistent-poison",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "neural-inhibitor"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "until-cured",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (persistent-poison)",
+      "reason": "Neural Inhibitor: on a hit the dart makes a 1d20+5 attack against Fortitude; success moves the target -1 CT persistently; a failure gives the NEXT poison attack a cumulative +1 until one succeeds; it attacks again at the beginning of the target's turns until cured (Treat Injury DC 20) and dissipates if the target falls unconscious. Run by the existing PoisonEngine (instance, recurrence, treatment, termination)."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-sith-sword::dark-side-empowerment",
+      "family": "special-mechanic",
+      "mechanicFamily": "activation-effect",
+      "disposition": "DEFERRED_TO_I_D",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sith-sword"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "Sith Sword: an activated empowerment with its own cost (Force Point / swift action) on the wielder, not an outcome on a target."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-verpine-shattergun::fragile-disable-on-damage",
+      "family": "special-mechanic",
+      "mechanicFamily": "status-condition",
+      "disposition": "BLOCKED_BY_MISSING_SUBSYSTEM",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "verpine-shattergun"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "currentConsumer": null,
+      "blockedBy": "weapon-object durability (damage taken BY the weapon as an object)",
+      "owner": "I-D",
+      "reason": "\"If the WEAPON takes any damage, it is disabled until repaired with a Mechanics check\": the trigger is damage to the weapon as an object (durability), not an outcome on the target, and there is no weapon-object damage path to hook. Not invented."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-wrist-rocket-launcher::nerve-toxin-secondary-attack-bonus",
+      "family": "special-mechanic",
+      "mechanicFamily": "persistent-poison",
+      "disposition": "DATA_COMPLETENESS",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-rocket-launcher"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "currentConsumer": null,
+      "owner": "I-D",
+      "reason": "The nerve-toxin rocket's secondary attack bonus (and any recurrence) is not carried by the canonical corpus; the published sidebar value must be added by a source-certified amendment before the secondary attack can be rolled instead of asked."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-wrist-rocket-launcher::payload:blinded",
+      "family": "special-mechanic",
+      "mechanicFamily": "status-effect",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-rocket-launcher"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (blinded)",
+      "reason": "Flash Rocket (effect-only): targets whose Reflex Defense is beaten (an area-attack hit) are blinded for 1d4 rounds. The same status-effect family as the Flash Canister; the payload effect gained structured trigger / duration through a source-certified amendment."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-wrist-rocket-launcher::payload:nerve-agent-injection",
+      "family": "special-mechanic",
+      "mechanicFamily": "ct-rider-prompt",
+      "disposition": "IMPLEMENTED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-rocket-launcher"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects | payloadProfiles[].specialEffects",
+      "timing": "after-damage",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (ct-rider-prompt)",
+      "reason": "Nerve-Toxin Hollow-Tip Rocket: a hit is followed by a secondary attack against Fortitude; success moves the target -2 CT. The corpus prints NO secondary attack bonus, so the secondary result is asked once at Apply Damage and stored (never invented; see the DATA_COMPLETENESS row)."
+    }
+  ],
+  "problems": []
+}

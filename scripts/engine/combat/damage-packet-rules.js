@@ -260,6 +260,44 @@ function syncComponentAmounts(packet = {}, targetAmount = 0) {
   return packet;
 }
 
+
+/**
+ * Phase 5D-I-C-A: per-target-class damage of an attack whose weapon declares structured `targetRules` (EMP Grenade). The class is STRUCTURAL
+ * (getDamageTargetCategory: droid / vehicle / device / object are electronic; an organic target is electronic only when the table answered
+ * the "cybernetically enhanced?" fact -- an unobserved fact is never read as false, so the damage is refused until it is answered). Hit and miss
+ * multipliers replace the profile's generic miss rule for this weapon; Evasion then modifies the area attack through the normal rule below.
+ * Pure: mutates only the cloned packet.
+ */
+function applyTargetClassRule(next, target) {
+  const special = next.workflowContext?.special ?? next.options?.workflowContext?.special ?? null;
+  const rules = special?.targetRules;
+  if (!target || !rules?.electronic || !rules?.nonCybernetic) return;
+  const category = getDamageTargetCategory(target);
+  let cls = null;
+  if (asArray(rules.electronic.categories).includes(category)) cls = 'electronic';
+  else if (category === 'organic') {
+    const ans = special?.answers?.[`target-class:cybernetic:${targetId(target) ?? ''}`];
+    cls = ans === true ? 'electronic' : ans === false ? 'nonCybernetic' : null;
+  }
+  const hit = next.disposition?.hit;
+  if (cls === null || (hit !== true && hit !== false)) {
+    next.flags.targetClassUnresolved = true;
+    next.multiplier = 0;
+    next.disposition.damageAllowed = false;
+    next.disposition.multiplier = 0;
+    next.disposition.reason = `${target.name ?? 'The target'}: its damage class (cybernetically enhanced or not) must be answered before this attack's damage can be applied.`;
+    return;
+  }
+  const m = Number(hit ? rules[cls].hitMultiplier : rules[cls].missMultiplier);
+  next.flags.targetClass = cls;
+  next.flags.targetClassMultiplier = m;
+  if (cls === 'electronic' && category === 'organic') next.flags.ionEligibleByClass = true;
+  next.multiplier = m;
+  next.disposition.multiplier = m;
+  next.disposition.damageAllowed = m > 0;
+  next.disposition.reason = m > 0 ? `${cls === 'electronic' ? 'Electronic-class' : 'Non-cybernetic'} target: ${hit ? 'hit' : 'miss'} deals ${m === 1 ? 'full' : 'half'} damage.` : `Non-cybernetic target: a miss deals no damage.`;
+}
+
 export function applyTargetDamagePacketRules(packet = {}, target = null) {
   const next = clonePacket(packet);
   const rawAmount = Math.max(0, asNumber(next.rawAmount ?? next.amount, 0));
@@ -282,6 +320,15 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
   next.options.damageTypes = typeContext.expanded;
 
   applyTargetedAreaPreEvasion(next, target);
+
+  // Phase 5D-I-C-A: the attack's own threshold-stage adjustment (Disruptor) and per-target-class damage (EMP) -- from the workflow's special state
+  const specialState = next.workflowContext?.special ?? next.options?.workflowContext?.special ?? null;
+  const thresholdAdjustment = Number(specialState?.thresholdAdjustment);
+  if (Number.isFinite(thresholdAdjustment) && thresholdAdjustment !== 0) {
+    next.options.thresholdAdjustment = thresholdAdjustment;
+    next.flags.thresholdAdjustment = thresholdAdjustment;
+  }
+  applyTargetClassRule(next, target);
 
   let amount = baseDamageAmount(next);
   let multiplier = asNumber(next.multiplier ?? next.disposition?.multiplier, 1);
@@ -343,7 +390,7 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
   }
 
   if (requestedType === 'ion') {
-    const eligible = target ? isIonEligibleDamageTarget(target) : undefined;
+    const eligible = target ? (isIonEligibleDamageTarget(target) || next.flags.ionEligibleByClass === true) : undefined;
     next.originalType = 'ion';
     next.flags.ion = true;
     next.flags.ionEligible = eligible;

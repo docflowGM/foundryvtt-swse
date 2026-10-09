@@ -26,6 +26,8 @@ export async function buildCensus() {
   const { registry, registryData } = await import('../tests/helpers/weapon-runtime-fixture.mjs');
   rt.setSharedWeaponAuthorityRegistry(registry);
   const { FAMILIES } = rt;
+  const { DEFER_OWNER_BY_FAMILY, DEFER_OWNER_BY_ID } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js');
+  const deferredByOwner = {}, deferredUnowned = [];
 
   const byFamily = {}, byPolicy = {}, identities = {}, unclassified = [], completeness = [], refusedForms = [];
   let forms = 0, formsWithMechanics = 0, resolveErrors = [];
@@ -52,6 +54,7 @@ export async function buildCensus() {
           byFamily[m.family] = (byFamily[m.family] ?? 0) + 1;
           byPolicy[m.policy] = (byPolicy[m.policy] ?? 0) + 1;
           (perWeapon[label] ??= []).push(`${m.family}:${m.id}:${m.policy}`);
+          if (m.policy === 'DEFER') { const owner = DEFER_OWNER_BY_ID[m.id] ?? DEFER_OWNER_BY_FAMILY[m.family] ?? null; if (owner) deferredByOwner[owner] = (deferredByOwner[owner] ?? 0) + 1; else deferredUnowned.push(`${key}/${label}:${m.id}`); }
           if (m.family === 'unclassified') unclassified.push({ identityKey: key, form: label, id: m.id, source: m.source });
           if (m.completeness) completeness.push({ identityKey: key, form: label, id: m.id, issue: m.completeness });
         }
@@ -68,6 +71,8 @@ export async function buildCensus() {
     totals: { identities: registryData.identities.length, identitiesWithMechanics: Object.keys(identities).length, forms, formsWithMechanics, resolveErrors: resolveErrors.length },
     mechanicsByFamily: sort(byFamily),
     mechanicsByPolicy: sort(byPolicy),
+    deferredByOwner: sort(deferredByOwner),
+    deferredWithoutOwner: deferredUnowned.sort(),
     refusedForms: refusedForms.sort((a, b) => (a.identityKey + a.profileId).localeCompare(b.identityKey + b.profileId)),
     unclassified: unclassified.sort((a, b) => (a.identityKey + a.id).localeCompare(b.identityKey + b.id)),
     completenessIssues: completeness.sort((a, b) => (a.identityKey + a.id).localeCompare(b.identityKey + b.id)),

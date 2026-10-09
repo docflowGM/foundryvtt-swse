@@ -328,6 +328,14 @@ async function handleLegacyDamageRollButton(event, button, message) {
 
   const combatContext = mergeDamageButtonWorkflowContext(button, decodeCombatWorkflowContext(button.dataset.workflowContext));
   const target = actorFromId(button.dataset.target) || actorFromId(combatContext?.targetId) || null;
+  // Phase 5D-I-C-A: an effect-only attack form (no damage roll) applies its outcome effects from this card action instead of rolling damage
+  if (combatContext?.special?.mechanics?.some?.((m) => m?.effectOnly === true)) {
+    if (!target) { ui?.notifications?.warn?.('Select a target to apply this attack\'s effects.'); return; }
+    const { applyEffectOnlyOutcome } = await import('/systems/foundryvtt-swse/scripts/engine/combat/canonical-special-effects.js');
+    const out = await applyEffectOnlyOutcome({ special: combatContext.special, target, attacker: actor, weapon, message, weaponLabel: weapon?.name ?? 'Weapon' });
+    if (!out.applied.length) ui?.notifications?.info?.(`${weapon?.name ?? 'Attack'}: no effect applied (${out.skipped.map((s) => `${s.id}: ${s.reason}`).join('; ') || 'none'}).`);
+    return;
+  }
   const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
   await SWSERoll.rollDamage(actor, weapon, {
     isCritical: button.dataset.isCrit === 'true' || combatContext?.damage?.crit === true,
@@ -363,6 +371,11 @@ async function handleApplyDamageButton(event, button, message) {
   const attacker = actorFromId(button.dataset.attacker || button.dataset.actorId || combatContext?.actorId);
   const target = actorFromId(button.dataset.target) || actorFromId(combatContext?.targetId) || null;
   const weapon = itemFromActor(attacker, button.dataset.weapon || button.dataset.weaponId || combatContext?.weaponId);
+  // Phase 5D-I-C-A: a weapon with structured per-target-class damage needs the one unobservable class fact answered (once, stored) before the packet is built
+  if (target && combatContext?.special?.targetRules) {
+    const { resolveTargetClassFacts } = await import('/systems/foundryvtt-swse/scripts/engine/combat/canonical-special-effects.js');
+    combatContext.special = await resolveTargetClassFacts({ special: combatContext.special, target, message, weaponLabel: weapon?.name ?? 'Weapon' });
+  }
   const packet = buildDamagePacket({
     attacker,
     target,
@@ -395,8 +408,9 @@ async function handleApplyDamageButton(event, button, message) {
 
   const { DamageSystem } = await import('/systems/foundryvtt-swse/scripts/combat/damage-system.js');
   const hpBefore = Number(target?.system?.hp?.value);
+  let damageResult = null;
   if (target) {
-    await DamageSystem.applyPacketToActor(target, packet);
+    damageResult = await DamageSystem.applyPacketToActor(target, packet);
   } else {
     await DamageSystem.applyPacketToSelected(packet);
   }
@@ -409,7 +423,9 @@ async function handleApplyDamageButton(event, button, message) {
       const { applyCanonicalSpecialEffects } = await import('/systems/foundryvtt-swse/scripts/engine/combat/canonical-special-effects.js');
       await applyCanonicalSpecialEffects({
         special: combatContext.special, target, attacker, message, weaponLabel: weapon?.name ?? 'Weapon',
-        hpBefore, hpAfter: Number(target?.system?.hp?.value), rawAmount
+        hpBefore, hpAfter: Number(target?.system?.hp?.value), rawAmount,
+        // Phase 5D-I-C-A: the resolved damage event (threshold / condition-track facts), the post-target-rule amount, the weapon and its damage type
+        resolution: damageResult?.resolution ?? null, appliedAmount: packet.amount, weapon, damageType: packet.type ?? null
       });
     } catch (err) {
       console.warn('[SWSE Chat] Canonical special effects could not be applied (damage was applied).', err);

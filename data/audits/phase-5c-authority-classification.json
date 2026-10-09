@@ -18,7 +18,7 @@
   "GENERATED_RUNTIME_INDEX": 1,
   "GENERATED_COMPATIBILITY": 3,
   "MIGRATION_ALIAS_ONLY": 2,
-  "HISTORICAL_AUDIT_EVIDENCE": 233,
+  "HISTORICAL_AUDIT_EVIDENCE": 234,
   "DEAD_REMOVE": 0,
   "OTHER_DOMAIN_DATA": 11,
   "REFERENCE_BEARING_DOMAIN_DATA": 14
@@ -952,6 +952,11 @@
   },
   {
    "path": "data/audits/weapon-phase-5d-i-b-input-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/weapon-phase-5d-i-c-a-input-manifest.json",
    "class": "HISTORICAL_AUDIT_EVIDENCE",
    "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
   },

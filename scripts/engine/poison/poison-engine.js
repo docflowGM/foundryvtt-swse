@@ -179,7 +179,7 @@ export class PoisonEngine {
     await this._postPoisonChat({ sourceActor, targetActor, poison: definition, delivery: chosenDelivery, result, isInitial });
 
     if (!hit && instance) await this._handlePoisonFailure(targetActor, definition, instance, result);
-    else if (hit && instance) await this._upsertPoisonInstance(targetActor, this._advanceInstanceAfterSuccess(instance, result));
+    else if (hit && instance) await this._upsertPoisonInstance(targetActor, this._advanceInstanceAfterSuccess(instance, result, definition));
     return result;
   }
 
@@ -188,8 +188,13 @@ export class PoisonEngine {
     if (!poisons.length) return [];
     const results = [];
     for (const instance of poisons) {
-      const poison = PoisonRegistry.get(instance.poisonKey);
+      const poison = PoisonRegistry.get(instance.poisonKey) ?? instance.definition ?? null;
       if (!poison) continue;
+      // Phase 5D-I-C-A: a toxin that "dissipates if the target falls unconscious" ends here instead of attacking an unconscious target again
+      if (poison.special?.endsWhenTargetUnconscious === true && this._isUnconscious(actor)) {
+        await this.clearPoison(actor, instance.id, { reason: 'target fell unconscious' });
+        continue;
+      }
       if (!this._recursOnTrigger(poison, trigger)) continue;
       if (poison.recurrence?.type === 'startOfTurnWhileExposed' && instance.exposed === false) continue;
       const sourceActor = this._resolveActor(instance.sourceActorUuid || instance.sourceActorId);
@@ -205,7 +210,7 @@ export class PoisonEngine {
     if (!targets.length) return { success: false, reason: 'No matching active poison' };
     const healed = [];
     for (const instance of targets) {
-      const poison = PoisonRegistry.get(instance.poisonKey);
+      const poison = PoisonRegistry.get(instance.poisonKey) ?? instance.definition ?? null;
       const dc = this._getTreatmentDC({ poison, instance, sourceActor: this._resolveActor(instance.sourceActorUuid || instance.sourceActorId), healer });
       if (rollTotal == null || Number(rollTotal) >= dc) {
         await this.clearPoison(actor, instance.id, { reason: 'treated' });
@@ -385,7 +390,7 @@ export class PoisonEngine {
     const targets = this._getActivePoisons(targetActor).filter(p => (!poisonInstanceId || p.id === poisonInstanceId) && (!poisonKey || p.poisonKey === normalizePoisonKey(poisonKey)));
     if (!targets.length) return { success: false, reason: 'No matching active poison' };
     const instance = targets[0];
-    const poison = PoisonRegistry.get(instance.poisonKey);
+    const poison = PoisonRegistry.get(instance.poisonKey) ?? instance.definition ?? null;
     const skill = skillKey || poison?.treatment?.skill || 'treatInjury';
     const mod = this._getSkillTotal(actor, skill);
     const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
@@ -408,6 +413,15 @@ export class PoisonEngine {
 
   static async _handlePoisonFailure(targetActor, poison, instance, result) {
     const failures = Number(instance?.consecutiveFailures || 0) + 1;
+    // Phase 5D-I-C-A: "if that poison attack fails, the next poison attack gains a cumulative +1 bonus until one succeeds": the toxin persists and the
+    // failure raises the next attack. The instance object is shared with applyPoison's own upsert, so the adjustment is set in place as well.
+    const onFailure = poison?.special?.onFailure;
+    if (onFailure?.continues === true) {
+      instance.attackBonusAdjustment = (Number(instance.attackBonusAdjustment) || 0) + (Number(onFailure.attackBonusIncrement) || 0);
+      instance.consecutiveFailures = failures;
+      await this._upsertPoisonInstance(targetActor, { ...instance, lastResult: this._compactResult(result), updatedAt: Date.now() });
+      return { success: false, retained: true, failures, attackBonusAdjustment: instance.attackBonusAdjustment };
+    }
     const neutralizeAfter = Number(poison?.special?.neutralizeAfterConsecutiveFailures || 0);
     if (neutralizeAfter > 0 && failures < neutralizeAfter) {
       await this._upsertPoisonInstance(targetActor, { ...instance, consecutiveFailures: failures, lastResult: this._compactResult(result), updatedAt: Date.now() });
@@ -603,14 +617,18 @@ export class PoisonEngine {
       recurrence: poison.recurrence?.type || 'none',
       treatment: poison.treatment || null,
       persistentConditionSource: !!poison.damage?.conditionTrack?.persistent,
+      // Phase 5D-I-C-A: a weapon-defined toxin is not in the registry; its instance carries the definition it must tick / treat / end by
+      ...(PoisonRegistry.has(poison.key) ? {} : { definition: foundry.utils.deepClone(poison) }),
       createdAt: Date.now(),
       consecutiveFailures: 0,
       successes: 0
     };
   }
 
-  static _advanceInstanceAfterSuccess(instance, result) {
-    return { ...instance, successes: Number(instance.successes || 0) + 1, consecutiveFailures: 0, initialResolved: true, lastResult: this._compactResult(result), updatedAt: Date.now() };
+  static _advanceInstanceAfterSuccess(instance, result, definition = null) {
+    // a cumulative failure bonus lasts only "until one succeeds"
+    const reset = definition?.special?.onFailure?.cumulative === true ? { attackBonusAdjustment: 0 } : {};
+    return { ...instance, ...reset, successes: Number(instance.successes || 0) + 1, consecutiveFailures: 0, initialResolved: true, lastResult: this._compactResult(result), updatedAt: Date.now() };
   }
 
   static _compactResult(result) {
@@ -632,6 +650,8 @@ export class PoisonEngine {
   static _shouldTrackInstance(poison, attackResult, exposed) {
     const recurrence = poison.recurrence?.type || 'none';
     if (recurrence === 'none') return false;
+    // Phase 5D-I-C-A: a persistent toxin that keeps attacking after a failed secondary attack is tracked from the start
+    if (poison.special?.onFailure?.continues === true) return true;
     if (recurrence === 'startOfTurnWhileExposed') return !!exposed || !!attackResult?.success;
     return !!attackResult?.success;
   }
@@ -648,6 +668,15 @@ export class PoisonEngine {
     if (this._hasPoisonImmunity(targetActor)) return `${targetActor.name} is immune to poison.`;
     if ((delivery === 'inhaled' || delivery === 'atmosphere') && this._hasFunctionalBreathMask(targetActor)) return 'Functional breath mask blocks inhaled poison.';
     return null;
+  }
+
+  /** "Falls unconscious": Condition Track step 5 on a character / NPC / beast, an Unconscious status, or 0 HP. */
+  static _isUnconscious(actor) {
+    const step = Number(actor?.system?.conditionTrack?.current ?? 0) || 0;
+    if (step >= 5 && ['character', 'npc', 'beast'].includes(actor?.type)) return true;
+    if (Array.from(actor?.effects ?? []).some(e => e?.statuses?.has?.('unconscious') && e?.disabled !== true)) return true;
+    const hp = Number(actor?.system?.hp?.value);
+    return Number.isFinite(hp) && hp <= 0;
   }
 
   static _isNonLiving(actor) {

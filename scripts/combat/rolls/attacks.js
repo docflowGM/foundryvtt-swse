@@ -38,7 +38,7 @@ import { resolveWielding, resolveOpportunityEligibility, crewRegulationFor } fro
 import { evaluateProfileRequirements, forgoesDoubleStrength, slugOfIdentity } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/activation-requirements.js";
 import { abilityKeysOfActor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
-import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf, canonicalSizeName, resolveTargetRequirements, askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
+import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf, canonicalSizeName, resolveTargetRequirements, askSpecialQuestion, thresholdAdjustmentOf, targetRulesOf, isEffectOnlyForm } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
 // ============================================
@@ -784,7 +784,11 @@ export async function rollAttack(actor, weapon, options = {}) {
     special: (specialStage.mechanics.length || Object.keys({ ...specialStage.answers, ...(rollOptions.answers ?? {}) }).length) ? {
       mechanics: summarizeMechanics(specialStage.mechanics), answers: { ...specialStage.answers, ...(rollOptions.answers ?? {}) }, unresolved: specialStage.unresolved, drInteraction: specialStage.drIgnore ? 'ignore' : undefined,
       attackTotal: roll.total,
+      // Phase 5D-I-C-A: attack-specific threshold-stage adjustment and per-target-class damage rules travel to Apply Damage (the stored DT is never touched)
+      ...(thresholdAdjustmentOf(specialStage.mechanics) ? { thresholdAdjustment: thresholdAdjustmentOf(specialStage.mechanics) } : {}),
+      ...(targetRulesOf(specialStage.mechanics) ? { targetRules: targetRulesOf(specialStage.mechanics) } : {}),
       records: evaluateAttackOutcomeSpecials(specialStage.mechanics, {
+        provenance: weaponFormRecord(rollOptions.weaponRuntime, rollOptions.damageMode ?? null),
         hit: isHit, attackTotal: roll.total,
         defenses: { reflex: getTargetDefense(target, 'reflex'), fortitude: getTargetDefense(target, 'fortitude'), will: getTargetDefense(target, 'will'), ...(Number.isFinite(resolvedTarget.defenseValue) ? { [resolvedTarget.defenseType]: resolvedTarget.defenseValue } : {}) }
       })
@@ -845,7 +849,9 @@ export async function rollAttack(actor, weapon, options = {}) {
       sourceElement: rollOptions?.sourceElement ?? null,
       companionSource: rollOptions?.companionSource ?? null,
       sheet: rollOptions?.sheet ?? null,
-      showRollCompanion: rollOptions?.showRollCompanion !== false
+      showRollCompanion: rollOptions?.showRollCompanion !== false,
+      // Phase 5D-I-C-A: an effect-only form has no damage roll; its card action applies the outcome effects instead
+      ...(isEffectOnlyForm(specialStage.mechanics) ? { damageActionLabel: 'Apply Effects' } : {})
     }
   });
 

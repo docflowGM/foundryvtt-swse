@@ -63,6 +63,7 @@ export const HEURISTIC_RULES = [
 // structured field) | OPERATION_FAMILY (derived from the per-key operation census) | PARTIAL (named residual) | DEFERRED (named reason + owner)
 import { I_A_LEDGER } from './weapon-phase-5d-i-a-ledger.mjs';
 import { I_B_LEDGER } from './weapon-phase-5d-i-b-ledger.mjs';
+import { I_C_A_ROWS } from './weapon-phase-5d-i-c-a-ledger.mjs';
 
 const W = 'scripts/items/weapon-runtime/';
 export const FIELD_CONSUMERS = {
@@ -71,7 +72,7 @@ export const FIELD_CONSUMERS = {
   '3b.profile.conditional': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'resolveTargetRequirements', consumed: ['conditionalModifiers (condition-policy AUTO/PROMPT)', 'activationRequirements.target / target-rule', 'conditionalRangeRules'], deferred: ['activationRequirements.action / wielding / choice / feat / configuration / proficiency / usage-limit / operators'], owner: '5D-I-B (activation state, wielding, configuration, crew)', note: '5D-I-A: conditional attack modifiers evaluate through condition-policy, target requirements gate the attack, conditionalRangeRules scale ranges; the remaining requirement types need persisted activation / wielding / crew state' },
   '3b.profile.area': { status: 'CONSUMED', file: `${W}area-shape.js`, probe: 'resolveAreaShape', note: '5D-G/5D-H' },
   '3b.profile.attackResolution': { status: 'CONSUMED', file: `${W}area-shape.js`, probe: 'attackResolution', note: 'defense + onMiss' },
-  '3b.profile.effects': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'criticalEffects', consumed: ['criticalEffects', 'hit effects (ct-rider, status-condition, damage-rider)'], deferred: ['persistent-effect', 'return-recovery', 'special-action', 'activation-effect'], owner: 'persistent effects / special actions subsystem', note: 'AUTO families execute at Apply Damage; DEFER families are named in the 5D-E census' },
+  '3b.profile.effects': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'criticalEffects', consumed: ['criticalEffects', 'hit effects (ct-rider, status-effect, damage-rider, delayed-damage, persistent-poison, poison-delivery: Phase 5D-I-C-A)'], deferred: ['return-recovery (I-C-C)', 'special-action Pin / Trip (I-C-B)', 'activation-effect (I-D)', 'gas-cloud concealment + weapon-object fragile (I-D)', 'grab-grapple (I-C-B)'], owner: 'grab / reaction / sensing subsystems (I-C-B / I-C-C / I-D)', note: 'AUTO families execute at Apply Damage; every remaining DEFER mechanic has a named owner in the 5D-E census (deferredByOwner)' },
   '3b.profile.damage': { status: 'CONSUMED', file: `${W}damage-profile-resolver.js`, probe: 'damageMultiplier', note: '5D-C/5D-E' },
   '3b.profile.damageComponents': { status: 'CONSUMED', file: `${W}damage-profile-resolver.js`, probe: 'components', note: '5D-C' },
   '3b.profile.firing': { status: 'CONSUMED', file: `${W}fire-state.js`, probe: 'firingConstraints', note: '5D-G temporal families' },
@@ -96,7 +97,7 @@ export const FIELD_CONSUMERS = {
   '3b.rateOfFire': { status: 'CONSUMED', file: `${W}attack-shape.js`, probe: 'rateOfFire', note: '5D-F' },
   '3b.size': { status: 'CONSUMED', file: `${W}weapon-descriptor.js`, probe: 'sizeIndex', note: 'light-weapon join (5D-H)' },
   '3b.stun': { status: 'CONSUMED', file: `${W}attack-consumer.js`, probe: 'effectiveDamageMode', note: '5D-E' },
-  '3b.triggered': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'triggeredEffects', consumed: ['triggeredEffects (AUTO families)'], deferred: ['persistent / return-recovery triggered effects'], owner: 'persistent effects / special actions subsystem', note: '17 identities; AUTO riders execute, DEFER families are named in the 5D-E census' },
+  '3b.triggered': { status: 'PARTIAL', file: `${W}special-mechanics.js`, probe: 'triggeredEffects', consumed: ['triggeredEffects (AUTO families incl. the 5D-I-C-A outcome families)'], deferred: ['return-recovery triggered effects (I-C-C)', 'grab / net / snare triggered effects (I-C-B)'], owner: 'grab / reaction subsystems (I-C-B / I-C-C)', note: 'AUTO riders execute; every remaining DEFER mechanic has a named owner in the 5D-E census (deferredByOwner)' },
   '3b.wielding': { status: 'DEFERRED', owner: 'wielding / two-hand state (post-5D-H)', reason: 'wieldingRules (15 identities, e.g. requires-two-hands when mounted) need a wielding state model; the mounted-on-rifle condition is evaluated for double-weapon availability only', populatedIdentities: 15 },
   '3b.qualityParameters': { status: 'DEFERRED', owner: 'quality parameter consumers (post-5D-H)', reason: 'qualityParameters are passed through the resolver; reach/thrown/etc. parameter values have no dedicated consumer beyond canonical-range qualityEffects', populatedIdentities: null },
   '3b.operation.container': { status: 'OPERATION_FAMILY' },
@@ -159,6 +160,8 @@ export const OPERATION_DUPLICATES = [
   ...I_A_LEDGER.filter((r) => r.disposition === 'DUPLICATE' && !r.key.includes('.')).map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
   // Phase 5D-I-B: duplicates proven against the registry by tools/census-weapon-phase-5d-i-b-inputs.mjs (single source: the I-B ledger)
   ...I_B_LEDGER.filter((r) => r.disposition === 'DUPLICATE' && !r.key.includes('.')).map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
+  // Phase 5D-I-C-A: duplicates proven against the registry by tools/census-weapon-phase-5d-i-c-a-inputs.mjs (single source: the I-C-A ledger)
+  ...I_C_A_ROWS.filter((r) => r.kind === 'operation-key' && r.disposition === 'DUPLICATE').map((r) => [new RegExp(`^${r.key}$`), r.carrier, r.consumer.file, r.consumer.probe]),
 ];
 
 // manifest classification overrides (named, justified): scope vocabulary the deterministic rule cannot judge on its own

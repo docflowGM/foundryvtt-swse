@@ -534,6 +534,7 @@
     "damageThresholdAdjustment",
     "hurledObjectDamageRule",
     "ignoresDRCondition",
+    "payloadDamageDiceAdjustment",
     "pointBlankDamageEquipmentBonus",
     "powerAttackExtraDamageAppliesToObjectsAndVehicles",
     "shieldRatingStillApplies",
@@ -543,7 +544,7 @@
     "weaponDRAppliesAgainstLightsabers",
     "weaponDRValue"
    ],
-   "identityCount": 22,
+   "identityCount": 23,
    "identities": [
     "lightsaber-chassis-longhandle",
     "lightsaber-chassis-short",
@@ -560,6 +561,7 @@
     "weapon-heavy-sonic-pistol",
     "weapon-lightfoil",
     "weapon-lightsaber",
+    "weapon-micro-grenade-launcher",
     "weapon-pulse-wave-pistol",
     "weapon-pulse-wave-rifle",
     "weapon-sling",
@@ -783,7 +785,7 @@
     "stunShotsPerAttack",
     "stunSwitchAction"
    ],
-   "identityCount": 24,
+   "identityCount": 25,
    "identities": [
     "lightsaber-chassis-retrosaber",
     "unmapped::Neuronic Whip",
@@ -802,6 +804,7 @@
     "weapon-ion-grenade",
     "weapon-ion-pistol",
     "weapon-ion-rifle",
+    "weapon-micro-grenade-launcher",
     "weapon-sonic-disruptor",
     "weapon-sonic-pistol",
     "weapon-sonic-rifle",

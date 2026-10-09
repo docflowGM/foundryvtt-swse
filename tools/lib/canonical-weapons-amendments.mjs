@@ -5,6 +5,7 @@
 // fails the build), is applied to the audit-derived record by tools/build-canonical-weapons.mjs, is re-verified by `--check`,
 // is logged in the corpus (`postCertificationAmendments`) and stamped on the amended record's provenance.
 const clone = (x) => JSON.parse(JSON.stringify(x));
+const same = (a, b) => { const k = (v) => (v && typeof v === 'object' ? (Array.isArray(v) ? v.map(k) : Object.fromEntries(Object.keys(v).sort().map((x) => [x, k(v[x])]))) : v); return JSON.stringify(k(a)) === JSON.stringify(k(b)); };
 const need = (cond, msg) => { if (!cond) throw new Error(`canonical amendment pre-condition failed: ${msg}`); };
 
 export const POST_CERTIFICATION_AMENDMENT_IDS = ['5D-D-thrown-profile-ranged-branch'];
@@ -27,7 +28,7 @@ const CORE_RULE = 'Core Rulebook: throwing a weapon is a ranged attack (attack r
  * amended) record; `log` receives one entry per amendment actually applied.
  */
 export function applyPostCertificationAmendments(rec, log = []) {
-  return applyIBStructure(applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log), log);
+  return applyICAStructure(applyIBStructure(applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log), log), log);
 }
 
 function applyThrownRanged(rec, log) {
@@ -223,4 +224,107 @@ function applyIBStructure(rec, log) {
     return out;
   }
   return rec;
+}
+
+// ---- Phase 5D-I-C-A: structure for outcome riders the source states in prose only ------------------------------------------------------
+// The certified operation riders / payload effects below carry their trigger, status and duration only as prose sentences. The runtime
+// reads structured fields and never parses prose, so the SAME source sentence is added as a `structure` object beside the untouched
+// prose. Comparison words follow the source: "exceeds" / "beats" is a strict comparison; "equals or exceeds" (not used here) is >=.
+export const ICA_STRUCTURE_AMENDMENT_ID = '5D-I-C-A-outcome-structure-backfill';
+const ICA_OPERATION_STRUCTURE = [
+  {
+    identityKey: 'weapon-carbonite-rifle', key: 'conditionTrackRider',
+    prose: { effect: 'target is immobilized until end of its next turn', trigger: 'target is moved down condition track by this weapon' },
+    structure: { trigger: 'target-moved-down-condition-track-by-this-damage', status: 'immobilized', duration: { owner: 'target', through: 'end-of-next-turn' } },
+    source: { book: 'Knights of the Old Republic Campaign Guide', page: '69 (description; stat table p.68)', evidence: 'A target moved down the condition track by a carbonite rifle is also immobilized until the end of its next turn.' },
+  },
+  {
+    identityKey: 'weapon-aurial-blaster', key: 'fortitudeRider',
+    prose: { effect: '-5 penalty to Perception checks until end of attacker next turn', trigger: 'attack hits and attack roll also exceeds target Fortitude Defense' },
+    structure: { trigger: 'hit-and-attack-total-exceeds-defense', defense: 'fortitude', comparison: 'exceeds', skillPenalty: { skill: 'perception', amount: 5 }, duration: { owner: 'attacker', through: 'end-of-next-turn' } },
+    source: { book: 'Knights of the Old Republic Campaign Guide', page: '67 (description; stat table p.68)', evidence: 'If an aurial blaster hits and the attack roll also exceeds the target\'s Fortitude Defense, the target takes a -5 penalty on Perception checks until the end of the attacker\'s next turn.' },
+  },
+  {
+    identityKey: 'weapon-cryoban-grenade', key: 'fortitudeRider',
+    prose: { effect: 'target speed becomes 2 squares until end of its next turn', trigger: 'grenade attack roll also beats target Fortitude Defense' },
+    structure: { trigger: 'hit-and-attack-total-exceeds-defense', defense: 'fortitude', comparison: 'exceeds', speedSetSquares: 2, duration: { owner: 'target', through: 'end-of-next-turn' } },
+    source: { book: 'Knights of the Old Republic Campaign Guide', page: '69 (description; stat table p.68)', evidence: 'If a CryoBan grenade\'s attack roll also beats a target\'s Fortitude Defense, that target\'s speed is reduced to 2 squares until the end of its next turn.' },
+  },
+  {
+    identityKey: 'weapon-ripper', key: 'embeddedShrapnel',
+    prose: { timing: 'immediate', trigger: 'damage exceeds target damage threshold and moves target at least 1 step down condition track' },
+    structure: { trigger: 'damage-exceeds-threshold-and-moves-target-down-condition-track', minimumConditionSteps: 1, damageEvent: 'separate-immediate' },
+    source: { book: 'Knights of the Old Republic Campaign Guide', page: '69 (description; stat table p.68)', evidence: 'If its damage exceeds a target\'s damage threshold and moves that target at least 1 step down the condition track, embedded shrapnel immediately deals an additional 1d4 damage.' },
+  },
+  {
+    identityKey: 'weapon-emp-grenade', key: 'targetRules',
+    prose: {
+      droidVehicleElectronicCybernetic: { hit: 'full ion damage', miss: 'half ion damage', zeroHpPreHalving: 'move -5 CT and disabled' },
+      nonCyberneticCreature: { hit: 'half ion damage', miss: 'no ion damage', otherIonEffects: false },
+    },
+    structure: {
+      electronic: { categories: ['droid', 'vehicle', 'device', 'object'], includesCyberneticallyEnhancedCreatures: true, hitMultiplier: 1, missMultiplier: 0.5, zeroHpPreHalving: { conditionTrackSteps: -5, disabled: true } },
+      nonCybernetic: { hitMultiplier: 0.5, missMultiplier: 0, otherIonEffects: false },
+    },
+    source: { book: 'Clone Wars Campaign Guide', page: '62 (description; stat table p.61)', evidence: 'Droids, vehicles, electronic devices, and cybernetically enhanced creatures take normal ion damage on a hit or half on a miss. If the pre-halving ion damage would reduce such a target to 0 hit points, the target moves -5 steps on the condition track and is disabled. Creatures without cybernetics take half ion damage on a hit and none on a miss, with no other ion effect. Evasion modifies the area attack normally.' },
+  },
+];
+const ICA_PAYLOAD_STRUCTURE = [
+  {
+    identityKey: 'weapon-wrist-rocket-launcher', payloadId: 'flash', effect: 'blinded',
+    prose: { duration: '1d4 rounds', effect: 'blinded', trigger: 'attack roll beats target Reflex Defense' },
+    structure: { trigger: 'area-attack-hit', defense: 'reflex', status: 'blinded', duration: { dice: '1d4', unit: 'rounds', owner: 'target' } },
+    source: { book: 'Clone Wars Campaign Guide', page: '63 (description; stat table p.61)', evidence: 'Flash rocket: targets whose Reflex Defense is beaten are blinded for 1d4 rounds (3-square burst).' },
+  },
+  {
+    identityKey: 'weapon-wrist-rocket-launcher', payloadId: 'hollow-tip-nerve-toxin', effect: 'nerve-agent-injection',
+    prose: { conditionTrackSteps: -2, effect: 'nerve-agent-injection', trigger: 'successful hit then secondary attack vs Fortitude Defense succeeds' },
+    structure: { trigger: 'hit-then-secondary-attack', secondaryDefense: 'fortitude', onSecondarySuccess: { conditionTrackSteps: -2 }, secondaryAttackBonus: null, secondaryAttackBonusStatus: 'NOT_CARRIED_BY_CANONICAL_CORPUS' },
+    source: { book: 'Clone Wars Campaign Guide', page: '63 (description; stat table p.61)', evidence: 'Nerve toxin hollow-tip rocket: a hit is followed by a secondary attack against Fortitude Defense; success moves the target -2 steps on the condition track. The corpus prints no secondary attack bonus.' },
+  },
+];
+const ICA_MICRO = {
+  identityKey: 'weapon-micro-grenade-launcher',
+  source: { book: 'Scum and Villainy', page: '50 (description; stat table p.51)', evidence: 'Micro grenades use the normal rules for their grenade type but deal two fewer dice of damage on a successful hit.' },
+};
+
+function applyICAStructure(rec, log) {
+  const opSpec = ICA_OPERATION_STRUCTURE.find((x) => x.identityKey === rec.identityKey);
+  const plSpecs = ICA_PAYLOAD_STRUCTURE.filter((x) => x.identityKey === rec.identityKey);
+  const isMicro = rec.identityKey === ICA_MICRO.identityKey;
+  if (!opSpec && !plSpecs.length && !isMicro) return rec;
+  const out = clone(rec);
+  const stampIt = () => { out.provenance = { ...out.provenance, postCertificationAmendments: [...(out.provenance.postCertificationAmendments ?? []), ICA_STRUCTURE_AMENDMENT_ID] }; };
+  if (opSpec) {
+    const cur = out.operation?.[opSpec.key];
+    need(cur && Object.entries(opSpec.prose).every(([k, v]) => same(cur[k], v)), `${opSpec.identityKey} operation.${opSpec.key} is the published prose`);
+    need(cur.structure === undefined, `${opSpec.identityKey} operation.${opSpec.key} has no structure yet`);
+    out.operation[opSpec.key] = { ...cur, structure: clone(opSpec.structure) };
+    stampIt();
+    log.push({ id: ICA_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-C-A', identityKey: rec.identityKey, field: `operation.${opSpec.key}.structure`, from: cur, to: out.operation[opSpec.key], source: opSpec.source,
+      rule: 'The runtime reads structured fields only; prose triggers and durations are never parsed.', reason: 'The trigger, status and duration were present only as prose; a structured copy of the same sentence lets the Apply Damage pipeline execute it.' });
+  }
+  for (const spec of plSpecs) {
+    const payload = out.canonicalStats.payloadProfiles.find((x) => x.id === spec.payloadId);
+    const effect = payload?.specialEffects?.find((e) => e && typeof e === 'object' && e.effect === spec.effect);
+    need(effect && same(effect, spec.prose), `${spec.identityKey} payload ${spec.payloadId} carries the published prose effect (found ${JSON.stringify(payload?.specialEffects)})`);
+    need(effect.structure === undefined, `${spec.identityKey} payload ${spec.payloadId} effect has no structure yet`);
+    effect.structure = clone(spec.structure);
+    stampIt();
+    log.push({ id: ICA_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-C-A', identityKey: rec.identityKey, field: `canonicalStats.payloadProfiles[id=${spec.payloadId}].specialEffects[effect=${spec.effect}].structure`, from: spec.prose, to: effect, source: spec.source,
+      rule: 'The runtime reads structured fields only; prose triggers and durations are never parsed.', reason: 'The payload effect carried its trigger and duration only as prose.' });
+  }
+  if (isMicro) {
+    need(out.operation.damageTypeAndBurstDeterminedByGrenade === undefined && out.operation.payloadDamageDiceAdjustment === undefined, 'micro grenade launcher declares no payload delegation yet');
+    need(out.canonicalStats.ammo.acceptedPayloadFamily === 'micro-grenade' && out.canonicalStats.ammo.damageSource === 'loaded-ammo-modified-by-weapon', 'micro grenade launcher accepts the (empty) micro-grenade family and modifies loaded damage');
+    const before = { acceptedPayloadFamily: out.canonicalStats.ammo.acceptedPayloadFamily };
+    out.operation.damageTypeAndBurstDeterminedByGrenade = true;
+    out.operation.payloadDamageDiceAdjustment = -2;
+    out.canonicalStats.ammo.acceptedPayloadFamily = 'grenade';
+    stampIt();
+    log.push({ id: ICA_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-C-A', identityKey: rec.identityKey, field: 'operation.damageTypeAndBurstDeterminedByGrenade + operation.payloadDamageDiceAdjustment + canonicalStats.ammo.acceptedPayloadFamily',
+      from: before, to: { damageTypeAndBurstDeterminedByGrenade: true, payloadDamageDiceAdjustment: -2, acceptedPayloadFamily: 'grenade' }, source: ICA_MICRO.source,
+      rule: 'A launcher delegates its payload to the loaded canonical grenade and applies only its own source-defined adjustment (no grenade rules are cloned).', reason: 'The launcher accepted a family no certified identity carries; micro grenades are the ordinary grenade types with two fewer dice.' });
+  }
+  return out;
 }

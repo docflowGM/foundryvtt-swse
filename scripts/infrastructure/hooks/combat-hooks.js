@@ -249,6 +249,13 @@ async function handleBasicEffectLifecycle(combat, updateData, updateOptions) {
     if (!actor) return;
     try {
         await EffectIntentEngine.expireManagedEffectsForActor(actor, { combat, timing: 'turn-start' });
+        // Phase 5D-I-C-A: an effect carried by one combatant but timed by another actor's turns (weapon effects "until the end of the attacker's next
+        // turn") must be examined on every turn change, not only on its bearer's turn. Legacy lifecycles still require their own actor's turn.
+        for (const combatant of Array.from(combat?.combatants ?? [])) {
+            const other = combatant?.actor;
+            if (!other || other.id === actor.id) continue;
+            await EffectIntentEngine.expireManagedEffectsForActor(other, { combat, timing: 'turn-start' });
+        }
     } catch (err) {
         SWSELogger.warn('[CombatHooks] Basic effect lifecycle expiration failed', err);
     }

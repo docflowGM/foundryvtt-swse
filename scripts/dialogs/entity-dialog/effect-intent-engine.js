@@ -912,6 +912,24 @@ function getLifecycleFlag(effect = {}) {
     ?? null;
 }
 
+/**
+ * Phase 5D-I-C-A: expiry of a lifecycle timed by ANOTHER actor's turns. `phase: 'end'` expires once combat has moved past the owner's next turn
+ * (so the effect lasts through it); `phase: 'start'` expires when that turn begins. An owner who is not in the combat never expires it here
+ * (combat end still does).
+ */
+function ownerTurnExpiry(lifecycle, combat, { createdRound, createdTurn, currentRound, currentTurn }) {
+  const ownerId = String(lifecycle.turnOwnerActorId ?? '');
+  const turns = Array.from(combat?.turns ?? []);
+  const ownerIndex = turns.findIndex((t) => String(t?.actor?.id ?? '') === ownerId);
+  if (ownerIndex < 0) return false;
+  const ownerRound = ownerIndex > createdTurn ? createdRound : createdRound + 1;
+  const after = (round, turn, atRound, atTurn) => round > atRound || (round === atRound && turn > atTurn);
+  const reached = (round, turn, atRound, atTurn) => round > atRound || (round === atRound && turn >= atTurn);
+  return lifecycle.phase === 'end'
+    ? after(currentRound, currentTurn, ownerRound, ownerIndex)
+    : reached(currentRound, currentTurn, ownerRound, ownerIndex);
+}
+
 function shouldExpireAtTurnStart(effect = {}, actor = null, combat = null) {
   const intent = EffectIntentEngine.getIntent(effect);
   const key = normalizeDurationKey(intent?.duration);
@@ -930,6 +948,9 @@ function shouldExpireAtTurnStart(effect = {}, actor = null, combat = null) {
   const hasAdvanced = currentRound > createdRound || (currentRound === createdRound && currentTurn !== createdTurn);
 
   if (key === 'until-start-next-turn' || key === 'until-end-next-turn') {
+    // Phase 5D-I-C-A: a lifecycle may name the actor whose TURNS time it (a weapon effect "until the end of the attacker's next turn" is carried by
+    // the target but timed by the attacker). Position-based and pure: the owner's next turn is the first turn slot of that actor after creation.
+    if (lifecycle.turnOwnerActorId) return ownerTurnExpiry(lifecycle, combat, { createdRound, createdTurn, currentRound, currentTurn });
     return isActorsTurn && hasAdvanced;
   }
 
@@ -941,8 +962,10 @@ function shouldExpireAtTurnStart(effect = {}, actor = null, combat = null) {
 function shouldExpireAtCombatEnd(effect = {}, combat = null) {
   const intent = EffectIntentEngine.getIntent(effect);
   const key = normalizeDurationKey(intent?.duration);
-  if (key !== 'encounter') return false;
   const lifecycle = getLifecycleFlag(effect);
+  // Phase 5D-I-C-A: a turn-owned effect (timed by another actor's turns) cannot outlive the combat that timed it
+  const turnOwned = !!lifecycle?.turnOwnerActorId && (key === 'until-start-next-turn' || key === 'until-end-next-turn');
+  if (key !== 'encounter' && !turnOwned) return false;
   return !combat || !lifecycle?.combatId || lifecycle.combatId === combat.id;
 }
 
@@ -1394,7 +1417,7 @@ export class EffectIntentEngine {
   }
 
 
-  static stampLifecycle(effectData = {}, { actor = null, combat = null } = {}) {
+  static stampLifecycle(effectData = {}, { actor = null, combat = null, turnOwnerActorId = null, phase = null } = {}) {
     const data = foundry?.utils?.deepClone?.(effectData) ?? { ...effectData };
     const intent = this.getIntent(data);
     const key = normalizeDurationKey(intent?.duration);
@@ -1409,7 +1432,9 @@ export class EffectIntentEngine {
       createdTurn: Number(activeCombat?.turn ?? -1),
       combatId: activeCombat?.id ?? null,
       combatantId: activeCombat?.combatant?.id ?? null,
-      actorId: actor?.id ?? null
+      actorId: actor?.id ?? null,
+      // Phase 5D-I-C-A: optional turn owner (another actor's turns time this effect) and the boundary of that turn it ends at
+      ...(turnOwnerActorId ? { turnOwnerActorId: String(turnOwnerActorId), phase: phase === 'start' ? 'start' : 'end' } : {})
     };
     data.flags = data.flags ?? {};
     data.flags[SWSE_EFFECT_FLAG_SCOPE] = {
