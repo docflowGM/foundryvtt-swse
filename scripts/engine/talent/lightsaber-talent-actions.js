@@ -4,6 +4,12 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { accruedPenalty, withRecordedUse, withCreditedBackUse } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/reaction-rules.js";
+import { resolveReactionWeapon, selectedReactionModifiers, canonicalLightsaberGroupOf } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js";
+
+// seam for the two roll collaborators (a test injects its own; production uses the real roll dialog and skill roll)
+export const LIGHTSABER_TALENT_IO = { showRollModifiersDialog, rollSkillCheck };
 
 const NS = 'swse';
 const BLOCK_DEFLECT_FLAG = 'blockDeflectUseState';
@@ -20,17 +26,24 @@ function normalizedTalentName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*\((\d+)\)\s*$/, '');
 }
 
+// Phase 5D-I-C-C: talent ownership is IDENTITY-FIRST. A talent carrying a canonical identity is the talent its identity says (display name irrelevant, and a
+// canonical talent merely NAMED "Block" is not Block); the name match survives only for a talent with no canonical identity (legacy / homebrew).
 function hasTalent(actor, name) {
-  const wanted = normalizedTalentName(name);
-  return !!actor?.items?.some?.(item => item?.type === 'talent' && normalizedTalentName(item?.name) === wanted);
+  const wanted = normalizedTalentName(name), wantedSlug = slug(name);
+  return !!actor?.items?.some?.(item => {
+    if (item?.type !== 'talent') return false;
+    const canonical = canonicalFeatSlug(item);
+    return canonical !== null ? canonical === wantedSlug : normalizedTalentName(item?.name) === wanted;
+  });
 }
 
 function countTalent(actor, name) {
-  const wanted = normalizedTalentName(name);
+  const wanted = normalizedTalentName(name), wantedSlug = slug(name);
   let total = 0;
   for (const item of actor?.items ?? []) {
     if (item?.type !== 'talent') continue;
-    if (normalizedTalentName(item?.name) !== wanted) continue;
+    const canonical = canonicalFeatSlug(item);
+    if (canonical !== null ? canonical !== wantedSlug : normalizedTalentName(item?.name) !== wanted) continue;
     const rawName = String(item?.name ?? '').trim().toLowerCase();
     const parenthetical = Number(rawName.match(/\((\d+)\)\s*$/)?.[1] ?? 0) || 0;
     const systemQty = Number(item?.system?.quantity ?? item?.system?.rank ?? item?.system?.ranks ?? item?.system?.uses?.max ?? 0) || 0;
@@ -52,8 +65,31 @@ function turnKey(actor) {
 function currentBlockDeflectState(actor) {
   const flag = actor?.getFlag?.(NS, BLOCK_DEFLECT_FLAG) ?? {};
   const key = turnKey(actor);
-  if (flag?.turnKey !== key || flag?.encounterId !== encounterId()) return { turnKey: key, encounterId: encounterId(), uses: 0 };
-  return { turnKey: key, encounterId: encounterId(), uses: Math.max(0, Number(flag?.uses ?? 0) || 0) };
+  if (flag?.turnKey !== key || flag?.encounterId !== encounterId()) return { turnKey: key, encounterId: encounterId(), uses: 0, increments: [] };
+  return { turnKey: key, encounterId: encounterId(), uses: Math.max(0, Number(flag?.uses ?? 0) || 0), increments: Array.isArray(flag?.increments) ? flag.increments.map(Number).filter(Number.isFinite) : [] };
+}
+
+// Phase 5D-I-C-C: which weapon is the reaction weapon. The canonical reaction-weapon context answers from the actor's owned, equipped canonical weapons;
+// with no canonical weapon the existing (legacy) path is untouched. Several materially different legal weapons are asked about ONCE -- the best modifiers of
+// all equipped weapons are never silently combined.
+async function chooseReactionWeapon(candidates, title) {
+  const options = candidates.map((c) => `<option value="${esc(c.item.id)}">${esc(c.item.name)}</option>`).join('');
+  const picked = await SWSEDialogV2.prompt({
+    title: `${title} - choose the weapon`,
+    content: `<form class="swse-dialog"><p>More than one equipped weapon can be used for ${esc(title)} with different effects. Choose the one you are using.</p><div class="form-group"><select name="weapon">${options}</select></div></form>`,
+    label: 'Use this weapon',
+    callback: (html) => { const root = html instanceof HTMLElement ? html : html?.[0] ?? html; const form = root?.querySelector?.('form') ?? root; return String(new FormData(form).get('weapon') ?? ''); }
+  });
+  return candidates.find((c) => c.item.id === picked) ?? null;
+}
+
+async function reactionWeaponFor(actor, reaction, { skip = false } = {}) {
+  if (skip) return { status: 'skipped' };
+  const label = reaction === 'redirect-shot' ? 'Redirect Shot' : reaction === 'block' ? 'Block' : 'Deflect';
+  const res = await resolveReactionWeapon(actor, reaction, { choose: (c) => chooseReactionWeapon(c, label) });
+  if (res.status === 'none') { ui?.notifications?.warn?.(`${label}: no equipped weapon can be used for it (${String(res.reason).replace(/-/g, ' ')}).`); return null; }
+  if (res.status === 'choice') { if (!res.cancelled) ui?.notifications?.warn?.(`${label}: choose which weapon you are using.`); return null; }
+  return res;
 }
 
 async function postCard(actor, title, body, flags = {}) {
@@ -64,9 +100,12 @@ async function postCard(actor, title, body, flags = {}) {
   return SWSEChat.postHTML({ actor, content, flags: { swse: { lightsaberTalent: true, ...flags } } });
 }
 
+// Phase 5D-I-C-C: a canonical weapon is a lightsaber by its structured group; the display-name test is the legacy fallback for a weapon with no canonical identity
+const isLightsaberLike = (item, legacyText) => { const canonical = canonicalLightsaberGroupOf(item); return canonical !== null ? canonical : /lightsaber/i.test(legacyText); };
+
 function weaponOptions(actor) {
   return Array.from(actor?.items ?? [])
-    .filter(item => ['weapon', 'lightsaber'].includes(String(item?.type ?? '').toLowerCase()) || /lightsaber/i.test(String(item?.name ?? '')))
+    .filter(item => ['weapon', 'lightsaber'].includes(String(item?.type ?? '').toLowerCase()) || isLightsaberLike(item, String(item?.name ?? '')))
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 
@@ -167,11 +206,11 @@ export class LightsaberTalentActions {
     return Math.max(1, Math.min(3, countTalent(actor, 'Lightsaber Defense') || 1));
   }
 
-  static async _recordBlockDeflectUse(actor, kind, success) {
+  static async _recordBlockDeflectUse(actor, kind, success, increment = 5) {
     const state = currentBlockDeflectState(actor);
     await actor?.setFlag?.(NS, BLOCK_DEFLECT_FLAG, {
       ...state,
-      uses: state.uses + 1,
+      ...withRecordedUse(state, increment),
       lastKind: kind,
       lastSuccess: success === true,
       updatedAt: Date.now()
@@ -183,7 +222,7 @@ export class LightsaberTalentActions {
     if (state.uses <= 0) return false;
     await actor?.setFlag?.(NS, BLOCK_DEFLECT_FLAG, {
       ...state,
-      uses: Math.max(0, state.uses - 1),
+      ...withCreditedBackUse(state),
       creditedBackReason: reason,
       creditedBackAt: Date.now()
     });
@@ -216,13 +255,16 @@ export class LightsaberTalentActions {
       }
     }
 
+    const reactionWeapon = await reactionWeaponFor(actor, 'block', { skip: choice.cortosis === true });
+    if (!reactionWeapon) return null;
+    const weaponMods = selectedReactionModifiers(reactionWeapon, 'block');
     const state = currentBlockDeflectState(actor);
-    const penalty = -5 * state.uses;
-    const modResult = await showRollModifiersDialog({ title: 'Block - Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
+    const penalty = -accruedPenalty(state);
+    const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Block - Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
     if (modResult === null) return null;
-    const roll = await rollSkillCheck(actor, 'useTheForce', {
+    const roll = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', {
       ...modResult,
-      customModifier: Number(modResult.customModifier || 0) + penalty + ((choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? 2 : 0),
+      customModifier: Number(modResult.customModifier || 0) + penalty + weaponMods.flat + weaponMods.equipmentBonus + ((choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? 2 : 0),
       dc: choice.dc,
       source: 'block-talent',
       skillUse: { key: 'block', label: 'Block' },
@@ -231,20 +273,21 @@ export class LightsaberTalentActions {
     });
     if (!roll) return null;
     const success = roll.success === true;
-    await this._recordBlockDeflectUse(actor, 'Block', success);
+    await this._recordBlockDeflectUse(actor, 'Block', success, weaponMods.increment);
     if (success) {
       await actor?.setFlag?.(NS, 'lastSuccessfulBlock', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area });
     }
     await postCard(actor, 'Block', `<p>${esc(actor.name)} attempts to Block a melee attack (${roll.roll?.total ?? '?'} vs DC ${choice.dc}).</p>
       <p><strong>${success ? 'Success' : 'Failure'}:</strong> ${success ? (choice.area ? 'For a melee area attack, take half damage if the attack hit or no damage if it missed.' : 'The melee attack is negated.') : 'The melee attack is not negated.'}</p>
       ${penalty ? `<p><strong>Cumulative Block/Deflect penalty:</strong> ${penalty}</p>` : ''}
+      ${weaponMods.notes.length ? `<p><strong>Weapon (${esc(reactionWeapon.weapon?.name ?? 'weapon')}):</strong> ${esc(weaponMods.notes.join('; '))}.</p>` : ''}
       ${choice.protectAdjacent ? `<p><strong>Adjacent ally:</strong> ${shelteringApplies ? 'Sheltering Stance waives the normal Force Point cost.' : '1 Force Point spent to protect an adjacent character.'}</p>` : ''}
       ${(choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? '<p><strong>Lightsaber Specialist:</strong> +2 morale bonus included for Block with a lightsaber you built.</p>' : ''}
       ${(success && choice.shotoPin && (hasTalent(actor, 'Shoto Pin') || hasTalent(actor, 'Shoto Pin Block'))) ? '<p><strong>Shoto Pin:</strong> the attacker can make no further melee attacks until the start of its next turn, until you are no longer adjacent, or until you move, attack, or use an action.</p>' : ''}
       ${choice.cortosis ? '<p><strong>Cortosis Gauntlet:</strong> if this successfully Blocks a lightsaber attack, the attacking lightsaber is deactivated.</p>' : ''}
       <p><strong>Requirements:</strong> active lightsaber unless using Cortosis Gauntlet Block, aware of attack, not Flat-Footed.</p>`,
       { talentName: 'Block', success, dc: choice.dc, penalty, protectAdjacent: choice.protectAdjacent, shelteringStance: shelteringApplies, lightsaberSpecialist: choice.lightsaberSpecialist === true, shotoPin: choice.shotoPin === true });
-    return { success, roll: roll.roll, dc: choice.dc, penalty };
+    return { success, roll: roll.roll, dc: choice.dc, penalty, weaponModifiers: weaponMods, reactionWeapon: reactionWeapon.identityKey ?? null };
   }
 
   static async promptDeflect(actor, { sourceElement = null } = {}) {
@@ -270,13 +313,16 @@ export class LightsaberTalentActions {
       }
     }
 
+    const reactionWeapon = await reactionWeaponFor(actor, 'deflect');
+    if (!reactionWeapon) return null;
+    const weaponMods = selectedReactionModifiers(reactionWeapon, 'deflect');
     const state = currentBlockDeflectState(actor);
-    const penalty = -5 * state.uses;
-    const modResult = await showRollModifiersDialog({ title: 'Deflect - Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
+    const penalty = -accruedPenalty(state);
+    const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Deflect - Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
     if (modResult === null) return null;
-    const roll = await rollSkillCheck(actor, 'useTheForce', {
+    const roll = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', {
       ...modResult,
-      customModifier: Number(modResult.customModifier || 0) + penalty + ((choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? 2 : 0),
+      customModifier: Number(modResult.customModifier || 0) + penalty + weaponMods.flat + weaponMods.equipmentBonus + ((choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? 2 : 0),
       dc: choice.dc,
       source: 'deflect-talent',
       skillUse: { key: 'deflect', label: 'Deflect' },
@@ -285,18 +331,19 @@ export class LightsaberTalentActions {
     });
     if (!roll) return null;
     const success = roll.success === true;
-    await this._recordBlockDeflectUse(actor, 'Deflect', success);
+    await this._recordBlockDeflectUse(actor, 'Deflect', success, weaponMods.increment);
     if (success) {
       await actor?.setFlag?.(NS, 'lastSuccessfulDeflect', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area });
     }
     await postCard(actor, 'Deflect', `<p>${esc(actor.name)} attempts to Deflect a ranged attack (${roll.roll?.total ?? '?'} vs DC ${choice.dc}).</p>
       <p><strong>${success ? 'Success' : 'Failure'}:</strong> ${success ? (choice.area ? 'For autofire/Force Lightning-style barrages, take half damage if the attack hit or no damage if it missed.' : 'The ranged attack is negated.') : 'The ranged attack is not negated.'}</p>
       ${penalty ? `<p><strong>Cumulative Block/Deflect penalty:</strong> ${penalty}</p>` : ''}
+      ${weaponMods.notes.length ? `<p><strong>Weapon (${esc(reactionWeapon.weapon?.name ?? 'weapon')}):</strong> ${esc(weaponMods.notes.join('; '))}.</p>` : ''}
       ${choice.protectAdjacent ? `<p><strong>Adjacent ally:</strong> ${shelteringApplies ? 'Sheltering Stance waives the normal Force Point cost.' : '1 Force Point spent to protect an adjacent character.'}</p>` : ''}
       ${(choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? '<p><strong>Lightsaber Specialist:</strong> +2 morale bonus included for Deflect with a lightsaber you built.</p>' : ''}
       <p><strong>Limits:</strong> requires active lightsaber, awareness, not Flat-Footed; cannot negate Colossal (Frigate)+ vehicle attacks unless point-defense.</p>`,
       { talentName: 'Deflect', success, dc: choice.dc, penalty, protectAdjacent: choice.protectAdjacent, shelteringStance: shelteringApplies, lightsaberSpecialist: choice.lightsaberSpecialist === true });
-    return { success, roll: roll.roll, dc: choice.dc, penalty };
+    return { success, roll: roll.roll, dc: choice.dc, penalty, weaponModifiers: weaponMods, reactionWeapon: reactionWeapon.identityKey ?? null };
   }
 
   static async promptLightsaberDefense(actor) {
@@ -323,7 +370,7 @@ export class LightsaberTalentActions {
       ui?.notifications?.warn?.('Lightsaber Throw talent required.');
       return null;
     }
-    const weapons = weaponOptions(actor).filter(w => /lightsaber/i.test(String(w.name ?? '') + ' ' + String(w.system?.group ?? '') + ' ' + String(w.system?.weaponType ?? '')));
+    const weapons = weaponOptions(actor).filter(w => isLightsaberLike(w, String(w.name ?? '') + ' ' + String(w.system?.group ?? '') + ' ' + String(w.system?.weaponType ?? '')));
     const weaponList = weapons.length ? `<div class="form-group"><label>Lightsaber</label><select name="weaponId">${weapons.map(w => `<option value="${esc(w.id)}">${esc(w.name)}</option>`).join('')}</select></div>` : '';
     const content = `<form class="swse-dialog"><p>Throw a lightsaber as a Standard Action; it is treated as a thrown weapon, not an improvised weapon.</p>${weaponList}<label class="checkbox"><input type="checkbox" name="pullBack" /> Target is within 6 squares and I want to pull the lightsaber back with a Swift Action now</label><p class="notes">The thrown attack itself uses the normal attack roller/range penalties. This helper handles the optional DC 20 Use the Force pull-back.</p></form>`;
     const choice = await SWSEDialogV2.prompt({ title: 'Lightsaber Throw', content, label: 'Use Lightsaber Throw', callback: (html) => {
@@ -335,9 +382,9 @@ export class LightsaberTalentActions {
     if (!choice) return null;
     let pullBackResult = null;
     if (choice.pullBack) {
-      const modResult = await showRollModifiersDialog({ title: 'Lightsaber Throw Pull-Back - DC 20 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
+      const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Lightsaber Throw Pull-Back - DC 20 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
       if (modResult !== null) {
-        pullBackResult = await rollSkillCheck(actor, 'useTheForce', { ...modResult, dc: 20, source: 'lightsaber-throw-pullback', skillUse: { key: 'lightsaber-throw-pullback', label: 'Lightsaber Throw Pull-Back' }, sourceElement });
+        pullBackResult = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', { ...modResult, dc: 20, source: 'lightsaber-throw-pullback', skillUse: { key: 'lightsaber-throw-pullback', label: 'Lightsaber Throw Pull-Back' }, sourceElement });
       }
     }
     await postCard(actor, 'Lightsaber Throw', `<p>${esc(actor.name)} may throw a lightsaber as a Standard Action using normal thrown-weapon range penalties.</p>${choice.pullBack ? `<p><strong>Pull-back:</strong> DC 20 Use the Force ${pullBackResult ? (pullBackResult.success ? 'succeeded' : 'failed') : 'was not rolled'}.</p>` : '<p>If the target is within 6 squares, the lightsaber can be pulled back as a Swift Action with DC 20 Use the Force.</p>'}`, { talentName: 'Lightsaber Throw', pullBack: choice.pullBack, pullBackSuccess: pullBackResult?.success ?? null });
@@ -355,6 +402,9 @@ export class LightsaberTalentActions {
       ui?.notifications?.warn?.('Redirect Shot has already been used this round.');
       return null;
     }
+    // Phase 5D-I-C-C: eligibility only (a weapon's modifiers grant nothing here); several equally-valid weapons are not asked about (no number differs)
+    const redirectWeapon = await reactionWeaponFor(actor, 'redirect-shot');
+    if (!redirectWeapon) return null;
     const target = await promptNamedTarget('Redirect Shot', 'Use after successfully Deflecting a single blaster bolt. Autofire barrages and other projectiles cannot be redirected.');
     if (!target) return null;
     await actor?.setFlag?.(NS, 'redirectShot', { roundKey, used: true, targetName: target.targetName, usedAt: Date.now() });
@@ -428,9 +478,9 @@ export class LightsaberTalentActions {
     }
     let pullBackResult = null;
     if (choice.pullBack) {
-      const modResult = await showRollModifiersDialog({ title: 'Improved Lightsaber Throw Pull-Back - DC 20 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
+      const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Improved Lightsaber Throw Pull-Back - DC 20 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
       if (modResult !== null) {
-        pullBackResult = await rollSkillCheck(actor, 'useTheForce', { ...modResult, dc: 20, source: 'improved-lightsaber-throw-pullback', skillUse: { key: 'improved-lightsaber-throw-pullback', label: 'Improved Lightsaber Throw Pull-Back' }, sourceElement });
+        pullBackResult = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', { ...modResult, dc: 20, source: 'improved-lightsaber-throw-pullback', skillUse: { key: 'improved-lightsaber-throw-pullback', label: 'Improved Lightsaber Throw Pull-Back' }, sourceElement });
       }
     }
     await postCard(actor, 'Improved Lightsaber Throw', `<p>${esc(actor.name)} throws a lightsaber through <strong>${esc(choice.targetName)}</strong>.</p><p><strong>Area Attack:</strong> make one ranged attack roll and compare it to each target's Reflex Defense. Success deals normal lightsaber damage; failure deals half damage.</p>${hasTalent(actor, 'Thrown Lightsaber Mastery') ? '<p><strong>Thrown Lightsaber Mastery:</strong> targets successfully struck move at half Speed until the beginning of your next turn.</p>' : ''}${choice.pullBack ? `<p><strong>Pull-back:</strong> DC 20 Use the Force ${pullBackResult ? (pullBackResult.success ? 'succeeded' : 'failed') : 'was not rolled'}.</p>` : ''}`, { talentName: 'Improved Lightsaber Throw', forcePointSpent: true, areaAttack: true, targetName: choice.targetName, pullBackSuccess: pullBackResult?.success ?? null });

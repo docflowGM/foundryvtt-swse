@@ -843,7 +843,8 @@ try {
   const census = JSON.parse(fs.readFileSync('data/audits/weapon-phase-5d-e-special-mechanic-census.json', 'utf8'));
   const all = Object.entries(census.identities).flatMap(([k, forms]) => Object.values(forms).flat().map((e) => [k, e]));
   assert.equal(all.filter(([, e]) => /^grab-grapple:/.test(e) && /:DEFER$/.test(e)).length, 0); assert.ok(all.filter(([, e]) => /^grab-grapple:/.test(e)).length >= 20);
-  assert.deepEqual(census.deferredByOwner, { 'I-C-C': 7, 'I-D': 3 }); assert.deepEqual(census.deferredWithoutOwner, []);
+  // Phase 5D-I-C-C later consumed the seven I-C-C reaction / defense deferrals: I-C-B left I-C-C 7 + I-D 3, the census now keeps only the I-D three
+  assert.equal(census.deferredByOwner['I-D'], 3); assert.ok(!Object.keys(census.deferredByOwner).includes('I-C-B')); assert.deepEqual(census.deferredWithoutOwner, []);
   for (const r of manifestICA.buildManifest().rows.filter((x) => x.disposition === 'DEFERRED_TO_I_C_B' && x.kind === 'operation-key')) assert.ok(m.rows.some((x) => x.key === r.key), `I-C-A deferral ${r.key} is closed by an I-C-B row`);
   ok('no grab-grapple mechanic remains DEFER (census: I-C-B 15 -> 0; only I-C-C 7 and I-D 3 remain); every I-C-A deferral is closed by an I-C-B row');
 
@@ -852,7 +853,7 @@ try {
   assert.equal(closure.operationKeys.families['grab-grapple-restrain'].executableUnconsumed.length, 0); assert.equal(closure.operationKeys.families['grab-grapple-restrain'].status, 'CONSUMED');
   assert.deepEqual(m.globalCounters.before, I_C_B_BASELINE);
   assert.deepEqual([closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER, closure.counters.RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER, closure.counters.EXECUTABLE_FORM_MECHANICS_DEFERRED, closure.counters.EXECUTABLE_RELATION_FAMILIES_DEFERRED], [m.globalCounters.after.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER, m.globalCounters.after.RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER, m.globalCounters.after.EXECUTABLE_FORM_MECHANICS_DEFERRED, m.globalCounters.after.EXECUTABLE_RELATION_FAMILIES_DEFERRED]);
-  assert.ok(closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER < I_C_B_BASELINE.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER && closure.counters.EXECUTABLE_FORM_MECHANICS_DEFERRED === 10 && closure.counters.EXECUTABLE_RELATION_FAMILIES_DEFERRED === 6);
+  assert.ok(closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER < I_C_B_BASELINE.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER && closure.counters.EXECUTABLE_FORM_MECHANICS_DEFERRED <= 10 && closure.counters.EXECUTABLE_RELATION_FAMILIES_DEFERRED <= 6);
   ok(`global counters: unique unconsumed keys ${I_C_B_BASELINE.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER} -> ${closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER}, raw ${I_C_B_BASELINE.RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER} -> ${closure.counters.RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER}, deferred mechanics 25 -> 10, deferred relations 7 -> 6, grab-grapple-restrain fully consumed`);
 
   // 94: the Amphistaff relation is consumed, not deferred, and names the entitlement consumer

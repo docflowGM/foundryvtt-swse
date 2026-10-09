@@ -255,8 +255,8 @@ const dexActor = (items, feats) => { const a = makeActor({ items, feats }); a.sy
   assert.equal(census.relations.distinctRelations, 22);
   for (const r of census.relations.executableConsumed) assert.ok(r.consumer, `${r.relation} names its consumer`);
   for (const r of census.relations.executableDeferred) { assert.ok(r.reason && r.owner, `${r.relation} deferred with reason+owner`); assert.ok(RELATION_POLICY[r.relation].deferred); }
-  assert.deepEqual(census.relations.executableDeferred.map((r) => r.relation).sort(), ['FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE', 'NEGATIVE_WEAPON_MODIFIER', 'POSITIVE_WEAPON_MODIFIER', 'TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK', 'TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY', 'USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION']);
-  ok('every one of the 22 weapon-ability relation families is classified; consumed ones name a consumer, the 6 deferred ones carry a reason and an owner (Phase 5D-I-C-B consumed the Amphistaff whip-form relation)');
+  assert.deepEqual(census.relations.executableDeferred.map((r) => r.relation).sort(), ['FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE', 'TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK', 'TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY', 'USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION']);
+  ok('every one of the 22 weapon-ability relation families is classified; consumed ones name a consumer, the 4 deferred ones carry a reason and an owner (Phase 5D-I-C-B consumed the Amphistaff whip-form relation; 5D-I-C-C the positive / negative weapon-modifier relations)');
 
   // 21: PROHIBITED still works -- by ability IDENTITY (a renamed canonical Rapid Shot is refused; a same-named impostor is not)
   const flech = canon('weapon-flechette-launcher');

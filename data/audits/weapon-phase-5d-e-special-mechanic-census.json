@@ -113,6 +113,11 @@
       "timing": "on-attack",
       "note": "form deals stun damage by default (damage mode)"
     },
+    "passive-defense": {
+      "policy": "AUTO",
+      "timing": "continuous",
+      "note": "contextual Reflex Defense penalty of the wielder against adjacent attackers while the persistent setting is in effect: consumed by the attack pipeline's target-side defense stage"
+    },
     "payload-delegation": {
       "policy": "AUTO",
       "timing": "on-damage-roll",
@@ -143,10 +148,15 @@
       "timing": "on-attack",
       "note": "swift-action preparation / bracing: CONSUMED by the owned fire-state (FireStateStore.primePreparedAttack / previewReadiness, Phase 5D-G / 5D-I-A); classified AUTO so the census stops reporting a superseded deferral"
     },
+    "reaction-modifier": {
+      "policy": "AUTO",
+      "timing": "on-reaction",
+      "note": "modifier to the wielder's Use the Force check made with Block / Deflect: consumed by the reaction roll through reaction-rules (operation field = numeric authority)"
+    },
     "return-recovery": {
-      "policy": "DEFER",
-      "timing": "on-attack",
-      "note": "return/recovery threshold with no structured effect or action"
+      "policy": "AUTO",
+      "timing": "on-hit",
+      "note": "weapon-native return on an attack margin over the target defense (thrown form only): a recovery record applied through the rider stage; nothing is removed from the owned weapon"
     },
     "special-action": {
       "policy": "DEFER",
@@ -183,7 +193,7 @@
     "identities": 203,
     "identitiesWithMechanics": 90,
     "forms": 266,
-    "formsWithMechanics": 116,
+    "formsWithMechanics": 115,
     "resolveErrors": 0
   },
   "mechanicsByFamily": {
@@ -200,7 +210,6 @@
     "ct-rider-prompt": 1,
     "damage-multiplier": 2,
     "damage-rider": 1,
-    "defensive-interaction": 5,
     "delayed-damage": 1,
     "display-note": 3,
     "dr-conditional": 1,
@@ -209,25 +218,26 @@
     "grab-grapple": 22,
     "multi-attack-interaction": 5,
     "native-stun": 16,
+    "passive-defense": 1,
     "payload-delegation": 4,
     "persistent-poison": 1,
     "poison-delivery": 2,
     "prepared-attack": 4,
-    "return-recovery": 2,
+    "reaction-modifier": 4,
+    "return-recovery": 1,
     "status-condition": 2,
     "status-effect": 10,
     "target-class-damage": 1,
     "threshold-adjustment": 3
   },
   "mechanicsByPolicy": {
-    "AUTO": 125,
-    "DEFER": 10,
+    "AUTO": 131,
+    "DEFER": 3,
     "DISPLAY_ONLY": 3,
     "PROMPT": 9,
     "VALIDATION_ONLY": 20
   },
   "deferredByOwner": {
-    "I-C-C": 7,
     "I-D": 3
   },
   "deferredWithoutOwner": [],
@@ -321,18 +331,6 @@
   "unclassified": [],
   "completenessIssues": [
     {
-      "identityKey": "unmapped::Darkstick",
-      "form": "melee",
-      "id": "return-on-attack-exceeds-reflex",
-      "issue": "threshold is structured but the effect/action (return to hand) is not; recorded as a completeness issue, never invented"
-    },
-    {
-      "identityKey": "unmapped::Darkstick",
-      "form": "thrown",
-      "id": "return-on-attack-exceeds-reflex",
-      "issue": "threshold is structured but the effect/action (return to hand) is not; recorded as a completeness issue, never invented"
-    },
-    {
       "identityKey": "weapon-ascension-gun",
       "form": "ascension/ascension",
       "id": "form-without-damage-or-effect",
@@ -377,9 +375,9 @@
     },
     "lightsaber-chassis-crossguard": {
       "blade": [
-        "defensive-interaction:conditional-0:DEFER",
-        "defensive-interaction:conditional-1:DEFER",
-        "dr-ignore:dr-ignore:AUTO"
+        "dr-ignore:dr-ignore:AUTO",
+        "reaction-modifier:conditional-0:AUTO",
+        "reaction-modifier:conditional-1:AUTO"
       ]
     },
     "lightsaber-chassis-dual-phase": {
@@ -387,8 +385,8 @@
         "dr-ignore:dr-ignore:AUTO"
       ],
       "extended/extended": [
-        "defensive-interaction:conditional-0:DEFER",
-        "dr-ignore:dr-ignore:AUTO"
+        "dr-ignore:dr-ignore:AUTO",
+        "passive-defense:conditional-0:AUTO"
       ]
     },
     "lightsaber-chassis-dueling": {
@@ -432,9 +430,9 @@
     },
     "lightsaber-chassis-pike": {
       "blade": [
-        "defensive-interaction:conditional-0:DEFER",
-        "defensive-interaction:conditional-1:DEFER",
-        "dr-ignore:dr-ignore:AUTO"
+        "dr-ignore:dr-ignore:AUTO",
+        "reaction-modifier:conditional-0:AUTO",
+        "reaction-modifier:conditional-1:AUTO"
       ],
       "haft-end": [
         "dr-ignore:dr-ignore:AUTO"
@@ -482,11 +480,8 @@
       ]
     },
     "unmapped::Darkstick": {
-      "melee": [
-        "return-recovery:return-on-attack-exceeds-reflex:DEFER"
-      ],
       "thrown": [
-        "return-recovery:return-on-attack-exceeds-reflex:DEFER"
+        "return-recovery:return-on-attack-exceeds-reflex:AUTO"
       ]
     },
     "unmapped::Energy Lance": {
