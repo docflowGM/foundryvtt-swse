@@ -50,6 +50,14 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Original scanned Force Unleashed Campaign Guide PDF chapter pp. 11-20 rendered and visually mapped to printed pagination (PDF page is printed page +1), searchable user-uploaded DJVU transcription used to compare named trait details.",
       "notes": "All 10 have pack identities and accurate ability adjustments, size and speed. Several sidecar mechanics and natural weapon materializations differ. No production edits; sourcebook does not itself confer optional species feats as automatic racial grants."
+    },
+    {
+      "source": "The Clone Wars Campaign Guide",
+      "printedScope": "Chapter I pp.10-17 (9 species); GM chapter p.91 (Republic Clone playable template); Republic NPC/personnel p.159 (Chagrian species traits)",
+      "reviewedSpecies": 11,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "Source PDF rendered and visually checked for main species table, Kaminoan resistant, Republic Clone source (PDF p92), Chagrian source (PDF p160); user-supplied searchable DJVU transcription used for per-entry text and exact traits.",
+      "notes": "No distinct Talz/Togruta racial traits are printed in this book's player species chapter, despite those pack records having 'Clone Wars' source labels. Their Force Unleashed audit decisions are unchanged; revisit additional source provenance separately. Printed size/base speed/ability adjustments match all 11 records, with Republic Clone fixed array correctly represented by separate choice data."
     }
   ],
   "summary": {
@@ -70,7 +78,7 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 39,
+    "totalSpeciesInRollingLedger": 50,
     "forceUnleashed": {
       "species": 10,
       "noChange": 0,
@@ -83,6 +91,20 @@
       "baseStatNoChange": 10,
       "languageParity": 9,
       "missingPack": 0
+    },
+    "cloneWars": {
+      "species": 11,
+      "mainChapter": 9,
+      "gmTemplates": 1,
+      "npcSpeciesBlocks": 1,
+      "packPresent": 11,
+      "baseChassisNoChange": 11,
+      "changeRequired": 6,
+      "reviewRequired": 5,
+      "noChange": 0,
+      "confirmedIssues": 7,
+      "reviewIssues": 19,
+      "totalIssues": 26
     }
   },
   "entries": [
@@ -481,6 +503,72 @@
       }
     },
     {
+      "name": "Chagrian",
+      "foundryId": "species-chagrian",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "159",
+        "part": "NPC-personnel-section",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-11-01",
+            "status": "CHANGE_REQUIRED",
+            "kind": "foreign-species-trait-contamination",
+            "target": "packs/species.db: Chagrian.system.canonicalTraits[all-codru-ji-possess-six-limbs] and canonicalStats.traits",
+            "current": "Imported Codru-Ji six-limb and Wyrwulves anatomy as Chagrian trait",
+            "publishedRule": "Published Chagrian block includes only Breathe Underwater, Radiation Resistance (+5 Fortitude vs radiation) and Low-Light Vision.",
+            "proposedAction": "Remove only the foreign Codru-Ji record from authoritative Chagrian species traits/derived projection; don't change real Chagrian traits or IDs.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "159",
+              "part": "NPC-personnel-section"
+            },
+            "crossBookProofRequired": false
+          },
+          {
+            "id": "CW-11-02",
+            "status": "REVIEW_REQUIRED",
+            "kind": "unsourced-endurance-field",
+            "target": "packs/species.db: Chagrian.system.skillBonuses",
+            "current": "+2 Endurance",
+            "publishedRule": "Chagrian NPC sidebar grants +2 STR -2 DEX, swim-capable breathing, +5 Fortitude vs radiation, low-light; no flat Endurance bonus.",
+            "proposedAction": "Check further publication/variant before retaining as automatic species skill modifier.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "159",
+              "part": "NPC-personnel-section"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
+      }
+    },
+    {
       "name": "Draethos",
       "foundryId": "species-draethos",
       "kotor": {
@@ -526,6 +614,56 @@
           }
         ],
         "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Dug",
+      "foundryId": "species-dug",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "11",
+        "part": "main",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-01-01",
+            "status": "REVIEW_REQUIRED",
+            "kind": "supplementary-sidecar-skill",
+            "target": "data/species-traits-migrated.json: Dug.structuralTraits[Reverse Jointed]",
+            "current": "+2 Acrobatics species bonus always",
+            "publishedRule": "Printed Dug species traits only grant Athletic rerolls and Take 10 on Climb/Jump, plus Small size modifiers.",
+            "proposedAction": "Check other-book trait provenance. Do not convert Athletic rerolls to Acrobatics bonuses.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "11",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
       }
     },
     {
@@ -893,6 +1031,88 @@
       }
     },
     {
+      "name": "Gen'Dai",
+      "foundryId": "species-gen-dai",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "12",
+        "part": "main",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-02-01",
+            "status": "CHANGE_REQUIRED",
+            "kind": "wrong-trigger-healing",
+            "target": "data/species-traits-migrated.json: Gen'Dai.structuralTraits[Regeneration].rules[fastHealing]",
+            "current": "Start-of-turn unconditional fastHealing, value 1, suppression after fire",
+            "publishedRule": "Printed Gen'Dai Surge heals 5 hp at the end of each turn ONLY after the Gen'Dai uses its Second Wind, until half HP, encounter end, or death.",
+            "proposedAction": "Remove incorrect automatic regeneration execution; implement distinct Second-Wind-triggered Gen'Dai Surge. Do not conflate with limb Regeneration.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "12",
+              "part": "main"
+            },
+            "crossBookProofRequired": false
+          },
+          {
+            "id": "CW-02-02",
+            "status": "REVIEW_REQUIRED",
+            "kind": "kill-only-damage-threshold",
+            "target": "packs/species.db: Gen'Dai.system.canonicalTraits[resilient-physiology]",
+            "current": "Doubling damage threshold described in pack",
+            "publishedRule": "Published Resilient Physiology doubles the threshold ONLY for determining death, not for ordinary condition-track movement.",
+            "proposedAction": "Confirm structured DamageThreshold/death logic obeys this narrow scope; do not add general threshold double.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "12",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          },
+          {
+            "id": "CW-02-03",
+            "status": "REVIEW_REQUIRED",
+            "kind": "trait-title",
+            "target": "packs/species.db: Gen'Dai.system.canonicalTraits[fast-healing].name",
+            "current": "Fast Healing",
+            "publishedRule": "Published name is Gen'Dai Surge; benefits otherwise correctly described in pack.",
+            "proposedAction": "Normalize title/alias in a controlled display-only patch after generator trace.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "12",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
+      }
+    },
+    {
       "name": "Gran",
       "foundryId": "species-gran",
       "forceUnleashed": {
@@ -1080,6 +1300,72 @@
       }
     },
     {
+      "name": "Iktotchi",
+      "foundryId": "species-iktotchi",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "12",
+        "part": "main",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-03-01",
+            "status": "REVIEW_REQUIRED",
+            "kind": "sidecar-initiative",
+            "target": "data/species-traits(-migrated).json: Iktotchi.structuralTraits[Prescient Vision] / conditionalTraits[Prescient Vision (Reroll)]",
+            "current": "+2 Initiative always and Initiative reroll",
+            "publishedRule": "Printed Limited Precognition is once-per-encounter reaction granting +2 Reflex against ONE attack to self or piloted vehicle; no unconditional Initiative bonus or Initiative reroll.",
+            "proposedAction": "Verify alternate source or selectable trait. Do not substitute generic initiative passive for reactive defense.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "12",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          },
+          {
+            "id": "CW-03-02",
+            "status": "REVIEW_REQUIRED",
+            "kind": "unsourced-skill-fields",
+            "target": "packs/species.db: Iktotchi.system.skillBonuses",
+            "current": "+2 Pilot and +2 Initiative",
+            "publishedRule": "Printed Expert Pilot permits must-accept Pilot reroll; no flat +2 Pilot/Initiative in the species traits.",
+            "proposedAction": "Check source/variant provenance and live bonus consumers.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "12",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
+      }
+    },
+    {
       "name": "Ithorian",
       "foundryId": "species-ithorian",
       "core": {
@@ -1169,6 +1455,170 @@
       }
     },
     {
+      "name": "Kaleesh",
+      "foundryId": "species-kaleesh",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "13",
+        "part": "main",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-04-01",
+            "status": "REVIEW_REQUIRED",
+            "kind": "sidecar-persuasion",
+            "target": "data/species-traits-migrated.json: Kaleesh.structuralTraits[Fearsome Reputation].rules",
+            "current": "+5 Persuasion (intimidation) always",
+            "publishedRule": "Published Kaleesh racial list is Survival conditional bonus feat, Darkvision, Driven (+5 Will vs mind-affecting), Persistent (Endurance reroll).",
+            "proposedAction": "Check alternate publication before registering extra +5 skill bonus.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "13",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          },
+          {
+            "id": "CW-04-02",
+            "status": "REVIEW_REQUIRED",
+            "kind": "extra-skill-fields",
+            "target": "packs/species.db: Kaleesh.system.skillBonuses",
+            "current": "+2 Initiative, +2 Stealth",
+            "publishedRule": "These flat modifiers are not in the published Clone Wars racial traits.",
+            "proposedAction": "Do not infer skill bonuses from culturally described stealth/combat prowess; source-check.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "13",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
+      }
+    },
+    {
+      "name": "Kaminoan",
+      "foundryId": "species-kaminoan",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "14",
+        "part": "main",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-05-01",
+            "status": "CHANGE_REQUIRED",
+            "kind": "fortitude-conflicting-authority",
+            "target": "packs/species.db: Kaminoan.system.canonicalTraits[resilient] + data/species-traits-migrated.json: Kaminoan.structuralTraits[Fragile].rules",
+            "current": "Pack +1 Fortitude; migrated sidecar -2 Fortitude",
+            "publishedRule": "Published Resistant grants +2 SPECIES bonus to Fortitude Defense against all relevant effects, not +1 and not -2.",
+            "proposedAction": "Correct canonical benefit to +2, retire or provenance-gate contradictory -2 sidecar and verify exactly one correct passive. Retain source-specific variant independently.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "14",
+              "part": "main"
+            },
+            "crossBookProofRequired": false
+          },
+          {
+            "id": "CW-05-02",
+            "status": "REVIEW_REQUIRED",
+            "kind": "extra-skill-authorities",
+            "target": "packs/species.db: Kaminoan.system.skillBonuses / sidecar Genetic Expertise",
+            "current": "+2 Knowledge (Life Sciences), +2 Treat Injury, and +5 Knowledge (Life Sciences)",
+            "publishedRule": "Published conditional bonus feat is Skill Focus (Treat Injury) IF trained; no blanket +2/+5 skill bonuses.",
+            "proposedAction": "Verify later source/variant before any extra passive modifier enters actor math.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "14",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          },
+          {
+            "id": "CW-05-03",
+            "status": "REVIEW_REQUIRED",
+            "kind": "alternate-species-variant",
+            "target": "packs/species.db: Kaminoan.system.variants[kaminoan-alternate]",
+            "current": "+2 CON -2 WIS alternate, Ocean Dweller, Reroll",
+            "publishedRule": "Clone Wars default Kaminoan has +2 INT -2 WIS, and Resistant +2 Fortitude.",
+            "proposedAction": "Identify specific printed source for alternate, preserve as distinct selection rather than replacing Clone Wars default.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "14",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          },
+          {
+            "id": "CW-05-04",
+            "status": "REVIEW_REQUIRED",
+            "kind": "printed-trait-label",
+            "target": "packs/species.db: Kaminoan.system.canonicalTraits[resilient].name",
+            "current": "Resilient",
+            "publishedRule": "Printed trait heading is Resistant.",
+            "proposedAction": "Correct printed display name with validated effect and stable ID.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "14",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
+      }
+    },
+    {
       "name": "Kel Dor",
       "foundryId": "species-kel-dor",
       "core": {
@@ -1238,6 +1688,56 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Kerkoiden",
+      "foundryId": "species-kerkoiden",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "15",
+        "part": "main",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-06-01",
+            "status": "REVIEW_REQUIRED",
+            "kind": "unsourced-sidecar-initiative",
+            "target": "data/species-traits-migrated.json: Kerkoiden.structuralTraits[Military Training]",
+            "current": "+2 Initiative always",
+            "publishedRule": "Printed Predator's Heritage adds +2 damage against recently damaged targets; Social Cunning uses WIS instead of CHA on Deception/Persuasion. No unconditional initiative bonus.",
+            "proposedAction": "Check sidecar provenance; preserve target-conditional damage and modifier substitution.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "15",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
       }
     },
     {
@@ -1490,6 +1990,173 @@
       }
     },
     {
+      "name": "Nautolan",
+      "foundryId": "species-nautolan",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "15-16",
+        "part": "main",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-07-01",
+            "status": "CHANGE_REQUIRED",
+            "kind": "invalid-automatic-language-data",
+            "target": "packs/species.db: Nautolan.system.languages",
+            "current": [
+              "communicate in Nautila",
+              "can Basic"
+            ],
+            "publishedRule": "Printed Automatic Languages: Basic and Nautila.",
+            "proposedAction": "Normalize to the two exact language names and correct canonical generation input.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "15-16",
+              "part": "main"
+            },
+            "crossBookProofRequired": false
+          },
+          {
+            "id": "CW-07-02",
+            "status": "CHANGE_REQUIRED",
+            "kind": "wrong-swim-movement-rule",
+            "target": "data/species-traits-migrated.json: Nautolan.structuralTraits[Aquatic].rules[movement]",
+            "current": "Swim speed 6, unconditional",
+            "publishedRule": "Printed Nautolan walking speed 6 and swim speed 4. Pack movement.swim=4 is already correct.",
+            "proposedAction": "Correct or remove conflicting supplementary movement rule; never overwrite canonical swim 4.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "15-16",
+              "part": "main"
+            },
+            "crossBookProofRequired": false
+          },
+          {
+            "id": "CW-07-03",
+            "status": "REVIEW_REQUIRED",
+            "kind": "unprinted-blindsense",
+            "target": "data/species-traits-migrated.json: Nautolan.structuralTraits[Tactile Awareness].rules",
+            "current": "Blindsense 6 squares always",
+            "publishedRule": "Printed Pheromonal Sensor grants a reroll on Perception to Sense Deception/Sense Influence, with keep-better underwater; it does not grant all-purpose blindsense.",
+            "proposedAction": "Find separate source or variant; do not replace specific pheromone mechanic with generic blindsense.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "15-16",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          },
+          {
+            "id": "CW-07-04",
+            "status": "REVIEW_REQUIRED",
+            "kind": "extra-skill-fields",
+            "target": "packs/species.db: Nautolan.system.skillBonuses",
+            "current": "+2 Endurance and +2 Swim",
+            "publishedRule": "Printed Expert Swimmer grants must-accept reroll and Take 10; no flat skill bonuses specified.",
+            "proposedAction": "Check other-book source/variant and prevent duplicate passive.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "15-16",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          },
+          {
+            "id": "CW-07-05",
+            "status": "REVIEW_REQUIRED",
+            "kind": "legacy-variant",
+            "target": "packs/species.db: Nautolan.system.variants[nautolan-variant]",
+            "current": "Variant drops -2 WIS, removes swim speed, and lacks base trait list",
+            "publishedRule": "Clone Wars default has +2 CON, -2 INT, -2 WIS; swim 4 and five innate traits.",
+            "proposedAction": "Identify publication/GM variant source before endorsing or deleting; verify selecting variant does not silently erase legal abilities.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "15-16",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
+      }
+    },
+    {
+      "name": "Nelvaanian",
+      "foundryId": "species-nelvaanian",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "16",
+        "part": "main",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-08-01",
+            "status": "REVIEW_REQUIRED",
+            "kind": "unsourced-initiative-sidecar",
+            "target": "data/species-traits-migrated.json: Nelvaanian.structuralTraits[Feral Instincts].rules",
+            "current": "+2 Initiative species always",
+            "publishedRule": "Published innate traits are Low-Light Vision, Primitive, Scent, and Shadow Swiftness (AoO movement rule).",
+            "proposedAction": "Check later sources before retaining extra Initiative.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "16",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
+      }
+    },
+    {
       "name": "Nosaurian",
       "foundryId": "species-nosaurian",
       "forceUnleashed": {
@@ -1660,6 +2327,72 @@
           }
         ],
         "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Republic Clone",
+      "foundryId": "species-republic-clone",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "91",
+        "part": "GM-section",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NOT_APPLICABLE_FIXED_ARRAY",
+            "note": "Fixed scores represented under system.abilityChoice; do not interpret six zeros as a zero-adjustment published array."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-10-01",
+            "status": "CHANGE_REQUIRED",
+            "kind": "incorrect-plus-two-choice-UI-metadata",
+            "target": "packs/species.db: Republic Clone.system.abilityChoice.{allocationMode,maxPerAbility,helpText}",
+            "current": "level-4-two-abilities; maximum +1 per ability; two separate +1 instructions",
+            "publishedRule": "Printed clone receives fixed 15/13/10/12/10/8 and ONE chosen ability +2 at creation.",
+            "proposedAction": "Align chooser to single +2 selection. Do not alter correct fixedScores/bonusValue=2; test preview and commit, avoid double spending/choosing.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "91",
+              "part": "GM-section"
+            },
+            "crossBookProofRequired": false
+          },
+          {
+            "id": "CW-10-02",
+            "status": "REVIEW_REQUIRED",
+            "kind": "choice-finalization-proof",
+            "target": "scripts/engine/progression/helpers/build-pending-species-context.js: Republic Clone fixed-array/choice",
+            "current": "Helper can add +2 to one selected ability, but wider UI validation still untested",
+            "publishedRule": "One selected ability must gain +2 and no other ability may rise from the choice.",
+            "proposedAction": "Confirm save/reopen, reselect, and resulting actor stats. Preserve printed first-level bonus feat and one extra trained class skill.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "91",
+              "part": "GM-section"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
       }
     },
     {
@@ -2270,6 +3003,88 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Vurk",
+      "foundryId": "species-vurk",
+      "cloneWars": {
+        "source": "The Clone Wars Campaign Guide",
+        "printedPages": "17",
+        "part": "main",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeAndBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "primarySpeciesTraitsCompared": true,
+          "bothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published values match live species pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published ability adjustment matches live species pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "CW-09-01",
+            "status": "CHANGE_REQUIRED",
+            "kind": "wrong-swim-speed",
+            "target": "data/species-traits-migrated.json: Vurk.structuralTraits[Powerful Swimmer].rules",
+            "current": "Swim 6 always (and sidecar +2 Athletics while swimming)",
+            "publishedRule": "Printed base speed 6, swim speed 4; Extra movement beyond 4 not printed.",
+            "proposedAction": "Fix/remove sidecar movement override. Preserve pack swim 4 and canonical Expert Swimmer.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "17",
+              "part": "main"
+            },
+            "crossBookProofRequired": false
+          },
+          {
+            "id": "CW-09-02",
+            "status": "REVIEW_REQUIRED",
+            "kind": "unprinted-skill-extras",
+            "target": "packs/species.db: Vurk.system.skillBonuses / sidecar Powerful Swimmer",
+            "current": "+2 Survival and +2 Athletics while swimming",
+            "publishedRule": "Printed Nomads grants must-accept Survival reroll; Expert Swimmer grants Swim reroll and Take 10, no unconditional +2 bonuses.",
+            "proposedAction": "Check other source; Athletics not a standalone SWSE skill, avoid attaching invented statistic.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "17",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          },
+          {
+            "id": "CW-09-03",
+            "status": "REVIEW_REQUIRED",
+            "kind": "printed-name",
+            "target": "packs/species.db: Vurk.system.canonicalTraits[survival-instinct].name",
+            "current": "Survival Instinct",
+            "publishedRule": "Printed Vurk trait is titled Nomads; identical must-accept Survival reroll mechanic.",
+            "proposedAction": "Correct label/alias only after ID/source impact review.",
+            "applied": false,
+            "source": {
+              "book": "The Clone Wars Campaign Guide",
+              "printedPages": "17",
+              "part": "main"
+            },
+            "crossBookProofRequired": true
+          }
+        ],
+        "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
       }
     },
     {
