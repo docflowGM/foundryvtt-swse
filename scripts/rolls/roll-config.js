@@ -1125,7 +1125,7 @@ export async function buildRollConfigModel(options = {}) {
   let attackFormInfo = null;
   let attackFormError = null;
   if (rollType === 'attack' && weapon) {
-    try { attackFormInfo = buildAttackForms(weapon, requestedAttackSelection(options)); } catch (err) { if (!(err instanceof WeaponRuntimeError)) throw err; attackFormError = err; }
+    try { attackFormInfo = buildAttackForms(weapon, requestedAttackSelection(options), { actor }); } catch (err) { if (!(err instanceof WeaponRuntimeError)) throw err; attackFormError = err; }
   }
   const canonicalForms = attackFormInfo?.source === 'canonical' ? attackFormInfo : null;
   const selectedAttackForm = canonicalForms?.selected ?? null;

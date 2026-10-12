@@ -28,6 +28,7 @@ export const HEURISTIC_RULES = [
   [/talent\/lightsaber-talent-actions\.js$/, /normalizedTalentName\(item\?\.name\)|String\(item\?\.name \?\? ''\)\.trim\(\)\.toLowerCase\(\)|isLightsaberLike|\/lightsaber\/i\.test/, 'IDENTITY_FALLBACK', 'ability / weapon display-name match used only when the item carries no canonical identity (canonical identity or structured group decides first)'],
   // Phase 5D-I-C-B: the existing grapple adapter now resolves feats / talents by canonical identity FIRST (abilityKeysOfActor / canonicalFeatSlug); the name
   // match survives only as the legacy fallback for an ability that carries no canonical identity (ordinary-grapple talents such as Grapple Resistance included)
+  [/weapon-runtime\/talent-identity\.js$/, /BY_FOLDED_NAME\.get\(fold\(item\?\.name\)\)/, 'IDENTITY_FALLBACK', 'unstamped talent joined by exact name ONLY because the 4 table names are verified corpus-unique; a canonicalTalent identity stamp wins first (I-D-E)'],
   [/combat\/systems\/grappling-system\.js$/, /sourceId: item\.id \?\? item\.name/, 'DISPLAY', 'modifier source label fallback (not a decision)'],
   [/combat\/systems\/grappling-system\.js$/, /swseNormalizeName\(item\.name\) === wanted|swseNormalizeName\(f\?\.name\)|feat\?\.name, feat\?\.system\?\.slug/, 'IDENTITY_FALLBACK', 'ability display-name match used only when the ability carries no canonical identity (canonical identity decides first)'],
   [/weapon-runtime\/legacy-adapter\.js$/, any, 'LEGACY_GATED', 'the legacy adapter exists only for weapons without a canonical identity'],

@@ -5,13 +5,13 @@
 
 Two independent questions per row: **who establishes the circumstances** (bucket) and **is the rule actually supported** (support). A GM_ADJUDICATED bucket is a valid way to support a rule but is never evidence that a numeric mechanic is implemented.
 
-## Totals (82 rows)
+## Totals (80 rows)
 
 | Bucket | Rows | Share |
 |---|---:|---:|
-| AUTO | 39 | 47.6% |
-| CONTEXTUAL | 31 | 37.8% |
-| GM_ADJUDICATED | 12 | 14.6% |
+| AUTO | 37 | 46.3% |
+| CONTEXTUAL | 31 | 38.8% |
+| GM_ADJUDICATED | 12 | 15.0% |
 
 | Support state | Rows |
 |---|---:|
@@ -20,10 +20,10 @@ Two independent questions per row: **who establishes the circumstances** (bucket
 | GM_FACING_SUPPORT_NEEDED | 18 |
 | IMPLEMENTED | 8 |
 | MISSING_SUBSYSTEM | 2 |
-| SMALL_CONSUMER_NEEDED | 33 |
+| SMALL_CONSUMER_NEEDED | 31 |
 | SOURCE_CLARIFICATION_NEEDED | 5 |
 
-Duplicate / non-executable claims: **11 mechanically verified** (carrier present on every identity + consumer probe), **4 asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **22**.
+Duplicate / non-executable claims: **11 mechanically verified** (carrier present on every identity + consumer probe), **4 asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **21**.
 
 ## By subpass
 
@@ -36,7 +36,7 @@ Duplicate / non-executable claims: **11 mechanically verified** (carrier present
 | I-D-B | 21 | 6 | 4 |
 | I-D-C | 3 | 4 | 0 |
 | I-D-D | 1 | 0 | 0 |
-| I-D-E | 6 | 1 | 0 |
+| I-D-E | 4 | 1 | 0 |
 | I-D-F | 6 | 6 | 0 |
 
 ## I-D-A — umbrella: stealth / concealment / sensing / visibility rows settled by the census itself (proven duplicate, non-executable, source-silent, missing consumer)
@@ -144,9 +144,7 @@ Duplicate / non-executable claims: **11 mechanically verified** (carrier present
 | `alternateProficiency` | Arggarok, massassi-lanvarok | AUTO | DUPLICATE_OR_NON_EXECUTABLE (VERIFIED) | species treat the weapon as advanced melee | - | none: proficiency.speciesOverrides is consumed by the proficiency resolver | — | Gamorrean / Massassi proficiency route covered by weapon-runtime-proficiency tests |
 | `wookieeAdvancedMeleeProficiencyCounts` | wookiee-ryyk-blade | AUTO | DUPLICATE_OR_NON_EXECUTABLE (VERIFIED) | Wookiee advanced-melee proficiency counts for the Ryyk Blade | - | none (speciesOverrides) | — | proven by the I-D-A1 Ryyk test as well |
 | `wookieeTreatsAsProficientWithWeaponProficiencyRifles` | bowcaster | AUTO | DUPLICATE_OR_NON_EXECUTABLE (VERIFIED) | Wookiee with Weapon Proficiency (rifles) is proficient with the bowcaster | - | none (speciesOverrides) | — | covered by the proficiency resolver |
-| `FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE` | talent relation | AUTO | SMALL_CONSUMER_NEEDED | the talent EXISTS in the canonical talent corpus (Jedi Academy Training Manual / Zeison Sha Warrior / Discblade Arc) with benefit text; actor records it | three target selections (player) | map the relation to the talent's canonical identity and expose a full-round three-target area-attack mode (one roll, point blank) in the attack shape | — | mode offered only with the talent; one roll applied to three designated targets |
-| `TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK` | talent relation | AUTO | SMALL_CONSUMER_NEEDED | Siang Lance Mastery relation; proficiency re-route already consumed through abilityOverrides | - | the +1 attack grant keyed by the talent's canonical identity | confirm the talent identity in the corpus before wiring | +1 only with the talent and the Siang Lance |
-| `TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY` | talent relation | AUTO | SMALL_CONSUMER_NEEDED | Distant Discblade Throw exists in the talent corpus; discblade uses pistol range with it | - | range-group override in the canonical range resolver keyed by the talent identity | — | pistol range bands only with the talent |
+| `FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE` | talent relation | AUTO | SMALL_CONSUMER_NEEDED | the talent EXISTS in the canonical talent corpus (Jedi Academy Training Manual / Zeison Sha Warrior / Discblade Arc) with benefit text; actor records it | three target selections (player) | the identity link is done (I-D-E, talent-identity.js); expose a full-round area-attack mode that designates three targets within point blank for ONE attack roll applied to all of them (not three attacks) | — | mode offered only with the talent; one roll applied to three designated targets |
 | `USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION` | talent relation | CONTEXTUAL | SMALL_CONSUMER_NEEDED | Recall Discblade exists in the corpus; DC 15 Use the Force, free action after a ranged discblade attack | the player chooses to recall; the Use the Force roll | offer the check after the attack through the skill workflow; on success mark the weapon back in hand (existing weapon recovery) | return is not an inherent weapon quality; only with the talent | offered only with the talent after a ranged discblade attack; success returns it as a free action |
 
 ## I-D-F — reload / ammo-resource special cases (approved subpass for the 12 reload / power-source / capacity keys)

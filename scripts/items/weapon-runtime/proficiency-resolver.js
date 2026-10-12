@@ -5,6 +5,7 @@
 // Future integrations (Implant / Spacehound) are explicit inputs: context.proficiencyIntegrations.
 import { WeaponRuntimeError, ERROR_CODES } from './errors.js';
 import { canonicalFeatSlug } from './ability-selector.js';
+import { ownedTalentIdentities, talentIdentityOfReference } from './talent-identity.js';
 
 const norm = (v) => String(v ?? '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '');
 
@@ -86,7 +87,7 @@ export function extractActorEntitlements(actor) {
   } catch (_e) { /* partial snapshot is returned */ }
   const sp = actor?.system?.species;
   const species = norm(typeof sp === 'string' ? sp : (sp?.name ?? actor?.system?.race ?? actor?.items?.find?.((i) => i.type === 'species')?.name ?? ''));
-  return { groups, exotic, exoticIdentities, abilities, species };
+  return { groups, exotic, exoticIdentities, abilities, talentIdentities: ownedTalentIdentities(actor), species };
 }
 
 function exoticIdentityFor(resolved, profile) {
@@ -173,7 +174,10 @@ export function resolveProficiency(resolved, profile, actor, context = {}) {
   // ability routes
   for (const o of resolved.proficiency?.abilityOverrides ?? []) {
     const via = normalizeGroup(o.treatAsGroup);
-    const has = ent.abilities.has(norm(o.ability));
+    // Phase 5D-I-D-E: a talent the corpus names is matched by canonical identity; the display string is the fallback only for an ability
+    // that has no canonical talent identity (a feat / homebrew reference)
+    const refIdentity = talentIdentityOfReference(o.ability);
+    const has = refIdentity ? ent.talentIdentities.has(refIdentity) : ent.abilities.has(norm(o.ability));
     const fits = via ? groupFitsBranch(via, profile.branch) : false;
     const held = !!via && ent.groups.has(via);
     considered.push({ kind: 'ability-override', ability: o.ability, via, applicable: has && fits, abilityHeld: has, branchFit: fits, held });
@@ -184,4 +188,32 @@ export function resolveProficiency(resolved, profile, actor, context = {}) {
     if (!r.species) diagnostics.push({ code: 'conditional-route-not-auto-applied', condition: r.condition ?? null, classifications: r.classifications ?? null });
   }
   return result(false, null);
+}
+
+/**
+ * Phase 5D-I-D-E: the attack-roll bonus a held ability grants ONLY while the weapon is used (Siang Lance Mastery +1, from the weapon's
+ * structured abilityOverrides[].attackBonus). Independent of WHICH proficiency route made the wielder proficient (a Siang Lance wielder
+ * with Exotic Weapon Proficiency still has the talent's +1).
+ * Weapon Focus (rifles) non-stacking (Rebellion Era Campaign Guide p.37): Weapon Focus is applied by the existing attack authorities
+ * (ScopedCombatFeatResolver / the feat's own modifier), and they match a CHOSEN weapon group against the weapon's canonical group --
+ * which is exotic for the Siang Lance -- so a rifles choice never reaches it. The talent's +1 is therefore the only one: exactly one +1
+ * whether or not Weapon Focus (rifles) is owned. This resolver deliberately does NOT second-guess the feat authority (a guess that
+ * removed the talent's +1 left the wielder with neither bonus); a regression test pins "exactly one +1" in every Weapon Focus form, and
+ * fails loudly if the feat authority ever starts applying a rifles choice to the Siang Lance (that would double count).
+ * @returns {{total:number, entries:Array<{ability:string,identity:string|null,bonus:number,applied:boolean}>}}
+ */
+export function resolveAbilityAttackBonus(resolved, actor) {
+  const entries = [];
+  let total = 0;
+  const ent = extractActorEntitlements(actor);
+  for (const o of resolved?.proficiency?.abilityOverrides ?? []) {
+    const bonus = Number(o.attackBonus);
+    if (!Number.isFinite(bonus) || bonus === 0) continue;
+    const refIdentity = talentIdentityOfReference(o.ability);
+    const held = refIdentity ? ent.talentIdentities.has(refIdentity) : ent.abilities.has(norm(o.ability));
+    if (!held) continue;
+    entries.push({ ability: o.ability, identity: refIdentity, bonus, applied: true });
+    total += bonus;
+  }
+  return { total, entries };
 }

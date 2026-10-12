@@ -16,15 +16,15 @@
   "counters": {
     "I_D_INPUT_OPERATION_KEYS": 75,
     "I_D_INPUT_SPECIAL_MECHANICS": 3,
-    "I_D_INPUT_RELATIONS": 4,
-    "I_D_INPUT_TOTAL": 82,
+    "I_D_INPUT_RELATIONS": 2,
+    "I_D_INPUT_TOTAL": 80,
     "I_D_IMPLEMENTED": 8,
     "I_D_DUPLICATES": 1,
     "I_D_NON_EXECUTABLE": 1,
     "I_D_DATA_DEFECT": 0,
     "I_D_DATA_COMPLETENESS": 1,
     "I_D_BLOCKED": 1,
-    "I_D_DEFERRED": 70,
+    "I_D_DEFERRED": 68,
     "I_D_UNCLASSIFIED": 0
   },
   "baseline": {
@@ -39,20 +39,20 @@
     "PARTIAL_EXECUTION_FIELD_FAMILIES": 12,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
-    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 4,
+    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 2,
     "CANONICAL_NAME_TEXT_HEURISTIC_USAGE": 0
   },
   "coverageMatrix": {
     "buckets": {
       "CONTEXTUAL": 31,
       "GM_ADJUDICATED": 12,
-      "AUTO": 39
+      "AUTO": 37
     },
     "support": {
       "IMPLEMENTED": 8,
       "DATA_COMPLETENESS": 1,
       "GM_FACING_SUPPORT_NEEDED": 18,
-      "SMALL_CONSUMER_NEEDED": 33,
+      "SMALL_CONSUMER_NEEDED": 31,
       "DUPLICATE_OR_NON_EXECUTABLE": 15,
       "SOURCE_CLARIFICATION_NEEDED": 5,
       "MISSING_SUBSYSTEM": 2
@@ -85,7 +85,7 @@
         "AUTO": 1
       },
       "I-D-E": {
-        "AUTO": 6,
+        "AUTO": 4,
         "CONTEXTUAL": 1
       },
       "I-D-F": {
@@ -93,7 +93,7 @@
         "CONTEXTUAL": 6
       }
     },
-    "sourceAmbiguities": 22,
+    "sourceAmbiguities": 21,
     "duplicateOrNonExecutable": {
       "verified": 11,
       "asserted": 4
@@ -103,7 +103,7 @@
     "CONTEXTUAL": 14,
     "GM_ADJUDICATED": 8,
     "AUTO": 2,
-    "NOT_ASSESSED_YET": 58
+    "NOT_ASSESSED_YET": 56
   },
   "supportGaps": {
     "CONTEXT_SURFACE_PENDING": 5,
@@ -118,7 +118,7 @@
     "I-D-B": 31,
     "I-D-C": 7,
     "I-D-D": 1,
-    "I-D-E": 7,
+    "I-D-E": 5,
     "I-D-F": 12
   },
   "fieldFamilyOwners": {
@@ -1918,56 +1918,12 @@
         "support": "SMALL_CONSUMER_NEEDED",
         "foundryKnows": "the talent EXISTS in the canonical talent corpus (Jedi Academy Training Manual | Zeison Sha Warrior | Discblade Arc) with benefit text; actor records it",
         "mustBeSupplied": "three target selections (player)",
-        "smallestImplementation": "map the relation to the talent's canonical identity and expose a full-round three-target area-attack mode (one roll, point blank) in the attack shape",
+        "smallestImplementation": "the identity link is done (I-D-E, talent-identity.js); expose a full-round area-attack mode that designates three targets within point blank for ONE attack roll applied to all of them (not three attacks)",
         "sourceAmbiguity": null,
         "acceptance": "mode offered only with the talent; one roll applied to three designated targets"
       },
       "owner": "I-D-E",
-      "reason": "Discblade Arc: a talent-granted full-round mode. The talent EXISTS in the canonical talent corpus (Jedi Academy Training Manual | Zeison Sha Warrior | Discblade Arc); the relation only names it by display string, so the missing piece is the relation -> canonical talent identity link and a structured mode, not a missing talent."
-    },
-    {
-      "kind": "relation",
-      "key": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
-      "family": "relation",
-      "subpass": "I-D-E",
-      "disposition": "DEFERRED_TO_I_D_E",
-      "identityCount": 0,
-      "rawOccurrences": 1,
-      "representativeWeapons": [],
-      "structuredSourceField": "abilityInteractions[].relation = TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
-      "matrix": {
-        "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
-        "foundryKnows": "Siang Lance Mastery relation; proficiency re-route already consumed through abilityOverrides",
-        "mustBeSupplied": "-",
-        "smallestImplementation": "the +1 attack grant keyed by the talent's canonical identity",
-        "sourceAmbiguity": "confirm the talent identity in the corpus before wiring",
-        "acceptance": "+1 only with the talent and the Siang Lance"
-      },
-      "owner": "I-D-E",
-      "reason": "Siang Lance Mastery: the +1 attack grant needs the canonical talent identity to be confirmed in the corpus and linked (the proficiency re-route is already consumed through abilityOverrides)."
-    },
-    {
-      "kind": "relation",
-      "key": "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
-      "family": "relation",
-      "subpass": "I-D-E",
-      "disposition": "DEFERRED_TO_I_D_E",
-      "identityCount": 0,
-      "rawOccurrences": 1,
-      "representativeWeapons": [],
-      "structuredSourceField": "abilityInteractions[].relation = TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
-      "matrix": {
-        "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
-        "foundryKnows": "Distant Discblade Throw exists in the talent corpus; discblade uses pistol range with it",
-        "mustBeSupplied": "-",
-        "smallestImplementation": "range-group override in the canonical range resolver keyed by the talent identity",
-        "sourceAmbiguity": null,
-        "acceptance": "pistol range bands only with the talent"
-      },
-      "owner": "I-D-E",
-      "reason": "Distant Discblade Throw: the talent exists in the canonical talent corpus; needs the relation -> canonical identity link and a range-group override."
+      "reason": "Discblade Arc: a full-round AREA attack against three designated targets, all within point blank range, resolved with ONE attack roll applied to every designated target (not three independent attacks). The relation -> canonical talent identity link exists (talent-identity.js, I-D-E); what remains is an attack mode that designates multiple targets for a single roll."
     },
     {
       "kind": "relation",
@@ -1989,7 +1945,7 @@
         "acceptance": "offered only with the talent after a ranged discblade attack; success returns it as a free action"
       },
       "owner": "I-D-E",
-      "reason": "Recall Discblade: the talent exists in the canonical talent corpus (DC 15 Use the Force, free action); needs the relation -> canonical identity link. Discblade return is not an inherent weapon quality."
+      "reason": "Recall Discblade: the relation -> canonical talent identity link now exists (talent-identity.js, I-D-E); what remains is the after-attack Use the Force DC 15 return, which is a GM-adjudicated free-action return (a combat-action card, not a modifier)."
     },
     {
       "kind": "operation-key",

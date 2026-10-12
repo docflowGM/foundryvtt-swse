@@ -1,7 +1,8 @@
 // Phase 5D-B -- player-selectable canonical attack forms.
 // Derives the legal attack forms of a canonical weapon FROM the resolver (WeaponRuntimeResolver is the authority):
 // every candidate is verified by actually resolving it, so an illegal profile/configuration/mode combination can never be
-// offered. Submitted values are canonical ids only; labels are display text and never identity. Pure (no actor, no mutation).
+// offered. Submitted values are canonical ids only; labels are display text and never identity. Pure (no mutation); an optional actor only
+// adjusts each form's displayed band squares for its ability range grants.
 //   legacy/custom weapon          -> { source: 'legacy' }
 //   canonical, one meaningful form -> forms.length === 1 (callers show no selector)
 //   canonical, several             -> forms.length > 1 (selector shown)
@@ -13,7 +14,8 @@ import { resolveAttackWeaponRuntime } from './attack-consumer.js';
 import { getSharedWeaponAuthorityRegistry } from './weapon-authority-registry.js';
 import { resolveCanonicalIdentity } from './canonical-identity.js';
 import { WeaponRuntimeResolver } from './weapon-runtime-resolver.js';
-import { resolveCanonicalRange } from './canonical-range.js';
+import { resolveCanonicalRange, applyAbilityRangeGrants } from './canonical-range.js';
+import { ownedTalentIdentities, talentIdentityOfReference } from './talent-identity.js';
 import { resolveCanonicalResourceCost } from './canonical-resource.js';
 
 const SEP = '|';
@@ -32,7 +34,7 @@ export function attackFormSelection(form) {
   return sel;
 }
 
-export function buildAttackForms(weapon, requested = {}) {
+export function buildAttackForms(weapon, requested = {}, { actor = null } = {}) {
   const registry = getSharedWeaponAuthorityRegistry();
   if (!weapon || !registry) return { source: 'legacy', forms: [] };
   const id = resolveCanonicalIdentity(weapon, registry);
@@ -65,6 +67,8 @@ export function buildAttackForms(weapon, requested = {}) {
       try {
         resolved = resolver.resolveIdentity(id.identityKey, weapon, ctx, id.via);
         range = resolveCanonicalRange(resolved, resolved.profiles.find((p) => p.id === resolved.selection.profileId)); // a form whose range contradicts its branch is never offered
+        // Phase 5D-I-D-E: the squares each band spans follow the wielder's ability range grants (Distant Discblade Throw), so the chips the player reads are right
+        if (actor) range = applyAbilityRangeGrants(range, resolved, ownedTalentIdentities(actor), registry, talentIdentityOfReference);
       } catch (err) { if (err instanceof WeaponRuntimeError) continue; throw err; }
       const sel = resolved.selection;
       const cfgLabel = configurationId ? base.configurationStates.find((c) => c.id === configurationId)?.label ?? configurationId : null;

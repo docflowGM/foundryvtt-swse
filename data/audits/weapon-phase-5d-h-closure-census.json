@@ -13,7 +13,7 @@
     "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 67,
     "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 84,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
-    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 4,
+    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 2,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
     "EXECUTABLE_CONDITIONS_AUTO": 99,
     "EXECUTABLE_CONDITIONS_PROMPT": 11,
@@ -21,7 +21,7 @@
     "EXECUTABLE_CONDITIONS_UNCLASSIFIED": 0,
     "EXECUTABLE_CANONICAL_CONDITIONS_WITH_POLICY_UNSUPPORTED": 0,
     "CANONICAL_NAME_TEXT_HEURISTIC_USAGE": 0,
-    "LEGACY_ONLY_NAME_TEXT_HEURISTIC_USAGE": 82,
+    "LEGACY_ONLY_NAME_TEXT_HEURISTIC_USAGE": 83,
     "AREA_FORMS_SOURCE_SILENT": 3,
     "AREA_FORMS_FIRE_MODE_DERIVED": 1,
     "AREA_FORMS_MISSING_CANONICAL_DATA": 0
@@ -1521,6 +1521,20 @@
         "consumer": "weapon-descriptor treated-as-light-for-weapon-finesse (operation.weaponFinesseCountsAsLight)"
       },
       {
+        "relation": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
+        "instances": 1,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "proficiency-resolver#resolveAbilityAttackBonus (talent matched by canonical identity; abilityOverrides[].attackBonus) -> combat-roll-math#resolveAttackBonus; the treat-as-rifle route is proficiency-resolver ability-override"
+      },
+      {
+        "relation": "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
+        "instances": 1,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "canonical-range#applyAbilityRangeGrants (RELATION_RANGE_GRANT; talent matched by canonical identity) -> attack-form-options band squares + combat-roll-math#resolveAttackBonus distanceSquares -> band; the band penalties stay the global table"
+      },
+      {
         "relation": "TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT",
         "instances": 1,
         "class": "EXECUTION",
@@ -1540,29 +1554,15 @@
         "relation": "FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE",
         "instances": 1,
         "policy": "AUTO",
-        "reason": "Discblade Arc is a talent-granted full-round attack MODE; the relation id encodes the effect (no structured parameters) and the talent has no canonical identity",
-        "owner": "talent canonical corpus (identity + structured Discblade Arc mode)"
-      },
-      {
-        "relation": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
-        "instances": 1,
-        "policy": "AUTO",
-        "reason": "Siang Lance Mastery: the proficiency re-route is carried by the weapon abilityOverrides (consumed by the proficiency resolver); the +1 attack grant has no structured parameter and the talent has no canonical identity",
-        "owner": "talent canonical corpus (identity + structured +1 attack grant)"
-      },
-      {
-        "relation": "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
-        "instances": 1,
-        "policy": "AUTO",
-        "reason": "ability-conditional range family: the relation id encodes the effect and Distant Discblade Throw has no canonical identity; the generic range consumer (canonical-range treatedAs) exists",
-        "owner": "talent canonical corpus (identity + structured rangeTreatedAs grant)"
+        "reason": "Discblade Arc (Jedi Academy Training Manual): a full-round area attack against THREE designated targets, all within point blank range of the discblade, resolved with ONE attack roll applied to every designated target (not three independent attacks); the talent has a canonical identity (talent-identity.js) but no consumer designates multiple targets for one attack roll",
+        "owner": "attack workflow: multi-target single-roll area attack mode (full-round action, point-blank targets)"
       },
       {
         "relation": "USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION",
         "instances": 1,
         "policy": "PROMPT",
-        "reason": "Recall Discblade is a Use the Force recall action after a thrown attack; the relation id encodes the DC/action and the talent has no canonical identity",
-        "owner": "talent canonical corpus (identity + structured recall action)"
+        "reason": "Recall Discblade is a Use the Force recall action after a thrown attack; the talent now has a canonical identity (talent-identity.js); the DC 15 Use the Force check + free-action return needs an after-attack reaction card",
+        "owner": "talent combat-action card (Recall Discblade) -- GM adjudicated return"
       }
     ]
   },
@@ -2663,10 +2663,10 @@
     ]
   },
   "heuristics": {
-    "totalSites": 214,
+    "totalSites": 215,
     "byClass": {
       "DISPLAY": 118,
-      "IDENTITY_FALLBACK": 24,
+      "IDENTITY_FALLBACK": 25,
       "LEGACY_GATED": 58,
       "NON_COMBAT_DOMAIN": 5,
       "PROJECTION": 4,
