@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core reviewed; Rebellion Era species feats reconciled (identity only); KOTOR species reviewed against primary rules and live species sidecars.  
+**Status:** Core, Rebellion Era, KOTOR and Force Unleashed audited. No production species data changed.  
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -137,7 +137,6 @@ There is no evidence from this section for rewriting Core baseline species recor
 3. Knights of the Old Republic Campaign Guide — 12/12 species baseline and sidecar audit
 
 **Pending sourcebooks**
-4. The Force Unleashed Campaign Guide
 5. Clone Wars Campaign Guide
 6. Scum and Villainy
 7. Jedi Academy Training Manual
@@ -230,4 +229,100 @@ Every KOTOR species is recorded, including **`NO_CHANGE` on the verified base-st
 
 Do not overwrite any earlier Core or Rebellion findings; they remain independent book-specific records. Do not turn unverified sidecar traits into automatic species grants. Where later books explicitly support a variant, create a separate source-linked rule rather than silently replacing the KOTOR default. Apply no production patches on this branch until the relevant book/variant source is certified and a narrowly scoped correction is authorized.
 
-**Next book:** *The Force Unleashed Campaign Guide*. Its new species and any reprinted/expanded species mechanics should be appended with the same one-entry-per-species `NO_CHANGE` / `CHANGE_REQUIRED` / `REVIEW_REQUIRED` discipline.
+**Next book:** *The Clone Wars Campaign Guide*. Its new species and any reprinted/expanded species mechanics should be appended with the same one-entry-per-species `NO_CHANGE` / `CHANGE_REQUIRED` / `REVIEW_REQUIRED` discipline.
+
+
+---
+
+## Book 4 — The Force Unleashed Campaign Guide
+
+**Source:** Chapter 1, Species, printed pp. 11–20; species ability adjustment table 1-1 printed p.12. The source PDF was rendered and source pages visually reviewed; the user-supplied searchable transcription was used for trait language.
+
+**Scope:** Aleena, Caamasi, Felucian, Gran, Nosaurian, Talz, Togorian, Togruta, Whiphid, Yarkora. All ten are already in `packs/species.db`. This is a **read-only** audit and **not** a live Foundry V13 verification or a separate feat implementation audit.
+
+### Results
+
+| Metric | Count |
+|---|---:|
+| Species in this book | **10** |
+| Species already in pack | **10/10** |
+| Ability adjustment, size and base speed match printed species data | **10/10 — NO_CHANGE** |
+| Automatic languages match publication | **9/10 — NO_CHANGE** |
+| Overall `NO_CHANGE` | **0** |
+| Overall `CHANGE_REQUIRED` | **7 species** |
+| Overall `REVIEW_REQUIRED` | **3 species** |
+| Confirmed correction candidates | **7** |
+| Additional source/runtime review entries | **19** |
+| Explicit source-legal sidecar `NO_CHANGE` ruling | **1** |
+
+All ten receive an explicit **`NO_CHANGE` field-level decision for their basic published statistics**, even though other traits need work. No blanket rewrite of base species data is justified.
+
+### Every species, including clean fields
+
+| Species | Printed page(s) | Size / speed / abilities | Languages | Overall species decision | Issues |
+|---|---|---|---|---|---:|
+| Aleena | 13-14 | `NO_CHANGE` | `CHANGE_REQUIRED` | `CHANGE_REQUIRED` | 2 |
+| Caamasi | 14-15 | `NO_CHANGE` | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Felucian | 15 | `NO_CHANGE` | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Gran | 16 | `NO_CHANGE` | `NO_CHANGE` | `REVIEW_REQUIRED` | 3 |
+| Nosaurian | 16-17 | `NO_CHANGE` | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Talz | 17-18 | `NO_CHANGE` | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Togorian | 18 | `NO_CHANGE` | `NO_CHANGE` | `REVIEW_REQUIRED` | 3 |
+| Togruta | 18-19 | `NO_CHANGE` | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Whiphid | 19-20 | `NO_CHANGE` | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Yarkora | 20 | `NO_CHANGE` | `NO_CHANGE` | `REVIEW_REQUIRED` | 3 |
+
+### Exact append-only correction/review ledger
+
+| Species | Finding ID | Status | Severity | Exact file selector / trait | Current declaration | Printed rule |
+|---|---|---|---|---|---|---|
+| Aleena | `TFU-01-01` | `CHANGE_REQUIRED` | HIGH | `system.languages` | ['Aleena','Basic Caamasi in: Species','Caamasi','Medium','6 more Caamasi 1 Edit'] | Automatic languages are Aleena and Basic. |
+| Aleena | `TFU-01-02` | `REVIEW_REQUIRED` | LOW | `system.canonicalTraits[energy-surge / heightened-agility].name` | Energy Surge, Heightened Agility | Printed Aleena traits are Quick Energy and Nimble, with materially equivalent described effects. |
+| Caamasi | `TFU-02-01` | `CHANGE_REQUIRED` | HIGH | `data/species-traits(-migrated).json :: Caamasi.Pacifist Insight` | Automatic +5 Initiative and additional Initiative reroll | Published traits are Adept Diplomat (Persuasion reroll keeping better), Pacifism, Memory Sharing; neither Initiative trait is granted. |
+| Caamasi | `TFU-02-02` | `REVIEW_REQUIRED` | LOW | `system.canonicalTraits['silver-tongued'].name` | Silver Tongued | Printed feat/trait name is Adept Diplomat; description reproduces its choose-better Persuasion reroll. |
+| Felucian | `TFU-03-01` | `CHANGE_REQUIRED` | HIGH | `system.primitive / system.suppressedClassProficiencies` | Suppresses only Heavy Weapons, Pistols and Rifles starting class grants | Printed Primitive: regardless of starting class, Felucians gain proficiency only with Simple Weapons; skullblade familiarity separately treats skullblade as Simple. |
+| Felucian | `TFU-03-02` | `NO_CHANGE` | NONE | `data/species-traits-migrated.json :: Felucian.Force Sensitivity featGrant` | Unconditional Force Sensitivity featGrant | Printed Bonus Feat explicitly grants Force Sensitivity; this is an authorized grant unlike Khil/Miraluka. |
+| Felucian | `TFU-03-03` | `REVIEW_REQUIRED` | MEDIUM | `system.canonicalTraits['force-blast'] / runtime activated ability` | Text includes once/encounter untrained Force Blast and replacement by free suite power for Force Training | Printed two modes require exclusion: no extra once/encounter blast once Force Training provides a suite use. |
+| Gran | `TFU-04-01` | `REVIEW_REQUIRED` | HIGH | `data/species-traits-migrated.json :: Gran.Three-Eyed Vision` | Automatic +2 species Reflex Defense | Published Gran abilities are Darkvision, Target Awareness, Triple Vision (once/encounter single-swift aim), conditional Precise Shot with Point Blank Shot. No Reflex bonus is in this source. |
+| Gran | `TFU-04-02` | `REVIEW_REQUIRED` | MEDIUM | `system.skillBonuses / system.socialTraits` | ['+2 Endurance','+2 Perception'] and Three-Eyed Vision sight-bonus text | Published Target Awareness removes distance penalties on noticing targets up to first 50 squares, not generic +2 Perception/Endurance. |
+| Gran | `TFU-04-03` | `REVIEW_REQUIRED` | LOW | `system.canonicalTraits['innate-accuracy'].name` | Innate Accuracy | Printed equivalent single-swift aim trait is named Triple Vision. |
+| Nosaurian | `TFU-05-01` | `CHANGE_REQUIRED` | HIGH | `system.naturalWeapons / natural weapon materialization` | Empty [] | Printed Natural Weapon grants horns 1d6 piercing, always armed. |
+| Nosaurian | `TFU-05-02` | `REVIEW_REQUIRED` | MEDIUM | `data/species-traits(-migrated).json :: Nosaurian.Prehensile Tail` | Automatic +2 Acrobatics | Printed innate traits are Climber's Heritage (Climb class skill), 1d6 horns, Survival Instinct; no Prehensile Tail bonus in this entry. |
+| Talz | `TFU-06-01` | `CHANGE_REQUIRED` | HIGH | `system.naturalWeapons / natural weapon materialization` | Empty [] | Printed Natural Weapon grants claws 1d6 slashing, always armed. |
+| Talz | `TFU-06-02` | `REVIEW_REQUIRED` | MEDIUM | `data/species-traits-migrated.json :: Talz.Cold Adaptation` | Automatic +5 Fortitude against cold environments | Printed innate Talz abilities here: Darkvision, 1d6 claws, conditional Skill Focus (Mechanics); cold Fortitude modifier not in this species block. |
+| Talz | `TFU-06-03` | `REVIEW_REQUIRED` | MEDIUM | `system.skillBonuses` | ['+2 Survival','+2 Perception'] | Printed traits have no general +2 to either skill. |
+| Togorian | `TFU-07-01` | `REVIEW_REQUIRED` | HIGH | `system.naturalWeapons / data/species-traits-migrated.json :: Togorian.Claws` | Pack natural claws 1d4, sidecar description says 1d6 but rule 1d4 | Printed Force Unleashed Togorian traits list Feline Reflexes +1 Reflex, Low-Light Vision, Physical Intimidation; no natural-weapon attack in printed trait list despite narrative about claws. |
+| Togorian | `TFU-07-02` | `REVIEW_REQUIRED` | MEDIUM | `system.skillBonuses` | ['+2 Survival'] | No unconditional +2 Survival in printed Force Unleashed species traits. |
+| Togorian | `TFU-07-03` | `REVIEW_REQUIRED` | LOW | `system.canonicalTraits['physically-intimidating'].name` | Physically Intimidating | Printed trait name Physical Intimidation; mechanism uses STR instead of CHA on Persuasion-to-intimidate. |
+| Togruta | `TFU-08-01` | `CHANGE_REQUIRED` | HIGH | `data/species-traits-migrated.json :: Togruta.Spatial Awareness.rules` | Sense blindsense range 6 squares | Printed Spatial Awareness: ignore all cover and concealment ONLY when making Perception checks to notice targets within 10 squares; not blanket 6-square blindsense. |
+| Togruta | `TFU-08-02` | `REVIEW_REQUIRED` | MEDIUM | `data/species-traits-migrated.json :: Togruta.Pack Instincts` | Unconditional +2 Initiative | Printed Togruta traits Pack Hunter (+2 melee damage only vs flanked foe), Sneaky, Spatial Awareness. No automatic +2 Initiative. |
+| Togruta | `TFU-08-03` | `REVIEW_REQUIRED` | MEDIUM | `system.skillBonuses / system.socialTraits` | ['+2 Perception','+2 Stealth'] and +2 Perception in enclosed spaces | Printed Sneaky gives a reroll for Stealth to sneak, and Spatial Awareness gives a specific perceptual exception, not generic +2 bonuses. |
+| Whiphid | `TFU-09-01` | `CHANGE_REQUIRED` | HIGH | `system.naturalWeapons / natural weapon materialization` | Empty [] | Printed Natural Weapon grants claws 1d6 slashing, always armed. |
+| Whiphid | `TFU-09-02` | `REVIEW_REQUIRED` | MEDIUM | `data/species-traits-migrated.json :: Whiphid.Arctic Hunter.rules` | Automatic +2 Stealth with when:always, description limits it to cold environments and Survival | Printed traits have Insulating Fur +5 Fortitude specifically for extreme cold, Natural Weapon, Scent; no generic Arctic Hunter in this species block. |
+| Whiphid | `TFU-09-03` | `REVIEW_REQUIRED` | MEDIUM | `system.skillBonuses` | ['+2 Survival','+2 Perception'] | Printed Scent grants within-10-square tracking/Perception exceptions, not flat +2 to these skills. |
+| Yarkora | `TFU-10-01` | `REVIEW_REQUIRED` | HIGH | `data/species-traits-migrated.json :: Yarkora.Brute Force` | Unconditional +2 melee damage | Printed traits Confusion (once/encounter Deception vs Will within 6), Deceptive reroll, Streetwise (Gather Information class skill); no melee damage bonus. |
+| Yarkora | `TFU-10-02` | `REVIEW_REQUIRED` | MEDIUM | `system.skillBonuses` | ['+2 Deception','+2 Persuasion'] | Printed Deceptive gives must-accept reroll and Streetwise gives a class skill, not general +2 modifiers. |
+| Yarkora | `TFU-10-03` | `REVIEW_REQUIRED` | MEDIUM | `system.canonicalTraits['confusion'] runtime` | Correct prose; no runtime proof collected | Published Confusion is once/encounter standard action, Deception vs multiple targets' Will, removes threatened squares through next turn, mind-affecting. |
+
+Proposed surgical action and additional-source gate for every finding are preserved in the matching JSON under `entries[*].forceUnleashed.findings`. Every finding is marked `applied: false`; it remains an audit item, not an implemented patch. **`REVIEW_REQUIRED` does not authorize deletion** of a purported expansion or variant without a verified later source.
+
+### High-priority interpretation and rulings
+
+- **Aleena:** The basic profile is correct, but `system.languages` contains scraped adjacent Caamasi/page editor text. The book gives **Aleena and Basic** only. The printed *Nimble* and *Quick Energy* names are represented as *Heightened Agility* and *Energy Surge* with substantially equivalent text; label/identity normalization is separate from the mechanical correction.
+- **Caamasi:** The book grants *Adept Diplomat* (Persuasion reroll, keep better), *Pacifism*, and *Memory Sharing*. The sidecar adds an unsupported **+5 Initiative** passive and Initiative reroll. The pack's *Silver Tongued* corresponds to printed *Adept Diplomat* mechanically, though not by name.
+- **Felucian:** **Important positive exception:** The migrated sidecar's `featGrant Force Sensitivity` is **correct and must be retained** because the printed Bonus Feat explicitly grants it. Contrast Khil and Miraluka from the KOTOR audit, where unconditional Force Sensitivity was unsupported. The book's *Primitive* rule gives **only Simple Weapons** as starting group proficiency regardless of class; pack's current suppression list only names Heavy Weapons, Pistols and Rifles. Check Advanced Melee/Lightsabers and other starting grants. *Force Blast* has a once/encounter untrained form or a free suite copy if Force Training is acquired; **not both**.
+- **Gran:** *Triple Vision* once/encounter single-swift aim and *Target Awareness* suppressing distance-based noticing penalties are printed. The migrated sidecar's **+2 Reflex** from *Three-Eyed Vision* is not supported by that rules block, and unconditional `+2 Endurance/Perception` fields need separate source support.
+- **Nosaurian:** Published horn attack is **1d6 piercing**, always armed. Pack describes the trait but has empty `naturalWeapons`. Sidecar adds `Prehensile Tail +2 Acrobatics` without this book's backing.
+- **Talz:** Published claws are **1d6 slashing**, always armed. Pack `naturalWeapons` is empty although the canonical trait describes it. The automatic Cold Adaptation +5 Fortitude and +2 Survival/Perception are not sourced by this printed block; keep them flagged pending Clone Wars / other source check.
+- **Togorian:** The printed *Feline Reflexes* (+1 Reflex), *Low-Light Vision*, and *Physical Intimidation* align with the pack. The pack additionally declares **1d4 claws** and the sidecar calls them **1d6** in prose while encoding **1d4** structurally. This book does **not** publish a natural-claw attack in its trait block; verify the alternative `Threats of the Galaxy` source before removing or changing claws.
+- **Togruta:** Critical semantic mismatch: printed *Spatial Awareness* ignores cover and concealment **for Perception checks to notice targets within 10 squares**. Sidecar implements generic **blindsense 6 squares**, which is not an equivalent mechanic. Sidecar +2 Initiative and general skill bonuses require provenance; printed *Pack Hunter* applies only to melee attacks against **flanked** opponents.
+- **Whiphid:** Printed **1d6 slashing claws** are not structured under `system.naturalWeapons`, despite correct pack trait text. Printed *Scent* is a scoped within-10-square Perception/tracking rule, not unconditional +2 to two skills. *Insulating Fur* +5 Fortitude applies against **extreme cold only**. The sidecar's `Arctic Hunter` has `when:always` despite its own cold-only prose, and is not a printed base trait here.
+- **Yarkora:** Published *Confusion* (once/encounter, Deception vs Will within 6 squares, no threatened squares), *Deceptive* (reroll), and *Streetwise* (Gather Information class skill) are described in the pack. Neither the sidecar's **+2 melee damage** nor pack's generic +2 Deception/Persuasion is printed. Validate those against a distinct source before execution; test *Confusion* as an actual triggered multi-target effect.
+
+### Legality and identity boundary
+
+Species source labels in the pack (for example `Gran: Rebellion`, `Togorian: Threats`, `Talz/Togruta: Clone Wars`) may reflect later publication or data origins. Those labels **do not supersede** the Force Unleashed primary source being audited. Follow up when the corresponding book is reached; do not conflate reprints, replacements and variants.
+
+**No production class/weapon/species files, trait sidecars, or runtime consumers were edited.** The original Core, Rebellion and KOTOR audit decisions and the 48 certified Rebellion species-feat identities remain unchanged.
+
+**Next book:** *The Clone Wars Campaign Guide*; include explicit addendum/reprint scrutiny for Talz and Togruta.
