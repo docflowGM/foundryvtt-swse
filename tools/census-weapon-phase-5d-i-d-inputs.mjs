@@ -7,15 +7,18 @@
  *
  * One row per operation key the 5D-H closure census still reports WITHOUT a consumer, per I-D special-mechanic DEFER and per deferred talent-corpus relation.
  * Audit evidence ONLY: no runtime module reads it, and it does NOT feed the 5D-H closure census (so it cannot lower a counter by itself).
+ * Policy: docs/architecture/swse-automation-authority.md (automation level is an additional audit dimension; BLOCKED means a missing mechanical CONSUMER, never an unobservable fact).
  * I_D_UNCLASSIFIED must be 0. A BLOCKED row must cite tripwires that still hold today; a tripwire that stops holding means the missing subsystem now exists.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { I_D_ROWS, I_D_DISPOSITIONS, I_D_SUBPASSES, I_D_FIELD_FAMILY_OWNERS, TRIPWIRES } from './lib/weapon-phase-5d-i-d-ledger.mjs';
+import { I_D_MATRIX, BUCKETS, SUPPORT } from './lib/weapon-phase-5d-i-d-matrix.mjs';
+import { I_D_ROWS, I_D_DISPOSITIONS, I_D_SUBPASSES, I_D_FIELD_FAMILY_OWNERS, TRIPWIRES, AUTOMATION_LEVELS, SUPPORT_GAPS } from './lib/weapon-phase-5d-i-d-ledger.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const OUT_JSON = 'data/audits/weapon-phase-5d-i-d-input-manifest.json';
+export const OUT_MD = 'docs/audits/weapon-phase-5d-i-d-coverage-matrix.md';
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const json = (rel) => JSON.parse(read(rel));
 const inc = (o, k, n = 1) => { o[k] = (o[k] ?? 0) + n; };
@@ -59,6 +62,10 @@ export function buildManifest() {
     if (!I_D_DISPOSITIONS.includes(L.disposition)) problems.push(`${L.key}: unknown disposition ${L.disposition}`);
     if (!I_D_SUBPASSES[L.subpass]) problems.push(`${L.key}: unknown subpass ${L.subpass}`);
     if (!L.reason) problems.push(`${L.key}: no reason`);
+    if (L.automation && !AUTOMATION_LEVELS.includes(L.automation)) problems.push(`${L.key}: unknown automation level ${L.automation}`);
+    if (L.supportGap && !SUPPORT_GAPS.includes(L.supportGap)) problems.push(`${L.key}: unknown supportGap ${L.supportGap}`);
+    if (L.subpass?.startsWith('I-D-A') && !L.automation) problems.push(`${L.key}: an I-D-A row must state its automation level`);
+    if (L.disposition.startsWith('DEFERRED_TO_I_D_A') && !L.supportGap) problems.push(`${L.key}: an I-D-A deferral must name the smallest outstanding support gap`);
     const isOp = L.kind === 'operation-key';
     const identities = isOp ? (opWho[L.key] ?? []) : L.identityKey ? [L.identityKey] : [];
     if (isOp && !identities.length) problems.push(`${L.key}: the key no longer exists in the canonical registry`);
@@ -66,7 +73,7 @@ export function buildManifest() {
     if (L.disposition.startsWith('DEFERRED_TO_') && !L.owner) problems.push(`${L.key}: deferral without an owner`);
     if (L.disposition === 'BLOCKED') {
       if (!L.subsystem || !L.owner) problems.push(`${L.key}: BLOCKED needs the named subsystem and an owner`);
-      if (!['INTEGRATION_CANDIDATE', 'MISSING_SUBSYSTEM'].includes(L.blockKind)) problems.push(`${L.key}: BLOCKED needs a blockKind`);
+      if (L.blockKind !== 'MISSING_CONSUMER' || L.supportGap !== 'MISSING_CONSUMER') problems.push(`${L.key}: BLOCKED is reserved for a missing MECHANICAL CONSUMER (blockKind / supportGap MISSING_CONSUMER); a fact the system merely cannot observe is CONTEXTUAL or GM_ADJUDICATED, never blocked`);
       if (!L.tripwires?.length) problems.push(`${L.key}: BLOCKED needs at least one tripwire proving the subsystem is absent`);
     }
     for (const id of L.tripwires ?? []) { const t = evaluateTripwire(id); if (!t.ok) problems.push(`${L.key}: tripwire ${id} no longer holds (${t.detail}); the subsystem may now exist, reclassify`); }
@@ -82,16 +89,34 @@ export function buildManifest() {
       if (!hit) problems.push(`${L.key}: the special-mechanic census no longer classifies ${L.identityKey} / ${L.mechanicId}`);
     }
     if (L.kind === 'relation' && !relationsDeferred.includes(L.key)) problems.push(`${L.key}: relation is no longer deferred in the closure census`);
+    const mx = I_D_MATRIX[L.key];
+    if (!mx) problems.push(`${L.key}: no three-bucket matrix entry`);
+    else {
+      if (!BUCKETS.includes(mx.bucket)) problems.push(`${L.key}: unknown bucket ${mx.bucket}`);
+      if (!SUPPORT.includes(mx.support)) problems.push(`${L.key}: unknown support ${mx.support}`);
+      for (const f of ['knows', 'needs', 'smallest', 'acceptance']) if (!mx[f]) problems.push(`${L.key}: matrix field ${f} is empty`);
+      if (!('ambiguity' in mx)) problems.push(`${L.key}: matrix must state ambiguity (null when none)`);
+      if (mx.support === 'IMPLEMENTED' && L.disposition !== 'IMPLEMENTED') problems.push(`${L.key}: matrix says IMPLEMENTED but the manifest disposition is ${L.disposition}`);
+      if (mx.support === 'SOURCE_CLARIFICATION_NEEDED' && !mx.ambiguity) problems.push(`${L.key}: SOURCE_CLARIFICATION_NEEDED needs the ambiguity stated`);
+      if (L.automation && L.automation !== mx.bucket && !(L.disposition === 'DUPLICATE' || L.disposition === 'NON_EXECUTABLE')) problems.push(`${L.key}: ledger automation ${L.automation} disagrees with the matrix bucket ${mx.bucket}`);
+      if (mx.dup) {
+        if (!codeOfText(read(mx.dup.file)).includes(mx.dup.probe)) problems.push(`${L.key}: duplicate claim: consumer probe "${mx.dup.probe}" not found in ${mx.dup.file}`);
+        if (mx.dup.verify(reg) !== true) problems.push(`${L.key}: duplicate claim: the structured carrier is not present on every identity carrying the key`);
+      }
+    }
     rows.push({
       kind: L.kind, key: L.key, family: L.family, subpass: L.subpass, disposition: L.disposition,
       identityCount: identities.length, rawOccurrences: isOp ? (opOcc[L.key] ?? 0) : 1,
       representativeWeapons: [...new Set(identities)].sort().slice(0, 4).map((k) => k.replace(/^(weapon-|unmapped::)/, '')),
       structuredSourceField: L.carrier ?? (isOp ? `operation.${L.key}` : L.kind === 'relation' ? `abilityInteractions[].relation = ${L.key}` : 'triggeredEffects | special-mechanic census'),
       ...(L.consumer ? { currentConsumer: `${L.consumer.file} (${L.consumer.probe})` } : {}),
-      ...(L.subsystem ? { missingSubsystem: L.subsystem, blockKind: L.blockKind } : {}), ...(L.tripwires ? { tripwires: L.tripwires } : {}),
+      ...(L.automation ? { automation: L.automation } : {}), ...(L.supportGap ? { supportGap: L.supportGap } : {}), ...(L.subsystem ? { missingConsumer: L.subsystem } : {}), ...(L.tripwires ? { tripwires: L.tripwires } : {}),
+      ...(mx ? { matrix: { bucket: mx.bucket, support: mx.support, foundryKnows: mx.knows, mustBeSupplied: mx.needs, smallestImplementation: mx.smallest, sourceAmbiguity: mx.ambiguity, acceptance: mx.acceptance, proof: mx.dup ? { status: 'VERIFIED', consumer: `${mx.dup.file} (${mx.dup.probe})` } : mx.support === 'DUPLICATE_OR_NON_EXECUTABLE' ? { status: 'ASSERTED', note: 'not mechanically proven; must gain a verify before any closure-ledger acceptance' } : undefined } } : {}),
       ...(L.owner ? { owner: L.owner } : {}), ...(L.nonExecutableClass ? { nonExecutableClass: L.nonExecutableClass } : {}), reason: L.reason,
     });
   }
+
+  for (const k of Object.keys(I_D_MATRIX)) if (!seen.has(k)) problems.push(`matrix entry ${k} has no manifest row`);
 
   // nothing unclassified --------------------------------------------------------------------------------------------------------------------------
   const unclassified = [];
@@ -102,7 +127,9 @@ export function buildManifest() {
   for (const f of [...partial, ...without]) if (!I_D_FIELD_FAMILY_OWNERS[f]) unclassified.push(`field-family::${f}`);
   for (const u of unclassified) problems.push(`unclassified ${u}`);
 
-  const blockKinds = {}; for (const r of rows.filter((x) => x.disposition === 'BLOCKED')) inc(blockKinds, r.blockKind);
+  const automation = {}, gaps = {}; for (const r of rows) { inc(automation, r.automation ?? 'NOT_ASSESSED_YET'); if (r.supportGap) inc(gaps, r.supportGap); }
+  const bucketCounts = {}, supportCounts = {}, grid = {};
+  for (const r of rows) { const mx = r.matrix; if (!mx) continue; inc(bucketCounts, mx.bucket); inc(supportCounts, mx.support); grid[r.subpass] ??= {}; inc(grid[r.subpass], mx.bucket); }
   const by = (d) => rows.filter((r) => r.disposition === d).length;
   const bySub = {}; for (const r of rows) inc(bySub, r.subpass);
   const c = closure.counters ?? {};
@@ -121,7 +148,7 @@ export function buildManifest() {
 
   return {
     schemaVersion: 1, phase: '5D-I-D',
-    purpose: 'Input manifest of the final weapon residual convergence. Audit evidence only: no runtime module reads it and it does not feed the 5D-H closure census. BLOCKED rows are guarded by tripwires that fail the day the missing subsystem appears.',
+    purpose: 'Input manifest of the final weapon residual convergence. Audit evidence only: no runtime module reads it and it does not feed the 5D-H closure census. Automation level (AUTO / CONTEXTUAL / GM_ADJUDICATED) is an additional dimension; BLOCKED is reserved for a missing mechanical consumer. Tripwires prove what does NOT exist today and fail the census the day it does.',
     subpasses: I_D_SUBPASSES,
     counters,
     closureCensusAtGeneration: {
@@ -129,7 +156,9 @@ export function buildManifest() {
       FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES: c.FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES, PARTIAL_EXECUTION_FIELD_FAMILIES: c.PARTIAL_EXECUTION_FIELD_FAMILIES, UNCONSUMED_EXECUTION_FIELD_FAMILIES: c.UNCONSUMED_EXECUTION_FIELD_FAMILIES,
       EXECUTABLE_FORM_MECHANICS_DEFERRED: c.EXECUTABLE_FORM_MECHANICS_DEFERRED, EXECUTABLE_RELATION_FAMILIES_DEFERRED: c.EXECUTABLE_RELATION_FAMILIES_DEFERRED, CANONICAL_NAME_TEXT_HEURISTIC_USAGE: c.CANONICAL_NAME_TEXT_HEURISTIC_USAGE,
     },
-    blockedByKind: blockKinds,
+    coverageMatrix: { buckets: bucketCounts, support: supportCounts, bucketsBySubpass: Object.fromEntries(Object.entries(grid).sort(([a], [b]) => a.localeCompare(b))), sourceAmbiguities: rows.filter((r) => r.matrix?.sourceAmbiguity).length, duplicateOrNonExecutable: { verified: rows.filter((r) => r.matrix?.proof?.status === 'VERIFIED').length, asserted: rows.filter((r) => r.matrix?.proof?.status === 'ASSERTED').length } },
+    automationLevels: automation,
+    supportGaps: gaps,
     bySubpass: Object.fromEntries(Object.entries(bySub).sort(([a], [b]) => a.localeCompare(b))),
     fieldFamilyOwners: { partialOrUnconsumed: Object.fromEntries([...partial, ...without].sort().map((f) => [f, I_D_FIELD_FAMILY_OWNERS[f] ?? null])) },
     tripwires: Object.fromEntries(Object.entries(TRIPWIRES).map(([id, t]) => [id, { kind: t.kind, note: t.note, holds: evaluateTripwire(id).ok }])),
@@ -138,16 +167,47 @@ export function buildManifest() {
   };
 }
 
+
+const cell = (v) => String(v ?? '').replace(/\|/g, '/').replace(/\n/g, ' ');
+/** Human-readable three-bucket coverage matrix (deterministic; generated from the manifest, never edited by hand). */
+export function renderMatrix(m) {
+  const cm = m.coverageMatrix, total = m.counters.I_D_INPUT_TOTAL;
+  const pct = (n) => `${((100 * n) / total).toFixed(1)}%`;
+  const L = [];
+  L.push('# Phase 5D-I-D three-bucket coverage matrix', '', '> GENERATED by `node tools/census-weapon-phase-5d-i-d-inputs.mjs` from `data/audits/weapon-phase-5d-i-d-input-manifest.json`. Do not edit by hand.', '> Policy: [`docs/architecture/swse-automation-authority.md`](../architecture/swse-automation-authority.md). Buckets and support states are PROPOSED classifications for review (not source-verified certification); the manifest dispositions and the 5D-H closure counters are unchanged.', '');
+  L.push('Two independent questions per row: **who establishes the circumstances** (bucket) and **is the rule actually supported** (support). A GM_ADJUDICATED bucket is a valid way to support a rule but is never evidence that a numeric mechanic is implemented.', '');
+  L.push(`## Totals (${total} rows)`, '', '| Bucket | Rows | Share |', '|---|---:|---:|');
+  for (const b of ['AUTO', 'CONTEXTUAL', 'GM_ADJUDICATED']) L.push(`| ${b} | ${cm.buckets[b] ?? 0} | ${pct(cm.buckets[b] ?? 0)} |`);
+  L.push('', '| Support state | Rows |', '|---|---:|');
+  for (const [k, v] of Object.entries(cm.support).sort(([a], [b]) => a.localeCompare(b))) L.push(`| ${k} | ${v} |`);
+  L.push('', `Duplicate / non-executable claims: **${cm.duplicateOrNonExecutable.verified} mechanically verified** (carrier present on every identity + consumer probe), **${cm.duplicateOrNonExecutable.asserted} asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **${cm.sourceAmbiguities}**.`, '');
+  L.push('## By subpass', '', '| Subpass | AUTO | CONTEXTUAL | GM_ADJUDICATED |', '|---|---:|---:|---:|');
+  for (const [sp, g] of Object.entries(cm.bucketsBySubpass)) L.push(`| ${sp} | ${g.AUTO ?? 0} | ${g.CONTEXTUAL ?? 0} | ${g.GM_ADJUDICATED ?? 0} |`);
+  L.push('');
+  for (const sp of Object.keys(cm.bucketsBySubpass)) {
+    L.push(`## ${sp} — ${m.subpasses[sp]}`, '', '| Row | Weapons | Bucket | Support | Foundry already knows | Must be supplied | Smallest implementation | Source ambiguity | Acceptance |', '|---|---|---|---|---|---|---|---|---|');
+    for (const r of m.rows.filter((x) => x.subpass === sp)) {
+      const x = r.matrix;
+      L.push(`| \`${cell(r.key)}\` | ${cell(r.representativeWeapons?.join(', ') || (r.kind === 'relation' ? 'talent relation' : ''))} | ${x.bucket} | ${x.support}${x.proof ? ` (${x.proof.status})` : ''} | ${cell(x.foundryKnows)} | ${cell(x.mustBeSupplied)} | ${cell(x.smallestImplementation)} | ${cell(x.sourceAmbiguity ?? '—')} | ${cell(x.acceptance)} |`);
+    }
+    L.push('');
+  }
+  return `${L.join('\n')}\n`;
+}
+
 const serialize = (m) => `${JSON.stringify(m, null, 2)}\n`;
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const manifest = buildManifest();
   const out = path.join(ROOT, OUT_JSON);
   if (manifest.problems.length) { console.error(`I-D input manifest has problems:\n  ${manifest.problems.join('\n  ')}`); process.exit(2); }
   if (process.argv.includes('--check')) {
+    const md = path.join(ROOT, OUT_MD);
     if (!fs.existsSync(out) || fs.readFileSync(out, 'utf8') !== serialize(manifest)) { console.error(`${OUT_JSON} is stale; run node tools/census-weapon-phase-5d-i-d-inputs.mjs`); process.exit(1); }
+    if (!fs.existsSync(md) || fs.readFileSync(md, 'utf8') !== renderMatrix(manifest)) { console.error(`${OUT_MD} is stale; run node tools/census-weapon-phase-5d-i-d-inputs.mjs`); process.exit(1); }
     console.log('weapon 5D-I-D input manifest: current', JSON.stringify(manifest.counters));
   } else {
     fs.writeFileSync(out, serialize(manifest));
-    console.log(`wrote ${OUT_JSON}`, JSON.stringify(manifest.counters));
+    fs.writeFileSync(path.join(ROOT, OUT_MD), renderMatrix(manifest));
+    console.log(`wrote ${OUT_JSON} + ${OUT_MD}`, JSON.stringify(manifest.counters));
   }
 }

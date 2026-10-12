@@ -1,14 +1,17 @@
 {
   "schemaVersion": 1,
   "phase": "5D-I-D",
-  "purpose": "Input manifest of the final weapon residual convergence. Audit evidence only: no runtime module reads it and it does not feed the 5D-H closure census. BLOCKED rows are guarded by tripwires that fail the day the missing subsystem appears.",
+  "purpose": "Input manifest of the final weapon residual convergence. Audit evidence only: no runtime module reads it and it does not feed the 5D-H closure census. Automation level (AUTO / CONTEXTUAL / GM_ADJUDICATED) is an additional dimension; BLOCKED is reserved for a missing mechanical consumer. Tripwires prove what does NOT exist today and fail the census the day it does.",
   "subpasses": {
-    "I-D-A": "stealth, concealment, sensing and visibility",
+    "I-D-A": "umbrella: stealth / concealment / sensing / visibility rows settled by the census itself (proven duplicate, non-executable, source-silent, missing consumer)",
+    "I-D-A1": "carried-item / weapon skill bonuses through the existing EquipmentSkillHookResolver -> skill-roll path",
+    "I-D-A2": "contextual smoke / gas / radiation clouds: GM-established concealment or exposure through existing combat authorities; duration on the existing timing authority",
+    "I-D-A3": "GM-adjudicated rule presentation: line-of-sight origin, silent / invisible firing, audibility, sensor scans, compass",
     "I-D-B": "weapon durability, construction, mounting, upgrades and size-derived wielding",
     "I-D-C": "special activation, resources and remote operation",
     "I-D-D": "poison coating and unresolved damage semantics",
     "I-D-E": "weapon / feat / talent relationships and remaining certification",
-    "I-D-F": "reload / ammo-resource special cases (PROPOSED subpass: the I-D handoff names no owner for these 12 keys; needs product approval)"
+    "I-D-F": "reload / ammo-resource special cases (approved subpass for the 12 reload / power-source / capacity keys)"
   },
   "counters": {
     "I_D_INPUT_OPERATION_KEYS": 75,
@@ -19,9 +22,9 @@
     "I_D_DUPLICATES": 1,
     "I_D_NON_EXECUTABLE": 1,
     "I_D_DATA_DEFECT": 0,
-    "I_D_DATA_COMPLETENESS": 0,
-    "I_D_BLOCKED": 22,
-    "I_D_DEFERRED": 58,
+    "I_D_DATA_COMPLETENESS": 1,
+    "I_D_BLOCKED": 1,
+    "I_D_DEFERRED": 78,
     "I_D_UNCLASSIFIED": 0
   },
   "closureCensusAtGeneration": {
@@ -34,12 +37,80 @@
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 4,
     "CANONICAL_NAME_TEXT_HEURISTIC_USAGE": 0
   },
-  "blockedByKind": {
-    "INTEGRATION_CANDIDATE": 11,
-    "MISSING_SUBSYSTEM": 11
+  "coverageMatrix": {
+    "buckets": {
+      "CONTEXTUAL": 31,
+      "GM_ADJUDICATED": 12,
+      "AUTO": 39
+    },
+    "support": {
+      "INTEGRATION_NEEDED": 8,
+      "DATA_COMPLETENESS": 1,
+      "GM_FACING_SUPPORT_NEEDED": 18,
+      "SMALL_CONSUMER_NEEDED": 33,
+      "DUPLICATE_OR_NON_EXECUTABLE": 15,
+      "SOURCE_CLARIFICATION_NEEDED": 5,
+      "MISSING_SUBSYSTEM": 2
+    },
+    "bucketsBySubpass": {
+      "I-D-A": {
+        "GM_ADJUDICATED": 1,
+        "AUTO": 2
+      },
+      "I-D-A1": {
+        "CONTEXTUAL": 8
+      },
+      "I-D-A2": {
+        "CONTEXTUAL": 5
+      },
+      "I-D-A3": {
+        "GM_ADJUDICATED": 7,
+        "CONTEXTUAL": 1
+      },
+      "I-D-B": {
+        "GM_ADJUDICATED": 4,
+        "AUTO": 21,
+        "CONTEXTUAL": 6
+      },
+      "I-D-C": {
+        "AUTO": 3,
+        "CONTEXTUAL": 4
+      },
+      "I-D-D": {
+        "AUTO": 1
+      },
+      "I-D-E": {
+        "AUTO": 6,
+        "CONTEXTUAL": 1
+      },
+      "I-D-F": {
+        "AUTO": 6,
+        "CONTEXTUAL": 6
+      }
+    },
+    "sourceAmbiguities": 23,
+    "duplicateOrNonExecutable": {
+      "verified": 11,
+      "asserted": 4
+    }
+  },
+  "automationLevels": {
+    "CONTEXTUAL": 14,
+    "GM_ADJUDICATED": 8,
+    "AUTO": 2,
+    "NOT_ASSESSED_YET": 58
+  },
+  "supportGaps": {
+    "INTEGRATION_PENDING": 8,
+    "CONTEXT_SURFACE_PENDING": 5,
+    "MISSING_CONSUMER": 1,
+    "PRESENTATION_PENDING": 7
   },
   "bySubpass": {
-    "I-D-A": 24,
+    "I-D-A": 3,
+    "I-D-A1": 8,
+    "I-D-A2": 5,
+    "I-D-A3": 8,
     "I-D-B": 31,
     "I-D-C": 7,
     "I-D-D": 1,
@@ -111,6 +182,11 @@
       "note": "the only scene-region / template creation is the droid sheet (unrelated); no persistent area-effect zone owner exists",
       "holds": true
     },
+    "no-direction-use": {
+      "kind": "none",
+      "note": "no \"determine direction\" skill use or result exists",
+      "holds": true
+    },
     "no-deaf-rule": {
       "kind": "none",
       "note": "no deafness-based damage immunity exists in the combat code (the Deafened status icon and IMMUNE_DEAFNESS rule live elsewhere and gate no damage)",
@@ -120,276 +196,28 @@
   "rows": [
     {
       "kind": "operation-key",
-      "key": "alwaysDetermineNorth",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "Survival Knife"
-      ],
-      "structuredSourceField": "operation.alwaysDetermineNorth",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "Carried-item Survival benefit (Survival Knife): an automatic result on a Survival use. Same missing equipment -> skill-use consumer; no Survival use consumes any carried item."
-    },
-    {
-      "kind": "operation-key",
-      "key": "audibility",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "sonic-stunner"
-      ],
-      "structuredSourceField": "operation.audibility",
-      "missingSubsystem": "noise / hearing event model",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-noise-model"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Sonic Stunner: only the target hears the attack. Same missing noise / hearing model."
-    },
-    {
-      "kind": "operation-key",
-      "key": "builtInDigitalCompass",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "Survival Knife"
-      ],
-      "structuredSourceField": "operation.builtInDigitalCompass",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "Companion fact of alwaysDetermineNorth (Survival Knife): same missing consumer."
-    },
-    {
-      "kind": "operation-key",
-      "key": "concealmentContext",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "Contact Stunner"
-      ],
-      "structuredSourceField": "operation.concealmentContext",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "States WHEN the bonus applies (\"conceal this weapon\"); it maps to the existing conceal-weapon use alias but is a qualifier of a bonus nobody reads."
-    },
-    {
-      "kind": "operation-key",
       "key": "concealmentDesign",
       "family": "3b.operation.concealment-stealth-sensing",
       "subpass": "I-D-A",
-      "disposition": "BLOCKED",
+      "disposition": "DATA_COMPLETENESS",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "adjudicator-slugthrower"
       ],
       "structuredSourceField": "operation.concealmentDesign",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "Design class (\"hold-out pistol\") that the Adjudicator Slugthrower shares with the weapons that carry a numeric concealment bonus; it carries no number itself and inherits the same missing consumer. No bonus is inferred from the label."
-    },
-    {
-      "kind": "operation-key",
-      "key": "concealmentEquipmentBonus",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 4,
-      "rawOccurrences": 4,
-      "representativeWeapons": [
-        "Contact Stunner",
-        "concealed-dart-launcher",
-        "hold-out-blaster-pistol",
-        "snap-shot-blaster-pistol"
-      ],
-      "structuredSourceField": "operation.concealmentEquipmentBonus",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "+5 equipment bonus to Stealth to conceal the weapon (Contact Stunner, Hold-out / Snap-shot blaster pistols, Concealed Dart Launcher). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
-    },
-    {
-      "kind": "operation-key",
-      "key": "concealmentSkill",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "Contact Stunner"
-      ],
-      "structuredSourceField": "operation.concealmentSkill",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "Names the skill (\"Stealth\") of concealmentEquipmentBonus; a qualifier with the same missing consumer."
-    },
-    {
-      "kind": "operation-key",
-      "key": "concealmentStealthBonus",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "defender-microblaster"
-      ],
-      "structuredSourceField": "operation.concealmentStealthBonus",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "+5 Stealth bonus carried with the weapon (Defender Microblaster). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
-    },
-    {
-      "kind": "operation-key",
-      "key": "concealmentStealthPenalty",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "ascension-gun"
-      ],
-      "structuredSourceField": "operation.concealmentStealthPenalty",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "-5 Stealth penalty carried with the weapon (Ascension Gun). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
-    },
-    {
-      "kind": "operation-key",
-      "key": "createsSmokeHazard",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "smoke-grenade"
-      ],
-      "structuredSourceField": "operation.createsSmokeHazard",
-      "missingSubsystem": "persistent area-effect zone + visibility geometry",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-persistent-area-zone",
-        "no-visibility-geometry"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Smoke Grenade hazard: same missing persistent-zone subsystem as providesConcealment (no zone to create)."
-    },
-    {
-      "kind": "operation-key",
-      "key": "firingDoesNotRevealShooterPosition",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "xerrol-nightstinger"
-      ],
-      "structuredSourceField": "operation.firingDoesNotRevealShooterPosition",
-      "missingSubsystem": "actor / token stealth + revealed-position state",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-stealth-state"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Xerrol Nightstinger: firing does not end Stealth / reveal position. The system has no hidden / revealed state for firing to leave unchanged."
-    },
-    {
-      "kind": "operation-key",
-      "key": "gasConcealmentDuration",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "gas-grenade"
-      ],
-      "structuredSourceField": "operation.gasConcealmentDuration",
-      "missingSubsystem": "persistent area-effect zone + visibility geometry",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-persistent-area-zone",
-        "no-visibility-geometry"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Gas Grenade lingering cloud (triggeredEffects lingering-gas-concealment, duration until-end-of-attacker-next-turn): concealment is MUTUAL across the blast boundary and inside the 4-square blast. The attacker-next-turn lifecycle already exists (outcome-effects durationPlan, used by Flash Canister), but it hangs a status on an ACTOR; the cloud has no actor to hang on and needs a placed zone plus an inside / outside / across-boundary visibility test. The I-C-A impact outcome (CT -2 / Evasion -1) is already implemented and must not be reapplied."
-    },
-    {
-      "kind": "operation-key",
-      "key": "lineOfSightOriginHeightSquares",
-      "family": "3b.operation.attack-modifiers-and-penalties",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "mortar-launcher"
-      ],
-      "structuredSourceField": "operation.lineOfSightOriginHeightSquares",
-      "missingSubsystem": "visibility / line-of-sight geometry",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-visibility-geometry"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Mortar Launcher: line of sight is traced from a point 20 squares above the launcher. The system takes line of sight as a caller-supplied boolean; there is no geometry to move the origin of."
+      "automation": "GM_ADJUDICATED",
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "DATA_COMPLETENESS",
+        "foundryKnows": "design label \"hold-out pistol\"",
+        "mustBeSupplied": "a source-stated bonus",
+        "smallestImplementation": "none until a source states one; do not inherit +5",
+        "sourceAmbiguity": "published text (\"concealable backup pistol\") states no Stealth bonus",
+        "acceptance": "no hook derived for the Adjudicator Slugthrower"
+      },
+      "owner": "canonical weapon data (source-silent)",
+      "reason": "Adjudicator Slugthrower: the design class \"hold-out pistol\" carries no number, and its published text (\"concealable slugthrower backup pistol\") states no Stealth bonus. Inheriting the +5 of other hold-out pistols would be an invention, so no hook is derived. Needs a source-backed bonus before it can be consumed."
     },
     {
       "kind": "operation-key",
@@ -404,173 +232,21 @@
       ],
       "structuredSourceField": "attackProfiles[].triggeredEffects[condition-track-effect].immunity = \"protected-from-atmospheric-hazards\"",
       "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (typeof e.immunity === 'string')",
+      "automation": "AUTO",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "condition-track-effect.immunity",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none",
+        "sourceAmbiguity": null,
+        "acceptance": "I-C-A ct-rider already executes the immunity",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/special-mechanics.js (typeof e.immunity === 'string')"
+        }
+      },
       "reason": "Gas Grenade: the same immunity is carried by the condition-track-effect triggered effect, which the I-C-A ct-rider already executes. (The lingering cloud is a separate triggered effect; see gasConcealmentDuration.)"
-    },
-    {
-      "kind": "operation-key",
-      "key": "providesConcealment",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "smoke-grenade"
-      ],
-      "structuredSourceField": "operation.providesConcealment",
-      "missingSubsystem": "persistent area-effect zone + visibility geometry",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-persistent-area-zone",
-        "no-visibility-geometry"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Smoke Grenade: the cloud provides concealment for durationRounds (10). A cloud is a placed area that persists and is tested against token positions; the system has no persistent area-effect owner and no visibility / line-of-sight geometry (combat code only accepts a caller-supplied concealment option and a context.lineOfSight boolean)."
-    },
-    {
-      "kind": "operation-key",
-      "key": "radiationExposure",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "radiation-grenade"
-      ],
-      "structuredSourceField": "operation.radiationExposure",
-      "missingSubsystem": "radiation exposure state / hazard area",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-radiation-exposure",
-        "no-persistent-area-zone"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Radiation Grenade: exposes creatures to Moderate radiation for damage and Treat Injury purposes. Exposure has no state to set and no area to persist in."
-    },
-    {
-      "kind": "operation-key",
-      "key": "sensorDetection",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "wrist-blaster"
-      ],
-      "structuredSourceField": "operation.sensorDetection",
-      "missingSubsystem": "sensor-scan detection flow",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-sensor-scan"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Wrist Blaster: a sensor scan for weapons detects it on a DC 25 Use Computer check. No sensor-scan flow exists to pit the scanner against a carried weapon."
-    },
-    {
-      "kind": "operation-key",
-      "key": "shotVisibility",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "xerrol-nightstinger"
-      ],
-      "structuredSourceField": "operation.shotVisibility",
-      "missingSubsystem": "actor / token stealth + revealed-position state",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-stealth-state",
-        "no-visibility-geometry"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Xerrol Nightstinger: the shot is invisible to the eye. Needs the observers' perception of an attack to be a modelled event; no such state exists."
-    },
-    {
-      "kind": "operation-key",
-      "key": "silentInUse",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "Vibrorapier"
-      ],
-      "structuredSourceField": "operation.silentInUse",
-      "missingSubsystem": "noise / hearing event model",
-      "blockKind": "MISSING_SUBSYSTEM",
-      "tripwires": [
-        "no-noise-model"
-      ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "Vibrorapier: silent operation. There is no noise or hearing event for a weapon to suppress."
-    },
-    {
-      "kind": "operation-key",
-      "key": "snipingSkill",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "magna-caster"
-      ],
-      "structuredSourceField": "operation.snipingSkill",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "Names the skill (\"Stealth\") the sniping bonus applies to; a qualifier of snipingStealthEquipmentBonus with the same missing consumer. There is also no \"sniping\" Extra Skill Use alias to attach it to."
-    },
-    {
-      "kind": "operation-key",
-      "key": "snipingStealthEquipmentBonus",
-      "family": "3b.operation.concealment-stealth-sensing",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "magna-caster"
-      ],
-      "structuredSourceField": "operation.snipingStealthEquipmentBonus",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "+5 equipment bonus to the Stealth check made to snipe (Magna-Caster). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
-    },
-    {
-      "kind": "operation-key",
-      "key": "survivalBasicForestJungleBonusWhenProficientAndCarried",
-      "family": "3b.operation.condition-and-persistent-effects",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
-      "representativeWeapons": [
-        "wookiee-ryyk-blade"
-      ],
-      "structuredSourceField": "operation.survivalBasicForestJungleBonusWhenProficientAndCarried",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
-      "blockKind": "INTEGRATION_CANDIDATE",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
-      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
-      "reason": "+2 to Basic Survival in forest / jungle when the wielder is proficient and carries the weapon (Wookiee Ryyk Blade). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
     },
     {
       "kind": "operation-key",
@@ -584,32 +260,646 @@
         "sonic-stunner"
       ],
       "structuredSourceField": "operation.targeting",
+      "automation": "AUTO",
       "tripwires": [
         "no-deaf-rule"
       ],
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "deaf targets can be harmed",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none (removes a restriction nothing imposes)",
+        "sourceAmbiguity": null,
+        "acceptance": "no deafness-based damage immunity exists (tripwire no-deaf-rule)",
+        "proof": {
+          "status": "ASSERTED",
+          "note": "not mechanically proven; must gain a verify before any closure-ledger acceptance"
+        }
+      },
       "nonExecutableClass": "DISPLAY",
       "reason": "Sonic Stunner: deaf targets CAN be harmed. That removes a restriction (deafness-based immunity) which nothing in the system imposes (no-deaf-rule tripwire), so the default behaviour is already the stated one and there is nothing to execute."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentContext",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A1",
+      "disposition": "DEFERRED_TO_I_D_A1",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Contact Stunner"
+      ],
+      "structuredSourceField": "operation.concealmentContext",
+      "automation": "CONTEXTUAL",
+      "supportGap": "INTEGRATION_PENDING",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "INTEGRATION_NEEDED",
+        "foundryKnows": "registry qualifier (\"conceal this weapon\")",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "validated by the hook derivation; scopes the hook to the concealed item itself",
+        "sourceAmbiguity": null,
+        "acceptance": "bonus never awarded for an unrelated item"
+      },
+      "owner": "I-D-A1",
+      "reason": "States WHEN the bonus applies (\"conceal this weapon\"): the integration scopes the hook to the concealed item itself and validates this qualifier."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentEquipmentBonus",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A1",
+      "disposition": "DEFERRED_TO_I_D_A1",
+      "identityCount": 4,
+      "rawOccurrences": 4,
+      "representativeWeapons": [
+        "Contact Stunner",
+        "concealed-dart-launcher",
+        "hold-out-blaster-pistol",
+        "snap-shot-blaster-pistol"
+      ],
+      "structuredSourceField": "operation.concealmentEquipmentBonus",
+      "automation": "CONTEXTUAL",
+      "supportGap": "INTEGRATION_PENDING",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "INTEGRATION_NEEDED",
+        "foundryKnows": "owned item, canonical identity, quantity (carried)",
+        "mustBeSupplied": "which item is being concealed (player picks the Conceal-item use and names the weapon)",
+        "smallestImplementation": "weapon-derived hook in EquipmentSkillHookResolver + its use in rollSkill (in progress on feat/weapon-phase-5d-i-d-a1-equipment-skill-hooks)",
+        "sourceAmbiguity": null,
+        "acceptance": "real rollSkill: +5 only for the named weapon on the Conceal use; none without item context; best-equipment-bonus stacking"
+      },
+      "owner": "I-D-A1",
+      "reason": "+5 equipment bonus to Stealth to conceal the weapon (Contact Stunner, Hold-out / Snap-shot blaster pistols, Concealed Dart Launcher). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentSkill",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A1",
+      "disposition": "DEFERRED_TO_I_D_A1",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Contact Stunner"
+      ],
+      "structuredSourceField": "operation.concealmentSkill",
+      "automation": "CONTEXTUAL",
+      "supportGap": "INTEGRATION_PENDING",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "INTEGRATION_NEEDED",
+        "foundryKnows": "registry qualifier",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "validated by the hook derivation",
+        "sourceAmbiguity": null,
+        "acceptance": "hook derived only when the qualifier agrees"
+      },
+      "owner": "I-D-A1",
+      "reason": "Names the skill (\"Stealth\") of concealmentEquipmentBonus; a qualifier the integration validates."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentStealthBonus",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A1",
+      "disposition": "DEFERRED_TO_I_D_A1",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "defender-microblaster"
+      ],
+      "structuredSourceField": "operation.concealmentStealthBonus",
+      "automation": "CONTEXTUAL",
+      "supportGap": "INTEGRATION_PENDING",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "INTEGRATION_NEEDED",
+        "foundryKnows": "owned item, identity, quantity",
+        "mustBeSupplied": "concealed item named",
+        "smallestImplementation": "same hook path; type = untyped (the text says \"+5 bonus\", not \"equipment bonus\")",
+        "sourceAmbiguity": "bonus type is unstated in the text; treated as untyped (stacks)",
+        "acceptance": "Defender +5 stacks with a +5 equipment bonus; applies only when concealing the Defender"
+      },
+      "owner": "I-D-A1",
+      "reason": "+5 (untyped) bonus to Stealth to conceal the weapon (Defender Microblaster). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentStealthPenalty",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A1",
+      "disposition": "DEFERRED_TO_I_D_A1",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "ascension-gun"
+      ],
+      "structuredSourceField": "operation.concealmentStealthPenalty",
+      "automation": "CONTEXTUAL",
+      "supportGap": "INTEGRATION_PENDING",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "INTEGRATION_NEEDED",
+        "foundryKnows": "owned item, identity",
+        "mustBeSupplied": "concealed item named",
+        "smallestImplementation": "same hook path; type = penalty, never dropped by best-bonus selection",
+        "sourceAmbiguity": null,
+        "acceptance": "Ascension Gun -5 kept beside a +2 equipment bonus (net -3); only when concealing the gun"
+      },
+      "owner": "I-D-A1",
+      "reason": "-5 penalty to Stealth to conceal the weapon (Ascension Gun, Galaxy at War p.37 \"its bulk imposes -5 on Stealth checks made to conceal it\"). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+    },
+    {
+      "kind": "operation-key",
+      "key": "snipingSkill",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A1",
+      "disposition": "DEFERRED_TO_I_D_A1",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "magna-caster"
+      ],
+      "structuredSourceField": "operation.snipingSkill",
+      "automation": "CONTEXTUAL",
+      "supportGap": "INTEGRATION_PENDING",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "INTEGRATION_NEEDED",
+        "foundryKnows": "registry qualifier",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "validated by the hook derivation (mismatch => no hook)",
+        "sourceAmbiguity": null,
+        "acceptance": "hook derived only when the qualifier agrees"
+      },
+      "owner": "I-D-A1",
+      "reason": "Names the skill (\"Stealth\") of snipingStealthEquipmentBonus; a qualifier the integration validates (a mismatch derives no hook)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "snipingStealthEquipmentBonus",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A1",
+      "disposition": "DEFERRED_TO_I_D_A1",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "magna-caster"
+      ],
+      "structuredSourceField": "operation.snipingStealthEquipmentBonus",
+      "automation": "CONTEXTUAL",
+      "supportGap": "INTEGRATION_PENDING",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "INTEGRATION_NEEDED",
+        "foundryKnows": "owned item, identity",
+        "mustBeSupplied": "the weapon used to snipe",
+        "smallestImplementation": "same hook path on the Snipe use",
+        "sourceAmbiguity": null,
+        "acceptance": "+5 only on the Snipe use with the Magna-Caster; not on Conceal; not with another weapon"
+      },
+      "owner": "I-D-A1",
+      "reason": "+5 equipment bonus to the Stealth check made to snipe (Magna-Caster). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+    },
+    {
+      "kind": "operation-key",
+      "key": "survivalBasicForestJungleBonusWhenProficientAndCarried",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "subpass": "I-D-A1",
+      "disposition": "DEFERRED_TO_I_D_A1",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wookiee-ryyk-blade"
+      ],
+      "structuredSourceField": "operation.survivalBasicForestJungleBonusWhenProficientAndCarried",
+      "automation": "CONTEXTUAL",
+      "supportGap": "INTEGRATION_PENDING",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "INTEGRATION_NEEDED",
+        "foundryKnows": "carried (quantity), proficiency (canonical resolver), Wookiee route",
+        "mustBeSupplied": "terrain is forest / jungle (stated)",
+        "smallestImplementation": "same hook path with requires {terrain, proficient}",
+        "sourceAmbiguity": null,
+        "acceptance": "+2 only on Basic Survival, forest/jungle, proficient, carried; Wookiee advanced-melee route counts"
+      },
+      "owner": "I-D-A1",
+      "reason": "+2 to Basic Survival in forest / jungle when the wielder is proficient and carries the weapon (Wookiee Ryyk Blade; terrain is player-stated, proficiency and carried state are observed). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+    },
+    {
+      "kind": "operation-key",
+      "key": "createsSmokeHazard",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A2",
+      "disposition": "DEFERRED_TO_I_D_A2",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "smoke-grenade"
+      ],
+      "structuredSourceField": "operation.createsSmokeHazard",
+      "automation": "CONTEXTUAL",
+      "supportGap": "CONTEXT_SURFACE_PENDING",
+      "tripwires": [
+        "no-persistent-area-zone"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "smoke hazard flag",
+        "mustBeSupplied": "who is in the smoke (GM)",
+        "smallestImplementation": "same cloud announcement",
+        "sourceAmbiguity": "the \"smoke hazard\" has no further stated mechanic in the record",
+        "acceptance": "rule shown; nothing inferred about who is affected"
+      },
+      "owner": "I-D-A2",
+      "reason": "Smoke Grenade hazard: the declared smoke area. CONTEXTUAL: the concealment consequence already executes from the GM-selected concealment level in the attack dialog (None / 20% / 50%); who is inside the cloud is the GM's call and is never inferred from a map. Outstanding: surface the weapon-declared cloud, its duration and the rule into that workflow and track the duration on the existing combat / effect timing authority. No geometry, visibility or token-position engine is needed."
+    },
+    {
+      "kind": "operation-key",
+      "key": "gasConcealmentDuration",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A2",
+      "disposition": "DEFERRED_TO_I_D_A2",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "gas-grenade"
+      ],
+      "structuredSourceField": "operation.gasConcealmentDuration",
+      "automation": "CONTEXTUAL",
+      "supportGap": "CONTEXT_SURFACE_PENDING",
+      "tripwires": [
+        "no-persistent-area-zone"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "until end of attacker next turn (existing durationPlan)",
+        "mustBeSupplied": "who is inside / across the cloud boundary (GM)",
+        "smallestImplementation": "cloud announcement on the existing attacker-next-turn lifecycle; I-C-A impact outcome not reapplied",
+        "sourceAmbiguity": null,
+        "acceptance": "impact CT applied once; cloud expires at the attacker's next turn end; concealment only where the GM says"
+      },
+      "owner": "I-D-A2",
+      "reason": "Gas Grenade lingering cloud (lingering-gas-concealment, until the end of the attacker's next turn; mutual concealment across the blast boundary and inside it). The attacker-next-turn lifecycle already exists (outcome-effects durationPlan, Flash Canister); the I-C-A impact outcome (CT -2 / Evasion -1) is implemented and must NOT be reapplied. CONTEXTUAL: the concealment consequence already executes from the GM-selected concealment level in the attack dialog (None / 20% / 50%); who is inside the cloud is the GM's call and is never inferred from a map. Outstanding: surface the weapon-declared cloud, its duration and the rule into that workflow and track the duration on the existing combat / effect timing authority. No geometry, visibility or token-position engine is needed."
+    },
+    {
+      "kind": "operation-key",
+      "key": "providesConcealment",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A2",
+      "disposition": "DEFERRED_TO_I_D_A2",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "smoke-grenade"
+      ],
+      "structuredSourceField": "operation.providesConcealment",
+      "automation": "CONTEXTUAL",
+      "supportGap": "CONTEXT_SURFACE_PENDING",
+      "tripwires": [
+        "no-persistent-area-zone"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "smoke cloud, 10-round duration (canonical)",
+        "mustBeSupplied": "which targets the GM rules concealed (attack dialog: None / 20% / 50%, already implemented)",
+        "smallestImplementation": "announce the cloud + rule + duration on the existing effect/combat timing; pre-select nothing",
+        "sourceAmbiguity": null,
+        "acceptance": "attack with GM-selected concealment rolls the miss chance; cloud duration counts down on the combat clock and can be ended by the GM"
+      },
+      "owner": "I-D-A2",
+      "reason": "Smoke Grenade: the smoke provides concealment for durationRounds (10). CONTEXTUAL: the concealment consequence already executes from the GM-selected concealment level in the attack dialog (None / 20% / 50%); who is inside the cloud is the GM's call and is never inferred from a map. Outstanding: surface the weapon-declared cloud, its duration and the rule into that workflow and track the duration on the existing combat / effect timing authority. No geometry, visibility or token-position engine is needed."
+    },
+    {
+      "kind": "operation-key",
+      "key": "radiationExposure",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A2",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "radiation-grenade"
+      ],
+      "structuredSourceField": "operation.radiationExposure",
+      "automation": "CONTEXTUAL",
+      "supportGap": "MISSING_CONSUMER",
+      "missingConsumer": "radiation exposure level -> damage / Treat Injury consumer",
+      "tripwires": [
+        "no-radiation-exposure"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "exposure level \"Moderate\" (canonical)",
+        "mustBeSupplied": "which creatures are exposed (GM)",
+        "smallestImplementation": "an exposure-level effect (damage / condition per the Core radiation table) applied through ActorEngine/active effects to the GM-chosen targets",
+        "sourceAmbiguity": "the Moderate radiation damage / condition values must be taken from the Core hazard table (not located in the runtime data)",
+        "acceptance": "GM selects exposed creatures; the table's effect applies once per its cadence; Treat Injury can treat it"
+      },
+      "owner": "I-D-A2",
+      "reason": "Radiation Grenade: exposes creatures to Moderate radiation for damage and Treat Injury purposes. WHICH creatures are exposed is GM-established context (not inferred from a map), but the consequence needs a consumer that does not exist: no exposure level is stored or applied, and the hazard table that gives Moderate its damage / condition effect is not in the runtime. Separate the two capabilities: exposure selection is contextual; the exposure-level consumer is the genuinely missing piece."
     },
     {
       "kind": "special-mechanic",
       "key": "weapon-gas-grenade::lingering-gas-concealment",
       "family": "status-condition",
-      "subpass": "I-D-A",
-      "disposition": "BLOCKED",
+      "subpass": "I-D-A2",
+      "disposition": "DEFERRED_TO_I_D_A2",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "gas-grenade"
       ],
       "structuredSourceField": "triggeredEffects | special-mechanic census",
-      "missingSubsystem": "persistent area-effect zone + visibility geometry",
-      "blockKind": "MISSING_SUBSYSTEM",
+      "automation": "CONTEXTUAL",
+      "supportGap": "CONTEXT_SURFACE_PENDING",
       "tripwires": [
-        "no-persistent-area-zone",
+        "no-persistent-area-zone"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "cloud duration + radius (4-square blast)",
+        "mustBeSupplied": "who is concealed (GM)",
+        "smallestImplementation": "same as gasConcealmentDuration",
+        "sourceAmbiguity": null,
+        "acceptance": "see gasConcealmentDuration"
+      },
+      "owner": "I-D-A2",
+      "reason": "See gasConcealmentDuration: GM-established concealment through the existing attack dialog + the existing attacker-next-turn timing; the I-C-A impact outcome is already implemented and is not reapplied."
+    },
+    {
+      "kind": "operation-key",
+      "key": "alwaysDetermineNorth",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A3",
+      "disposition": "DEFERRED_TO_I_D_A3",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Survival Knife"
+      ],
+      "structuredSourceField": "operation.alwaysDetermineNorth",
+      "automation": "GM_ADJUDICATED",
+      "supportGap": "PRESENTATION_PENDING",
+      "tripwires": [
+        "no-direction-use"
+      ],
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "carrier always knows north",
+        "mustBeSupplied": "the fictional direction (GM)",
+        "smallestImplementation": "show the property (shared with builtInDigitalCompass: ONE capability, two data keys)",
+        "sourceAmbiguity": null,
+        "acceptance": "property displayed for the carrier; no check, no number"
+      },
+      "owner": "I-D-A3",
+      "reason": "Survival Knife: the carrier always knows which way is north. There is no check and no number, and no Extra Skill Use \"determine direction\" to attach a result to. GM_ADJUDICATED: the outcome depends on narrative judgment (who sees, hears or notices). Foundry presents the canonical rule in the attack / skill workflow and does not decide it; there is no numeric consumer, so nothing is simulated."
+    },
+    {
+      "kind": "operation-key",
+      "key": "audibility",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A3",
+      "disposition": "DEFERRED_TO_I_D_A3",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sonic-stunner"
+      ],
+      "structuredSourceField": "operation.audibility",
+      "automation": "GM_ADJUDICATED",
+      "supportGap": "PRESENTATION_PENDING",
+      "tripwires": [
+        "no-noise-model"
+      ],
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "only the target hears the attack",
+        "mustBeSupplied": "GM adjudicates others",
+        "smallestImplementation": "show the rule; damage applies normally",
+        "sourceAmbiguity": null,
+        "acceptance": "Sonic Stunner damage unchanged; rule shown"
+      },
+      "owner": "I-D-A3",
+      "reason": "Sonic Stunner: only the target hears the attack, otherwise silent. Damage applies normally; hearing is not simulated per creature. GM_ADJUDICATED: the outcome depends on narrative judgment (who sees, hears or notices). Foundry presents the canonical rule in the attack / skill workflow and does not decide it; there is no numeric consumer, so nothing is simulated."
+    },
+    {
+      "kind": "operation-key",
+      "key": "builtInDigitalCompass",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A3",
+      "disposition": "DEFERRED_TO_I_D_A3",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Survival Knife"
+      ],
+      "structuredSourceField": "operation.builtInDigitalCompass",
+      "automation": "GM_ADJUDICATED",
+      "supportGap": "PRESENTATION_PENDING",
+      "tripwires": [
+        "no-direction-use"
+      ],
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "built-in compass",
+        "mustBeSupplied": "GM supplies direction",
+        "smallestImplementation": "same single capability as alwaysDetermineNorth",
+        "sourceAmbiguity": null,
+        "acceptance": "one display, not two features"
+      },
+      "owner": "I-D-A3",
+      "reason": "Survival Knife: companion fact of alwaysDetermineNorth. GM_ADJUDICATED: the outcome depends on narrative judgment (who sees, hears or notices). Foundry presents the canonical rule in the attack / skill workflow and does not decide it; there is no numeric consumer, so nothing is simulated."
+    },
+    {
+      "kind": "operation-key",
+      "key": "firingDoesNotRevealShooterPosition",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A3",
+      "disposition": "DEFERRED_TO_I_D_A3",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "xerrol-nightstinger"
+      ],
+      "structuredSourceField": "operation.firingDoesNotRevealShooterPosition",
+      "automation": "GM_ADJUDICATED",
+      "supportGap": "PRESENTATION_PENDING",
+      "tripwires": [
+        "no-stealth-state"
+      ],
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "firing does not reveal position",
+        "mustBeSupplied": "whether anyone detects the shooter (GM)",
+        "smallestImplementation": "show the rule on the attack card",
+        "sourceAmbiguity": null,
+        "acceptance": "rule shown; no hidden-state written"
+      },
+      "owner": "I-D-A3",
+      "reason": "Xerrol Nightstinger: firing does not reveal the shooter's position. The shooter is not automatically marked hidden from everyone. GM_ADJUDICATED: the outcome depends on narrative judgment (who sees, hears or notices). Foundry presents the canonical rule in the attack / skill workflow and does not decide it; there is no numeric consumer, so nothing is simulated."
+    },
+    {
+      "kind": "operation-key",
+      "key": "lineOfSightOriginHeightSquares",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "subpass": "I-D-A3",
+      "disposition": "DEFERRED_TO_I_D_A3",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "mortar-launcher"
+      ],
+      "structuredSourceField": "operation.lineOfSightOriginHeightSquares",
+      "automation": "GM_ADJUDICATED",
+      "supportGap": "PRESENTATION_PENDING",
+      "tripwires": [
         "no-visibility-geometry"
       ],
-      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
-      "reason": "See gasConcealmentDuration: the cloud needs a placed zone and a mutual inside / outside / across-boundary visibility test; the impact outcome is already implemented (I-C-A) and is not reapplied."
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "LOS origin is 20 squares above the mortar",
+        "mustBeSupplied": "whether the target is visible / covered (GM)",
+        "smallestImplementation": "show the rule in the attack workflow; the LOS answer stays a supplied fact",
+        "sourceAmbiguity": null,
+        "acceptance": "rule visible on a Mortar attack; no automatic LOS decision"
+      },
+      "owner": "I-D-A3",
+      "reason": "Mortar Launcher: line of sight is traced from a point 20 squares above the launcher. Line of sight is already a caller-supplied fact in the combat workflow; a custom 3-D line-of-sight engine is not built. GM_ADJUDICATED: the outcome depends on narrative judgment (who sees, hears or notices). Foundry presents the canonical rule in the attack / skill workflow and does not decide it; there is no numeric consumer, so nothing is simulated."
+    },
+    {
+      "kind": "operation-key",
+      "key": "sensorDetection",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A3",
+      "disposition": "DEFERRED_TO_I_D_A3",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-blaster"
+      ],
+      "structuredSourceField": "operation.sensorDetection",
+      "automation": "CONTEXTUAL",
+      "supportGap": "CONTEXT_SURFACE_PENDING",
+      "tripwires": [
+        "no-sensor-scan"
+      ],
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "scan detects it on Use Computer DC 25",
+        "mustBeSupplied": "that a scan of this weapon is being made (explicit)",
+        "smallestImplementation": "offer the DC 25 Use Computer check through the existing skill workflow when the GM initiates a scan",
+        "sourceAmbiguity": null,
+        "acceptance": "check resolves vs DC 25 only when initiated for that weapon"
+      },
+      "owner": "I-D-A3",
+      "reason": "Wrist Blaster: a sensor scan for weapons detects it on a DC 25 Use Computer check. CONTEXTUAL: when the scan is explicitly initiated against this weapon, the check resolves through the existing Use Computer skill workflow; no sensor network is simulated. Outstanding: surface the DC when a scan is initiated."
+    },
+    {
+      "kind": "operation-key",
+      "key": "shotVisibility",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A3",
+      "disposition": "DEFERRED_TO_I_D_A3",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "xerrol-nightstinger"
+      ],
+      "structuredSourceField": "operation.shotVisibility",
+      "automation": "GM_ADJUDICATED",
+      "supportGap": "PRESENTATION_PENDING",
+      "tripwires": [
+        "no-stealth-state"
+      ],
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "shot is invisible to the eye",
+        "mustBeSupplied": "what observers perceive (GM)",
+        "smallestImplementation": "show the rule on the attack card",
+        "sourceAmbiguity": null,
+        "acceptance": "rule shown; nobody auto-marked hidden"
+      },
+      "owner": "I-D-A3",
+      "reason": "Xerrol Nightstinger: the shot is invisible to the eye. GM_ADJUDICATED: the outcome depends on narrative judgment (who sees, hears or notices). Foundry presents the canonical rule in the attack / skill workflow and does not decide it; there is no numeric consumer, so nothing is simulated."
+    },
+    {
+      "kind": "operation-key",
+      "key": "silentInUse",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A3",
+      "disposition": "DEFERRED_TO_I_D_A3",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Vibrorapier"
+      ],
+      "structuredSourceField": "operation.silentInUse",
+      "automation": "GM_ADJUDICATED",
+      "supportGap": "PRESENTATION_PENDING",
+      "tripwires": [
+        "no-noise-model"
+      ],
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "silent operation",
+        "mustBeSupplied": "who would hear otherwise (GM)",
+        "smallestImplementation": "show the rule on the attack card",
+        "sourceAmbiguity": null,
+        "acceptance": "rule shown; no hearing simulation"
+      },
+      "owner": "I-D-A3",
+      "reason": "Vibrorapier: silent operation. GM_ADJUDICATED: the outcome depends on narrative judgment (who sees, hears or notices). Foundry presents the canonical rule in the attack / skill workflow and does not decide it; there is no numeric consumer, so nothing is simulated."
     },
     {
       "kind": "operation-key",
@@ -623,6 +913,15 @@
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.canMountOnRifle",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "micro grenade launcher mounts on a rifle",
+        "mustBeSupplied": "the host rifle (owned item)",
+        "smallestImplementation": "mount validation in the customization workbench using canonical host rules",
+        "sourceAmbiguity": null,
+        "acceptance": "mount refused on a non-rifle host"
+      },
       "owner": "I-D-B",
       "reason": "Mounting a weapon on a host weapon (construction / modification authority)."
     },
@@ -638,6 +937,15 @@
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.canUseStandalone",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "usable standalone",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "same mount capability (mounted OR standalone)",
+        "sourceAmbiguity": null,
+        "acceptance": "standalone attack allowed unmounted"
+      },
       "owner": "I-D-B",
       "reason": "Mounted-versus-standalone use of an attachment weapon."
     },
@@ -653,6 +961,19 @@
         "snap-baton"
       ],
       "structuredSourceField": "operation.collapsedForm",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "snap baton collapsed / expanded, swift transition",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: the configurationStates carrier is already consumed",
+        "sourceAmbiguity": null,
+        "acceptance": "collapse / expand is a Swift via FireStateStore.setConfiguration",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/engine/combat/fire-state-store.js (transitionAction)"
+        }
+      },
       "owner": "I-D-B",
       "reason": "Collapsed-form configuration / size."
     },
@@ -668,6 +989,15 @@
         "vibrosword"
       ],
       "structuredSourceField": "operation.designedForTwoHandedUse",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "vibrosword is designed for two-handed use",
+        "mustBeSupplied": "wielding choice (player)",
+        "smallestImplementation": "feed to the 5D-I-B wielding resolver as the weapon's natural grip",
+        "sourceAmbiguity": null,
+        "acceptance": "two-handed Strength damage applies when wielded two-handed"
+      },
       "owner": "I-D-B",
       "reason": "Size-derived wielding."
     },
@@ -683,6 +1013,15 @@
         "plx-2m-portable-missile-launcher"
       ],
       "structuredSourceField": "operation.encumbranceException",
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "PLX-2M weight ignored while the weapon is the active drawn weapon",
+        "mustBeSupplied": "encumbrance is a GM / inventory total",
+        "smallestImplementation": "exclude the weapon's weight from the carried total while drawn (inventory weight authority) or display the exception",
+        "sourceAmbiguity": "it is not stated whether the rule affects the encumbrance total or only the carrying-capacity check",
+        "acceptance": "documented decision + test"
+      },
       "owner": "I-D-B",
       "reason": "Encumbrance exception for carried equipment."
     },
@@ -698,6 +1037,15 @@
         "wrist-rocket-launcher"
       ],
       "structuredSourceField": "operation.forearmMounted",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "wrist rocket launcher is forearm-mounted (cannot be disarmed / dropped is NOT stated here)",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "worn-item classification feeding the existing disarm / drop guards",
+        "sourceAmbiguity": "record states mounting only, not the disarm rule (the stunning gauntlet text does)",
+        "acceptance": "classification available to the wielding resolver; no new rule invented"
+      },
       "owner": "I-D-B",
       "reason": "Worn / mounted wielding."
     },
@@ -713,6 +1061,19 @@
         "targeting-blaster-rifle"
       ],
       "structuredSourceField": "operation.hasFoldingStock",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "targeting blaster rifle has no folding stock (false)",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: false states the absence of an option",
+        "sourceAmbiguity": null,
+        "acceptance": "no stock option offered",
+        "proof": {
+          "status": "ASSERTED",
+          "note": "not mechanically proven; must gain a verify before any closure-ledger acceptance"
+        }
+      },
       "owner": "I-D-B",
       "reason": "Stock configuration / construction option."
     },
@@ -729,6 +1090,15 @@
         "lightsaber-chassis-modern-lightfoil"
       ],
       "structuredSourceField": "operation.mayCountAsSmallWhenBeneficial",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "lightfoil may be treated as Small",
+        "mustBeSupplied": "player chooses when beneficial",
+        "smallestImplementation": "size choice input in the 5D-I-B wielding resolver (never a free default)",
+        "sourceAmbiguity": null,
+        "acceptance": "Small treatment only when chosen; cannot be wielded two-handed"
+      },
       "owner": "I-D-B",
       "reason": "Size-derived wielding."
     },
@@ -744,6 +1114,15 @@
         "lightfoil"
       ],
       "structuredSourceField": "operation.mayTreatAsSizeWhenBeneficial",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "lightfoil may be treated as Small",
+        "mustBeSupplied": "player choice",
+        "smallestImplementation": "same capability as mayCountAsSmallWhenBeneficial (one capability, two keys)",
+        "sourceAmbiguity": null,
+        "acceptance": "same"
+      },
       "owner": "I-D-B",
       "reason": "Size-derived wielding."
     },
@@ -759,6 +1138,15 @@
         "targeting-laser"
       ],
       "structuredSourceField": "operation.mountableOnMinimumWeaponSize",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "targeting laser mounts on a Medium or larger weapon",
+        "mustBeSupplied": "host weapon size (item)",
+        "smallestImplementation": "host-size gate in the mount validation",
+        "sourceAmbiguity": null,
+        "acceptance": "mount refused on a Small host"
+      },
       "owner": "I-D-B",
       "reason": "Host-size gate for mounting."
     },
@@ -774,6 +1162,15 @@
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.mountMechanicsDC",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "Mechanics DC 15 to mount",
+        "mustBeSupplied": "the check result (player rolls)",
+        "smallestImplementation": "drive the mount through the existing Mechanics skill workflow in the workbench",
+        "sourceAmbiguity": null,
+        "acceptance": "mount completes only on a success vs DC 15"
+      },
       "owner": "I-D-B",
       "reason": "Mounting check DC (construction / installation)."
     },
@@ -789,6 +1186,15 @@
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.mountTimeMinutes",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "1 minute to mount",
+        "mustBeSupplied": "time passing (GM)",
+        "smallestImplementation": "display the time; outside combat the GM tracks it",
+        "sourceAmbiguity": null,
+        "acceptance": "time shown on the mount action"
+      },
       "owner": "I-D-B",
       "reason": "Mounting time (construction / installation)."
     },
@@ -804,6 +1210,15 @@
         "Darkstick"
       ],
       "structuredSourceField": "operation.multipleHeldOneHandCountsAsOneWeapon",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "darksticks held together count as one weapon",
+        "mustBeSupplied": "how many are held (owned items)",
+        "smallestImplementation": "wielding-count rule in the 5D-I-B resolver + the 2d8 multi-stick damage (profile)",
+        "sourceAmbiguity": null,
+        "acceptance": "two held darksticks = one weapon for attack count"
+      },
       "owner": "I-D-B",
       "reason": "Wielding count rule."
     },
@@ -819,6 +1234,15 @@
         "Power Hammer"
       ],
       "structuredSourceField": "operation.powerAttackExtraDamageAppliesToObjectsAndVehicles",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SOURCE_CLARIFICATION_NEEDED",
+        "foundryKnows": "Power Attack extra damage applies to objects / vehicles with a power hammer",
+        "mustBeSupplied": "target is an object / vehicle (target type)",
+        "smallestImplementation": "allow the Power Attack damage term when the target type is object / vehicle",
+        "sourceAmbiguity": "general Power Attack rules for objects vs this exception must be reconciled with the source before coding",
+        "acceptance": "reconciled rule + test"
+      },
       "owner": "I-D-B",
       "reason": "Damage to weapon-adjacent objects / vehicles (object damage semantics)."
     },
@@ -834,6 +1258,19 @@
         "espo-500-riot-gun"
       ],
       "structuredSourceField": "operation.preferredMode",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "riot gun favours autofire; autofire modifier already in modeProfiles",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none (a preference label)",
+        "sourceAmbiguity": null,
+        "acceptance": "autofire +2 equipment / single -1 already execute from modeProfiles",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/attack-shape.js (switchAction)"
+        }
+      },
       "owner": "I-D-B",
       "reason": "Preferred fire mode of a configurable weapon (configuration state)."
     },
@@ -849,6 +1286,19 @@
         "xerrol-nightstinger"
       ],
       "structuredSourceField": "operation.redirectionCrystalCompatibility",
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "prose: \"a common tactic; the crystal is a separate equipment record (p.67)\"",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none on the weapon; compatibility belongs to the redirection-crystal equipment record",
+        "sourceAmbiguity": "states no mechanic for this weapon",
+        "acceptance": "no weapon-side behaviour",
+        "proof": {
+          "status": "ASSERTED",
+          "note": "not mechanically proven; must gain a verify before any closure-ledger acceptance"
+        }
+      },
       "owner": "I-D-B",
       "reason": "Redirection crystal is a separate equipment record installed on a weapon: upgrade / installation compatibility."
     },
@@ -864,6 +1314,15 @@
         "electronet"
       ],
       "structuredSourceField": "operation.requiresGrenadeLauncher",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "electronet is fired only from a grenade launcher",
+        "mustBeSupplied": "launcher in hand",
+        "smallestImplementation": "payload-load validation (shares the payload / launcher compatibility gate)",
+        "sourceAmbiguity": "inventory-level payload consumption authority was deferred in the readiness UI work",
+        "acceptance": "electronet cannot be fired without a grenade launcher"
+      },
       "owner": "I-D-B",
       "reason": "Host-weapon requirement for a mounted weapon."
     },
@@ -880,6 +1339,19 @@
         "blaster-rifle"
       ],
       "structuredSourceField": "operation.retractableStockOptional",
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "some models have a retractable stock (price only)",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: a purchase option, not an attack rule",
+        "sourceAmbiguity": null,
+        "acceptance": "no runtime behaviour",
+        "proof": {
+          "status": "ASSERTED",
+          "note": "not mechanically proven; must gain a verify before any closure-ledger acceptance"
+        }
+      },
       "owner": "I-D-B",
       "reason": "Stock configuration / construction option."
     },
@@ -895,6 +1367,15 @@
         "grenade-launcher"
       ],
       "structuredSourceField": "operation.rifleMountable",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "grenade launcher mounts on a rifle",
+        "mustBeSupplied": "host rifle",
+        "smallestImplementation": "same mount validation as canMountOnRifle",
+        "sourceAmbiguity": null,
+        "acceptance": "same"
+      },
       "owner": "I-D-B",
       "reason": "Host-weapon compatibility for mounting."
     },
@@ -911,6 +1392,15 @@
         "Vibroknucklers"
       ],
       "structuredSourceField": "operation.sizeRule",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "worn gauntlet / knucklers are two sizes smaller than the wearer",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "effective-size input for worn items in the 5D-I-B wielding resolver; \"cannot be disarmed or dropped\" guard",
+        "sourceAmbiguity": null,
+        "acceptance": "effective size = wearer size - 2; disarm refused"
+      },
       "owner": "I-D-B",
       "reason": "Size-derived wielding."
     },
@@ -926,6 +1416,15 @@
         "darter"
       ],
       "structuredSourceField": "operation.surveillanceTaggerCompatibility",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "darter dart can carry a surveillance tagger (equipment p.67)",
+        "mustBeSupplied": "tagger item installed / loaded (inventory)",
+        "smallestImplementation": "compatibility check in the existing upgrade / payload install path; the tagger mechanic itself is a separate equipment record",
+        "sourceAmbiguity": "full tagger mechanics are not in the weapon record",
+        "acceptance": "a tagger can only be loaded into a compatible weapon"
+      },
       "owner": "I-D-B",
       "reason": "Surveillance tagger installation compatibility (upgrade authority)."
     },
@@ -941,6 +1440,15 @@
         "darter"
       ],
       "structuredSourceField": "operation.surveillanceTaggerCompatible",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "darter compatible = true",
+        "mustBeSupplied": "tagger item",
+        "smallestImplementation": "same as surveillanceTaggerCompatibility (one capability)",
+        "sourceAmbiguity": null,
+        "acceptance": "same"
+      },
       "owner": "I-D-B",
       "reason": "Surveillance tagger installation compatibility (upgrade authority)."
     },
@@ -956,6 +1464,15 @@
         "e-web-repeating-blaster"
       ],
       "structuredSourceField": "operation.tripodEffectiveSize",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "E-Web effective size Large on a tripod (one smaller for wielding)",
+        "mustBeSupplied": "tripod mounted (state)",
+        "smallestImplementation": "tripod state input to the wielding resolver",
+        "sourceAmbiguity": null,
+        "acceptance": "one size smaller only while mounted"
+      },
       "owner": "I-D-B",
       "reason": "Tripod effective size (size-derived wielding)."
     },
@@ -973,6 +1490,15 @@
         "tactical-tractor-beam"
       ],
       "structuredSourceField": "operation.tripodTreatsAsOneSizeSmallerForWielding",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "tripod-mounted weapons wield one size smaller",
+        "mustBeSupplied": "tripod mounted",
+        "smallestImplementation": "same tripod capability as tripodEffectiveSize (one capability, four weapons)",
+        "sourceAmbiguity": null,
+        "acceptance": "same"
+      },
       "owner": "I-D-B",
       "reason": "Tripod wielding size."
     },
@@ -988,6 +1514,15 @@
         "sniper-blaster-rifle"
       ],
       "structuredSourceField": "operation.upgradeRestrictions",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "sniper rifle cannot take the rapid recycler",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "read the canonical restriction in UpgradeSlotEngine / UpgradeService install validation (installedUpgrades already tracked)",
+        "sourceAmbiguity": "spelled \"rapid-recycler\" in the weapon record vs \"rapid recycler\" in the text; match by upgrade key",
+        "acceptance": "installing the rapid recycler on the sniper rifle is refused before any cost"
+      },
       "owner": "I-D-B",
       "reason": "Weapon-specific upgrade installation restrictions (UpgradeSlotEngine / UpgradeService)."
     },
@@ -1003,6 +1538,15 @@
         "electrostaff"
       ],
       "structuredSourceField": "operation.weaponDR",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "MISSING_SUBSYSTEM",
+        "foundryKnows": "electrostaff DR 20 (canonicalStats.objectDurability.damageReduction)",
+        "mustBeSupplied": "that the weapon OBJECT is being damaged (GM / sunder action)",
+        "smallestImplementation": "a weapon-object damage event: apply DR to damage dealt TO the weapon. None exists; do not reuse target damage",
+        "sourceAmbiguity": null,
+        "acceptance": "damage to the weapon object is reduced by DR 20; damage dealt BY the weapon unaffected"
+      },
       "owner": "I-D-B",
       "reason": "Weapon-object DR / durability (Electrostaff, Shockstaff)."
     },
@@ -1019,6 +1563,15 @@
         "electrostaff"
       ],
       "structuredSourceField": "operation.weaponDRAppliesAgainstLightsabers",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "DR is not ignored by lightsabers (phrik)",
+        "mustBeSupplied": "attacker is a lightsaber",
+        "smallestImplementation": "flag read by the same weapon-object damage event (and by the existing lightsaber DR-ignore rule)",
+        "sourceAmbiguity": null,
+        "acceptance": "lightsaber damage to a shockstaff / electrostaff is reduced by its DR"
+      },
       "owner": "I-D-B",
       "reason": "Weapon-object DR versus lightsabers."
     },
@@ -1034,6 +1587,15 @@
         "Shockstaff"
       ],
       "structuredSourceField": "operation.weaponDRValue",
+      "matrix": {
+        "bucket": "GM_ADJUDICATED",
+        "support": "SOURCE_CLARIFICATION_NEEDED",
+        "foundryKnows": "shockstaff DR value is \"not_stated_in_KOTOR_entry\"",
+        "mustBeSupplied": "a source-stated value",
+        "smallestImplementation": "none: the DR value is unknown",
+        "sourceAmbiguity": "KOTOR entry gives no DR number; do not invent one",
+        "acceptance": "value supplied by a source or the GM per table"
+      },
       "owner": "I-D-B",
       "reason": "Weapon-object DR value."
     },
@@ -1049,6 +1611,15 @@
         "wrist-blaster"
       ],
       "structuredSourceField": "operation.wornAs",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "wrist blaster worn as bracelet",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "worn-item classification (shares forearmMounted / wornOnWrist)",
+        "sourceAmbiguity": null,
+        "acceptance": "classification only"
+      },
       "owner": "I-D-B",
       "reason": "Worn-item classification."
     },
@@ -1064,6 +1635,15 @@
         "concealed-dart-launcher"
       ],
       "structuredSourceField": "operation.wornOnWrist",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "dart launcher worn on the wrist",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "worn-item classification (shares forearmMounted / wornAs)",
+        "sourceAmbiguity": null,
+        "acceptance": "classification only"
+      },
       "owner": "I-D-B",
       "reason": "Worn-item classification."
     },
@@ -1079,6 +1659,15 @@
         "verpine-shattergun"
       ],
       "structuredSourceField": "triggeredEffects | special-mechanic census",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "MISSING_SUBSYSTEM",
+        "foundryKnows": "weapon is disabled if it takes damage, until repaired (Mechanics)",
+        "mustBeSupplied": "that the weapon was damaged (GM)",
+        "smallestImplementation": "a \"disabled until repaired\" item state + Mechanics repair; needs the same weapon-object damage event as weaponDR",
+        "sourceAmbiguity": "repair DC is not stated in the record",
+        "acceptance": "a disabled weapon cannot attack; repair clears it"
+      },
       "owner": "I-D-B",
       "reason": "Disabled when the WEAPON OBJECT takes damage; needs a legitimate weapon-object damage event."
     },
@@ -1094,6 +1683,15 @@
         "targeting-laser"
       ],
       "structuredSourceField": "operation.allyAttackBonus",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "+2 to allies who know the frequency, vs the designated target, with missile / grenade launchers or vehicle weapons",
+        "mustBeSupplied": "which allies know the frequency; which target is designated",
+        "smallestImplementation": "a designation record on the target (existing effect store) read by the attack-modifier path",
+        "sourceAmbiguity": null,
+        "acceptance": "+2 only for eligible allies vs the designated target with eligible weapons"
+      },
       "owner": "I-D-C",
       "reason": "Targeting Laser: ally attack bonus from a cross-actor designation."
     },
@@ -1109,6 +1707,15 @@
         "targeting-laser"
       ],
       "structuredSourceField": "operation.allyEligibleWeapons",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "missile launcher, grenade launcher, vehicle weapon",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "weapon-group match by canonical selector (never name) in the same designation consumer",
+        "sourceAmbiguity": null,
+        "acceptance": "other weapons get no bonus"
+      },
       "owner": "I-D-C",
       "reason": "Targeting Laser: which ally weapons benefit from the designation."
     },
@@ -1125,6 +1732,15 @@
         "heavy-variable-blaster"
       ],
       "structuredSourceField": "operation.ascensionMode",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "swift mode switch; lift / zipline 12 squares per round; ~720 kg; needs a lower destination",
+        "mustBeSupplied": "the movement is a GM-adjudicated traversal (destination, anchor)",
+        "smallestImplementation": "mode switch via configuration (already supported) + display of the traversal rule; no movement automation",
+        "sourceAmbiguity": "configurationStates is empty for this weapon, so the mode switch has no carrier yet",
+        "acceptance": "Swift mode switch works; traversal rule shown; GM adjudicates the route"
+      },
       "owner": "I-D-C",
       "reason": "Ascension Gun lift / zipline movement action (special activation)."
     },
@@ -1140,6 +1756,15 @@
         "sith-sword"
       ],
       "structuredSourceField": "operation.darkSideEmpowerment",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "swift, 1 Force Point, Dark Side Score +1, bonus = Dark Side Score on the next attack, expires after the attack or end of encounter, requires proficiency",
+        "mustBeSupplied": "wielder chooses to activate",
+        "smallestImplementation": "preflight (proficiency, FP available) then spend Swift + FP and +1 DSP through their authorities and record a pending next-attack damage bonus that expires",
+        "sourceAmbiguity": "whether the DSP bonus uses the score before or after the +1 (record says \"equal to Dark Side Score\")",
+        "acceptance": "refused with nothing spent when not proficient / no FP; one activation = one swift, one FP, +1 DSP, one bonus; chat re-apply cannot repeat it"
+      },
       "owner": "I-D-C",
       "reason": "Sith Sword Force Point empowerment + Dark Side Score consequence (special activation / resource)."
     },
@@ -1155,6 +1780,15 @@
         "remote-grenade"
       ],
       "structuredSourceField": "operation.remoteDetonationSafetyRule",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "cannot detonate within 100 m of the transmitter",
+        "mustBeSupplied": "the distance (GM / measured)",
+        "smallestImplementation": "preflight on the remote-detonate action: ask / accept the distance, refuse under 100 m before any action is spent",
+        "sourceAmbiguity": null,
+        "acceptance": "detonation refused at <100 m with nothing spent; allowed otherwise"
+      },
       "owner": "I-D-C",
       "reason": "Remote Grenade 100-meter safety restriction (remote operation preflight)."
     },
@@ -1170,6 +1804,15 @@
         "targeting-laser"
       ],
       "structuredSourceField": "operation.repeatAttackEachRoundToMaintainDesignation",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "designation lasts only while the attack is repeated each round",
+        "mustBeSupplied": "whether the wielder repeated it (combat state)",
+        "smallestImplementation": "designation lifecycle on the existing round clock (lapses if not renewed)",
+        "sourceAmbiguity": null,
+        "acceptance": "designation lapses after a round without the attack"
+      },
       "owner": "I-D-C",
       "reason": "Targeting Laser: designation upkeep."
     },
@@ -1185,6 +1828,15 @@
         "sith-sword"
       ],
       "structuredSourceField": "triggeredEffects | special-mechanic census",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "same as darkSideEmpowerment",
+        "mustBeSupplied": "same",
+        "smallestImplementation": "same capability (one mechanic, two rows)",
+        "sourceAmbiguity": null,
+        "acceptance": "same"
+      },
       "owner": "I-D-C",
       "reason": "Force Point empowerment + Dark Side Score consequence."
     },
@@ -1200,6 +1852,15 @@
         "Fira"
       ],
       "structuredSourceField": "operation.grievousWound",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SOURCE_CLARIFICATION_NEEDED",
+        "foundryKnows": "hit equals or exceeds BOTH Reflex and Fortitude vs a living creature => half the attack damage again \"on the following round\"",
+        "mustBeSupplied": "target is a living creature (GM / type)",
+        "smallestImplementation": "delayed damage through RecurringDamageEngine with a formula derived from the attack's damage (the Tehk'la bleeding precedent)",
+        "sourceAmbiguity": "\"on the following round\" is not the same wording as \"start of its next turn\" used for the Tehk'la Blade; the exact timing needs a source ruling",
+        "acceptance": "applies once; half damage; living targets only; timing per the ruling"
+      },
       "owner": "I-D-D",
       "reason": "Grievous wound semantics (unresolved damage semantics)."
     },
@@ -1216,6 +1877,19 @@
         "massassi-lanvarok"
       ],
       "structuredSourceField": "operation.alternateProficiency",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "species treat the weapon as advanced melee",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: proficiency.speciesOverrides is consumed by the proficiency resolver",
+        "sourceAmbiguity": null,
+        "acceptance": "Gamorrean / Massassi proficiency route covered by weapon-runtime-proficiency tests",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/proficiency-resolver.js (speciesOverrides)"
+        }
+      },
       "owner": "I-D-E",
       "reason": "Proficiency echo: confirm it duplicates selectors.speciesOverrides / abilityOverrides."
     },
@@ -1231,6 +1905,19 @@
         "wookiee-ryyk-blade"
       ],
       "structuredSourceField": "operation.wookieeAdvancedMeleeProficiencyCounts",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "Wookiee advanced-melee proficiency counts for the Ryyk Blade",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none (speciesOverrides)",
+        "sourceAmbiguity": null,
+        "acceptance": "proven by the I-D-A1 Ryyk test as well",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/proficiency-resolver.js (speciesOverrides)"
+        }
+      },
       "owner": "I-D-E",
       "reason": "Species proficiency echo: confirm duplicate."
     },
@@ -1246,6 +1933,19 @@
         "bowcaster"
       ],
       "structuredSourceField": "operation.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "Wookiee with Weapon Proficiency (rifles) is proficient with the bowcaster",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none (speciesOverrides)",
+        "sourceAmbiguity": null,
+        "acceptance": "covered by the proficiency resolver",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/proficiency-resolver.js (speciesOverrides)"
+        }
+      },
       "owner": "I-D-E",
       "reason": "Species / feat proficiency echo: confirm duplicate."
     },
@@ -1259,8 +1959,17 @@
       "rawOccurrences": 1,
       "representativeWeapons": [],
       "structuredSourceField": "abilityInteractions[].relation = FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "the talent EXISTS in the canonical talent corpus (Jedi Academy Training Manual | Zeison Sha Warrior | Discblade Arc) with benefit text; actor records it",
+        "mustBeSupplied": "three target selections (player)",
+        "smallestImplementation": "map the relation to the talent's canonical identity and expose a full-round three-target area-attack mode (one roll, point blank) in the attack shape",
+        "sourceAmbiguity": null,
+        "acceptance": "mode offered only with the talent; one roll applied to three designated targets"
+      },
       "owner": "I-D-E",
-      "reason": "Discblade Arc: talent-granted mode; the talent has no canonical identity."
+      "reason": "Discblade Arc: a talent-granted full-round mode. The talent EXISTS in the canonical talent corpus (Jedi Academy Training Manual | Zeison Sha Warrior | Discblade Arc); the relation only names it by display string, so the missing piece is the relation -> canonical talent identity link and a structured mode, not a missing talent."
     },
     {
       "kind": "relation",
@@ -1272,8 +1981,17 @@
       "rawOccurrences": 1,
       "representativeWeapons": [],
       "structuredSourceField": "abilityInteractions[].relation = TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "Siang Lance Mastery relation; proficiency re-route already consumed through abilityOverrides",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "the +1 attack grant keyed by the talent's canonical identity",
+        "sourceAmbiguity": "confirm the talent identity in the corpus before wiring",
+        "acceptance": "+1 only with the talent and the Siang Lance"
+      },
       "owner": "I-D-E",
-      "reason": "Siang Lance Mastery: the +1 attack grant needs the talent identity (the proficiency re-route is already consumed through abilityOverrides)."
+      "reason": "Siang Lance Mastery: the +1 attack grant needs the canonical talent identity to be confirmed in the corpus and linked (the proficiency re-route is already consumed through abilityOverrides)."
     },
     {
       "kind": "relation",
@@ -1285,8 +2003,17 @@
       "rawOccurrences": 1,
       "representativeWeapons": [],
       "structuredSourceField": "abilityInteractions[].relation = TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "Distant Discblade Throw exists in the talent corpus; discblade uses pistol range with it",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "range-group override in the canonical range resolver keyed by the talent identity",
+        "sourceAmbiguity": null,
+        "acceptance": "pistol range bands only with the talent"
+      },
       "owner": "I-D-E",
-      "reason": "Distant Discblade Throw: talent identity required."
+      "reason": "Distant Discblade Throw: the talent exists in the canonical talent corpus; needs the relation -> canonical identity link and a range-group override."
     },
     {
       "kind": "relation",
@@ -1298,8 +2025,17 @@
       "rawOccurrences": 1,
       "representativeWeapons": [],
       "structuredSourceField": "abilityInteractions[].relation = USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "Recall Discblade exists in the corpus; DC 15 Use the Force, free action after a ranged discblade attack",
+        "mustBeSupplied": "the player chooses to recall; the Use the Force roll",
+        "smallestImplementation": "offer the check after the attack through the skill workflow; on success mark the weapon back in hand (existing weapon recovery)",
+        "sourceAmbiguity": "return is not an inherent weapon quality; only with the talent",
+        "acceptance": "offered only with the talent after a ranged discblade attack; success returns it as a free action"
+      },
       "owner": "I-D-E",
-      "reason": "Recall Discblade: talent identity required; discblade return is not an inherent weapon quality."
+      "reason": "Recall Discblade: the talent exists in the canonical talent corpus (DC 15 Use the Force, free action); needs the relation -> canonical identity link. Discblade return is not an inherent weapon quality."
     },
     {
       "kind": "operation-key",
@@ -1313,6 +2049,15 @@
         "mortar-launcher"
       ],
       "structuredSourceField": "operation.canSingleLoadShell",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "SOURCE_CLARIFICATION_NEEDED",
+        "foundryKnows": "mortar launcher: magazine holds five shells and AUTOMATICALLY feeds each shot",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none until reconciled",
+        "sourceAmbiguity": "canSingleLoadShell = true conflicts with the automatic-feed magazine text; the key may be a DATA_DEFECT",
+        "acceptance": "source ruling; then a data correction if confirmed"
+      },
       "owner": "I-D-F",
       "reason": "Single-shell loading special case."
     },
@@ -1328,6 +2073,19 @@
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.capacityGrenades",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "micro grenade launcher holds four",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: ammo.capacityShots = 4 is consumed by the resource resolver",
+        "sourceAmbiguity": null,
+        "acceptance": "resource resolver reports capacity 4",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/resource-resolver.js (capacityShots)"
+        }
+      },
       "owner": "I-D-F",
       "reason": "Grenade capacity of a launcher: needs inventory-level payload authority (deliberately deferred in the readiness UI work)."
     },
@@ -1343,6 +2101,19 @@
         "wrist-blaster"
       ],
       "structuredSourceField": "operation.oneShotCapacity",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "wrist blaster has one shot",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: ammo.capacityShots = 1",
+        "sourceAmbiguity": null,
+        "acceptance": "resource resolver capacity 1",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/resource-resolver.js (capacityShots)"
+        }
+      },
       "owner": "I-D-F",
       "reason": "One-shot capacity special case."
     },
@@ -1358,6 +2129,15 @@
         "lightsaber-chassis-archaic-lightsaber"
       ],
       "structuredSourceField": "operation.powerCordDisconnectRule",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SOURCE_CLARIFICATION_NEEDED",
+        "foundryKnows": "archaic lightsaber uses an external cell connected by a cord",
+        "mustBeSupplied": "whether the cord is disconnected / cut (GM)",
+        "smallestImplementation": "none stated: the record carries a boolean but the published text states no disconnect rule",
+        "sourceAmbiguity": "no disconnect effect is stated in the canonical text; do not invent one",
+        "acceptance": "source-backed rule before any behaviour"
+      },
       "owner": "I-D-F",
       "reason": "Power-source disconnect rule."
     },
@@ -1374,6 +2154,19 @@
         "variable-blaster"
       ],
       "structuredSourceField": "operation.powerLevelSwitchAction",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "variable blaster power switch is a swift action; 5x / 10x ammo",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: modeProfiles[].switchAction and resourceConsumption.multiplier are consumed (attack-shape / resource-resolver)",
+        "sourceAmbiguity": null,
+        "acceptance": "mode switch costs a Swift; higher modes consume more shots",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/attack-shape.js (switchAction)"
+        }
+      },
       "owner": "I-D-F",
       "reason": "Power-level switch action cost."
     },
@@ -1392,6 +2185,15 @@
         "lightsaber-chassis-modern-lightfoil"
       ],
       "structuredSourceField": "operation.requiresEnergyCell",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "weapon needs an energy cell to operate (no per-attack consumption is stated)",
+        "mustBeSupplied": "that a cell is installed (player / GM)",
+        "smallestImplementation": "display the power requirement; optionally a powered / unpowered flag via the existing owned-item state",
+        "sourceAmbiguity": "no charge accounting is published for energy-cell melee weapons",
+        "acceptance": "requirement shown; no fabricated charge counter"
+      },
       "owner": "I-D-F",
       "reason": "Power-source requirement."
     },
@@ -1409,6 +2211,15 @@
         "gungan-electropole"
       ],
       "structuredSourceField": "operation.requiresEnergyCells",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "needs two energy cells",
+        "mustBeSupplied": "cells installed",
+        "smallestImplementation": "same capability as requiresEnergyCell (count shown)",
+        "sourceAmbiguity": null,
+        "acceptance": "same"
+      },
       "owner": "I-D-F",
       "reason": "Power-source requirement."
     },
@@ -1424,6 +2235,15 @@
         "Blastsword"
       ],
       "structuredSourceField": "operation.requiresPowerPack",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "needs a power pack to operate",
+        "mustBeSupplied": "pack installed",
+        "smallestImplementation": "same display capability",
+        "sourceAmbiguity": "no shot count is stated for this melee weapon",
+        "acceptance": "same"
+      },
       "owner": "I-D-F",
       "reason": "Power-source requirement."
     },
@@ -1439,6 +2259,15 @@
         "battering-ram"
       ],
       "structuredSourceField": "operation.requiresPowerPacks",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "GM_FACING_SUPPORT_NEEDED",
+        "foundryKnows": "battering ram needs four power packs",
+        "mustBeSupplied": "packs installed",
+        "smallestImplementation": "same display capability (count 4)",
+        "sourceAmbiguity": "ammo.capacityShots is null: the source states no shot count",
+        "acceptance": "requirement shown"
+      },
       "owner": "I-D-F",
       "reason": "Power-source requirement."
     },
@@ -1454,6 +2283,15 @@
         "e-web-missile-launcher"
       ],
       "structuredSourceField": "operation.secondCrewReloadAction",
+      "matrix": {
+        "bucket": "CONTEXTUAL",
+        "support": "SMALL_CONSUMER_NEEDED",
+        "foundryKnows": "E-Web missile launcher is reloaded as a Move action by a second crew member (ammo.reloadAction is text)",
+        "mustBeSupplied": "whether a second crew member reloads (GM / crew)",
+        "smallestImplementation": "cost the reload in the crew member's action economy through the existing reload path; structured action id instead of free text",
+        "sourceAmbiguity": null,
+        "acceptance": "reload Move is spent by the crew member, not the gunner"
+      },
       "owner": "I-D-F",
       "reason": "Crew reload action."
     },
@@ -1469,6 +2307,19 @@
         "wrist-rocket-launcher"
       ],
       "structuredSourceField": "operation.singleShot",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "wrist rocket launcher is single-shot, reload after every shot",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: firingConstraints.reloadRequiredAfterEachShot is consumed",
+        "sourceAmbiguity": null,
+        "acceptance": "second attack refused until reloaded (fire-state tests)",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/fire-state.js (reloadRequiredAfterEachShot)"
+        }
+      },
       "owner": "I-D-F",
       "reason": "Single-shot reload special case."
     },
@@ -1484,6 +2335,19 @@
         "sonic-disruptor"
       ],
       "structuredSourceField": "operation.specialRateOfFire",
+      "matrix": {
+        "bucket": "AUTO",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "foundryKnows": "sonic disruptor fires once every other round, no multi-shot abilities",
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: firingConstraints.firesOnAlternatingRounds / cooldownRounds / prohibitsMultiShotAbilities are consumed",
+        "sourceAmbiguity": null,
+        "acceptance": "fire-state cooldown tests",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/fire-state.js (firesOnAlternatingRounds)"
+        }
+      },
       "owner": "I-D-F",
       "reason": "Special rate-of-fire / reload interaction."
     }
