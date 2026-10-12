@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core reviewed; Rebellion Era species feats reconciled (identity only).  
+**Status:** Core reviewed; Rebellion Era species feats reconciled (identity only); KOTOR species reviewed against primary rules and live species sidecars.  
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -134,9 +134,9 @@ There is no evidence from this section for rewriting Core baseline species recor
 **Completed**
 1. Saga Edition Core Rulebook — 17 baseline species and targeted sidecar discrepancies
 2. Rebellion Era Campaign Guide — 48 sourcebook species-feat identities reconciled
+3. Knights of the Old Republic Campaign Guide — 12/12 species baseline and sidecar audit
 
 **Pending sourcebooks**
-3. Knights of the Old Republic Campaign Guide
 4. The Force Unleashed Campaign Guide
 5. Clone Wars Campaign Guide
 6. Scum and Villainy
@@ -151,3 +151,83 @@ For every subsequent book: inventory species entries, variants, feats that modif
 ## Next correction strategy
 
 After each book, make a **small, separately approved corrective commit** for source-proven changes only, with exact before/after fields, regression tests and ID stability. Do not batch speculative supplements or start a new species SSOT. This branch remains a **read-only audit** until those changes are explicitly authorized.
+
+
+---
+
+## Book 3 — Knights of the Old Republic Campaign Guide
+
+**Published source:** Chapter 1, Species, pp. 10–20 (table p. 10; individual species entries pp. 11–20).
+
+**Corpus:** 12 species/lineages: Arkanian, Arkanian Offshoot, Cathar, Draethos, Feeorin, Khil, Kissai, Massassi, Miraluka, Rakata, Selkath, Snivvian.
+
+**Read-only findings:** `12` species checked; `9` flagged `CHANGE_REQUIRED`, `3` flagged `REVIEW_REQUIRED`, `0` overall `NO_CHANGE`. Exactly `10` individual correction candidates and `13` review entries were logged. Importantly, **all 12 have `NO_CHANGE` for basic printed ability score modifiers, size, and base speed**, while many have other fields needing correction.
+
+**Authority verification:** KOTOR printed PDF species chapter visually mapped from PDF pages 11–21 to printed pp. 10–20, with rendered full-page spot checks for Cathar p.12, Feeorin p.14 and Rakata p.18, and checked against the uploaded DJVU text transcription. No mechanical changes made; no Foundry runtime testing performed. Any supplementary sidecar trait outside KOTOR's native trait list remains explicitly tagged for further-book source proof before deletion.
+
+### Species-by-species dispositions
+
+| Species | Printed page | Base stats / size / speed | Species overall status | Findings |
+|---|---|---|---|---:|
+| Arkanian | p. 11-12 | `NO_CHANGE` | `REVIEW_REQUIRED` | 2 |
+| Arkanian Offshoot | p. 12 | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Cathar | p. 12 | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Draethos | p. 13 | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Feeorin | p. 14 | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Khil | p. 15 | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Kissai | p. 16 | `NO_CHANGE` | `REVIEW_REQUIRED` | 1 |
+| Massassi | p. 16 | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Miraluka | p. 17 | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Rakata | p. 18 | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Selkath | p. 19 | `NO_CHANGE` | `REVIEW_REQUIRED` | 1 |
+| Snivvian | p. 20 | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+
+### Source-backed corrections and review queue
+
+Each row has an **exact target selector** and a proposed surgical action. `CHANGE_REQUIRED` means discrepancy against the printed KOTOR rule or an unmistakably malformed pack value; `REVIEW_REQUIRED` means the effect is not justified by this book and must be source/variant checked against other publications before removal. No row reports an applied fix.
+
+| Species | ID | Disposition | Target field / consumer | Current data | KOTOR source authority | Suggested action |
+|---|---|---|---|---|---|---|
+| Arkanian | `KOTOR-01-01` | `REVIEW_REQUIRED` | `system.skillBonuses` | +2 Mechanics, +2 Use Computer | Flash of Genius is a once/encounter +5 circumstance choice, not unconditional +2 to these skills | Check other sourcebook authority and actor bonus consumption |
+| Arkanian | `KOTOR-01-02` | `REVIEW_REQUIRED` | `Arkanian.sidecar.Genetic Memory` | +2 Knowledge (Life Sciences) always | Printed innate traits: Darkvision, Intellectual Reputation, Flash of Genius | Seek source provenance before retaining passive |
+| Arkanian Offshoot | `KOTOR-02-01` | `CHANGE_REQUIRED` | `system.languages` | Basic; 'Arkanian (albeit with a distinct accent' | Automatic: Arkanian and Basic | Repair malformed Arkanian token without replacing original two languages |
+| Arkanian Offshoot | `KOTOR-02-02` | `REVIEW_REQUIRED` | `system.skillBonuses / Resilient Physiology` | +2 Endurance and +2 Fortitude | Offshoot innate traits are Conditional Bonus Feat and Determination | Seek separate publication, otherwise remove extraneous passives |
+| Cathar | `KOTOR-03-01` | `CHANGE_REQUIRED` | `system.naturalWeapons.Claws.damage and migrated Claws.rules.damage` | 1d4 slashing | 1d6 slashing Cathar natural weapons | Use 1d6 in both pack and sidecar; verify actor claw creation |
+| Cathar | `KOTOR-03-02` | `REVIEW_REQUIRED` | `system.skillBonuses / Feline Agility` | +2 Perception, +2 Stealth, +2 Reflex | Cathar Instincts grants Climb and Stealth as CLASS SKILLS, not numeric bonus | Identify later variant/source before any modifier applies |
+| Draethos | `KOTOR-04-01` | `CHANGE_REQUIRED` | `system.languages` | Draethos and Basic for everyone | Draethos always; only exiled Draethos gain Basic | Make Basic conditional on exiled background/profile |
+| Draethos | `KOTOR-04-02` | `REVIEW_REQUIRED` | `Resilient Hide sidecar` | +2 Fortitude | Species grants natural armor +1 Reflex, Natural Telepath, advanced-melee proficiency, low-light | Check any expansion before retaining extra Fortitude |
+| Feeorin | `KOTOR-05-01` | `CHANGE_REQUIRED` | `canonicalTraits.Stronger by Age.description` | +1/+2 bonus to Strength and Constitution SCORES | Middle/old age +1/+2 species bonus to Strength OR Constitution CHECKS | Correct to check modifier; preserve source age exception |
+| Feeorin | `KOTOR-05-02` | `CHANGE_REQUIRED` | `system.languages` | Basic only | Automatic: Feeorin and Basic | Add Feeorin once |
+| Feeorin | `KOTOR-05-03` | `REVIEW_REQUIRED` | `system.skillBonuses / Intimidating Presence` | +2 Endurance, +5 Persuasion (Intimidate) | Printed innate feats do not grant either unconditional skill bonus | Confirm external source or retire passive |
+| Khil | `KOTOR-06-01` | `CHANGE_REQUIRED` | `Khil.sidecar.Force Sensitivity.rules` | featGrant Force Sensitivity always | Khil traits are Dependable Worker, Cooperative Spirit, Hullepi, without this feat grant | Remove unconditional grant after cross-book variant review |
+| Khil | `KOTOR-06-02` | `REVIEW_REQUIRED` | `canonicalTraits.Self-Sustaining runtime` | environmental exemption recorded as text | Hullepi prevents starvation except sterile environments | Verify structured starvation/environment handler |
+| Kissai | `KOTOR-07-01` | `REVIEW_REQUIRED` | `Kissai.sidecar.Dark Ritualist.rules` | +2 Use the Force always (source sidecar describes dark-side powers) | KOTOR grants Inspired, Warrior's Awareness, lanvarok familiarity; no +2 Force bonus | Find other authority and add conditional gate if valid |
+| Massassi | `KOTOR-08-01` | `CHANGE_REQUIRED` | `system.languages` | Sith, 'Sith as well' | Automatic: Sith only | Remove duplicate malformed language value |
+| Massassi | `KOTOR-08-02` | `REVIEW_REQUIRED` | `Massassi.sidecar.Brutal Strength / Dark Side Affinity` | +2 melee damage and +2 Use the Force always | KOTOR innate grants conditional Survival feat, Duty Bound, Primitive, Warrior's Awareness, lanvarok familiarity | Require explicit alternate printed grant to retain these modifiers |
+| Miraluka | `KOTOR-09-01` | `CHANGE_REQUIRED` | `Miraluka.sidecar.Force Sensitivity.rules` | featGrant Force Sensitivity always | KOTOR gives Force Sight and conditional Force Training IF Use the Force is trained | Remove automatic Force Sensitivity grant; preserve conditional Force Training |
+| Miraluka | `KOTOR-09-02` | `REVIEW_REQUIRED` | `system.skillBonuses` | +2 Use the Force | Force Sight has non-generic perception/Sense Surroundings exceptions, not blanket bonus | Check additional source/variant |
+| Rakata | `KOTOR-10-01` | `CHANGE_REQUIRED` | `Rakata.sidecar.Dark Side Mastery.rules` | automatic +2 Use the Force; sidecar claims auto-trained | Force Blind forbids taking Force Sensitivity and printed Ancient Knowledge lists only technological skill exceptions | Source-check then remove any automatic +2/trained Force rule |
+| Rakata | `KOTOR-10-02` | `REVIEW_REQUIRED` | `system.canonicalTraits.Weapon Familiarity / system.skillBonuses` | Rakata weapons lose Exotic; +2 Use the Force | Neither listed in the KOTOR p18 innate trait list | Check separate published authority before accepting |
+| Selkath | `KOTOR-11-01` | `REVIEW_REQUIRED` | `system.skillBonuses / Aquatic Adaptation` | +2 Endurance, +2 Swim, +2 Fortitude | Expert Swimmer grants reroll and Take 10; Breathe Underwater is innate; no static +2 bonuses printed | Verify later supplement; keep valid swim 4 / Able Healer |
+| Snivvian | `KOTOR-12-01` | `CHANGE_REQUIRED` | `system.skillBonuses` | +2 Negotiation (not a SWSE skill) | Observant substitutes Perception for Deception or Persuasion once/encounter, not +2 Negotiation | Remove unsupported field; do not turn it into +2 Persuasion |
+| Snivvian | `KOTOR-12-02` | `REVIEW_REQUIRED` | `Snivvian.sidecar.Craven / Opportunistic` | -2 Will and +2 Deception always | KOTOR innate traits only Observant and Cold Resistance | Find supplemental/variant source before allowing modifiers |
+
+### High-impact conclusions
+
+- **Cathar claws:** The book grants **1d6 slashing** natural attacks (p. 12). `packs/species.db` and the migrated sidecar both supply **1d4**. Repair both in one surgical change and verify the resulting actor weapon once-only.
+- **Feeorin age trait:** `Stronger by Age` modifies **Strength or Constitution checks**, not the underlying Strength or Constitution scores (p. 14). This is a real mechanical distinction and should not trigger unintended derived-stat changes.
+- **Miraluka:** Force Sight plus **conditional Force Training** for characters trained in Use the Force does not itself grant **Force Sensitivity** (p. 17). A migrated sidecar has an unconditional feat-grant rule that could bypass the prerequisite system. Source-check later variants before correction, and preserve the actual conditional Force Training.
+- **Khil:** A migrated sidecar grants **Force Sensitivity** to every Khil, absent from the published traits (p. 15). This is a high-priority grant-legality check.
+- **Rakata:** Printed **Force Blind** forbids taking Force Sensitivity (p. 18), whereas a sidecar advertises automatic trained Use the Force and an unconditional +2 species modifier. These authorities must not be conflated.
+- **Language data:** Arkanian Offshoot has a truncated language token; Massassi has a duplicate invented Sith-language token; Feeorin lacks its named native language; Draethos has Basic unconditionally, while the printed text grants Basic to *exiled* Draethos.
+- **Snivvian:** `+2 Negotiation` is not a valid standalone SWSE skill grant; it does not replace Observant's once/encounter Perception-for-Deception/Persuasion substitution.
+- **Twelve-way basic statistics:** All printed species-table ability adjustments and size/speed checks match the existing pack; **do not rewrite the base species chassis.**
+- **Feat separation:** KOTOR's canonical feat identity manifest currently contains **21 GENERAL feats and zero SPECIES_FEAT** records. This is a corpus classification check; it does not imply feats from other books become species starting grants.
+
+### Status and continuation guardrails
+
+Every KOTOR species is recorded, including **`NO_CHANGE` on the verified base-stat subset for all 12**. None of the KOTOR species is labelled overall `NO_CHANGE`, because each has at least one separate trait/sidecar discrepancy or unresolved rule-provenance question. This is not a claim that all 12 have an incorrect published base stat.
+
+Do not overwrite any earlier Core or Rebellion findings; they remain independent book-specific records. Do not turn unverified sidecar traits into automatic species grants. Where later books explicitly support a variant, create a separate source-linked rule rather than silently replacing the KOTOR default. Apply no production patches on this branch until the relevant book/variant source is certified and a narrowly scoped correction is authorized.
+
+**Next book:** *The Force Unleashed Campaign Guide*. Its new species and any reprinted/expanded species mechanics should be appended with the same one-entry-per-species `NO_CHANGE` / `CHANGE_REQUIRED` / `REVIEW_REQUIRED` discipline.
