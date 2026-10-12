@@ -58,6 +58,14 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Source PDF rendered and visually checked for main species table, Kaminoan resistant, Republic Clone source (PDF p92), Chagrian source (PDF p160); user-supplied searchable DJVU transcription used for per-entry text and exact traits.",
       "notes": "No distinct Talz/Togruta racial traits are printed in this book's player species chapter, despite those pack records having 'Clone Wars' source labels. Their Force Unleashed audit decisions are unchanged; revisit additional source provenance separately. Printed size/base speed/ability adjustments match all 11 records, with Republic Clone fixed array correctly represented by separate choice data."
+    },
+    {
+      "source": "Scum and Villainy",
+      "printedScope": "Chapter I pp.6-13 (eight) and Point Nadir Other Species pp.154-156 (four)",
+      "reviewedSpecies": 12,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "Scanned book PDF pages corresponding to printed pp.6-13 and 154-156 rendered and visually read; provided DJVU text used for quick searching only. Compared current pack with both trait sidecars.",
+      "notes": "Twelve identities present; published ability adjustments, sizes, land speeds match pack. Extra unsourced sidecar mechanics require verification. Other publications may supply expansions. No production mutations or runtime execution."
     }
   ],
   "summary": {
@@ -78,7 +86,7 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 50,
+    "totalSpeciesInRollingLedger": 62,
     "forceUnleashed": {
       "species": 10,
       "noChange": 0,
@@ -105,6 +113,19 @@
       "confirmedIssues": 7,
       "reviewIssues": 19,
       "totalIssues": 26
+    },
+    "scumAndVillainy": {
+      "species": 12,
+      "chapterOne": 8,
+      "pointNadir": 4,
+      "packPresent": 12,
+      "baseChassisNoChange": 12,
+      "changeRequired": 7,
+      "reviewRequired": 5,
+      "noChange": 0,
+      "confirmedIssues": 9,
+      "reviewIssues": 23,
+      "totalIssues": 32
     }
   },
   "entries": [
@@ -255,6 +276,259 @@
           }
         ],
         "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Balosar",
+      "foundryId": "species-balosar",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "154",
+        "part": "OTHER",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-09-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Antennapalps reroll overbroad",
+            "target": "packs/species.db: Balosar.system.canonicalTraits[heightened-awareness]",
+            "current": "Reroll any Perception check when extended",
+            "publishedRule": "Printed reroll only Perception involving SOUND, must accept second roll; free retract/extend to appear human",
+            "proposedAction": "Restrict to sound checks; preserve concealment/disguise state.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "154",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "SV-09-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Poison vs toxic atmosphere",
+            "target": "packs/species.db: Balosar.system.canonicalTraits[toxic-resistance]",
+            "current": "+5 Fortitude versus poisons and toxic atmospheres",
+            "publishedRule": "Printed Poison Resistance only states +5 Fortitude against poisons",
+            "proposedAction": "Check other source before extending bonus.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "154",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-09-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra Toxic Breath activation",
+            "target": "data/species-traits.json: Balosar.activatedAbilities[Toxic Breath]",
+            "current": "Standard action adjacent enemy -2 attack",
+            "publishedRule": "Printed Balosar species traits do not grant Toxic Breath",
+            "proposedAction": "Confirm source/variant before executing.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "154",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-09-04",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra skill bonus",
+            "target": "packs/species.db: Balosar.system.skillBonuses",
+            "current": "+2 Deception",
+            "publishedRule": "Printed Moral Ambiguity instead gives +2 Will against Deception/Persuasion checks",
+            "proposedAction": "Check source and active consumer.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "154",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
+      "name": "Barabel",
+      "foundryId": "species-barabel",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "155",
+        "part": "OTHER",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-10-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Wrong/missing natural weapons",
+            "target": "packs/species.db: Barabel.system.naturalWeapons",
+            "current": "Claws 1d4 slashing; Bite 1d6 piercing; Tail absent",
+            "publishedRule": "Printed Claws 1d6 slashing, Bite 1d6 piercing, Tail 1d6 bludgeoning, always armed",
+            "proposedAction": "Correct 3 modes once in canonical weapon generation; test attacks and item grants.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "155",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "SV-10-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Radiation resistance publication conflict",
+            "target": "packs/species.db: Barabel.system.canonicalTraits[radiation-resistance]",
+            "current": "+5 Fortitude and no persistent radiation condition",
+            "publishedRule": "Scum p155 explicitly prints +2 Fortitude against radiation without no-persistent clause",
+            "proposedAction": "Resolve cross-book source precedence before changing production; track this publication conflict.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "155",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-10-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra Stun Resistance",
+            "target": "packs/species.db: Barabel.system.canonicalTraits[stun-resistance]",
+            "current": "+5 Damage Threshold to resist stun",
+            "publishedRule": "This printed species block has no Stun Resistance trait",
+            "proposedAction": "Search other book/variant source.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "155",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-10-04",
+            "status": "CHANGE_REQUIRED",
+            "title": "Reptilian Ferocity always-on leak",
+            "target": "data/species-traits-migrated.json: Barabel.conditionalTraits[Reptilian Ferocity].rules",
+            "current": "+2 melee damage when:always, though prose says at or below half HP",
+            "publishedRule": "Not among printed base traits; sidecar's own conditional trigger also contradicts always-on rule",
+            "proposedAction": "Block automatic bonus; source-check distinct conditional before enabling.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "155",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
+      "name": "Blood Carver",
+      "foundryId": "species-blood-carver",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "6-7",
+        "part": "CH1",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-01-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Battle Rage sidecar",
+            "target": "data/species-traits-migrated.json: Blood Carver.conditionalTraits[Battle Rage].rules",
+            "current": "+2 melee damage when:always; own text says only after taking damage",
+            "publishedRule": "Printed innate traits: Conditional Bonus Feat (Acrobatics) and Deathstrike, not Battle Rage",
+            "proposedAction": "Check later source and gate after receiving damage before accepting this optional bonus.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "6-7",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-01-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Deathstrike runtime",
+            "target": "packs/species.db: Blood Carver.canonicalTraits[deathstrike]",
+            "current": "Pack prose correct; attack execution not inspected",
+            "publishedRule": "On successful melee attack vs enemy denied DEX to Reflex, add one damage die",
+            "proposedAction": "Test targeted extra damage die and eligibility; preserve text.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "6-7",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
       }
     },
     {
@@ -569,6 +843,69 @@
       }
     },
     {
+      "name": "Clawdite",
+      "foundryId": "species-clawdite",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "7",
+        "part": "CH1",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-02-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra unprinted skill fields",
+            "target": "packs/species.db: Clawdite.system.skillBonuses",
+            "current": "+2 Deception and +2 Stealth",
+            "publishedRule": "Shapeshift instead grants +10 Deception to disguise, plus full-round appearance change without penalty",
+            "proposedAction": "Verify source and runtime effect; no generic skill-grant inference.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "7",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-02-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Potential duplicated shapeshift",
+            "target": "data/species-traits.json: Clawdite.activatedAbilities[Shapeshifter]",
+            "current": "Another full-round appearance change as any Medium humanoid",
+            "publishedRule": "Printed Shapeshift uses same-size form; changing size requires Metamorph",
+            "proposedAction": "Check double ability and preserve printed size/Deception restrictions.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "7",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
       "name": "Draethos",
       "foundryId": "species-draethos",
       "kotor": {
@@ -790,6 +1127,69 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Falleen",
+      "foundryId": "species-falleen",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "8",
+        "part": "CH1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-03-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Wrong activated pheromones",
+            "target": "data/species-traits.json: Falleen.activatedAbilities[Pheromones]",
+            "current": "-2 Will Defense to all living creatures within 6 squares for encounter",
+            "publishedRule": "Printed pheromones target ONE adjacent nonhostile creature with level+CHA vs Fortitude; move -1 CT on hit, poison breathing rules, 24-hour immunity on failed attack",
+            "proposedAction": "Retire incorrect second activation or align with canonical adjacent Fortitude/condition-track workflow.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "8",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "SV-03-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra flat skill modifiers",
+            "target": "packs/species.db: Falleen.system.skillBonuses",
+            "current": "+2 Persuasion and +2 Stealth",
+            "publishedRule": "Only Hold Breath, Pheromones, and Pheromone Acclimation printed; no general skill bonus",
+            "proposedAction": "Source-check extra bonuses before retaining.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "8",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
       }
     },
     {
@@ -1028,6 +1428,69 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Gand",
+      "foundryId": "species-gand",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "9",
+        "part": "CH1",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-04-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra weapon familiarity",
+            "target": "packs/species.db: Gand.system.canonicalTraits[weapon-familiarity]",
+            "current": "Treat Gand weapons as non-exotic",
+            "publishedRule": "Printed Gand list has Darkvision, Hardy, Special Equipment, Limb Regeneration; no extra weapon familiarity",
+            "proposedAction": "Check other published equipment rules before treating as innate.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "9",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-04-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Special equipment runtime proof",
+            "target": "packs/species.db: Gand.system.canonicalTraits[special-equipment]",
+            "current": "Correct description; no actual builder/materialization test",
+            "publishedRule": "Free breathing apparatus, filters and transliterator, with suffocation/translation restriction if missing",
+            "proposedAction": "Test actual first-level grants and breathing/language rule without changing valid text.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "9",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
       }
     },
     {
@@ -1271,6 +1734,85 @@
       }
     },
     {
+      "name": "Houk",
+      "foundryId": "species-houk",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "155-156",
+        "part": "OTHER",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-11-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Powerful Arms sidecar",
+            "target": "data/species-traits-migrated.json: Houk.structuralTraits[Powerful Arms].rules",
+            "current": "+2 melee attack always",
+            "publishedRule": "Printed only +1 natural armor Reflex and Strength-for-Charisma on Persuasion/intimidation",
+            "proposedAction": "Check alternate source, avoid unconditional melee attack bonuses.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "155-156",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-11-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra Endurance bonus",
+            "target": "packs/species.db: Houk.system.skillBonuses",
+            "current": "+2 Endurance",
+            "publishedRule": "No flat Endurance bonus among printed abilities",
+            "proposedAction": "Check source and runtime.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "155-156",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-11-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Language alias",
+            "target": "packs/species.db: Houk.system.languages",
+            "current": "Basic, Houkese",
+            "publishedRule": "Printed Basic and Houk",
+            "proposedAction": "Normalize only if invalid alias confirmed.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "155-156",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
       "name": "Human",
       "foundryId": "species-human",
       "core": {
@@ -1452,6 +1994,85 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Jawa",
+      "foundryId": "species-jawa",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "10",
+        "part": "CH1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-05-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Scavenger semantics wrong",
+            "target": "data/species-traits-migrated.json: Jawa.structuralTraits[Scavenger].rules",
+            "current": "+5 Mechanics repairing/jury-rigging, when:always",
+            "publishedRule": "Printed Scavenger adds half Jawa level as ION damage on hits using ion weapon against droid or vehicle",
+            "proposedAction": "Replace incorrect skill passive with correctly target-gated ion damage rider; avoid dual application.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "10",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "SV-05-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra flat skill bonuses",
+            "target": "packs/species.db: Jawa.system.skillBonuses",
+            "current": "+2 Perception and +2 Mechanics",
+            "publishedRule": "Printed Mechanics always class skill plus must-accept reroll; no unconditional +2",
+            "proposedAction": "Check source and consumption.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "10",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-05-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Language naming",
+            "target": "packs/species.db: Jawa.system.languages",
+            "current": "Jawaese; the Jawa Trade Language",
+            "publishedRule": "Printed automatic names Jawa, Jawa Trade Language",
+            "proposedAction": "Verify language aliases and normalize only if necessary.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "10",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
       }
     },
     {
@@ -2468,6 +3089,85 @@
       }
     },
     {
+      "name": "Ryn",
+      "foundryId": "species-ryn",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "11",
+        "part": "CH1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-06-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Invalid Perform skill passive",
+            "target": "data/species-traits-migrated.json: Ryn.structuralTraits[Natural Performer].rules",
+            "current": "+5 Perform always",
+            "publishedRule": "Printed Musical Beak rerolls Deception to convey deceptive information (keep better) and permits Swift Action diversion via sounds within 10 squares; Perform is not a SWSE skill",
+            "proposedAction": "Remove unsupported Perform passive; implement/preserve specific Deception conditions.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "11",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "SV-06-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra flat skill bonuses",
+            "target": "packs/species.db: Ryn.system.skillBonuses",
+            "current": "+2 Deception, +2 Use Computer",
+            "publishedRule": "Printed traits Musical Beak, Connections and Prehensile Tail have no general +2 fields",
+            "proposedAction": "Check variant source and avoid treating reroll as flat bonus.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "11",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-06-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Optional sabacc procedure",
+            "target": "Scum and Villainy p11 boxed sidebar",
+            "current": "No innate racial record for sabacc fortune telling",
+            "publishedRule": "Ryn sabacc fortune telling allows untrained Use the Force Search Your Feelings via one minute card ritual even in Force-suppressed areas",
+            "proposedAction": "Track as separate optional procedure; do not automatically confer Force Sensitivity.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "11",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
       "name": "Selkath",
       "foundryId": "species-selkath",
       "kotor": {
@@ -2828,6 +3528,85 @@
       }
     },
     {
+      "name": "Toydarian",
+      "foundryId": "species-toydarian",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "12",
+        "part": "CH1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-07-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Force Resistance unconditional",
+            "target": "data/species-traits-migrated.json: Toydarian.structuralTraits[Force Resistance].rules",
+            "current": "+5 Will against all effects, when:always",
+            "publishedRule": "Printed +5 species Will Defense ONLY against mind-affecting Use the Force checks",
+            "proposedAction": "Scope by UTF and mind-affecting descriptor; regression vs all other Will effects.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "12",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "SV-07-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra skill/defense fields",
+            "target": "packs/species.db: Toydarian.system.skillBonuses",
+            "current": "+2 Will and +2 Deception",
+            "publishedRule": "Conditional trained Deception yields Skill Focus (Deception); Force Resistance narrow +5 Will, not blanket +2",
+            "proposedAction": "Check runtime effect and source.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "12",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-07-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Flight ceilings and hover",
+            "target": "packs/species.db: Toydarian.system.canonicalTraits[flight] / sidecar Wings",
+            "current": "Fly 6 present, but altitude cap/hover not structurally certified",
+            "publishedRule": "Printed walk 4, fly 6, can hover, maximum flight altitude 2 squares",
+            "proposedAction": "Test altitude and hover; preserve legal fly speed.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "12",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
       "name": "Trandoshan",
       "foundryId": "species-trandoshan",
       "core": {
@@ -3003,6 +3782,69 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Ubese",
+      "foundryId": "species-ubese",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "13",
+        "part": "CH1",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-08-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra Survivalist passive",
+            "target": "data/species-traits-migrated.json: Ubese.structuralTraits[Survivalist].rules",
+            "current": "+2 Endurance always (prose adds +2 Survival)",
+            "publishedRule": "Printed Survival Instinct permits must-accept Survival reroll, not flat modifier",
+            "proposedAction": "Verify distinct source; ensure no automatic extra bonus.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "13",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "SV-08-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra skill fields",
+            "target": "packs/species.db: Ubese.system.skillBonuses",
+            "current": "+2 Stealth and +2 Survival",
+            "publishedRule": "Printed traits charge Aggressive, Perception conditional feat, Survival reroll and Special Equipment",
+            "proposedAction": "Check source, and test free suit plus suffocation.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "13",
+              "section": "Chapter I: Character Options"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
       }
     },
     {
@@ -3260,6 +4102,69 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Wroonian",
+      "foundryId": "species-wroonian",
+      "scumAndVillainy": {
+        "source": "Scum and Villainy",
+        "printedPages": "156",
+        "part": "OTHER",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModifiers": "NO_CHANGE",
+          "sizeAndBaseSpeed": "NO_CHANGE",
+          "packTraitsAndBothSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE"
+          },
+          {
+            "field": "system.size and system.speed",
+            "status": "NO_CHANGE"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SV-12-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Elongated Reach attack leak",
+            "target": "data/species-traits-migrated.json: Wroonian.structuralTraits[Elongated Reach].rules",
+            "current": "+2 melee attackRoll always, despite sidecar prose +2 grapple",
+            "publishedRule": "Printed only +2 Will Defense and must-accept Persuasion reroll, not extra attack or grapple",
+            "proposedAction": "Disable unauthorized unconditional attack modifier; separate valid grappling feats if any.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "156",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "SV-12-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Trait title provenance",
+            "target": "packs/species.db: Wroonian.system.canonicalTraits[iron-will,soothing-voice]",
+            "current": "Iron Will; Soothing Voice",
+            "publishedRule": "Printed titles Free Spirit and Skills; effects match +2 Will and must-accept Persuasion reroll",
+            "proposedAction": "Keep rules; normalize display labels if desired.",
+            "source": {
+              "book": "Scum and Villainy",
+              "printedPages": "156",
+              "section": "Point Nadir: Other Species"
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Source-specific race audit; no production modifications."
       }
     },
     {
