@@ -66,6 +66,7 @@ export function buildManifest() {
     if (L.disposition.startsWith('DEFERRED_TO_') && !L.owner) problems.push(`${L.key}: deferral without an owner`);
     if (L.disposition === 'BLOCKED') {
       if (!L.subsystem || !L.owner) problems.push(`${L.key}: BLOCKED needs the named subsystem and an owner`);
+      if (!['INTEGRATION_CANDIDATE', 'MISSING_SUBSYSTEM'].includes(L.blockKind)) problems.push(`${L.key}: BLOCKED needs a blockKind`);
       if (!L.tripwires?.length) problems.push(`${L.key}: BLOCKED needs at least one tripwire proving the subsystem is absent`);
     }
     for (const id of L.tripwires ?? []) { const t = evaluateTripwire(id); if (!t.ok) problems.push(`${L.key}: tripwire ${id} no longer holds (${t.detail}); the subsystem may now exist, reclassify`); }
@@ -87,7 +88,7 @@ export function buildManifest() {
       representativeWeapons: [...new Set(identities)].sort().slice(0, 4).map((k) => k.replace(/^(weapon-|unmapped::)/, '')),
       structuredSourceField: L.carrier ?? (isOp ? `operation.${L.key}` : L.kind === 'relation' ? `abilityInteractions[].relation = ${L.key}` : 'triggeredEffects | special-mechanic census'),
       ...(L.consumer ? { currentConsumer: `${L.consumer.file} (${L.consumer.probe})` } : {}),
-      ...(L.subsystem ? { missingSubsystem: L.subsystem } : {}), ...(L.tripwires ? { tripwires: L.tripwires } : {}),
+      ...(L.subsystem ? { missingSubsystem: L.subsystem, blockKind: L.blockKind } : {}), ...(L.tripwires ? { tripwires: L.tripwires } : {}),
       ...(L.owner ? { owner: L.owner } : {}), ...(L.nonExecutableClass ? { nonExecutableClass: L.nonExecutableClass } : {}), reason: L.reason,
     });
   }
@@ -101,6 +102,7 @@ export function buildManifest() {
   for (const f of [...partial, ...without]) if (!I_D_FIELD_FAMILY_OWNERS[f]) unclassified.push(`field-family::${f}`);
   for (const u of unclassified) problems.push(`unclassified ${u}`);
 
+  const blockKinds = {}; for (const r of rows.filter((x) => x.disposition === 'BLOCKED')) inc(blockKinds, r.blockKind);
   const by = (d) => rows.filter((r) => r.disposition === d).length;
   const bySub = {}; for (const r of rows) inc(bySub, r.subpass);
   const c = closure.counters ?? {};
@@ -127,6 +129,7 @@ export function buildManifest() {
       FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES: c.FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES, PARTIAL_EXECUTION_FIELD_FAMILIES: c.PARTIAL_EXECUTION_FIELD_FAMILIES, UNCONSUMED_EXECUTION_FIELD_FAMILIES: c.UNCONSUMED_EXECUTION_FIELD_FAMILIES,
       EXECUTABLE_FORM_MECHANICS_DEFERRED: c.EXECUTABLE_FORM_MECHANICS_DEFERRED, EXECUTABLE_RELATION_FAMILIES_DEFERRED: c.EXECUTABLE_RELATION_FAMILIES_DEFERRED, CANONICAL_NAME_TEXT_HEURISTIC_USAGE: c.CANONICAL_NAME_TEXT_HEURISTIC_USAGE,
     },
+    blockedByKind: blockKinds,
     bySubpass: Object.fromEntries(Object.entries(bySub).sort(([a], [b]) => a.localeCompare(b))),
     fieldFamilyOwners: { partialOrUnconsumed: Object.fromEntries([...partial, ...without].sort().map((f) => [f, I_D_FIELD_FAMILY_OWNERS[f] ?? null])) },
     tripwires: Object.fromEntries(Object.entries(TRIPWIRES).map(([id, t]) => [id, { kind: t.kind, note: t.note, holds: evaluateTripwire(id).ok }])),

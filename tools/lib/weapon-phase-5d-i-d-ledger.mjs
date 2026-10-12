@@ -36,13 +36,18 @@ export const TRIPWIRES = Object.freeze({
   'no-deaf-rule': { kind: 'none', dirs: ['scripts/engine/combat', 'scripts/items/weapon-runtime', 'scripts/combat'], pattern: '\\bdeaf(ened|ness)?\\b', note: 'no deafness-based damage immunity exists in the combat code (the Deafened status icon and IMMUNE_DEAFNESS rule live elsewhere and gate no damage)' },
 });
 
+const SKILL_HOOK = 'equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)';
 const row = (kind, key, family, subpass, disposition, extra) => Object.freeze({ kind, key, family, subpass, disposition, ...extra });
 const op = (key, family, subpass, disposition, extra) => row('operation-key', key, `3b.operation.${family}`, subpass, disposition, extra);
-const blocked = (key, family, subsystem, tripwires, reason, extra = {}) => op(key, family, 'I-D-A', 'BLOCKED', { subsystem, tripwires, owner: 'I-D-A follow-up (new authority needs product approval)', reason, ...extra });
+// blockKind: INTEGRATION_CANDIDATE = an existing authority that is not yet connected to a production call path (approved integration, owner I-D-A1);
+//            MISSING_SUBSYSTEM = no authority exists at all (needs a bounded architecture design before any implementation).
+const blocked = (key, family, subsystem, tripwires, reason, extra = {}) => {
+  const integration = subsystem === SKILL_HOOK;
+  return op(key, family, 'I-D-A', 'BLOCKED', { subsystem, tripwires, blockKind: integration ? 'INTEGRATION_CANDIDATE' : 'MISSING_SUBSYSTEM', owner: integration ? 'I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)' : 'I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)', reason, ...extra });
+};
 const deferred = (key, family, subpass, reason) => op(key, family, subpass, `DEFERRED_TO_${subpass.replace(/-/g, '_')}`, { owner: subpass, reason });
 
-const SKILL_HOOK = 'equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)';
-const SKILL_REASON = (what) => `${what}. The only authority that carries "equipment bonus to a skill use" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed.`;
+const SKILL_REASON = (what) => `${what}. The only authority that carries "equipment bonus to a skill use" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed.`;
 
 export const I_D_ROWS = Object.freeze([
   // ------------------------------------------------------------------ I-D-A : stealth / concealment / sensing / visibility
@@ -135,7 +140,7 @@ export const I_D_ROWS = Object.freeze([
   deferred('ascensionMode', 'utility-and-movement', 'I-D-C', 'Ascension Gun lift / zipline movement action (special activation).'),
 
   // ------------------------------------------------------------------ special-mechanic DEFERs and deferred talent-corpus relations
-  row('special-mechanic', 'weapon-gas-grenade::lingering-gas-concealment', 'status-condition', 'I-D-A', 'BLOCKED', { identityKey: 'weapon-gas-grenade', mechanicId: 'lingering-gas-concealment', subsystem: 'persistent area-effect zone + visibility geometry', tripwires: ['no-persistent-area-zone', 'no-visibility-geometry'], owner: 'I-D-A follow-up (new authority needs product approval)', reason: 'See gasConcealmentDuration: the cloud needs a placed zone and a mutual inside / outside / across-boundary visibility test; the impact outcome is already implemented (I-C-A) and is not reapplied.' }),
+  row('special-mechanic', 'weapon-gas-grenade::lingering-gas-concealment', 'status-condition', 'I-D-A', 'BLOCKED', { identityKey: 'weapon-gas-grenade', mechanicId: 'lingering-gas-concealment', subsystem: 'persistent area-effect zone + visibility geometry', tripwires: ['no-persistent-area-zone', 'no-visibility-geometry'], blockKind: 'MISSING_SUBSYSTEM', owner: 'I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)', reason: 'See gasConcealmentDuration: the cloud needs a placed zone and a mutual inside / outside / across-boundary visibility test; the impact outcome is already implemented (I-C-A) and is not reapplied.' }),
   row('special-mechanic', 'weapon-sith-sword::dark-side-empowerment', 'activation-effect', 'I-D-C', 'DEFERRED_TO_I_D_C', { identityKey: 'weapon-sith-sword', mechanicId: 'dark-side-empowerment', owner: 'I-D-C', reason: 'Force Point empowerment + Dark Side Score consequence.' }),
   row('special-mechanic', 'weapon-verpine-shattergun::fragile-disable-on-damage', 'status-condition', 'I-D-B', 'DEFERRED_TO_I_D_B', { identityKey: 'weapon-verpine-shattergun', mechanicId: 'fragile-disable-on-damage', owner: 'I-D-B', reason: 'Disabled when the WEAPON OBJECT takes damage; needs a legitimate weapon-object damage event.' }),
   row('relation', 'FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE', 'relation', 'I-D-E', 'DEFERRED_TO_I_D_E', { owner: 'I-D-E', virtual: true, reason: 'Discblade Arc: talent-granted mode; the talent has no canonical identity.' }),

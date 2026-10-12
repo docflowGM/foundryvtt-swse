@@ -34,6 +34,10 @@
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 4,
     "CANONICAL_NAME_TEXT_HEURISTIC_USAGE": 0
   },
+  "blockedByKind": {
+    "INTEGRATION_CANDIDATE": 11,
+    "MISSING_SUBSYSTEM": 11
+  },
   "bySubpass": {
     "I-D-A": 24,
     "I-D-B": 31,
@@ -126,12 +130,13 @@
         "Survival Knife"
       ],
       "structuredSourceField": "operation.alwaysDetermineNorth",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
       "reason": "Carried-item Survival benefit (Survival Knife): an automatic result on a Survival use. Same missing equipment -> skill-use consumer; no Survival use consumes any carried item."
     },
     {
@@ -147,10 +152,11 @@
       ],
       "structuredSourceField": "operation.audibility",
       "missingSubsystem": "noise / hearing event model",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-noise-model"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Sonic Stunner: only the target hears the attack. Same missing noise / hearing model."
     },
     {
@@ -165,12 +171,13 @@
         "Survival Knife"
       ],
       "structuredSourceField": "operation.builtInDigitalCompass",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
       "reason": "Companion fact of alwaysDetermineNorth (Survival Knife): same missing consumer."
     },
     {
@@ -185,12 +192,13 @@
         "Contact Stunner"
       ],
       "structuredSourceField": "operation.concealmentContext",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
       "reason": "States WHEN the bonus applies (\"conceal this weapon\"); it maps to the existing conceal-weapon use alias but is a qualifier of a bonus nobody reads."
     },
     {
@@ -205,12 +213,13 @@
         "adjudicator-slugthrower"
       ],
       "structuredSourceField": "operation.concealmentDesign",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
       "reason": "Design class (\"hold-out pistol\") that the Adjudicator Slugthrower shares with the weapons that carry a numeric concealment bonus; it carries no number itself and inherits the same missing consumer. No bonus is inferred from the label."
     },
     {
@@ -228,13 +237,14 @@
         "snap-shot-blaster-pistol"
       ],
       "structuredSourceField": "operation.concealmentEquipmentBonus",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
-      "reason": "+5 equipment bonus to Stealth to conceal the weapon (Contact Stunner, Hold-out / Snap-shot blaster pistols, Concealed Dart Launcher). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
+      "reason": "+5 equipment bonus to Stealth to conceal the weapon (Contact Stunner, Hold-out / Snap-shot blaster pistols, Concealed Dart Launcher). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
     },
     {
       "kind": "operation-key",
@@ -248,12 +258,13 @@
         "Contact Stunner"
       ],
       "structuredSourceField": "operation.concealmentSkill",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
       "reason": "Names the skill (\"Stealth\") of concealmentEquipmentBonus; a qualifier with the same missing consumer."
     },
     {
@@ -268,13 +279,14 @@
         "defender-microblaster"
       ],
       "structuredSourceField": "operation.concealmentStealthBonus",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
-      "reason": "+5 Stealth bonus carried with the weapon (Defender Microblaster). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
+      "reason": "+5 Stealth bonus carried with the weapon (Defender Microblaster). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
     },
     {
       "kind": "operation-key",
@@ -288,13 +300,14 @@
         "ascension-gun"
       ],
       "structuredSourceField": "operation.concealmentStealthPenalty",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
-      "reason": "-5 Stealth penalty carried with the weapon (Ascension Gun). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
+      "reason": "-5 Stealth penalty carried with the weapon (Ascension Gun). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
     },
     {
       "kind": "operation-key",
@@ -309,11 +322,12 @@
       ],
       "structuredSourceField": "operation.createsSmokeHazard",
       "missingSubsystem": "persistent area-effect zone + visibility geometry",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-persistent-area-zone",
         "no-visibility-geometry"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Smoke Grenade hazard: same missing persistent-zone subsystem as providesConcealment (no zone to create)."
     },
     {
@@ -329,10 +343,11 @@
       ],
       "structuredSourceField": "operation.firingDoesNotRevealShooterPosition",
       "missingSubsystem": "actor / token stealth + revealed-position state",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-stealth-state"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Xerrol Nightstinger: firing does not end Stealth / reveal position. The system has no hidden / revealed state for firing to leave unchanged."
     },
     {
@@ -348,11 +363,12 @@
       ],
       "structuredSourceField": "operation.gasConcealmentDuration",
       "missingSubsystem": "persistent area-effect zone + visibility geometry",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-persistent-area-zone",
         "no-visibility-geometry"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Gas Grenade lingering cloud (triggeredEffects lingering-gas-concealment, duration until-end-of-attacker-next-turn): concealment is MUTUAL across the blast boundary and inside the 4-square blast. The attacker-next-turn lifecycle already exists (outcome-effects durationPlan, used by Flash Canister), but it hangs a status on an ACTOR; the cloud has no actor to hang on and needs a placed zone plus an inside / outside / across-boundary visibility test. The I-C-A impact outcome (CT -2 / Evasion -1) is already implemented and must not be reapplied."
     },
     {
@@ -368,10 +384,11 @@
       ],
       "structuredSourceField": "operation.lineOfSightOriginHeightSquares",
       "missingSubsystem": "visibility / line-of-sight geometry",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-visibility-geometry"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Mortar Launcher: line of sight is traced from a point 20 squares above the launcher. The system takes line of sight as a caller-supplied boolean; there is no geometry to move the origin of."
     },
     {
@@ -402,11 +419,12 @@
       ],
       "structuredSourceField": "operation.providesConcealment",
       "missingSubsystem": "persistent area-effect zone + visibility geometry",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-persistent-area-zone",
         "no-visibility-geometry"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Smoke Grenade: the cloud provides concealment for durationRounds (10). A cloud is a placed area that persists and is tested against token positions; the system has no persistent area-effect owner and no visibility / line-of-sight geometry (combat code only accepts a caller-supplied concealment option and a context.lineOfSight boolean)."
     },
     {
@@ -422,11 +440,12 @@
       ],
       "structuredSourceField": "operation.radiationExposure",
       "missingSubsystem": "radiation exposure state / hazard area",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-radiation-exposure",
         "no-persistent-area-zone"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Radiation Grenade: exposes creatures to Moderate radiation for damage and Treat Injury purposes. Exposure has no state to set and no area to persist in."
     },
     {
@@ -442,10 +461,11 @@
       ],
       "structuredSourceField": "operation.sensorDetection",
       "missingSubsystem": "sensor-scan detection flow",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-sensor-scan"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Wrist Blaster: a sensor scan for weapons detects it on a DC 25 Use Computer check. No sensor-scan flow exists to pit the scanner against a carried weapon."
     },
     {
@@ -461,11 +481,12 @@
       ],
       "structuredSourceField": "operation.shotVisibility",
       "missingSubsystem": "actor / token stealth + revealed-position state",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-stealth-state",
         "no-visibility-geometry"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Xerrol Nightstinger: the shot is invisible to the eye. Needs the observers' perception of an attack to be a modelled event; no such state exists."
     },
     {
@@ -481,10 +502,11 @@
       ],
       "structuredSourceField": "operation.silentInUse",
       "missingSubsystem": "noise / hearing event model",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-noise-model"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "Vibrorapier: silent operation. There is no noise or hearing event for a weapon to suppress."
     },
     {
@@ -499,12 +521,13 @@
         "magna-caster"
       ],
       "structuredSourceField": "operation.snipingSkill",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
       "reason": "Names the skill (\"Stealth\") the sniping bonus applies to; a qualifier of snipingStealthEquipmentBonus with the same missing consumer. There is also no \"sniping\" Extra Skill Use alias to attach it to."
     },
     {
@@ -519,13 +542,14 @@
         "magna-caster"
       ],
       "structuredSourceField": "operation.snipingStealthEquipmentBonus",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
-      "reason": "+5 equipment bonus to the Stealth check made to snipe (Magna-Caster). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
+      "reason": "+5 equipment bonus to the Stealth check made to snipe (Magna-Caster). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
     },
     {
       "kind": "operation-key",
@@ -539,13 +563,14 @@
         "wookiee-ryyk-blade"
       ],
       "structuredSourceField": "operation.survivalBasicForestJungleBonusWhenProficientAndCarried",
-      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is an existing authority that is unwired and equipment-only)",
+      "blockKind": "INTEGRATION_CANDIDATE",
       "tripwires": [
         "skill-hook-unwired",
         "skill-hook-equipment-only"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
-      "reason": "+2 to Basic Survival in forest / jungle when the wielder is proficient and carries the weapon (Wookiee Ryyk Blade). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+      "owner": "I-D-A1 (approved: wire the existing EquipmentSkillHookResolver into the skill-roll pipeline)",
+      "reason": "+2 to Basic Survival in forest / jungle when the wielder is proficient and carries the weapon (Wookiee Ryyk Blade). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. This is an existing authority awaiting integration (approved, I-D-A1), not a missing subsystem; the canonical value is intact and nothing is guessed."
     },
     {
       "kind": "operation-key",
@@ -578,11 +603,12 @@
       ],
       "structuredSourceField": "triggeredEffects | special-mechanic census",
       "missingSubsystem": "persistent area-effect zone + visibility geometry",
+      "blockKind": "MISSING_SUBSYSTEM",
       "tripwires": [
         "no-persistent-area-zone",
         "no-visibility-geometry"
       ],
-      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "owner": "I-D-A2 / I-D-A3 (architecture design first; no implementation without a reviewed proposal)",
       "reason": "See gasConcealmentDuration: the cloud needs a placed zone and a mutual inside / outside / across-boundary visibility test; the impact outcome is already implemented (I-C-A) and is not reapplied."
     },
     {

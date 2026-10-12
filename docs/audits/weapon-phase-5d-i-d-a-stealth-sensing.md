@@ -4,11 +4,11 @@ Base: `main` @ `80b13790c4f11ea18d0def666386f4d233856c40` (PR #1019 and PR #1020
 
 ## Result
 
-**No I-D-A mechanic is executable inside the existing architecture.** Every input either needs a subsystem that does not exist (and which the I-D handoff forbids inventing), or is a proven duplicate / non-executable fact. This pass therefore ships the full I-D residual manifest (zero unclassified), tripwires that keep the "blocked" claims honest, and **no runtime change**. Consumption claimed: none. The 5D-H closure counters are intentionally untouched (the I-D ledger does not feed them).
+**No I-D-A mechanic had a production consumer at the time of this census.** Every input is either an *existing authority awaiting integration* (11 rows, `INTEGRATION_CANDIDATE`: the unwired `EquipmentSkillHookResolver`, approved as I-D-A1), a *missing subsystem* needing a bounded design first (11 rows, `MISSING_SUBSYSTEM`), or a proven duplicate / non-executable fact. This pass therefore ships the full I-D residual manifest (zero unclassified), tripwires that keep the "blocked" claims honest, and **no runtime change**. Consumption claimed: none. The 5D-H closure counters are intentionally untouched (the I-D ledger does not feed them).
 
 Regenerated live census (identical to the post-I-C-C checkpoint, before and after this PR): 75 unique / 95 raw unconsumed operation keys · 37 fully / 12 partial / 8 unconsumed execution field families · 3 special-mechanic DEFER · 4 deferred relations · canonical name/text heuristic usage 0.
 
-I-D manifest (`data/audits/weapon-phase-5d-i-d-input-manifest.json`, `node tools/census-weapon-phase-5d-i-d-inputs.mjs --check`): 82 rows = 75 operation keys + 3 special mechanics + 4 relations → 22 BLOCKED, 1 DUPLICATE, 1 NON_EXECUTABLE, 58 DEFERRED to a named subpass (B 24, C 9, D 1, E 7, F 12 (+ I-D-A none)), 0 IMPLEMENTED, **0 unclassified**.
+I-D manifest (`data/audits/weapon-phase-5d-i-d-input-manifest.json`, `node tools/census-weapon-phase-5d-i-d-inputs.mjs --check`): 82 rows = 75 operation keys + 3 special mechanics + 4 relations → 22 BLOCKED (11 INTEGRATION_CANDIDATE + 11 MISSING_SUBSYSTEM), 1 DUPLICATE, 1 NON_EXECUTABLE, 58 DEFERRED to a named subpass (I-D-B 31, I-D-C 7, I-D-D 1, I-D-E 7, I-D-F 12), 0 IMPLEMENTED, **0 unclassified**. Rows per subpass: A 24 · B 31 · C 7 · D 1 · E 7 · F 12 = 82.
 
 ## Existing authorities traced
 
@@ -39,11 +39,12 @@ I-D manifest (`data/audits/weapon-phase-5d-i-d-input-manifest.json`, `node tools
 ### Tripwires
 A BLOCKED row is only as good as its "the subsystem is absent" claim, so each cites tripwires (`tools/lib/weapon-phase-5d-i-d-ledger.mjs`) that scan executable `scripts/**` code and **fail the census** the day the subsystem appears, forcing reclassification. They are verified by `tests/weapon-phase-5d-i-d-a-residual-manifest.test.mjs` (including synthetic failing cases).
 
-## Decisions needed (product / architecture, not guessed)
-1. **Equipment skill-hook wiring.** Connecting `EquipmentSkillHookResolver` to skill rolls (and letting it read weapon-derived hooks) would unlock ~11 I-D-A keys without a weapon-specific engine, but it is an equipment/skill-use change outside the weapon runtime. Recommended as its own phase.
-2. **Persistent area-effect zone + visibility geometry.** Needed by Smoke Grenade, Gas Grenade's cloud, Radiation Grenade and the Mortar's LOS origin. This *is* a new authority; do not build it inside a weapon phase without approval.
-3. **Hidden / revealed state and a noise model.** Needed by Nightstinger, Vibrorapier and Sonic Stunner.
-4. **Owner for the 12 reload / ammo-resource keys** (proposed `I-D-F`): the I-D handoff lists no pass for them.
+## Decisions (made after review)
+1. **Equipment skill-hook wiring: approved (I-D-A1).** Wire the existing resolver into the skill-roll pipeline; support weapon-derived hooks. The resolver's single-highest-bonus selection must not swallow a penalty (Ascension Gun -5), and a conceal-this-weapon bonus must apply only when that weapon is the concealed object.
+2. **Persistent zones + visibility: architecture design approved (I-D-A2), implementation not.** Use Foundry V13 Regions / Measured Templates / walls / visibility; no second visibility engine.
+3. **Hidden state and noise: deferred (I-D-A3).** Classify Nightstinger, Vibrorapier, Sonic Stunner and Wrist Blaster individually; no general noise simulation.
+4. **I-D-F approved** for reload / ammunition / power-source / capacity (12 keys); preserve the AmmoSystem and inventory SSOT.
+5. **I-D-B..E approved.**
 
 ## Source verification
 No rule text was implemented, so no PDF page verification was needed or claimed; every classification rests on the certified canonical values already in the registry. Re-verify against the PDFs when a blocked row is implemented.
