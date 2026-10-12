@@ -10,8 +10,8 @@
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 11,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 75,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 95,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 67,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 84,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 4,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
@@ -208,7 +208,7 @@
         "id": "3b.operation.concealment-stealth-sensing",
         "fieldPaths": 36,
         "status": "PARTIAL",
-        "consumedKeys": 3,
+        "consumedKeys": 10,
         "nonExecutable": {
           "DISPLAY": 1
         },
@@ -216,12 +216,7 @@
           "alwaysDetermineNorth",
           "audibility",
           "builtInDigitalCompass",
-          "concealmentContext",
           "concealmentDesign",
-          "concealmentEquipmentBonus",
-          "concealmentSkill",
-          "concealmentStealthBonus",
-          "concealmentStealthPenalty",
           "createsSmokeHazard",
           "firingDoesNotRevealShooterPosition",
           "gasConcealmentDuration",
@@ -230,9 +225,7 @@
           "radiationExposure",
           "sensorDetection",
           "shotVisibility",
-          "silentInUse",
-          "snipingSkill",
-          "snipingStealthEquipmentBonus"
+          "silentInUse"
         ],
         "owner": "stealth / sensing subsystem"
       },
@@ -240,11 +233,10 @@
         "id": "3b.operation.condition-and-persistent-effects",
         "fieldPaths": 48,
         "status": "PARTIAL",
-        "consumedKeys": 6,
+        "consumedKeys": 7,
         "nonExecutable": {},
         "executableUnconsumed": [
-          "grievousWound",
-          "survivalBasicForestJungleBonusWhenProficientAndCarried"
+          "grievousWound"
         ],
         "owner": "persistent effects / poison subsystem"
       },
@@ -885,7 +877,14 @@
         "consumed": [
           "blindCreaturesImmune",
           "concealment",
-          "durationRounds"
+          "concealmentContext",
+          "concealmentEquipmentBonus",
+          "concealmentSkill",
+          "concealmentStealthBonus",
+          "concealmentStealthPenalty",
+          "durationRounds",
+          "snipingSkill",
+          "snipingStealthEquipmentBonus"
         ],
         "duplicates": {},
         "nonExecutable": {
@@ -897,12 +896,7 @@
           "alwaysDetermineNorth",
           "audibility",
           "builtInDigitalCompass",
-          "concealmentContext",
           "concealmentDesign",
-          "concealmentEquipmentBonus",
-          "concealmentSkill",
-          "concealmentStealthBonus",
-          "concealmentStealthPenalty",
           "createsSmokeHazard",
           "firingDoesNotRevealShooterPosition",
           "gasConcealmentDuration",
@@ -911,17 +905,15 @@
           "radiationExposure",
           "sensorDetection",
           "shotVisibility",
-          "silentInUse",
-          "snipingSkill",
-          "snipingStealthEquipmentBonus"
+          "silentInUse"
         ],
         "owner": "stealth / sensing subsystem",
-        "executableUnconsumedOccurrences": 23,
+        "executableUnconsumedOccurrences": 13,
         "representativeIdentities": [
-          "unmapped::Contact Stunner",
           "unmapped::Survival Knife",
           "unmapped::Vibrorapier",
-          "weapon-adjudicator-slugthrower"
+          "weapon-adjudicator-slugthrower",
+          "weapon-gas-grenade"
         ],
         "note": {
           "reason": "weapon-driven concealment, silence and sensing belong to the stealth/sensing subsystem",
@@ -938,7 +930,8 @@
           "fortitudeRider",
           "ongoingEffect",
           "poisonDeliveryRequiresDamage",
-          "returnOnAttackExceedsReflexBy"
+          "returnOnAttackExceedsReflexBy",
+          "survivalBasicForestJungleBonusWhenProficientAndCarried"
         ],
         "duplicates": {
           "conditionTrackOnHit": "attackProfiles[].triggeredEffects[condition-track-effect].effect.conditionTrackSteps (area-attack-hit)",
@@ -951,14 +944,12 @@
         },
         "nonExecutable": {},
         "executableUnconsumed": [
-          "grievousWound",
-          "survivalBasicForestJungleBonusWhenProficientAndCarried"
+          "grievousWound"
         ],
         "owner": "persistent effects / poison subsystem",
-        "executableUnconsumedOccurrences": 2,
+        "executableUnconsumedOccurrences": 1,
         "representativeIdentities": [
-          "unmapped::Fira",
-          "weapon-wookiee-ryyk-blade"
+          "unmapped::Fira"
         ],
         "note": {
           "reason": "poison delivery, persistent effects and venom need the persistent/status delivery subsystem",
@@ -1353,12 +1344,7 @@
       "concealment-stealth-sensing.alwaysDetermineNorth",
       "concealment-stealth-sensing.audibility",
       "concealment-stealth-sensing.builtInDigitalCompass",
-      "concealment-stealth-sensing.concealmentContext",
       "concealment-stealth-sensing.concealmentDesign",
-      "concealment-stealth-sensing.concealmentEquipmentBonus",
-      "concealment-stealth-sensing.concealmentSkill",
-      "concealment-stealth-sensing.concealmentStealthBonus",
-      "concealment-stealth-sensing.concealmentStealthPenalty",
       "concealment-stealth-sensing.createsSmokeHazard",
       "concealment-stealth-sensing.firingDoesNotRevealShooterPosition",
       "concealment-stealth-sensing.gasConcealmentDuration",
@@ -1368,10 +1354,7 @@
       "concealment-stealth-sensing.sensorDetection",
       "concealment-stealth-sensing.shotVisibility",
       "concealment-stealth-sensing.silentInUse",
-      "concealment-stealth-sensing.snipingSkill",
-      "concealment-stealth-sensing.snipingStealthEquipmentBonus",
       "condition-and-persistent-effects.grievousWound",
-      "condition-and-persistent-effects.survivalBasicForestJungleBonusWhenProficientAndCarried",
       "configuration-and-wielding.collapsedForm",
       "configuration-and-wielding.designedForTwoHandedUse",
       "configuration-and-wielding.encumbranceException",
@@ -1393,8 +1376,8 @@
       "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 75,
-    "rawOccurrencesUnconsumed": 95,
+    "uniqueKeysUnconsumed": 67,
+    "rawOccurrencesUnconsumed": 84,
     "problems": []
   },
   "relations": {
@@ -2680,9 +2663,9 @@
     ]
   },
   "heuristics": {
-    "totalSites": 209,
+    "totalSites": 214,
     "byClass": {
-      "DISPLAY": 113,
+      "DISPLAY": 118,
       "IDENTITY_FALLBACK": 24,
       "LEGACY_GATED": 58,
       "NON_COMBAT_DOMAIN": 5,

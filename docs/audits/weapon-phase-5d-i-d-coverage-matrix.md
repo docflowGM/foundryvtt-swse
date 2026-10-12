@@ -18,7 +18,7 @@ Two independent questions per row: **who establishes the circumstances** (bucket
 | DATA_COMPLETENESS | 1 |
 | DUPLICATE_OR_NON_EXECUTABLE | 15 |
 | GM_FACING_SUPPORT_NEEDED | 18 |
-| INTEGRATION_NEEDED | 8 |
+| IMPLEMENTED | 8 |
 | MISSING_SUBSYSTEM | 2 |
 | SMALL_CONSUMER_NEEDED | 33 |
 | SOURCE_CLARIFICATION_NEEDED | 5 |
@@ -51,14 +51,14 @@ Duplicate / non-executable claims: **11 mechanically verified** (carrier present
 
 | Row | Weapons | Bucket | Support | Foundry already knows | Must be supplied | Smallest implementation | Source ambiguity | Acceptance |
 |---|---|---|---|---|---|---|---|---|
-| `concealmentContext` | Contact Stunner | CONTEXTUAL | INTEGRATION_NEEDED | registry qualifier ("conceal this weapon") | - | validated by the hook derivation; scopes the hook to the concealed item itself | — | bonus never awarded for an unrelated item |
-| `concealmentEquipmentBonus` | Contact Stunner, concealed-dart-launcher, hold-out-blaster-pistol, snap-shot-blaster-pistol | CONTEXTUAL | INTEGRATION_NEEDED | owned item, canonical identity, quantity (carried) | which item is being concealed (player picks the Conceal-item use and names the weapon) | weapon-derived hook in EquipmentSkillHookResolver + its use in rollSkill (in progress on feat/weapon-phase-5d-i-d-a1-equipment-skill-hooks) | — | real rollSkill: +5 only for the named weapon on the Conceal use; none without item context; best-equipment-bonus stacking |
-| `concealmentSkill` | Contact Stunner | CONTEXTUAL | INTEGRATION_NEEDED | registry qualifier | - | validated by the hook derivation | — | hook derived only when the qualifier agrees |
-| `concealmentStealthBonus` | defender-microblaster | CONTEXTUAL | INTEGRATION_NEEDED | owned item, identity, quantity | concealed item named | same hook path; type = untyped (the text says "+5 bonus", not "equipment bonus") | bonus type is unstated in the text; treated as untyped (stacks) | Defender +5 stacks with a +5 equipment bonus; applies only when concealing the Defender |
-| `concealmentStealthPenalty` | ascension-gun | CONTEXTUAL | INTEGRATION_NEEDED | owned item, identity | concealed item named | same hook path; type = penalty, never dropped by best-bonus selection | — | Ascension Gun -5 kept beside a +2 equipment bonus (net -3); only when concealing the gun |
-| `snipingSkill` | magna-caster | CONTEXTUAL | INTEGRATION_NEEDED | registry qualifier | - | validated by the hook derivation (mismatch => no hook) | — | hook derived only when the qualifier agrees |
-| `snipingStealthEquipmentBonus` | magna-caster | CONTEXTUAL | INTEGRATION_NEEDED | owned item, identity | the weapon used to snipe | same hook path on the Snipe use | — | +5 only on the Snipe use with the Magna-Caster; not on Conceal; not with another weapon |
-| `survivalBasicForestJungleBonusWhenProficientAndCarried` | wookiee-ryyk-blade | CONTEXTUAL | INTEGRATION_NEEDED | carried (quantity), proficiency (canonical resolver), Wookiee route | terrain is forest / jungle (stated) | same hook path with requires {terrain, proficient} | — | +2 only on Basic Survival, forest/jungle, proficient, carried; Wookiee advanced-melee route counts |
+| `concealmentContext` | Contact Stunner | CONTEXTUAL | IMPLEMENTED | registry qualifier ("conceal this weapon") | - | DONE (I-D-A1): validated by the hook derivation; scopes the hook to the concealed item itself | — | bonus never awarded for an unrelated item |
+| `concealmentEquipmentBonus` | Contact Stunner, concealed-dart-launcher, hold-out-blaster-pistol, snap-shot-blaster-pistol | CONTEXTUAL | IMPLEMENTED | owned item, canonical identity, quantity (carried) | which item is being concealed (player picks the Conceal-item use and names the weapon) | DONE (I-D-A1): weapon-derived hook in EquipmentSkillHookResolver, applied by rollSkill | — | real rollSkill: +5 only for the named weapon on the Conceal use; none without item context; best-equipment-bonus stacking |
+| `concealmentSkill` | Contact Stunner | CONTEXTUAL | IMPLEMENTED | registry qualifier | - | DONE (I-D-A1): validated by the hook derivation | — | hook derived only when the qualifier agrees |
+| `concealmentStealthBonus` | defender-microblaster | CONTEXTUAL | IMPLEMENTED | owned item, identity, quantity | concealed item named | DONE (I-D-A1): same hook path; type = untyped (the text says "+5 bonus", not "equipment bonus") | bonus type is unstated in the text; treated as untyped (stacks) | Defender +5 stacks with a +5 equipment bonus; applies only when concealing the Defender |
+| `concealmentStealthPenalty` | ascension-gun | CONTEXTUAL | IMPLEMENTED | owned item, identity | concealed item named | DONE (I-D-A1): same hook path; type = penalty, never dropped by best-bonus selection | — | Ascension Gun -5 kept beside a +2 equipment bonus (net -3); only when concealing the gun |
+| `snipingSkill` | magna-caster | CONTEXTUAL | IMPLEMENTED | registry qualifier | - | DONE (I-D-A1): validated by the hook derivation (mismatch => no hook) | — | hook derived only when the qualifier agrees |
+| `snipingStealthEquipmentBonus` | magna-caster | CONTEXTUAL | IMPLEMENTED | owned item, identity | the weapon used to snipe | DONE (I-D-A1): same hook path on the Snipe use | — | +5 only on the Snipe use with the Magna-Caster; not on Conceal; not with another weapon |
+| `survivalBasicForestJungleBonusWhenProficientAndCarried` | wookiee-ryyk-blade | CONTEXTUAL | IMPLEMENTED | carried (quantity), proficiency (canonical resolver), Wookiee route | terrain is forest / jungle (stated) | DONE (I-D-A1): same hook path with requires {terrain, proficient} | — | +2 only on Basic Survival, forest/jungle, proficient, carried; Wookiee advanced-melee route counts |
 
 ## I-D-A2 — contextual smoke / gas / radiation clouds: GM-established concealment or exposure through existing combat authorities; duration on the existing timing authority
 

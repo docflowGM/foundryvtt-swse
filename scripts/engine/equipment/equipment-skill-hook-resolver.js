@@ -6,6 +6,8 @@
  */
 
 import { normalizeEquipmentSystem, slugifyEquipment } from './equipment-normalizer.js';
+import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { getSharedWeaponAuthorityRegistry, resolveCanonicalIdentity, resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js';
 
 const SKILL_KEY_MAP = Object.freeze({
   acrobatics: 'acrobatics',
@@ -199,6 +201,7 @@ function useAliases(skillUse = {}) {
   if (text.includes('swim') || text.includes('tread water')) values.push('swim-tread-water');
   if (text.includes('conceal item on self') || text.includes('conceal item') || text.includes('conceal weapon')) values.push('conceal-item-on-self', 'conceal-weapon');
   if (text.includes('conceal large item') || text.includes('conceal covered area') || text.includes('conceal position')) values.push('conceal-large-item');
+  if (text.includes('snipe') || text.includes('sniping')) values.push('snipe');
   if (text.includes('hide') || text.includes('sneak')) values.push('hide-sneak');
   if (text.includes('climb')) values.push('climb');
 
@@ -251,12 +254,75 @@ function equipmentBonusFromHooks(hooks = [], chosenConsumable = null) {
   return best;
 }
 
+/**
+ * Phase 5D-I-D-A1 -- weapon-carried skill hooks.
+ *
+ * The canonical weapon registry states, per identity, the skill effects the weapon grants its carrier (operation.* keys). They are turned into the SAME hook
+ * shape equipment items use, so the one resolver below stays the only authority for equipment -> Extra Skill Use modifiers. Identity comes from
+ * resolveCanonicalIdentity (flag stamp / production id), NEVER from the item name; a legacy weapon (no canonical identity) derives no hooks.
+ *
+ *   key                                   hook                                                                         source (registry canonicalPlayerText)
+ *   concealmentEquipmentBonus             +N EQUIPMENT bonus, Stealth, "conceal item on self", only for THIS weapon     "...+5 equipment bonus on Stealth checks made to conceal the weapon"
+ *   concealmentStealthBonus               +N untyped bonus,   Stealth, "conceal item on self", only for THIS weapon     Defender Microblaster: "+5 bonus on Stealth checks to conceal it"
+ *   concealmentStealthPenalty             -N penalty,         Stealth, "conceal item on self", only for THIS weapon     Ascension Gun: "bulk imposes -5 on Stealth checks made to conceal it"
+ *   snipingStealthEquipmentBonus          +N EQUIPMENT bonus, Stealth, "snipe", only when sniping WITH this weapon      Magna Caster: "+5 equipment bonus on Stealth checks made to snipe"
+ *   survivalBasicForestJungleBonus...     +N untyped bonus,   Survival, "basic survival", carried + proficient + forest/jungle   Ryyk Blade
+ * Qualifier keys (concealmentSkill, snipingSkill, concealmentContext) are validated, never assumed: a mismatch derives no hook.
+ */
+export const WEAPON_SKILL_HOOK_SPECS = Object.freeze([
+  Object.freeze({ key: 'concealmentEquipmentBonus', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'equipment', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
+  Object.freeze({ key: 'concealmentStealthBonus', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'untyped', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
+  Object.freeze({ key: 'concealmentStealthPenalty', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'penalty', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
+  Object.freeze({ key: 'snipingStealthEquipmentBonus', skill: 'stealth', useKey: 'snipe', type: 'equipment', itemScope: 'self-item', qualifiers: { snipingSkill: 'stealth' } }),
+  Object.freeze({ key: 'survivalBasicForestJungleBonusWhenProficientAndCarried', skill: 'survival', useKey: 'basic-survival', type: 'untyped', itemScope: 'carried', requires: Object.freeze({ terrain: ['forest', 'jungle'], proficient: true }) })
+]);
+
+function weaponDerivedHooks(item, actor = null) {
+  if (!['weapon', 'lightsaber'].includes(String(item?.type ?? '').toLowerCase())) return [];
+  const registry = getSharedWeaponAuthorityRegistry();
+  if (!registry) return [];
+  let record = null;
+  try {
+    const identity = resolveCanonicalIdentity(item, registry);
+    if (identity.kind !== 'canonical') return [];
+    record = registry.getByIdentityKey(identity.identityKey);
+  } catch (_err) { return []; }
+  const operation = record?.operation ?? {};
+  const hooks = [];
+  for (const spec of WEAPON_SKILL_HOOK_SPECS) {
+    if (!(spec.key in operation)) continue;
+    const value = Number(operation[spec.key]);
+    if (!Number.isFinite(value) || value === 0) continue;
+    // qualifier keys must agree with the spec; a disagreement means the record states something this mapping was not written for
+    const qualifiersAgree = Object.entries(spec.qualifiers ?? {}).every(([qualifierKey, expected]) => !(qualifierKey in operation) || String(operation[qualifierKey]).trim().toLowerCase() === expected);
+    if (!qualifiersAgree) continue;
+    const signed = spec.type === 'penalty' ? -Math.abs(value) : value;
+    const hook = normalizeHook({
+      skill: spec.skill, useKey: spec.useKey, mode: 'modifies', source: record.canonicalName || item.name,
+      bonus: { type: spec.type, value: signed, label: `${signed > 0 ? '+' : ''}${signed} ${spec.type === 'penalty' ? 'Penalty' : spec.type === 'equipment' ? 'Equipment bonus' : 'Bonus'}`, conditional: false },
+      requiresEquipped: false
+    }, item);
+    if (!hook) continue;
+    hooks.push({ ...hook, origin: 'canonical-weapon', canonicalKey: spec.key, identityKey: record.identityKey, itemScope: spec.itemScope, requires: spec.requires ?? null, actor });
+  }
+  return hooks;
+}
+
 export function getEquipmentSkillHooks(actorOrItems = null, { skill = '', useKey = '', includeUnavailable = false } = {}) {
   const skillFilter = normalizeSkillKey(skill);
   const useFilter = normalizeUseKey(useKey);
   const hooks = [];
 
   for (const item of itemArray(actorOrItems)) {
+    if (item?.type === 'weapon' || item?.type === 'lightsaber') {
+      for (const hook of weaponDerivedHooks(item, actorOrItems?.items ? actorOrItems : null)) {
+        if (!includeUnavailable && !hook.available) continue;
+        if (skillFilter && hook.skill !== skillFilter) continue;
+        if (useFilter && hook.useKey !== useFilter) continue;
+        hooks.push(hook);
+      }
+      continue;
+    }
     if (item?.type !== 'equipment') continue;
     const system = normalizeEquipmentSystem(item.system ?? {}, {
       id: item._id ?? item.id ?? '',
@@ -279,7 +345,72 @@ export function getEquipmentHooksForSkill(actorOrItems = null, skill = '', optio
   return getEquipmentSkillHooks(actorOrItems, { ...options, skill });
 }
 
-export function resolveEquipmentForSkillUse(actorOrItems = null, skillUse = {}, { skill = '' } = {}) {
+function terrainList(value) {
+  const list = Array.isArray(value) ? value : value == null ? [] : [value];
+  return list.map((entry) => slugifyEquipment(entry, '')).filter(Boolean);
+}
+
+/** is the actor proficient with this canonical weapon? true / false, or null when it cannot be observed (fail closed at the caller) */
+function carrierProficiency(item, actor) {
+  try {
+    const runtime = resolveAttackWeaponRuntime(item, {});
+    if (runtime?.source !== 'canonical') return null;
+    return resolveCanonicalAttackProficiency(runtime, actor).proficient === true;
+  } catch (_err) { return null; }
+}
+
+/**
+ * Turn the AVAILABLE hooks of one skill use into signed modifiers with provenance and explicit stacking.
+ *   equipment bonuses   do not stack with each other: the best one applies (the others are reported as superseded, never silently dropped)
+ *   untyped bonuses     stack
+ *   penalties           stack and are NEVER suppressed by (nor counted against) the best-equipment-bonus selection
+ *   self-item hooks     apply only when `context.hookItemId` names THIS item (the object being concealed / the weapon used to snipe); no context -> not applied
+ *   requires.terrain    only when `context.terrain` names one of the listed terrains; requires.proficient only when the carrier is proficient with the weapon
+ * A hook that does not apply is returned in `skipped` with its reason (shown to the player), never guessed.
+ * @returns {{modifiers:object[], total:number, skipped:object[]}}
+ */
+export function resolveSkillModifiersFromHooks(hooks = [], { actor = null, context = {}, chosenConsumable = null } = {}) {
+  const applicable = [];
+  const skipped = [];
+  const terrain = terrainList(context?.terrain);
+  for (const hook of hooks) {
+    const bonus = hook?.bonus;
+    if (!hook?.available || !bonus || bonus.conditional === true) continue;
+    const value = Number(bonus.value ?? 0);
+    if (!Number.isFinite(value) || value === 0) continue;
+    const type = bonus.type === 'penalty' || value < 0 ? 'penalty' : bonus.type === 'equipment' ? 'equipment' : bonus.type === 'untyped' ? 'untyped' : null;
+    const label = hook.itemName || hook.source;
+    const note = (reason) => skipped.push({ id: `${hook.itemId}:${hook.canonicalKey ?? hook.useKey ?? hook.skill}`, label, source: label, itemId: hook.itemId, skill: hook.skill, useKey: hook.useKey, value, type: type ?? bonus.type ?? null, reason });
+    // Conservative wiring (Automation Authority): only a plain, use-specific, always-available modifier is applied automatically.
+    //   - enable / require hooks, consumables and training overrides are not modifiers: they stay with their own (unwired) paths, so merely
+    //     carrying a consumable can never grant its bonus or be consumed here
+    //   - circumstance / unknown typed bonuses were never applied and stay unapplied
+    //   - "all uses" hooks depend on activation, terrain or other circumstances the system cannot observe (Holoshroud, Sound Sponge, Camouflage
+    //     Poncho...): UNKNOWN is not TRUE, so they are reported and not applied until a contextual toggle exists
+    if (hook.mode && hook.mode !== 'modifies') { note('not-a-modifier-hook'); continue; }
+    if (hook.required === true || hook.consumes) { note('consumable-or-required-hook'); continue; }
+    if (!type) { note('unsupported-bonus-type'); continue; }
+    if (!hook.useKey || hook.useKey === 'all' || hook.useKey === '*') { note('all-uses-hook-needs-context'); continue; }
+    const entry = { hook, type, value, id: `${hook.itemId}:${hook.canonicalKey ?? hook.useKey ?? hook.skill}`, label, source: label, itemId: hook.itemId, skill: hook.skill, useKey: hook.useKey };
+    if (bonus.appliesWhenChosen === true && chosenConsumable?.itemId !== hook.itemId) continue; // legacy: only the consumable that was chosen for this use
+    if (hook.itemScope === 'self-item' && String(context?.hookItemId ?? '') !== String(hook.itemId)) { skipped.push({ ...entry, reason: context?.hookItemId ? 'different-item' : 'item-context-missing' }); continue; }
+    if (hook.requires?.terrain && !hook.requires.terrain.some((t) => terrain.includes(t))) { skipped.push({ ...entry, reason: terrain.length ? 'terrain-mismatch' : 'terrain-unstated' }); continue; }
+    if (hook.requires?.proficient) {
+      const owned = actor?.items?.get?.(hook.itemId) ?? null;
+      const proficient = owned ? carrierProficiency(owned, actor) : null;
+      if (proficient !== true) { skipped.push({ ...entry, reason: proficient === false ? 'not-proficient' : 'proficiency-unobserved' }); continue; }
+    }
+    applicable.push(entry);
+  }
+  const modifiers = [];
+  const equipment = applicable.filter((e) => e.type === 'equipment').sort((a, b) => b.value - a.value);
+  if (equipment.length) { modifiers.push(equipment[0]); for (const loser of equipment.slice(1)) skipped.push({ ...loser, reason: 'superseded-equipment-bonus' }); }
+  for (const e of applicable) if (e.type !== 'equipment') modifiers.push(e);
+  const slim = ({ hook, ...rest }) => rest; // provenance only: never carry the hook (it holds the item system) into chat flags
+  return { modifiers: modifiers.map(slim), total: modifiers.reduce((sum, e) => sum + e.value, 0), skipped: skipped.map(slim) };
+}
+
+export function resolveEquipmentForSkillUse(actorOrItems = null, skillUse = {}, { skill = '', context = {} } = {}) {
   const skillKey = normalizeSkillKey(skill || skillUse.skillKey || skillUse.skill || skillUse._source?.system?.skill || '');
   const allHooks = getEquipmentSkillHooks(actorOrItems, { skill: skillKey, includeUnavailable: true })
     .filter((hook) => hookMatchesSkill(hook, skillKey))
@@ -303,7 +434,8 @@ export function resolveEquipmentForSkillUse(actorOrItems = null, skillUse = {}, 
   const trainingOverrideHook = availableHooks.find((hook) => hook.allowsUntrained === true);
   const trainingOverride = Boolean(trainingOverrideHook);
   const trainingOverrideLabel = trainingOverrideHook?.trainingOverride?.label || (trainingOverrideHook ? `${trainingOverrideHook.itemName || trainingOverrideHook.source} permits this trained-only use while untrained` : '');
-  const equipmentBonus = equipmentBonusFromHooks(availableHooks, chosenConsumable);
+  const equipmentBonus = equipmentBonusFromHooks(availableHooks.filter((hook) => hook.itemScope !== 'self-item' && hook.itemScope !== 'carried'), chosenConsumable);
+  const skillModifiers = resolveSkillModifiersFromHooks(availableHooks, { actor: actorOrItems?.items ? actorOrItems : null, context, chosenConsumable });
   const notes = availableHooks.map((hook) => hook.note).filter(Boolean);
   const consumeOnAttempt = chosenConsumable?.consumes?.timing === 'onAttempt' || chosenConsumable?.consumes?.consumeOn === 'onAttempt';
 
@@ -324,6 +456,9 @@ export function resolveEquipmentForSkillUse(actorOrItems = null, skillUse = {}, 
     consumeOnAttempt,
     equipmentBonus,
     equipmentBonusValue: equipmentBonus?.value ?? 0,
+    skillModifiers: skillModifiers.modifiers,
+    skillModifierTotal: skillModifiers.total,
+    skippedSkillModifiers: skillModifiers.skipped,
     notes,
     summary: summarizeSkillUseEquipment({ availableHooks, missingRequirements, equipmentBonus, chosenConsumable })
   };
@@ -356,7 +491,8 @@ export async function consumeEquipmentForSkillUse(actor = null, state = {}, { ti
   const quantity = normalizeQuantity(item.system?.quantity);
   if (quantity < amount) return { consumed: false, reason: 'insufficient-quantity', itemName: item.name };
   const nextQuantity = Math.max(0, quantity - amount);
-  await item.update?.({ 'system.quantity': nextQuantity });
+  // inventory mutation goes through ActorEngine (the owned-item mutation authority), never item.update()
+  await ActorEngine.updateOwnedItems(actor, [{ _id: itemId, 'system.quantity': nextQuantity }], { source: 'EquipmentSkillHookResolver.consumeEquipmentForSkillUse' });
   return {
     consumed: true,
     itemId,
@@ -384,6 +520,7 @@ export default {
   getEquipmentSkillHooks,
   getEquipmentHooksForSkill,
   resolveEquipmentForSkillUse,
+  resolveSkillModifiersFromHooks,
   consumeEquipmentForSkillUse,
   summarizeEquipmentSkillHooks
 };

@@ -731,6 +731,14 @@ export class SWSERollEngine {
       }
     }
 
+    if (Array.isArray(context?.equipmentSkillModifiers)) {
+      for (const modifier of context.equipmentSkillModifiers) {
+        const value = Number(modifier?.value ?? 0);
+        if (!Number.isFinite(value) || value === 0) continue;
+        parts.push({ kind: 'bonus', label: this._stripHtml(`Gear: ${modifier?.label ?? modifier?.source ?? 'Equipment'}`), value: this._formatSigned(value) });
+      }
+    }
+
     const staticBonus = this._rollStaticBonus(roll, d20);
     if (!parts.some(part => part.kind === 'bonus') && Number.isFinite(staticBonus) && staticBonus !== 0) {
       parts.push({ kind: 'bonus', label: category === 'damage' ? 'Bonus' : 'Modifier', value: this._formatSigned(staticBonus) });

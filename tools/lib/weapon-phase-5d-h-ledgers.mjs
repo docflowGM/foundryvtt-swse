@@ -21,6 +21,8 @@ const any = /./;
 export const HEURISTIC_RULES = [
   [any, /notifications|flavor:|title:|label:|label \|\||sourceName|narration|<h3>|<div|\bsource: (weapon|item)\?\.name|speaker|weaponName:|\.description\)|breakdown\.push|ActionChat|question:|swseLogger|console\.|`[^`]*\$\{[^}]*name[^}]*\}[^`]*`|name: weapon\.name|id: `\$\{|source: item\.name|return weapon\?\.id|weapon\?\.name \?\? ''|weapon\?\.name \?\? null|\.description \|\| item\.name/, 'DISPLAY', 'message/label/log text'],
   [/weapon-runtime\/attack-consumer\.js$/, /refusing to treat/, 'DISPLAY', 'error message text'],
+  // Phase 5D-I-D-A1: EquipmentSkillHookResolver derives weapon hooks from the registry by canonical identity (resolveCanonicalIdentity); the item name only labels the modifier on the roll card / result
+  [/equipment\/equipment-skill-hook-resolver\.js$/, /source: record\.canonicalName \|\| item\.name|rawHook\.source \|\| item\.name|itemName: item\.name|insufficient-quantity/, 'DISPLAY', 'provenance label shown on the roll card / consume result (not a decision)'],
   // Phase 5D-I-C-C: the live Block / Deflect / Redirect Shot executor resolves talents and lightsaber weapons by canonical identity / structured group FIRST
   // (canonicalFeatSlug, selectors.group); the display-name match survives only for an ability / weapon that carries no canonical identity
   [/talent\/lightsaber-talent-actions\.js$/, /normalizedTalentName\(item\?\.name\)|String\(item\?\.name \?\? ''\)\.trim\(\)\.toLowerCase\(\)|isLightsaberLike|\/lightsaber\/i\.test/, 'IDENTITY_FALLBACK', 'ability / weapon display-name match used only when the item carries no canonical identity (canonical identity or structured group decides first)'],
