@@ -69,7 +69,8 @@ export function buildManifest() {
     const isOp = L.kind === 'operation-key';
     const identities = isOp ? (opWho[L.key] ?? []) : L.identityKey ? [L.identityKey] : [];
     if (isOp && !identities.length) problems.push(`${L.key}: the key no longer exists in the canonical registry`);
-    if (isOp && !unconsumedByFamily[L.key]) problems.push(`${L.key}: no longer reported unconsumed by the 5D-H closure census (reclassify / retire the row)`);
+    if (isOp && L.disposition !== 'IMPLEMENTED' && !unconsumedByFamily[L.key]) problems.push(`${L.key}: no longer reported unconsumed by the 5D-H closure census (reclassify as IMPLEMENTED with a consumer probe, or retire the row)`);
+    if (isOp && L.disposition === 'IMPLEMENTED' && unconsumedByFamily[L.key]) problems.push(`${L.key}: marked IMPLEMENTED but the 5D-H closure census still reports it unconsumed`);
     if (L.disposition.startsWith('DEFERRED_TO_') && !L.owner) problems.push(`${L.key}: deferral without an owner`);
     if (L.disposition === 'BLOCKED') {
       if (!L.subsystem || !L.owner) problems.push(`${L.key}: BLOCKED needs the named subsystem and an owner`);
@@ -144,13 +145,15 @@ export function buildManifest() {
   };
   const sum = counters.I_D_IMPLEMENTED + counters.I_D_DUPLICATES + counters.I_D_NON_EXECUTABLE + counters.I_D_DATA_DEFECT + counters.I_D_DATA_COMPLETENESS + counters.I_D_BLOCKED + counters.I_D_DEFERRED;
   if (sum !== counters.I_D_INPUT_TOTAL) problems.push('counter arithmetic does not close');
-  if (counters.I_D_INPUT_OPERATION_KEYS !== c.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER) problems.push(`ledger covers ${counters.I_D_INPUT_OPERATION_KEYS} operation keys but the closure census reports ${c.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER} unconsumed`);
+  const implementedKeys = rows.filter((r) => r.kind === 'operation-key' && r.disposition === 'IMPLEMENTED').length;
+  if (counters.I_D_INPUT_OPERATION_KEYS !== c.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER + implementedKeys) problems.push(`ledger covers ${counters.I_D_INPUT_OPERATION_KEYS} operation keys but the closure census reports ${c.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER} unconsumed + ${implementedKeys} implemented in I-D`);
 
   return {
     schemaVersion: 1, phase: '5D-I-D',
     purpose: 'Input manifest of the final weapon residual convergence. Audit evidence only: no runtime module reads it and it does not feed the 5D-H closure census. Automation level (AUTO / CONTEXTUAL / GM_ADJUDICATED) is an additional dimension; BLOCKED is reserved for a missing mechanical consumer. Tripwires prove what does NOT exist today and fail the census the day it does.',
     subpasses: I_D_SUBPASSES,
     counters,
+    baseline: { UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER_BEFORE_I_D: 75, RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER_BEFORE_I_D: 95, note: 'post-I-C-C checkpoint; the live values below move only when a production consumer is demonstrated' },
     closureCensusAtGeneration: {
       UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER: c.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER, RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER: c.RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER,
       FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES: c.FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES, PARTIAL_EXECUTION_FIELD_FAMILIES: c.PARTIAL_EXECUTION_FIELD_FAMILIES, UNCONSUMED_EXECUTION_FIELD_FAMILIES: c.UNCONSUMED_EXECUTION_FIELD_FAMILIES,

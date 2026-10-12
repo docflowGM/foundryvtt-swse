@@ -720,7 +720,8 @@ export class SWSERollEngine {
     if (Number.isFinite(Number(context?.forcePointBonus)) && Number(context.forcePointBonus) > 0) {
       parts.push({ kind: 'bonus', label: 'Force Point', value: this._formatSigned(context.forcePointBonus) });
     }
-    if (Number.isFinite(Number(context?.featSkillBonus)) && Number(context.featSkillBonus) !== 0) {
+    // the aggregate feat line is shown only when the per-feat lines are not (listing both counted every feat twice)
+    if (!Array.isArray(context?.featSkillBonuses) && Number.isFinite(Number(context?.featSkillBonus)) && Number(context.featSkillBonus) !== 0) {
       parts.push({ kind: 'bonus', label: 'Feat Bonus', value: this._formatSigned(context.featSkillBonus) });
     }
     if (Array.isArray(context?.featSkillBonuses)) {
@@ -728,6 +729,14 @@ export class SWSERollEngine {
         const value = Number(bonus?.value ?? bonus?.bonus ?? 0);
         if (!Number.isFinite(value) || value === 0) continue;
         parts.push({ kind: 'bonus', label: this._stripHtml(bonus?.sourceName ?? bonus?.name ?? 'Feat'), value: this._formatSigned(value) });
+      }
+    }
+
+    if (Array.isArray(context?.equipmentSkillModifiers)) {
+      for (const modifier of context.equipmentSkillModifiers) {
+        const value = Number(modifier?.value ?? 0);
+        if (!Number.isFinite(value) || value === 0) continue;
+        parts.push({ kind: 'bonus', label: this._stripHtml(`Gear: ${modifier?.label ?? modifier?.source ?? 'Equipment'}`), value: this._formatSigned(value) });
       }
     }
 

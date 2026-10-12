@@ -5,7 +5,9 @@ Policy: [`docs/architecture/swse-automation-authority.md`](../architecture/swse-
 
 ## Result
 
-**This census changes no runtime code.** Under the Automation Authority policy a rule is **not** blocked because Foundry cannot observe the world. The question per row is: *can the rule execute once the GM or player supplies the missing circumstance?* Every I-D-A row therefore carries an **automation level** (`AUTO` / `CONTEXTUAL` / `GM_ADJUDICATED`) and the **smallest outstanding support gap**. `BLOCKED` is reserved for a missing mechanical *consumer*: exactly **one** row (`radiationExposure`).
+**Update (I-D-A1 PR): the eight skill-bonus rows are now IMPLEMENTED** through the existing `EquipmentSkillHookResolver` -> `rollSkill` path (see `tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs` and `tests/equipment-skill-hook-roll-regression.test.mjs`); the 5D-H closure counters moved 75 -> 67 unique / 95 -> 84 raw unconsumed keys because a production consumer is now demonstrated (everything else below is the original census).
+
+**The census itself changed no runtime code.** Under the Automation Authority policy a rule is **not** blocked because Foundry cannot observe the world. The question per row is: *can the rule execute once the GM or player supplies the missing circumstance?* Every I-D-A row therefore carries an **automation level** (`AUTO` / `CONTEXTUAL` / `GM_ADJUDICATED`) and the **smallest outstanding support gap**. `BLOCKED` is reserved for a missing mechanical *consumer*: exactly **one** row (`radiationExposure`).
 
 The 5D-H closure counters keep their historical meaning and are untouched (the I-D ledger does not feed them). Live census, identical before / after this PR: 75 unique / 95 raw unconsumed operation keys · 37 / 12 / 8 execution field families · 3 special-mechanic DEFER · 4 deferred relations · canonical name/text heuristic usage 0.
 
@@ -26,11 +28,10 @@ Full per-row matrix (bucket, support, what Foundry knows, what must be supplied,
 | DUPLICATE_OR_NON_EXECUTABLE (11 mechanically verified, 4 asserted) | 15 |
 | SMALL_CONSUMER_NEEDED | 33 |
 | GM_FACING_SUPPORT_NEEDED | 18 |
-| INTEGRATION_NEEDED (I-D-A1) | 8 |
+| IMPLEMENTED (I-D-A1 skill bonuses) | 8 |
 | SOURCE_CLARIFICATION_NEEDED | 5 |
 | MISSING_SUBSYSTEM (weapon-object damage event: Electrostaff DR, Verpine Shattergun) | 2 |
 | DATA_COMPLETENESS | 1 |
-| IMPLEMENTED | 0 |
 
 Findings that changed earlier claims (all in the generated matrix):
 * **11 rows are proven duplicates** of structured fields that production code already consumes (e.g. `capacityGrenades` / `oneShotCapacity` = `ammo.capacityShots`; `singleShot` = `reloadRequiredAfterEachShot`; `specialRateOfFire` = `firesOnAlternatingRounds`; `powerLevelSwitchAction` = `modeProfiles[].switchAction`; `collapsedForm` = `configurationStates`; the three Wookiee / species proficiency echoes = `speciesOverrides`). They need no code; closure-ledger acceptance is a separate, later step.

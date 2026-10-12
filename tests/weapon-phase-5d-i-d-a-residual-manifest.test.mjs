@@ -13,7 +13,7 @@ assert.equal(m.counters.I_D_UNCLASSIFIED, 0);
 ok('manifest builds with no problems and zero unclassified');
 
 const closure = JSON.parse(fs.readFileSync(new URL('../data/audits/weapon-phase-5d-h-closure-census.json', import.meta.url), 'utf8'));
-assert.equal(m.counters.I_D_INPUT_OPERATION_KEYS, closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER);
+assert.equal(m.counters.I_D_INPUT_OPERATION_KEYS, closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER + 8, '75 at the I-D baseline = unconsumed now + the 8 implemented in I-D-A1');
 assert.equal(closure.counters.CANONICAL_NAME_TEXT_HEURISTIC_USAGE, 0);
 ok('every live unconsumed operation key has a row; canonical heuristic usage stays 0');
 
@@ -21,9 +21,11 @@ assert.equal(fs.readFileSync(new URL(`../${OUT_JSON}`, import.meta.url), 'utf8')
 ok('committed manifest equals the regenerated one (deterministic)');
 
 // no consumption claimed: the I-D-A rows are BLOCKED / DUPLICATE / NON_EXECUTABLE, never IMPLEMENTED, and the manifest does not feed the closure census
-assert.equal(m.counters.I_D_IMPLEMENTED, 0);
+// I-D-A1: exactly the eight skill-bonus rows are IMPLEMENTED, each with a consumer probe found in the resolver's executable code and a key the closure census now sees consumed
+assert.deepEqual(m.rows.filter((r) => r.disposition === 'IMPLEMENTED').map((r) => r.key).sort(), ['concealmentContext', 'concealmentEquipmentBonus', 'concealmentSkill', 'concealmentStealthBonus', 'concealmentStealthPenalty', 'snipingSkill', 'snipingStealthEquipmentBonus', 'survivalBasicForestJungleBonusWhenProficientAndCarried']);
+assert.equal(m.counters.I_D_IMPLEMENTED, 8);
 assert.ok(!fs.readFileSync(new URL('../tools/lib/weapon-phase-5d-h-ledgers.mjs', import.meta.url), 'utf8').includes('5d-i-d'));
-ok('no IMPLEMENTED claim; the I-D ledger does not feed (or lower) the 5D-H closure counters');
+ok('only the eight I-D-A1 rows are IMPLEMENTED (consumer-probed); the I-D ledger does not itself feed the 5D-H closure counters');
 
 // BLOCKED is reserved for a missing mechanical CONSUMER; an unobservable fact is CONTEXTUAL or GM_ADJUDICATED (docs/architecture/swse-automation-authority.md)
 const blockedRows = m.rows.filter((x) => x.disposition === 'BLOCKED');
@@ -69,7 +71,7 @@ ok('every deferral names its owning subpass');
   assert.equal(m.rows.filter((r) => !r.matrix).length, 0);
   assert.equal(Object.values(cm.buckets).reduce((a, b) => a + b, 0), m.counters.I_D_INPUT_TOTAL);
   assert.equal(Object.values(cm.support).reduce((a, b) => a + b, 0), m.counters.I_D_INPUT_TOTAL);
-  assert.equal(cm.support.IMPLEMENTED ?? 0, 0, 'no support claimed IMPLEMENTED without a production consumer in this PR');
+  assert.equal(cm.support.IMPLEMENTED ?? 0, 8, 'support IMPLEMENTED only where the manifest disposition is IMPLEMENTED (checked per row by the census)');
   assert.ok(cm.duplicateOrNonExecutable.verified >= 11, 'duplicate claims are proven against the registry + consumer probe, not asserted');
   for (const r of m.rows) {
     const x = r.matrix;
@@ -79,7 +81,7 @@ ok('every deferral names its owning subpass');
   }
   assert.equal(fs.readFileSync(new URL(`../${OUT_MD}`, import.meta.url), 'utf8'), renderMatrix(m), 'the generated matrix document is current');
 }
-ok('three-bucket matrix: all 82 rows classified, duplicate claims verified, nothing claimed implemented, document current');
+ok('three-bucket matrix: all 82 rows classified, duplicate claims verified, implemented only where proven, document current');
 
 // the corrected talent facts: the Zeison Sha talents EXIST in the canonical corpus (the relation merely names them by display string)
 {

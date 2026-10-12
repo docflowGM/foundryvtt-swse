@@ -16,6 +16,7 @@ import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { TeamFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/team-feat-runtime-patches.js";
 import { RebellionSpeciesSkillFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js";
+import { resolveEquipmentForSkillUse } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-skill-hook-resolver.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 
 
@@ -122,6 +123,66 @@ function buildAthleticsRollSkill(actor, derivedSkills = {}) {
   return { skill, derivedSkill };
 }
 
+/**
+ * Phase 5D-I-D-A1: equipment / weapon-carried modifiers of this skill use (EquipmentSkillHookResolver is the only authority).
+ * The derived skill total never includes them (nothing else reads item skillHooks), so adding them here cannot double count.
+ * A hook that needs the object it concerns (the weapon being concealed / used to snipe) or a terrain is only applied when the caller states it; a guarded
+ * prompt asks the owner once, and an unanswered / unavailable prompt applies nothing (never a guess).
+ */
+const escapeHtml = (value) => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+async function resolveEquipmentSkillModifiers(actor, effectiveSkillKey, skillContext) {
+  const empty = { modifiers: [], total: 0, skipped: [], notes: [] };
+  try {
+    const skillUse = skillContext.skillUse ?? {};
+    const resolve = () => resolveEquipmentForSkillUse(actor, skillUse, { skill: effectiveSkillKey, context: skillContext });
+    let state = resolve();
+    const needsContext = state.skippedSkillModifiers.filter((entry) => ['item-context-missing', 'terrain-unstated'].includes(entry.reason));
+    if (needsContext.length && skillContext.skipEquipmentSkillPrompt !== true && actor?.isOwner && typeof Dialog?.prompt === 'function') {
+      const offered = offeredEquipmentSkillContext(needsContext);
+      const answers = await promptForEquipmentSkillContext(offered);
+      if (answers) {
+        // only what was offered is accepted: an item id that is not one of the candidates, or a terrain that was not an option, is ignored
+        if (answers.hookItemId && !skillContext.hookItemId && offered.items.some((e) => String(e.itemId) === String(answers.hookItemId))) skillContext.hookItemId = answers.hookItemId;
+        if (answers.terrain && !skillContext.terrain && offered.terrains.includes(answers.terrain)) skillContext.terrain = answers.terrain;
+        state = resolve();
+      }
+    }
+    const notes = state.skippedSkillModifiers.filter((e) => ['item-context-missing', 'terrain-unstated'].includes(e.reason)).map((e) => `${e.label}: ${e.value > 0 ? '+' : ''}${e.value} not applied (${e.reason === 'terrain-unstated' ? 'terrain not stated' : 'no item selected'})`);
+    return { modifiers: state.skillModifiers, total: state.skillModifierTotal, skipped: state.skippedSkillModifiers, notes };
+  } catch (err) {
+    swseLogger.warn('Equipment skill modifiers failed; continuing without them.', err);
+    return empty;
+  }
+}
+
+function offeredEquipmentSkillContext(needed) {
+  const items = [...new Map(needed.filter((e) => e.reason === 'item-context-missing').map((e) => [String(e.itemId), e])).values()];
+  const terrains = [...new Set(needed.filter((e) => e.reason === 'terrain-unstated').flatMap((e) => e.terrainOptions ?? []))];
+  return { items, terrains };
+}
+
+async function promptForEquipmentSkillContext({ items, terrains }) {
+  const itemOptions = items.map((e) => `<option value="${escapeHtml(e.itemId)}">${escapeHtml(e.label)}</option>`).join('');
+  const terrainOptions = terrains.map((t) => `<option value="${escapeHtml(t)}">${escapeHtml(String(t).replace(/^./, (c) => c.toUpperCase()))}</option>`).join('');
+  const content = `<form class="swse-equipment-skill-prompt">
+    ${items.length ? `<label>Which item does this check concern (concealed object / sniping weapon)? <select name="hookItemId"><option value="">None of these</option>${itemOptions}</select></label>` : ''}
+    ${terrains.length ? `<label>Terrain <select name="terrain"><option value="">Other / not applicable</option>${terrainOptions}</select></label>` : ''}
+  </form>`;
+  try {
+    return await Dialog.prompt({
+      title: 'Equipment Bonuses',
+      content,
+      label: 'Apply',
+      callback: (html) => {
+        const root = html?.[0] ?? html;
+        return { hookItemId: root?.querySelector?.('[name="hookItemId"]')?.value || null, terrain: root?.querySelector?.('[name="terrain"]')?.value || null };
+      },
+      rejectClose: false
+    });
+  } catch (_err) { return null; }
+}
+
 export async function rollSkill(actor, skillKey, options = {}) {
   const utils = game.swse.utils;
   const athleticsOn = athleticsConsolidationActive();
@@ -183,6 +244,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
   if (forcePointDieUpgrade) skillContext.forcePointDieUpgrade = forcePointDieUpgrade;
 
   const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, effectiveSkillKey, skillContext);
+  const equipmentSkill = await resolveEquipmentSkillModifiers(actor, effectiveSkillKey, skillContext);
   const skillCheckMode = String(options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll')).toLowerCase();
   const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
   const skillIsTakeX = skillCheckMode === 'take10' || skillCheckMode === 'take20';
@@ -191,7 +253,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
   const rollResult = await RollCore.execute({
     actor,
     domain,
-    baseBonus: canonicalTotal + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0),
+    baseBonus: canonicalTotal + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0) + Number(equipmentSkill.total || 0),
     rollOptions: {
       baseDice: '1d20',
       useForce: options?.useForcePoint === true,
@@ -207,6 +269,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
       skillUse: skillContext.skillUse,
       useKey: skillContext.useKey,
       featSkillBonuses: featSkillBonuses.bonuses,
+      equipmentSkillModifiers: equipmentSkill.modifiers,
       teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
       forcePointDieUpgrade: forcePointDieUpgrade ?? null,
       checkMode: skillCheckMode,
@@ -245,6 +308,8 @@ export async function rollSkill(actor, skillKey, options = {}) {
           skillKey: effectiveSkillKey,
           skillUseKey: skillContext.useKey ?? null,
           featSkillBonuses: featSkillBonuses.bonuses,
+          equipmentSkillModifiers: equipmentSkill.modifiers,
+          equipmentSkillNotes: equipmentSkill.notes,
           teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
           forcePointDieUpgrade: forcePointDieUpgrade ?? null,
           skillResultRiders: resultRiders,
@@ -257,11 +322,15 @@ export async function rollSkill(actor, skillKey, options = {}) {
         skillKey: effectiveSkillKey,
         abilityKey,
         trained: isTrained,
-        baseBonus: rollResult.baseBonus,
+        // the displayed Base is the DERIVED skill total only: the custom modifier, feat bonuses and gear modifiers are listed separately on the card, so
+        // every modifier appears exactly once (Base + the listed lines = the rolled bonus)
+        baseBonus: canonicalTotal,
         situationalMods: rollResult.modifierTotal,
         customModifier: Number(options?.customModifier || 0),
         featSkillBonus: featSkillBonuses.total,
         featSkillBonuses: featSkillBonuses.bonuses,
+        equipmentSkillBonus: equipmentSkill.total,
+        equipmentSkillModifiers: equipmentSkill.modifiers,
         teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
         forcePointDieUpgrade: forcePointDieUpgrade ?? null,
         skillResultRiders: resultRiders,

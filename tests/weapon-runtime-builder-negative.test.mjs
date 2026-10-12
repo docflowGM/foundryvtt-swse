@@ -49,6 +49,7 @@ const ALLOWED_RUNTIME_CONSUMERS = new Set([
   // 5D-I-C-B weapon control: the declarative control contract is read by the control executor, the falling-object authority and the existing grapple
   // adapter (canonical feat identity + weapon entitlement); no builder / census / manifest is ever read at runtime
   'scripts/engine/combat/weapon-control-effects.js',
+  'scripts/engine/equipment/equipment-skill-hook-resolver.js', // 5D-I-D-A1: weapon-carried skill hooks derived from canonical operation.* keys (identity via resolveCanonicalIdentity, never the name)
   'scripts/engine/combat/falling-object-rules.js',
   'scripts/combat/systems/grappling-system.js',
   // 5D-I-C-C reaction / defense: the one reaction-weapon context (eligibility, modifiers, passive defense, disarm protection) and the live Block / Deflect /

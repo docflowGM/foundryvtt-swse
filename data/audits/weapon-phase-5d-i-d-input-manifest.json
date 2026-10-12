@@ -18,18 +18,23 @@
     "I_D_INPUT_SPECIAL_MECHANICS": 3,
     "I_D_INPUT_RELATIONS": 4,
     "I_D_INPUT_TOTAL": 82,
-    "I_D_IMPLEMENTED": 0,
+    "I_D_IMPLEMENTED": 8,
     "I_D_DUPLICATES": 1,
     "I_D_NON_EXECUTABLE": 1,
     "I_D_DATA_DEFECT": 0,
     "I_D_DATA_COMPLETENESS": 1,
     "I_D_BLOCKED": 1,
-    "I_D_DEFERRED": 78,
+    "I_D_DEFERRED": 70,
     "I_D_UNCLASSIFIED": 0
   },
+  "baseline": {
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER_BEFORE_I_D": 75,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER_BEFORE_I_D": 95,
+    "note": "post-I-C-C checkpoint; the live values below move only when a production consumer is demonstrated"
+  },
   "closureCensusAtGeneration": {
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 75,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 95,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 67,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 84,
     "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 37,
     "PARTIAL_EXECUTION_FIELD_FAMILIES": 12,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
@@ -44,7 +49,7 @@
       "AUTO": 39
     },
     "support": {
-      "INTEGRATION_NEEDED": 8,
+      "IMPLEMENTED": 8,
       "DATA_COMPLETENESS": 1,
       "GM_FACING_SUPPORT_NEEDED": 18,
       "SMALL_CONSUMER_NEEDED": 33,
@@ -88,7 +93,7 @@
         "CONTEXTUAL": 6
       }
     },
-    "sourceAmbiguities": 23,
+    "sourceAmbiguities": 22,
     "duplicateOrNonExecutable": {
       "verified": 11,
       "asserted": 4
@@ -101,7 +106,6 @@
     "NOT_ASSESSED_YET": 58
   },
   "supportGaps": {
-    "INTEGRATION_PENDING": 8,
     "CONTEXT_SURFACE_PENDING": 5,
     "MISSING_CONSUMER": 1,
     "PRESENTATION_PENDING": 7
@@ -142,16 +146,6 @@
     }
   },
   "tripwires": {
-    "skill-hook-unwired": {
-      "kind": "unreferenced",
-      "note": "EquipmentSkillHookResolver (the equipment -> Extra Skill Use bonus authority) has no importer, and only reads items of type \"equipment\"",
-      "holds": true
-    },
-    "skill-hook-equipment-only": {
-      "kind": "contains",
-      "note": "the resolver ignores weapon items, so a weapon-carried skill bonus has no reader",
-      "holds": true
-    },
     "no-stealth-state": {
       "kind": "none",
       "note": "no hidden / revealed-position state on actors or tokens",
@@ -285,29 +279,24 @@
       "key": "concealmentContext",
       "family": "3b.operation.concealment-stealth-sensing",
       "subpass": "I-D-A1",
-      "disposition": "DEFERRED_TO_I_D_A1",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "Contact Stunner"
       ],
       "structuredSourceField": "operation.concealmentContext",
+      "currentConsumer": "scripts/engine/equipment/equipment-skill-hook-resolver.js (\\bconcealmentContext\\b)",
       "automation": "CONTEXTUAL",
-      "supportGap": "INTEGRATION_PENDING",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "INTEGRATION_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "registry qualifier (\"conceal this weapon\")",
         "mustBeSupplied": "-",
-        "smallestImplementation": "validated by the hook derivation; scopes the hook to the concealed item itself",
+        "smallestImplementation": "DONE (I-D-A1): validated by the hook derivation; scopes the hook to the concealed item itself",
         "sourceAmbiguity": null,
         "acceptance": "bonus never awarded for an unrelated item"
       },
-      "owner": "I-D-A1",
       "reason": "States WHEN the bonus applies (\"conceal this weapon\"): the integration scopes the hook to the concealed item itself and validates this qualifier."
     },
     {
@@ -315,7 +304,7 @@
       "key": "concealmentEquipmentBonus",
       "family": "3b.operation.concealment-stealth-sensing",
       "subpass": "I-D-A1",
-      "disposition": "DEFERRED_TO_I_D_A1",
+      "disposition": "IMPLEMENTED",
       "identityCount": 4,
       "rawOccurrences": 4,
       "representativeWeapons": [
@@ -325,52 +314,42 @@
         "snap-shot-blaster-pistol"
       ],
       "structuredSourceField": "operation.concealmentEquipmentBonus",
+      "currentConsumer": "scripts/engine/equipment/equipment-skill-hook-resolver.js (\\bconcealmentEquipmentBonus\\b)",
       "automation": "CONTEXTUAL",
-      "supportGap": "INTEGRATION_PENDING",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "INTEGRATION_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "owned item, canonical identity, quantity (carried)",
         "mustBeSupplied": "which item is being concealed (player picks the Conceal-item use and names the weapon)",
-        "smallestImplementation": "weapon-derived hook in EquipmentSkillHookResolver + its use in rollSkill (in progress on feat/weapon-phase-5d-i-d-a1-equipment-skill-hooks)",
+        "smallestImplementation": "DONE (I-D-A1): weapon-derived hook in EquipmentSkillHookResolver, applied by rollSkill",
         "sourceAmbiguity": null,
         "acceptance": "real rollSkill: +5 only for the named weapon on the Conceal use; none without item context; best-equipment-bonus stacking"
       },
-      "owner": "I-D-A1",
-      "reason": "+5 equipment bonus to Stealth to conceal the weapon (Contact Stunner, Hold-out / Snap-shot blaster pistols, Concealed Dart Launcher). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+      "reason": "+5 equipment bonus to Stealth to conceal the weapon (Contact Stunner, Hold-out / Snap-shot blaster pistols, Concealed Dart Launcher). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. IMPLEMENTED in I-D-A1: EquipmentSkillHookResolver now derives the hook from the canonical registry (by identity) and rollSkill applies it; proven by tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs and tests/equipment-skill-hook-roll-regression.test.mjs."
     },
     {
       "kind": "operation-key",
       "key": "concealmentSkill",
       "family": "3b.operation.concealment-stealth-sensing",
       "subpass": "I-D-A1",
-      "disposition": "DEFERRED_TO_I_D_A1",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "Contact Stunner"
       ],
       "structuredSourceField": "operation.concealmentSkill",
+      "currentConsumer": "scripts/engine/equipment/equipment-skill-hook-resolver.js (\\bconcealmentSkill\\b)",
       "automation": "CONTEXTUAL",
-      "supportGap": "INTEGRATION_PENDING",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "INTEGRATION_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "registry qualifier",
         "mustBeSupplied": "-",
-        "smallestImplementation": "validated by the hook derivation",
+        "smallestImplementation": "DONE (I-D-A1): validated by the hook derivation",
         "sourceAmbiguity": null,
         "acceptance": "hook derived only when the qualifier agrees"
       },
-      "owner": "I-D-A1",
       "reason": "Names the skill (\"Stealth\") of concealmentEquipmentBonus; a qualifier the integration validates."
     },
     {
@@ -378,89 +357,74 @@
       "key": "concealmentStealthBonus",
       "family": "3b.operation.concealment-stealth-sensing",
       "subpass": "I-D-A1",
-      "disposition": "DEFERRED_TO_I_D_A1",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "defender-microblaster"
       ],
       "structuredSourceField": "operation.concealmentStealthBonus",
+      "currentConsumer": "scripts/engine/equipment/equipment-skill-hook-resolver.js (\\bconcealmentStealthBonus\\b)",
       "automation": "CONTEXTUAL",
-      "supportGap": "INTEGRATION_PENDING",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "INTEGRATION_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "owned item, identity, quantity",
         "mustBeSupplied": "concealed item named",
-        "smallestImplementation": "same hook path; type = untyped (the text says \"+5 bonus\", not \"equipment bonus\")",
-        "sourceAmbiguity": "bonus type is unstated in the text; treated as untyped (stacks)",
-        "acceptance": "Defender +5 stacks with a +5 equipment bonus; applies only when concealing the Defender"
+        "smallestImplementation": "DONE (I-D-A1): same hook path; type = untyped (CWCG p.62 gives a \"+5 bonus\" with no descriptor; Core Rulebook p.241 \"Stacking Bonuses\": bonuses without a descriptor stack with other bonuses, including other undescribed bonuses)",
+        "sourceAmbiguity": null,
+        "acceptance": "Defender +5 stacks with a separate +5 equipment bonus and with other undescribed bonuses; applies only when concealing the Defender"
       },
-      "owner": "I-D-A1",
-      "reason": "+5 (untyped) bonus to Stealth to conceal the weapon (Defender Microblaster). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+      "reason": "+5 untyped bonus to Stealth to conceal the weapon (Defender Microblaster, Clone Wars Campaign Guide p.62 states no bonus descriptor; Core Rulebook p.241 \"Stacking Bonuses\": bonuses without a descriptor stack, including with other undescribed bonuses). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. IMPLEMENTED in I-D-A1: EquipmentSkillHookResolver now derives the hook from the canonical registry (by identity) and rollSkill applies it; proven by tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs and tests/equipment-skill-hook-roll-regression.test.mjs."
     },
     {
       "kind": "operation-key",
       "key": "concealmentStealthPenalty",
       "family": "3b.operation.concealment-stealth-sensing",
       "subpass": "I-D-A1",
-      "disposition": "DEFERRED_TO_I_D_A1",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "ascension-gun"
       ],
       "structuredSourceField": "operation.concealmentStealthPenalty",
+      "currentConsumer": "scripts/engine/equipment/equipment-skill-hook-resolver.js (\\bconcealmentStealthPenalty\\b)",
       "automation": "CONTEXTUAL",
-      "supportGap": "INTEGRATION_PENDING",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "INTEGRATION_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "owned item, identity",
         "mustBeSupplied": "concealed item named",
-        "smallestImplementation": "same hook path; type = penalty, never dropped by best-bonus selection",
+        "smallestImplementation": "DONE (I-D-A1): same hook path; type = penalty, never dropped by best-bonus selection",
         "sourceAmbiguity": null,
         "acceptance": "Ascension Gun -5 kept beside a +2 equipment bonus (net -3); only when concealing the gun"
       },
-      "owner": "I-D-A1",
-      "reason": "-5 penalty to Stealth to conceal the weapon (Ascension Gun, Galaxy at War p.37 \"its bulk imposes -5 on Stealth checks made to conceal it\"). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+      "reason": "-5 penalty to Stealth to conceal the weapon (Ascension Gun, Galaxy at War p.37 \"its bulk imposes -5 on Stealth checks made to conceal it\"). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. IMPLEMENTED in I-D-A1: EquipmentSkillHookResolver now derives the hook from the canonical registry (by identity) and rollSkill applies it; proven by tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs and tests/equipment-skill-hook-roll-regression.test.mjs."
     },
     {
       "kind": "operation-key",
       "key": "snipingSkill",
       "family": "3b.operation.concealment-stealth-sensing",
       "subpass": "I-D-A1",
-      "disposition": "DEFERRED_TO_I_D_A1",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "magna-caster"
       ],
       "structuredSourceField": "operation.snipingSkill",
+      "currentConsumer": "scripts/engine/equipment/equipment-skill-hook-resolver.js (\\bsnipingSkill\\b)",
       "automation": "CONTEXTUAL",
-      "supportGap": "INTEGRATION_PENDING",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "INTEGRATION_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "registry qualifier",
         "mustBeSupplied": "-",
-        "smallestImplementation": "validated by the hook derivation (mismatch => no hook)",
+        "smallestImplementation": "DONE (I-D-A1): validated by the hook derivation (mismatch => no hook)",
         "sourceAmbiguity": null,
         "acceptance": "hook derived only when the qualifier agrees"
       },
-      "owner": "I-D-A1",
       "reason": "Names the skill (\"Stealth\") of snipingStealthEquipmentBonus; a qualifier the integration validates (a mismatch derives no hook)."
     },
     {
@@ -468,60 +432,50 @@
       "key": "snipingStealthEquipmentBonus",
       "family": "3b.operation.concealment-stealth-sensing",
       "subpass": "I-D-A1",
-      "disposition": "DEFERRED_TO_I_D_A1",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "magna-caster"
       ],
       "structuredSourceField": "operation.snipingStealthEquipmentBonus",
+      "currentConsumer": "scripts/engine/equipment/equipment-skill-hook-resolver.js (\\bsnipingStealthEquipmentBonus\\b)",
       "automation": "CONTEXTUAL",
-      "supportGap": "INTEGRATION_PENDING",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "INTEGRATION_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "owned item, identity",
         "mustBeSupplied": "the weapon used to snipe",
-        "smallestImplementation": "same hook path on the Snipe use",
+        "smallestImplementation": "DONE (I-D-A1): same hook path on the Snipe use",
         "sourceAmbiguity": null,
         "acceptance": "+5 only on the Snipe use with the Magna-Caster; not on Conceal; not with another weapon"
       },
-      "owner": "I-D-A1",
-      "reason": "+5 equipment bonus to the Stealth check made to snipe (Magna-Caster). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+      "reason": "+5 equipment bonus to the Stealth check made to snipe (Magna-Caster). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. IMPLEMENTED in I-D-A1: EquipmentSkillHookResolver now derives the hook from the canonical registry (by identity) and rollSkill applies it; proven by tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs and tests/equipment-skill-hook-roll-regression.test.mjs."
     },
     {
       "kind": "operation-key",
       "key": "survivalBasicForestJungleBonusWhenProficientAndCarried",
       "family": "3b.operation.condition-and-persistent-effects",
       "subpass": "I-D-A1",
-      "disposition": "DEFERRED_TO_I_D_A1",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "wookiee-ryyk-blade"
       ],
       "structuredSourceField": "operation.survivalBasicForestJungleBonusWhenProficientAndCarried",
+      "currentConsumer": "scripts/engine/equipment/equipment-skill-hook-resolver.js (\\bsurvivalBasicForestJungleBonusWhenProficientAndCarried\\b)",
       "automation": "CONTEXTUAL",
-      "supportGap": "INTEGRATION_PENDING",
-      "tripwires": [
-        "skill-hook-unwired",
-        "skill-hook-equipment-only"
-      ],
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "INTEGRATION_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "carried (quantity), proficiency (canonical resolver), Wookiee route",
         "mustBeSupplied": "terrain is forest / jungle (stated)",
-        "smallestImplementation": "same hook path with requires {terrain, proficient}",
+        "smallestImplementation": "DONE (I-D-A1): same hook path with requires {terrain, proficient}",
         "sourceAmbiguity": null,
         "acceptance": "+2 only on Basic Survival, forest/jungle, proficient, carried; Wookiee advanced-melee route counts"
       },
-      "owner": "I-D-A1",
-      "reason": "+2 to Basic Survival in forest / jungle when the wielder is proficient and carries the weapon (Wookiee Ryyk Blade; terrain is player-stated, proficiency and carried state are observed). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. The existing authority for equipment -> Extra Skill Use modifiers (EquipmentSkillHookResolver, with conceal-weapon / snipe / basic-survival uses) had no caller and read only equipment items; connecting it to the production skill roll is the approved I-D-A1 integration, not a new subsystem."
+      "reason": "+2 to Basic Survival in forest / jungle when the wielder is proficient and carries the weapon (Wookiee Ryyk Blade; terrain is player-stated, proficiency and carried state are observed). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. IMPLEMENTED in I-D-A1: EquipmentSkillHookResolver now derives the hook from the canonical registry (by identity) and rollSkill applies it; proven by tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs and tests/equipment-skill-hook-roll-regression.test.mjs."
     },
     {
       "kind": "operation-key",

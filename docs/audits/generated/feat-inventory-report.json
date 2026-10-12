@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-07T18:09:02.792Z",
-  "gitCommit": "708c58f00b56551a800345f70b73a3444c949462",
+  "generatedAt": "2026-10-12T16:27:34.741Z",
+  "gitCommit": "0d16b7c8d5b5757c0332bd1ae4df2d9adddcc282",
   "canonicalSource": "data/feat-catalog.json",
   "catalog": {
     "path": "data/feat-catalog.json",
     "count": 353,
-    "hash": "1fee3e6888207c602230f0fb381aaf46ab8814ac1643f083809e7a834a14bb66"
+    "hash": "a44946418f305dcca25598f16062760ed12101f30a87dc2c40fbe53390881344"
   },
   "packSource": {
     "path": "packs/feats.db",
     "count": 353,
-    "hash": "9aa31e5ac6ab9459494a4aec756cae7734b5bda29bf5162de78ae3ae4840b2b2"
+    "hash": "2a8fbfd5e2c2d4c76735c2ede8871ffebb0275e0d3a7ff8b1a05657855e9ff4d"
   },
   "totals": {
     "statusCounts": {
