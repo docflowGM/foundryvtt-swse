@@ -23,3 +23,4 @@ export * from './special-mechanics.js';
 export { buildAttackForms, findAttackForm, attackFormSelection, attackFormValue } from './attack-form-options.js';
 export { resolveCanonicalRange, assertRangeSelectionResolvable, canonicalRangePenalty, normalizeRangeBand, RANGE_BANDS } from './canonical-range.js';
 export { resolveCanonicalResourceCost } from './canonical-resource.js';
+export { POWER_SOURCE_KEYS, POWER_SOURCE_STATES, powerSourceRequirementOf, powerSourceLabel, powerSourceStatus } from './power-source.js';

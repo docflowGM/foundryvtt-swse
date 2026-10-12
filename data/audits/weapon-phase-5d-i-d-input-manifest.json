@@ -18,13 +18,13 @@
     "I_D_INPUT_SPECIAL_MECHANICS": 3,
     "I_D_INPUT_RELATIONS": 2,
     "I_D_INPUT_TOTAL": 80,
-    "I_D_IMPLEMENTED": 8,
-    "I_D_DUPLICATES": 1,
+    "I_D_IMPLEMENTED": 14,
+    "I_D_DUPLICATES": 6,
     "I_D_NON_EXECUTABLE": 1,
     "I_D_DATA_DEFECT": 0,
-    "I_D_DATA_COMPLETENESS": 1,
+    "I_D_DATA_COMPLETENESS": 2,
     "I_D_BLOCKED": 1,
-    "I_D_DEFERRED": 68,
+    "I_D_DEFERRED": 56,
     "I_D_UNCLASSIFIED": 0
   },
   "baseline": {
@@ -33,8 +33,8 @@
     "note": "post-I-C-C checkpoint; the live values below move only when a production consumer is demonstrated"
   },
   "closureCensusAtGeneration": {
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 67,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 84,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 61,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 70,
     "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 37,
     "PARTIAL_EXECUTION_FIELD_FAMILIES": 12,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
@@ -45,16 +45,16 @@
   "coverageMatrix": {
     "buckets": {
       "CONTEXTUAL": 31,
-      "GM_ADJUDICATED": 12,
-      "AUTO": 37
+      "GM_ADJUDICATED": 13,
+      "AUTO": 36
     },
     "support": {
-      "IMPLEMENTED": 8,
-      "DATA_COMPLETENESS": 1,
-      "GM_FACING_SUPPORT_NEEDED": 18,
-      "SMALL_CONSUMER_NEEDED": 31,
+      "IMPLEMENTED": 14,
+      "DATA_COMPLETENESS": 2,
+      "GM_FACING_SUPPORT_NEEDED": 14,
+      "SMALL_CONSUMER_NEEDED": 30,
       "DUPLICATE_OR_NON_EXECUTABLE": 15,
-      "SOURCE_CLARIFICATION_NEEDED": 5,
+      "SOURCE_CLARIFICATION_NEEDED": 3,
       "MISSING_SUBSYSTEM": 2
     },
     "bucketsBySubpass": {
@@ -89,21 +89,22 @@
         "CONTEXTUAL": 1
       },
       "I-D-F": {
-        "AUTO": 6,
-        "CONTEXTUAL": 6
+        "AUTO": 5,
+        "CONTEXTUAL": 6,
+        "GM_ADJUDICATED": 1
       }
     },
-    "sourceAmbiguities": 21,
+    "sourceAmbiguities": 17,
     "duplicateOrNonExecutable": {
       "verified": 11,
       "asserted": 4
     }
   },
   "automationLevels": {
-    "CONTEXTUAL": 14,
-    "GM_ADJUDICATED": 8,
-    "AUTO": 2,
-    "NOT_ASSESSED_YET": 56
+    "CONTEXTUAL": 20,
+    "GM_ADJUDICATED": 9,
+    "AUTO": 7,
+    "NOT_ASSESSED_YET": 44
   },
   "supportGaps": {
     "CONTEXT_SURFACE_PENDING": 5,
@@ -1952,37 +1953,40 @@
       "key": "canSingleLoadShell",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "mortar-launcher"
       ],
       "structuredSourceField": "operation.canSingleLoadShell",
+      "currentConsumer": "scripts/engine/inventory/ammo-system.js (\\bcanSingleLoadShell\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
-        "bucket": "AUTO",
-        "support": "SOURCE_CLARIFICATION_NEEDED",
-        "foundryKnows": "mortar launcher: magazine holds five shells and AUTOMATICALLY feeds each shot",
-        "mustBeSupplied": "-",
-        "smallestImplementation": "none until reconciled",
-        "sourceAmbiguity": "canSingleLoadShell = true conflicts with the automatic-feed magazine text; the key may be a DATA_DEFECT",
-        "acceptance": "source ruling; then a data correction if confirmed"
+        "bucket": "CONTEXTUAL",
+        "support": "IMPLEMENTED",
+        "foundryKnows": "mortar launcher: five-shell magazine that automatically feeds each shot, AND (Galaxy at War p.40, source-confirmed) a shell may instead be dropped singly down the open tube",
+        "mustBeSupplied": "the player choosing single-round loading in the reload dialog",
+        "smallestImplementation": "DONE (I-D-F): AmmoSystem.loadSingleRound adds ONE round to the one ammunition pool (capped at capacity) when the weapon declares operation.canSingleLoadShell; the sheet reload workflow offers the choice only for such weapons; no separate action is charged (the source states none)",
+        "sourceAmbiguity": null,
+        "acceptance": "single round loads and the magazine refill still works; a weapon without the capability refuses; no over-fill; one reload action"
       },
-      "owner": "I-D-F",
-      "reason": "Single-shell loading special case."
+      "reason": "Mortar Launcher. Galaxy at War p.40 (source-confirmed): a five-shell magazine that automatically feeds each shot AND an alternative of dropping a single shell down the open tube. The key is valid, not a data defect. AmmoSystem.loadSingleRound adds one round to the one ammunition pool (capped at capacity); the reload workflow offers it only for weapons declaring the key. No separate action is charged because the source states none. Proven in the I-D-F test."
     },
     {
       "kind": "operation-key",
       "key": "capacityGrenades",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "DUPLICATE",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "micro-grenade-launcher"
       ],
-      "structuredSourceField": "operation.capacityGrenades",
+      "structuredSourceField": "canonicalStats.ammo.capacityShots (= 4) and the generated production projection system.ammunition.max",
+      "currentConsumer": "scripts/items/weapon-runtime/resource-resolver.js (capacityShots)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
         "support": "DUPLICATE_OR_NON_EXECUTABLE",
@@ -1996,21 +2000,22 @@
           "consumer": "scripts/items/weapon-runtime/resource-resolver.js (capacityShots)"
         }
       },
-      "owner": "I-D-F",
-      "reason": "Grenade capacity of a launcher: needs inventory-level payload authority (deliberately deferred in the readiness UI work)."
+      "reason": "Micro Grenade Launcher holds four grenades. The same number is the canonical ammo capacity, the resolved resource capacity and the production projection AmmoSystem spends from. Proven by tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs (four shots, the fifth refused, a reload restores four)."
     },
     {
       "kind": "operation-key",
       "key": "oneShotCapacity",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "DUPLICATE",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "wrist-blaster"
       ],
-      "structuredSourceField": "operation.oneShotCapacity",
+      "structuredSourceField": "canonicalStats.ammo.capacityShots (= 1) and the generated production projection system.ammunition.max",
+      "currentConsumer": "scripts/items/weapon-runtime/resource-resolver.js (capacityShots)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
         "support": "DUPLICATE_OR_NON_EXECUTABLE",
@@ -2024,46 +2029,48 @@
           "consumer": "scripts/items/weapon-runtime/resource-resolver.js (capacityShots)"
         }
       },
-      "owner": "I-D-F",
-      "reason": "One-shot capacity special case."
+      "reason": "Wrist Blaster carries enough power for one shot; the canonical capacity of 1 is what AmmoSystem enforces (the second attack is refused). No larger capacity is invented. Proven in the I-D-F test."
     },
     {
       "kind": "operation-key",
       "key": "powerCordDisconnectRule",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "DATA_COMPLETENESS",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "lightsaber-chassis-archaic-lightsaber"
       ],
       "structuredSourceField": "operation.powerCordDisconnectRule",
+      "automation": "GM_ADJUDICATED",
       "matrix": {
-        "bucket": "CONTEXTUAL",
-        "support": "SOURCE_CLARIFICATION_NEEDED",
-        "foundryKnows": "archaic lightsaber uses an external cell connected by a cord",
-        "mustBeSupplied": "whether the cord is disconnected / cut (GM)",
-        "smallestImplementation": "none stated: the record carries a boolean but the published text states no disconnect rule",
-        "sourceAmbiguity": "no disconnect effect is stated in the canonical text; do not invent one",
-        "acceptance": "source-backed rule before any behaviour"
+        "bucket": "GM_ADJUDICATED",
+        "support": "DATA_COMPLETENESS",
+        "foundryKnows": "archaic lightsaber: external power cell worn on the belt or back, connected to the hilt by a cord (Jedi Academy Training Manual p.51)",
+        "mustBeSupplied": "a published disconnect rule",
+        "smallestImplementation": "none: the published text states a cord but no disconnect / cut mechanic, so none is invented",
+        "sourceAmbiguity": "the boolean powerCordDisconnectRule has no published rule behind it; the text only says the pack is connected by a cord and that a special 600-credit pack is required",
+        "acceptance": "a source-backed rule before any behaviour"
       },
-      "owner": "I-D-F",
-      "reason": "Power-source disconnect rule."
+      "owner": "canonical weapon data (source-silent)",
+      "reason": "Archaic Lightsaber (Jedi Academy Training Manual p.51): the published text says the external power cell is worn on the belt or back and connected to the hilt by a cord, and that a special 600-credit power pack is required. It states NO disconnect, cut or interruption mechanic, so none is invented and the boolean has nothing to execute. (The pack requirement itself belongs to the power-source capability.)"
     },
     {
       "kind": "operation-key",
       "key": "powerLevelSwitchAction",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "DUPLICATE",
       "identityCount": 2,
       "rawOccurrences": 2,
       "representativeWeapons": [
         "heavy-variable-blaster",
         "variable-blaster"
       ],
-      "structuredSourceField": "operation.powerLevelSwitchAction",
+      "structuredSourceField": "canonicalStats.modeProfiles[].switchAction (swift) with resourceConsumption.multiplier (5 / 10, heavy 10 / 20)",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (switchAction)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
         "support": "DUPLICATE_OR_NON_EXECUTABLE",
@@ -2077,15 +2084,14 @@
           "consumer": "scripts/items/weapon-runtime/attack-shape.js (switchAction)"
         }
       },
-      "owner": "I-D-F",
-      "reason": "Power-level switch action cost."
+      "reason": "Variable / Heavy Variable Blaster: changing the power level is a swift action. VERIFIED, not assumed: the persistent-setting machinery already charges the modeProfiles[].switchAction swift once per change of level (free at the baseline and when unchanged) and the per-level multipliers are the canonical resource cost. Proven in the I-D-F test (including an unpayable switch failing closed)."
     },
     {
       "kind": "operation-key",
       "key": "requiresEnergyCell",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "IMPLEMENTED",
       "identityCount": 7,
       "rawOccurrences": 7,
       "representativeWeapons": [
@@ -2095,24 +2101,25 @@
         "lightsaber-chassis-modern-lightfoil"
       ],
       "structuredSourceField": "operation.requiresEnergyCell",
+      "currentConsumer": "scripts/items/weapon-runtime/power-source.js (\\brequiresEnergyCell\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "GM_FACING_SUPPORT_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "weapon needs an energy cell to operate (no per-attack consumption is stated)",
-        "mustBeSupplied": "that a cell is installed (player / GM)",
-        "smallestImplementation": "display the power requirement; optionally a powered / unpowered flag via the existing owned-item state",
-        "sourceAmbiguity": "no charge accounting is published for energy-cell melee weapons",
-        "acceptance": "requirement shown; no fabricated charge counter"
+        "mustBeSupplied": "that the source is installed (player-confirmed owned state; unknown is not missing)",
+        "smallestImplementation": "DONE (I-D-F): powerSourceRequirementOf shows kind and count in the readiness notes and the weapon card; the player confirms installed / missing (FireStateStore.setPowerSourceState); only an explicit missing blocks the attack; nothing is consumed and no capacity or charge counter is invented; one reusable capability (power-source.js) shared by all four requires* keys",
+        "sourceAmbiguity": null,
+        "acceptance": "requirement shown; unconfirmed never blocks; confirmed missing refuses before any cost; no ammunition change"
       },
-      "owner": "I-D-F",
-      "reason": "Power-source requirement."
+      "reason": "needs an energy cell (7 weapons). CONTEXTUAL: the weapon REQUIRES a power source; the published text states no capacity, no charge counter and no per-attack consumption, so none is invented. IMPLEMENTED in I-D-F: one reusable reader (power-source.js, shared by requiresEnergyCell / requiresEnergyCells / requiresPowerPack / requiresPowerPacks) shows the requirement in the readiness notes and on the weapon card; the player confirms installed / missing (owned state), only an explicit missing blocks the attack, and an unconfirmed source never does (unknown is not false). Proven in tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs."
     },
     {
       "kind": "operation-key",
       "key": "requiresEnergyCells",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "IMPLEMENTED",
       "identityCount": 3,
       "rawOccurrences": 3,
       "representativeWeapons": [
@@ -2121,102 +2128,108 @@
         "gungan-electropole"
       ],
       "structuredSourceField": "operation.requiresEnergyCells",
+      "currentConsumer": "scripts/items/weapon-runtime/power-source.js (\\brequiresEnergyCells\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "GM_FACING_SUPPORT_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "needs two energy cells",
-        "mustBeSupplied": "cells installed",
-        "smallestImplementation": "same capability as requiresEnergyCell (count shown)",
+        "mustBeSupplied": "that the source is installed (player-confirmed owned state; unknown is not missing)",
+        "smallestImplementation": "DONE (I-D-F): powerSourceRequirementOf shows kind and count in the readiness notes and the weapon card; the player confirms installed / missing (FireStateStore.setPowerSourceState); only an explicit missing blocks the attack; nothing is consumed and no capacity or charge counter is invented",
         "sourceAmbiguity": null,
-        "acceptance": "same"
+        "acceptance": "requirement shown; unconfirmed never blocks; confirmed missing refuses before any cost; no ammunition change"
       },
-      "owner": "I-D-F",
-      "reason": "Power-source requirement."
+      "reason": "needs two energy cells (San-Ni Staff, Vibro-Saw, Gungan Electropole). CONTEXTUAL: the weapon REQUIRES a power source; the published text states no capacity, no charge counter and no per-attack consumption, so none is invented. IMPLEMENTED in I-D-F: one reusable reader (power-source.js, shared by requiresEnergyCell / requiresEnergyCells / requiresPowerPack / requiresPowerPacks) shows the requirement in the readiness notes and on the weapon card; the player confirms installed / missing (owned state), only an explicit missing blocks the attack, and an unconfirmed source never does (unknown is not false). Proven in tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs."
     },
     {
       "kind": "operation-key",
       "key": "requiresPowerPack",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "Blastsword"
       ],
       "structuredSourceField": "operation.requiresPowerPack",
+      "currentConsumer": "scripts/items/weapon-runtime/power-source.js (\\brequiresPowerPack\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "GM_FACING_SUPPORT_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "needs a power pack to operate",
-        "mustBeSupplied": "pack installed",
-        "smallestImplementation": "same display capability",
-        "sourceAmbiguity": "no shot count is stated for this melee weapon",
-        "acceptance": "same"
+        "mustBeSupplied": "that the source is installed (player-confirmed owned state; unknown is not missing)",
+        "smallestImplementation": "DONE (I-D-F): powerSourceRequirementOf shows kind and count in the readiness notes and the weapon card; the player confirms installed / missing (FireStateStore.setPowerSourceState); only an explicit missing blocks the attack; nothing is consumed and no capacity or charge counter is invented",
+        "sourceAmbiguity": null,
+        "acceptance": "requirement shown; unconfirmed never blocks; confirmed missing refuses before any cost; no ammunition change"
       },
-      "owner": "I-D-F",
-      "reason": "Power-source requirement."
+      "reason": "needs a power pack (Blastsword). CONTEXTUAL: the weapon REQUIRES a power source; the published text states no capacity, no charge counter and no per-attack consumption, so none is invented. IMPLEMENTED in I-D-F: one reusable reader (power-source.js, shared by requiresEnergyCell / requiresEnergyCells / requiresPowerPack / requiresPowerPacks) shows the requirement in the readiness notes and on the weapon card; the player confirms installed / missing (owned state), only an explicit missing blocks the attack, and an unconfirmed source never does (unknown is not false). Proven in tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs."
     },
     {
       "kind": "operation-key",
       "key": "requiresPowerPacks",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "battering-ram"
       ],
       "structuredSourceField": "operation.requiresPowerPacks",
+      "currentConsumer": "scripts/items/weapon-runtime/power-source.js (\\brequiresPowerPacks\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "GM_FACING_SUPPORT_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "battering ram needs four power packs",
-        "mustBeSupplied": "packs installed",
-        "smallestImplementation": "same display capability (count 4)",
-        "sourceAmbiguity": "ammo.capacityShots is null: the source states no shot count",
-        "acceptance": "requirement shown"
+        "mustBeSupplied": "that the source is installed (player-confirmed owned state; unknown is not missing)",
+        "smallestImplementation": "DONE (I-D-F): powerSourceRequirementOf shows kind and count in the readiness notes and the weapon card; the player confirms installed / missing (FireStateStore.setPowerSourceState); only an explicit missing blocks the attack; nothing is consumed and no capacity or charge counter is invented",
+        "sourceAmbiguity": null,
+        "acceptance": "requirement shown; unconfirmed never blocks; confirmed missing refuses before any cost; no ammunition change"
       },
-      "owner": "I-D-F",
-      "reason": "Power-source requirement."
+      "reason": "needs four power packs (Squib Battering Ram). CONTEXTUAL: the weapon REQUIRES a power source; the published text states no capacity, no charge counter and no per-attack consumption, so none is invented. IMPLEMENTED in I-D-F: one reusable reader (power-source.js, shared by requiresEnergyCell / requiresEnergyCells / requiresPowerPack / requiresPowerPacks) shows the requirement in the readiness notes and on the weapon card; the player confirms installed / missing (owned state), only an explicit missing blocks the attack, and an unconfirmed source never does (unknown is not false). Proven in tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs."
     },
     {
       "kind": "operation-key",
       "key": "secondCrewReloadAction",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "e-web-missile-launcher"
       ],
       "structuredSourceField": "operation.secondCrewReloadAction",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (\\bsecondCrewReloadAction\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "SMALL_CONSUMER_NEEDED",
-        "foundryKnows": "E-Web missile launcher is reloaded as a Move action by a second crew member (ammo.reloadAction is text)",
-        "mustBeSupplied": "whether a second crew member reloads (GM / crew)",
-        "smallestImplementation": "cost the reload in the crew member's action economy through the existing reload path; structured action id instead of free text",
+        "support": "IMPLEMENTED",
+        "foundryKnows": "E-Web missile launcher is reloaded as a Move action by a second crew member (operation.secondCrewReloadAction = move)",
+        "mustBeSupplied": "the crew member who reloads (supplied by the player; never inferred)",
+        "smallestImplementation": "DONE (I-D-F): FireStateStore.reloadBySecondCrew charges the Move to the supplied crew member through the existing action economy and reloads through AmmoSystem.reloadWeapon; the sheet reload workflow asks once for such weapons",
         "sourceAmbiguity": null,
-        "acceptance": "reload Move is spent by the crew member, not the gunner"
+        "acceptance": "Move charged to the crew member, not the gunner; no crew -> nothing; no double reload; failed reload returns the action"
       },
-      "owner": "I-D-F",
-      "reason": "Crew reload action."
+      "reason": "E-Web Missile Launcher: a second crew member reloads it as a Move action. FireStateStore.reloadBySecondCrew charges the Move to the SUPPLIED crew member through the existing action economy and reloads through AmmoSystem.reloadWeapon (which clears the awaiting-reload state). No crew member is ever inferred; nothing is spent when none is supplied, when the launcher is already loaded, or when the action cannot be paid; a failed reload returns the action. Proven in the I-D-F test."
     },
     {
       "kind": "operation-key",
       "key": "singleShot",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "DUPLICATE",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "wrist-rocket-launcher"
       ],
-      "structuredSourceField": "operation.singleShot",
+      "structuredSourceField": "attackProfiles[].firingConstraints.reloadRequiredAfterEachShot and canonicalStats.ammo.capacityShots (= 1)",
+      "currentConsumer": "scripts/items/weapon-runtime/fire-state.js (reloadRequiredAfterEachShot)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
         "support": "DUPLICATE_OR_NON_EXECUTABLE",
@@ -2230,21 +2243,22 @@
           "consumer": "scripts/items/weapon-runtime/fire-state.js (reloadRequiredAfterEachShot)"
         }
       },
-      "owner": "I-D-F",
-      "reason": "Single-shot reload special case."
+      "reason": "Wrist Rocket Launcher: single shot, reload after every shot. The fire-state authority blocks the next attack until the reload action clears it. Proven in the I-D-F test (fire, refused, reload, fire)."
     },
     {
       "kind": "operation-key",
       "key": "specialRateOfFire",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-F",
-      "disposition": "DEFERRED_TO_I_D_F",
+      "disposition": "DUPLICATE",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "sonic-disruptor"
       ],
-      "structuredSourceField": "operation.specialRateOfFire",
+      "structuredSourceField": "attackProfiles[].firingConstraints {firesOnAlternatingRounds, cooldownRounds, maxShotsPerRound, prohibitsMultiShotAbilities}",
+      "currentConsumer": "scripts/items/weapon-runtime/fire-state.js (firesOnAlternatingRounds)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
         "support": "DUPLICATE_OR_NON_EXECUTABLE",
@@ -2258,8 +2272,7 @@
           "consumer": "scripts/items/weapon-runtime/fire-state.js (firesOnAlternatingRounds)"
         }
       },
-      "owner": "I-D-F",
-      "reason": "Special rate-of-fire / reload interaction."
+      "reason": "Sonic Disruptor fires once every other round and cannot use multi-shot abilities. The alternate-round firing constraint and the multi-shot prohibition are executed by the fire-state / attack-shape authorities. Proven in the I-D-F test (round 1 fires, round 2 refused, round 3 fires)."
     }
   ],
   "problems": []

@@ -3702,6 +3702,34 @@ const forcePoints = [];
     await this.requestSurfaceRender({ reason: "weapon-configuration-change" });
   }
 
+  /**
+   * Phase 5D-I-D-F: confirm whether the power source a weapon requires (energy cell(s) / power pack(s)) is installed. Owned state the player
+   * states; "Unconfirmed" is the default and never blocks an attack. Applies ONLY through FireStateStore.setPowerSourceState.
+   */
+  async _openWeaponPowerSourceDialog(weapon) {
+    const owned = (() => { try { return weapon.flags?.swse?.fireState ?? weapon.getFlag?.("swse", "fireState") ?? null; } catch (_err) { return null; } })();
+    const current = owned?.powerSource === "installed" || owned?.powerSource === "missing" ? owned.powerSource : "";
+    const choices = [["", "Unconfirmed"], ["installed", "Installed"], ["missing", "Missing (the weapon cannot attack)"]];
+    const rows = choices.map(([value, label]) => `<label class="swse-weapon-choice ${value === current ? "is-selected" : ""}"><span class="swse-weapon-choice__name"><input type="radio" name="powerSource" value="${value}" ${value === current ? "checked" : ""}> ${label}</span></label>`).join("");
+    const picked = await SWSEDialogV2.prompt({
+      title: `${weapon.name} - Power Source`,
+      content: `<form class="swse-dialog"><div class="swse-weapon-choice-list">${rows}</div></form>`,
+      label: "Apply",
+      callback: (html) => {
+        const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+        const form = root?.querySelector?.("form") ?? root;
+        return String(new FormData(form).get("powerSource") ?? "");
+      }
+    });
+    if (picked === null || picked === undefined || picked === current) return;
+    const result = await FireStateStore.setPowerSourceState(this.actor, weapon, picked === "" ? null : picked);
+    if (!result?.ok) {
+      ui?.notifications?.warn?.(`${weapon.name}: cannot record the power source (${String(result?.reason ?? "unavailable").replace(/-/g, " ")}).`);
+      return;
+    }
+    await this.requestSurfaceRender({ reason: "weapon-power-source-change" });
+  }
+
   _activateInventoryUI(html, { signal } = {}) {
     // Equip / Unequip toggle
     html.querySelectorAll(".item-equip").forEach(button => {
@@ -3745,7 +3773,7 @@ const forcePoints = [];
     });
 
     // Delete/Remove item
-    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="toggle-weapon-readiness"], [data-action="draw-and-ignite-lightsaber"], [data-action="change-weapon-configuration"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
+    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="toggle-weapon-readiness"], [data-action="draw-and-ignite-lightsaber"], [data-action="change-weapon-configuration"], [data-action="set-power-source"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         const action = button.dataset.action;
@@ -3788,6 +3816,9 @@ const forcePoints = [];
           }
           case "change-weapon-configuration":
             await this._openWeaponConfigurationDialog(item);
+            break;
+          case "set-power-source":
+            await this._openWeaponPowerSourceDialog(item);
             break;
           case "toggle-implant-tag":
             await InventoryEngine.toggleImplantTag(this.actor, itemId);
@@ -6767,18 +6798,22 @@ const forcePoints = [];
   async _executeReloadCombatWorkflow(context = {}, options = {}) {
     const actionData = context?.action ?? {};
     const actionId = actionData?.id ?? context?.actionId ?? 'reload';
-
-    if (!AmmoSystem.isTrackingEnabled()) {
-      ui?.notifications?.info?.('Ammunition tracking is disabled; reload does not need to be resolved.');
-      return { skipped: true, reason: 'ammo-tracking-disabled', actionId };
-    }
+    const trackingOn = AmmoSystem.isTrackingEnabled();
 
     const weaponId = actionData?.weaponId ?? actionData?.itemId ?? context?.weaponId ?? null;
     let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
     if (!weapon) {
       weapon = this.actor.items.find(i =>
-        ['weapon', 'lightsaber'].includes(i.type) && i.system?.equipped && AmmoSystem.weaponUsesAmmunition(i)
+        ['weapon', 'lightsaber'].includes(i.type) && i.system?.equipped && (AmmoSystem.weaponUsesAmmunition(i) || FireStateStore.readFireState(i)?.needsReload === true)
       ) ?? null;
+    }
+
+    // Phase 5D-I-D-F: a weapon that is mechanically AWAITING RELOAD (reload after each shot: wrist rocket launcher, E-Web) stays unfireable until
+    // a reload action clears it, whether or not the optional ammunition-tracking house rule is on, so that case must still resolve.
+    const awaitingReload = !!weapon && FireStateStore.readFireState(weapon)?.needsReload === true;
+    if (!trackingOn && !awaitingReload) {
+      ui?.notifications?.info?.('Ammunition tracking is disabled; reload does not need to be resolved.');
+      return { skipped: true, reason: 'ammo-tracking-disabled', actionId };
     }
 
     if (!weapon) {
@@ -6786,16 +6821,37 @@ const forcePoints = [];
       return null;
     }
 
-    if (!AmmoSystem.weaponUsesAmmunition(weapon)) {
+    if (!AmmoSystem.weaponUsesAmmunition(weapon) && !awaitingReload) {
       ui?.notifications?.warn?.(`${weapon.name} does not use tracked ammunition.`);
       return null;
     }
 
     const currentAmmo = Number(weapon.system?.ammunition?.current ?? 0) || 0;
     const maxAmmo = Number(weapon.system?.ammunition?.max ?? 0) || 0;
-    if (maxAmmo <= 0 || currentAmmo >= maxAmmo) {
+    if (!awaitingReload && (maxAmmo <= 0 || currentAmmo >= maxAmmo)) {
       ui?.notifications?.info?.(`${weapon.name} is already fully loaded.`);
       return { skipped: true, reason: 'already-full', weaponId: weapon.id };
+    }
+
+    // Phase 5D-I-D-F: published alternative reloads (second crew member's Move action; the mortar's single shell) are CHOSEN, never assumed.
+    const mode = await this._chooseReloadMode(weapon, options, context);
+    if (!mode) return null;
+
+    if (mode.kind === 'second-crew') {
+      const result = await FireStateStore.reloadBySecondCrew(this.actor, weapon, mode.crew, { source: options?.source ?? context?.source?.invocation ?? 'reload' });
+      if (!result?.ok) {
+        ui?.notifications?.warn?.(`${weapon.name}: the second-crew reload could not be performed (${String(result?.reason ?? 'unavailable').replace(/-/g, ' ')}).`);
+        return null;
+      }
+      ui?.notifications?.info?.(`${weapon.name} reloaded by ${result.chargedTo.name ?? 'the second crew member'} (${result.action} action).`);
+      try {
+        await ChatMessage.create({
+          speaker: ChatMessage.getSpeaker({ actor: mode.crew }),
+          content: `<section class="swse-chat-card"><header><strong>${mode.crew.name} reloads ${weapon.name}</strong></header><p>${result.action} action by the second crew member; ${result.reload?.message ?? 'reloaded.'}</p></section>`,
+          flags: { swse: { combatAction: 'reload', weaponId: weapon.id, secondCrew: true, chargedTo: result.chargedTo.id } }
+        });
+      } catch (err) { console.warn('[SWSE] Failed to post reload chat card:', err); }
+      return result;
     }
 
     const actionType = this._deriveCombatActionEconomyType(actionData);
@@ -6807,7 +6863,10 @@ const forcePoints = [];
     });
     if (!allowed) return null;
 
-    const result = await AmmoSystem.reloadWeapon(this.actor, weapon);
+    let result;
+    if (mode.kind === 'single-round') result = await AmmoSystem.loadSingleRound(this.actor, weapon);
+    else if (trackingOn) result = await AmmoSystem.reloadWeapon(this.actor, weapon);
+    else { await FireStateStore.clearReload(this.actor, weapon); result = { success: true, message: `${weapon.name} reloaded` }; }
     if (result?.success === false) {
       ui?.notifications?.error?.(result.message || 'Reload failed.');
       return null;
@@ -6824,6 +6883,51 @@ const forcePoints = [];
       console.warn('[SWSE] Failed to post reload chat card:', err);
     }
     return result;
+  }
+
+  /**
+   * Phase 5D-I-D-F: which published reload applies. A weapon with only the ordinary reload returns it without asking. A weapon that publishes
+   * an alternative (operation.secondCrewReloadAction: a Move action by a second crew member; operation.canSingleLoadShell: one shell dropped
+   * in the open tube) asks ONCE per reload; an explicit option skips the question. No crew member is ever inferred: the second crew member is
+   * the actor the player names (from the active combat's other combatants), and "reload it myself" keeps the ordinary reload.
+   * @returns {Promise<{kind:'full'|'single-round'|'second-crew', crew?:Actor}|null>} null = cancelled
+   */
+  async _chooseReloadMode(weapon, options = {}, context = {}) {
+    const { secondCrewAction: crewAction, canSingleLoad: canSingle } = FireStateStore.reloadOptions(weapon);
+    if (options?.loadSingleRound === true && canSingle) return { kind: 'single-round' };
+    const suppliedCrewId = options?.secondCrewActorId ?? context?.secondCrewActorId ?? null;
+    if (suppliedCrewId && crewAction) {
+      const crew = game?.actors?.get?.(suppliedCrewId) ?? null;
+      return crew ? { kind: 'second-crew', crew } : { kind: 'full' };
+    }
+    if (!crewAction && !canSingle) return { kind: 'full' };
+
+    const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const crewChoices = crewAction
+      ? Array.from(game?.combat?.combatants ?? []).map((c) => c?.actor).filter((a) => a?.id && a.id !== this.actor.id)
+      : [];
+    const rows = [
+      `<label class="swse-weapon-choice"><input type="radio" name="reload" value="full" checked> <span>${canSingle ? 'Refill the magazine' : 'Reload it myself'}</span></label>`,
+      ...(canSingle ? ['<label class="swse-weapon-choice"><input type="radio" name="reload" value="single-round"> <span>Load a single round</span></label>'] : []),
+      ...crewChoices.map((a) => `<label class="swse-weapon-choice"><input type="radio" name="reload" value="crew:${esc(a.id)}"> <span>${esc(a.name)} reloads it (${esc(crewAction)} action)</span></label>`)
+    ];
+    const picked = await SWSEDialogV2.prompt({
+      title: `${weapon.name} - Reload`,
+      content: `<form class="swse-dialog"><div class="swse-weapon-choice-list">${rows.join('')}</div></form>`,
+      label: 'Reload',
+      callback: (html) => {
+        const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+        const form = root?.querySelector?.('form') ?? root;
+        return String(new FormData(form).get('reload') ?? '');
+      }
+    });
+    if (!picked) return null;
+    if (picked === 'single-round') return { kind: 'single-round' };
+    if (picked.startsWith('crew:')) {
+      const crew = game?.actors?.get?.(picked.slice(5)) ?? crewChoices.find((a) => a.id === picked.slice(5)) ?? null;
+      return crew ? { kind: 'second-crew', crew } : null;
+    }
+    return { kind: 'full' };
   }
 
   async _executeSkillActionCombatWorkflow(context = {}, options = {}) {

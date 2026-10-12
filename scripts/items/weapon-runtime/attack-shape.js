@@ -8,6 +8,7 @@
 // executes. Pure: no actor/item mutation, no dice, no spending. Never reads a weapon name or Item-level projection.
 
 const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
+import { powerSourceRequirementOf } from './power-source.js';
 import { resolveTemporalConstraints } from './fire-state.js';
 import { resolveAreaShape } from './area-shape.js';
 import { buildWeaponDescriptor } from './weapon-descriptor.js';
@@ -160,6 +161,8 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
     environment: Object.freeze({ underwaterUsableProfiles: Array.isArray(op.underwaterUsableProfiles) ? Object.freeze(op.underwaterUsableProfiles.map(String)) : null }),
     // Phase 5D-I-A: a persistent stun SETTING that costs an action to switch to (Shockboxing Gloves: set to stun as a swift action)
     stunSetting: stunSettingOf(def, resolved, op),
+    // Phase 5D-I-D-F: the weapon's power-source REQUIREMENT (energy cell(s) / power pack(s)); a requirement, never a per-shot ammunition cost
+    powerSource: powerSourceRequirementOf(op),
     // temporal firing constraints (families in fire-state.js); owned readiness state lives on the Item, never here
     temporal: resolveTemporalConstraints(def, op, resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions),
     dualWield: Object.freeze({

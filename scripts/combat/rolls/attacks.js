@@ -82,7 +82,7 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
   // error fails closed (ok:false); legacy/custom weapons pass through untouched.
   // Phase 5D-I-B: an attack that names no configuration / profile uses the state the OWNED weapon is in (the weapon remembers it)
   rollOptions = FireStateStore.applyOwnedSelection(actor, weapon, rollOptions);
-  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions);
+  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions, actor);
   if (canonical.error) return { ok: false, reason: 'weapon-runtime-error', weaponRuntimeError: canonical.error };
   rollOptions = canonical.rollOptions;
   const domainResolution = resolveAttackDomain({
@@ -206,7 +206,7 @@ async function resolveOpportunityChoice(weapon, rollOptions) {
  * a canonical weapon returns options carrying the resolved weaponRuntime and the selected profile's branch as attackType.
  * A canonical identity/selection error is returned (never thrown, never a legacy fallback) so callers fail closed.
  */
-function withCanonicalWeaponRuntime(weapon, rollOptions) {
+function withCanonicalWeaponRuntime(weapon, rollOptions, actor = null) {
   try {
     const weaponRuntime = resolveAttackWeaponRuntime(weapon, rollOptions);
     if (weaponRuntime.source !== 'canonical') return { rollOptions };
@@ -214,7 +214,7 @@ function withCanonicalWeaponRuntime(weapon, rollOptions) {
     // Phase 5D-E: a native-stun form deals stun damage only (structured stun capability) -- the effective mode is what is
     // validated, costed, recorded in the carried form and tagged on the workflow context
     const damageMode = effectiveDamageMode(weaponRuntime, rollOptions.damageMode ?? null);
-    assertAttackFormResolvable(weaponRuntime, { damageMode: damageMode ?? null, rangeBand: rollOptions.rangeBand ?? null });
+    assertAttackFormResolvable(weaponRuntime, { damageMode: damageMode ?? null, rangeBand: rollOptions.rangeBand ?? null, distanceSquares: rollOptions.distanceSquares ?? null, actor });
     // Phase 5D-D: the selected form's canonical per-attack resource units feed the existing AmmoSystem cost rule (read-only here;
     // spending still happens exactly once, in AmmoSystem.spendForWorkflow). 'pending' leaves the existing rule untouched.
     // Phase 5D-F: attack-shape legality of the selected form (firing constraints / fire modes) -- refused BEFORE any cost is spent
@@ -431,7 +431,7 @@ async function resolveTargetSideDefense(actor, weapon, rollOptions) {
  * contributions the existing typed-modifier pipeline folds into computeFinalAttackComposition() -- the same objects rollAttack builds.
  */
 export async function resolveCanonicalAttackStage(actor, weapon, rollOptions = {}) {
-  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions);
+  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions, actor);
   if (canonical.error) return { situationalContributions: undefined, answers: {}, unresolved: [] };
   const stage = await prepareCanonicalSpecialMechanics(weapon, canonical.rollOptions, actor);
   return { situationalContributions: stage.rollOptions.situationalContributions, answers: stage.answers ?? {}, unresolved: stage.unresolved ?? [], areaShape: stage.areaShape ?? null, refusal: stage.refusal ?? null };
@@ -469,6 +469,7 @@ function assertAttackShapeLegal(shape, rollOptions) {
 
 function describeReadinessBlockers(blockers = []) {
   return blockers.map((b) => {
+    if (b.reason === 'power-source-missing') return `its required power source is confirmed missing (${b.requirement?.count ?? 1} ${b.requirement?.kind === 'power-pack' ? 'power pack' : 'energy cell'}${(b.requirement?.count ?? 1) === 1 ? '' : 's'})`;
     if (b.reason === 'awaiting-reload') return `it must be reloaded${b.reloadAction ? ` (${b.reloadAction} action)` : ''}`;
     if (b.reason === 'unavailable-this-round') return `it cannot fire in round ${b.currentRound}; it is ready again in round ${b.availableRound}`;
     if (b.reason === 'round-shot-limit') return `it has already fired its limit (${b.maxShots}) this round`;
@@ -636,7 +637,7 @@ export async function rollAttack(actor, weapon, options = {}) {
   const opportunity = await resolveOpportunityChoice(weapon, rollOptions);
   if (opportunity.refusal) { ui?.notifications?.warn?.(`${weapon.name}: ${opportunity.refusal}`); return null; }
   rollOptions = opportunity.rollOptions;
-  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions);
+  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions, actor);
   if (canonical.error) {
     reportWeaponRuntimeError(canonical.error, { notify: false });
     ui?.notifications?.error?.(`Attack could not be resolved: ${canonical.error.message}`);

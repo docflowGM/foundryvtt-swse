@@ -68,6 +68,9 @@
 .swse-sheet--concept .swse-weapon-control--reload,
 .swse-sheet--concept .swse-weapon-control--ammo,
 .swse-sheet--concept .swse-weapon-control--resource { --weapon-control-accent: var(--swse-weapon-ammo); }
+.swse-sheet--concept .swse-weapon-control--power { --weapon-control-accent: var(--swse-concept-text-dim); }
+.swse-sheet--concept .swse-weapon-control--power.is-installed { --weapon-control-accent: var(--swse-weapon-ready); }
+.swse-sheet--concept .swse-weapon-control--power.is-missing { --weapon-control-accent: var(--swse-weapon-warning); }
 .swse-sheet--concept .swse-weapon-control--payload { --weapon-control-accent: var(--swse-weapon-payload); }
 .swse-sheet--concept .swse-weapon-control--prepared { --weapon-control-accent: var(--swse-weapon-prepared); }
 .swse-sheet--concept .swse-weapon-control--utility { --weapon-control-accent: var(--swse-concept-text-dim); }
