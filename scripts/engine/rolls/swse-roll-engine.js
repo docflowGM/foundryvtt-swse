@@ -720,7 +720,8 @@ export class SWSERollEngine {
     if (Number.isFinite(Number(context?.forcePointBonus)) && Number(context.forcePointBonus) > 0) {
       parts.push({ kind: 'bonus', label: 'Force Point', value: this._formatSigned(context.forcePointBonus) });
     }
-    if (Number.isFinite(Number(context?.featSkillBonus)) && Number(context.featSkillBonus) !== 0) {
+    // the aggregate feat line is shown only when the per-feat lines are not (listing both counted every feat twice)
+    if (!Array.isArray(context?.featSkillBonuses) && Number.isFinite(Number(context?.featSkillBonus)) && Number(context.featSkillBonus) !== 0) {
       parts.push({ kind: 'bonus', label: 'Feat Bonus', value: this._formatSigned(context.featSkillBonus) });
     }
     if (Array.isArray(context?.featSkillBonuses)) {

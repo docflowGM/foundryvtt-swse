@@ -71,6 +71,8 @@ for (const { entry, i, h } of hookRows) {
     if (needsEquipped) assert.equal(await total(mkActor([owned(entry, i, false)]), skill, use) - BASELINE, 0, `${entry.doc.name}: requires equipped but is not`);
     assert.equal(await total(mkActor([owned(entry, i, true)]), skill, { key: 'an-unrelated-use' }) - BASELINE, 0, `${entry.doc.name}: an unrelated use`);
     assert.equal(await total(mkActor([owned(entry, i, true)]), skill, null) - BASELINE, 0, `${entry.doc.name}: a plain check of the skill`);
+    const none = owned(entry, i, true); none.system.quantity = 0;
+    assert.equal(await total(mkActor([none]), skill, use) - BASELINE, 0, `${entry.doc.name}: quantity 0 (used up / sold) grants nothing`);
   } else {
     inertCount++;
     assert.equal(equippedTotal - BASELINE, 0, `${entry.doc.name} / ${h.useKey} (${h.mode}, ${h.bonus.type}${h.consumes ? ', consumable' : ''}${h.required ? ', required' : ''}): must NOT change a roll`);

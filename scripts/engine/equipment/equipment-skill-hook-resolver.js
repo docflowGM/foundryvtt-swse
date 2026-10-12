@@ -263,7 +263,7 @@ function equipmentBonusFromHooks(hooks = [], chosenConsumable = null) {
  *
  *   key                                   hook                                                                         source (registry canonicalPlayerText)
  *   concealmentEquipmentBonus             +N EQUIPMENT bonus, Stealth, "conceal item on self", only for THIS weapon     "...+5 equipment bonus on Stealth checks made to conceal the weapon"
- *   concealmentStealthBonus               +N untyped bonus,   Stealth, "conceal item on self", only for THIS weapon     Defender Microblaster: "+5 bonus on Stealth checks to conceal it"
+ *   concealmentStealthBonus               +N gear bonus,      Stealth, "conceal item on self", only for THIS weapon     Defender Microblaster: "+5 bonus on Stealth checks to conceal it" -- the source states NO bonus type; stacking is not inferred from the missing word "equipment", so it is handled conservatively as a gear (equipment) bonus: best one only, until a source ruling
  *   concealmentStealthPenalty             -N penalty,         Stealth, "conceal item on self", only for THIS weapon     Ascension Gun: "bulk imposes -5 on Stealth checks made to conceal it"
  *   snipingStealthEquipmentBonus          +N EQUIPMENT bonus, Stealth, "snipe", only when sniping WITH this weapon      Magna Caster: "+5 equipment bonus on Stealth checks made to snipe"
  *   survivalBasicForestJungleBonus...     +N untyped bonus,   Survival, "basic survival", carried + proficient + forest/jungle   Ryyk Blade
@@ -271,7 +271,7 @@ function equipmentBonusFromHooks(hooks = [], chosenConsumable = null) {
  */
 export const WEAPON_SKILL_HOOK_SPECS = Object.freeze([
   Object.freeze({ key: 'concealmentEquipmentBonus', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'equipment', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
-  Object.freeze({ key: 'concealmentStealthBonus', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'untyped', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
+  Object.freeze({ key: 'concealmentStealthBonus', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'equipment', typeBasis: 'source-unstated', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
   Object.freeze({ key: 'concealmentStealthPenalty', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'penalty', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
   Object.freeze({ key: 'snipingStealthEquipmentBonus', skill: 'stealth', useKey: 'snipe', type: 'equipment', itemScope: 'self-item', qualifiers: { snipingSkill: 'stealth' } }),
   Object.freeze({ key: 'survivalBasicForestJungleBonusWhenProficientAndCarried', skill: 'survival', useKey: 'basic-survival', type: 'untyped', itemScope: 'carried', requires: Object.freeze({ terrain: ['forest', 'jungle'], proficient: true }) })
@@ -328,8 +328,10 @@ export function getEquipmentSkillHooks(actorOrItems = null, { skill = '', useKey
       id: item._id ?? item.id ?? '',
       sourcePack: item.pack ?? ''
     });
+    // normalizeEquipmentSystem() clamps quantity to >= 1 (a catalogue default); availability must follow what the actor actually OWNS
+    const ownedSystem = { ...system, quantity: item.system?.quantity };
     for (const rawHook of system.skillHooks ?? []) {
-      const hook = normalizeHook(rawHook, { ...item, system });
+      const hook = normalizeHook(rawHook, { ...item, system: ownedSystem });
       if (!hook) continue;
       if (!includeUnavailable && !hook.available) continue;
       if (skillFilter && hook.skill !== skillFilter) continue;
@@ -391,7 +393,7 @@ export function resolveSkillModifiersFromHooks(hooks = [], { actor = null, conte
     if (hook.required === true || hook.consumes) { note('consumable-or-required-hook'); continue; }
     if (!type) { note('unsupported-bonus-type'); continue; }
     if (!hook.useKey || hook.useKey === 'all' || hook.useKey === '*') { note('all-uses-hook-needs-context'); continue; }
-    const entry = { hook, type, value, id: `${hook.itemId}:${hook.canonicalKey ?? hook.useKey ?? hook.skill}`, label, source: label, itemId: hook.itemId, skill: hook.skill, useKey: hook.useKey };
+    const entry = { hook, type, value, id: `${hook.itemId}:${hook.canonicalKey ?? hook.useKey ?? hook.skill}`, label, source: label, itemId: hook.itemId, skill: hook.skill, useKey: hook.useKey, ...(hook.requires?.terrain ? { terrainOptions: hook.requires.terrain } : {}) };
     if (bonus.appliesWhenChosen === true && chosenConsumable?.itemId !== hook.itemId) continue; // legacy: only the consumable that was chosen for this use
     if (hook.itemScope === 'self-item' && String(context?.hookItemId ?? '') !== String(hook.itemId)) { skipped.push({ ...entry, reason: context?.hookItemId ? 'different-item' : 'item-context-missing' }); continue; }
     if (hook.requires?.terrain && !hook.requires.terrain.some((t) => terrain.includes(t))) { skipped.push({ ...entry, reason: terrain.length ? 'terrain-mismatch' : 'terrain-unstated' }); continue; }

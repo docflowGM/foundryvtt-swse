@@ -371,11 +371,11 @@
         "support": "IMPLEMENTED",
         "foundryKnows": "owned item, identity, quantity",
         "mustBeSupplied": "concealed item named",
-        "smallestImplementation": "DONE (I-D-A1): same hook path; type = untyped (the text says \"+5 bonus\", not \"equipment bonus\")",
-        "sourceAmbiguity": "bonus type is unstated in the text; treated as untyped (stacks)",
-        "acceptance": "Defender +5 stacks with a +5 equipment bonus; applies only when concealing the Defender"
+        "smallestImplementation": "DONE (I-D-A1): same hook path; the source states a \"+5 bonus\" with NO type, so it is handled as a gear bonus (best one only) -- stacking is not inferred from the missing word \"equipment\"",
+        "sourceAmbiguity": "bonus type unstated in the source (CWCG p.62); conservative gear-bonus handling pending a source / designer ruling",
+        "acceptance": "Defender +5 does not stack with another equipment bonus; applies only when concealing the Defender"
       },
-      "reason": "+5 (untyped) bonus to Stealth to conceal the weapon (Defender Microblaster). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. IMPLEMENTED in I-D-A1: EquipmentSkillHookResolver now derives the hook from the canonical registry (by identity) and rollSkill applies it; proven by tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs and tests/equipment-skill-hook-roll-regression.test.mjs."
+      "reason": "+5 bonus to Stealth to conceal the weapon (Defender Microblaster; the source states no bonus type, so it is handled as a gear bonus: best one only, pending a source ruling). CONTEXTUAL: it applies when the player states the object / terrain the check concerns. IMPLEMENTED in I-D-A1: EquipmentSkillHookResolver now derives the hook from the canonical registry (by identity) and rollSkill applies it; proven by tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs and tests/equipment-skill-hook-roll-regression.test.mjs."
     },
     {
       "kind": "operation-key",

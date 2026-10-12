@@ -65,7 +65,7 @@ const PRESENT_REASON = (what) => `${what}. GM_ADJUDICATED: the outcome depends o
 export const I_D_ROWS = Object.freeze([
   // ------------------------------------------------------------------ I-D-A1 : carried-item / weapon skill bonuses (approved integration)
   impl('concealmentEquipmentBonus', 'concealment-stealth-sensing', 'CONTEXTUAL', SKILL_REASON('+5 equipment bonus to Stealth to conceal the weapon (Contact Stunner, Hold-out / Snap-shot blaster pistols, Concealed Dart Launcher)')),
-  impl('concealmentStealthBonus', 'concealment-stealth-sensing', 'CONTEXTUAL', SKILL_REASON('+5 (untyped) bonus to Stealth to conceal the weapon (Defender Microblaster)')),
+  impl('concealmentStealthBonus', 'concealment-stealth-sensing', 'CONTEXTUAL', SKILL_REASON('+5 bonus to Stealth to conceal the weapon (Defender Microblaster; the source states no bonus type, so it is handled as a gear bonus: best one only, pending a source ruling)')),
   impl('concealmentStealthPenalty', 'concealment-stealth-sensing', 'CONTEXTUAL', SKILL_REASON('-5 penalty to Stealth to conceal the weapon (Ascension Gun, Galaxy at War p.37 "its bulk imposes -5 on Stealth checks made to conceal it")')),
   impl('snipingStealthEquipmentBonus', 'concealment-stealth-sensing', 'CONTEXTUAL', SKILL_REASON('+5 equipment bonus to the Stealth check made to snipe (Magna-Caster)')),
   impl('snipingSkill', 'concealment-stealth-sensing', 'CONTEXTUAL', 'Names the skill ("Stealth") of snipingStealthEquipmentBonus; a qualifier the integration validates (a mismatch derives no hook).'),

@@ -129,6 +129,8 @@ function buildAthleticsRollSkill(actor, derivedSkills = {}) {
  * A hook that needs the object it concerns (the weapon being concealed / used to snipe) or a terrain is only applied when the caller states it; a guarded
  * prompt asks the owner once, and an unanswered / unavailable prompt applies nothing (never a guess).
  */
+const escapeHtml = (value) => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
 async function resolveEquipmentSkillModifiers(actor, effectiveSkillKey, skillContext) {
   const empty = { modifiers: [], total: 0, skipped: [], notes: [] };
   try {
@@ -137,10 +139,12 @@ async function resolveEquipmentSkillModifiers(actor, effectiveSkillKey, skillCon
     let state = resolve();
     const needsContext = state.skippedSkillModifiers.filter((entry) => ['item-context-missing', 'terrain-unstated'].includes(entry.reason));
     if (needsContext.length && skillContext.skipEquipmentSkillPrompt !== true && actor?.isOwner && typeof Dialog?.prompt === 'function') {
-      const answers = await promptForEquipmentSkillContext(needsContext);
+      const offered = offeredEquipmentSkillContext(needsContext);
+      const answers = await promptForEquipmentSkillContext(offered);
       if (answers) {
-        if (answers.hookItemId && !skillContext.hookItemId) skillContext.hookItemId = answers.hookItemId;
-        if (answers.terrain && !skillContext.terrain) skillContext.terrain = answers.terrain;
+        // only what was offered is accepted: an item id that is not one of the candidates, or a terrain that was not an option, is ignored
+        if (answers.hookItemId && !skillContext.hookItemId && offered.items.some((e) => String(e.itemId) === String(answers.hookItemId))) skillContext.hookItemId = answers.hookItemId;
+        if (answers.terrain && !skillContext.terrain && offered.terrains.includes(answers.terrain)) skillContext.terrain = answers.terrain;
         state = resolve();
       }
     }
@@ -152,13 +156,18 @@ async function resolveEquipmentSkillModifiers(actor, effectiveSkillKey, skillCon
   }
 }
 
-async function promptForEquipmentSkillContext(needed) {
-  const items = [...new Map(needed.filter((e) => e.reason === 'item-context-missing').map((e) => [e.itemId, e])).values()];
-  const wantsTerrain = needed.some((e) => e.reason === 'terrain-unstated');
-  const options = items.map((e) => `<option value="${e.itemId}">${e.label}</option>`).join('');
+function offeredEquipmentSkillContext(needed) {
+  const items = [...new Map(needed.filter((e) => e.reason === 'item-context-missing').map((e) => [String(e.itemId), e])).values()];
+  const terrains = [...new Set(needed.filter((e) => e.reason === 'terrain-unstated').flatMap((e) => e.terrainOptions ?? []))];
+  return { items, terrains };
+}
+
+async function promptForEquipmentSkillContext({ items, terrains }) {
+  const itemOptions = items.map((e) => `<option value="${escapeHtml(e.itemId)}">${escapeHtml(e.label)}</option>`).join('');
+  const terrainOptions = terrains.map((t) => `<option value="${escapeHtml(t)}">${escapeHtml(String(t).replace(/^./, (c) => c.toUpperCase()))}</option>`).join('');
   const content = `<form class="swse-equipment-skill-prompt">
-    ${items.length ? `<label>Which item does this check concern (concealed object / sniping weapon)? <select name="hookItemId"><option value="">None of these</option>${options}</select></label>` : ''}
-    ${wantsTerrain ? '<label>Terrain <select name="terrain"><option value="">Other / not applicable</option><option value="forest">Forest</option><option value="jungle">Jungle</option></select></label>' : ''}
+    ${items.length ? `<label>Which item does this check concern (concealed object / sniping weapon)? <select name="hookItemId"><option value="">None of these</option>${itemOptions}</select></label>` : ''}
+    ${terrains.length ? `<label>Terrain <select name="terrain"><option value="">Other / not applicable</option>${terrainOptions}</select></label>` : ''}
   </form>`;
   try {
     return await Dialog.prompt({
@@ -313,8 +322,9 @@ export async function rollSkill(actor, skillKey, options = {}) {
         skillKey: effectiveSkillKey,
         abilityKey,
         trained: isTrained,
-        // the displayed Base excludes the gear modifiers, which the card lists separately with their source (Base + listed gear = the rolled bonus)
-        baseBonus: rollResult.baseBonus - Number(equipmentSkill.total || 0),
+        // the displayed Base is the DERIVED skill total only: the custom modifier, feat bonuses and gear modifiers are listed separately on the card, so
+        // every modifier appears exactly once (Base + the listed lines = the rolled bonus)
+        baseBonus: canonicalTotal,
         situationalMods: rollResult.modifierTotal,
         customModifier: Number(options?.customModifier || 0),
         featSkillBonus: featSkillBonuses.total,

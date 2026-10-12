@@ -91,11 +91,13 @@ ok('Ascension Gun -5 is a real penalty: kept alongside equipment bonuses, only f
   const eq5 = gear('e5', [{ skill: 'stealth', useKey: 'conceal-item-on-self', mode: 'modifies', bonus: { type: 'equipment', value: 5 } }]);
   const a = mkActor([def, hold, eq5]);
   assert.equal(await delta(a, 'stealth', CONCEAL, { hookItemId: 'w1' }), 5, 'equipment +5 (weapon) and equipment +5 (gear) do not stack');
-  assert.equal(await delta(a, 'stealth', CONCEAL, { hookItemId: 'd1' }), 10, 'Defender\'s untyped +5 stacks with the best equipment bonus');
+  assert.equal(await delta(a, 'stealth', CONCEAL, { hookItemId: 'd1' }), 5, 'Defender\'s +5 (type unstated in the source) is a gear bonus: it does not stack with another equipment bonus');
+  const plain = gear('p1', [{ skill: 'stealth', useKey: 'conceal-item-on-self', mode: 'modifies', bonus: { type: 'untyped', value: 2 } }]);
+  assert.equal(await delta(mkActor([hold, plain]), 'stealth', CONCEAL, { hookItemId: 'w1' }), 7, 'a genuinely untyped legacy bonus still stacks with the best equipment bonus');
   const st = resolveEquipmentForSkillUse(a, CONCEAL, { skill: 'stealth', context: { hookItemId: 'w1' } });
   assert.ok(st.skippedSkillModifiers.some((s) => s.reason === 'superseded-equipment-bonus'), 'the losing equipment bonus is reported, not silently dropped');
 }
-ok('equipment bonuses take the best one, untyped bonuses stack, losers are reported');
+ok('equipment bonuses take the best one, genuinely untyped bonuses stack, losers are reported');
 
 // 5. Magna Caster: only the sniping use, only the sniping weapon
 {
@@ -212,3 +214,84 @@ ok('the owner is asked which item the check concerns; closing the prompt applies
 ok('inventory mutation in the resolver goes through ActorEngine');
 
 console.log(`Weapon 5D-I-D-A1 equipment skill hooks: ${n} checks passed.`);
+
+// ======================= review corrections (PR #1022) =======================
+const section = (m) => console.log(`  -- ${m}`);
+{ // Blocker 1: a real EQUIPMENT item with quantity 0 grants nothing (normalizeEquipmentSystem clamps quantity to >= 1, so availability must use the owned quantity)
+  const hook = [{ skill: 'stealth', useKey: 'conceal-item-on-self', mode: 'modifies', bonus: { type: 'equipment', value: 3 } }];
+  const zero = gear('z1', hook, { system: { quantity: 0 } });
+  assert.equal(await delta(mkActor([zero]), 'stealth', CONCEAL, {}), 0, 'equipment with quantity 0 grants no bonus');
+  const negative = gear('z2', hook, { system: { quantity: -2 } });
+  assert.equal(await delta(mkActor([negative]), 'stealth', CONCEAL, {}), 0, 'negative quantity grants no bonus');
+  const missing = gear('z3', hook); delete missing.system.quantity;
+  assert.equal(await delta(mkActor([missing]), 'stealth', CONCEAL, {}), 3, 'an unspecified quantity still means one');
+  const three = gear('z4', hook, { system: { quantity: 3 } });
+  assert.equal(await delta(mkActor([three]), 'stealth', CONCEAL, {}), 3, 'quantity 3 grants the bonus once');
+  const weaponZero = weapon('wz', 'weapon-hold-out-blaster-pistol', { system: { quantity: 0 } });
+  assert.equal(await delta(mkActor([weaponZero]), 'stealth', CONCEAL, { hookItemId: 'wz' }), 0, 'weapon with quantity 0 grants no bonus');
+}
+ok('zero / negative quantity equipment and weapons grant nothing; an unspecified quantity still means one');
+
+{ // Blocker 2: the card reconciles with a derived total, a custom modifier, a feat bonus, an equipment bonus and a penalty -- every modifier shown exactly once
+  const featItem = { id: 'ft1', name: 'Test Stealth Feat', type: 'feat', system: { abilityMeta: { skillCheckBonuses: [{ id: 'ft-stealth', skill: 'stealth', value: 3 }] } } };
+  const cases = [
+    { items: [weapon('w1', 'weapon-hold-out-blaster-pistol'), featItem], hook: 'w1', custom: 2, gear: 5 },
+    { items: [weapon('g1', 'weapon-ascension-gun'), featItem], hook: 'g1', custom: 2, gear: -5 },
+    { items: [weapon('g1', 'weapon-ascension-gun'), weapon('w1', 'weapon-hold-out-blaster-pistol'), featItem], hook: 'g1', custom: -1, gear: -5 },
+    { items: [weapon('w1', 'weapon-hold-out-blaster-pistol')], hook: 'w1', custom: 0, gear: 5 },
+  ];
+  for (const c of cases) {
+    const a = mkActor(c.items.map((i) => structuredClone(i)));
+    const featTotal = c.items.some((i) => i.id === 'ft1') ? 3 : 0;
+    const r = await roll(a, 'stealth', CONCEAL, { hookItemId: c.hook, customModifier: c.custom });
+    const bonusOnTheRoll = r.total - 10; // take-10: the d20 is the constant 10
+    assert.equal(bonusOnTheRoll, BASE + c.custom + featTotal + c.gear, 'the roll math itself is unchanged');
+    const parts = SWSERollEngine._buildParts({ roll: { total: r.total }, context: r.ctx, breakdown: [], d20: null, category: 'skill' });
+    const shown = parts.filter((p) => p.kind === 'bonus').reduce((s, p) => s + Number(String(p.value).replace('+', '')), 0);
+    assert.equal(shown, bonusOnTheRoll, `card lines add up to the rolled bonus: ${JSON.stringify(parts.filter((p) => p.kind === 'bonus').map((p) => [p.label, p.value]))}`);
+    const labels = parts.filter((p) => p.kind === 'bonus').map((p) => p.label);
+    assert.equal(labels.filter((l) => /Test Stealth Feat/.test(l)).length, featTotal ? 1 : 0, 'the feat is listed once');
+    assert.equal(labels.filter((l) => /^Modifier$/.test(l)).length, c.custom ? 1 : 0, 'the custom modifier is listed once');
+    assert.equal(labels.filter((l) => /^Gear: /.test(l)).length, 1, 'the gear modifier is listed once');
+    assert.equal(r.ctx.baseBonus, BASE, 'Base is the derived total only');
+  }
+}
+ok('roll card reconciles exactly with derived + custom + feat + equipment bonus / penalty, each modifier shown once');
+
+{ // Correction 3: the prompt escapes editable text and validates what it returns
+  const evil = weapon('e1', 'weapon-hold-out-blaster-pistol');
+  evil.name = '<img src=x onerror=alert(1)> "Pistol" & Co';
+  const other = weapon('e2', 'unmapped::Contact Stunner');
+  const a = mkActor([evil, other]);
+  let html = '';
+  globalThis.Dialog = { prompt: async ({ content }) => { html = content; return { hookItemId: 'e1', terrain: null }; } };
+  let r = await rollSkill(a, 'stealth', { skillUse: CONCEAL, take10: true });
+  assert.ok(!/<img/i.test(html) && !html.includes('onerror=alert') || html.includes('&lt;img'), 'item names are escaped in the dialog markup');
+  assert.ok(html.includes('&lt;img') && html.includes('&quot;Pistol&quot;') && html.includes('&amp; Co'), html);
+  assert.equal(r.total, 10 + BASE + 5, 'a valid answer applies the named item');
+  globalThis.Dialog = { prompt: async () => ({ hookItemId: 'not-an-eligible-item', terrain: 'desert<script>' }) };
+  r = await rollSkill(a, 'stealth', { skillUse: CONCEAL, take10: true });
+  assert.equal(r.total, 10 + BASE, 'an item id that is not one of the offered candidates is rejected');
+  globalThis.Dialog = { prompt: async () => ({ hookItemId: 'e1', terrain: null }) };
+  const ryyk = mkActor([weapon('r1', 'weapon-wookiee-ryyk-blade'), { id: 'f1', name: 'Exotic Weapon Proficiency (Ryyk Blade)', type: 'feat', system: {}, flags: { swse: { choices: { weaponProficiency: { weaponIdentity: 'weapon-wookiee-ryyk-blade' } } } } }]);
+  globalThis.Dialog = { prompt: async () => ({ hookItemId: null, terrain: 'desert' }) };
+  r = await rollSkill(ryyk, 'survival', { skillUse: SURVIVAL, take10: true });
+  assert.equal(r.total, 10 + BASE, 'a terrain that is not one of the offered options is not accepted');
+  globalThis.Dialog = { prompt: async () => ({ hookItemId: null, terrain: 'jungle' }) };
+  r = await rollSkill(ryyk, 'survival', { skillUse: SURVIVAL, take10: true });
+  assert.equal(r.total, 10 + BASE + 2, 'an offered terrain is accepted');
+  delete globalThis.Dialog;
+}
+ok('the context prompt escapes item names and rejects an unoffered item id or terrain');
+
+{ // Defender Microblaster: "+5 bonus" with no stated type. Stacking is NOT inferred from the missing word "equipment": gear-granted bonuses are handled as equipment bonuses (best only) until a source ruling
+  const def = weapon('d1', 'weapon-defender-microblaster');
+  const eq5 = gear('e5', [{ skill: 'stealth', useKey: 'conceal-item-on-self', mode: 'modifies', bonus: { type: 'equipment', value: 5 } }]);
+  assert.equal(await delta(mkActor([def]), 'stealth', CONCEAL, { hookItemId: 'd1' }), 5);
+  assert.equal(await delta(mkActor([def, eq5]), 'stealth', CONCEAL, { hookItemId: 'd1' }), 5, 'no stacking with another equipment bonus on the missing word alone');
+  const rec = JSON.parse(fs.readFileSync(new URL('../data/weapons/canonical-weapon-registry.json', import.meta.url), 'utf8')).identities.find((r) => r.identityKey === 'weapon-defender-microblaster');
+  assert.ok(/\+5 bonus on Stealth checks to conceal it/.test(rec.canonicalPlayerText) && !/equipment bonus/i.test(rec.canonicalPlayerText), 'the recorded source wording states a +5 bonus with no type');
+}
+ok('Defender Microblaster +5 (type unstated in the source) is treated conservatively as a gear bonus: it does not stack with another equipment bonus');
+
+console.log(`Review corrections: ${n} total checks passed.`);
