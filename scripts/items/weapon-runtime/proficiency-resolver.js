@@ -4,7 +4,9 @@
 // NOT replace actorIsProficientForAttack (consumer migration is a later phase).
 // Future integrations (Implant / Spacehound) are explicit inputs: context.proficiencyIntegrations.
 import { WeaponRuntimeError, ERROR_CODES } from './errors.js';
-import { canonicalFeatSlug } from './ability-selector.js';
+import { canonicalFeatSlug, featIs } from './ability-selector.js';
+import { featChoiceSelectors } from './attack-shape.js';
+import { ownedTalentIdentities, talentIdentityOfReference } from './talent-identity.js';
 
 const norm = (v) => String(v ?? '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '');
 
@@ -86,7 +88,7 @@ export function extractActorEntitlements(actor) {
   } catch (_e) { /* partial snapshot is returned */ }
   const sp = actor?.system?.species;
   const species = norm(typeof sp === 'string' ? sp : (sp?.name ?? actor?.system?.race ?? actor?.items?.find?.((i) => i.type === 'species')?.name ?? ''));
-  return { groups, exotic, exoticIdentities, abilities, species };
+  return { groups, exotic, exoticIdentities, abilities, talentIdentities: ownedTalentIdentities(actor), species };
 }
 
 function exoticIdentityFor(resolved, profile) {
@@ -173,7 +175,10 @@ export function resolveProficiency(resolved, profile, actor, context = {}) {
   // ability routes
   for (const o of resolved.proficiency?.abilityOverrides ?? []) {
     const via = normalizeGroup(o.treatAsGroup);
-    const has = ent.abilities.has(norm(o.ability));
+    // Phase 5D-I-D-E: a talent the corpus names is matched by canonical identity; the display string is the fallback only for an ability
+    // that has no canonical talent identity (a feat / homebrew reference)
+    const refIdentity = talentIdentityOfReference(o.ability);
+    const has = refIdentity ? ent.talentIdentities.has(refIdentity) : ent.abilities.has(norm(o.ability));
     const fits = via ? groupFitsBranch(via, profile.branch) : false;
     const held = !!via && ent.groups.has(via);
     considered.push({ kind: 'ability-override', ability: o.ability, via, applicable: has && fits, abilityHeld: has, branchFit: fits, held });
@@ -184,4 +189,37 @@ export function resolveProficiency(resolved, profile, actor, context = {}) {
     if (!r.species) diagnostics.push({ code: 'conditional-route-not-auto-applied', condition: r.condition ?? null, classifications: r.classifications ?? null });
   }
   return result(false, null);
+}
+
+/**
+ * Phase 5D-I-D-E: the attack-roll bonus a held ability grants ONLY while the weapon is used (Siang Lance Mastery +1, from the weapon's
+ * structured abilityOverrides[].attackBonus). Independent of WHICH proficiency route made the wielder proficient (a Siang Lance wielder
+ * with Exotic Weapon Proficiency still has the talent's +1).
+ * A Weapon Focus feat that already covers the group the ability treats the weapon as ("does not stack with Weapon Focus (rifles)")
+ * suppresses it: only the larger of the two applies, and both are +1, so the talent then adds 0.
+ * @returns {{total:number, entries:Array<{ability:string,identity:string|null,bonus:number,applied:boolean,suppressedBy:string|null}>}}
+ */
+export function resolveAbilityAttackBonus(resolved, actor) {
+  const entries = [];
+  let total = 0;
+  const ent = extractActorEntitlements(actor);
+  for (const o of resolved?.proficiency?.abilityOverrides ?? []) {
+    const bonus = Number(o.attackBonus);
+    if (!Number.isFinite(bonus) || bonus === 0) continue;
+    const refIdentity = talentIdentityOfReference(o.ability);
+    const held = refIdentity ? ent.talentIdentities.has(refIdentity) : ent.abilities.has(norm(o.ability));
+    if (!held) continue;
+    const via = normalizeGroup(o.treatAsGroup);
+    let suppressedBy = null;
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (item?.type !== 'feat' || !featIs(item, 'weapon-focus')) continue;
+      const sel = featChoiceSelectors(item, { actor, choiceKind: 'weapon_focus' });
+      const identityKey = resolved?.identity?.identityKey ?? null;
+      if ((via && sel.groups.has(via)) || (identityKey && sel.identities.has(identityKey))) { suppressedBy = 'weapon-focus'; break; }
+    }
+    const applied = suppressedBy === null;
+    entries.push({ ability: o.ability, identity: refIdentity, bonus, applied, suppressedBy });
+    if (applied) total += bonus;
+  }
+  return { total, entries };
 }

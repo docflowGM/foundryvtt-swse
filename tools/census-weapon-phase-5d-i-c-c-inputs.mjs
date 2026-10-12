@@ -39,8 +39,8 @@ export function buildManifest() {
   const relations = closure.relations ?? {};
   const consumedRelations = new Set((relations.executableConsumed ?? []).map((r) => r.relation));
   const deferredRelations = new Set((relations.executableDeferred ?? []).map((r) => r.relation));
-  // the four talent-corpus relations that must STAY deferred (not this phase's)
-  const STAY_DEFERRED = ['FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE', 'TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK', 'TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY', 'USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION'];
+  // the talent-corpus relations that must STAY deferred (not this phase's). Siang Lance Mastery and Distant Discblade Throw were closed by I-D-E.
+  const STAY_DEFERRED = ['FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE', 'USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION'];
   for (const r of STAY_DEFERRED) if (!deferredRelations.has(r)) problems.push(`relation ${r} must remain deferred (talent-corpus owner) but is not`);
 
   const seen = new Set(), rows = [];

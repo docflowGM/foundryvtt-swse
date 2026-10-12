@@ -38,7 +38,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
 import { getStackingRule } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
-import { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime, resolveCanonicalDamage, summarizeCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, resolveCanonicalAbilityAttackBonus, summarizeAttackRuntime, resolveCanonicalDamage, summarizeCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { WeaponRuntimeError, ERROR_CODES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { replaceBaseDieSize, evaluateConditionalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { normalizeRangeBand, canonicalDamageRangePenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
@@ -465,6 +465,9 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   // whatever proficiency the printed creature has with its own weapon — a
   // proficiency penalty must not be layered on top of either flat total.
   const proficiencyPenalty = isFlatOverride ? 0 : (proficient ? 0 : -5);
+  // Phase 5D-I-D-E: an attack bonus a held ability grants with this weapon (Siang Lance Mastery +1; suppressed by an overlapping Weapon Focus)
+  const abilityWeaponAttack = (weaponRuntime.source === 'canonical' && !isFlatOverride)
+    ? resolveCanonicalAbilityAttackBonus(weaponRuntime, actor) : { total: 0, entries: [] };
 
   // Math Integrity Freeze, Attack Bonus round (blocker fix): an NPC's
   // flatAttackBonus is authored by the importer from the creature's PRINTED
@@ -630,7 +633,7 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const total =
     flatOverrideValue +
     bab + abilityMod + miscBonus + rangePenalty + firingIntoMeleePenalty + attackPenalty + ctPenalty +
-    proficiencyPenalty + talentBonus + stateBonus + combatOptionBonus + rageBonus +
+    proficiencyPenalty + abilityWeaponAttack.total + talentBonus + stateBonus + combatOptionBonus + rageBonus +
     sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + typedModifierTotal + scopedFeatBonus +
     armorAcpPenalty;
 
@@ -649,6 +652,7 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   if (attackPenalty !== 0) components['Attack Penalty'] = attackPenalty;
   if (ctPenalty !== 0) components['CT Penalty'] = ctPenalty;
   if (proficiencyPenalty !== 0) components['Proficiency'] = proficiencyPenalty;
+  for (const e of abilityWeaponAttack.entries) if (e.applied) components[e.ability] = (components[e.ability] ?? 0) + e.bonus;
   if (talentBonus !== 0) components['Talent'] = talentBonus;
   if (stateBonus !== 0) components['State'] = stateBonus;
   // Math Integrity Freeze, Attack Bonus round 3: each active combat

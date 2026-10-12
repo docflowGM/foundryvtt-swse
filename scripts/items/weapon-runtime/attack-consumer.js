@@ -8,7 +8,7 @@ import { WeaponRuntimeError, ERROR_CODES } from './errors.js';
 import { getSharedWeaponAuthorityRegistry, getWeaponAuthorityRegistryLoadFailure } from './weapon-authority-registry.js';
 import { resolveCanonicalIdentity } from './canonical-identity.js';
 import { WeaponRuntimeResolver, getProfile } from './weapon-runtime-resolver.js';
-import { resolveProficiency } from './proficiency-resolver.js';
+import { resolveProficiency, resolveAbilityAttackBonus } from './proficiency-resolver.js';
 import { resolveDamageProfile } from './damage-profile-resolver.js';
 import { resolveCanonicalRange, assertRangeSelectionResolvable } from './canonical-range.js';
 import { resolveCanonicalResourceCost } from './canonical-resource.js';
@@ -93,6 +93,12 @@ export function resolveAttackWeaponRuntime(weapon, context = {}) {
 export function resolveCanonicalAttackProficiency(runtime, actor, integrations = {}) {
   if (runtime?.source !== 'canonical') throw new WeaponRuntimeError(ERROR_CODES.CANONICAL_ENTRY_MISSING, 'canonical proficiency requires a canonical weapon runtime');
   return resolveProficiency(runtime.resolved, runtime.profile, actor, { proficiencyIntegrations: integrations });
+}
+
+/** Phase 5D-I-D-E: attack bonus a held ability grants with this weapon (Siang Lance Mastery +1); see resolveAbilityAttackBonus. */
+export function resolveCanonicalAbilityAttackBonus(runtime, actor) {
+  if (runtime?.source !== 'canonical') return { total: 0, entries: [] };
+  return resolveAbilityAttackBonus(runtime.resolved, actor);
 }
 
 /** Small, serializable diagnostics for resolveAttackBonus() results (never the frozen ResolvedWeapon itself). */

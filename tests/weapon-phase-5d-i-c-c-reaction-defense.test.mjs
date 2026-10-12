@@ -492,7 +492,7 @@ const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflec
   ok(`the defense-and-reaction family is FULLY CONSUMED; unique unconsumed keys ${I_C_C_BASELINE.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER} -> ${closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER}, raw ${I_C_C_BASELINE.RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER} -> ${closure.counters.RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER}, execution families fully consumed 36 -> ${closure.counters.FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES}`);
   // 67: special-mechanic census: DEFER 10 -> 3 (only the I-D three); relations deferred 6 -> 4 (the talent-corpus four)
   const census = JSON.parse(fs.readFileSync('data/audits/weapon-phase-5d-e-special-mechanic-census.json', 'utf8')); assert.deepEqual(census.deferredByOwner, { 'I-D': 3 }); assert.equal(closure.counters.EXECUTABLE_FORM_MECHANICS_DEFERRED, 3);
-  assert.deepEqual(closure.relations.executableDeferred.map((r) => r.relation).sort(), m.stillDeferredRelations.slice().sort()); assert.equal(closure.counters.EXECUTABLE_RELATION_FAMILIES_DEFERRED, 4);
+  assert.deepEqual(closure.relations.executableDeferred.map((r) => r.relation).sort(), m.stillDeferredRelations.slice().sort()); assert.equal(closure.counters.EXECUTABLE_RELATION_FAMILIES_DEFERRED, 2);
   ok('special-mechanic DEFER 10 -> 3 (Gas Grenade concealment, Sith Sword empowerment, Verpine durability stay with I-D); deferred relation families 6 -> 4 (the talent-corpus four are untouched)');
   // 68: no weapon-name branches in the new modules; allow-list; no census read at runtime
   const strip = (src) => src.split('\n').filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
