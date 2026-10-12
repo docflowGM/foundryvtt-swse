@@ -263,7 +263,7 @@ function equipmentBonusFromHooks(hooks = [], chosenConsumable = null) {
  *
  *   key                                   hook                                                                         source (registry canonicalPlayerText)
  *   concealmentEquipmentBonus             +N EQUIPMENT bonus, Stealth, "conceal item on self", only for THIS weapon     "...+5 equipment bonus on Stealth checks made to conceal the weapon"
- *   concealmentStealthBonus               +N gear bonus,      Stealth, "conceal item on self", only for THIS weapon     Defender Microblaster: "+5 bonus on Stealth checks to conceal it" -- the source states NO bonus type; stacking is not inferred from the missing word "equipment", so it is handled conservatively as a gear (equipment) bonus: best one only, until a source ruling
+ *   concealmentStealthBonus               +N untyped bonus,   Stealth, "conceal item on self", only for THIS weapon     Defender Microblaster, CWCG p.62: "+5 bonus on Stealth checks to conceal it" (no descriptor => untyped; Core Rulebook p.241 "Stacking Bonuses": undescribed bonuses stack)
  *   concealmentStealthPenalty             -N penalty,         Stealth, "conceal item on self", only for THIS weapon     Ascension Gun: "bulk imposes -5 on Stealth checks made to conceal it"
  *   snipingStealthEquipmentBonus          +N EQUIPMENT bonus, Stealth, "snipe", only when sniping WITH this weapon      Magna Caster: "+5 equipment bonus on Stealth checks made to snipe"
  *   survivalBasicForestJungleBonus...     +N untyped bonus,   Survival, "basic survival", carried + proficient + forest/jungle   Ryyk Blade
@@ -271,7 +271,7 @@ function equipmentBonusFromHooks(hooks = [], chosenConsumable = null) {
  */
 export const WEAPON_SKILL_HOOK_SPECS = Object.freeze([
   Object.freeze({ key: 'concealmentEquipmentBonus', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'equipment', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
-  Object.freeze({ key: 'concealmentStealthBonus', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'equipment', typeBasis: 'source-unstated', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
+  Object.freeze({ key: 'concealmentStealthBonus', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'untyped', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
   Object.freeze({ key: 'concealmentStealthPenalty', skill: 'stealth', useKey: 'conceal-item-on-self', type: 'penalty', itemScope: 'self-item', qualifiers: { concealmentSkill: 'stealth', concealmentContext: 'conceal this weapon' } }),
   Object.freeze({ key: 'snipingStealthEquipmentBonus', skill: 'stealth', useKey: 'snipe', type: 'equipment', itemScope: 'self-item', qualifiers: { snipingSkill: 'stealth' } }),
   Object.freeze({ key: 'survivalBasicForestJungleBonusWhenProficientAndCarried', skill: 'survival', useKey: 'basic-survival', type: 'untyped', itemScope: 'carried', requires: Object.freeze({ terrain: ['forest', 'jungle'], proficient: true }) })

@@ -91,7 +91,7 @@ ok('Ascension Gun -5 is a real penalty: kept alongside equipment bonuses, only f
   const eq5 = gear('e5', [{ skill: 'stealth', useKey: 'conceal-item-on-self', mode: 'modifies', bonus: { type: 'equipment', value: 5 } }]);
   const a = mkActor([def, hold, eq5]);
   assert.equal(await delta(a, 'stealth', CONCEAL, { hookItemId: 'w1' }), 5, 'equipment +5 (weapon) and equipment +5 (gear) do not stack');
-  assert.equal(await delta(a, 'stealth', CONCEAL, { hookItemId: 'd1' }), 5, 'Defender\'s +5 (type unstated in the source) is a gear bonus: it does not stack with another equipment bonus');
+  assert.equal(await delta(a, 'stealth', CONCEAL, { hookItemId: 'd1' }), 10, 'Defender\'s +5 is an undescribed (untyped) bonus: it stacks with the best equipment bonus (Core Rulebook p.241)');
   const plain = gear('p1', [{ skill: 'stealth', useKey: 'conceal-item-on-self', mode: 'modifies', bonus: { type: 'untyped', value: 2 } }]);
   assert.equal(await delta(mkActor([hold, plain]), 'stealth', CONCEAL, { hookItemId: 'w1' }), 7, 'a genuinely untyped legacy bonus still stacks with the best equipment bonus');
   const st = resolveEquipmentForSkillUse(a, CONCEAL, { skill: 'stealth', context: { hookItemId: 'w1' } });
@@ -284,14 +284,18 @@ ok('roll card reconciles exactly with derived + custom + feat + equipment bonus 
 }
 ok('the context prompt escapes item names and rejects an unoffered item id or terrain');
 
-{ // Defender Microblaster: "+5 bonus" with no stated type. Stacking is NOT inferred from the missing word "equipment": gear-granted bonuses are handled as equipment bonuses (best only) until a source ruling
+{ // Defender Microblaster: CWCG p.62 "+5 bonus" with no descriptor; Core Rulebook p.241 (Stacking Bonuses): bonuses without a descriptor stack with other bonuses, including other undescribed bonuses
   const def = weapon('d1', 'weapon-defender-microblaster');
   const eq5 = gear('e5', [{ skill: 'stealth', useKey: 'conceal-item-on-self', mode: 'modifies', bonus: { type: 'equipment', value: 5 } }]);
+  const plain2 = gear('p2', [{ skill: 'stealth', useKey: 'conceal-item-on-self', mode: 'modifies', bonus: { type: 'untyped', value: 2 } }]);
   assert.equal(await delta(mkActor([def]), 'stealth', CONCEAL, { hookItemId: 'd1' }), 5);
-  assert.equal(await delta(mkActor([def, eq5]), 'stealth', CONCEAL, { hookItemId: 'd1' }), 5, 'no stacking with another equipment bonus on the missing word alone');
+  assert.equal(await delta(mkActor([def, eq5]), 'stealth', CONCEAL, { hookItemId: 'd1' }), 10, 'untyped +5 stacks with a separate equipment bonus');
+  assert.equal(await delta(mkActor([def, plain2]), 'stealth', CONCEAL, { hookItemId: 'd1' }), 7, 'and with another undescribed bonus');
+  assert.equal(await delta(mkActor([def, eq5]), 'stealth', CONCEAL, { hookItemId: 'other' }), 5, 'self-item limitation: concealing something else gets only the legacy gear bonus, never the Defender\'s');
   const rec = JSON.parse(fs.readFileSync(new URL('../data/weapons/canonical-weapon-registry.json', import.meta.url), 'utf8')).identities.find((r) => r.identityKey === 'weapon-defender-microblaster');
-  assert.ok(/\+5 bonus on Stealth checks to conceal it/.test(rec.canonicalPlayerText) && !/equipment bonus/i.test(rec.canonicalPlayerText), 'the recorded source wording states a +5 bonus with no type');
+  assert.ok(/\+5 bonus on Stealth checks to conceal it/.test(rec.canonicalPlayerText) && !/equipment bonus/i.test(rec.canonicalPlayerText), 'the recorded source wording states a +5 bonus with no descriptor');
+  assert.equal(WEAPON_SKILL_HOOK_SPECS.find((x) => x.key === 'concealmentStealthBonus').type, 'untyped');
 }
-ok('Defender Microblaster +5 (type unstated in the source) is treated conservatively as a gear bonus: it does not stack with another equipment bonus');
+ok('Defender Microblaster +5 is untyped (CWCG p.62 + Core p.241): it stacks with an equipment bonus, only when the Defender itself is concealed');
 
 console.log(`Review corrections: ${n} total checks passed.`);
