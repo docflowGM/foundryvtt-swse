@@ -42,6 +42,14 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Published PDF pages mapped/visually reviewed with OCR-less full-page renders plus user-supplied searchable text transcription.",
       "note": "12 KOTOR species/lineages all present. All 12 size/speed/ability base fields match. Published species traits have sidecar inconsistencies. Feat manifest lists 21 KOTOR GENERAL feats, 0 SPECIES_FEAT; no auto-racial grant from feat list."
+    },
+    {
+      "source": "The Force Unleashed Campaign Guide",
+      "printedScope": "Species chapter pp. 11-20; Species Ability Adjustments Table 1-1 p.12",
+      "reviewedSpecies": 10,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "Original scanned Force Unleashed Campaign Guide PDF chapter pp. 11-20 rendered and visually mapped to printed pagination (PDF page is printed page +1), searchable user-uploaded DJVU transcription used to compare named trait details.",
+      "notes": "All 10 have pack identities and accurate ability adjustments, size and speed. Several sidecar mechanics and natural weapon materializations differ. No production edits; sourcebook does not itself confer optional species feats as automatic racial grants."
     }
   ],
   "summary": {
@@ -62,9 +70,75 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 29
+    "totalSpeciesInRollingLedger": 39,
+    "forceUnleashed": {
+      "species": 10,
+      "noChange": 0,
+      "changeRequired": 7,
+      "reviewRequired": 3,
+      "issueCount": 26,
+      "confirmedIssues": 7,
+      "reviewIssues": 19,
+      "explicitNoChangeRulings": 1,
+      "baseStatNoChange": 10,
+      "languageParity": 9,
+      "missingPack": 0
+    }
   },
   "entries": [
+    {
+      "name": "Aleena",
+      "foundryId": "species-aleena",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "13-14",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "CHANGE_REQUIRED",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-01-01",
+            "status": "CHANGE_REQUIRED",
+            "severity": "HIGH",
+            "field": "system.languages",
+            "current": "['Aleena','Basic Caamasi in: Species','Caamasi','Medium','6 more Caamasi 1 Edit']",
+            "publishedRule": "Automatic languages are Aleena and Basic.",
+            "recommendedSurgicalAction": "Replace malformed array with ['Aleena','Basic']; trace upstream parser and do not leak adjacent Caamasi page text.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "13-14"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": false,
+            "kind": "SOURCE_OR_SCHEMA_DEFECT"
+          },
+          {
+            "id": "TFU-01-02",
+            "status": "REVIEW_REQUIRED",
+            "severity": "LOW",
+            "field": "system.canonicalTraits[energy-surge / heightened-agility].name",
+            "current": "Energy Surge, Heightened Agility",
+            "publishedRule": "Printed Aleena traits are Quick Energy and Nimble, with materially equivalent described effects.",
+            "recommendedSurgicalAction": "Reconcile canonical player-facing names/aliases without changing mechanical IDs until source identity policy is checked.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "13-14"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
+      }
+    },
     {
       "name": "Arkanian",
       "foundryId": "species-arkanian",
@@ -231,6 +305,59 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Caamasi",
+      "foundryId": "species-caamasi",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "14-15",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "NO_CHANGE",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-02-01",
+            "status": "CHANGE_REQUIRED",
+            "severity": "HIGH",
+            "field": "data/species-traits(-migrated).json :: Caamasi.Pacifist Insight",
+            "current": "Automatic +5 Initiative and additional Initiative reroll",
+            "publishedRule": "Published traits are Adept Diplomat (Persuasion reroll keeping better), Pacifism, Memory Sharing; neither Initiative trait is granted.",
+            "recommendedSurgicalAction": "Stop unsupported passive +5 Initiative and reroll; preserve existing Pacifism and memory execution; test rule collection.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "14-15"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": false,
+            "kind": "SOURCE_OR_SCHEMA_DEFECT"
+          },
+          {
+            "id": "TFU-02-02",
+            "status": "REVIEW_REQUIRED",
+            "severity": "LOW",
+            "field": "system.canonicalTraits['silver-tongued'].name",
+            "current": "Silver Tongued",
+            "publishedRule": "Printed feat/trait name is Adept Diplomat; description reproduces its choose-better Persuasion reroll.",
+            "recommendedSurgicalAction": "Name/provenance normalization only; preserve benefit and existing IDs.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "14-15"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
       }
     },
     {
@@ -591,6 +718,75 @@
       }
     },
     {
+      "name": "Felucian",
+      "foundryId": "species-felucian",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "15",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "NO_CHANGE",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-03-01",
+            "status": "CHANGE_REQUIRED",
+            "severity": "HIGH",
+            "field": "system.primitive / system.suppressedClassProficiencies",
+            "current": "Suppresses only Heavy Weapons, Pistols and Rifles starting class grants",
+            "publishedRule": "Printed Primitive: regardless of starting class, Felucians gain proficiency only with Simple Weapons; skullblade familiarity separately treats skullblade as Simple.",
+            "recommendedSurgicalAction": "Inspect all first-level class proficiency sources; ensure default first-level Advanced Melee/Lightsabers etc are not granted where the printed restriction applies. Preserve later acquired proficiency.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "15"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": false,
+            "kind": "SOURCE_OR_SCHEMA_DEFECT"
+          },
+          {
+            "id": "TFU-03-02",
+            "status": "NO_CHANGE",
+            "severity": "NONE",
+            "field": "data/species-traits-migrated.json :: Felucian.Force Sensitivity featGrant",
+            "current": "Unconditional Force Sensitivity featGrant",
+            "publishedRule": "Printed Bonus Feat explicitly grants Force Sensitivity; this is an authorized grant unlike Khil/Miraluka.",
+            "recommendedSurgicalAction": "Retain this species feat grant; add coverage for once-only grant and Force Blast/Force Training mode substitution.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "15"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": false,
+            "kind": "CONFIRMED_LEGAL_GRANT"
+          },
+          {
+            "id": "TFU-03-03",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "system.canonicalTraits['force-blast'] / runtime activated ability",
+            "current": "Text includes once/encounter untrained Force Blast and replacement by free suite power for Force Training",
+            "publishedRule": "Printed two modes require exclusion: no extra once/encounter blast once Force Training provides a suite use.",
+            "recommendedSurgicalAction": "Test mode exclusivity in character creation and in combat; don't add an extra copy of Force Blast.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "15"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
+      }
+    },
+    {
       "name": "Gamorrean",
       "foundryId": "species-gamorrean",
       "core": {
@@ -694,6 +890,75 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Gran",
+      "foundryId": "species-gran",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "16",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "NO_CHANGE",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-04-01",
+            "status": "REVIEW_REQUIRED",
+            "severity": "HIGH",
+            "field": "data/species-traits-migrated.json :: Gran.Three-Eyed Vision",
+            "current": "Automatic +2 species Reflex Defense",
+            "publishedRule": "Published Gran abilities are Darkvision, Target Awareness, Triple Vision (once/encounter single-swift aim), conditional Precise Shot with Point Blank Shot. No Reflex bonus is in this source.",
+            "recommendedSurgicalAction": "Require alternate source/variant before enabling bonus; source-check active passive adapter.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "16"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          },
+          {
+            "id": "TFU-04-02",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "system.skillBonuses / system.socialTraits",
+            "current": "['+2 Endurance','+2 Perception'] and Three-Eyed Vision sight-bonus text",
+            "publishedRule": "Published Target Awareness removes distance penalties on noticing targets up to first 50 squares, not generic +2 Perception/Endurance.",
+            "recommendedSurgicalAction": "Verify separately sourced additions and avoid replacing range-condition with unconditional numbers.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "16"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          },
+          {
+            "id": "TFU-04-03",
+            "status": "REVIEW_REQUIRED",
+            "severity": "LOW",
+            "field": "system.canonicalTraits['innate-accuracy'].name",
+            "current": "Innate Accuracy",
+            "publishedRule": "Printed equivalent single-swift aim trait is named Triple Vision.",
+            "recommendedSurgicalAction": "Consider display-name alias without changing the once/encounter benefit.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "16"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
       }
     },
     {
@@ -1225,6 +1490,59 @@
       }
     },
     {
+      "name": "Nosaurian",
+      "foundryId": "species-nosaurian",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "16-17",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "NO_CHANGE",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-05-01",
+            "status": "CHANGE_REQUIRED",
+            "severity": "HIGH",
+            "field": "system.naturalWeapons / natural weapon materialization",
+            "current": "Empty []",
+            "publishedRule": "Printed Natural Weapon grants horns 1d6 piercing, always armed.",
+            "recommendedSurgicalAction": "Ensure exactly one 1d6 piercing horn weapon is generated and attack is proficient; preserve the correct descriptive trait.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "16-17"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": false,
+            "kind": "SOURCE_OR_SCHEMA_DEFECT"
+          },
+          {
+            "id": "TFU-05-02",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "data/species-traits(-migrated).json :: Nosaurian.Prehensile Tail",
+            "current": "Automatic +2 Acrobatics",
+            "publishedRule": "Printed innate traits are Climber's Heritage (Climb class skill), 1d6 horns, Survival Instinct; no Prehensile Tail bonus in this entry.",
+            "recommendedSurgicalAction": "Verify alternate publication/variant source before treating as species passive.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "16-17"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
+      }
+    },
+    {
       "name": "Quarren",
       "foundryId": "species-quarren",
       "core": {
@@ -1570,6 +1888,213 @@
       }
     },
     {
+      "name": "Talz",
+      "foundryId": "species-talz",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "17-18",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "NO_CHANGE",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-06-01",
+            "status": "CHANGE_REQUIRED",
+            "severity": "HIGH",
+            "field": "system.naturalWeapons / natural weapon materialization",
+            "current": "Empty []",
+            "publishedRule": "Printed Natural Weapon grants claws 1d6 slashing, always armed.",
+            "recommendedSurgicalAction": "Ensure 1d6 slashing claw item materializes exactly once, respecting existing unarmed natural-weapon rules.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "17-18"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": false,
+            "kind": "SOURCE_OR_SCHEMA_DEFECT"
+          },
+          {
+            "id": "TFU-06-02",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "data/species-traits-migrated.json :: Talz.Cold Adaptation",
+            "current": "Automatic +5 Fortitude against cold environments",
+            "publishedRule": "Printed innate Talz abilities here: Darkvision, 1d6 claws, conditional Skill Focus (Mechanics); cold Fortitude modifier not in this species block.",
+            "recommendedSurgicalAction": "Search Clone Wars/other publications for an explicit variant before retaining.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "17-18"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          },
+          {
+            "id": "TFU-06-03",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "system.skillBonuses",
+            "current": "['+2 Survival','+2 Perception']",
+            "publishedRule": "Printed traits have no general +2 to either skill.",
+            "recommendedSurgicalAction": "Validate supplementary source and real consumption before adding passive bonuses.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "17-18"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
+      }
+    },
+    {
+      "name": "Togorian",
+      "foundryId": "species-togorian",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "18",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "NO_CHANGE",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-07-01",
+            "status": "REVIEW_REQUIRED",
+            "severity": "HIGH",
+            "field": "system.naturalWeapons / data/species-traits-migrated.json :: Togorian.Claws",
+            "current": "Pack natural claws 1d4, sidecar description says 1d6 but rule 1d4",
+            "publishedRule": "Printed Force Unleashed Togorian traits list Feline Reflexes +1 Reflex, Low-Light Vision, Physical Intimidation; no natural-weapon attack in printed trait list despite narrative about claws.",
+            "recommendedSurgicalAction": "Reconcile possible Threats of the Galaxy variant/source; do not assert 1d4 or 1d6 innate attack without explicit published mechanical evidence.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "18"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          },
+          {
+            "id": "TFU-07-02",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "system.skillBonuses",
+            "current": "['+2 Survival']",
+            "publishedRule": "No unconditional +2 Survival in printed Force Unleashed species traits.",
+            "recommendedSurgicalAction": "Check other-source variant and passive registration.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "18"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          },
+          {
+            "id": "TFU-07-03",
+            "status": "REVIEW_REQUIRED",
+            "severity": "LOW",
+            "field": "system.canonicalTraits['physically-intimidating'].name",
+            "current": "Physically Intimidating",
+            "publishedRule": "Printed trait name Physical Intimidation; mechanism uses STR instead of CHA on Persuasion-to-intimidate.",
+            "recommendedSurgicalAction": "Label-only normalization candidate; verify Strength substitution works.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "18"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
+      }
+    },
+    {
+      "name": "Togruta",
+      "foundryId": "species-togruta",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "18-19",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "NO_CHANGE",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-08-01",
+            "status": "CHANGE_REQUIRED",
+            "severity": "HIGH",
+            "field": "data/species-traits-migrated.json :: Togruta.Spatial Awareness.rules",
+            "current": "Sense blindsense range 6 squares",
+            "publishedRule": "Printed Spatial Awareness: ignore all cover and concealment ONLY when making Perception checks to notice targets within 10 squares; not blanket 6-square blindsense.",
+            "recommendedSurgicalAction": "Replace structured effect with exact 10-square Perception-only cover/concealment exception; no general target/sense behavior.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "18-19"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": false,
+            "kind": "SOURCE_OR_SCHEMA_DEFECT"
+          },
+          {
+            "id": "TFU-08-02",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "data/species-traits-migrated.json :: Togruta.Pack Instincts",
+            "current": "Unconditional +2 Initiative",
+            "publishedRule": "Printed Togruta traits Pack Hunter (+2 melee damage only vs flanked foe), Sneaky, Spatial Awareness. No automatic +2 Initiative.",
+            "recommendedSurgicalAction": "Find later-source evidence before granting; validate flanking condition for Pack Hunter.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "18-19"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          },
+          {
+            "id": "TFU-08-03",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "system.skillBonuses / system.socialTraits",
+            "current": "['+2 Perception','+2 Stealth'] and +2 Perception in enclosed spaces",
+            "publishedRule": "Printed Sneaky gives a reroll for Stealth to sneak, and Spatial Awareness gives a specific perceptual exception, not generic +2 bonuses.",
+            "recommendedSurgicalAction": "Validate other source/variant and prevent converting a reroll or sensing exception to flat bonuses.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "18-19"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
+      }
+    },
+    {
       "name": "Trandoshan",
       "foundryId": "species-trandoshan",
       "core": {
@@ -1748,6 +2273,75 @@
       }
     },
     {
+      "name": "Whiphid",
+      "foundryId": "species-whiphid",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "19-20",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "NO_CHANGE",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-09-01",
+            "status": "CHANGE_REQUIRED",
+            "severity": "HIGH",
+            "field": "system.naturalWeapons / natural weapon materialization",
+            "current": "Empty []",
+            "publishedRule": "Printed Natural Weapon grants claws 1d6 slashing, always armed.",
+            "recommendedSurgicalAction": "Populate 1d6 slashing natural attack once, preserve Cold Resistance/Scent rules.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "19-20"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": false,
+            "kind": "SOURCE_OR_SCHEMA_DEFECT"
+          },
+          {
+            "id": "TFU-09-02",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "data/species-traits-migrated.json :: Whiphid.Arctic Hunter.rules",
+            "current": "Automatic +2 Stealth with when:always, description limits it to cold environments and Survival",
+            "publishedRule": "Printed traits have Insulating Fur +5 Fortitude specifically for extreme cold, Natural Weapon, Scent; no generic Arctic Hunter in this species block.",
+            "recommendedSurgicalAction": "Seek other source or optional feat; condition any valid modifier correctly, never always-on.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "19-20"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          },
+          {
+            "id": "TFU-09-03",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "system.skillBonuses",
+            "current": "['+2 Survival','+2 Perception']",
+            "publishedRule": "Printed Scent grants within-10-square tracking/Perception exceptions, not flat +2 to these skills.",
+            "recommendedSurgicalAction": "Verify alternate source and keep Scent distinct from passive modifier.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "19-20"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
+      }
+    },
+    {
       "name": "Wookiee",
       "foundryId": "species-wookiee",
       "core": {
@@ -1851,6 +2445,75 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Yarkora",
+      "foundryId": "species-yarkora",
+      "forceUnleashed": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "20",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "foundryIdPreserved": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "languageParity": "NO_CHANGE",
+          "publishedTraitTextVsPackReviewed": true,
+          "ordinaryAndMigratedSidecarsReviewed": true,
+          "runtimeFoundryTested": false
+        },
+        "findings": [
+          {
+            "id": "TFU-10-01",
+            "status": "REVIEW_REQUIRED",
+            "severity": "HIGH",
+            "field": "data/species-traits-migrated.json :: Yarkora.Brute Force",
+            "current": "Unconditional +2 melee damage",
+            "publishedRule": "Printed traits Confusion (once/encounter Deception vs Will within 6), Deceptive reroll, Streetwise (Gather Information class skill); no melee damage bonus.",
+            "recommendedSurgicalAction": "Find optional variant/provenance before allowing rule injection.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "20"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          },
+          {
+            "id": "TFU-10-02",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "system.skillBonuses",
+            "current": "['+2 Deception','+2 Persuasion']",
+            "publishedRule": "Printed Deceptive gives must-accept reroll and Streetwise gives a class skill, not general +2 modifiers.",
+            "recommendedSurgicalAction": "Validate alternate published source; do not silently add to actor skill math.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "20"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          },
+          {
+            "id": "TFU-10-03",
+            "status": "REVIEW_REQUIRED",
+            "severity": "MEDIUM",
+            "field": "system.canonicalTraits['confusion'] runtime",
+            "current": "Correct prose; no runtime proof collected",
+            "publishedRule": "Published Confusion is once/encounter standard action, Deception vs multiple targets' Will, removes threatened squares through next turn, mind-affecting.",
+            "recommendedSurgicalAction": "Test timing, AoE, individual Will defenses and effect duration; no inference that description means it executes.",
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPages": "20"
+            },
+            "applied": false,
+            "additionalSourceCheckNeeded": true,
+            "kind": "POTENTIAL_LEGACY_SIDECAR_OR_VARIANT_CONFLICT"
+          }
+        ],
+        "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
       }
     },
     {
