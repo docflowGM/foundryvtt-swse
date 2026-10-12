@@ -34,6 +34,14 @@
       "status": "OPTIONAL_FEAT_IDENTITIES_RECONCILED",
       "sourceAuthority": "Rebellion Era Campaign Guide_djvu.txt species feat table and entries; cross-check to 353-id canonical feat identity manifest",
       "note": "48 optional feats for 16 non-Human Core species; no printed replacement of Core innate traits identified. Exact feat effects, prerequisites, and runtime are for existing feat authority to certify."
+    },
+    {
+      "source": "Knights of the Old Republic Campaign Guide",
+      "printedScope": "Species chapter pp.10-20",
+      "reviewedSpecies": 12,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "Published PDF pages mapped/visually reviewed with OCR-less full-page renders plus user-supplied searchable text transcription.",
+      "note": "12 KOTOR species/lineages all present. All 12 size/speed/ability base fields match. Published species traits have sidecar inconsistencies. Feat manifest lists 21 KOTOR GENERAL feats, 0 SPECIES_FEAT; no auto-racial grant from feat list."
     }
   ],
   "summary": {
@@ -43,36 +51,114 @@
     "coreReview": 10,
     "coreIssues": 24,
     "rebellionSpeciesFeats": 48,
-    "rebellionIdentityPresent": 48
+    "rebellionIdentityPresent": 48,
+    "kotor": {
+      "species": 12,
+      "noChange": 0,
+      "changeRequired": 9,
+      "reviewRequired": 3,
+      "issueCount": 23,
+      "confirmedIssues": 10,
+      "reviewIssues": 13,
+      "baseStatNoChange": 12
+    },
+    "totalSpeciesInRollingLedger": 29
   },
   "entries": [
     {
-      "name": "Human",
-      "foundryId": "species-human",
-      "core": {
-        "source": "Saga Edition Core Rulebook",
-        "printedPages": "23",
-        "status": "NO_CHANGE",
+      "name": "Arkanian",
+      "foundryId": "species-arkanian",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "11-12",
+        "status": "REVIEW_REQUIRED",
         "checked": {
-          "packExists": true,
-          "recordIdentityStable": true,
-          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
-          "packCanonicalTraitListReviewed": true,
-          "sidecarsInspected": true,
-          "foundryRuntimeTested": false
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
         },
-        "issues": [],
-        "notes": "No core-species mechanical correction identified in this static and primary-source comparison; runtime execution not certified."
-      },
-      "rebellion": {
-        "source": "Rebellion Era Campaign Guide",
-        "printedPages": "31-36",
-        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
-        "status": "NO_CHANGE",
-        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
-        "speciesFeats": [],
-        "issues": [],
-        "note": "No Rebellion Era species feats granted to Humans; no changes required to Human species baseline."
+        "findings": [
+          {
+            "id": "KOTOR-01-01",
+            "status": "REVIEW_REQUIRED",
+            "field": "system.skillBonuses",
+            "current": "+2 Mechanics, +2 Use Computer",
+            "publishedRule": "Flash of Genius is a once/encounter +5 circumstance choice, not unconditional +2 to these skills",
+            "action": "Check other sourcebook authority and actor bonus consumption",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "11-12"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          },
+          {
+            "id": "KOTOR-01-02",
+            "status": "REVIEW_REQUIRED",
+            "field": "Arkanian.sidecar.Genetic Memory",
+            "current": "+2 Knowledge (Life Sciences) always",
+            "publishedRule": "Printed innate traits: Darkvision, Intellectual Reputation, Flash of Genius",
+            "action": "Seek source provenance before retaining passive",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "11-12"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Arkanian Offshoot",
+      "foundryId": "species-arkanian-offshoot",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "12",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-02-01",
+            "status": "CHANGE_REQUIRED",
+            "field": "system.languages",
+            "current": "Basic; 'Arkanian (albeit with a distinct accent'",
+            "publishedRule": "Automatic: Arkanian and Basic",
+            "action": "Repair malformed Arkanian token without replacing original two languages",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "12"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-02-02",
+            "status": "REVIEW_REQUIRED",
+            "field": "system.skillBonuses / Resilient Physiology",
+            "current": "+2 Endurance and +2 Fortitude",
+            "publishedRule": "Offshoot innate traits are Conditional Bonus Feat and Determination",
+            "action": "Seek separate publication, otherwise remove extraneous passives",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "12"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
       }
     },
     {
@@ -148,6 +234,54 @@
       }
     },
     {
+      "name": "Cathar",
+      "foundryId": "species-cathar",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "12",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-03-01",
+            "status": "CHANGE_REQUIRED",
+            "field": "system.naturalWeapons.Claws.damage and migrated Claws.rules.damage",
+            "current": "1d4 slashing",
+            "publishedRule": "1d6 slashing Cathar natural weapons",
+            "action": "Use 1d6 in both pack and sidecar; verify actor claw creation",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "12"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-03-02",
+            "status": "REVIEW_REQUIRED",
+            "field": "system.skillBonuses / Feline Agility",
+            "current": "+2 Perception, +2 Stealth, +2 Reflex",
+            "publishedRule": "Cathar Instincts grants Climb and Stealth as CLASS SKILLS, not numeric bonus",
+            "action": "Identify later variant/source before any modifier applies",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "12"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
       "name": "Cerean",
       "foundryId": "species-cerean",
       "core": {
@@ -217,6 +351,54 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Draethos",
+      "foundryId": "species-draethos",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "13",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-04-01",
+            "status": "CHANGE_REQUIRED",
+            "field": "system.languages",
+            "current": "Draethos and Basic for everyone",
+            "publishedRule": "Draethos always; only exiled Draethos gain Basic",
+            "action": "Make Basic conditional on exiled background/profile",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "13"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-04-02",
+            "status": "REVIEW_REQUIRED",
+            "field": "Resilient Hide sidecar",
+            "current": "+2 Fortitude",
+            "publishedRule": "Species grants natural armor +1 Reflex, Natural Telepath, advanced-melee proficiency, low-light",
+            "action": "Check any expansion before retaining extra Fortitude",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "13"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
       }
     },
     {
@@ -343,6 +525,69 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Feeorin",
+      "foundryId": "species-feeorin",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "14",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-05-01",
+            "status": "CHANGE_REQUIRED",
+            "field": "canonicalTraits.Stronger by Age.description",
+            "current": "+1/+2 bonus to Strength and Constitution SCORES",
+            "publishedRule": "Middle/old age +1/+2 species bonus to Strength OR Constitution CHECKS",
+            "action": "Correct to check modifier; preserve source age exception",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "14"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-05-02",
+            "status": "CHANGE_REQUIRED",
+            "field": "system.languages",
+            "current": "Basic only",
+            "publishedRule": "Automatic: Feeorin and Basic",
+            "action": "Add Feeorin once",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "14"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-05-03",
+            "status": "REVIEW_REQUIRED",
+            "field": "system.skillBonuses / Intimidating Presence",
+            "current": "+2 Endurance, +5 Persuasion (Intimidate)",
+            "publishedRule": "Printed innate feats do not grant either unconditional skill bonus",
+            "action": "Confirm external source or retire passive",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "14"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
       }
     },
     {
@@ -541,6 +786,35 @@
       }
     },
     {
+      "name": "Human",
+      "foundryId": "species-human",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "23",
+        "status": "NO_CHANGE",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [],
+        "notes": "No core-species mechanical correction identified in this static and primary-source comparison; runtime execution not certified."
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [],
+        "issues": [],
+        "note": "No Rebellion Era species feats granted to Humans; no changes required to Human species baseline."
+      }
+    },
+    {
       "name": "Ithorian",
       "foundryId": "species-ithorian",
       "core": {
@@ -702,6 +976,183 @@
       }
     },
     {
+      "name": "Khil",
+      "foundryId": "species-khil",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "15",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-06-01",
+            "status": "CHANGE_REQUIRED",
+            "field": "Khil.sidecar.Force Sensitivity.rules",
+            "current": "featGrant Force Sensitivity always",
+            "publishedRule": "Khil traits are Dependable Worker, Cooperative Spirit, Hullepi, without this feat grant",
+            "action": "Remove unconditional grant after cross-book variant review",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "15"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-06-02",
+            "status": "REVIEW_REQUIRED",
+            "field": "canonicalTraits.Self-Sustaining runtime",
+            "current": "environmental exemption recorded as text",
+            "publishedRule": "Hullepi prevents starvation except sterile environments",
+            "action": "Verify structured starvation/environment handler",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "15"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Kissai",
+      "foundryId": "species-kissai",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "16",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-07-01",
+            "status": "REVIEW_REQUIRED",
+            "field": "Kissai.sidecar.Dark Ritualist.rules",
+            "current": "+2 Use the Force always (source sidecar describes dark-side powers)",
+            "publishedRule": "KOTOR grants Inspired, Warrior's Awareness, lanvarok familiarity; no +2 Force bonus",
+            "action": "Find other authority and add conditional gate if valid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "16"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Massassi",
+      "foundryId": "species-massassi",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "16",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-08-01",
+            "status": "CHANGE_REQUIRED",
+            "field": "system.languages",
+            "current": "Sith, 'Sith as well'",
+            "publishedRule": "Automatic: Sith only",
+            "action": "Remove duplicate malformed language value",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "16"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-08-02",
+            "status": "REVIEW_REQUIRED",
+            "field": "Massassi.sidecar.Brutal Strength / Dark Side Affinity",
+            "current": "+2 melee damage and +2 Use the Force always",
+            "publishedRule": "KOTOR innate grants conditional Survival feat, Duty Bound, Primitive, Warrior's Awareness, lanvarok familiarity",
+            "action": "Require explicit alternate printed grant to retain these modifiers",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "16"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Miraluka",
+      "foundryId": "species-miraluka",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "17",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-09-01",
+            "status": "CHANGE_REQUIRED",
+            "field": "Miraluka.sidecar.Force Sensitivity.rules",
+            "current": "featGrant Force Sensitivity always",
+            "publishedRule": "KOTOR gives Force Sight and conditional Force Training IF Use the Force is trained",
+            "action": "Remove automatic Force Sensitivity grant; preserve conditional Force Training",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "17"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-09-02",
+            "status": "REVIEW_REQUIRED",
+            "field": "system.skillBonuses",
+            "current": "+2 Use the Force",
+            "publishedRule": "Force Sight has non-generic perception/Sense Surroundings exceptions, not blanket bonus",
+            "action": "Check additional source/variant",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "17"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
       "name": "Mon Calamari",
       "foundryId": "species-mon-calamari",
       "core": {
@@ -846,6 +1297,54 @@
       }
     },
     {
+      "name": "Rakata",
+      "foundryId": "species-rakata",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "18",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-10-01",
+            "status": "CHANGE_REQUIRED",
+            "field": "Rakata.sidecar.Dark Side Mastery.rules",
+            "current": "automatic +2 Use the Force; sidecar claims auto-trained",
+            "publishedRule": "Force Blind forbids taking Force Sensitivity and printed Ancient Knowledge lists only technological skill exceptions",
+            "action": "Source-check then remove any automatic +2/trained Force rule",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "18"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-10-02",
+            "status": "REVIEW_REQUIRED",
+            "field": "system.canonicalTraits.Weapon Familiarity / system.skillBonuses",
+            "current": "Rakata weapons lose Exotic; +2 Use the Force",
+            "publishedRule": "Neither listed in the KOTOR p18 innate trait list",
+            "action": "Check separate published authority before accepting",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "18"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
       "name": "Rodian",
       "foundryId": "species-rodian",
       "core": {
@@ -915,6 +1414,87 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Selkath",
+      "foundryId": "species-selkath",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "19",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-11-01",
+            "status": "REVIEW_REQUIRED",
+            "field": "system.skillBonuses / Aquatic Adaptation",
+            "current": "+2 Endurance, +2 Swim, +2 Fortitude",
+            "publishedRule": "Expert Swimmer grants reroll and Take 10; Breathe Underwater is innate; no static +2 bonuses printed",
+            "action": "Verify later supplement; keep valid swim 4 / Able Healer",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "19"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Snivvian",
+      "foundryId": "species-snivvian",
+      "kotor": {
+        "source": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "20",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "abilityModifiersSizeSpeed": "NO_CHANGE",
+          "packTraitsAndSidecarsReviewed": true,
+          "actorRuntimeTested": false
+        },
+        "findings": [
+          {
+            "id": "KOTOR-12-01",
+            "status": "CHANGE_REQUIRED",
+            "field": "system.skillBonuses",
+            "current": "+2 Negotiation (not a SWSE skill)",
+            "publishedRule": "Observant substitutes Perception for Deception or Persuasion once/encounter, not +2 Negotiation",
+            "action": "Remove unsupported field; do not turn it into +2 Persuasion",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "20"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": false
+          },
+          {
+            "id": "KOTOR-12-02",
+            "status": "REVIEW_REQUIRED",
+            "field": "Snivvian.sidecar.Craven / Opportunistic",
+            "current": "-2 Will and +2 Deception always",
+            "publishedRule": "KOTOR innate traits only Observant and Cold Resistance",
+            "action": "Find supplemental/variant source before allowing modifiers",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "printedPage": "20"
+            },
+            "applied": false,
+            "scope": "species-pack/sidecar consumer",
+            "additionalSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
       }
     },
     {
