@@ -399,7 +399,7 @@ function weaponStateViews(entry, isWeaponRow, actor) {
   return { weaponReadiness: buildWeaponReadinessView(liveItem, actor, { isNaturalWeapon: entry?.isNaturalWeapon === true }), weaponConfiguration: buildWeaponConfigurationView(liveItem) };
 }
 
-function buildInventoryGroups(inventoryPanel) {
+function buildInventoryGroups(inventoryPanel, actor) {
   const grouped = inventoryPanel?.grouped ?? {};
   const order = ['Weapons', 'Armor', 'Equipment'];
 
@@ -411,7 +411,7 @@ function buildInventoryGroups(inventoryPanel) {
           type: entry?.type || entry?.itemType || (label === 'Weapons' ? 'weapon' : label === 'Armor' ? 'armor' : entry?.type),
           system: entry?.system || entry?.raw?.system || entry
         };
-        const visualProfile = WeaponVisualProfileResolver.resolve(itemLike, { actor: inventoryPanel?.actor });
+        const visualProfile = WeaponVisualProfileResolver.resolve(itemLike, { actor });
         const activated = visualProfile?.active === true || itemLike.system?.activated === true || itemLike.system?.active === true;
 
         return {
@@ -435,7 +435,7 @@ function buildInventoryGroups(inventoryPanel) {
             : (entry?.isEnergyShield ? 'Shield Inactive' : 'Blade Inactive'),
           bladeColor: visualProfile?.bladeColor || null,
           bladeHex: visualProfile?.bladeHex || null,
-          ...weaponStateViews(entry, label === 'Weapons', inventoryPanel?.actor)
+          ...weaponStateViews(entry, label === 'Weapons', actor)
         };
       });
 
@@ -1739,7 +1739,7 @@ export function buildConceptSheetViewModel(context = {}) {
   const currentConditionCardCount = asArray(context.healthPanel?.currentConditions?.cards).length;
   const percentHp = hpMax > 0 ? Math.max(0, Math.min(100, Math.round((hpValue / hpMax) * 100))) : 0;
   const skillCount = asArray(context.skillsPanel?.skills).length || Object.keys(context.derived?.skills ?? {}).length;
-  const gearGroups = buildInventoryGroups(context.inventoryPanel);
+  const gearGroups = buildInventoryGroups(context.inventoryPanel, actor);
   const actionGroups = buildActionGroups(context.combatActions, context.actionEconomy);
   const actorItems = Array.from(actor?.items ?? []);
   const itemById = new Map(actorItems.map((item) => [item.id, item]));
