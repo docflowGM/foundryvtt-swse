@@ -38,7 +38,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
 import { getStackingRule } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
-import { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, resolveCanonicalAbilityAttackBonus, summarizeAttackRuntime, resolveCanonicalDamage, summarizeCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, resolveCanonicalAbilityAttackBonus, rangeBandForDistance, summarizeAttackRuntime, resolveCanonicalDamage, summarizeCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { WeaponRuntimeError, ERROR_CODES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { replaceBaseDieSize, evaluateConditionalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { normalizeRangeBand, canonicalDamageRangePenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
@@ -452,7 +452,13 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const abilityMod = isFlatOverride ? 0 : (SchemaAdapters.getAbilityMod(actor, abilityKey) + Number(attackOptionModifiers.attackAbilityBonus || 0));
 
   const miscBonus = isFlatOverride ? 0 : getWeaponFlatAttackBonus(weapon);
-  const rangePenalty = getRangePenalty(weapon, context);
+  // Phase 5D-I-D-E: a stated distance (squares, from the player/GM; no token geometry required) names the band through the wielder's
+  // range facet (a granted range table such as Distant Discblade Throw's pistol range). An explicit rangeBand always wins.
+  const distanceBand = (context.rangeBand == null && context.range == null && context.distanceSquares != null
+    && weaponRuntime.source === 'canonical')
+    ? rangeBandForDistance(weaponRuntime, actor, context.distanceSquares) : null;
+  const rangeContext = distanceBand ? { ...context, rangeBand: distanceBand, weaponRuntime } : context;
+  const rangePenalty = getRangePenalty(weapon, rangeContext);
   const firingIntoMeleePenalty = shootingIntoMeleePenalty(actor, context);
   const rageModifiers = RageEngine.collectAttackModifiers(actor, weapon, context);
   const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ?? actor.system?.conditionTrack?.penalty ?? 0;

@@ -1409,8 +1409,8 @@
     },
     "unclassified": [],
     "byClass": {
-      "DISPLAY_ONLY": 2,
-      "EXECUTION": 11,
+      "DISPLAY_ONLY": 1,
+      "EXECUTION": 12,
       "SELECTOR": 8,
       "VALIDATION": 1
     },
@@ -1528,6 +1528,13 @@
         "consumer": "proficiency-resolver#resolveAbilityAttackBonus (talent matched by canonical identity; abilityOverrides[].attackBonus) -> combat-roll-math#resolveAttackBonus; the treat-as-rifle route is proficiency-resolver ability-override"
       },
       {
+        "relation": "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
+        "instances": 1,
+        "class": "EXECUTION",
+        "policy": "AUTO",
+        "consumer": "canonical-range#applyAbilityRangeGrants (RELATION_RANGE_GRANT; talent matched by canonical identity) -> attack-form-options band squares + combat-roll-math#resolveAttackBonus distanceSquares -> band; the band penalties stay the global table"
+      },
+      {
         "relation": "TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT",
         "instances": 1,
         "class": "EXECUTION",
@@ -1547,8 +1554,8 @@
         "relation": "FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE",
         "instances": 1,
         "policy": "AUTO",
-        "reason": "Discblade Arc is a talent-granted full-round attack MODE (three targets within point blank, one attack roll each); the talent now has a canonical identity (talent-identity.js) but the multi-target full-round attack needs a multi-attack planner mode, not a modifier",
-        "owner": "multi-attack planner (structured Discblade Arc mode)"
+        "reason": "Discblade Arc (Jedi Academy Training Manual): a full-round area attack against THREE designated targets, all within point blank range of the discblade, resolved with ONE attack roll applied to every designated target (not three independent attacks); the talent has a canonical identity (talent-identity.js) but no consumer designates multiple targets for one attack roll",
+        "owner": "attack workflow: multi-target single-roll area attack mode (full-round action, point-blank targets)"
       },
       {
         "relation": "USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION",

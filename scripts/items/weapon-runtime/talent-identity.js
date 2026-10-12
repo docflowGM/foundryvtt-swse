@@ -50,3 +50,15 @@ export function ownedTalentIdentities(actor) {
   } catch (_e) { /* partial snapshot */ }
   return out;
 }
+
+/**
+ * Prerequisite equivalences a talent grants (Rebellion Era Campaign Guide p.37: Siang Lance Mastery "counts as the Weapon Focus (siang
+ * lance) feat for the purpose of satisfying prerequisites"). TRACKED, NOT CONSUMED: the prerequisite checker has no "counts as" input
+ * yet, and this is NOT an attack bonus -- the talent's attack +1 is a separate grant (resolveAbilityAttackBonus), and no Weapon Focus
+ * feat item is ever created for it. A future prerequisite consumer reads this declaration; a test pins that attack math never does.
+ */
+export const TALENT_PREREQUISITE_EQUIVALENTS = Object.freeze({
+  [WEAPON_TALENT_IDENTITIES['Siang Lance Mastery']]: Object.freeze([
+    Object.freeze({ countsAs: 'weapon-focus', choice: 'weapon-siang-lance', purpose: 'prerequisites-only', source: 'Rebellion Era Campaign Guide p.37' }),
+  ]),
+});

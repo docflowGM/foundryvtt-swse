@@ -4,8 +4,7 @@
 // NOT replace actorIsProficientForAttack (consumer migration is a later phase).
 // Future integrations (Implant / Spacehound) are explicit inputs: context.proficiencyIntegrations.
 import { WeaponRuntimeError, ERROR_CODES } from './errors.js';
-import { canonicalFeatSlug, featIs } from './ability-selector.js';
-import { featChoiceSelectors } from './attack-shape.js';
+import { canonicalFeatSlug } from './ability-selector.js';
 import { ownedTalentIdentities, talentIdentityOfReference } from './talent-identity.js';
 
 const norm = (v) => String(v ?? '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '');
@@ -195,9 +194,13 @@ export function resolveProficiency(resolved, profile, actor, context = {}) {
  * Phase 5D-I-D-E: the attack-roll bonus a held ability grants ONLY while the weapon is used (Siang Lance Mastery +1, from the weapon's
  * structured abilityOverrides[].attackBonus). Independent of WHICH proficiency route made the wielder proficient (a Siang Lance wielder
  * with Exotic Weapon Proficiency still has the talent's +1).
- * A Weapon Focus feat that already covers the group the ability treats the weapon as ("does not stack with Weapon Focus (rifles)")
- * suppresses it: only the larger of the two applies, and both are +1, so the talent then adds 0.
- * @returns {{total:number, entries:Array<{ability:string,identity:string|null,bonus:number,applied:boolean,suppressedBy:string|null}>}}
+ * Weapon Focus (rifles) non-stacking (Rebellion Era Campaign Guide p.37): Weapon Focus is applied by the existing attack authorities
+ * (ScopedCombatFeatResolver / the feat's own modifier), and they match a CHOSEN weapon group against the weapon's canonical group --
+ * which is exotic for the Siang Lance -- so a rifles choice never reaches it. The talent's +1 is therefore the only one: exactly one +1
+ * whether or not Weapon Focus (rifles) is owned. This resolver deliberately does NOT second-guess the feat authority (a guess that
+ * removed the talent's +1 left the wielder with neither bonus); a regression test pins "exactly one +1" in every Weapon Focus form, and
+ * fails loudly if the feat authority ever starts applying a rifles choice to the Siang Lance (that would double count).
+ * @returns {{total:number, entries:Array<{ability:string,identity:string|null,bonus:number,applied:boolean}>}}
  */
 export function resolveAbilityAttackBonus(resolved, actor) {
   const entries = [];
@@ -209,17 +212,8 @@ export function resolveAbilityAttackBonus(resolved, actor) {
     const refIdentity = talentIdentityOfReference(o.ability);
     const held = refIdentity ? ent.talentIdentities.has(refIdentity) : ent.abilities.has(norm(o.ability));
     if (!held) continue;
-    const via = normalizeGroup(o.treatAsGroup);
-    let suppressedBy = null;
-    for (const item of Array.from(actor?.items ?? [])) {
-      if (item?.type !== 'feat' || !featIs(item, 'weapon-focus')) continue;
-      const sel = featChoiceSelectors(item, { actor, choiceKind: 'weapon_focus' });
-      const identityKey = resolved?.identity?.identityKey ?? null;
-      if ((via && sel.groups.has(via)) || (identityKey && sel.identities.has(identityKey))) { suppressedBy = 'weapon-focus'; break; }
-    }
-    const applied = suppressedBy === null;
-    entries.push({ ability: o.ability, identity: refIdentity, bonus, applied, suppressedBy });
-    if (applied) total += bonus;
+    entries.push({ ability: o.ability, identity: refIdentity, bonus, applied: true });
+    total += bonus;
   }
   return { total, entries };
 }

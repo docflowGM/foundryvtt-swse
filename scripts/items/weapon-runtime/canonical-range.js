@@ -107,3 +107,59 @@ export function resolveRangeEnvironment(range, { underwater } = {}) {
   }
   return Object.freeze(out);
 }
+
+// ---- Phase 5D-I-D-E: ability range grants ------------------------------------------------------------------------------------
+// A weapon's abilityInteractions may carry a relation whose mechanic is "use another weapon family's range table" (Distant Discblade
+// Throw: the discblade uses pistol range). The weapon record names WHICH ability and WHICH weapon; this table says what the relation
+// id means; the held talent is matched by canonical identity (talent-identity.js). The band PENALTIES are untouched (same 0/-2/-5/-10);
+// what changes is how many squares each band spans, i.e. which band a distance falls in.
+export const RELATION_RANGE_GRANT = Object.freeze({ TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY: 'pistols' });
+
+const FAMILY_BANDS = new WeakMap();
+/** Band squares of a range family, read from the canonical registry's own profile range blocks (the global band table, one per family). */
+export function familyBandSquares(registry, family) {
+  if (!registry || !family) return null;
+  let perRegistry = FAMILY_BANDS.get(registry);
+  if (!perRegistry) { perRegistry = new Map(); FAMILY_BANDS.set(registry, perRegistry); }
+  if (perRegistry.has(family)) return perRegistry.get(family);
+  let found = null;
+  for (const rec of registry.getAll()) {
+    for (const p of rec.canonicalStats?.attackProfiles ?? []) {
+      if (p.range?.profileId === family && p.range.bands) { found = p.range.bands; break; }
+    }
+    if (found) break;
+  }
+  perRegistry.set(family, found);
+  return found;
+}
+
+/**
+ * The range facet with the ability range grants of the held talents applied. Pure. Returns the SAME facet when nothing applies.
+ * @param {object} range         resolveCanonicalRange() result
+ * @param {object} resolved      ResolvedWeapon (abilityInteractions)
+ * @param {Set<string>} heldTalentIdentities  canonical talent identities the wielder owns
+ * @param {object} registry      WeaponAuthorityRegistry (family band tables)
+ */
+export function applyAbilityRangeGrants(range, resolved, heldTalentIdentities, registry, identityOfReference) {
+  if (!range || range.status !== 'banded' || !heldTalentIdentities?.size) return range;
+  for (const rel of resolved?.abilityInteractions ?? resolved?.canonicalStats?.abilityInteractions ?? []) {
+    const family = RELATION_RANGE_GRANT[rel?.relation];
+    const identity = family ? identityOfReference(rel.ability) : null;
+    if (!family || !identity || !heldTalentIdentities.has(identity)) continue;
+    const bands = familyBandSquares(registry, family);
+    if (!bands) continue;
+    return Object.freeze({ ...range, family, treatedAs: family, bandSquares: bands, grantedBy: identity });
+  }
+  return range;
+}
+
+/** Band a distance (in squares) falls in for a banded facet, or null (not banded / beyond every allowed band / not a finite distance). */
+export function bandForDistance(range, squares) {
+  const d = Math.floor(Number(squares));
+  if (!range || range.status !== 'banded' || !range.bandSquares || !Number.isFinite(d) || d < 0) return null;
+  for (const band of RANGE_BANDS) {
+    const span = range.bandSquares[band];
+    if (Array.isArray(span) && range.allowedBands.includes(band) && d >= span[0] && d <= span[1]) return band;
+  }
+  return null;
+}

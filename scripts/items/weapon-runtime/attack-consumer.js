@@ -10,7 +10,8 @@ import { resolveCanonicalIdentity } from './canonical-identity.js';
 import { WeaponRuntimeResolver, getProfile } from './weapon-runtime-resolver.js';
 import { resolveProficiency, resolveAbilityAttackBonus } from './proficiency-resolver.js';
 import { resolveDamageProfile } from './damage-profile-resolver.js';
-import { resolveCanonicalRange, assertRangeSelectionResolvable } from './canonical-range.js';
+import { resolveCanonicalRange, assertRangeSelectionResolvable, applyAbilityRangeGrants, bandForDistance } from './canonical-range.js';
+import { ownedTalentIdentities, talentIdentityOfReference } from './talent-identity.js';
 import { resolveCanonicalResourceCost } from './canonical-resource.js';
 import { extractSpecialMechanics, damageShapeFromMechanics, summarizeMechanics } from './special-mechanics.js';
 import { resolveAttackShape } from './attack-shape.js';
@@ -93,6 +94,20 @@ export function resolveAttackWeaponRuntime(weapon, context = {}) {
 export function resolveCanonicalAttackProficiency(runtime, actor, integrations = {}) {
   if (runtime?.source !== 'canonical') throw new WeaponRuntimeError(ERROR_CODES.CANONICAL_ENTRY_MISSING, 'canonical proficiency requires a canonical weapon runtime');
   return resolveProficiency(runtime.resolved, runtime.profile, actor, { proficiencyIntegrations: integrations });
+}
+
+/**
+ * Phase 5D-I-D-E: the selected form's range facet with the wielder's ability range grants applied (Distant Discblade Throw: pistol range
+ * table). Same facet object when nothing applies. The registry supplies the family band table; the talent is matched by canonical identity.
+ */
+export function resolveActorRange(runtime, actor) {
+  if (runtime?.source !== 'canonical') return runtime?.range ?? null;
+  return applyAbilityRangeGrants(runtime.range, runtime.resolved, ownedTalentIdentities(actor), getSharedWeaponAuthorityRegistry(), talentIdentityOfReference);
+}
+
+/** Range band a stated distance (squares) falls in for this wielder + form, or null (no distance / not banded / beyond every band). */
+export function rangeBandForDistance(runtime, actor, squares) {
+  return bandForDistance(resolveActorRange(runtime, actor), squares);
 }
 
 /** Phase 5D-I-D-E: attack bonus a held ability grants with this weapon (Siang Lance Mastery +1); see resolveAbilityAttackBonus. */

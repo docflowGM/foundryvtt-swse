@@ -6,13 +6,14 @@ export { WeaponAuthorityRegistry, loadWeaponAuthorityRegistry, setSharedWeaponAu
 export { resolveCanonicalIdentity } from './canonical-identity.js';
 export { WeaponRuntimeResolver, getProfile, resolveSelected } from './weapon-runtime-resolver.js';
 export { resolveProficiency, extractActorEntitlements, normalizeGroup, resolveAbilityAttackBonus } from './proficiency-resolver.js';
-export { WEAPON_TALENT_IDENTITIES, canonicalTalentIdentityOf, talentIdentityOfReference, ownedTalentIdentities } from './talent-identity.js';
+export { WEAPON_TALENT_IDENTITIES, TALENT_PREREQUISITE_EQUIVALENTS, canonicalTalentIdentityOf, talentIdentityOfReference, ownedTalentIdentities } from './talent-identity.js';
 export { resolveDamageProfile } from './damage-profile-resolver.js';
 export { resolveRange } from './range-resolver.js';
 export { resolveResource } from './resource-resolver.js';
 export { adaptLegacyWeapon } from './legacy-adapter.js';
 export { resolveHostAugmentations } from './host-augmentation.js';
 export { evaluateCondition, policyFor } from './condition-policy.js';
+export { resolveActorRange, rangeBandForDistance } from './attack-consumer.js';
 export { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summarizeAttackRuntime, weaponFormRecord, assertDamageSelectionResolvable, assertAttackFormResolvable, resolveAttackResourceCost, resolveCanonicalDamage, summarizeCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, shapeOfWeapon, attackSelectionOf, canonicalProficiencyOf, doubleWeaponEnds } from './attack-consumer.js';
 export * from './attack-shape.js';
 export * from './fire-state.js';

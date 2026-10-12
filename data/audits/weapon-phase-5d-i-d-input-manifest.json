@@ -1918,12 +1918,12 @@
         "support": "SMALL_CONSUMER_NEEDED",
         "foundryKnows": "the talent EXISTS in the canonical talent corpus (Jedi Academy Training Manual | Zeison Sha Warrior | Discblade Arc) with benefit text; actor records it",
         "mustBeSupplied": "three target selections (player)",
-        "smallestImplementation": "map the relation to the talent's canonical identity and expose a full-round three-target area-attack mode (one roll, point blank) in the attack shape",
+        "smallestImplementation": "the identity link is done (I-D-E, talent-identity.js); expose a full-round area-attack mode that designates three targets within point blank for ONE attack roll applied to all of them (not three attacks)",
         "sourceAmbiguity": null,
         "acceptance": "mode offered only with the talent; one roll applied to three designated targets"
       },
       "owner": "I-D-E",
-      "reason": "Discblade Arc: a talent-granted full-round mode (three targets within point blank). The relation -> canonical talent identity link now exists (talent-identity.js, I-D-E); what remains is the multi-target full-round attack MODE in the multi-attack planner."
+      "reason": "Discblade Arc: a full-round AREA attack against three designated targets, all within point blank range, resolved with ONE attack roll applied to every designated target (not three independent attacks). The relation -> canonical talent identity link exists (talent-identity.js, I-D-E); what remains is an attack mode that designates multiple targets for a single roll."
     },
     {
       "kind": "relation",
