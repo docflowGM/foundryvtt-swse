@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core, Rebellion Era, KOTOR, Force Unleashed and Clone Wars audited. No production species data changed.  
+**Status:** Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars and Scum and Villainy audited. No production species data changed.  
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -138,7 +138,7 @@ There is no evidence from this section for rewriting Core baseline species recor
 
 **Pending sourcebooks**
 5. Clone Wars Campaign Guide — COMPLETED
-6. Scum and Villainy
+6. Scum and Villainy — COMPLETED
 7. Jedi Academy Training Manual
 8. Galaxy at War
 9. Legacy Era Campaign Guide
@@ -422,4 +422,110 @@ Dug's unsourced `Reverse Jointed` +2 Acrobatics; Iktotchi's passive initiative a
 
 ### Rolling continuation
 
-Core, Rebellion Era, KOTOR and Force Unleashed book entries have not been overwritten. There are now **50 distinct species records** in the rolling JSON. **Next: Scum and Villainy**, then Jedi Academy Training Manual, Galaxy at War, Legacy Era, Scavenger's Guide to Droids, and the remaining supplements.
+Core, Rebellion Era, KOTOR and Force Unleashed book entries have not been overwritten. There are now **50 distinct species records** in the rolling JSON. **Next: Jedi Academy Training Manual**, then Galaxy at War, Galaxy at War, Legacy Era, Scavenger's Guide to Droids, and the remaining supplements.
+
+---
+
+## Book 6 — Scum and Villainy
+
+**Primary source:** Chapter I, printed pp. 6–13 (**8 species**); Point Nadir, Other Species, pp. 154–156 (**4 species**). The PDF is image-based, and the original pages were rendered and read directly rather than treating noisy transcription as authority.
+
+### Results
+
+| Check | Result |
+|---|---:|
+| Published species reviewed | **12** |
+| Foundry pack identities present | **12/12** |
+| Published ability adjustments, size and walking speed | **12/12 `NO_CHANGE`** |
+| Species with `CHANGE_REQUIRED` finding | **7** |
+| Species with `REVIEW_REQUIRED` finding only | **5** |
+| Species completely `NO_CHANGE` after sidecar review | **0** |
+| Individual confirmed correction candidates | **9** |
+| Individual additional source/runtime reviews | **23** |
+| Total tracked findings | **32** |
+
+**Interpretation:** Every species gets an explicit field-level `NO_CHANGE` for the verified base chassis. A species with a clean chassis can still have incorrect sidecar mechanics and therefore an overall `CHANGE_REQUIRED` or `REVIEW_REQUIRED`. The absence of an overall clean species in this pass is **not** a claim that its base species data is wrong.
+
+### Per-species dispositions
+
+| Species | Source page(s) | Section | Published base statistics | Overall status | Finding count |
+|---|---|---|---|---|---:|
+| Balosar | 154 | Point Nadir | `NO_CHANGE` | `CHANGE_REQUIRED` | 4 |
+| Barabel | 155 | Point Nadir | `NO_CHANGE` | `CHANGE_REQUIRED` | 4 |
+| Blood Carver | 6-7 | Chapter I | `NO_CHANGE` | `REVIEW_REQUIRED` | 2 |
+| Clawdite | 7 | Chapter I | `NO_CHANGE` | `REVIEW_REQUIRED` | 2 |
+| Falleen | 8 | Chapter I | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Gand | 9 | Chapter I | `NO_CHANGE` | `REVIEW_REQUIRED` | 2 |
+| Houk | 155-156 | Point Nadir | `NO_CHANGE` | `REVIEW_REQUIRED` | 3 |
+| Jawa | 10 | Chapter I | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Ryn | 11 | Chapter I | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Toydarian | 12 | Chapter I | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Ubese | 13 | Chapter I | `NO_CHANGE` | `REVIEW_REQUIRED` | 2 |
+| Wroonian | 156 | Point Nadir | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+
+### Rolling surgical correction queue
+
+Each finding has a published source location, exact target selector, existing declaration, published mechanic, and proposed minimal action. All 32 are recorded with `applied:false` in JSON; nothing here is an implemented production patch. `REVIEW_REQUIRED` does not justify deleting a trait before checking other books/variants.
+
+| Species | Finding ID | Status | Issue | Target field or sidecar | Current state | Printed source | Proposed correction / proof |
+|---|---|---|---|---|---|---|---|
+| Balosar | `SV-09-01` | `CHANGE_REQUIRED` | Antennapalps reroll overbroad | `packs/species.db: Balosar.system.canonicalTraits[heightened-awareness]` | Reroll any Perception check when extended | Printed reroll only Perception involving SOUND, must accept second roll; free retract/extend to appear human | Restrict to sound checks; preserve concealment/disguise state. |
+| Balosar | `SV-09-02` | `REVIEW_REQUIRED` | Poison vs toxic atmosphere | `packs/species.db: Balosar.system.canonicalTraits[toxic-resistance]` | +5 Fortitude versus poisons and toxic atmospheres | Printed Poison Resistance only states +5 Fortitude against poisons | Check other source before extending bonus. |
+| Balosar | `SV-09-03` | `REVIEW_REQUIRED` | Extra Toxic Breath activation | `data/species-traits.json: Balosar.activatedAbilities[Toxic Breath]` | Standard action adjacent enemy -2 attack | Printed Balosar species traits do not grant Toxic Breath | Confirm source/variant before executing. |
+| Balosar | `SV-09-04` | `REVIEW_REQUIRED` | Extra skill bonus | `packs/species.db: Balosar.system.skillBonuses` | +2 Deception | Printed Moral Ambiguity instead gives +2 Will against Deception/Persuasion checks | Check source and active consumer. |
+| Barabel | `SV-10-01` | `CHANGE_REQUIRED` | Wrong/missing natural weapons | `packs/species.db: Barabel.system.naturalWeapons` | Claws 1d4 slashing; Bite 1d6 piercing; Tail absent | Printed Claws 1d6 slashing, Bite 1d6 piercing, Tail 1d6 bludgeoning, always armed | Correct 3 modes once in canonical weapon generation; test attacks and item grants. |
+| Barabel | `SV-10-02` | `CHANGE_REQUIRED` | Radiation resistance publication conflict | `packs/species.db: Barabel.system.canonicalTraits[radiation-resistance]` | +5 Fortitude and no persistent radiation condition | Scum p155 explicitly prints +2 Fortitude against radiation without no-persistent clause | Resolve cross-book source precedence before changing production; track this publication conflict. |
+| Barabel | `SV-10-03` | `REVIEW_REQUIRED` | Extra Stun Resistance | `packs/species.db: Barabel.system.canonicalTraits[stun-resistance]` | +5 Damage Threshold to resist stun | This printed species block has no Stun Resistance trait | Search other book/variant source. |
+| Barabel | `SV-10-04` | `CHANGE_REQUIRED` | Reptilian Ferocity always-on leak | `data/species-traits-migrated.json: Barabel.conditionalTraits[Reptilian Ferocity].rules` | +2 melee damage when:always, though prose says at or below half HP | Not among printed base traits; sidecar's own conditional trigger also contradicts always-on rule | Block automatic bonus; source-check distinct conditional before enabling. |
+| Blood Carver | `SV-01-01` | `REVIEW_REQUIRED` | Battle Rage sidecar | `data/species-traits-migrated.json: Blood Carver.conditionalTraits[Battle Rage].rules` | +2 melee damage when:always; own text says only after taking damage | Printed innate traits: Conditional Bonus Feat (Acrobatics) and Deathstrike, not Battle Rage | Check later source and gate after receiving damage before accepting this optional bonus. |
+| Blood Carver | `SV-01-02` | `REVIEW_REQUIRED` | Deathstrike runtime | `packs/species.db: Blood Carver.canonicalTraits[deathstrike]` | Pack prose correct; attack execution not inspected | On successful melee attack vs enemy denied DEX to Reflex, add one damage die | Test targeted extra damage die and eligibility; preserve text. |
+| Clawdite | `SV-02-01` | `REVIEW_REQUIRED` | Extra unprinted skill fields | `packs/species.db: Clawdite.system.skillBonuses` | +2 Deception and +2 Stealth | Shapeshift instead grants +10 Deception to disguise, plus full-round appearance change without penalty | Verify source and runtime effect; no generic skill-grant inference. |
+| Clawdite | `SV-02-02` | `REVIEW_REQUIRED` | Potential duplicated shapeshift | `data/species-traits.json: Clawdite.activatedAbilities[Shapeshifter]` | Another full-round appearance change as any Medium humanoid | Printed Shapeshift uses same-size form; changing size requires Metamorph | Check double ability and preserve printed size/Deception restrictions. |
+| Falleen | `SV-03-01` | `CHANGE_REQUIRED` | Wrong activated pheromones | `data/species-traits.json: Falleen.activatedAbilities[Pheromones]` | -2 Will Defense to all living creatures within 6 squares for encounter | Printed pheromones target ONE adjacent nonhostile creature with level+CHA vs Fortitude; move -1 CT on hit, poison breathing rules, 24-hour immunity on failed attack | Retire incorrect second activation or align with canonical adjacent Fortitude/condition-track workflow. |
+| Falleen | `SV-03-02` | `REVIEW_REQUIRED` | Extra flat skill modifiers | `packs/species.db: Falleen.system.skillBonuses` | +2 Persuasion and +2 Stealth | Only Hold Breath, Pheromones, and Pheromone Acclimation printed; no general skill bonus | Source-check extra bonuses before retaining. |
+| Gand | `SV-04-01` | `REVIEW_REQUIRED` | Extra weapon familiarity | `packs/species.db: Gand.system.canonicalTraits[weapon-familiarity]` | Treat Gand weapons as non-exotic | Printed Gand list has Darkvision, Hardy, Special Equipment, Limb Regeneration; no extra weapon familiarity | Check other published equipment rules before treating as innate. |
+| Gand | `SV-04-02` | `REVIEW_REQUIRED` | Special equipment runtime proof | `packs/species.db: Gand.system.canonicalTraits[special-equipment]` | Correct description; no actual builder/materialization test | Free breathing apparatus, filters and transliterator, with suffocation/translation restriction if missing | Test actual first-level grants and breathing/language rule without changing valid text. |
+| Houk | `SV-11-01` | `REVIEW_REQUIRED` | Powerful Arms sidecar | `data/species-traits-migrated.json: Houk.structuralTraits[Powerful Arms].rules` | +2 melee attack always | Printed only +1 natural armor Reflex and Strength-for-Charisma on Persuasion/intimidation | Check alternate source, avoid unconditional melee attack bonuses. |
+| Houk | `SV-11-02` | `REVIEW_REQUIRED` | Extra Endurance bonus | `packs/species.db: Houk.system.skillBonuses` | +2 Endurance | No flat Endurance bonus among printed abilities | Check source and runtime. |
+| Houk | `SV-11-03` | `REVIEW_REQUIRED` | Language alias | `packs/species.db: Houk.system.languages` | Basic, Houkese | Printed Basic and Houk | Normalize only if invalid alias confirmed. |
+| Jawa | `SV-05-01` | `CHANGE_REQUIRED` | Scavenger semantics wrong | `data/species-traits-migrated.json: Jawa.structuralTraits[Scavenger].rules` | +5 Mechanics repairing/jury-rigging, when:always | Printed Scavenger adds half Jawa level as ION damage on hits using ion weapon against droid or vehicle | Replace incorrect skill passive with correctly target-gated ion damage rider; avoid dual application. |
+| Jawa | `SV-05-02` | `REVIEW_REQUIRED` | Extra flat skill bonuses | `packs/species.db: Jawa.system.skillBonuses` | +2 Perception and +2 Mechanics | Printed Mechanics always class skill plus must-accept reroll; no unconditional +2 | Check source and consumption. |
+| Jawa | `SV-05-03` | `REVIEW_REQUIRED` | Language naming | `packs/species.db: Jawa.system.languages` | Jawaese; the Jawa Trade Language | Printed automatic names Jawa, Jawa Trade Language | Verify language aliases and normalize only if necessary. |
+| Ryn | `SV-06-01` | `CHANGE_REQUIRED` | Invalid Perform skill passive | `data/species-traits-migrated.json: Ryn.structuralTraits[Natural Performer].rules` | +5 Perform always | Printed Musical Beak rerolls Deception to convey deceptive information (keep better) and permits Swift Action diversion via sounds within 10 squares; Perform is not a SWSE skill | Remove unsupported Perform passive; implement/preserve specific Deception conditions. |
+| Ryn | `SV-06-02` | `REVIEW_REQUIRED` | Extra flat skill bonuses | `packs/species.db: Ryn.system.skillBonuses` | +2 Deception, +2 Use Computer | Printed traits Musical Beak, Connections and Prehensile Tail have no general +2 fields | Check variant source and avoid treating reroll as flat bonus. |
+| Ryn | `SV-06-03` | `REVIEW_REQUIRED` | Optional sabacc procedure | `Scum and Villainy p11 boxed sidebar` | No innate racial record for sabacc fortune telling | Ryn sabacc fortune telling allows untrained Use the Force Search Your Feelings via one minute card ritual even in Force-suppressed areas | Track as separate optional procedure; do not automatically confer Force Sensitivity. |
+| Toydarian | `SV-07-01` | `CHANGE_REQUIRED` | Force Resistance unconditional | `data/species-traits-migrated.json: Toydarian.structuralTraits[Force Resistance].rules` | +5 Will against all effects, when:always | Printed +5 species Will Defense ONLY against mind-affecting Use the Force checks | Scope by UTF and mind-affecting descriptor; regression vs all other Will effects. |
+| Toydarian | `SV-07-02` | `REVIEW_REQUIRED` | Extra skill/defense fields | `packs/species.db: Toydarian.system.skillBonuses` | +2 Will and +2 Deception | Conditional trained Deception yields Skill Focus (Deception); Force Resistance narrow +5 Will, not blanket +2 | Check runtime effect and source. |
+| Toydarian | `SV-07-03` | `REVIEW_REQUIRED` | Flight ceilings and hover | `packs/species.db: Toydarian.system.canonicalTraits[flight] / sidecar Wings` | Fly 6 present, but altitude cap/hover not structurally certified | Printed walk 4, fly 6, can hover, maximum flight altitude 2 squares | Test altitude and hover; preserve legal fly speed. |
+| Ubese | `SV-08-01` | `REVIEW_REQUIRED` | Extra Survivalist passive | `data/species-traits-migrated.json: Ubese.structuralTraits[Survivalist].rules` | +2 Endurance always (prose adds +2 Survival) | Printed Survival Instinct permits must-accept Survival reroll, not flat modifier | Verify distinct source; ensure no automatic extra bonus. |
+| Ubese | `SV-08-02` | `REVIEW_REQUIRED` | Extra skill fields | `packs/species.db: Ubese.system.skillBonuses` | +2 Stealth and +2 Survival | Printed traits charge Aggressive, Perception conditional feat, Survival reroll and Special Equipment | Check source, and test free suit plus suffocation. |
+| Wroonian | `SV-12-01` | `CHANGE_REQUIRED` | Elongated Reach attack leak | `data/species-traits-migrated.json: Wroonian.structuralTraits[Elongated Reach].rules` | +2 melee attackRoll always, despite sidecar prose +2 grapple | Printed only +2 Will Defense and must-accept Persuasion reroll, not extra attack or grapple | Disable unauthorized unconditional attack modifier; separate valid grappling feats if any. |
+| Wroonian | `SV-12-02` | `REVIEW_REQUIRED` | Trait title provenance | `packs/species.db: Wroonian.system.canonicalTraits[iron-will,soothing-voice]` | Iron Will; Soothing Voice | Printed titles Free Spirit and Skills; effects match +2 Will and must-accept Persuasion reroll | Keep rules; normalize display labels if desired. |
+
+### Source interpretation and collision guardrails
+
+**Toydarian, p.12 — defensive scope.** Published Force Resistance applies +5 Will **only against Use the Force checks with a mind-affecting descriptor**. A migrated passive rule currently uses `when:always`, so the sidecar must not be interpreted as a blanket Will Defense grant. Published walk 4, fly 6, hover, and maximum altitude of 2 squares should be checked as separate movement constraints.
+
+**Falleen, p.8 — attack/effect identity.** The canonical pheromone attack uses a **standard action against a single adjacent nonhostile creature**, level+CHA against Fortitude, condition track changes, and immunity/timing/poison restrictions. The sidecar's wide-area Will Defense debuff is a *different ability*, not a safe presentation shorthand.
+
+**Jawa, p.10 — mechanic category.** Scavenger adds **half level in ion damage** against a droid/vehicle when the Jawa hits with an ion weapon. Its sidecar instead emits an unconditional Mechanics modifier. Printed Tinkerer separately grants Mechanics class-skill access and a must-accept Mechanics reroll. Preserve all distinct traits rather than replacing one with another.
+
+**Ryn, p.11 — skill authority.** A passive bonus to `Perform` cannot represent the printed Musical Beak; SWSE has no separate Perform skill. Musical Beak is a constrained Deception reroll and an action-based diversion. The sabacc fortune-telling sidebar is a separate special procedure, not automatic Force Sensitivity or innate Force Training.
+
+**Balosar, p.154 — sensory gating.** Antennapalp rerolls are limited to **Perception involving sound** with must-accept new roll. The existing generalized Perception-reroll prose is overbroad. The printed poison resistance +5 applies to poison, not automatically all atmosphere hazards. Toxic Breath requires independent source proof.
+
+**Barabel, p.155 — mixed published identities.** The printed Scum species block grants **1d6 claws, 1d6 bite, and 1d6 tail** (slashing/piercing/bludgeoning), but the pack lists claws as 1d4 and omits tail. It prints **+2 Fortitude against radiation**, while the pack currently has **+5 and an additional persistent-condition exemption**. The latter is explicitly a **cross-publication reconciliation gate**: compare Rebellion-era or other source/variants before rewriting an existing valid expansion. The sidecar Reptilian Ferocity says it depends on low HP but its structured damage rule applies always. That unconditional modifier is unsafe regardless of eventual provenance.
+
+**Wroonian and Houk, pp.155–156 — extra attacks.** The printed Wroonian gains +2 Will and a Persuasion reroll; its sidecar instead adds +2 to **all melee attacks** under the pretense of a grapple bonus. The printed Houk gets natural armor and Strength-for-Charisma intimidation; the migrated sidecar adds +2 all melee attacks without source authority. These must not slip into generic attack modifiers without proof.
+
+**Clawdite, p.7; Ubese, p.13; Gand, p.9 — retain correct foundational traits.** Shapeshift/Startle, suit/suffocation, and Gand life-support/transliterator requirements are present in pack descriptions. Their actual actor grants and action timing are **not runtime-certified**, and unsourced extra sidecar skills must not replace them.
+
+### Verified operational scope
+
+- All twelve current species identity records are present; **no** new species creation or deletion indicated by this printed book.
+- The original Core, Rebellion, KOTOR, Force Unleashed, and Clone Wars findings remain separate in the ledger. No prior source claims were overwritten.
+- Supplemental traits absent from Scum's printed species blocks are marked for **source provenance review**, not automatically removed.
+- No Foundry V13 scene/actor runtime smoke tests or full rolling suite were executed.
+- No production race records, sidecars, compendium packs, generators, or consumers were modified.
+
+**Next book:** *Jedi Academy Training Manual*, followed by *Galaxy at War*. Continue the same rolling JSON and Markdown files, with per-source `NO_CHANGE` records even where no edit is necessary.
