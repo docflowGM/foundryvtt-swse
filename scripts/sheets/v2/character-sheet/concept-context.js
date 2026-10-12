@@ -1,4 +1,4 @@
-import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isItemEquipped, isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
@@ -344,11 +344,13 @@ function buildCombatStatusStrip(context, combat) {
 }
 
 /** Weapon readiness (drawn / stowed, blade state) read from the live owned Item; presentation only. */
-function buildWeaponReadinessView(item, actor, { isNaturalWeapon = false } = {}) {
+function buildWeaponReadinessView(item, actor) {
   if (!item) return null;
   if (!['weapon', 'lightsaber'].includes(String(item.type ?? '').toLowerCase())) return null;
   const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
   const drawn = isItemEquipped(item, actor);
+  // Canonical authority: natural (auto-equipped) and integrated droid weapons are always readied -> no Draw/Stow.
+  const alwaysReadied = isAlwaysReadiedWeapon(item, actor);
   const activated = isItemActivated(item);
   const isLightsaber = visualProfile?.isLightsaber === true;
   let combinedEffects = [];
@@ -358,9 +360,10 @@ function buildWeaponReadinessView(item, actor, { isNaturalWeapon = false } = {})
   } catch (_err) { combinedEffects = []; }
   return {
     drawn, activated, isLightsaber,
-    stateLabel: isNaturalWeapon ? 'Natural' : drawn ? 'Drawn' : 'Stowed',
+    alwaysReadied,
+    stateLabel: alwaysReadied ? (isNaturalWeaponOnly(item) ? 'Natural' : 'Integrated') : drawn ? 'Drawn' : 'Stowed',
     bladeStateLabel: isLightsaber ? (activated ? 'Active' : 'Inactive') : '',
-    canDrawStow: !isNaturalWeapon,
+    canDrawStow: !alwaysReadied,
     drawStowLabel: drawn ? 'Stow' : 'Draw',
     stowBlocked: drawn && isLightsaber && activated,
     canToggleActivated: isLightsaber && drawn,
@@ -396,10 +399,10 @@ function weaponStateViews(entry, isWeaponRow, actor) {
   if (!isWeaponRow || !actor || entry?.isVirtual || entry?.virtual) return {};
   const liveItem = actor.items?.get?.(entry?.id) ?? null;
   if (!liveItem) return {};
-  return { weaponReadiness: buildWeaponReadinessView(liveItem, actor, { isNaturalWeapon: entry?.isNaturalWeapon === true }), weaponConfiguration: buildWeaponConfigurationView(liveItem) };
+  return { weaponReadiness: buildWeaponReadinessView(liveItem, actor), weaponConfiguration: buildWeaponConfigurationView(liveItem) };
 }
 
-function buildInventoryGroups(inventoryPanel) {
+function buildInventoryGroups(inventoryPanel, actor) {
   const grouped = inventoryPanel?.grouped ?? {};
   const order = ['Weapons', 'Armor', 'Equipment'];
 
@@ -411,7 +414,7 @@ function buildInventoryGroups(inventoryPanel) {
           type: entry?.type || entry?.itemType || (label === 'Weapons' ? 'weapon' : label === 'Armor' ? 'armor' : entry?.type),
           system: entry?.system || entry?.raw?.system || entry
         };
-        const visualProfile = WeaponVisualProfileResolver.resolve(itemLike, { actor: inventoryPanel?.actor });
+        const visualProfile = WeaponVisualProfileResolver.resolve(itemLike, { actor });
         const activated = visualProfile?.active === true || itemLike.system?.activated === true || itemLike.system?.active === true;
 
         return {
@@ -435,7 +438,7 @@ function buildInventoryGroups(inventoryPanel) {
             : (entry?.isEnergyShield ? 'Shield Inactive' : 'Blade Inactive'),
           bladeColor: visualProfile?.bladeColor || null,
           bladeHex: visualProfile?.bladeHex || null,
-          ...weaponStateViews(entry, label === 'Weapons', inventoryPanel?.actor)
+          ...weaponStateViews(entry, label === 'Weapons', actor)
         };
       });
 
@@ -1739,7 +1742,7 @@ export function buildConceptSheetViewModel(context = {}) {
   const currentConditionCardCount = asArray(context.healthPanel?.currentConditions?.cards).length;
   const percentHp = hpMax > 0 ? Math.max(0, Math.min(100, Math.round((hpValue / hpMax) * 100))) : 0;
   const skillCount = asArray(context.skillsPanel?.skills).length || Object.keys(context.derived?.skills ?? {}).length;
-  const gearGroups = buildInventoryGroups(context.inventoryPanel);
+  const gearGroups = buildInventoryGroups(context.inventoryPanel, actor);
   const actionGroups = buildActionGroups(context.combatActions, context.actionEconomy);
   const actorItems = Array.from(actor?.items ?? []);
   const itemById = new Map(actorItems.map((item) => [item.id, item]));

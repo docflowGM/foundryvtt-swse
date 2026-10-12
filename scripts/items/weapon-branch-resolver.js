@@ -740,6 +740,11 @@ export function isItemEquipped(item, actor = null) {
     || isIntegratedDroidWeapon(item, actor);
 }
 
+/** Natural (auto-equipped) and integrated droid weapons are always readied: no Draw/Stow. */
+export function isAlwaysReadiedWeapon(item, actor = null) {
+  return isAutoEquippedNaturalWeapon(item) || isIntegratedDroidWeapon(item, actor);
+}
+
 export default {
   resolveWeaponBranchFamily,
   getWeaponBranch,

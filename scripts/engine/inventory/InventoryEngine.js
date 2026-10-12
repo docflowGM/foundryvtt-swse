@@ -12,7 +12,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
-import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isItemEquipped, isAlwaysReadiedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
@@ -41,6 +41,15 @@ function equipMirrors(item, update, next) {
   if (item.system?.isEquipped !== undefined) update["system.isEquipped"] = next;
   if (item.system?.equippable && typeof item.system.equippable === "object") update["system.equippable.equipped"] = next;
   if (item.flags?.swse?.equipped !== undefined) update["flags.swse.equipped"] = next;
+  // Legacy shapes that isItemEquipped() also reads: keep them in step so a stowed weapon cannot still read as drawn.
+  // Pure equip aliases mirror both ways; the activation-flavored ones (active) are only ever cleared on stow.
+  const system = item.system ?? {};
+  if (system.readied !== undefined) update["system.readied"] = next;
+  if (system.equippable && typeof system.equippable === "object" && system.equippable.active !== undefined) update["system.equippable.active"] = next;
+  if (!next) {
+    if (system.active !== undefined) update["system.active"] = false;
+    if (system.activation && typeof system.activation === "object" && system.activation.active !== undefined) update["system.activation.active"] = false;
+  }
   return update;
 }
 
@@ -57,6 +66,12 @@ export class InventoryEngine {
   static async toggleEquip(actor, itemId) {
     const item = actor?.items?.get(itemId);
     if (!actor || !item) return;
+
+    // Ordinary weapons: equipped state IS drawn state, so Draw/Stow (Move / Quick Draw Swift) owns it; never a free toggle.
+    if (isWeaponItem(item)) {
+      if (isAlwaysReadiedWeapon(item, actor)) return { ok: false, reason: "always-readied" };
+      return this.toggleWeaponReadied(actor, itemId);
+    }
 
     const currentEquipped = isTruthyState(item.system?.equipped)
       || isTruthyState(item.system?.isEquipped)
@@ -143,6 +158,8 @@ export class InventoryEngine {
     if (isItemActivated(item) === next) return { ok: true, changed: false, activated: next };
 
     const update = { _id: itemId, "system.activated": next };
+    // isItemActivated() also reads legacy system.active; mirror it so a deactivated item cannot still read as active.
+    if (item.system?.active !== undefined) update["system.active"] = next;
     const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
     const shield = isEnergyShield(item);
 
@@ -196,6 +213,7 @@ export class InventoryEngine {
     const item = actor?.items?.get?.(itemId);
     if (!actor || !item) return { ok: false, reason: "missing-item" };
     if (!isWeaponItem(item)) return { ok: false, reason: "not-weapon" };
+    if (isAlwaysReadiedWeapon(item, actor)) return { ok: false, reason: "always-readied" };
     const next = readied === true;
     const current = isItemEquipped(item, actor);
     if (current === next) return { ok: true, changed: false, readied: current };
@@ -237,7 +255,7 @@ export class InventoryEngine {
     const actionType = combined.actionCost ?? "swift";
     const spend = await spendItemAction(actor, actionType, item, "Draw & Ignite");
     if (!spend.ok) return { ok: false, reason: "action-unavailable", actionType };
-    const update = equipMirrors(item, { _id: item.id, "system.activated": true, "flags.foundryvtt-swse.emitLight": true, "flags.foundryvtt-swse.bladeColor": visualProfile.bladeColor }, true);
+    const update = equipMirrors(item, { _id: item.id, "system.activated": true, ...(item.system?.active !== undefined ? { "system.active": true } : {}), "flags.foundryvtt-swse.emitLight": true, "flags.foundryvtt-swse.bladeColor": visualProfile.bladeColor }, true);
     try {
       await ActorEngine.updateOwnedItems(actor, [update], { source: "InventoryEngine.drawAndActivateLightsaber" });
     } catch (err) {
