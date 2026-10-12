@@ -37,28 +37,21 @@ ActorEngine.updateOwnedItems = async (actor, updates) => {
   }
 };
 
-const mkActor = (items, extra = {}) => { items.get = (id) => items.find((i) => i.id === id); return { id: 'a', type: 'character', items, system: {}, flags: {}, ...extra }; };
+const mkActor = (items, extra = {}) => { items.get = (id) => items.find((i) => i.id === id); const a = { id: 'a', type: 'character', items, system: {}, flags: {}, ...extra }; for (const i of items) i.actor = a; return a; }; // owned Items carry .actor
 const saber = (o = {}, id = 's1') => ({ id, name: 'Lightsaber', type: 'weapon', system: { equipped: false, activated: false, weaponCategory: 'lightsaber', subtype: 'lightsaber', ...o } });
 const blaster = (o = {}, id = 'b1') => ({ id, name: 'Blaster Pistol', type: 'weapon', system: { equipped: false, ...o } });
 
-/** the real production chain: panel builder -> concept view model */
-function gearEntries(actor) {
+/** the real production chain: panel builder -> concept view model (explicit vm.gear paths) */
+function gearVm(actor) {
   const inventoryPanel = new PanelContextBuilder(actor, { isEditable: true }).buildInventoryPanel();
   const vm = buildConceptSheetViewModel({ actor, inventoryPanel });
-  const rows = new Map();
-  for (const group of vm.gear?.groups ?? vm.inventory?.groups ?? findGroups(vm)) for (const e of group.entries) rows.set(e.id, e);
-  return rows;
+  assert.ok(Array.isArray(vm.gear?.groups), 'vm.gear.groups exists');
+  return vm.gear;
 }
-function findGroups(vm) {
-  const stack = [vm];
-  while (stack.length) {
-    const v = stack.pop();
-    if (v && typeof v === 'object') {
-      if (Array.isArray(v.groups) && v.groups.some((g) => Array.isArray(g?.entries))) return v.groups;
-      stack.push(...Object.values(v));
-    }
-  }
-  return [];
+function gearEntries(actor) {
+  const rows = new Map();
+  for (const group of gearVm(actor).groups) for (const e of group.entries) rows.set(e.id, e);
+  return rows;
 }
 
 { // 1. hydration: stowed AND drawn rows both receive readiness views
@@ -96,13 +89,29 @@ ok('active lightsaber stow is blocked in the production view and rejected by the
 }
 ok('legacy toggleEquip on an ordinary weapon routes through Draw/Stow (Move) and writes nothing on failed spend');
 
-{ // 4. natural weapons keep their exception (no action spent, no Draw/Stow)
+{ // 4. always-readied weapons: natural (canonical fields) and integrated droid weapons
   const nat = { id: 'n1', name: 'Claws', type: 'weapon', system: { equipped: false, naturalWeapon: true }, flags: { swse: { autoEquipped: true } } };
-  const a = mkActor([nat]); spent.length = 0;
-  await InventoryEngine.toggleEquip(a, 'n1');
-  assert.deepEqual(spent, [], 'natural weapon never spends a draw/stow action');
+  const integ = { id: 'i1', name: 'Integrated Blaster', type: 'weapon', system: { equipped: false, integrated: true, weaponCategory: 'pistols' } };
+  for (const [item, actor, label] of [[nat, mkActor([nat]), 'natural'], [integ, mkActor([integ], { type: 'droid', system: { isDroid: true } }), 'integrated']]) {
+    const before = JSON.stringify(item.system); spent.length = 0;
+    assert.equal(isItemEquipped(item, actor), true, `${label} reads readied`);
+    const gear = gearVm(actor);
+    const row = gear.groups.flatMap((g) => g.entries).find((e) => e.id === item.id);
+    assert.equal(row.weaponReadiness.alwaysReadied, true, `${label} flagged always-readied`);
+    assert.equal(row.weaponReadiness.canDrawStow, false, `${label}: no Draw/Stow control`);
+    assert.equal(row.canToggleEquip, false, `${label}: no legacy Equip control`);
+    assert.equal(row.equipped, true, `${label} row reads equipped`);
+    assert.ok(gear.equippedEntries.some((e) => e.id === item.id), `${label} stays in the Equipped Loadout`);
+    for (const attempt of [() => InventoryEngine.setWeaponReadied(actor, item.id, false), () => InventoryEngine.toggleWeaponReadied(actor, item.id), () => InventoryEngine.toggleEquip(actor, item.id)]) {
+      const r = await attempt();
+      assert.equal(r?.ok, false); assert.equal(r?.reason, 'always-readied');
+    }
+    assert.deepEqual(spent, [], `${label}: no action spent`);
+    assert.equal(JSON.stringify(item.system), before, `${label}: nothing written`);
+    assert.equal(isItemEquipped(item, actor), true);
+  }
 }
-ok('natural/auto-equipped weapons keep the legacy path (no action spent)');
+ok('natural and integrated-droid weapons: no Draw/Stow UI, stay in loadout, direct stow/toggle spend and write nothing');
 
 { // 5. legacy-shaped readiness: Stow clears every alias isItemEquipped reads
   for (const legacy of [{ active: true }, { readied: true }, { equippable: { equipped: true, active: true } }, { activation: { active: true } }, { isEquipped: true }]) {

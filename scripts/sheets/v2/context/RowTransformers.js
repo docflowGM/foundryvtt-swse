@@ -1,5 +1,6 @@
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
+import { isAlwaysReadiedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 
@@ -203,6 +204,8 @@ export class RowTransformers {
       return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'natural'].includes(String(value || '').toLowerCase());
     };
     const isNaturalWeapon = isNaturalWeaponItem(item);
+    // Canonical always-readied authority (natural auto-equipped + integrated droid weapons): never shown stowed.
+    const alwaysReadied = isAlwaysReadiedWeapon(item, item.actor);
     const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor: item.actor });
     const isLightsaber = visualProfile.isLightsaber;
     const armorStats = item.type === 'armor' ? resolveArmorData(item) : null;
@@ -218,7 +221,8 @@ export class RowTransformers {
       || truthy(item.system?.equippable?.equipped)
       || truthy(item.flags?.swse?.equipped)
       || (isNaturalWeapon && truthy(item.flags?.swse?.autoEquipped))
-      || isNaturalWeapon;
+      || isNaturalWeapon
+      || alwaysReadied;
 
     const row = {
       id: item.id,
@@ -261,7 +265,7 @@ export class RowTransformers {
       visualColorKey: visualProfile.primaryColor,
       visualColorHex: visualProfile.primaryHex,
       isNaturalWeapon,
-      canToggleEquip: !isNaturalWeapon,
+      canToggleEquip: !isNaturalWeapon && !alwaysReadied,
       tags: this._extractTags(item),
       cssClass: [
         `item-${item.type}`,

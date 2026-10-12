@@ -68,7 +68,10 @@ export class InventoryEngine {
     if (!actor || !item) return;
 
     // Ordinary weapons: equipped state IS drawn state, so Draw/Stow (Move / Quick Draw Swift) owns it; never a free toggle.
-    if (isWeaponItem(item) && !isAlwaysReadiedWeapon(item, actor)) return this.toggleWeaponReadied(actor, itemId);
+    if (isWeaponItem(item)) {
+      if (isAlwaysReadiedWeapon(item, actor)) return { ok: false, reason: "always-readied" };
+      return this.toggleWeaponReadied(actor, itemId);
+    }
 
     const currentEquipped = isTruthyState(item.system?.equipped)
       || isTruthyState(item.system?.isEquipped)
@@ -210,6 +213,7 @@ export class InventoryEngine {
     const item = actor?.items?.get?.(itemId);
     if (!actor || !item) return { ok: false, reason: "missing-item" };
     if (!isWeaponItem(item)) return { ok: false, reason: "not-weapon" };
+    if (isAlwaysReadiedWeapon(item, actor)) return { ok: false, reason: "always-readied" };
     const next = readied === true;
     const current = isItemEquipped(item, actor);
     if (current === next) return { ok: true, changed: false, readied: current };

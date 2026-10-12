@@ -1,4 +1,4 @@
-import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isItemEquipped, isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
@@ -344,11 +344,13 @@ function buildCombatStatusStrip(context, combat) {
 }
 
 /** Weapon readiness (drawn / stowed, blade state) read from the live owned Item; presentation only. */
-function buildWeaponReadinessView(item, actor, { isNaturalWeapon = false } = {}) {
+function buildWeaponReadinessView(item, actor) {
   if (!item) return null;
   if (!['weapon', 'lightsaber'].includes(String(item.type ?? '').toLowerCase())) return null;
   const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
   const drawn = isItemEquipped(item, actor);
+  // Canonical authority: natural (auto-equipped) and integrated droid weapons are always readied -> no Draw/Stow.
+  const alwaysReadied = isAlwaysReadiedWeapon(item, actor);
   const activated = isItemActivated(item);
   const isLightsaber = visualProfile?.isLightsaber === true;
   let combinedEffects = [];
@@ -358,9 +360,10 @@ function buildWeaponReadinessView(item, actor, { isNaturalWeapon = false } = {})
   } catch (_err) { combinedEffects = []; }
   return {
     drawn, activated, isLightsaber,
-    stateLabel: isNaturalWeapon ? 'Natural' : drawn ? 'Drawn' : 'Stowed',
+    alwaysReadied,
+    stateLabel: alwaysReadied ? (isNaturalWeaponOnly(item) ? 'Natural' : 'Integrated') : drawn ? 'Drawn' : 'Stowed',
     bladeStateLabel: isLightsaber ? (activated ? 'Active' : 'Inactive') : '',
-    canDrawStow: !isNaturalWeapon,
+    canDrawStow: !alwaysReadied,
     drawStowLabel: drawn ? 'Stow' : 'Draw',
     stowBlocked: drawn && isLightsaber && activated,
     canToggleActivated: isLightsaber && drawn,
@@ -396,7 +399,7 @@ function weaponStateViews(entry, isWeaponRow, actor) {
   if (!isWeaponRow || !actor || entry?.isVirtual || entry?.virtual) return {};
   const liveItem = actor.items?.get?.(entry?.id) ?? null;
   if (!liveItem) return {};
-  return { weaponReadiness: buildWeaponReadinessView(liveItem, actor, { isNaturalWeapon: entry?.isNaturalWeapon === true }), weaponConfiguration: buildWeaponConfigurationView(liveItem) };
+  return { weaponReadiness: buildWeaponReadinessView(liveItem, actor), weaponConfiguration: buildWeaponConfigurationView(liveItem) };
 }
 
 function buildInventoryGroups(inventoryPanel, actor) {
