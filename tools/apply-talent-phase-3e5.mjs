@@ -123,7 +123,11 @@ function renderDoc(r) {
 // Files a LATER certified phase (3F) legitimately rewrote: their verification belongs to that phase.
 // Phase 5C owns actor-pack weapon/feat reference migration (embedded sourceId remaps)
 const PHASE_5C_OWNED = new Set(['data/class-archetypes.json', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db', 'packs/droids.db', 'packs/beasts.db']);
-const LATER_OWNED = new Set(['packs/talents.db', 'packs/talent_trees.db', 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json']);
+// Historical dry-run reports freeze the repository state at certification.
+// In a certified later state, unrelated runtime/manifest files such as
+// system.json may legitimately change. Do not rewrite the historical report;
+// exempt later-owned files only while verifying POST_LATER states.
+const LATER_OWNED = new Set(['packs/talents.db', 'packs/talent_trees.db', 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json', 'system.json']);
 const afterLater = () => ['talent-phase-3f-dry-run-report.json', 'talent-phase-3g-dry-run-report.json', 'talent-phase-11-2a-dry-run-report.json', 'talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json'].some(f => { const p = path.join(ROOT, 'data/audits', f); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(fs.readFileSync(path.join(ROOT, TALENTS), 'utf8')); });
 export function detect3E5State(root = ROOT) {
   const rp = path.join(root, REPORT_PATH); if (!fs.existsSync(rp)) return 'PRE_3E5';

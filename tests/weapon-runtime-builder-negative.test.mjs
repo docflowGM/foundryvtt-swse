@@ -55,6 +55,7 @@ const ALLOWED_RUNTIME_CONSUMERS = new Set([
   // Redirect Shot executor that reads it (identity-first talent ownership)
   'scripts/engine/combat/reactions/reaction-weapon-context.js',
   'scripts/engine/talent/lightsaber-talent-actions.js',
+  // weapon-readiness UI: sheet view model + configuration dialog (read the owned / canonical configuration; mutate only through FireStateStore)
 ]);
 const refs = execFileSync('git', ['ls-files', 'scripts', 'index.js', 'system.json'], { cwd: ROOT }).toString().split('\n').filter((f) => f.endsWith('.js') && !f.startsWith('scripts/items/weapon-runtime/'));
 for (const f of refs) {

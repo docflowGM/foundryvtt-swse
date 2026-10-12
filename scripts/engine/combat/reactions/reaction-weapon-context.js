@@ -6,6 +6,8 @@
 // the held item can be disarmed. It rolls nothing and posts nothing; the callers keep the existing roll / chat / counter authorities.
 import { getSharedWeaponAuthorityRegistry, resolveCanonicalIdentity, resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js";
 import { reactionDeclarationOf, reactionEligibility, reactionModifiers, reactionSignature, adjacentReflexPenalty, disarmProtection } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/reaction-rules.js";
+import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
 
@@ -15,18 +17,26 @@ const idOf = (a) => a?.id ?? a?._id ?? null;
 export function equippedReactionWeapons(actor) {
   const registry = getSharedWeaponAuthorityRegistry();
   const out = [];
-  let legacyCount = 0, canonicalCount = 0;
+  let legacyCount = 0, canonicalCount = 0, stowedReactionCount = 0;
   for (const item of Array.from(actor?.items ?? [])) {
-    if (item?.type !== 'weapon' || item?.system?.equipped === false) continue;
+    if (item?.type !== 'weapon') continue;
     let id = null;
     try { id = registry ? resolveCanonicalIdentity(item, registry) : null; } catch (_err) { id = null; }
+    if (!isItemEquipped(item, actor)) {
+      // an owned but stowed canonical reaction weapon: the actor is not a legacy actor, it simply has nothing drawn
+      if (id?.kind === 'canonical') {
+        const e = reactionDeclarationOf(registry.getByIdentityKey(id.identityKey))?.eligibility;
+        if (e && (e.lightsaberGroup || e.treatAsLightsaberFor.length || e.mayUseBlockAsLightsaber || e.forceImbuedBlock)) stowedReactionCount += 1;
+      }
+      continue;
+    }
     if (!id || id.kind !== 'canonical') { legacyCount += 1; continue; }
     canonicalCount += 1;
     const record = registry.getByIdentityKey(id.identityKey);
     const declaration = reactionDeclarationOf(record);
     out.push({ item, identityKey: id.identityKey, record, declaration });
   }
-  return { weapons: out, legacyCount, canonicalCount };
+  return { weapons: out, legacyCount, canonicalCount, stowedReactionCount };
 }
 
 function proficientWith(actor, item) {
@@ -55,11 +65,14 @@ export function existingEquipmentBonus(actor, target = 'skill.useTheForce') {
  * @param {{ask?:Function, choose?:(candidates:object[])=>Promise<object|null>}} io  `ask(id, question)` stores a yes/no fact for this reaction event
  */
 export async function resolveReactionWeapon(actor, reaction, { ask = null, choose = null, answers = {} } = {}) {
-  const { weapons, legacyCount, canonicalCount } = equippedReactionWeapons(actor);
+  const { weapons, legacyCount, canonicalCount, stowedReactionCount } = equippedReactionWeapons(actor);
+  if (!canonicalCount && !legacyCount && stowedReactionCount) return { status: 'none', reason: 'reaction-weapon-not-drawn', pending: [] };
   if (!canonicalCount) return { status: 'legacy', reason: 'no-canonical-weapon-equipped' };
   const candidates = [], pending = [];
   for (const w of weapons) {
     if (!w.declaration) continue;
+    // an actual lightsaber must be drawn (equipped, above) AND ignited; a structured alternate reaction weapon (Sith Sword ...) keeps its own declaration as authority
+    if (w.declaration.eligibility.lightsaberGroup && !isItemActivated(w.item)) continue;
     const proficient = w.declaration.eligibility.requiresProficiency || Object.values(w.declaration.modifiers).some((m) => m.equipmentBonus !== null) ? proficientWith(actor, w.item) : null;
     let imbued = null;
     if (w.declaration.eligibility.forceImbuedBlock && reaction === 'block') {

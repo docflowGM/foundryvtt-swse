@@ -347,6 +347,7 @@ export function isThrownMeleeWeapon(weapon) {
 import { PROJECTED_ATTACK_ABILITIES, ATTACK_ABILITY_OVERRIDE_FLAG, readAttackAbilityOverride } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-ability-override.js";
 import { canonicalRangePenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
 import { canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
+import { isItemActivated } from '/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js';
 import { shapeOfWeapon, attackSelectionOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
 import { descriptorMatchesAny } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js';
 
@@ -760,11 +761,6 @@ function targetActorWieldsActiveLightsaber(targetActor) {
   return items.some((item) => isLightsaberWeapon(item)
     && canonicalIsItemEquipped(item, targetActor)
     && isItemActivated(item));
-}
-
-function isItemActivated(item) {
-  const system = item?.system ?? {};
-  return system.activated === true || system.active === true;
 }
 
 function normalizeCriticalMultiplier(value, fallback = 2) {

@@ -38,6 +38,7 @@
     "styles/sheets/v2-shell-tokens.css",
     "styles/sheets/v2-interior-reskin.css",
     "styles/sheets/v2-alive-systems.css",
+    "styles/sheets/v2-weapon-controls.css",
     "styles/sheets/v2-motion-picker.css",
     "styles/system/tokens.css",
     "styles/system/mentor-hologram.css",

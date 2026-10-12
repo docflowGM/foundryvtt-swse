@@ -4,6 +4,7 @@ import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/act
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
+import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { handleSetDarkSideScore } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/dsp-click-handler.js";
@@ -3673,6 +3674,34 @@ const forcePoints = [];
      INVENTORY UI WIRING
   ============================================================ */
 
+  /** Weapon configuration chooser. Reads the canonical configuration states and the owned configuration; applies ONLY through FireStateStore.setConfiguration. */
+  async _openWeaponConfigurationDialog(weapon) {
+    const states = FireStateStore.configurationOptions(weapon).states;
+    if (states.length < 2) return;
+    const owned = (() => { try { return weapon.flags?.swse?.fireState ?? weapon.getFlag?.("swse", "fireState") ?? null; } catch (_err) { return null; } })();
+    const defaultId = states.find((c) => c?.default === true)?.id ?? states[0]?.id;
+    const currentId = states.some((c) => c?.id === owned?.configurationId) ? owned.configurationId : defaultId;
+    const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const rows = states.map((c) => `<label class="swse-weapon-choice swse-weapon-choice--configuration ${c.id === currentId ? "is-selected" : ""}"><span class="swse-weapon-choice__name"><input type="radio" name="configuration" value="${esc(c.id)}" ${c.id === currentId ? "checked" : ""}/> ${esc(c.label || c.id)}${c.id === currentId ? " (current)" : ""}</span><span class="swse-weapon-choice__cost">${c.id === currentId ? "" : esc(c.transitionAction ? `${c.transitionAction} action` : "free")}</span></label>`).join("");
+    const nextId = await SWSEDialogV2.prompt({
+      title: `${weapon.name} - Configuration`,
+      content: `<form class="swse-dialog"><div class="swse-weapon-choice-list">${rows}</div></form>`,
+      label: "Apply",
+      callback: (html) => {
+        const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+        const form = root?.querySelector?.("form") ?? root;
+        return String(new FormData(form).get("configuration") ?? "");
+      }
+    });
+    if (!nextId || nextId === currentId) return;
+    const result = await FireStateStore.setConfiguration(this.actor, weapon, nextId);
+    if (!result?.ok) {
+      ui?.notifications?.warn?.(`${weapon.name}: cannot change configuration (${String(result?.reason ?? "unavailable").replace(/-/g, " ")}).`);
+      return;
+    }
+    await this.requestSurfaceRender({ reason: "weapon-configuration-change" });
+  }
+
   _activateInventoryUI(html, { signal } = {}) {
     // Equip / Unequip toggle
     html.querySelectorAll(".item-equip").forEach(button => {
@@ -3716,7 +3745,7 @@ const forcePoints = [];
     });
 
     // Delete/Remove item
-    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
+    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="toggle-weapon-readiness"], [data-action="draw-and-ignite-lightsaber"], [data-action="change-weapon-configuration"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         const action = button.dataset.action;
@@ -3733,8 +3762,32 @@ const forcePoints = [];
           case "equip":
             await InventoryEngine.toggleEquip(this.actor, itemId);
             break;
-          case "toggle-activated":
-            await InventoryEngine.toggleActivated(this.actor, itemId);
+          case "toggle-activated": {
+            const result = await InventoryEngine.toggleActivated(this.actor, itemId);
+            if (result?.ok && result.changed) await this.requestSurfaceRender({ reason: "item-activation-change" });
+            else if (result && result.ok === false && result.reason === "draw-before-activating") ui?.notifications?.warn?.(`${item.name}: draw the lightsaber before igniting it.`);
+            break;
+          }
+          case "toggle-weapon-readiness": {
+            const result = await InventoryEngine.toggleWeaponReadied(this.actor, itemId);
+            if (!result?.ok) {
+              if (result?.reason === "deactivate-before-stowing") ui?.notifications?.warn?.(`${item.name}: deactivate the lightsaber before stowing it.`);
+              break;
+            }
+            await this.requestSurfaceRender({ reason: "weapon-readiness-change" });
+            break;
+          }
+          case "draw-and-ignite-lightsaber": {
+            const result = await InventoryEngine.drawAndActivateLightsaber(this.actor, itemId);
+            if (!result?.ok) {
+              ui?.notifications?.warn?.(`${item.name}: unable to draw and ignite.`);
+              break;
+            }
+            await this.requestSurfaceRender({ reason: "weapon-draw-and-ignite" });
+            break;
+          }
+          case "change-weapon-configuration":
+            await this._openWeaponConfigurationDialog(item);
             break;
           case "toggle-implant-tag":
             await InventoryEngine.toggleImplantTag(this.actor, itemId);

@@ -291,6 +291,12 @@ export function detect3GState() {
   return ['talent-phase-11-2a-dry-run-report.json', 'talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
 }
 
+// Historical dry-run reports freeze the repository state at certification.
+// In a certified later state, unrelated runtime/manifest files such as
+// system.json may legitimately change. Do not rewrite the historical report;
+// exempt later-owned files only while verifying POST_LATER states.
+const LATER_OWNED = new Set(['system.json']);
+
 export async function verifyApplied({ exact = false } = {}) {
   const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
   const report = readJson(REPORT_PATH), manifest = readJson(MANIFEST_PATH), talentsText = read(TALENTS), talents = parse(talentsText), ta = new Map(talents.map(t => [t._id, t]));
@@ -303,7 +309,7 @@ export async function verifyApplied({ exact = false } = {}) {
   check('the four printed prerequisite lines are restored', manifest.textCorrections.every(c => ta.get(c.productionId).system.prerequisites === c.after.prerequisites));
   if (!later) check('the other talents are unchanged', sortedFp(talents.filter(t => !ownerIds.has(t._id))) === report.othersFingerprint);
   // Phase 5C owns actor-pack reference migration (embedded sourceId remaps)
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!['data/class-archetypes.json','packs/heroic.db','packs/nonheroic.db','packs/npc.db','packs/droids.db','packs/beasts.db'].includes(rel)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!['data/class-archetypes.json','packs/heroic.db','packs/nonheroic.db','packs/npc.db','packs/droids.db','packs/beasts.db'].includes(rel) && !(later && LATER_OWNED.has(rel))) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
   const rec = reconcile(loadInput());
   check('reconciler: zero blocking findings (3E corpus/text incl. the 3G correction layer, 3F tree identity)', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
   const eff = await runtimeEffectiveness(manifest, talents, parse(read('packs/talent_trees.db')));
