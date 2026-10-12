@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core, Rebellion Era, KOTOR and Force Unleashed audited. No production species data changed.  
+**Status:** Core, Rebellion Era, KOTOR, Force Unleashed and Clone Wars audited. No production species data changed.  
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -137,7 +137,7 @@ There is no evidence from this section for rewriting Core baseline species recor
 3. Knights of the Old Republic Campaign Guide — 12/12 species baseline and sidecar audit
 
 **Pending sourcebooks**
-5. Clone Wars Campaign Guide
+5. Clone Wars Campaign Guide — COMPLETED
 6. Scum and Villainy
 7. Jedi Academy Training Manual
 8. Galaxy at War
@@ -325,4 +325,101 @@ Species source labels in the pack (for example `Gran: Rebellion`, `Togorian: Thr
 
 **No production class/weapon/species files, trait sidecars, or runtime consumers were edited.** The original Core, Rebellion and KOTOR audit decisions and the 48 certified Rebellion species-feat identities remain unchanged.
 
-**Next book:** *The Clone Wars Campaign Guide*; include explicit addendum/reprint scrutiny for Talz and Togruta.
+**Next book:** *Scum and Villainy*.
+
+---
+
+## Book 5 — The Clone Wars Campaign Guide
+
+**Published locations:** species chapter pp. 10–17 (9 playable races), Republic Clone template p. 91, Chagrian NPC species block p. 159. Main sourcebook PDF pages are +1 over the printed pages. All 11 were identified directly from printed racial-rules sections, including the two sections outside the player species chapter.
+
+**Field-by-field status:** `NO_CHANGE` for the pack's basic size and walking speed, and for the published ability-score adjustments (the Republic Clone fixed array is correctly separated as a choice structure). Some species-wide outcomes remain `REVIEW_REQUIRED` or `CHANGE_REQUIRED` because executable sidecars, trait descriptions or languages disagree with published mechanics.
+
+### Summary
+
+| Measure | Result |
+|---|---:|
+| Main player species chapter entries | 9 |
+| Additional Republic Clone template | 1 |
+| Additional Chagrian rules block | 1 |
+| Total species/source templates audited | **11** |
+| Existing Foundry species identities found | **11/11** |
+| Basic species chassis requiring changes | **0** |
+| Species `CHANGE_REQUIRED` | **6** |
+| Species `REVIEW_REQUIRED` | **5** |
+| Species `NO_CHANGE` overall | **0** |
+| Confirmed correction items | **7** |
+| Source/variant/runtime review items | **19** |
+| Total findings | **26** |
+
+### Per-species decisions
+
+| Species or template | Source location | Size / land speed / basic ability data | Overall disposition | Findings |
+|---|---|---|---|---:|
+| Chagrian | p. 159 (NPC-personnel-section) | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Dug | p. 11 (main) | `NO_CHANGE` | `REVIEW_REQUIRED` | 1 |
+| Gen'Dai | p. 12 (main) | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Iktotchi | p. 12 (main) | `NO_CHANGE` | `REVIEW_REQUIRED` | 2 |
+| Kaleesh | p. 13 (main) | `NO_CHANGE` | `REVIEW_REQUIRED` | 2 |
+| Kaminoan | p. 14 (main) | `NO_CHANGE` | `CHANGE_REQUIRED` | 4 |
+| Kerkoiden | p. 15 (main) | `NO_CHANGE` | `REVIEW_REQUIRED` | 1 |
+| Nautolan | p. 15-16 (main) | `NO_CHANGE` | `CHANGE_REQUIRED` | 5 |
+| Nelvaanian | p. 16 (main) | `NO_CHANGE` | `REVIEW_REQUIRED` | 1 |
+| Republic Clone | p. 91 (GM-section) | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Vurk | p. 17 (main) | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+
+A species may be marked `NO_CHANGE` in the **verified field subset** despite having other mechanical findings. A whole-species `NO_CHANGE` would mean no correction or source issue was found in this book; none of the 11 meets that higher bar after inspecting both live sidecars.
+
+### Complete correction and source-review ledger
+
+The JSON contains for every finding its current value, exact selector, published effect, minimal surgical action, printed source page, `applied: false`, and whether further-book evidence is needed.
+
+| Species | Finding ID | Classification | Rule family | Source/consumer target | Printed authority |
+|---|---|---|---|---|---|
+| Chagrian | `CW-11-01` | `CHANGE_REQUIRED` | `foreign-species-trait-contamination` | `packs/species.db: Chagrian.system.canonicalTraits[all-codru-ji-possess-six-limbs] and canonicalStats.traits` | Published Chagrian block includes only Breathe Underwater, Radiation Resistance (+5 Fortitude vs radiation) and Low-Light Vision. |
+| Chagrian | `CW-11-02` | `REVIEW_REQUIRED` | `unsourced-endurance-field` | `packs/species.db: Chagrian.system.skillBonuses` | Chagrian NPC sidebar grants +2 STR -2 DEX, swim-capable breathing, +5 Fortitude vs radiation, low-light; no flat Endurance bonus. |
+| Dug | `CW-01-01` | `REVIEW_REQUIRED` | `supplementary-sidecar-skill` | `data/species-traits-migrated.json: Dug.structuralTraits[Reverse Jointed]` | Printed Dug species traits only grant Athletic rerolls and Take 10 on Climb/Jump, plus Small size modifiers. |
+| Gen'Dai | `CW-02-01` | `CHANGE_REQUIRED` | `wrong-trigger-healing` | `data/species-traits-migrated.json: Gen'Dai.structuralTraits[Regeneration].rules[fastHealing]` | Printed Gen'Dai Surge heals 5 hp at the end of each turn ONLY after the Gen'Dai uses its Second Wind, until half HP, encounter end, or death. |
+| Gen'Dai | `CW-02-02` | `REVIEW_REQUIRED` | `kill-only-damage-threshold` | `packs/species.db: Gen'Dai.system.canonicalTraits[resilient-physiology]` | Published Resilient Physiology doubles the threshold ONLY for determining death, not for ordinary condition-track movement. |
+| Gen'Dai | `CW-02-03` | `REVIEW_REQUIRED` | `trait-title` | `packs/species.db: Gen'Dai.system.canonicalTraits[fast-healing].name` | Published name is Gen'Dai Surge; benefits otherwise correctly described in pack. |
+| Iktotchi | `CW-03-01` | `REVIEW_REQUIRED` | `sidecar-initiative` | `data/species-traits(-migrated).json: Iktotchi.structuralTraits[Prescient Vision] / conditionalTraits[Prescient Vision (Reroll)]` | Printed Limited Precognition is once-per-encounter reaction granting +2 Reflex against ONE attack to self or piloted vehicle; no unconditional Initiative bonus or Initiative reroll. |
+| Iktotchi | `CW-03-02` | `REVIEW_REQUIRED` | `unsourced-skill-fields` | `packs/species.db: Iktotchi.system.skillBonuses` | Printed Expert Pilot permits must-accept Pilot reroll; no flat +2 Pilot/Initiative in the species traits. |
+| Kaleesh | `CW-04-01` | `REVIEW_REQUIRED` | `sidecar-persuasion` | `data/species-traits-migrated.json: Kaleesh.structuralTraits[Fearsome Reputation].rules` | Published Kaleesh racial list is Survival conditional bonus feat, Darkvision, Driven (+5 Will vs mind-affecting), Persistent (Endurance reroll). |
+| Kaleesh | `CW-04-02` | `REVIEW_REQUIRED` | `extra-skill-fields` | `packs/species.db: Kaleesh.system.skillBonuses` | These flat modifiers are not in the published Clone Wars racial traits. |
+| Kaminoan | `CW-05-01` | `CHANGE_REQUIRED` | `fortitude-conflicting-authority` | `packs/species.db: Kaminoan.system.canonicalTraits[resilient] + data/species-traits-migrated.json: Kaminoan.structuralTraits[Fragile].rules` | Published Resistant grants +2 SPECIES bonus to Fortitude Defense against all relevant effects, not +1 and not -2. |
+| Kaminoan | `CW-05-02` | `REVIEW_REQUIRED` | `extra-skill-authorities` | `packs/species.db: Kaminoan.system.skillBonuses / sidecar Genetic Expertise` | Published conditional bonus feat is Skill Focus (Treat Injury) IF trained; no blanket +2/+5 skill bonuses. |
+| Kaminoan | `CW-05-03` | `REVIEW_REQUIRED` | `alternate-species-variant` | `packs/species.db: Kaminoan.system.variants[kaminoan-alternate]` | Clone Wars default Kaminoan has +2 INT -2 WIS, and Resistant +2 Fortitude. |
+| Kaminoan | `CW-05-04` | `REVIEW_REQUIRED` | `printed-trait-label` | `packs/species.db: Kaminoan.system.canonicalTraits[resilient].name` | Printed trait heading is Resistant. |
+| Kerkoiden | `CW-06-01` | `REVIEW_REQUIRED` | `unsourced-sidecar-initiative` | `data/species-traits-migrated.json: Kerkoiden.structuralTraits[Military Training]` | Printed Predator's Heritage adds +2 damage against recently damaged targets; Social Cunning uses WIS instead of CHA on Deception/Persuasion. No unconditional initiative bonus. |
+| Nautolan | `CW-07-01` | `CHANGE_REQUIRED` | `invalid-automatic-language-data` | `packs/species.db: Nautolan.system.languages` | Printed Automatic Languages: Basic and Nautila. |
+| Nautolan | `CW-07-02` | `CHANGE_REQUIRED` | `wrong-swim-movement-rule` | `data/species-traits-migrated.json: Nautolan.structuralTraits[Aquatic].rules[movement]` | Printed Nautolan walking speed 6 and swim speed 4. Pack movement.swim=4 is already correct. |
+| Nautolan | `CW-07-03` | `REVIEW_REQUIRED` | `unprinted-blindsense` | `data/species-traits-migrated.json: Nautolan.structuralTraits[Tactile Awareness].rules` | Printed Pheromonal Sensor grants a reroll on Perception to Sense Deception/Sense Influence, with keep-better underwater; it does not grant all-purpose blindsense. |
+| Nautolan | `CW-07-04` | `REVIEW_REQUIRED` | `extra-skill-fields` | `packs/species.db: Nautolan.system.skillBonuses` | Printed Expert Swimmer grants must-accept reroll and Take 10; no flat skill bonuses specified. |
+| Nautolan | `CW-07-05` | `REVIEW_REQUIRED` | `legacy-variant` | `packs/species.db: Nautolan.system.variants[nautolan-variant]` | Clone Wars default has +2 CON, -2 INT, -2 WIS; swim 4 and five innate traits. |
+| Nelvaanian | `CW-08-01` | `REVIEW_REQUIRED` | `unsourced-initiative-sidecar` | `data/species-traits-migrated.json: Nelvaanian.structuralTraits[Feral Instincts].rules` | Published innate traits are Low-Light Vision, Primitive, Scent, and Shadow Swiftness (AoO movement rule). |
+| Republic Clone | `CW-10-01` | `CHANGE_REQUIRED` | `incorrect-plus-two-choice-UI-metadata` | `packs/species.db: Republic Clone.system.abilityChoice.{allocationMode,maxPerAbility,helpText}` | Printed clone receives fixed 15/13/10/12/10/8 and ONE chosen ability +2 at creation. |
+| Republic Clone | `CW-10-02` | `REVIEW_REQUIRED` | `choice-finalization-proof` | `scripts/engine/progression/helpers/build-pending-species-context.js: Republic Clone fixed-array/choice` | One selected ability must gain +2 and no other ability may rise from the choice. |
+| Vurk | `CW-09-01` | `CHANGE_REQUIRED` | `wrong-swim-speed` | `data/species-traits-migrated.json: Vurk.structuralTraits[Powerful Swimmer].rules` | Printed base speed 6, swim speed 4; Extra movement beyond 4 not printed. |
+| Vurk | `CW-09-02` | `REVIEW_REQUIRED` | `unprinted-skill-extras` | `packs/species.db: Vurk.system.skillBonuses / sidecar Powerful Swimmer` | Printed Nomads grants must-accept Survival reroll; Expert Swimmer grants Swim reroll and Take 10, no unconditional +2 bonuses. |
+| Vurk | `CW-09-03` | `REVIEW_REQUIRED` | `printed-name` | `packs/species.db: Vurk.system.canonicalTraits[survival-instinct].name` | Printed Vurk trait is titled Nomads; identical must-accept Survival reroll mechanic. |
+
+### Highest-priority source-backed corrections
+
+- **Kaminoan, p. 14:** The printed trait **Resistant** gives **+2 species Fortitude Defense**. The pack currently says `Resilient +1 Fortitude`; another executable sidecar gives **-2 Fortitude** under `Fragile`. This is a direct conflict within the current authority and a stat-affecting priority repair. An existing alternate Kaminoan profile with different ability modifiers is a separate, source-dependent variant. Do not overwrite that variant while fixing the default.
+- **Gen'Dai, p. 12:** **Gen'Dai Surge** grants 5 hp at the **end** of each turn after taking Second Wind, stopping at half HP, encounter end or death. The sidecar's generic unconditional start-of-turn healing of 1 and fire suppression does not match. **Regeneration** is separately for lost limbs (1d10 minutes); **Resilient Physiology** only doubles threshold for checking if killed, not general CT checks.
+- **Nautolan, pp. 15–16:** The printed languages are **Basic, Nautila**, but the pack contains sentence fragments rather than language names. Published walking/swimming speed is **6/4**; the pack correctly has swim 4 but a migrated sidecar attempts to impose **swim 6**. **Pheromonal Sensor** is a conditional perception reroll, not blanket blindsense. The legacy species variant drops a printed Wisdom penalty and swim speed; provenance must be established.
+- **Vurk, p. 17:** Printed **6 walking / 4 swimming**. The pack is correct, but the sidecar `Powerful Swimmer` overrides swim to **6**, and uses an `Athletics` skill bonus inconsistent with Saga's skill names. Printed **Nomads** gives a Survival reroll, not automatic flat +2.
+- **Republic Clone, p. 91:** Published fixed array **15 STR / 13 DEX / 10 CON / 12 INT / 10 WIS / 8 CHA**, plus exactly **one ability +2**. The pack's fixed scores and `bonusValue:2` are correct, but the `allocationMode='level-4-two-abilities'`, `maxPerAbility:1`, and helper text instructing two +1 increases are not. Preserve published additional starting feat and additional trained class skill.
+- **Chagrian, p. 159:** The actual printed species rules are **+2 STR/-2 DEX**, Medium/6, breathing underwater, **+5 Fortitude vs radiation**, low-light vision, languages Basic/Chagri. The pack contains an entirely unrelated Codru-Ji trait claiming Chagrians possess six limbs and have Wyrwulves juveniles. Remove **only** that foreign record from Chagrian authority; do not disturb Chagrian racial IDs or its correct innate traits.
+
+### Additional review-only findings
+
+Dug's unsourced `Reverse Jointed` +2 Acrobatics; Iktotchi's passive initiative and Pilot skill modifiers despite printed reroll/reaction structure; Kaleesh's unrelated intimidation and skill modifiers; Kaminoan's extra skill bonuses and alternate variant; Kerkoiden's initiative bonus; Nautolan's flat skill bonuses and generic blindsense; Nelvaanian's initiative bonus; Vurk's unsourced Survival/Athletics modifier; Chagrian's extra Endurance bonus. These remain `REVIEW_REQUIRED`, not approved for deletion, until any later book/variant source is checked.
+
+**No independent Talz or Togruta player-race species-trait block was printed in this book's main species chapter.** Their existing `source='Clone Wars'` metadata in the species pack does **not** by itself prove that this sourcebook authorizes their traits. Their earlier *Force Unleashed* source-audit records remain unchanged, and source provenance should be revisited during final cross-book reconciliation.
+
+**No Foundry smoke tests or production patches performed.** This is a read-only audit; changes above are proposals and remain `applied:false`.
+
+### Rolling continuation
+
+Core, Rebellion Era, KOTOR and Force Unleashed book entries have not been overwritten. There are now **50 distinct species records** in the rolling JSON. **Next: Scum and Villainy**, then Jedi Academy Training Manual, Galaxy at War, Legacy Era, Scavenger's Guide to Droids, and the remaining supplements.
