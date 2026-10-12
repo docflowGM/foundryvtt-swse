@@ -1,0 +1,1466 @@
+{
+  "schemaVersion": 1,
+  "phase": "5D-I-D",
+  "purpose": "Input manifest of the final weapon residual convergence. Audit evidence only: no runtime module reads it and it does not feed the 5D-H closure census. BLOCKED rows are guarded by tripwires that fail the day the missing subsystem appears.",
+  "subpasses": {
+    "I-D-A": "stealth, concealment, sensing and visibility",
+    "I-D-B": "weapon durability, construction, mounting, upgrades and size-derived wielding",
+    "I-D-C": "special activation, resources and remote operation",
+    "I-D-D": "poison coating and unresolved damage semantics",
+    "I-D-E": "weapon / feat / talent relationships and remaining certification",
+    "I-D-F": "reload / ammo-resource special cases (PROPOSED subpass: the I-D handoff names no owner for these 12 keys; needs product approval)"
+  },
+  "counters": {
+    "I_D_INPUT_OPERATION_KEYS": 75,
+    "I_D_INPUT_SPECIAL_MECHANICS": 3,
+    "I_D_INPUT_RELATIONS": 4,
+    "I_D_INPUT_TOTAL": 82,
+    "I_D_IMPLEMENTED": 0,
+    "I_D_DUPLICATES": 1,
+    "I_D_NON_EXECUTABLE": 1,
+    "I_D_DATA_DEFECT": 0,
+    "I_D_DATA_COMPLETENESS": 0,
+    "I_D_BLOCKED": 22,
+    "I_D_DEFERRED": 58,
+    "I_D_UNCLASSIFIED": 0
+  },
+  "closureCensusAtGeneration": {
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 75,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 95,
+    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 37,
+    "PARTIAL_EXECUTION_FIELD_FAMILIES": 12,
+    "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
+    "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
+    "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 4,
+    "CANONICAL_NAME_TEXT_HEURISTIC_USAGE": 0
+  },
+  "bySubpass": {
+    "I-D-A": 24,
+    "I-D-B": 31,
+    "I-D-C": 7,
+    "I-D-D": 1,
+    "I-D-E": 7,
+    "I-D-F": 12
+  },
+  "fieldFamilyOwners": {
+    "partialOrUnconsumed": {
+      "3b.defensive": "I-D-B (weapon object DR / durability)",
+      "3b.durability": "I-D-B (weapon object DR / durability)",
+      "3b.operation.ability-compatibility": "I-D-B / I-D-C (rows above)",
+      "3b.operation.ammo-resource-reload": "I-D-B (mounting) / I-D-F (reload, proposed)",
+      "3b.operation.area-splash-burst": "I-D-C (remoteDetonationSafetyRule)",
+      "3b.operation.attack-modifiers-and-penalties": "I-D-A (lineOfSight), I-D-B, I-D-C",
+      "3b.operation.concealment-stealth-sensing": "I-D-A (BLOCKED / DUPLICATE / NON_EXECUTABLE rows above)",
+      "3b.operation.condition-and-persistent-effects": "I-D-A (carried Survival bonus), I-D-D (grievousWound)",
+      "3b.operation.configuration-and-wielding": "I-D-B",
+      "3b.operation.crew-and-emplacement": "I-D-B",
+      "3b.operation.damage-modifiers": "I-D-B",
+      "3b.operation.proficiency-routes": "I-D-E",
+      "3b.operation.utility-and-movement": "I-D-C",
+      "3b.profile.conditional": "I-D-E (per-condition PROMPT / AUTO policy already classified by 5D-E)",
+      "3b.profile.effects": "I-D-A..E (follows the key rows)",
+      "3b.profile.wielding": "I-D-B",
+      "3b.qualityParameters": "I-D-B / I-D-E",
+      "3b.triggered": "I-D-A (lingering-gas-concealment), I-D-D (poison coating)",
+      "3b.wielding": "I-D-B",
+      "4h.auth.ruleSelectors.riders": "I-D-E"
+    }
+  },
+  "tripwires": {
+    "skill-hook-unwired": {
+      "kind": "unreferenced",
+      "note": "EquipmentSkillHookResolver (the equipment -> Extra Skill Use bonus authority) has no importer, and only reads items of type \"equipment\"",
+      "holds": true
+    },
+    "skill-hook-equipment-only": {
+      "kind": "contains",
+      "note": "the resolver ignores weapon items, so a weapon-carried skill bonus has no reader",
+      "holds": true
+    },
+    "no-stealth-state": {
+      "kind": "none",
+      "note": "no hidden / revealed-position state on actors or tokens",
+      "holds": true
+    },
+    "no-noise-model": {
+      "kind": "none",
+      "note": "no noise / hearing event model",
+      "holds": true
+    },
+    "no-sensor-scan": {
+      "kind": "none",
+      "note": "no sensor-scan detection flow",
+      "holds": true
+    },
+    "no-radiation-exposure": {
+      "kind": "none",
+      "note": "no radiation exposure state",
+      "holds": true
+    },
+    "no-visibility-geometry": {
+      "kind": "none",
+      "note": "no line-of-sight / visibility geometry; combat code only consumes caller-supplied booleans (context.lineOfSight)",
+      "holds": true
+    },
+    "no-persistent-area-zone": {
+      "kind": "count",
+      "note": "the only scene-region / template creation is the droid sheet (unrelated); no persistent area-effect zone owner exists",
+      "holds": true
+    },
+    "no-deaf-rule": {
+      "kind": "none",
+      "note": "no deafness-based damage immunity exists in the combat code (the Deafened status icon and IMMUNE_DEAFNESS rule live elsewhere and gate no damage)",
+      "holds": true
+    }
+  },
+  "rows": [
+    {
+      "kind": "operation-key",
+      "key": "alwaysDetermineNorth",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Survival Knife"
+      ],
+      "structuredSourceField": "operation.alwaysDetermineNorth",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Carried-item Survival benefit (Survival Knife): an automatic result on a Survival use. Same missing equipment -> skill-use consumer; no Survival use consumes any carried item."
+    },
+    {
+      "kind": "operation-key",
+      "key": "audibility",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sonic-stunner"
+      ],
+      "structuredSourceField": "operation.audibility",
+      "missingSubsystem": "noise / hearing event model",
+      "tripwires": [
+        "no-noise-model"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Sonic Stunner: only the target hears the attack. Same missing noise / hearing model."
+    },
+    {
+      "kind": "operation-key",
+      "key": "builtInDigitalCompass",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Survival Knife"
+      ],
+      "structuredSourceField": "operation.builtInDigitalCompass",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Companion fact of alwaysDetermineNorth (Survival Knife): same missing consumer."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentContext",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Contact Stunner"
+      ],
+      "structuredSourceField": "operation.concealmentContext",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "States WHEN the bonus applies (\"conceal this weapon\"); it maps to the existing conceal-weapon use alias but is a qualifier of a bonus nobody reads."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentDesign",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "adjudicator-slugthrower"
+      ],
+      "structuredSourceField": "operation.concealmentDesign",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Design class (\"hold-out pistol\") that the Adjudicator Slugthrower shares with the weapons that carry a numeric concealment bonus; it carries no number itself and inherits the same missing consumer. No bonus is inferred from the label."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentEquipmentBonus",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 4,
+      "rawOccurrences": 4,
+      "representativeWeapons": [
+        "Contact Stunner",
+        "concealed-dart-launcher",
+        "hold-out-blaster-pistol",
+        "snap-shot-blaster-pistol"
+      ],
+      "structuredSourceField": "operation.concealmentEquipmentBonus",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "+5 equipment bonus to Stealth to conceal the weapon (Contact Stunner, Hold-out / Snap-shot blaster pistols, Concealed Dart Launcher). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentSkill",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Contact Stunner"
+      ],
+      "structuredSourceField": "operation.concealmentSkill",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Names the skill (\"Stealth\") of concealmentEquipmentBonus; a qualifier with the same missing consumer."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentStealthBonus",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "defender-microblaster"
+      ],
+      "structuredSourceField": "operation.concealmentStealthBonus",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "+5 Stealth bonus carried with the weapon (Defender Microblaster). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+    },
+    {
+      "kind": "operation-key",
+      "key": "concealmentStealthPenalty",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "ascension-gun"
+      ],
+      "structuredSourceField": "operation.concealmentStealthPenalty",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "-5 Stealth penalty carried with the weapon (Ascension Gun). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+    },
+    {
+      "kind": "operation-key",
+      "key": "createsSmokeHazard",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "smoke-grenade"
+      ],
+      "structuredSourceField": "operation.createsSmokeHazard",
+      "missingSubsystem": "persistent area-effect zone + visibility geometry",
+      "tripwires": [
+        "no-persistent-area-zone",
+        "no-visibility-geometry"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Smoke Grenade hazard: same missing persistent-zone subsystem as providesConcealment (no zone to create)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "firingDoesNotRevealShooterPosition",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "xerrol-nightstinger"
+      ],
+      "structuredSourceField": "operation.firingDoesNotRevealShooterPosition",
+      "missingSubsystem": "actor / token stealth + revealed-position state",
+      "tripwires": [
+        "no-stealth-state"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Xerrol Nightstinger: firing does not end Stealth / reveal position. The system has no hidden / revealed state for firing to leave unchanged."
+    },
+    {
+      "kind": "operation-key",
+      "key": "gasConcealmentDuration",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "gas-grenade"
+      ],
+      "structuredSourceField": "operation.gasConcealmentDuration",
+      "missingSubsystem": "persistent area-effect zone + visibility geometry",
+      "tripwires": [
+        "no-persistent-area-zone",
+        "no-visibility-geometry"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Gas Grenade lingering cloud (triggeredEffects lingering-gas-concealment, duration until-end-of-attacker-next-turn): concealment is MUTUAL across the blast boundary and inside the 4-square blast. The attacker-next-turn lifecycle already exists (outcome-effects durationPlan, used by Flash Canister), but it hangs a status on an ACTOR; the cloud has no actor to hang on and needs a placed zone plus an inside / outside / across-boundary visibility test. The I-C-A impact outcome (CT -2 / Evasion -1) is already implemented and must not be reapplied."
+    },
+    {
+      "kind": "operation-key",
+      "key": "lineOfSightOriginHeightSquares",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "mortar-launcher"
+      ],
+      "structuredSourceField": "operation.lineOfSightOriginHeightSquares",
+      "missingSubsystem": "visibility / line-of-sight geometry",
+      "tripwires": [
+        "no-visibility-geometry"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Mortar Launcher: line of sight is traced from a point 20 squares above the launcher. The system takes line of sight as a caller-supplied boolean; there is no geometry to move the origin of."
+    },
+    {
+      "kind": "operation-key",
+      "key": "protectedAtmosphereImmune",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "DUPLICATE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "gas-grenade"
+      ],
+      "structuredSourceField": "attackProfiles[].triggeredEffects[condition-track-effect].immunity = \"protected-from-atmospheric-hazards\"",
+      "currentConsumer": "scripts/items/weapon-runtime/special-mechanics.js (typeof e.immunity === 'string')",
+      "reason": "Gas Grenade: the same immunity is carried by the condition-track-effect triggered effect, which the I-C-A ct-rider already executes. (The lingering cloud is a separate triggered effect; see gasConcealmentDuration.)"
+    },
+    {
+      "kind": "operation-key",
+      "key": "providesConcealment",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "smoke-grenade"
+      ],
+      "structuredSourceField": "operation.providesConcealment",
+      "missingSubsystem": "persistent area-effect zone + visibility geometry",
+      "tripwires": [
+        "no-persistent-area-zone",
+        "no-visibility-geometry"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Smoke Grenade: the cloud provides concealment for durationRounds (10). A cloud is a placed area that persists and is tested against token positions; the system has no persistent area-effect owner and no visibility / line-of-sight geometry (combat code only accepts a caller-supplied concealment option and a context.lineOfSight boolean)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "radiationExposure",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "radiation-grenade"
+      ],
+      "structuredSourceField": "operation.radiationExposure",
+      "missingSubsystem": "radiation exposure state / hazard area",
+      "tripwires": [
+        "no-radiation-exposure",
+        "no-persistent-area-zone"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Radiation Grenade: exposes creatures to Moderate radiation for damage and Treat Injury purposes. Exposure has no state to set and no area to persist in."
+    },
+    {
+      "kind": "operation-key",
+      "key": "sensorDetection",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-blaster"
+      ],
+      "structuredSourceField": "operation.sensorDetection",
+      "missingSubsystem": "sensor-scan detection flow",
+      "tripwires": [
+        "no-sensor-scan"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Wrist Blaster: a sensor scan for weapons detects it on a DC 25 Use Computer check. No sensor-scan flow exists to pit the scanner against a carried weapon."
+    },
+    {
+      "kind": "operation-key",
+      "key": "shotVisibility",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "xerrol-nightstinger"
+      ],
+      "structuredSourceField": "operation.shotVisibility",
+      "missingSubsystem": "actor / token stealth + revealed-position state",
+      "tripwires": [
+        "no-stealth-state",
+        "no-visibility-geometry"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Xerrol Nightstinger: the shot is invisible to the eye. Needs the observers' perception of an attack to be a modelled event; no such state exists."
+    },
+    {
+      "kind": "operation-key",
+      "key": "silentInUse",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Vibrorapier"
+      ],
+      "structuredSourceField": "operation.silentInUse",
+      "missingSubsystem": "noise / hearing event model",
+      "tripwires": [
+        "no-noise-model"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Vibrorapier: silent operation. There is no noise or hearing event for a weapon to suppress."
+    },
+    {
+      "kind": "operation-key",
+      "key": "snipingSkill",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "magna-caster"
+      ],
+      "structuredSourceField": "operation.snipingSkill",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "Names the skill (\"Stealth\") the sniping bonus applies to; a qualifier of snipingStealthEquipmentBonus with the same missing consumer. There is also no \"sniping\" Extra Skill Use alias to attach it to."
+    },
+    {
+      "kind": "operation-key",
+      "key": "snipingStealthEquipmentBonus",
+      "family": "3b.operation.concealment-stealth-sensing",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "magna-caster"
+      ],
+      "structuredSourceField": "operation.snipingStealthEquipmentBonus",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "+5 equipment bonus to the Stealth check made to snipe (Magna-Caster). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+    },
+    {
+      "kind": "operation-key",
+      "key": "survivalBasicForestJungleBonusWhenProficientAndCarried",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wookiee-ryyk-blade"
+      ],
+      "structuredSourceField": "operation.survivalBasicForestJungleBonusWhenProficientAndCarried",
+      "missingSubsystem": "equipment-hook -> Extra Skill Use roll integration (EquipmentSkillHookResolver is unwired and equipment-only)",
+      "tripwires": [
+        "skill-hook-unwired",
+        "skill-hook-equipment-only"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "+2 to Basic Survival in forest / jungle when the wielder is proficient and carries the weapon (Wookiee Ryyk Blade). The only authority that carries \"equipment bonus to a skill use\" (EquipmentSkillHookResolver, with conceal-weapon / conceal-item aliases already declared) has no caller and reads only equipment items, so no skill roll consumes any item bonus. Wiring it is an equipment / skill-use integration, not a weapon field; the canonical value is intact and nothing is guessed."
+    },
+    {
+      "kind": "operation-key",
+      "key": "targeting",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "subpass": "I-D-A",
+      "disposition": "NON_EXECUTABLE",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sonic-stunner"
+      ],
+      "structuredSourceField": "operation.targeting",
+      "tripwires": [
+        "no-deaf-rule"
+      ],
+      "nonExecutableClass": "DISPLAY",
+      "reason": "Sonic Stunner: deaf targets CAN be harmed. That removes a restriction (deafness-based immunity) which nothing in the system imposes (no-deaf-rule tripwire), so the default behaviour is already the stated one and there is nothing to execute."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-gas-grenade::lingering-gas-concealment",
+      "family": "status-condition",
+      "subpass": "I-D-A",
+      "disposition": "BLOCKED",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "gas-grenade"
+      ],
+      "structuredSourceField": "triggeredEffects | special-mechanic census",
+      "missingSubsystem": "persistent area-effect zone + visibility geometry",
+      "tripwires": [
+        "no-persistent-area-zone",
+        "no-visibility-geometry"
+      ],
+      "owner": "I-D-A follow-up (new authority needs product approval)",
+      "reason": "See gasConcealmentDuration: the cloud needs a placed zone and a mutual inside / outside / across-boundary visibility test; the impact outcome is already implemented (I-C-A) and is not reapplied."
+    },
+    {
+      "kind": "operation-key",
+      "key": "canMountOnRifle",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "micro-grenade-launcher"
+      ],
+      "structuredSourceField": "operation.canMountOnRifle",
+      "owner": "I-D-B",
+      "reason": "Mounting a weapon on a host weapon (construction / modification authority)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "canUseStandalone",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "micro-grenade-launcher"
+      ],
+      "structuredSourceField": "operation.canUseStandalone",
+      "owner": "I-D-B",
+      "reason": "Mounted-versus-standalone use of an attachment weapon."
+    },
+    {
+      "kind": "operation-key",
+      "key": "collapsedForm",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "snap-baton"
+      ],
+      "structuredSourceField": "operation.collapsedForm",
+      "owner": "I-D-B",
+      "reason": "Collapsed-form configuration / size."
+    },
+    {
+      "kind": "operation-key",
+      "key": "designedForTwoHandedUse",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "vibrosword"
+      ],
+      "structuredSourceField": "operation.designedForTwoHandedUse",
+      "owner": "I-D-B",
+      "reason": "Size-derived wielding."
+    },
+    {
+      "kind": "operation-key",
+      "key": "encumbranceException",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "plx-2m-portable-missile-launcher"
+      ],
+      "structuredSourceField": "operation.encumbranceException",
+      "owner": "I-D-B",
+      "reason": "Encumbrance exception for carried equipment."
+    },
+    {
+      "kind": "operation-key",
+      "key": "forearmMounted",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-rocket-launcher"
+      ],
+      "structuredSourceField": "operation.forearmMounted",
+      "owner": "I-D-B",
+      "reason": "Worn / mounted wielding."
+    },
+    {
+      "kind": "operation-key",
+      "key": "hasFoldingStock",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-blaster-rifle"
+      ],
+      "structuredSourceField": "operation.hasFoldingStock",
+      "owner": "I-D-B",
+      "reason": "Stock configuration / construction option."
+    },
+    {
+      "kind": "operation-key",
+      "key": "mayCountAsSmallWhenBeneficial",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "lightsaber-chassis-archaic-lightfoil",
+        "lightsaber-chassis-modern-lightfoil"
+      ],
+      "structuredSourceField": "operation.mayCountAsSmallWhenBeneficial",
+      "owner": "I-D-B",
+      "reason": "Size-derived wielding."
+    },
+    {
+      "kind": "operation-key",
+      "key": "mayTreatAsSizeWhenBeneficial",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightfoil"
+      ],
+      "structuredSourceField": "operation.mayTreatAsSizeWhenBeneficial",
+      "owner": "I-D-B",
+      "reason": "Size-derived wielding."
+    },
+    {
+      "kind": "operation-key",
+      "key": "mountableOnMinimumWeaponSize",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-laser"
+      ],
+      "structuredSourceField": "operation.mountableOnMinimumWeaponSize",
+      "owner": "I-D-B",
+      "reason": "Host-size gate for mounting."
+    },
+    {
+      "kind": "operation-key",
+      "key": "mountMechanicsDC",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "micro-grenade-launcher"
+      ],
+      "structuredSourceField": "operation.mountMechanicsDC",
+      "owner": "I-D-B",
+      "reason": "Mounting check DC (construction / installation)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "mountTimeMinutes",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "micro-grenade-launcher"
+      ],
+      "structuredSourceField": "operation.mountTimeMinutes",
+      "owner": "I-D-B",
+      "reason": "Mounting time (construction / installation)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "multipleHeldOneHandCountsAsOneWeapon",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Darkstick"
+      ],
+      "structuredSourceField": "operation.multipleHeldOneHandCountsAsOneWeapon",
+      "owner": "I-D-B",
+      "reason": "Wielding count rule."
+    },
+    {
+      "kind": "operation-key",
+      "key": "powerAttackExtraDamageAppliesToObjectsAndVehicles",
+      "family": "3b.operation.damage-modifiers",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Power Hammer"
+      ],
+      "structuredSourceField": "operation.powerAttackExtraDamageAppliesToObjectsAndVehicles",
+      "owner": "I-D-B",
+      "reason": "Damage to weapon-adjacent objects / vehicles (object damage semantics)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "preferredMode",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "espo-500-riot-gun"
+      ],
+      "structuredSourceField": "operation.preferredMode",
+      "owner": "I-D-B",
+      "reason": "Preferred fire mode of a configurable weapon (configuration state)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "redirectionCrystalCompatibility",
+      "family": "3b.operation.ability-compatibility",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "xerrol-nightstinger"
+      ],
+      "structuredSourceField": "operation.redirectionCrystalCompatibility",
+      "owner": "I-D-B",
+      "reason": "Redirection crystal is a separate equipment record installed on a weapon: upgrade / installation compatibility."
+    },
+    {
+      "kind": "operation-key",
+      "key": "requiresGrenadeLauncher",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "electronet"
+      ],
+      "structuredSourceField": "operation.requiresGrenadeLauncher",
+      "owner": "I-D-B",
+      "reason": "Host-weapon requirement for a mounted weapon."
+    },
+    {
+      "kind": "operation-key",
+      "key": "retractableStockOptional",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "blaster-carbine",
+        "blaster-rifle"
+      ],
+      "structuredSourceField": "operation.retractableStockOptional",
+      "owner": "I-D-B",
+      "reason": "Stock configuration / construction option."
+    },
+    {
+      "kind": "operation-key",
+      "key": "rifleMountable",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "grenade-launcher"
+      ],
+      "structuredSourceField": "operation.rifleMountable",
+      "owner": "I-D-B",
+      "reason": "Host-weapon compatibility for mounting."
+    },
+    {
+      "kind": "operation-key",
+      "key": "sizeRule",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Stunning Gauntlet",
+        "Vibroknucklers"
+      ],
+      "structuredSourceField": "operation.sizeRule",
+      "owner": "I-D-B",
+      "reason": "Size-derived wielding."
+    },
+    {
+      "kind": "operation-key",
+      "key": "surveillanceTaggerCompatibility",
+      "family": "3b.operation.ability-compatibility",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "darter"
+      ],
+      "structuredSourceField": "operation.surveillanceTaggerCompatibility",
+      "owner": "I-D-B",
+      "reason": "Surveillance tagger installation compatibility (upgrade authority)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "surveillanceTaggerCompatible",
+      "family": "3b.operation.ability-compatibility",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "darter"
+      ],
+      "structuredSourceField": "operation.surveillanceTaggerCompatible",
+      "owner": "I-D-B",
+      "reason": "Surveillance tagger installation compatibility (upgrade authority)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "tripodEffectiveSize",
+      "family": "3b.operation.crew-and-emplacement",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "e-web-repeating-blaster"
+      ],
+      "structuredSourceField": "operation.tripodEffectiveSize",
+      "owner": "I-D-B",
+      "reason": "Tripod effective size (size-derived wielding)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "tripodTreatsAsOneSizeSmallerForWielding",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "e-web-missile-launcher",
+        "flame-cannon",
+        "tactical-tractor-beam"
+      ],
+      "structuredSourceField": "operation.tripodTreatsAsOneSizeSmallerForWielding",
+      "owner": "I-D-B",
+      "reason": "Tripod wielding size."
+    },
+    {
+      "kind": "operation-key",
+      "key": "upgradeRestrictions",
+      "family": "3b.operation.ability-compatibility",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sniper-blaster-rifle"
+      ],
+      "structuredSourceField": "operation.upgradeRestrictions",
+      "owner": "I-D-B",
+      "reason": "Weapon-specific upgrade installation restrictions (UpgradeSlotEngine / UpgradeService)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "weaponDR",
+      "family": "3b.operation.damage-modifiers",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "electrostaff"
+      ],
+      "structuredSourceField": "operation.weaponDR",
+      "owner": "I-D-B",
+      "reason": "Weapon-object DR / durability (Electrostaff, Shockstaff)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "weaponDRAppliesAgainstLightsabers",
+      "family": "3b.operation.damage-modifiers",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Shockstaff",
+        "electrostaff"
+      ],
+      "structuredSourceField": "operation.weaponDRAppliesAgainstLightsabers",
+      "owner": "I-D-B",
+      "reason": "Weapon-object DR versus lightsabers."
+    },
+    {
+      "kind": "operation-key",
+      "key": "weaponDRValue",
+      "family": "3b.operation.damage-modifiers",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Shockstaff"
+      ],
+      "structuredSourceField": "operation.weaponDRValue",
+      "owner": "I-D-B",
+      "reason": "Weapon-object DR value."
+    },
+    {
+      "kind": "operation-key",
+      "key": "wornAs",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-blaster"
+      ],
+      "structuredSourceField": "operation.wornAs",
+      "owner": "I-D-B",
+      "reason": "Worn-item classification."
+    },
+    {
+      "kind": "operation-key",
+      "key": "wornOnWrist",
+      "family": "3b.operation.configuration-and-wielding",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "concealed-dart-launcher"
+      ],
+      "structuredSourceField": "operation.wornOnWrist",
+      "owner": "I-D-B",
+      "reason": "Worn-item classification."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-verpine-shattergun::fragile-disable-on-damage",
+      "family": "status-condition",
+      "subpass": "I-D-B",
+      "disposition": "DEFERRED_TO_I_D_B",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "verpine-shattergun"
+      ],
+      "structuredSourceField": "triggeredEffects | special-mechanic census",
+      "owner": "I-D-B",
+      "reason": "Disabled when the WEAPON OBJECT takes damage; needs a legitimate weapon-object damage event."
+    },
+    {
+      "kind": "operation-key",
+      "key": "allyAttackBonus",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "subpass": "I-D-C",
+      "disposition": "DEFERRED_TO_I_D_C",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-laser"
+      ],
+      "structuredSourceField": "operation.allyAttackBonus",
+      "owner": "I-D-C",
+      "reason": "Targeting Laser: ally attack bonus from a cross-actor designation."
+    },
+    {
+      "kind": "operation-key",
+      "key": "allyEligibleWeapons",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "subpass": "I-D-C",
+      "disposition": "DEFERRED_TO_I_D_C",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-laser"
+      ],
+      "structuredSourceField": "operation.allyEligibleWeapons",
+      "owner": "I-D-C",
+      "reason": "Targeting Laser: which ally weapons benefit from the designation."
+    },
+    {
+      "kind": "operation-key",
+      "key": "ascensionMode",
+      "family": "3b.operation.utility-and-movement",
+      "subpass": "I-D-C",
+      "disposition": "DEFERRED_TO_I_D_C",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "ascension-gun",
+        "heavy-variable-blaster"
+      ],
+      "structuredSourceField": "operation.ascensionMode",
+      "owner": "I-D-C",
+      "reason": "Ascension Gun lift / zipline movement action (special activation)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "darkSideEmpowerment",
+      "family": "3b.operation.ability-compatibility",
+      "subpass": "I-D-C",
+      "disposition": "DEFERRED_TO_I_D_C",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sith-sword"
+      ],
+      "structuredSourceField": "operation.darkSideEmpowerment",
+      "owner": "I-D-C",
+      "reason": "Sith Sword Force Point empowerment + Dark Side Score consequence (special activation / resource)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "remoteDetonationSafetyRule",
+      "family": "3b.operation.area-splash-burst",
+      "subpass": "I-D-C",
+      "disposition": "DEFERRED_TO_I_D_C",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "remote-grenade"
+      ],
+      "structuredSourceField": "operation.remoteDetonationSafetyRule",
+      "owner": "I-D-C",
+      "reason": "Remote Grenade 100-meter safety restriction (remote operation preflight)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "repeatAttackEachRoundToMaintainDesignation",
+      "family": "3b.operation.attack-modifiers-and-penalties",
+      "subpass": "I-D-C",
+      "disposition": "DEFERRED_TO_I_D_C",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "targeting-laser"
+      ],
+      "structuredSourceField": "operation.repeatAttackEachRoundToMaintainDesignation",
+      "owner": "I-D-C",
+      "reason": "Targeting Laser: designation upkeep."
+    },
+    {
+      "kind": "special-mechanic",
+      "key": "weapon-sith-sword::dark-side-empowerment",
+      "family": "activation-effect",
+      "subpass": "I-D-C",
+      "disposition": "DEFERRED_TO_I_D_C",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sith-sword"
+      ],
+      "structuredSourceField": "triggeredEffects | special-mechanic census",
+      "owner": "I-D-C",
+      "reason": "Force Point empowerment + Dark Side Score consequence."
+    },
+    {
+      "kind": "operation-key",
+      "key": "grievousWound",
+      "family": "3b.operation.condition-and-persistent-effects",
+      "subpass": "I-D-D",
+      "disposition": "DEFERRED_TO_I_D_D",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Fira"
+      ],
+      "structuredSourceField": "operation.grievousWound",
+      "owner": "I-D-D",
+      "reason": "Grievous wound semantics (unresolved damage semantics)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "alternateProficiency",
+      "family": "3b.operation.proficiency-routes",
+      "subpass": "I-D-E",
+      "disposition": "DEFERRED_TO_I_D_E",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "Arggarok",
+        "massassi-lanvarok"
+      ],
+      "structuredSourceField": "operation.alternateProficiency",
+      "owner": "I-D-E",
+      "reason": "Proficiency echo: confirm it duplicates selectors.speciesOverrides / abilityOverrides."
+    },
+    {
+      "kind": "operation-key",
+      "key": "wookieeAdvancedMeleeProficiencyCounts",
+      "family": "3b.operation.proficiency-routes",
+      "subpass": "I-D-E",
+      "disposition": "DEFERRED_TO_I_D_E",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wookiee-ryyk-blade"
+      ],
+      "structuredSourceField": "operation.wookieeAdvancedMeleeProficiencyCounts",
+      "owner": "I-D-E",
+      "reason": "Species proficiency echo: confirm duplicate."
+    },
+    {
+      "kind": "operation-key",
+      "key": "wookieeTreatsAsProficientWithWeaponProficiencyRifles",
+      "family": "3b.operation.proficiency-routes",
+      "subpass": "I-D-E",
+      "disposition": "DEFERRED_TO_I_D_E",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "bowcaster"
+      ],
+      "structuredSourceField": "operation.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
+      "owner": "I-D-E",
+      "reason": "Species / feat proficiency echo: confirm duplicate."
+    },
+    {
+      "kind": "relation",
+      "key": "FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE",
+      "family": "relation",
+      "subpass": "I-D-E",
+      "disposition": "DEFERRED_TO_I_D_E",
+      "identityCount": 0,
+      "rawOccurrences": 1,
+      "representativeWeapons": [],
+      "structuredSourceField": "abilityInteractions[].relation = FULL_ROUND_THREE_TARGET_AREA_ATTACK_WITH_DISCBLADE",
+      "owner": "I-D-E",
+      "reason": "Discblade Arc: talent-granted mode; the talent has no canonical identity."
+    },
+    {
+      "kind": "relation",
+      "key": "TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
+      "family": "relation",
+      "subpass": "I-D-E",
+      "disposition": "DEFERRED_TO_I_D_E",
+      "identityCount": 0,
+      "rawOccurrences": 1,
+      "representativeWeapons": [],
+      "structuredSourceField": "abilityInteractions[].relation = TREAT_AS_RIFLE_INSTEAD_OF_EXOTIC_AND_GAIN_PLUS_1_ATTACK",
+      "owner": "I-D-E",
+      "reason": "Siang Lance Mastery: the +1 attack grant needs the talent identity (the proficiency re-route is already consumed through abilityOverrides)."
+    },
+    {
+      "kind": "relation",
+      "key": "TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
+      "family": "relation",
+      "subpass": "I-D-E",
+      "disposition": "DEFERRED_TO_I_D_E",
+      "identityCount": 0,
+      "rawOccurrences": 1,
+      "representativeWeapons": [],
+      "structuredSourceField": "abilityInteractions[].relation = TREAT_DISCBLADE_AS_PISTOL_FOR_RANGE_ONLY",
+      "owner": "I-D-E",
+      "reason": "Distant Discblade Throw: talent identity required."
+    },
+    {
+      "kind": "relation",
+      "key": "USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION",
+      "family": "relation",
+      "subpass": "I-D-E",
+      "disposition": "DEFERRED_TO_I_D_E",
+      "identityCount": 0,
+      "rawOccurrences": 1,
+      "representativeWeapons": [],
+      "structuredSourceField": "abilityInteractions[].relation = USE_THE_FORCE_DC_15_AFTER_RANGED_ATTACK_TO_RETURN_DISCBLADE_AS_FREE_ACTION",
+      "owner": "I-D-E",
+      "reason": "Recall Discblade: talent identity required; discblade return is not an inherent weapon quality."
+    },
+    {
+      "kind": "operation-key",
+      "key": "canSingleLoadShell",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "mortar-launcher"
+      ],
+      "structuredSourceField": "operation.canSingleLoadShell",
+      "owner": "I-D-F",
+      "reason": "Single-shell loading special case."
+    },
+    {
+      "kind": "operation-key",
+      "key": "capacityGrenades",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "micro-grenade-launcher"
+      ],
+      "structuredSourceField": "operation.capacityGrenades",
+      "owner": "I-D-F",
+      "reason": "Grenade capacity of a launcher: needs inventory-level payload authority (deliberately deferred in the readiness UI work)."
+    },
+    {
+      "kind": "operation-key",
+      "key": "oneShotCapacity",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-blaster"
+      ],
+      "structuredSourceField": "operation.oneShotCapacity",
+      "owner": "I-D-F",
+      "reason": "One-shot capacity special case."
+    },
+    {
+      "kind": "operation-key",
+      "key": "powerCordDisconnectRule",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "lightsaber-chassis-archaic-lightsaber"
+      ],
+      "structuredSourceField": "operation.powerCordDisconnectRule",
+      "owner": "I-D-F",
+      "reason": "Power-source disconnect rule."
+    },
+    {
+      "kind": "operation-key",
+      "key": "powerLevelSwitchAction",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 2,
+      "rawOccurrences": 2,
+      "representativeWeapons": [
+        "heavy-variable-blaster",
+        "variable-blaster"
+      ],
+      "structuredSourceField": "operation.powerLevelSwitchAction",
+      "owner": "I-D-F",
+      "reason": "Power-level switch action cost."
+    },
+    {
+      "kind": "operation-key",
+      "key": "requiresEnergyCell",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 7,
+      "rawOccurrences": 7,
+      "representativeWeapons": [
+        "lightsaber-chassis-archaic-lightfoil",
+        "lightsaber-chassis-guard-shoto",
+        "lightsaber-chassis-longhandle",
+        "lightsaber-chassis-modern-lightfoil"
+      ],
+      "structuredSourceField": "operation.requiresEnergyCell",
+      "owner": "I-D-F",
+      "reason": "Power-source requirement."
+    },
+    {
+      "kind": "operation-key",
+      "key": "requiresEnergyCells",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 3,
+      "rawOccurrences": 3,
+      "representativeWeapons": [
+        "San-Ni Staff",
+        "Vibro-Saw",
+        "gungan-electropole"
+      ],
+      "structuredSourceField": "operation.requiresEnergyCells",
+      "owner": "I-D-F",
+      "reason": "Power-source requirement."
+    },
+    {
+      "kind": "operation-key",
+      "key": "requiresPowerPack",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "Blastsword"
+      ],
+      "structuredSourceField": "operation.requiresPowerPack",
+      "owner": "I-D-F",
+      "reason": "Power-source requirement."
+    },
+    {
+      "kind": "operation-key",
+      "key": "requiresPowerPacks",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "battering-ram"
+      ],
+      "structuredSourceField": "operation.requiresPowerPacks",
+      "owner": "I-D-F",
+      "reason": "Power-source requirement."
+    },
+    {
+      "kind": "operation-key",
+      "key": "secondCrewReloadAction",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "e-web-missile-launcher"
+      ],
+      "structuredSourceField": "operation.secondCrewReloadAction",
+      "owner": "I-D-F",
+      "reason": "Crew reload action."
+    },
+    {
+      "kind": "operation-key",
+      "key": "singleShot",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "wrist-rocket-launcher"
+      ],
+      "structuredSourceField": "operation.singleShot",
+      "owner": "I-D-F",
+      "reason": "Single-shot reload special case."
+    },
+    {
+      "kind": "operation-key",
+      "key": "specialRateOfFire",
+      "family": "3b.operation.ammo-resource-reload",
+      "subpass": "I-D-F",
+      "disposition": "DEFERRED_TO_I_D_F",
+      "identityCount": 1,
+      "rawOccurrences": 1,
+      "representativeWeapons": [
+        "sonic-disruptor"
+      ],
+      "structuredSourceField": "operation.specialRateOfFire",
+      "owner": "I-D-F",
+      "reason": "Special rate-of-fire / reload interaction."
+    }
+  ],
+  "problems": []
+}
