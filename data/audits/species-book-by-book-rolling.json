@@ -1,0 +1,1366 @@
+{
+  "schemaVersion": 1,
+  "policy": "APPEND_ONLY_SOURCE_CLAIMS_ROLLING_RECONCILIATION",
+  "baseline": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "branch": "audit/species-book-by-book-canonical",
+    "sourceBooks": [
+      "Saga Edition Core Rulebook",
+      "Rebellion Era Campaign Guide"
+    ],
+    "priorAuditBranch": "audit/species-health-phase-0"
+  },
+  "statusVocabulary": {
+    "NO_CHANGE": "Source/field scope reviewed; no correction indicated. Does not certify runtime.",
+    "CHANGE_REQUIRED": "Source-backed discrepancy exists, pending a targeted corrective patch.",
+    "REVIEW_REQUIRED": "Supplemental or ambiguous issue; additional source or runtime proof needed.",
+    "NO_SPECIES_BASE_CHANGE": "Later book adds choices but does not replace innate species record.",
+    "FOUND_UNIQUE_SPECIES_FEAT": "One canonical feat identity matches exact title and source book; not runtime certification."
+  },
+  "books": [
+    {
+      "source": "Saga Edition Core Rulebook",
+      "printedScope": "Chapter 2 species, pp.23-33",
+      "reviewedSpecies": 17,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "printed Core species blocks checked against fast-search Core Rulebook_djvu.txt; previously rendered PDF pages for targeted rules",
+      "note": "Review includes core pack data and both sidecar consumers. Every species has explicit NO_CHANGE, CHANGE_REQUIRED, or REVIEW_REQUIRED."
+    },
+    {
+      "source": "Rebellion Era Campaign Guide",
+      "printedScope": "Heroic Traits - Species Feats pp.31-36",
+      "reviewedSpecies": 17,
+      "speciesFeats": 48,
+      "status": "OPTIONAL_FEAT_IDENTITIES_RECONCILED",
+      "sourceAuthority": "Rebellion Era Campaign Guide_djvu.txt species feat table and entries; cross-check to 353-id canonical feat identity manifest",
+      "note": "48 optional feats for 16 non-Human Core species; no printed replacement of Core innate traits identified. Exact feat effects, prerequisites, and runtime are for existing feat authority to certify."
+    }
+  ],
+  "summary": {
+    "coreRows": 17,
+    "coreNoChange": 2,
+    "coreChange": 5,
+    "coreReview": 10,
+    "coreIssues": 24,
+    "rebellionSpeciesFeats": 48,
+    "rebellionIdentityPresent": 48
+  },
+  "entries": [
+    {
+      "name": "Human",
+      "foundryId": "species-human",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "23",
+        "status": "NO_CHANGE",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [],
+        "notes": "No core-species mechanical correction identified in this static and primary-source comparison; runtime execution not certified."
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [],
+        "issues": [],
+        "note": "No Rebellion Era species feats granted to Humans; no changes required to Human species baseline."
+      }
+    },
+    {
+      "name": "Bothan",
+      "foundryId": "species-bothan",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "23-24",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-bothan-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Bothan Spy Network",
+            "reason": "supplementary conditional Gather Information reroll not in Core species traits; verify source before removing",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "23-24",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Bothan.conditionalTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Bothan Will",
+            "canonicalFeatId": "d40dea327376ec90",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::bothan-will",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Confident Success",
+            "canonicalFeatId": "139a80972fc3b8ee",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::confident-success",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Lasting Influence",
+            "canonicalFeatId": "ad740c563485664d",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::lasting-influence",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Cerean",
+      "foundryId": "species-cerean",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "24-25",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-cerean-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Binary Brain / Binary Brain (Reroll)",
+            "reason": "+2 species Will and a Knowledge reroll not in Core Cerean traits; verify other-book source and scope",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "24-25",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Cerean.structuralTraits / conditionalTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Binary Mind",
+            "canonicalFeatId": "33905755bbb1ca10",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::binary-mind",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Mind of Reason",
+            "canonicalFeatId": "987bdca14576cf2f",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::mind-of-reason",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Perfect Intuition",
+            "canonicalFeatId": "5a2ba2f28bc5ee01",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::perfect-intuition",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Duros",
+      "foundryId": "species-duros",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "25",
+        "status": "NO_CHANGE",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [],
+        "notes": "No core-species mechanical correction identified in this static and primary-source comparison; runtime execution not certified."
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Flawless Pilot",
+            "canonicalFeatId": "87969fb8b12ff507",
+            "identityKey": "feat::rebellion-era-campaign-guide::p33::flawless-pilot",
+            "printedPage": 33,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Spacer's Surge",
+            "canonicalFeatId": "dd6ad0e712e9a314",
+            "identityKey": "feat::rebellion-era-campaign-guide::p35::spacers-surge",
+            "printedPage": 35,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Veteran Spacer",
+            "canonicalFeatId": "423c5fffe7abe449",
+            "identityKey": "feat::rebellion-era-campaign-guide::p36::veteran-spacer",
+            "printedPage": 36,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Ewok",
+      "foundryId": "species-ewok",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "25-26",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-ewok-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Primitive Weapons",
+            "reason": "sidecar claims primitive weapon proficiency separate from printed Primitive suppression; check whether this creates extra proficiency",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "25-26",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits.json",
+              "field": "Ewok.structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Ample Foraging",
+            "canonicalFeatId": "223a5c14f2ea4737",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::ample-foraging",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Forest Stalker",
+            "canonicalFeatId": "febbb0f05c8a0883",
+            "identityKey": "feat::rebellion-era-campaign-guide::p33::forest-stalker",
+            "printedPage": 33,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Keen Scent",
+            "canonicalFeatId": "46d70ac7db6872f6",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::keen-scent",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Gamorrean",
+      "foundryId": "species-gamorrean",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "26",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-gamorrean-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Low Cunning (-2 Will)",
+            "reason": "sidecar adds penalty absent from printed Core Gamorrean traits; verify other-book source",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "26",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Gamorrean.structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          },
+          {
+            "id": "CORE-gamorrean-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Brutal Charge trigger",
+            "reason": "sidecar rule has when:always although its own text requires charging; source and entitlement also require verification",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "26",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Gamorrean.conditionalTraits[].rules[].when"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          },
+          {
+            "id": "CORE-gamorrean-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Weapon Familiarity (Arg'garok)",
+            "reason": "present in pack trait set but not Core racial traits; identify later source before changing",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "26",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "packs/species.db",
+              "field": "Gamorrean.system.canonicalTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Increased Resistance",
+            "canonicalFeatId": "0365722a629eed1f",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::increased-resistance",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Primitive Warrior",
+            "canonicalFeatId": "047f06ec480d841f",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::primitive-warrior",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Quick Comeback",
+            "canonicalFeatId": "21a0af5ef58172a0",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::quick-comeback",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Gungan",
+      "foundryId": "species-gungan",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "26-27",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-gungan-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Amphibious unlimited underwater breathing",
+            "reason": "sidecar describes unlimited air/water breathing, whereas Core specifies Hold Breath (25 x Constitution score rounds) and endurance checks",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "26-27",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Gungan.structuralTraits['Amphibious']"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          },
+          {
+            "id": "CORE-gungan-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Lucky",
+            "reason": "sidecar adds once-per-encounter generic reroll absent from Core; verify later source and feat/variant gate",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "26-27",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits.json",
+              "field": "Gungan.activatedAbilities"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Gungan Weapon Master",
+            "canonicalFeatId": "f916516eeeaae10b",
+            "identityKey": "feat::rebellion-era-campaign-guide::p33::gungan-weapon-master",
+            "printedPage": 33,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Perfect Swimmer",
+            "canonicalFeatId": "70c842436bbb6330",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::perfect-swimmer",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Warrior Heritage",
+            "canonicalFeatId": "a9a59c85cddbda1f",
+            "identityKey": "feat::rebellion-era-campaign-guide::p36::warrior-heritage",
+            "printedPage": 36,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Ithorian",
+      "foundryId": "species-ithorian",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "27-28",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-ithorian-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Sonic Bellow 1d6 adjacent",
+            "reason": "sidecar says 1d6 to adjacent enemies, Core Bellow is 3d6 sonic in 6-square cone with Fortitude attack and condition track cost",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "27-28",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits.json",
+              "field": "Ithorian.activatedAbilities['Sonic Bellow']"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          },
+          {
+            "id": "CORE-ithorian-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Nature Affinity +5 Knowledge (Life Sciences)",
+            "reason": "additional unconditional bonus not among Core innate traits; Core instead grants conditional Skill Focus in Life Sciences",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "27-28",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Ithorian.structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Devastating Bellow",
+            "canonicalFeatId": "9f1305cc6ada5d7a",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::devastating-bellow",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Nature Specialist",
+            "canonicalFeatId": "f965ca153bb13aaf",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::nature-specialist",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Strong Bellow",
+            "canonicalFeatId": "1a9091174116f6ff",
+            "identityKey": "feat::rebellion-era-campaign-guide::p36::strong-bellow",
+            "printedPage": 36,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Kel Dor",
+      "foundryId": "species-kel-dor",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "28-29",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-kel-dor-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Force Awareness +2 Use the Force",
+            "reason": "sidecar all-use bonus differs from narrow Core Keen Force Sense reroll; source/variant check before execution",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "28-29",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Kel Dor.structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Justice Seeker",
+            "canonicalFeatId": "3595086bb17d4303",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::justice-seeker",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Read the Winds",
+            "canonicalFeatId": "f5be1207aa6b1817",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::read-the-winds",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Scion of Dorin",
+            "canonicalFeatId": "08a15012d82f0d16",
+            "identityKey": "feat::rebellion-era-campaign-guide::p35::scion-of-dorin",
+            "printedPage": 35,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Mon Calamari",
+      "foundryId": "species-mon-calamari",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "29",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-mon-calamari-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Tech Savvy +2 Mechanics",
+            "reason": "sidecar modifier absent from Core innate traits; verify source before treating as automatic",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "29",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Mon Calamari.structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Fast Swimmer",
+            "canonicalFeatId": "d874a33284de77e4",
+            "identityKey": "feat::rebellion-era-campaign-guide::p33::fast-swimmer",
+            "printedPage": 33,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Mon Calamari Shipwright",
+            "canonicalFeatId": "bb16070b5fdfccf4",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::mon-calamari-shipwright",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Sharp Senses",
+            "canonicalFeatId": "2357f4a68fe571fb",
+            "identityKey": "feat::rebellion-era-campaign-guide::p35::sharp-senses",
+            "printedPage": 35,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Quarren",
+      "foundryId": "species-quarren",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "29-30",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-quarren-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Forceful Presence +2 Persuasion",
+            "reason": "sidecar modifier absent from Core innate traits; verify supplemental source and intimidation-only scope",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "29-30",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Quarren.structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Clawed Subspecies",
+            "canonicalFeatId": "edd8bb64c18d9a8a",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::clawed-subspecies",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Deep Sight",
+            "canonicalFeatId": "e4de79f4993a6690",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::deep-sight",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Shrewd Bargainer",
+            "canonicalFeatId": "df58db54c4b53539",
+            "identityKey": "feat::rebellion-era-campaign-guide::p35::shrewd-bargainer",
+            "printedPage": 35,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Rodian",
+      "foundryId": "species-rodian",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "30",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-rodian-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Keen Senses +2 Perception",
+            "reason": "sidecar modifier absent from Core, which grants a Perception reroll",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "30",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Rodian.structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Fringe Benefits",
+            "canonicalFeatId": "b1299c242802a260",
+            "identityKey": "feat::rebellion-era-campaign-guide::p33::fringe-benefits",
+            "printedPage": 33,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Hunter's Instincts",
+            "canonicalFeatId": "d2e86b15327ae544",
+            "identityKey": "feat::rebellion-era-campaign-guide::p33::hunters-instincts",
+            "printedPage": 33,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Master Tracker",
+            "canonicalFeatId": "d133d3fad058c35f",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::master-tracker",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Sullustan",
+      "foundryId": "species-sullustan",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "30-31",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-sullustan-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Spatial Awareness +5 Pilot/Initiative",
+            "reason": "sidecar claims bonus absent from Core, with migrated rule only specifying Pilot; source-check and reconcile",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "30-31",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Sullustan.structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Darkness Dweller",
+            "canonicalFeatId": "eaf7079b977d60b7",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::darkness-dweller",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Disarming Charm",
+            "canonicalFeatId": "9567c9e2fe8416e6",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::disarming-charm",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Sure Climber",
+            "canonicalFeatId": "f8748ba7993b6b17",
+            "identityKey": "feat::rebellion-era-campaign-guide::p36::sure-climber",
+            "printedPage": 36,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Trandoshan",
+      "foundryId": "species-trandoshan",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "31",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-trandoshan-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Regeneration automatic HP restoration",
+            "reason": "sidecar adds once-per-encounter healing, Core only grants limb regeneration; distinguish the separate Rebellion Regenerative Healing feat",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "31",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits.json",
+              "field": "Trandoshan.activatedAbilities['Regeneration']"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          },
+          {
+            "id": "CORE-trandoshan-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Claws provenance and die mismatch",
+            "reason": "pack has 1d4 claws, sidecar description says 1d6 while structured rule says 1d4; Core species text does not list natural claw damage",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "31",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "packs/species.db + data/species-traits-migrated.json",
+              "field": "Trandoshan.system.naturalWeapons / structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Pitiless Warrior",
+            "canonicalFeatId": "08896a9f860ebca9",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::pitiless-warrior",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Regenerative Healing",
+            "canonicalFeatId": "be1346b0cfb5ea78",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::regenerative-healing",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Thick Skin",
+            "canonicalFeatId": "e97cc5c5128a55ce",
+            "identityKey": "feat::rebellion-era-campaign-guide::p36::thick-skin",
+            "printedPage": 36,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Twi'lek",
+      "foundryId": "species-twi-lek",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "31-32",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-twi-lek-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Graceful +2 Reflex",
+            "reason": "Core gives Great Fortitude +2 Fortitude, not +2 Reflex; sidecar pseudo-passive risks extra unrelated defense bonus",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "31-32",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits.json + data/species-traits-migrated.json",
+              "field": "Twi'lek.structuralTraits['Graceful']"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          },
+          {
+            "id": "CORE-twi-lek-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Persuasion Training +5 Persuasion",
+            "reason": "Core provides Deceptive Deception reroll, not this automatic bonus; verify later source before retaining",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "31-32",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits.json + data/species-traits-migrated.json",
+              "field": "Twi'lek.structuralTraits['Persuasion Training']"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Imperceptible Liar",
+            "canonicalFeatId": "ec8b6bb889f65dea",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::imperceptible-liar",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Jedi Heritage",
+            "canonicalFeatId": "d3c4ae9f793b8573",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::jedi-heritage",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Survivor of Ryloth",
+            "canonicalFeatId": "90a258aae2583994",
+            "identityKey": "feat::rebellion-era-campaign-guide::p36::survivor-of-ryloth",
+            "printedPage": 36,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Wookiee",
+      "foundryId": "species-wookiee",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "32-33",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-wookiee-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Endurance +2 Fortitude",
+            "reason": "Core gives CON +2 but no standalone +2 species Fortitude; sidecar can add unsupported extra defense modifier",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "32-33",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits.json + data/species-traits-migrated.json",
+              "field": "Wookiee.structuralTraits['Endurance']"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          },
+          {
+            "id": "CORE-wookiee-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Rage trigger and duration",
+            "reason": "sidecar Rage triggers automatically below half HP for encounter, but Core Rage is chosen swift action, once/day, 5+CON mod rounds with persistent CT penalty",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "32-33",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Wookiee.conditionalTraits['Rage']"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          },
+          {
+            "id": "CORE-wookiee-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Natural claws",
+            "reason": "pack includes 1d6 claw weapon while Core species traits do not grant natural claw attacks; check source and how character uses claws",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "32-33",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "packs/species.db",
+              "field": "Wookiee.system.naturalWeapons"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Bowcaster Marksman",
+            "canonicalFeatId": "db82e1df17c3110b",
+            "identityKey": "feat::rebellion-era-campaign-guide::p31::bowcaster-marksman",
+            "printedPage": 31,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Resurgent Vitality",
+            "canonicalFeatId": "47f21e32233bb910",
+            "identityKey": "feat::rebellion-era-campaign-guide::p35::resurgent-vitality",
+            "printedPage": 35,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Wroshyr Rage",
+            "canonicalFeatId": "2ed1a3257175feb9",
+            "identityKey": "feat::rebellion-era-campaign-guide::p36::wroshyr-rage",
+            "printedPage": 36,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Zabrak",
+      "foundryId": "species-zabrak",
+      "core": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "33",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "recordIdentityStable": true,
+          "abilityModifiersSizeSpeedAgainstExistingCanonicalReference": true,
+          "packCanonicalTraitListReviewed": true,
+          "sidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "issues": [
+          {
+            "id": "CORE-zabrak-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Battle Hardened +2 Fortitude",
+            "reason": "sidecar adds independent +2 Fortitude not in Core; Core Superior Defenses +1 to all defenses",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "33",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits-migrated.json",
+              "field": "Zabrak.structuralTraits"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          },
+          {
+            "id": "CORE-zabrak-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Irrepressible",
+            "reason": "sidecar one-per-encounter stun/daze ignore absent from Core racial traits; verify later source and eligibility",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "pages": "33",
+              "sourceType": "published_species_traits"
+            },
+            "target": {
+              "file": "data/species-traits.json",
+              "field": "Zabrak.activatedAbilities"
+            },
+            "action": "SURGICAL_RECONCILIATION_AFTER_PROVENANCE_CHECK",
+            "applied": false
+          }
+        ],
+        "notes": null
+      },
+      "rebellion": {
+        "source": "Rebellion Era Campaign Guide",
+        "printedPages": "31-36",
+        "scope": "ADDITIONAL_OPTIONAL_SPECIES_FEATS",
+        "status": "NO_SPECIES_BASE_CHANGE",
+        "featIdentityStatus": "ALL_IDENTITIES_PRESENT",
+        "speciesFeats": [
+          {
+            "featName": "Inborn Resilience",
+            "canonicalFeatId": "9d70c309eb95da5e",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::inborn-resilience",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Instinctive Perception",
+            "canonicalFeatId": "bf71e5f4171547ef",
+            "identityKey": "feat::rebellion-era-campaign-guide::p34::instinctive-perception",
+            "printedPage": 34,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          },
+          {
+            "featName": "Unwavering Focus",
+            "canonicalFeatId": "0214e9586b6c8bb5",
+            "identityKey": "feat::rebellion-era-campaign-guide::p36::unwavering-focus",
+            "printedPage": 36,
+            "identityStatus": "FOUND_UNIQUE_SPECIES_FEAT",
+            "prerequisitesAndRuntimeVerified": false
+          }
+        ],
+        "issues": [],
+        "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    }
+  ]
+}
