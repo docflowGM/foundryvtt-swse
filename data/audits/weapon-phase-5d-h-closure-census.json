@@ -10,8 +10,8 @@
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 10,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 42,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 47,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 41,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 46,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 2,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
@@ -142,14 +142,13 @@
         "id": "3b.operation.ammo-resource-reload",
         "fieldPaths": 46,
         "status": "PARTIAL",
-        "consumedKeys": 20,
+        "consumedKeys": 21,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 1
         },
         "executableUnconsumed": [
           "capacityGrenades",
-          "hasFoldingStock",
           "oneShotCapacity",
           "powerCordDisconnectRule",
           "powerLevelSwitchAction",
@@ -683,6 +682,7 @@
           "canUseStandalone",
           "cannotFireThermalDetonators",
           "firingConstraints",
+          "hasFoldingStock",
           "maxShotsPerRound",
           "mountMechanicsDC",
           "mountTimeMinutes",
@@ -712,7 +712,6 @@
         },
         "executableUnconsumed": [
           "capacityGrenades",
-          "hasFoldingStock",
           "oneShotCapacity",
           "powerCordDisconnectRule",
           "powerLevelSwitchAction",
@@ -721,7 +720,7 @@
           "specialRateOfFire"
         ],
         "owner": "resource / reload rules (inventory phase)",
-        "executableUnconsumedOccurrences": 10,
+        "executableUnconsumedOccurrences": 9,
         "representativeIdentities": [
           "lightsaber-chassis-archaic-lightsaber",
           "weapon-blaster-carbine",
@@ -1280,7 +1279,6 @@
       "ability-compatibility.redirectionCrystalCompatibility",
       "ability-compatibility.surveillanceTaggerCompatibility",
       "ammo-resource-reload.capacityGrenades",
-      "ammo-resource-reload.hasFoldingStock",
       "ammo-resource-reload.oneShotCapacity",
       "ammo-resource-reload.powerCordDisconnectRule",
       "ammo-resource-reload.powerLevelSwitchAction",
@@ -1319,8 +1317,8 @@
       "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 42,
-    "rawOccurrencesUnconsumed": 47,
+    "uniqueKeysUnconsumed": 41,
+    "rawOccurrencesUnconsumed": 46,
     "problems": []
   },
   "relations": {

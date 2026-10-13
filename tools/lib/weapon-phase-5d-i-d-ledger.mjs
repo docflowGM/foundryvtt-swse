@@ -147,8 +147,13 @@ export const I_D_ROWS = Object.freeze([
     verify: (reg) => { const r = reg.identities.find((x) => x.identityKey === 'weapon-snap-baton'); return (r?.canonicalStats?.configurationStates ?? []).some((c) => c.id === 'collapsed' && c.transitionAction === 'swift'); },
     reason: 'Snap Baton collapses and expands as a swift action. The same fact is the collapsed configuration state, whose swift transition FireStateStore.setConfiguration already pays.',
   }),
-  deferred('hasFoldingStock', 'ammo-resource-reload', 'I-D-B', 'Stock configuration / construction option.'),
-  deferred('retractableStockOptional', 'ammo-resource-reload', 'I-D-B', 'Stock configuration / construction option.'),
+  op('hasFoldingStock', 'ammo-resource-reload', 'I-D-B', 'IMPLEMENTED', { automation: 'AUTO', consumer: { file: 'scripts/engine/combat/fire-state-store.js', probe: '\\bhasFoldingStock\\b' }, reason: 'Phase 5D-I-D-B5: the Targeting Blaster Rifle STATES it has no folding stock (false). FireStateStore.setStockState (the existing owned stock-state writer; Move action paid through the action economy) refuses with no-stock, even for a free GM correction, and writes nothing. Only the stated absence refuses; a weapon that does not say (purchase option, installed modification) is not guessed at. Stock position stays owned state; the canonical definition is never mutated.' }),
+  op('retractableStockOptional', 'ammo-resource-reload', 'I-D-B', 'NON_EXECUTABLE', {
+    nonExecutableClass: 'STORE',
+    automation: 'GM_ADJUDICATED',
+    verify: (reg) => { const r = reg.identities.filter((x) => x.operation && 'retractableStockOptional' in x.operation); return r.map((x) => x.identityKey).sort().join() === 'weapon-blaster-carbine,weapon-blaster-rifle' && r.every((x) => x.operation.retractableStockOptional === true) && r.every((x) => Number.isFinite(x.operation.retractableStockCostCredits ?? x.operation.costWithoutRetractableStockCredits)); },
+    reason: 'Blaster Rifle / Blaster Carbine: the retractable stock is a PURCHASE option with a price (retractableStockCostCredits / costWithoutRetractableStockCredits, already classified as store data). It states no attack rule. Fitting a stock is a persistent MODIFICATION (the retractable_stock upgrade through the upgrade authorities), whereas extending / folding one is an operational configuration (owned stock state, Move action); this key conflates neither and executes nothing.',
+  }),
   // ------------------------------------------------------------------ I-D-F : ammunition / power source / reload
   op('capacityGrenades', 'ammo-resource-reload', 'I-D-F', 'DUPLICATE', {
     carrier: 'canonicalStats.ammo.capacityShots (= 4) and the generated production projection system.ammunition.max',
