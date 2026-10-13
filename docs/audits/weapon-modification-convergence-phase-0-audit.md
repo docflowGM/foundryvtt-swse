@@ -3,11 +3,11 @@
 **Status:** audit only. No runtime, pack, template, or data change accompanies this document.
 **Baseline:** `9cca1452a3f9b65dca2713ad0e534b3cb3da7361`, which is current `origin/main` (re-fetched for revision 2). Revision 1 of this document said `origin/main` had moved to `811462e`. That was wrong: `811462e` is a stale **local** `main` branch ref in the session checkout, not the remote. The baseline did not move.
 **Branch:** `claude/weapon-modification-roadmap-iq4c8w`
-**Revision 2 and 3:** corrections from the independent Phase 0 review of PR #1031. Documentation only; see section 12 for the change list.
+**Revisions 2-4:** corrections from the independent Phase 0 review of PR #1031. Documentation only; see section 14 for the change list.
 
 ## 0. Read this first: input provenance and limits
 
-1. **Inputs received.** Revision 1 used only `SWSE_Modification_Schema_Proposal_v1.2.md` (42 KB). The reviewer then supplied corrections **in the review message**, including the binding decisions in section 9. **The file `SWSE_Claude_Weapon_Modification_Handoff_v2_CORRECTED.md` was referenced but is not present in this session** (searched the filesystem and the upload directory). This revision therefore applies exactly what the review message states, and nothing else. Anything the v2 file adds beyond the review message is **not reflected**; section 9 marks the places where that could matter. If the v2 file is supplied, a further reconciliation pass is needed.
+1. **Inputs received.** Revision 1 used only `SWSE_Modification_Schema_Proposal_v1.2.md` (42 KB). Revisions 2-3 applied corrections stated in the review messages. **Revision 4 reconciles against the complete `SWSE_Claude_Weapon_Modification_Handoff_v2_CORRECTED.md` (810 lines), now received and read in full.** Its section 0A, section 2 (LATEST LOCKED DECISIONS) and section 4 (Phase 0 task list) are treated as binding. Where this document and v2 differ, v2 and the latest direct review decisions win. Section 12 lists which v2 Phase 0 deliverables this PR does and does not contain.
 2. **Certification status.**
    - Items marked **reviewer-certified** come from the review message, which states they were verified against the scanned PDFs (*Scum and Villainy* p. 37; *Knights of the Old Republic Campaign Guide* p. 75, Table 5-6). I did not open those PDFs and have not independently verified them.
    - Everything else in section 3 remains OCR-derived (`reference/sourcebooks/*.txt`; per its README the PDF is the final authority). The *Scum and Villainy* chapter is mostly illegible in OCR.
@@ -48,7 +48,7 @@
 |---|---|---|---|
 | C1 | **Engine ignores `system.upgradeSlots`; Workbench trusts it.** | S1 vs S3 | A pack/custom item with `upgradeSlots` ≠ 1 shows different capacity in the Workbench than `InstallRemoveEngine` enforces. |
 | C2 | **Structural double count in the Workbench.** `applySizeIncrease`/`applyStrip` write `system.upgradeSlots = stock+size+strips`; the Workbench reads that as base and adds `size+strips` again. | S5 vs S3 | An item enlarged via `CustomizationWorkflow` and later opened in the Workbench shows +1 (or +N strips) too many slots. Only reachable if both paths touch the same item. *Runtime validation needed.* |
-| C3 | **Tech Specialist slot bonus is read by only one consumer, and three different ways.** S6 writes `system.upgradeSlots` (honored by S3, ignored by S1). S9 adds a separate `+1` for lightsabers by feat presence. | S1/S3/S6/S9 | Same feat, different slot totals by path, and no per-item record of which item received the benefit. (The `tech_device_upgrade_slot` trait is catalogued, line 19 of the service.) |
+| C3 | **Tech Specialist slot bonus is read by only one consumer, and three different ways.** S6 writes `system.upgradeSlots` (honored by S3, ignored by S1). S9 adds a separate `+1` for lightsabers by feat presence. | S1/S3/S6/S9 | Same feat, different slot totals by path, and no per-item record of which item received the benefit. The underlying `tech_device_upgrade_slot` trait is **source-unverified** (section 3.3), so the grant itself is not certified. |
 | C4 | **`UpgradeService.getSlotUsage` reads fields that do not exist.** `CustomizationWorkflow.getFullCustomizationState().slots` is `{stockBase, totalAvailable, usedSlots, freeSlots, …}`; the service reads `slots.used` / `slots.total`. | `customization-workflow.js:61`, `UpgradeService.js:352-354` | The Upgrade app always receives `{used:0,max:0,remaining:0}` for standard items. |
 | C5 | **Hard-coded 10-slot cap** in `SafetyEngine.#validateInstallOperation` is applied in addition to the real total. | S7 | An item that legitimately has >10 total slots can never reach them; an item with 1 slot is still bounded only by `canAccommodate` in eligibility. The two checks answer different questions. |
 | C6 | **Base slot defaults disagree (1 / 2 / 3) and do not match the reviewer-certified baseline.** Engine: `1` for everything except powered armor `2`. Workbench legacy fallback (S4): weapon `2`, armor `3`. `template.json`: `1`. Lightsaber chassis default: `3`. Certified baseline (section 3): ordinary weapon 1, ordinary equipment 1, light armor 1, medium armor 2, heavy armor 3. Pack data: `weapons.db` 188/207 have no `upgradeSlots`, 13 have `2`, 4 `1`, 1 `0`, 1 `3`; `weapons-lightsabers.db` 13/15 have `2`; all 133 armor and 142 equipment records have none. | pack census (section 10) | The "stock" count for an unannotated item is whichever fallback the consumer happens to use. The Workbench's weapon fallback `2` contradicts the certified `1`; the engine's armor `1` is wrong for medium and heavy; the Workbench's armor `3` is correct only for heavy. |
@@ -84,8 +84,10 @@ The earlier handoff's heavy-armor value of 1 was wrong. This audit never adopted
 
 | Topic | What is known | Why it is unresolved |
 |---|---|---|
-| **Powered armor baseline** | KotOR Campaign Guide OCR (≈ lines 6563-6565, 6601): light powered armor and powered battle armor each have "2 free upgrade slots (as does all powered armor)" under the *Scum and Villainy* modification rules. **L** | It is not decided whether 2 *replaces* or *adds to* the weight-class baseline (light 1 / medium 2 / heavy 3), and the OCR wording is "free upgrade slots". The repo's `isPoweredArmor → 2` (S1) is therefore **U**, not confirmed. Also depends on `isPoweredArmor` being set correctly (`item-profile-resolver.js:170`). |
-| **Lightsaber accessory vs general slots** | Masterwork Lightsaber grants "one extra accessory" at creation (*Jedi Academy Training Manual*, OCR ≈ line 1610, **L**). Repo S9 uses chassis `upgradeSlots` or constant `3`, `+1` for Tech Specialist. | Whether lightsabers have general (non-accessory) upgrade slots, how they relate to accessory/crystal/construction pools, the published base accessory count, and whether Tech Specialist's `+1` is published are all **U**. Masterwork Lightsaber's extra accessory is a different mechanism from the repo's Tech Specialist `+1`. |
+| **Powered armor baseline** | KotOR Campaign Guide OCR (≈ lines 6563-6565, 6601): light powered armor and powered battle armor each have "2 free upgrade slots (as does all powered armor)" under the *Scum and Villainy* modification rules. **L** | It is not decided whether 2 *replaces* or *adds to* the weight-class baseline (light 1 / medium 2 / heavy 3), and the OCR wording is "free upgrade slots". The repo's `isPoweredArmor → 2` (S1) is therefore **U**, not confirmed. Classification is also unsafe today: when `system.isPoweredArmor` is not a boolean, `_resolvePoweredArmor` falls back to `/power/i.test(item.name)` (`item-profile-resolver.js:170-175`), so a **mutable name** can change an item's slot baseline. v2 requires that a renamed item cannot change classification. |
+| **Lightsaber construction accessory vs general slots** | *Jedi Academy Training Manual* (OCR, accessory section, ≈ lines 5472-5486; v2 cites printed pp. 54, 60, reviewer-verified against scans): at creation "the crafter can choose **one** of the following lightsaber accessories or modifications ... at no additional cost in time or credits. A character with the Tech Specialist feat ... can add **one additional** accessory or modification, which counts toward the weapon's one-modification limit." **L** | The one-modification limit and the Tech Specialist exception are a *construction accessory allowance*, not a general upgrade-slot count. Whether an accessory also consumes a general *Scum and Villainy* slot, and how the "counts toward the one-modification limit" clause is to be read, is **U**. The Workbench's `+1` for Tech Specialist (S9) models that exception as a slot count, which is an unapproved interpretation. The engine also does not limit accessory *count* (v2 Appendix B). |
+| **Lightsaber chassis `upgradeSlots` 2/3, crystal and accessory `upgradeSlots: 1`** | Pack data (C6). v2 section 0A: not automatically general capacity or cost. | **U**. Keep as evidence only. Dual-phase two-crystal settings are mutually exclusive, not simultaneous (v2 Appendix B). |
+| **Tech Specialist `tech_device_upgrade_slot` ("Additional Upgrade Slot")** | `tech-specialist-modification-service.js:19,372`. The *Starships of the Galaxy* Tech Specialist table (OCR ≈ lines 1890-1912) lists device traits Enhanced Strength, Improved Durability, Mastercraft Device only. | **Source UNVERIFIED** (OCR agrees with v2). Not a certified slot grant. It writes `system.upgradeSlots` (S6). Must not be counted as a grant until provenance is established. |
 
 ### 3.4 OCR-only observations (not certified)
 
@@ -134,7 +136,30 @@ It does **not** read `flags.swse.blasterUpgrades`, `flags.swse.appliedTemplates`
 - Critical: `combat/utils/combat-utils.js` `getEffectiveCritRange` (reads `system.critRange`, `EXTEND_CRITICAL_RANGE` rule); `combat-roll-math.js:884` `resolveCriticalMultiplier` (the declared single multiplier authority); `items/weapon-runtime/special-mechanics.js:256-260` `criticalEffects` (`add-damage-after-critical-multiplication`, `critical-die-replace`).
 - `engine/combat/weapons-engine.js:301-312,441-460` reads `weapon.system.installedUpgrades` **as an array of item ids** resolved against `actor.items`. The only live writer stores `{id, name, cost, slotsUsed…}` objects. This consumer therefore matches no live producer (the same observation `combat-stat-rules.js:519-530` records in its comment). *Dead path; classify D/B in a later phase, do not delete in Phase 0.*
 - Workbench/Upgrade UI: `PanelContextBuilder`, `RowTransformers` (`upgradeSlots` for display), `WorkbenchSurfaceAdapter`.
+- Further id-based `installedUpgrades` readers with no matching live producer shape: `scripts/engine/crafting/phase-3-advanced-crystal-system.js:92-95,166-171,242-243`. An **armor** reader of `system.installedUpgrades` exists at `scripts/engine/effects/modifiers/ModifierEngine.js:1460-1462` (out of weapon scope; noted for the later armor workstream).
 - **No combat consumer reads `flags.swse.techSpecialist`, `appliedTemplates`, `alchemy`, or `customization.installedUpgrades`.** Their effect reaches combat only through the direct stat keys they write.
+
+### 4.4 Field classification (v2 Phase 0, step 5)
+
+STOCK = published base · DERIVED = computed by one writer and stored · SOURCE = installed fact · DISPLAY = UI only · ALIAS = duplicate of another field · UNKNOWN.
+
+| Field | Class | Evidence |
+|---|---|---|
+| `system.upgradeSlots` | **UNKNOWN / DERIVED-or-STOCK** (legacy ambiguous, per decision 9.1) | Written as derived by S5, incremented by S6, defaulted to `1` by `item-defaults.js`/`safe-item-factory.js`/`custom-item-dialog.js` (which turns `0` into `1`), set `0` by Force Alchemy (Sith amulet), authored per record in packs and `tools/fix-equipment-data.js`. |
+| `flags.foundryvtt-swse.customization.structural.{sizeIncreaseApplied,strippedAreas}` | SOURCE | Written by `StructuralChangeEngine` and the Workbench. |
+| `system.sizeIncreaseApplied`, `system.strippedFeatures.*` | ALIAS (legacy mirrors of the above) | Read only by legacy recovery. |
+| `flags.foundryvtt-swse.customization.installedUpgrades[]` | SOURCE | `InstallRemoveEngine`, Workbench. |
+| `system.installedUpgrades[]` | ALIAS/DISPLAY (summaries) for InstallRemoveEngine, but the **only** store for `UpgradeService` | Shape differs per writer (section 4.1). |
+| `flags.swse.{blasterUpgrades,meleeUpgrades,armorUpgrades,gearMods}` | ALIAS of Workbench selections; `blasterUpgrades` not recovered (section 4.2) | Workbench apply. |
+| `flags.swse.customizationStructural`, `flags.swse.appliedTemplates` | ALIAS (Workbench mirrors) | Workbench apply; not recovered. |
+| `system.gearTemplate(Secondary)` | SOURCE/ALIAS of `appliedTemplates` | `TemplateEngine`. |
+| `flags...overrides.stockSlotOverride` | UNKNOWN (legacy evidence; no writer found) | Read only, `item-profile-resolver.js:63`. |
+| `system.critRange`, `system.attackBonus`, `system.flatDamageBonus`, `system.damageBonus`, `system.ammo`, `system.damageType`, `system.rateOfFire`, `system.<x>Bonus` | **DERIVED by install-time mutation, baseline not preserved** | `EffectResolver`, Tech Specialist (section 5). Cannot be reconstructed after removal. |
+| `system.modifiers` (lightsaber) | DERIVED copy of component records | `LightsaberConstructionEngine`. |
+| `flags.*.lightsaberConfig` | SOURCE (component references) | Same. |
+| `flags.{foundryvtt-swse,swse}.alchemy` | SOURCE | `ForceAlchemyMechanicsService`. |
+| `flags.swse.techSpecialist.*` | SOURCE | `TechSpecialistModificationService`. |
+| Workbench `flags.swse.{accentColor,tintColor,variant,boltColor,fxType}` | DISPLAY | Workbench. |
 
 ## 5. Where "effective weapon properties" are calculated, and where it is duplicated
 
@@ -161,6 +186,19 @@ There is no effective-profile resolver. The effective value is whatever was last
 | Transaction | Install/remove/template/structural: `ActorEngine.applyMutationPlan` with `LedgerService.buildCreditDelta`. Workbench: `TransactionEngine.executeMutationTransaction`. `UpgradeService`: two separate writes. | Three different atomicity models. |
 | Duplicate-apply guard | `SafetyEngine.guardAgainstDuplicateApply` (in-memory, per client) | Not cross-client. |
 | Remaining direct mutations | `TechSpecialistModificationService` `subject.update` fall-through (lines 569/590/687, non-owned items); `UpgradeService` `item.update` for unowned (`@mutation-exception: world-item`). | Documented exceptions or unmarked; review in Phase 2. |
+
+### 6.1 Forged-call and bypass trace (v2 Phase 0, step 4)
+
+| Entry point | Capacity check | Eligibility check | Late revalidation at write | Bypass? |
+|---|---|---|---|---|
+| `CustomizationWorkflow.applyInstall` → `InstallRemoveEngine.applyInstall` | Yes: `previewInstall` → `canInstallUpgrade` → `slotEngine.getSlotAccounting().canAccommodate` (S2), then `SafetyEngine.validateCustomizationApply` (hard-coded 10) | Yes (`UpgradeEligibilityEngine`) | Yes: `previewInstall` re-run inside `applyInstall`, after the in-flight guard | Capacity is checked against S2 only, so it is wrong wherever S2 is wrong (C1, C11, legacy-only upgrades invisible to S2). |
+| `UpgradeCommands.applyItemUpgrade` → `UpgradeService.applyUpgrade` | Indirect: requires the key to appear in `getFullCustomizationState().availableUpgrades` with `allowed` (so `insufficient_slots` applies, S2) | Yes, same source | No second pass; the item write precedes the credit write | A direct call with a key from the list passes; capacity is stale if state changed between the list build and the write (same call, so narrow). Writes only `system.installedUpgrades`, so S2 does not see the new entry once the canonical flag exists (section 4.2). |
+| `ItemCustomizationWorkbench._applyCurrentItem` | Workbench's own `_getSlotState` (S3), via `_validateDraft` (`:595-613`) | **None.** The Workbench never references `UpgradeEligibilityEngine`, `InstallRemoveEngine` or `CustomizationWorkflow` (grep). It checks only slots, funds, category, duplicates and `GearTemplatesEngine.canApplyTemplate` | `_validateDraft` is re-run at apply; `TransactionEngine.executeMutationTransaction` (`validate:true`) has no slot or upgrade logic (grep of `transaction-engine.js`) | **Yes.** Canonical-weapon upgrade restrictions, Tech Specialist feat gates and `requires` flags are not enforced here; capacity relies on the client-side draft arithmetic and the item's `system.upgradeSlots`. |
+| `StructuralChangeEngine.applySizeIncrease/applyStrip` | `canApplySizeIncrease` / `canStripArea` only; no check that existing upgrades still fit | n/a | None | A strip or size change does not re-validate occupancy. |
+| `TechSpecialistModificationService` | None (does not consult slots) | Feat and signature-device logic | None | Writes `system.upgradeSlots` and stat keys directly (S6). |
+| `ActorEngine.updateOwnedItems/updateEmbeddedDocuments/applyMutationPlan` | **None.** No reference to slots or `installedUpgrades` in `actor-engine.js` (grep) | None | None | **Yes.** Any caller (macro, sheet, GM tool, a forged client call) can write `system.installedUpgrades` or `flags.foundryvtt-swse.customization` with no capacity or eligibility check at the mutation authority. This is a design observation, not a proposal to add domain logic to `ActorEngine` in Phase 0. |
+
+*Static reading; no live forged-call test was run.*
 
 ## 7. Rules that remain uncertified (must not be implemented)
 
@@ -205,6 +243,8 @@ Phase 1 is split by gate. **Only 1a is proposed for the next approval, and it is
 10. Category spoofing: a non-armor item cannot receive an armor baseline by setting `isPoweredArmor` or a weight class; domain comes from item type.
 11. Deterministic: same input gives the same output; input item objects are not mutated.
 12. Static guard: the module contains no call to `ActorEngine`, `.update(`, `setFlag`, `unsetFlag`.
+13. A `tech_device_upgrade_slot` record is listed as a source-unverified grant and contributes 0 to the total.
+14. Powered-armor status never comes from the item's name: a non-boolean `isPoweredArmor` on an item named "Power ..." is reported unresolved, and renaming an item never changes its baseline.
 
 ### Later gates (not proposed for approval now; each needs its own approval)
 
@@ -233,7 +273,7 @@ Phase 1 is split by gate. **Only 1a is proposed for the next approval, and it is
 2. **Lightsaber** accessory vs general slots, and the Tech Specialist `+1` (3.3).
 3. Disposition of `UpgradeService.applyUpgrade/removeUpgrade` (a third installed-upgrade shape): proposed to reroute through `InstallRemoveEngine` at a later gate. Needs approval.
 4. Provenance of the 28 Workbench catalog entries (shipped content or placeholders). Not determined here.
-5. **Items the v2 handoff may settle that I could not see** (the file was not received, section 0): the per-family stacking rules, any lightsaber slot pools, any migration policy for legacy installed-upgrade shapes, and anything else locked there. If v2 settles items 1-4, this audit should be reconciled to it.
+5. **Reconciled with v2 (revision 4):** v2 section 0A decisions 1-7 match section 9.1. v2 additionally freezes (section 2, item 9): lightsaber chassis `upgradeSlots` 2/3 meaning, crystal/accessory `upgradeSlots: 1` meaning, Tech Specialist `tech_device_upgrade_slot` provenance, lightsaber Tech Specialist accessory interaction, unknown source-specific exceptions, stock-vs-derived status of mutated `system.upgradeSlots`, critical-range stacking/caps, die-step progression, effects without rules, and unresolvable migrated baselines. Each is a BLOCKED / SOURCE_CLARIFICATION_NEEDED item here; none is resolved or implemented.
 
 ## 10. Validation and method
 
@@ -265,7 +305,42 @@ Method notes:
 | `stockSlotOverride` | **D/E** pending decision |
 | `TechSpecialistModificationService` direct stat writes | **B** convergence candidate (per v1.2 §1.1) |
 
-## 12. Revision 2 and 3 change lists (documentation only)
+## 12. v2 Phase 0 conformance (what this PR does and does not contain)
+
+| v2 Phase 0 requirement | Status in this PR |
+|---|---|
+| 1. Latest main SHA, branch | Done (`9cca145`; branch is the session-designated `claude/weapon-modification-roadmap-iq4c8w`, not the v2 suggested name). |
+| 2. Inventory of slot producers, readers, defaults, structural, Tech Specialist, costs, `freeSlots`/overflow sites | Sections 2, 3, 4. Existing-upgrade slot costs compared by catalog (section 2, C9/C10); a full per-entry cost matrix is **not** produced. Sheet/compendium consumers listed only at the `upgradeSlots` display level. |
+| 3. Weapon modification producers, persist paths, consumers, double-count paths | Sections 4, 5. |
+| 4. Call graphs and forged-call bypass trace | Section 6.1 (new in revision 4). |
+| 5. Field classification | Section 4.4 (new). Production-Item *shape* classification by pack: counts only (C6); owned-world items cannot be censused statically. |
+| 6. Sourcebook verification by page | **Partial.** Items marked **C** rest on the reviewer's PDF verification (S&V p. 37; KotOR p. 75; JATM pp. 54, 60 per v2). I opened no PDF. S&V pp. 38-39, KotOR crystal sections and the Starships Tech Specialist table were checked in OCR only. |
+| 7. Production migration dry-run plan | Section 13 (new), a plan only. |
+| 8. Read-only `ModificationSlotAuthority` API contract | **Intentionally not included.** The review directs this to a separate Phase 1a contract-only proposal after Phase 0 is approved. |
+| 9. `WeaponModificationEngine` boundary and per-source mapping | Section 5 (sources, collisions, existing consumers) only; no separate boundary specification. |
+| 10. Exact Phase 1 changes and acceptance tests | Section 8 (Phase 1a read-only; later gates). |
+| Deliverable files: `modification-convergence-phase-0-authority-map.md`, `data/audits/modification-convergence-phase-0-matrix.json`, `...-source-questions.md`, `...-implementation-handoff.md` | **Not created.** This PR keeps one document (accepted in the previous review round). Splitting out the machine-readable matrix, source-question list and implementation handoff is available on request; I did not add files without that direction. |
+
+## 13. Migration dry-run plan (plan only; no data edited)
+
+Scope: weapon items first; armor/equipment share the slot authority but not modification schemas.
+
+1. **Inputs:** shipped packs (`weapons*.db`, `armor*.db`, `equipment*.db`, `lightsaber-*.db`) and, separately, GM-exported world/actor items. World items are the real risk and cannot be assessed from this repo.
+2. **Record classes** (each gets a status, never a guessed value):
+   - *Recoverable:* canonical identity resolves in the weapon registry and the published baseline is certified (ordinary weapon 1; armor by weight class; equipment 1) → baseline from the certified definition.
+   - *Legacy ambiguous:* `system.upgradeSlots` present, no canonical flag, or structural flags with a stored total → value preserved as evidence; baseline `unresolved` unless it can be shown that it equals certified stock **plus** only recorded grants.
+   - *Dual-representation:* canonical customization flag plus legacy-only upgrades (`system.installedUpgrades` or `blasterUpgrades`) → conflict report (section 4.2 scenarios).
+   - *Unmapped:* Workbench catalog keys with no certified mapping → listed, not costed.
+   - *Missing/invalid `slotCost`:* reported per decision 9.1.
+   - *Name-classified powered armor:* items where `isPoweredArmor` is not boolean and the name matches `/power/i` → flagged for GM/manual review.
+   - *Tech Specialist device-slot items:* `tech_device_upgrade_slot` records → quarantined as source-unverified.
+   - *Lightsabers:* chassis `upgradeSlots` 2/3, crystal/accessory `1` → evidence only; pools unresolved.
+3. **Pre/post invariants:** the dry run must not change any item; total and free-slot figures from the old arithmetic and the new authority are reported side by side; any difference is listed with its cause (C1, C2, C3, C11, legacy omission); no item is auto-reconciled.
+4. **Output:** a deterministic report (counts per class, per-item diffs, GM-review list). Safe-to-infer cases are only those with a resolved canonical identity and a certified baseline.
+5. **Not in plan:** writes, flag deletion, subtraction of guessed bonuses, droid/vehicle items.
+
+
+## 14. Revision change lists (documentation only)
 
 - Baseline note corrected: `origin/main` is `9cca145`; `811462e` was a stale local ref.
 - Section 0: input provenance restated; v2 handoff file not present; certified items distinguished from OCR items.
@@ -289,3 +364,11 @@ Method notes:
 4. The same upgrade in both canonical and legacy representations (matching key) → counted once, provenance records both.
 5. Legacy entry with missing `slotsUsed` → `slotCost` unresolved (current adapter coerces to 0; decision 9.1 forbids defaulting).
 6. Workbench-only keys (not in `UPGRADE_CATALOG`) present in the legacy flags → surfaced as unmapped, not costed.
+
+**Revision 4** (reconciliation with the received v2 handoff, documentation only):
+
+- Section 0: v2 received and read; precedence stated.
+- Section 3.3: lightsaber rows rewritten around the Jedi Academy one-modification allowance and its Tech Specialist exception; chassis/crystal/accessory `upgradeSlots` kept as evidence; `tech_device_upgrade_slot` marked source-unverified (OCR of the Starships table agrees with v2); powered-armor row corrected (mutable-name classification fallback).
+- Section 4.3: further id-based and armor `installedUpgrades` readers noted. Section 4.4: field classification. Section 6.1: forged-call and bypass trace. Section 9.2: v2's frozen items recorded. Sections 12-13: v2 conformance table and dry-run plan.
+- Baseline `9cca145` unchanged. No runtime, catalog, data or test file changed.
+
