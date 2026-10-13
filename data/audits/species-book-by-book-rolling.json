@@ -98,6 +98,14 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Scanned PDF pages 26,34,117,127 were rendered and reviewed directly; searchable Threats TXT used for navigation and comparing, Galaxy of Intrigue Bith passage checked for later edition difference.",
       "notes": "Organics-only species audit; later Galaxy of Intrigue explicitly supports current Bith race version. Do not erase prior race/profile based on Threats. No Foundry runtime or production changes."
+    },
+    {
+      "source": "Galaxy of Intrigue",
+      "printedScope": "Chapter 1 species pp.10-19 (9 entries); Nyriaan chapter sidebars Pa'lowick p.131, Elomin p.133, Nyriaanan p.144 (3 entries)",
+      "reviewedSpecies": 12,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "Original user-uploaded Galaxy of Intrigue PDF text and targeted page renders compared to uploaded searchable DJVU transcription; PDF page is printed page +1. Repo species pack and both sidecars compared read-only.",
+      "notes": "All 12 published non-droid species blocks matched existing pack identities. Bith retains earlier Threats source claims while Galaxy of Intrigue confirms current pack's distinct later profile. Three later-chapter sidebars inventoried. No production data or Foundry runtime mutated."
     }
   ],
   "summary": {
@@ -118,7 +126,7 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 90,
+    "totalSpeciesInRollingLedger": 101,
     "forceUnleashed": {
       "species": 10,
       "noChange": 0,
@@ -213,6 +221,23 @@
       "excludedDroidSpecies": [
         "Replica Droid"
       ]
+    },
+    "galaxyOfIntrigue": {
+      "publishedSpeciesBlocks": 12,
+      "chapterOne": 9,
+      "laterSidebars": 3,
+      "allFoundInPack": 12,
+      "previouslyAuditedSpecies": 1,
+      "newSpeciesInLedger": 11,
+      "changeRequiredSpecies": 11,
+      "reviewOnlySpecies": 1,
+      "confirmedIssues": 12,
+      "reviewItems": 22,
+      "totalFindings": 34,
+      "explicitNoChangeFieldDecisions": 24,
+      "productionMutations": 0,
+      "foundryRuntimeTests": 0,
+      "priorBithSourceClaimsRetained": true
     }
   },
   "entries": [
@@ -811,6 +836,85 @@
           }
         ],
         "notes": "Organics/sapient species only. No droid rules reviewed or production data changed."
+      },
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "11",
+        "section": "Chapter 1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed / system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Medium, 6 squares, -2 CON/+2 INT/+2 CHA all match the Galaxy of Intrigue version."
+          },
+          {
+            "field": "system.languages / canonicalTraits[meditative-trance,scent,evolved-intellect]",
+            "status": "NO_CHANGE",
+            "note": "Basic+Bith, four-hour trance, 10-square Scent limited to Perception/tracking, and temporary Intelligence-only Force Point all match Galaxy of Intrigue text."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-01-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unpublished Musical Savant / Fragile typed modifiers",
+            "target": "data/species-traits-migrated.json: Bith.structuralTraits[Musical Savant,Fragile].rules",
+            "current": "+5 Perform skill and -2 Fortitude always-on",
+            "publishedRule": "Galaxy of Intrigue p.11 lists no such benefits; neither is a substitute for Scent or Evolved Intellect.",
+            "proposedAction": "Suspend the unsupported typed rules if no independent official source exists; preserve source-appropriate canonical traits.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 11,
+              "pdfPage": 12
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-01-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Printed Bith profiles disagree across books",
+            "target": "packs/species.db: Bith.system.abilityMods, languages, canonicalTraits",
+            "current": "Pack represents Galaxy of Intrigue race (+2 CHA, Basic+Bith, Scent and FP-based Evolved Intellect).",
+            "publishedRule": "Threats of the Galaxy p.26 instead omits +2 CHA/Basic, grants Heightened Awareness and a once-encounter Intelligence natural-20 use. Galaxy of Intrigue p.11 confirms the pack's alternative profile.",
+            "proposedAction": "Record explicit book-profile provenance; do not merge incompatible abilities or overwrite the later profile automatically.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 11,
+              "pdfPage": 12
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-01-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Temporary Force Point needs runtime certification",
+            "target": "packs/species.db: Bith.system.canonicalTraits[evolved-intellect] / species runtime",
+            "current": "Correct Galaxy of Intrigue benefit text; actor grant/spend behavior not tested.",
+            "publishedRule": "Whenever any Force Point is spent, grant a temporary Force Point usable for an Intelligence-based skill check, expiring at encounter end.",
+            "proposedAction": "Test one-time temp FP award, permitted spending, and encounter expiration; do not silently use Threats natural-20 variant.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 11,
+              "pdfPage": 12
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized.",
+        "crossBookNotes": [
+          "Galaxy of Intrigue p.11 directly supports current pack and resolves which published text that pack follows; it does not erase the contradictory Threats profile.",
+          "Cross-reference THR-01-01, THR-01-02, THR-01-03: retain earlier REVIEW_REQUIRED source claims until formal source/variant policy is certified."
+        ]
       }
     },
     {
@@ -1898,6 +2002,85 @@
       }
     },
     {
+      "name": "Defel",
+      "foundryId": "species-defel",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "12",
+        "section": "Chapter 1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed / system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Small, 6 squares, -2 STR/+2 INT agree."
+          },
+          {
+            "field": "system.languages / canonicalTraits[partial-invisibility,special-equipment]",
+            "status": "NO_CHANGE",
+            "note": "Basic+Defel and pack descriptions correctly identify total concealment in shadowy/darker illumination, darkvision exception, ultraviolet visor necessity."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-02-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Shadow Blend sidecar understates printed concealment",
+            "target": "data/species-traits.json / data/species-traits-migrated.json: Defel.structuralTraits[Shadow Blend]",
+            "current": "Sidecar claims only ordinary concealment in low light/darker; migrated sidecar has no typed effect.",
+            "publishedRule": "In shadowy illumination or darker a Defel has TOTAL concealment; foes with darkvision see it fully.",
+            "proposedAction": "Reconcile alias with published Partial Invisibility rather than grant a weaker/generalized duplicate; preserve darkvision exception.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-02-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extraneous flat skill bonuses in pack",
+            "target": "packs/species.db: Defel.system.skillBonuses",
+            "current": "+2 Stealth and +2 Perception",
+            "publishedRule": "Printed Small size confers +5 SIZE bonus on Stealth; no racial flat +2 Perception or additional +2 Stealth.",
+            "proposedAction": "Check provenance and whether this field executes; do not mistake size's +5 Stealth for an extra racial grant.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-02-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Ultraviolet visor starting grant and blindness",
+            "target": "packs/species.db: Defel.system.canonicalTraits[special-equipment] / equipment grant consumer",
+            "current": "Printed description; both sidecars lack equipmentGrants",
+            "publishedRule": "Defel begins with free 2,000-credit visor; without one the character is blind in normal light.",
+            "proposedAction": "Verify first-level inventory grant and conditional blindness in runtime before authorizing targeted implementation.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
+      }
+    },
+    {
       "name": "Devaronian",
       "foundryId": "species-devaronian",
       "legacyEra": {
@@ -2149,6 +2332,100 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Elomin",
+      "foundryId": "species-elomin",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "133",
+        "section": "Chapter 6 Nyriaan — Tor'Oront species inset",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / size / speed / languages",
+            "status": "NO_CHANGE",
+            "note": "+2 INT/-2 CHA, Medium/6, Basic+Elomin agree."
+          },
+          {
+            "field": "canonicalTraits[impose-order,driven] effect text",
+            "status": "NO_CHANGE",
+            "note": "Impose Order swift once/encounter and +5 species Will vs mind-affecting described correctly; book names latter 'Logical Mind' rather than pack 'Driven'."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-11-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unprinted Frail Build and Technical Savant executable modifiers",
+            "target": "data/species-traits-migrated.json: Elomin.structuralTraits[Frail Build,Technical Savant].rules",
+            "current": "-2 Fortitude always and +2 Mechanics always",
+            "publishedRule": "Published sidebar grants Imposed Order and Logical Mind (+5 Will against mind-affecting); no Fortitude penalty or Mechanics bonus.",
+            "proposedAction": "Source-check any alternate profile before removing inappropriate typed mods; preserve mind-affecting-only bonus.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 133,
+              "pdfPage": 134
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-11-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted Knowledge (Galactic Lore) pack bonus",
+            "target": "packs/species.db: Elomin.system.skillBonuses",
+            "current": "+2 Knowledge (Galactic Lore)",
+            "publishedRule": "Printed sidebar does not grant Knowledge bonuses.",
+            "proposedAction": "Check provenance/consumer before deleting metadata.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 133,
+              "pdfPage": 134
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-11-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Logical Mind label mismatch",
+            "target": "packs/species.db: Elomin.system.canonicalTraits[driven]",
+            "current": "Pack 'Driven' title on correct +5 Will vs mind-affecting text",
+            "publishedRule": "Printed trait name is 'Logical Mind'.",
+            "proposedAction": "Consider surgical display rename preserving ID and passive-rule ownership; do not change numeric effect.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 133,
+              "pdfPage": 134
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-11-04",
+            "status": "REVIEW_REQUIRED",
+            "title": "Impose Order reactive ally move execution",
+            "target": "packs/species.db: Elomin.system.canonicalTraits[impose-order] / actor runtime",
+            "current": "Correct pack prose; migrated sidecar has no activated rule",
+            "publishedRule": "Once/encounter swift; each ally within 12 squares may move up to half speed as reaction without provoking opportunity attacks.",
+            "proposedAction": "Confirm action cost, ally targeting, reaction, movement limit and no automated token relocation without reliable authority.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 133,
+              "pdfPage": 134
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
       }
     },
     {
@@ -2419,6 +2696,85 @@
       }
     },
     {
+      "name": "Fosh",
+      "foundryId": "species-fosh",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "13",
+        "section": "Chapter 1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "DEX +2/CON -2/CHA +2, Small, 6 squares match."
+          },
+          {
+            "field": "system.languages / canonicalTraits[deceptive,healing-glands]",
+            "status": "NO_CHANGE",
+            "note": "Basic+Fosh and exact core reroll/Treat Injury entitlements appear in pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-03-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unprinted Subtle Influence typed bonus",
+            "target": "data/species-traits-migrated.json: Fosh.structuralTraits[Subtle Influence].rules",
+            "current": "Unconditional +5 species bonus to Deception",
+            "publishedRule": "Published Deceptive grants reroll any Deception check, must accept second result; not +5.",
+            "proposedAction": "Check supplemental provenance; do not stack automatic +5 atop published reroll.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-03-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted extra pack skills",
+            "target": "packs/species.db: Fosh.system.skillBonuses",
+            "current": "+2 Acrobatics and +2 Perception",
+            "publishedRule": "Only Small size +5 Stealth is printed; no such flat skill bonuses.",
+            "proposedAction": "Check whether bonuses are implemented and whether any alternate official source supports them.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-03-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Reroll and Healing Glands execution",
+            "target": "packs/species.db: Fosh.system.canonicalTraits[deceptive,healing-glands] / actor rules",
+            "current": "Source text correct; no migrated executable trait handlers present",
+            "publishedRule": "Deception reroll accepts second; Treat Injury counts as possessing medpac/medical kit and permits trained-only applications when untrained.",
+            "proposedAction": "Test both grant paths, equipment prerequisite substitution and reroll choice before runtime certification.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
+      }
+    },
+    {
       "name": "Gamorrean",
       "foundryId": "species-gamorrean",
       "core": {
@@ -2670,6 +3026,164 @@
       }
     },
     {
+      "name": "Givin",
+      "foundryId": "species-givin",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "13-14",
+        "section": "Chapter 1, traits continue p.14",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / size / speed / languages",
+            "status": "NO_CHANGE",
+            "note": "-2 STR/+2 INT, Medium/6, Basic+Givin agree."
+          },
+          {
+            "field": "canonicalTraits[damage-reduction,great-fortitude,deductive-reasoning,vacuum-immunity]",
+            "status": "NO_CHANGE",
+            "note": "Pack expresses DR 2, Fortitude +2, any Knowledge reroll with second result, immunity to vacuum/inhaled poison correctly; published names group these under Exoskeleton and Unique Physiology."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-04-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unprinted Analytical Mind typed skill bonus",
+            "target": "data/species-traits-migrated.json: Givin.structuralTraits[Analytical Mind].rules",
+            "current": "+5 species Mechanics always; legacy sidecar also describes +5 Knowledge (physical sciences)",
+            "publishedRule": "Galaxy of Intrigue p.13-14 contains no such skill modifiers.",
+            "proposedAction": "Source-check and remove unsupported executable bonus, preserving printed Deductive Reasoning reroll.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-04-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extraneous pack Mechanics modifier",
+            "target": "packs/species.db: Givin.system.skillBonuses",
+            "current": "+2 Mechanics",
+            "publishedRule": "Printed Exoskeleton, Deductive Reasoning, Unique Physiology provide no flat Mechanics boost.",
+            "proposedAction": "Trace pack skillBonus consumer and variant provenance; avoid double granting with Analytical Mind.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-04-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Exoskeleton and Unique Physiology runtime",
+            "target": "packs/species.db: Givin.system.canonicalTraits[damage-reduction,great-fortitude,vacuum-immunity]",
+            "current": "Mechanics expressed as three pack canonical entries, untested",
+            "publishedRule": "One published Exoskeleton grants DR 2 and +2 species Fortitude; Unique Physiology protects from vacuum and inhaled chemicals/poisons.",
+            "proposedAction": "Preserve effect-equivalent existing IDs unless player-facing canonical naming needs a surgical alias; test DR/defense/immunity and avoid double application.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
+      }
+    },
+    {
+      "name": "Gotal",
+      "foundryId": "species-gotal",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "14",
+        "section": "Chapter 1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / size / speed / languages",
+            "status": "NO_CHANGE",
+            "note": "No modifiers, Medium/6, Basic+Gotal agree."
+          },
+          {
+            "field": "canonicalTraits[energy-reading,low-light-vision,sensor-cones]",
+            "status": "NO_CHANGE",
+            "note": "Pack text accurately records 6-square emotional sensing action, low-light vision, untrained Sense Force/Sense Surroundings."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-05-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Force Awareness makes unprinted general blindsense",
+            "target": "data/species-traits-migrated.json: Gotal.structuralTraits[Force Awareness].rules",
+            "current": "General always-on blindsense 6 squares",
+            "publishedRule": "Printed 6-square ability is an active Perception check versus Will to identify emotion; Sensor Cones allow two specific Use the Force applications untrained.",
+            "proposedAction": "Do not convert emotion reading into spatial blindsense; source-check alias then remove or scope unsupported sense rule.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 14,
+              "pdfPage": 15
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-05-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted pack skill bonuses",
+            "target": "packs/species.db: Gotal.system.skillBonuses",
+            "current": "+2 Perception and +2 Survival",
+            "publishedRule": "Printed Gotal block has no flat Perception/Survival bonuses.",
+            "proposedAction": "Check another publication and exact actor use before deletion.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 14,
+              "pdfPage": 15
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-05-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Emotional reading and Force skill exceptions",
+            "target": "packs/species.db: Gotal.system.canonicalTraits[energy-reading,sensor-cones]",
+            "current": "Correct prose; no executable implementations observed in sidecars",
+            "publishedRule": "Standard action Perception vs Will, sentient within 6 squares; Sense Force and Sense Surroundings usable untrained.",
+            "proposedAction": "Test gating, action cost, challenge comparison, and untrained Force applications; never substitute blanket Force Sensitivity.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 14,
+              "pdfPage": 15
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
+      }
+    },
+    {
       "name": "Gran",
       "foundryId": "species-gran",
       "forceUnleashed": {
@@ -2825,6 +3339,85 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Herglic",
+      "foundryId": "species-herglic",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "15-16",
+        "section": "Chapter 1, traits continue p.16",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / size / speed / languages",
+            "status": "NO_CHANGE",
+            "note": "+4 STR/-4 DEX, Large/6, Basic+Herglic agree."
+          },
+          {
+            "field": "canonicalTraits[sturdy,conditional-bonus-feat]",
+            "status": "NO_CHANGE",
+            "note": "Second Wind heals additional 5 + half level; trained Gather Information conditional Skill Focus is correctly described."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-06-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unprinted Massive Build Strength check bonus",
+            "target": "data/species-traits-migrated.json: Herglic.structuralTraits[Massive Build].rules",
+            "current": "+5 always-on modifier with skillId 'str'",
+            "publishedRule": "Published Herglic block has no +5 Strength check benefit; it lists Large size, Sturdy, and conditional feat.",
+            "proposedAction": "Require independent source; do not execute fabricated modifier (and do not treat STR as a skill ID).",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 15,
+              "pdfPage": 16
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-06-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extraneous Endurance skill bonus",
+            "target": "packs/species.db: Herglic.system.skillBonuses",
+            "current": "+2 Endurance",
+            "publishedRule": "Published block has no species Endurance modifier.",
+            "proposedAction": "Validate other source and consumer before any patch.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 15,
+              "pdfPage": 16
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-06-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Large size, Sturdy and conditional feat runtime",
+            "target": "packs/species.db: Herglic.system.canonicalTraits[sturdy,conditional-bonus-feat] / actors",
+            "current": "Printed benefit text but no live actor tests",
+            "publishedRule": "Large imposes -1 Reflex/-5 Stealth, adds +5 DT; Sturdy heals 5 + floor(level/2) extra Second Wind HP. Conditional feat references 'Gather Information as a trained skill' literally.",
+            "proposedAction": "Test derived size values and first-level feat condition; keep published Gather Information wording, seek rules resolution rather than inventing a feat prerequisite.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 15,
+              "pdfPage": 16
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
       }
     },
     {
@@ -4102,6 +4695,70 @@
       }
     },
     {
+      "name": "Mrlssi",
+      "foundryId": "species-mrlssi",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "17",
+        "section": "Chapter 1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / size / speed / languages",
+            "status": "NO_CHANGE",
+            "note": "-2 STR/+2 INT/+2 CHA, Small/4, Basic+Mrlsstese agree."
+          },
+          {
+            "field": "canonicalTraits[bonus-class-skill,scholarly-inclination,conditional-bonus-feat]",
+            "status": "NO_CHANGE",
+            "note": "Mechanics always class skill, one Knowledge trained skill at 1st level, and conditional Skill Focus (Persuasion) correctly described."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-07-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unprinted Mercantile Instincts +5 trade rule",
+            "target": "data/species-traits-migrated.json: Mrlssi.structuralTraits[Mercantile Instincts].rules",
+            "current": "+5 Persuasion for trade / negotiation",
+            "publishedRule": "No such flat modifier printed; conditional feat instead grants Skill Focus (Persuasion) once trained.",
+            "proposedAction": "Find provenance and remove unsupported executable bonus; do not replace conditional feat with permanent Persuasion boost.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 17,
+              "pdfPage": 18
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-07-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Class skill, trained Knowledge and conditional feat entitlements",
+            "target": "packs/species.db: Mrlssi.system.canonicalTraits / progression/species grant consumers",
+            "current": "Text is present; sidecars have no chooser/grant rules",
+            "publishedRule": "Mechanics is always a class skill; at level 1 choose any ONE trained Knowledge skill; Persuasion trained grants Skill Focus (Persuasion).",
+            "proposedAction": "Test one-time selection and state prerequisites in new-character chargen; avoid converting choice to unrestricted training.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 17,
+              "pdfPage": 18
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
+      }
+    },
+    {
       "name": "Nagai",
       "foundryId": "species-nagai",
       "legacyEra": {
@@ -4292,6 +4949,85 @@
       }
     },
     {
+      "name": "Neimoidian",
+      "foundryId": "species-neimoidian",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "18",
+        "section": "Chapter 1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / size / speed",
+            "status": "NO_CHANGE",
+            "note": "-2 STR/+2 CHA, Medium/6 agree."
+          },
+          {
+            "field": "canonicalTraits[conditional-bonus-feats]",
+            "status": "NO_CHANGE",
+            "note": "Conditional Deception and Persuasion Skill Focus feat text matches intended printed effect, despite a printed 'trained feat' typo."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-08-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Malformed extraneous automatic-language token",
+            "target": "packs/species.db: Neimoidian.system.languages",
+            "current": "['speak','Basic','Neimoidian']",
+            "publishedRule": "Printed automatic languages are Basic and Neimoidian, with no language called 'speak'.",
+            "proposedAction": "Remove only the stray 'speak' language token; retain Basic/Neimoidian and stable identity.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 18,
+              "pdfPage": 19
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-08-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unprinted Cowardly and Mercantile Training modifiers",
+            "target": "data/species-traits-migrated.json: Neimoidian.structuralTraits[Cowardly,Mercantile Training].rules",
+            "current": "Always -2 Will and +5 trade Persuasion",
+            "publishedRule": "Printed racial block has neither modifier, granting only two conditional Skill Focus options.",
+            "proposedAction": "Source-check alternate profiles then remove unsupported typed rules; do not add permanent debuff to all Neimoidians.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 18,
+              "pdfPage": 19
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-08-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Conditional feat training language typo and runtime",
+            "target": "packs/species.db: Neimoidian.system.canonicalTraits[conditional-bonus-feats] / grant ledger",
+            "current": "Published description present, no actor entitlement probe",
+            "publishedRule": "Printed 'Deception as a trained feat' evidently describes trained Deception; separately trained Persuasion grants its own Skill Focus.",
+            "proposedAction": "Verify each feat separately and only when its underlying skill is trained; preserve exact printed anomaly in provenance.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 18,
+              "pdfPage": 19
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
+      }
+    },
+    {
       "name": "Nelvaanian",
       "foundryId": "species-nelvaanian",
       "cloneWars": {
@@ -4392,6 +5128,134 @@
           }
         ],
         "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
+      }
+    },
+    {
+      "name": "Nyriaanan",
+      "foundryId": "species-nyriaanan",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "144",
+        "section": "Chapter 6 Nyriaan — near-human species inset",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / size / speed / languages",
+            "status": "NO_CHANGE",
+            "note": "+2 WIS/-2 CHA, Medium/6, Nyriaanan language agree."
+          },
+          {
+            "field": "canonicalTraits[bonus-class-skill,bonus-feat,low-light-vision]",
+            "status": "NO_CHANGE",
+            "note": "Survival always class skill, free level-1 feat, low-light vision match printed sidebar."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-12-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unpublished Winged Glide creates flight speed",
+            "target": "data/species-traits-migrated.json: Nyriaanan.structuralTraits[Winged Glide].rules",
+            "current": "Always-on movement mode fly, speed 6, combatMovement true; text claims immunity to falling damage",
+            "publishedRule": "Published near-Human Nyriaanan has no wings or gliding trait. Its full sidebar lists Survival class skill, bonus feat, Low-Light Vision.",
+            "proposedAction": "Confirm no independent variant; surgically remove unsupported flying speed rule rather than alter canonical player-facing species.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 144,
+              "pdfPage": 145
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-12-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "First-level bonus feat and Survival class skill consumers",
+            "target": "packs/species.db: Nyriaanan.system.canonicalTraits[bonus-feat,bonus-class-skill] / progression",
+            "current": "Correct pack wording; both sidecars contain no structured grants",
+            "publishedRule": "Survival must be class skill regardless of heroic class; one bonus feat granted at 1st level.",
+            "proposedAction": "Verify class-skill hydration and one-time free feat grant in CharGen; do not double-grant or infer from bonusFeats numeric 0.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 144,
+              "pdfPage": 145
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
+      }
+    },
+    {
+      "name": "Pa'lowick",
+      "foundryId": "species-pa-lowick",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "131",
+        "section": "Chapter 6 Nyriaan — Prosperity species inset",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / size / speed",
+            "status": "NO_CHANGE",
+            "note": "-2 STR/+2 WIS, Medium/6 match printed sidebar."
+          },
+          {
+            "field": "canonicalTraits[expert-swimmer,hold-breath,primitive]",
+            "status": "NO_CHANGE",
+            "note": "Swim reroll/take 10, 25x CON rounds breath, and suppress initial pistols/rifles/heavy weapons starting feats all represented in pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-10-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra Basic language beyond printed native",
+            "target": "packs/species.db: Pa'lowick.system.languages",
+            "current": "Basic and Lowickese",
+            "publishedRule": "Printed inset lists 'Language: Lowickese' only; it does not explicitly include Basic as an automatic language.",
+            "proposedAction": "Check independent printed source/interpretation before dropping Basic; retain Lowickese.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 131,
+              "pdfPage": 132
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-10-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Swim, breath, and Primitive actor mechanics",
+            "target": "packs/species.db: Pa'lowick.system.canonicalTraits / species grant and combat consumers",
+            "current": "Descriptions match source except pack reroll describes mandatory acceptance not explicitly stated in inset; no typed runtime rules.",
+            "publishedRule": "Reroll any Swim check and take 10 under threat; hold breath 25x CON rounds; Primitive suppresses pistol/rifle/heavy starting proficiencies.",
+            "proposedAction": "Test each mechanic and core reroll default before normalizing acceptance wording; do not silently grant weapons.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 131,
+              "pdfPage": 132
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
       }
     },
     {
@@ -5788,6 +6652,85 @@
           }
         ],
         "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
+      "name": "Umbaran",
+      "foundryId": "species-umbaran",
+      "galaxyOfIntrigue": {
+        "source": "Galaxy of Intrigue",
+        "printedPages": "19",
+        "section": "Chapter 1",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "originalPdfInspected": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "publishedAbilityModifiers": "NO_CHANGE",
+          "printedSizeAndSpeed": "NO_CHANGE",
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / size / speed / languages",
+            "status": "NO_CHANGE",
+            "note": "-2 CON/+2 DEX/+2 WIS, Medium/6, Basic+Umbarese agree."
+          },
+          {
+            "field": "canonicalTraits[darkvision,sneaky,conditional-bonus-feat]",
+            "status": "NO_CHANGE",
+            "note": "Darkvision, must-accept Stealth reroll and trained Gather Information conditional feat are effect-equivalent to printed traits."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GOI-09-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unprinted flat Deception and Perception skill bonuses",
+            "target": "packs/species.db: Umbaran.system.skillBonuses",
+            "current": "+2 Deception and +2 Perception",
+            "publishedRule": "Galaxy of Intrigue p.19 grants Darkvision, 'Stealthy' reroll, and a conditional Skill Focus, not these flat bonuses.",
+            "proposedAction": "Check other-book provenance and whether skillBonuses executes; remove unsupported numeric projection surgically if it does.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 19,
+              "pdfPage": 20
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-09-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Stealthy published name versus Sneaky pack alias",
+            "target": "packs/species.db: Umbaran.system.canonicalTraits[sneaky]",
+            "current": "Pack title 'Sneaky' but printed title 'Stealthy'; effect matches.",
+            "publishedRule": "Reroll any Stealth check, must accept the second result.",
+            "proposedAction": "Use a display-name alias only if required for canonical presentation; avoid changing stable trait ID or introducing a duplicate effect.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 19,
+              "pdfPage": 20
+            },
+            "applied": false
+          },
+          {
+            "id": "GOI-09-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Darkvision and Gather Information feat runtime",
+            "target": "packs/species.db: Umbaran.system.canonicalTraits[darkvision,conditional-bonus-feat] / actor runtime",
+            "current": "Correct prose but runtime untested",
+            "publishedRule": "Darkness concealment including total concealment ignored (not color vision); trained Gather Information grants Skill Focus (Gather Information).",
+            "proposedAction": "Test precise vision rules and entitlement; do not conflate trained Gather Information with general Persuasion unless source authority resolves it.",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "printedPage": 19,
+              "pdfPage": 20
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
       }
     },
     {

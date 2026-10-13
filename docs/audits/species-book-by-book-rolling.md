@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, Jedi Academy, Galaxy at War and Legacy Era audited. No production species data changed.  
+**Status:** Core through Galaxy of Intrigue (11 sourcebooks) audited. Production species data unchanged.
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -999,3 +999,113 @@ All 13 findings have `applied:false` and a printed source in the JSON. A `REVIEW
 - Earlier Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, Jedi Academy, Galaxy at War and Legacy Era source claims are retained. The rolling file now tracks **90 distinct species** in **10 books**.
 - The existing pack and both trait-sidecar consumers were compared read-only. No claim of live Foundry execution is made. All findings remain unapplied.
 - **Next biological species source:** *Galaxy of Intrigue*. It will certify Bith's alternative printed profile and many additional playable species, including sidebars outside Chapter I. Then audit *The Unknown Regions*.
+
+---
+
+## Book 11 — Galaxy of Intrigue (non-droid species only)
+
+**Primary source:** *Galaxy of Intrigue* PDF, printed pp.10-19 (main chapter), p.131 Pa'lowick, p.133 Elomin, p.144 Nyriaanan. PDF indices/page display are +1 relative to printed numbers. Uploaded `Galaxy of Intrigue_djvu.txt` used for text search; printed PDF and target page renders checked. No droid species audited.
+
+### Results
+
+| Measure | Count |
+|---|---:|
+| Printed non-droid species blocks | 12 |
+| Main chapter / later sidebars | 9 / 3 |
+| Foundry identities found | 12 / 12 |
+| New unique species identities added to rolling ledger | 11 |
+| Distinct species across all books | **101** |
+| Whole-species `CHANGE_REQUIRED` | 11 |
+| Whole-species `REVIEW_REQUIRED` | 1 |
+| Confirmed source-data correction candidates | **12** |
+| Further provenance/runtime review findings | **22** |
+| Total individual findings | **34** |
+| Field-level `NO_CHANGE` decisions | **24** |
+| Production species files changed / live actor tests | 0 / 0 |
+
+### Source inventory and outcomes
+
+| Species | Printed page | Existing Foundry ID | Audit status | Findings |
+|---|---:|---|---|---:|
+| Bith | 11 | `species-bith` | `CHANGE_REQUIRED` | 3 |
+| Defel | 12 | `species-defel` | `CHANGE_REQUIRED` | 3 |
+| Fosh | 13 | `species-fosh` | `CHANGE_REQUIRED` | 3 |
+| Givin | 13 | `species-givin` | `CHANGE_REQUIRED` | 3 |
+| Gotal | 14 | `species-gotal` | `CHANGE_REQUIRED` | 3 |
+| Herglic | 15 | `species-herglic` | `CHANGE_REQUIRED` | 3 |
+| Mrlssi | 17 | `species-mrlssi` | `CHANGE_REQUIRED` | 2 |
+| Neimoidian | 18 | `species-neimoidian` | `CHANGE_REQUIRED` | 3 |
+| Umbaran | 19 | `species-umbaran` | `CHANGE_REQUIRED` | 3 |
+| Pa'lowick | 131 | `species-pa-lowick` | `REVIEW_REQUIRED` | 2 |
+| Elomin | 133 | `species-elomin` | `CHANGE_REQUIRED` | 4 |
+| Nyriaanan | 144 | `species-nyriaanan` | `CHANGE_REQUIRED` | 2 |
+
+### Findings — source comparison and proposed surgical action
+
+All 34 findings are `applied:false`; `REVIEW_REQUIRED` is not permission to delete a possibly variant trait. Runtime is not certified. The exact same finding IDs, target files, printed pages, current values and proposed actions are stored in the JSON ledger.
+
+| Finding | Status | Specific target / discrepancy | Minimum action |
+|---|---|---|---|
+| `GOI-01-01` Bith (p.11) | `CHANGE_REQUIRED` | Unpublished Musical Savant / Fragile typed modifiers: +5 Perform skill and -2 Fortitude always-on | Suspend the unsupported typed rules if no independent official source exists; preserve source-appropriate canonical traits. |
+| `GOI-01-02` Bith (p.11) | `REVIEW_REQUIRED` | Printed Bith profiles disagree across books: Pack represents Galaxy of Intrigue race (+2 CHA, Basic+Bith, Scent and FP-based Evolved Intellect). | Record explicit book-profile provenance; do not merge incompatible abilities or overwrite the later profile automatically. |
+| `GOI-01-03` Bith (p.11) | `REVIEW_REQUIRED` | Temporary Force Point needs runtime certification: Correct Galaxy of Intrigue benefit text; actor grant/spend behavior not tested. | Test one-time temp FP award, permitted spending, and encounter expiration; do not silently use Threats natural-20 variant. |
+| `GOI-02-01` Defel (p.12) | `CHANGE_REQUIRED` | Shadow Blend sidecar understates printed concealment: Sidecar claims only ordinary concealment in low light/darker; migrated sidecar has no typed effect. | Reconcile alias with published Partial Invisibility rather than grant a weaker/generalized duplicate; preserve darkvision exception. |
+| `GOI-02-02` Defel (p.12) | `REVIEW_REQUIRED` | Extraneous flat skill bonuses in pack: +2 Stealth and +2 Perception | Check provenance and whether this field executes; do not mistake size's +5 Stealth for an extra racial grant. |
+| `GOI-02-03` Defel (p.12) | `REVIEW_REQUIRED` | Ultraviolet visor starting grant and blindness: Printed description; both sidecars lack equipmentGrants | Verify first-level inventory grant and conditional blindness in runtime before authorizing targeted implementation. |
+| `GOI-03-01` Fosh (p.13) | `CHANGE_REQUIRED` | Unprinted Subtle Influence typed bonus: Unconditional +5 species bonus to Deception | Check supplemental provenance; do not stack automatic +5 atop published reroll. |
+| `GOI-03-02` Fosh (p.13) | `REVIEW_REQUIRED` | Unprinted extra pack skills: +2 Acrobatics and +2 Perception | Check whether bonuses are implemented and whether any alternate official source supports them. |
+| `GOI-03-03` Fosh (p.13) | `REVIEW_REQUIRED` | Reroll and Healing Glands execution: Source text correct; no migrated executable trait handlers present | Test both grant paths, equipment prerequisite substitution and reroll choice before runtime certification. |
+| `GOI-04-01` Givin (p.13) | `CHANGE_REQUIRED` | Unprinted Analytical Mind typed skill bonus: +5 species Mechanics always; legacy sidecar also describes +5 Knowledge (physical sciences) | Source-check and remove unsupported executable bonus, preserving printed Deductive Reasoning reroll. |
+| `GOI-04-02` Givin (p.13) | `REVIEW_REQUIRED` | Extraneous pack Mechanics modifier: +2 Mechanics | Trace pack skillBonus consumer and variant provenance; avoid double granting with Analytical Mind. |
+| `GOI-04-03` Givin (p.13) | `REVIEW_REQUIRED` | Exoskeleton and Unique Physiology runtime: Mechanics expressed as three pack canonical entries, untested | Preserve effect-equivalent existing IDs unless player-facing canonical naming needs a surgical alias; test DR/defense/immunity and avoid double application. |
+| `GOI-05-01` Gotal (p.14) | `CHANGE_REQUIRED` | Force Awareness makes unprinted general blindsense: General always-on blindsense 6 squares | Do not convert emotion reading into spatial blindsense; source-check alias then remove or scope unsupported sense rule. |
+| `GOI-05-02` Gotal (p.14) | `REVIEW_REQUIRED` | Unprinted pack skill bonuses: +2 Perception and +2 Survival | Check another publication and exact actor use before deletion. |
+| `GOI-05-03` Gotal (p.14) | `REVIEW_REQUIRED` | Emotional reading and Force skill exceptions: Correct prose; no executable implementations observed in sidecars | Test gating, action cost, challenge comparison, and untrained Force applications; never substitute blanket Force Sensitivity. |
+| `GOI-06-01` Herglic (p.15) | `CHANGE_REQUIRED` | Unprinted Massive Build Strength check bonus: +5 always-on modifier with skillId 'str' | Require independent source; do not execute fabricated modifier (and do not treat STR as a skill ID). |
+| `GOI-06-02` Herglic (p.15) | `REVIEW_REQUIRED` | Extraneous Endurance skill bonus: +2 Endurance | Validate other source and consumer before any patch. |
+| `GOI-06-03` Herglic (p.15) | `REVIEW_REQUIRED` | Large size, Sturdy and conditional feat runtime: Printed benefit text but no live actor tests | Test derived size values and first-level feat condition; keep published Gather Information wording, seek rules resolution rather than inventing a feat prerequisite. |
+| `GOI-07-01` Mrlssi (p.17) | `CHANGE_REQUIRED` | Unprinted Mercantile Instincts +5 trade rule: +5 Persuasion for trade / negotiation | Find provenance and remove unsupported executable bonus; do not replace conditional feat with permanent Persuasion boost. |
+| `GOI-07-02` Mrlssi (p.17) | `REVIEW_REQUIRED` | Class skill, trained Knowledge and conditional feat entitlements: Text is present; sidecars have no chooser/grant rules | Test one-time selection and state prerequisites in new-character chargen; avoid converting choice to unrestricted training. |
+| `GOI-08-01` Neimoidian (p.18) | `CHANGE_REQUIRED` | Malformed extraneous automatic-language token: ['speak','Basic','Neimoidian'] | Remove only the stray 'speak' language token; retain Basic/Neimoidian and stable identity. |
+| `GOI-08-02` Neimoidian (p.18) | `CHANGE_REQUIRED` | Unprinted Cowardly and Mercantile Training modifiers: Always -2 Will and +5 trade Persuasion | Source-check alternate profiles then remove unsupported typed rules; do not add permanent debuff to all Neimoidians. |
+| `GOI-08-03` Neimoidian (p.18) | `REVIEW_REQUIRED` | Conditional feat training language typo and runtime: Published description present, no actor entitlement probe | Verify each feat separately and only when its underlying skill is trained; preserve exact printed anomaly in provenance. |
+| `GOI-09-01` Umbaran (p.19) | `CHANGE_REQUIRED` | Unprinted flat Deception and Perception skill bonuses: +2 Deception and +2 Perception | Check other-book provenance and whether skillBonuses executes; remove unsupported numeric projection surgically if it does. |
+| `GOI-09-02` Umbaran (p.19) | `REVIEW_REQUIRED` | Stealthy published name versus Sneaky pack alias: Pack title 'Sneaky' but printed title 'Stealthy'; effect matches. | Use a display-name alias only if required for canonical presentation; avoid changing stable trait ID or introducing a duplicate effect. |
+| `GOI-09-03` Umbaran (p.19) | `REVIEW_REQUIRED` | Darkvision and Gather Information feat runtime: Correct prose but runtime untested | Test precise vision rules and entitlement; do not conflate trained Gather Information with general Persuasion unless source authority resolves it. |
+| `GOI-10-01` Pa'lowick (p.131) | `REVIEW_REQUIRED` | Extra Basic language beyond printed native: Basic and Lowickese | Check independent printed source/interpretation before dropping Basic; retain Lowickese. |
+| `GOI-10-02` Pa'lowick (p.131) | `REVIEW_REQUIRED` | Swim, breath, and Primitive actor mechanics: Descriptions match source except pack reroll describes mandatory acceptance not explicitly stated in inset; no typed runtime rules. | Test each mechanic and core reroll default before normalizing acceptance wording; do not silently grant weapons. |
+| `GOI-11-01` Elomin (p.133) | `CHANGE_REQUIRED` | Unprinted Frail Build and Technical Savant executable modifiers: -2 Fortitude always and +2 Mechanics always | Source-check any alternate profile before removing inappropriate typed mods; preserve mind-affecting-only bonus. |
+| `GOI-11-02` Elomin (p.133) | `REVIEW_REQUIRED` | Unprinted Knowledge (Galactic Lore) pack bonus: +2 Knowledge (Galactic Lore) | Check provenance/consumer before deleting metadata. |
+| `GOI-11-03` Elomin (p.133) | `REVIEW_REQUIRED` | Logical Mind label mismatch: Pack 'Driven' title on correct +5 Will vs mind-affecting text | Consider surgical display rename preserving ID and passive-rule ownership; do not change numeric effect. |
+| `GOI-11-04` Elomin (p.133) | `REVIEW_REQUIRED` | Impose Order reactive ally move execution: Correct pack prose; migrated sidecar has no activated rule | Confirm action cost, ally targeting, reaction, movement limit and no automated token relocation without reliable authority. |
+| `GOI-12-01` Nyriaanan (p.144) | `CHANGE_REQUIRED` | Unpublished Winged Glide creates flight speed: Always-on movement mode fly, speed 6, combatMovement true; text claims immunity to falling damage | Confirm no independent variant; surgically remove unsupported flying speed rule rather than alter canonical player-facing species. |
+| `GOI-12-02` Nyriaanan (p.144) | `REVIEW_REQUIRED` | First-level bonus feat and Survival class skill consumers: Correct pack wording; both sidecars contain no structured grants | Verify class-skill hydration and one-time free feat grant in CharGen; do not double-grant or infer from bonusFeats numeric 0. |
+
+### Source-aligned fields explicitly kept
+
+- **Bith:** system.size / system.speed / system.abilityMods — Medium, 6 squares, -2 CON/+2 INT/+2 CHA all match the Galaxy of Intrigue version. system.languages / canonicalTraits[meditative-trance,scent,evolved-intellect] — Basic+Bith, four-hour trance, 10-square Scent limited to Perception/tracking, and temporary Intelligence-only Force Point all match Galaxy of Intrigue text.
+- **Defel:** system.size / system.speed / system.abilityMods — Small, 6 squares, -2 STR/+2 INT agree. system.languages / canonicalTraits[partial-invisibility,special-equipment] — Basic+Defel and pack descriptions correctly identify total concealment in shadowy/darker illumination, darkvision exception, ultraviolet visor necessity.
+- **Fosh:** system.abilityMods / system.size / system.speed — DEX +2/CON -2/CHA +2, Small, 6 squares match. system.languages / canonicalTraits[deceptive,healing-glands] — Basic+Fosh and exact core reroll/Treat Injury entitlements appear in pack.
+- **Givin:** system.abilityMods / size / speed / languages — -2 STR/+2 INT, Medium/6, Basic+Givin agree. canonicalTraits[damage-reduction,great-fortitude,deductive-reasoning,vacuum-immunity] — Pack expresses DR 2, Fortitude +2, any Knowledge reroll with second result, immunity to vacuum/inhaled poison correctly; published names group these under Exoskeleton and Unique Physiology.
+- **Gotal:** system.abilityMods / size / speed / languages — No modifiers, Medium/6, Basic+Gotal agree. canonicalTraits[energy-reading,low-light-vision,sensor-cones] — Pack text accurately records 6-square emotional sensing action, low-light vision, untrained Sense Force/Sense Surroundings.
+- **Herglic:** system.abilityMods / size / speed / languages — +4 STR/-4 DEX, Large/6, Basic+Herglic agree. canonicalTraits[sturdy,conditional-bonus-feat] — Second Wind heals additional 5 + half level; trained Gather Information conditional Skill Focus is correctly described.
+- **Mrlssi:** system.abilityMods / size / speed / languages — -2 STR/+2 INT/+2 CHA, Small/4, Basic+Mrlsstese agree. canonicalTraits[bonus-class-skill,scholarly-inclination,conditional-bonus-feat] — Mechanics always class skill, one Knowledge trained skill at 1st level, and conditional Skill Focus (Persuasion) correctly described.
+- **Neimoidian:** system.abilityMods / size / speed — -2 STR/+2 CHA, Medium/6 agree. canonicalTraits[conditional-bonus-feats] — Conditional Deception and Persuasion Skill Focus feat text matches intended printed effect, despite a printed 'trained feat' typo.
+- **Umbaran:** system.abilityMods / size / speed / languages — -2 CON/+2 DEX/+2 WIS, Medium/6, Basic+Umbarese agree. canonicalTraits[darkvision,sneaky,conditional-bonus-feat] — Darkvision, must-accept Stealth reroll and trained Gather Information conditional feat are effect-equivalent to printed traits.
+- **Pa'lowick:** system.abilityMods / size / speed — -2 STR/+2 WIS, Medium/6 match printed sidebar. canonicalTraits[expert-swimmer,hold-breath,primitive] — Swim reroll/take 10, 25x CON rounds breath, and suppress initial pistols/rifles/heavy weapons starting feats all represented in pack.
+- **Elomin:** system.abilityMods / size / speed / languages — +2 INT/-2 CHA, Medium/6, Basic+Elomin agree. canonicalTraits[impose-order,driven] effect text — Impose Order swift once/encounter and +5 species Will vs mind-affecting described correctly; book names latter 'Logical Mind' rather than pack 'Driven'.
+- **Nyriaanan:** system.abilityMods / size / speed / languages — +2 WIS/-2 CHA, Medium/6, Nyriaanan language agree. canonicalTraits[bonus-class-skill,bonus-feat,low-light-vision] — Survival always class skill, free level-1 feat, low-light vision match printed sidebar.
+
+### Bith cross-book reconciliation
+
+**Bith — source variants, not a wholesale correction.** *Threats of the Galaxy* p.26 prints +2 INT/-2 CON, native Bith, Heightened Awareness and once-encounter Intelligence natural-20 Evolved Intellect. *Galaxy of Intrigue* p.11 prints -2 CON/+2 INT/+2 CHA, Basic+Bith, Scent (Perception within 10 squares), and a temporary Intelligence-skill-only Force Point after spending any Force Point. The current Foundry pack reflects the *Galaxy of Intrigue* profile. Preserve the previous `THR-01-01`, `THR-01-02` and `THR-01-03` findings as published-source history. Future remediation must select an explicit variant/provenance policy, not hybridize both.
+
+### Priority concerns and audit boundaries
+
+**Most dangerous sidecar:** Nyriaanan's `Winged Glide` typed rule currently describes always-on flight speed 6, unsupported by the printed near-Human race. Gotal's sidecar grants generic blindsense in place of an emotional reading check and specific untrained Force applications. Neimoidian has a stray `speak` in its language array and unprinted Will/Persuasion modifiers. Defel's `Shadow Blend` understates total concealment.
+
+**Conditional entitlements must not be guessed:** Mrlssi's chosen Knowledge training, Neimoidian's independently trained-skill feats, Nyriaanan's free feat/Survival class skill, Defel's free visor, Fosh's Treat Injury exception, Herglic/Umbaran Gather Information feat wording and Elomin's ally reactions require live consumer tests, not arbitrary new engines.
+
+**No production changes.** This is an append-only source-data audit. `packs/species.db`, `data/species-traits.json`, `data/species-traits-migrated.json`, registries, grant ledger and CharGen were not modified. Foundry actors have not been tested.
+
+**Next book:** *The Unknown Regions* (playable non-droid species only).
