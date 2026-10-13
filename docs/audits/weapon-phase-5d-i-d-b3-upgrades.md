@@ -14,6 +14,12 @@ Existing authorities retained: `UpgradeEligibilityEngine` (via `CustomizationWor
 
 Tests now use real production pack records (real category and stamp) under wrong names, including rename in both directions, service and install-engine paths with write/credit spies, nonexistent stamp, registry reset/restore, and the real Darter for the synthetic tagger gate.
 
+## Review corrections (round 2)
+1. **The record is authoritative.** For a resolved canonical weapon, `canonical.blaster` alone decides the catalog class; the mutable `system.category` is honored only for genuine legacy weapons. A canonical Darter or Vibroblade with a forged `category: 'blaster'` stays a non-blaster.
+2. **Any canonical hint counts.** With the shared registry absent, `canonicalWeaponStateOf` returns `unresolved` for any `hasCanonicalHint` Item (stamp, compendium source, `core.sourceId`, `swse.sourceId`), not only explicit stamps. An Item with no hint remains legacy.
+3. **Ranged-energy is structural.** `requires: ['ranged_energy']` is satisfied for a canonical weapon only when its record is `range.mode === 'ranged'` and its damage types include `energy` (`isRangedEnergy`); family membership alone does not satisfy it. All 44 family-token blasters in the current registry satisfy it.
+4. The family-token blaster set is pinned in the test against the current 203-weapon registry (44 identities).
+
 ## Dispositions
 | Key | Disposition |
 | --- | --- |

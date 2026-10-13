@@ -53,14 +53,20 @@ export function isBlasterFamily(record) {
   return families.some((f) => String(f).split(':').pop().split('-').some((t) => BLASTER_FAMILY_TOKENS.has(t)));
 }
 
+/** Structured ranged-energy test (catalog `requires: ['ranged_energy']`): a ranged attack whose damage is energy. Family membership alone never satisfies it. */
+export function isRangedEnergy(record) {
+  const cs = record?.canonicalStats;
+  return cs?.range?.mode === 'ranged' && Array.isArray(cs?.damageType?.types) && cs.damageType.types.includes('energy');
+}
+
 /**
- * @returns {{state:'legacy'}|{state:'canonical', identityKey:string, operation:object|null, blaster:boolean}|{state:'unresolved', reason:string}}
+ * @returns {{state:'legacy'}|{state:'canonical', identityKey:string, operation:object|null, blaster:boolean, rangedEnergy:boolean}|{state:'unresolved', reason:string}}
  */
 export function canonicalWeaponStateOf(item, registry = getSharedWeaponAuthorityRegistry()) {
   if (!item) return { state: 'legacy' };
   if (!registry) {
-    if (getWeaponAuthorityRegistryLoadFailure() && hasCanonicalHint(item)) return { state: 'unresolved', reason: 'registry_load_failed' };
-    if (item?.flags?.swse?.canonicalWeapon?.identityKey) return { state: 'unresolved', reason: 'registry_not_loaded' };
+    // Any canonical hint (stamp OR compendium source id) means the weapon may be canonical and cannot be judged without the registry.
+    if (hasCanonicalHint(item)) return { state: 'unresolved', reason: getWeaponAuthorityRegistryLoadFailure() ? 'registry_load_failed' : 'registry_not_loaded' };
     return { state: 'legacy' };
   }
   let id;
@@ -68,5 +74,5 @@ export function canonicalWeaponStateOf(item, registry = getSharedWeaponAuthority
   if (id.kind !== 'canonical') return { state: 'legacy' };
   const record = registry.getByIdentityKey(id.identityKey);
   if (!record) return { state: 'unresolved', reason: 'identity_unresolvable' };
-  return { state: 'canonical', identityKey: id.identityKey, operation: record.operation ?? null, blaster: isBlasterFamily(record) };
+  return { state: 'canonical', identityKey: id.identityKey, operation: record.operation ?? null, blaster: isBlasterFamily(record), rangedEnergy: isRangedEnergy(record) };
 }

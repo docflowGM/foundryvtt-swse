@@ -194,6 +194,113 @@ for (const k of ['weapon-sniper-blaster-rifle', 'weapon-blaster-pistol', 'weapon
   ok('13. direct service / install entry points charge nothing and write nothing when canonical resolution fails');
 }
 
+// ---- Round 2: the record is authoritative; every canonical hint counts ------------------------------------------------------------------------
+{
+  // forged mutable category cannot turn a canonical non-blaster into a blaster
+  for (const k of ['weapon-darter', 'weapon-vibroblade']) {
+    const forged = prod(k); forged.system.category = 'blaster';
+    assert.equal(eng.canInstallUpgrade(forged, 'rapid_recycler').reason, 'category_mismatch', `${k} with forged category blaster`);
+    assert.equal(eng.canInstallUpgrade(forged, 'bipod').reason, 'category_mismatch');
+  }
+  const real = prod('weapon-sniper-blaster-rifle'); assert.equal(real.system.category, 'weapon');
+  assert.equal(eng.canInstallUpgrade(real, 'rapid_recycler').reason, 'weapon_restriction:rapid_recycler');
+  const forgedSniper = prod('weapon-sniper-blaster-rifle'); forgedSniper.system.category = 'blaster';
+  assert.equal(eng.canInstallUpgrade(forgedSniper, 'rapid_recycler').reason, 'weapon_restriction:rapid_recycler');
+  // a genuine legacy blaster-category weapon keeps the published category behaviour
+  const legacyBlaster = { id: 'lb', name: 'Homebrew', type: 'weapon', flags: {}, system: { category: 'blaster', weaponCategory: 'ranged', weaponType: 'pistols', range: '15 squares' } };
+  assert.equal(compat.canonicalWeaponStateOf(legacyBlaster).state, 'legacy');
+  assert.notEqual(eng.canInstallUpgrade(legacyBlaster, 'rapid_recycler').reason, 'category_mismatch');
+  ok('15. forged system.category cannot override the canonical record (Darter / Vibroblade stay non-blasters); legacy weapons keep category behaviour');
+}
+{
+  const sourceOnly = (identityKey) => { const it = prod(identityKey); it.flags = {}; it._stats = { compendiumSource: `Compendium.foundryvtt-swse.weapons.${idOf(identityKey)}` }; return it; };
+  const sniper = sourceOnly('weapon-sniper-blaster-rifle');
+  const pistol = sourceOnly('weapon-blaster-pistol');
+  const a = mkActor([sniper, pistol]);
+  assert.equal(compat.canonicalWeaponStateOf(sniper).state, 'canonical', 'source-id-only resolves through the production-id index');
+  assert.equal(eng.canInstallUpgrade(sniper, 'rapid_recycler').reason, 'weapon_restriction:rapid_recycler');
+  rt.resetSharedWeaponAuthorityRegistry();
+  try {
+    assert.deepEqual(compat.canonicalWeaponStateOf(sniper), { state: 'unresolved', reason: 'registry_not_loaded' });
+    assert.equal(eng.canInstallUpgrade(sniper, 'cheater').reason, 'canonical_unresolved:registry_not_loaded');
+    assert.equal(eng.canInstallUpgrade(pistol, 'rapid_recycler').allowed, false);
+    const flagSourceId = prod('weapon-blaster-pistol'); flagSourceId.flags = { core: { sourceId: `Compendium.foundryvtt-swse.weapons.${idOf('weapon-blaster-pistol')}` } };
+    assert.equal(compat.canonicalWeaponStateOf(flagSourceId).state, 'unresolved');
+    assert.equal(compat.canonicalWeaponStateOf({ id: 'l', name: 'x', type: 'weapon', flags: {}, system: {} }).state, 'legacy');
+    writes.length = 0;
+    await assert.rejects(() => UpgradeService.applyUpgrade({ actor: a, itemId: sniper.id, upgradeId: 'cheater' }));
+    assert.equal((await wf.installRemoveEngine.applyInstall(a, pistol, 'rapid_recycler', { mechanicsTotal: 99 })).success, false);
+    assert.deepEqual(writes, []); assert.equal(a.system.credits, 99999);
+  } finally { rt.setSharedWeaponAuthorityRegistry(registry); }
+  assert.equal(compat.canonicalWeaponStateOf(sniper).state, 'canonical');
+  assert.equal(eng.canInstallUpgrade(sniper, 'rapid_recycler').reason, 'weapon_restriction:rapid_recycler');
+  assert.equal(eng.canInstallUpgrade(pistol, 'rapid_recycler').allowed, true);
+  ok('16. source-id-only canonical Items: unresolved when the registry is missing (no cost, no write), resolved and enforced once it is restored');
+}
+{
+  const BLASTERS = [
+    "weapon-arc-9965-blaster",
+    "weapon-ascension-gun",
+    "weapon-assault-blaster-rifle",
+    "weapon-aurial-blaster",
+    "weapon-blaster-cannon",
+    "weapon-blaster-carbine",
+    "weapon-blaster-pistol",
+    "weapon-blaster-rifle",
+    "weapon-bluebolt-blaster-pistol",
+    "weapon-bryar-pistol",
+    "weapon-commando-special-rifle",
+    "weapon-defender-microblaster",
+    "weapon-dh-23-blaster-pistol",
+    "weapon-dlt-20a-longblaster",
+    "weapon-double-barreled-blaster-carbine",
+    "weapon-dt-12-heavy-blaster",
+    "weapon-e-web-repeating-blaster",
+    "weapon-espo-500-riot-gun",
+    "weapon-firelance-blaster-rifle",
+    "weapon-heavy-assault-blaster",
+    "weapon-heavy-blaster-cannon",
+    "weapon-heavy-blaster-pistol",
+    "weapon-heavy-blaster-rifle",
+    "weapon-heavy-repeating-blaster",
+    "weapon-heavy-variable-blaster",
+    "weapon-hold-out-blaster-pistol",
+    "weapon-hunting-blaster-carbine",
+    "weapon-ion-carbine",
+    "weapon-light-repeating-blaster",
+    "weapon-model-434-deathhammer",
+    "weapon-repeating-blaster-carbine",
+    "weapon-rotary-blaster-cannon",
+    "weapon-sg-4-blaster-rifle",
+    "weapon-siang-lance",
+    "weapon-sidearm-blaster-pistol",
+    "weapon-snap-shot-blaster-pistol",
+    "weapon-sniper-blaster-rifle",
+    "weapon-sporting-blaster-carbine",
+    "weapon-sporting-blaster-pistol",
+    "weapon-sporting-blaster-rifle",
+    "weapon-subrepeating-blaster",
+    "weapon-targeting-blaster-rifle",
+    "weapon-variable-blaster",
+    "weapon-wrist-blaster"
+  ];
+  const t = (r) => compat.isBlasterFamily(r);
+  const found = registryData.identities.filter(t).map((r) => r.identityKey).sort();
+  assert.equal(registryData.identities.length, 203);
+  assert.deepEqual(found, BLASTERS, 'the family-token blaster set over the current 203-weapon registry is exactly this list');
+  for (const k of ['weapon-darter', 'weapon-vibroblade', 'weapon-bowcaster', 'weapon-slugthrower-rifle', 'weapon-ion-rifle', 'weapon-sonic-pistol', 'weapon-bryar-rifle']) assert.ok(!found.includes(k), `${k} is not a catalog blaster`);
+  // ranged-energy is grounded in structured properties, not family membership
+  for (const r of registryData.identities.filter(t)) assert.equal(compat.isRangedEnergy(r), r.canonicalStats.range.mode === 'ranged' && r.canonicalStats.damageType.types.includes('energy'), r.identityKey);
+  const fam = { selectors: { families: ['weapon-family:blaster-pistol'] } };
+  assert.equal(compat.isRangedEnergy({ ...fam, canonicalStats: { range: { mode: 'melee' }, damageType: { types: ['energy'] } } }), false);
+  assert.equal(compat.isRangedEnergy({ ...fam, canonicalStats: { range: { mode: 'ranged' }, damageType: { types: ['sonic'] } } }), false);
+  assert.equal(compat.isRangedEnergy({ ...fam, canonicalStats: { range: { mode: 'ranged' }, damageType: { types: ['energy'] } } }), true);
+  assert.notEqual(eng.canInstallUpgrade(prod('weapon-blaster-pistol'), 'ion_charger').reason, 'requires_ranged_energy');
+  const legacyRifle = { id: 'lr', name: 'Homebrew', type: 'weapon', flags: {}, system: { category: 'blaster', weaponCategory: 'ranged', weaponType: 'rifles', range: '15 squares' } };
+  assert.equal(eng.canInstallUpgrade(legacyRifle, 'ion_charger').reason, 'requires_ranged_energy', 'legacy behaviour unchanged');
+  ok('17. family-token blaster set is pinned against the 203-weapon registry; ranged-energy needs ranged + energy damage, not just the family');
+}
+
 // ---- pure helpers ------------------------------------------------------------------------------------------------------------------------------
 {
   assert.equal(compat.normalizeUpgradeKey('Rapid Recycler'), 'rapid_recycler');

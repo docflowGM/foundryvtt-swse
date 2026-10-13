@@ -48,14 +48,16 @@ export class UpgradeEligibilityEngine {
     if (!profile.customizable) return { allowed: false, reason: `unsupported_category:${profile.category}` };
     // Phase 5D-I-D-B3: a weapon is classified from its canonical record. Production weapons carry system.category 'weapon', so the catalog's blaster class
     // comes from the record's weapon-family selectors; a declared-but-unresolvable canonical identity is refused (never treated as legacy).
-    const isWeaponItem = profile.category === 'blaster' || profile.category === 'weapon';
+    const isWeaponItem = item?.type === 'weapon' || profile.category === 'blaster' || profile.category === 'weapon';
     const canonical = isWeaponItem ? canonicalWeaponStateOf(item) : { state: 'legacy' };
     if (canonical.state === 'unresolved') return { allowed: false, reason: `canonical_unresolved:${canonical.reason}`, visible: true };
-    const isBlaster = profile.category === 'blaster' || (canonical.state === 'canonical' && canonical.blaster);
+    // A resolved canonical weapon is classified by its record ONLY; the mutable Item category (editable, forgeable) is honored for genuine legacy weapons alone.
+    const isCanonical = canonical.state === 'canonical';
+    const isBlaster = isCanonical ? canonical.blaster : profile.category === 'blaster';
 
     const categorySet = new Set(upgrade.appliesTo ?? []);
-    const itemCategory = isBlaster ? 'blaster' : profile.category;
-    const matchesCategory = categorySet.has(itemCategory) || (isBlaster && categorySet.has('weapon')) || (itemCategory === 'weapon' && categorySet.has('weapon'));
+    const itemCategory = isCanonical ? (isBlaster ? 'blaster' : 'weapon') : profile.category;
+    const matchesCategory = categorySet.has(itemCategory) || (isBlaster && categorySet.has('weapon'));
     if (!matchesCategory) return { allowed: false, reason: 'category_mismatch', visible: false };
 
     if (canonical.state === 'canonical') {
@@ -72,7 +74,7 @@ export class UpgradeEligibilityEngine {
     }
 
     if ((upgrade.requires ?? []).includes('ranged') && !profile.traits.hasRange) return { allowed: false, reason: 'requires_ranged' };
-    if ((upgrade.requires ?? []).includes('ranged_energy') && !(isBlaster && canonical.state === 'canonical') && !String(profile.weaponSubtype ?? '').includes('ranged')) return { allowed: false, reason: 'requires_ranged_energy' };
+    if ((upgrade.requires ?? []).includes('ranged_energy') && !(isCanonical && canonical.rangedEnergy) && !String(profile.weaponSubtype ?? '').includes('ranged')) return { allowed: false, reason: 'requires_ranged_energy' };
     if ((upgrade.requires ?? []).includes('stun_setting') && !profile.traits.hasStunSetting) return { allowed: false, reason: 'requires_stun_setting' };
     if ((upgrade.requires ?? []).includes('autofire') && !profile.traits.hasAutofire) return { allowed: false, reason: 'requires_autofire' };
 
