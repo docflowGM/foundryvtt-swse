@@ -1,0 +1,143 @@
+// Phase 5D-I-D-B2 -- effective weapon SIZE, worn / mounted classification, and the held-together rule (pure).
+// The canonical record states HOW a weapon's size is treated (it never states the wielder's current choice):
+//   tripodEffectiveSize / tripodTreatsAsOneSizeSmallerForWielding   while the weapon is mounted on a tripod, its size for wielding is smaller
+//   mayCountAsSmallWhenBeneficial / mayTreatAsSizeWhenBeneficial    the WIELDER may choose to treat it as a smaller size (a choice, never a default)
+//   wieldingRules[may-count-as-size].value                          the same fact in the structured wielding rules
+//   sizeRule 'two_sizes_smaller_than_wearer'                        a worn item is a fixed number of sizes below its wearer (no choice)
+// This module computes the EFFECTIVE size from those declarations and the CURRENT state the owned Item / the attack carries (tripod mounted, size
+// choice made), and classifies it against the wielder's size (Core Rulebook p.120, Weapon Sizes: smaller = light, same = one-handed, one larger =
+// two-handed, two or more larger = too large to use). The classification is what the weapon REQUIRES; the hands the wielder actually uses stay the
+// wielder's explicit choice (owned-state.js resolveWielding). Pure: no mutation, no rolls.
+import { SIZE_RANK } from './condition-policy.js';
+// the established size-rank vocabulary of the weapon runtime (condition-policy.js SIZE_RANK) -- no second ordering table
+const SIZE_NAMES = Object.freeze(Object.keys(SIZE_RANK));
+export const sizeIndexOf = (s) => { const k = SIZE_NAMES.find((n) => n.toLowerCase() === String(s ?? '').trim().toLowerCase()); return k === undefined ? -1 : SIZE_RANK[k]; };
+const sizeLabel = (i) => SIZE_NAMES.find((n) => SIZE_RANK[n] === i) ?? null;
+const NUMBER_WORDS = Object.freeze({ one: 1, two: 2, three: 3 });
+const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
+
+/**
+ * The structured size rules of a canonical record, or null when it declares none.
+ * @returns {{tripod:{mode:'absolute'|'one-smaller', size:string|null}|null, beneficial:{size:string}|null, belowWearer:number|null, keys:string[]}|null}
+ */
+export function sizeRulesOf(operation, wieldingRules = []) {
+  const op = operation ?? {};
+  const keys = [];
+  let tripod = null;
+  if (typeof op.tripodEffectiveSize === 'string' && sizeIndexOf(op.tripodEffectiveSize) >= 0) { tripod = { mode: 'absolute', size: op.tripodEffectiveSize }; keys.push('tripodEffectiveSize'); }
+  else if (op.tripodTreatsAsOneSizeSmallerForWielding === true) { tripod = { mode: 'one-smaller', size: null }; keys.push('tripodTreatsAsOneSizeSmallerForWielding'); }
+  let beneficial = null;
+  const ruleSize = asArray(wieldingRules).find((r) => r?.effect === 'may-count-as-size' && sizeIndexOf(r.value) >= 0)?.value ?? null;
+  if (typeof op.mayTreatAsSizeWhenBeneficial === 'string' && sizeIndexOf(op.mayTreatAsSizeWhenBeneficial) >= 0) { beneficial = { size: op.mayTreatAsSizeWhenBeneficial }; keys.push('mayTreatAsSizeWhenBeneficial'); }
+  if (op.mayCountAsSmallWhenBeneficial === true) { beneficial = beneficial ?? { size: ruleSize ?? 'Small' }; keys.push('mayCountAsSmallWhenBeneficial'); }
+  if (!beneficial && ruleSize) beneficial = { size: ruleSize };
+  let belowWearer = null;
+  const m = /^(one|two|three)_sizes?_smaller_than_wearer$/.exec(String(op.sizeRule ?? ''));
+  if (m) { belowWearer = NUMBER_WORDS[m[1]]; keys.push('sizeRule'); }
+  if (!tripod && !beneficial && belowWearer === null) return null;
+  return Object.freeze({ tripod: tripod && Object.freeze(tripod), beneficial: beneficial && Object.freeze(beneficial), belowWearer, keys: Object.freeze(keys) });
+}
+
+/**
+ * Effective size for wielding. `state` = { mounted?:boolean, treatAs?:string }. A choice is honoured only when it names exactly the size the record
+ * allows; an unknown / forged value is ignored, and no rule engages without its state. When several rules engage the SMALLEST result applies.
+ * @returns {{index:number, size:string|null, via:'base'|'tripod'|'beneficial-choice'|'below-wearer', engaged:string[]}}
+ */
+export function effectiveSizeOf(rules, baseSize, { wielderSize = null, mounted = false, treatAs = null } = {}) {
+  const baseIdx = sizeIndexOf(baseSize);
+  const wielderIdx = sizeIndexOf(wielderSize);
+  let best = { index: baseIdx, via: 'base' };
+  const engaged = [];
+  const consider = (index, via) => { if (index < 0) return; engaged.push(via); if (best.index < 0 || index < best.index) best = { index, via }; };
+  if (rules?.belowWearer && wielderIdx >= 0) consider(Math.max(0, wielderIdx - rules.belowWearer), 'below-wearer');
+  if (rules?.tripod && mounted === true) {
+    if (rules.tripod.mode === 'absolute') consider(sizeIndexOf(rules.tripod.size), 'tripod');
+    else if (baseIdx >= 0) consider(baseIdx - 1, 'tripod');
+  }
+  if (rules?.beneficial && treatAs && sizeIndexOf(treatAs) === sizeIndexOf(rules.beneficial.size)) consider(sizeIndexOf(rules.beneficial.size), 'beneficial-choice');
+  return Object.freeze({ index: best.index, size: sizeLabel(best.index), via: best.via, engaged: Object.freeze(engaged) });
+}
+
+/** Core Rulebook p.120: the classification of a weapon of size index `eff` for a wielder of size index `wielder`. */
+export function classifySize(eff, wielder) {
+  if (!(eff >= 0) || !(wielder >= 0)) return null;
+  const d = eff - wielder;
+  return d < 0 ? 'light' : d === 0 ? 'one-handed' : d === 1 ? 'two-handed' : 'too-large';
+}
+
+/**
+ * The shared effective-size resolver (no mutation, no rolls, no dialogs).
+ * @param {object} shape  an attack shape (needs .size, .sizeRules)
+ * @param {string} actorSize  the wielder's size
+ * @param {{tripodMounted?:boolean, beneficialSizeChoice?:string}} state  tripodMounted undefined = not established
+ * @returns {{baseSize:string|null, effectiveSize:string|null, actorSize:string|null, sizeDelta:number|null, classification:'light'|'one-handed'|'two-handed'|'too-large'|null,
+ *   requiredHands:2|null, source:'base'|'tripod'|'beneficial-choice'|'below-wearer', legal:boolean|null, pending:string|null, reason?:string}}
+ *   legal false = definitely too large; legal null = depends on a tripod state that is not established (unknown is neither true nor false)
+ */
+export function resolveEffectiveWieldingSize(shape, actorSize, { tripodMounted, beneficialSizeChoice = null } = {}) {
+  const rules = shape?.sizeRules ?? null;
+  const base = shape?.size ?? null;
+  const w = sizeIndexOf(actorSize);
+  const at = (tripod) => effectiveSizeOf(rules, base, { wielderSize: actorSize, mounted: tripod, treatAs: beneficialSizeChoice });
+  const pack = (eff, legal = undefined, pending = null) => {
+    const classification = classifySize(eff.index, w);
+    return Object.freeze({
+      baseSize: base, effectiveSize: eff.size, actorSize: sizeLabel(w) ?? actorSize ?? null,
+      sizeDelta: eff.index >= 0 && w >= 0 ? eff.index - w : null, classification,
+      requiredHands: classification === 'two-handed' ? 2 : null, source: eff.via,
+      legal: legal === undefined ? classification !== 'too-large' : legal, pending,
+      ...((legal === undefined ? classification === 'too-large' : legal === false) ? { reason: 'too-large-to-wield' } : {}),
+    });
+  };
+  if (typeof tripodMounted === 'boolean' || !rules?.tripod) return pack(at(tripodMounted === true));
+  // a tripod rule exists and whether the weapon is on a tripod is not established: the verdict stands only if both answers agree
+  const off = at(false), on = at(true);
+  const cOff = classifySize(off.index, w), cOn = classifySize(on.index, w);
+  if (cOff === cOn) return pack(off);
+  const base0 = pack(off, (cOff === 'too-large' || cOn === 'too-large') ? null : true, 'tripod');
+  return Object.freeze({ ...base0, requiredHands: null, classification: null });
+}
+
+/** The size state a consumer reads for ONE attack / classification: an explicit option wins over the owned state (never a free default). */
+export function sizeStateOf(ownedState, context = {}) {
+  const mounted = typeof context?.mounted === 'boolean' ? context.mounted : ownedState?.mounted === true;
+  const treatAs = context?.beneficialSizeChoice ?? ownedState?.sizeTreatment ?? null;
+  return { mounted, treatAs: typeof treatAs === 'string' ? treatAs : null };
+}
+
+/** sizeStateOf() for an owned weapon Item: reads its owned fire state (flags.swse.fireState) and the attack / classification context. */
+export function ownedSizeStateOf(weapon, context = {}) {
+  let owned = null;
+  try { owned = weapon?.flags?.swse?.fireState ?? weapon?.getFlag?.('swse', 'fireState') ?? null; } catch { owned = null; }
+  return sizeStateOf(owned, context);
+}
+
+/**
+ * Worn / mounted-on-the-body classification of a canonical record (wear location: wrist | forearm; 'bracelet/jewelry' is a wrist item). CLASSIFICATION ONLY: the records do not say that a
+ * worn weapon occupies, frees or needs a hand, so none of that is decided here.
+ * @returns {{kind:'wrist'|'forearm'|null, wearLocation:'wrist'|'forearm'|null, keys:string[], worn:string|null}|null}
+ */
+export function wornClassOf(operation) {
+  const op = operation ?? {};
+  const keys = [];
+  let kind = null;
+  if (op.wornOnWrist === true) { kind = 'wrist'; keys.push('wornOnWrist'); }
+  if (op.forearmMounted === true) { kind = kind ?? 'forearm'; keys.push('forearmMounted'); }
+  const as = typeof op.wornAs === 'string' && op.wornAs.trim() ? op.wornAs.trim() : null;
+  if (as) { if (as.toLowerCase().split('/').map((t) => t.trim()).includes('bracelet')) kind = kind ?? 'wrist'; keys.push('wornAs'); }
+  return keys.length ? Object.freeze({ kind, wearLocation: kind, keys: Object.freeze(keys), worn: as }) : null;
+}
+
+/**
+ * Do `a` and `b` count as ONE weapon when held together (Darkstick: several held in one hand)? Both must be the same canonical identity that
+ * declares multipleHeldOneHandCountsAsOneWeapon; an explicit second-weapon designation by the player is decided by the caller.
+ */
+export function countsAsOneHeldWeapon(shapeA, shapeB) {
+  return !!shapeA && !!shapeB && shapeA.source === 'canonical' && shapeB.source === 'canonical'
+    && shapeA.heldTogether === true && shapeB.heldTogether === true && shapeA.identityKey === shapeB.identityKey;
+}
+
+/** The two-handed design of a record: operation.designedForTwoHandedUse or the structured wieldingRules effect. */
+export function designedTwoHandedOf(operation, wieldingRules = []) {
+  return operation?.designedForTwoHandedUse === true || asArray(wieldingRules).some((r) => r?.effect === 'designed-for-two-handed-use');
+}

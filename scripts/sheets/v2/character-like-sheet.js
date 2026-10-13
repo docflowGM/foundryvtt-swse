@@ -3677,6 +3677,8 @@ const forcePoints = [];
   /** Weapon configuration chooser. Reads the canonical configuration states and the owned configuration; applies ONLY through FireStateStore.setConfiguration. */
   async _openWeaponConfigurationDialog(weapon) {
     if (FireStateStore.hasMountRule(weapon)) return this._openWeaponMountDialog(weapon);
+    if (FireStateStore.sizeTreatmentOptions(weapon)) return this._openWeaponSizeTreatmentDialog(weapon);
+    { const together = FireStateStore.heldTogetherOptions(this.actor, weapon); if (together && together.max >= 2) return this._openWeaponHeldTogetherDialog(weapon, together); }
     const states = FireStateStore.configurationOptions(weapon).states;
     if (states.length < 2) return;
     const owned = (() => { try { return weapon.flags?.swse?.fireState ?? weapon.getFlag?.("swse", "fireState") ?? null; } catch (_err) { return null; } })();
@@ -3701,6 +3703,54 @@ const forcePoints = [];
       return;
     }
     await this.requestSurfaceRender({ reason: "weapon-configuration-change" });
+  }
+
+  /**
+   * Phase 5D-I-D-B2: how many identical weapons are held together in one hand (Darkstick). Applies ONLY through FireStateStore.setHeldTogetherCount, which
+   * validates ownership, the number owned and the wielder's proficiency; the count is the player's statement, never inferred from the equipped inventory.
+   */
+  async _openWeaponHeldTogetherDialog(weapon, opt) {
+    const rows = Array.from({ length: opt.max }, (_v, i) => i + 1).map((n) => `<label class="swse-weapon-choice ${n === opt.current ? "is-selected" : ""}"><span class="swse-weapon-choice__name"><input type="radio" name="count" value="${n}" ${n === opt.current ? "checked" : ""}/> ${n === 1 ? "Held singly" : `${n} held together in one hand`}${n === opt.current ? " (current)" : ""}</span></label>`).join("");
+    const picked = await SWSEDialogV2.prompt({
+      title: `${weapon.name} - Held together`,
+      content: `<form class="swse-dialog"><div class="swse-weapon-choice-list">${rows}</div></form>`,
+      label: "Apply",
+      callback: (html) => {
+        const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+        const form = root?.querySelector?.("form") ?? root;
+        return String(new FormData(form).get("count") ?? "");
+      }
+    });
+    const n = Number(picked);
+    if (!n || n === opt.current) return;
+    const result = await FireStateStore.setHeldTogetherCount(this.actor, weapon, n);
+    if (!result?.ok) { ui?.notifications?.warn?.(`${weapon.name}: cannot change how many are held together (${String(result?.reason ?? "unavailable").replace(/-/g, " ")}).`); return; }
+    await this.requestSurfaceRender({ reason: "weapon-held-together-change" });
+  }
+
+  /**
+   * Phase 5D-I-D-B2: the wielder's choice to treat a weapon as the smaller size its record allows ("whenever beneficial"). Applies ONLY through
+   * FireStateStore.setSizeTreatment, which validates ownership and the size the record declares.
+   */
+  async _openWeaponSizeTreatmentDialog(weapon) {
+    const opt = FireStateStore.sizeTreatmentOptions(weapon);
+    if (!opt) return;
+    const current = opt.current ? "treated" : "normal";
+    const rows = [["normal", "Normal size"], ["treated", `Treat as ${opt.size}`]].map(([v, label]) => `<label class="swse-weapon-choice ${v === current ? "is-selected" : ""}"><span class="swse-weapon-choice__name"><input type="radio" name="size" value="${v}" ${v === current ? "checked" : ""}/> ${label}${v === current ? " (current)" : ""}</span></label>`).join("");
+    const picked = await SWSEDialogV2.prompt({
+      title: `${weapon.name} - Size`,
+      content: `<form class="swse-dialog"><div class="swse-weapon-choice-list">${rows}</div></form>`,
+      label: "Apply",
+      callback: (html) => {
+        const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+        const form = root?.querySelector?.("form") ?? root;
+        return String(new FormData(form).get("size") ?? "");
+      }
+    });
+    if (!picked || picked === current) return;
+    const result = await FireStateStore.setSizeTreatment(this.actor, weapon, picked === "treated" ? opt.size : null);
+    if (!result?.ok) { ui?.notifications?.warn?.(`${weapon.name}: cannot change size treatment (${String(result?.reason ?? "unavailable").replace(/-/g, " ")}).`); return; }
+    await this.requestSurfaceRender({ reason: "weapon-size-treatment-change" });
   }
 
   /**

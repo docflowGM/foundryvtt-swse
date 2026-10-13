@@ -35,6 +35,8 @@ import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/f
 import { summarizeAreaShape, validateDetonationTimer } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
 import { abilityProhibitedForShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 import { resolveWielding, resolveOpportunityEligibility, crewRegulationFor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/owned-state.js";
+import { resolveEffectiveWieldingSize } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
+import { isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/weapon-target-gate-classifiers.js";
 import { evaluateProfileRequirements, forgoesDoubleStrength, slugOfIdentity } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/activation-requirements.js";
 import { abilityKeysOfActor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
@@ -264,7 +266,18 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   // Phase 5D-I-B: what the OWNED weapon state already says (hands, mount, this round's crew adjudication) -- read once, never rediscovered later
   const shape = resolveAttackShapeFor(runtime, rollOptions);
   const owned = FireStateStore.readFireState(weapon) ?? {};
-  const wield = resolveWielding(shape.wielding, { option: rollOptions.wieldedHands, state: owned });
+  // Phase 5D-I-D-B2: the EFFECTIVE size class (Core Rulebook p.120) joins the hands resolution. Vehicle / starship weapons keep their own mounting rules
+  // and are not personally wielded. A tripod state that is not established leaves a tripod-dependent verdict pending (asked below, never guessed).
+  // A form with a published size-dependent PREPARATION rule (the heavy-weapon brace: two swift actions for a wielder not larger than the exempt size) has its own
+  // published way for a smaller wielder to use it, so the size class does not gate it (certified: a Medium wielder braces a Huge cannon).
+  const asArrayOf = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
+  const personallyWielded = actor?.type !== 'vehicle' && !isVehicleWeapon(weapon, rollOptions) && !asArrayOf(shape.temporal).some((c) => c?.exemptAboveWielderSize);
+  const wielderSize = actor?.system?.size ?? actor?.system?.details?.size ?? null;
+  const beneficialSizeChoice = rollOptions.beneficialSizeChoice ?? owned.sizeTreatment ?? undefined;
+  const sizeFor = (tripodMounted) => (personallyWielded ? resolveEffectiveWieldingSize(shape, wielderSize, { tripodMounted, beneficialSizeChoice }) : undefined);
+  const tripodKnown = typeof rollOptions.mounted === 'boolean' ? rollOptions.mounted : (typeof owned.mounted === 'boolean' ? owned.mounted : undefined);
+  let sizing = sizeFor(tripodKnown);
+  let wield = resolveWielding(shape.wielding, { option: rollOptions.wieldedHands, state: owned, sizing });
   const ownedFacts = { wieldedHands: wield.hands, mounted: typeof owned.mounted === 'boolean' ? owned.mounted : undefined, crewRegulated: FireStateStore.storedCrewRegulation(actor, weapon) };
   const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried, activeUses, attackContext: buildAttackConditionContext(actor, target, rollOptions, ownedFacts) });
   if (typeof stage.answers['fact:crewRegulated'] === 'boolean' && carried['fact:crewRegulated'] === undefined) await FireStateStore.recordCrewRegulation(actor, weapon, stage.answers['fact:crewRegulated']);
@@ -302,6 +315,17 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
     }
     if (mountedNow === false) refuseOnce('tripod-required', 'mount: tripod-required');
   }
+  // the tripod answer (option, owned state or the question above) settles a tripod-dependent size verdict
+  if (sizing?.pending === 'tripod') {
+    const mountedFinal = typeof rollOptions.mounted === 'boolean' ? rollOptions.mounted : (typeof FireStateStore.readFireState(weapon)?.mounted === 'boolean' ? FireStateStore.readFireState(weapon).mounted : undefined);
+    if (typeof mountedFinal === 'boolean') {
+      sizing = sizeFor(mountedFinal);
+      wield = resolveWielding(shape.wielding, { option: rollOptions.wieldedHands, state: FireStateStore.readFireState(weapon) ?? owned, sizing });
+      if (!wield.legal) refuseOnce('wielding', `wielding: ${wield.reason}`);
+    }
+  }
+  // Phase 5D-I-D-B2: the grouped (held-together) profile is legal only when the player has established two or more held together (owned state), however it was selected
+  if (shape.heldTogetherProfileId && runtime.profile?.id === shape.heldTogetherProfileId && !(Number(FireStateStore.readFireState(weapon)?.heldTogetherCount) >= 2)) refuseOnce('held-together-required', 'held together: fewer than two established');
   const abilityKeys = abilityKeysOfActor(actor);
   const proficientNow = (() => { try { return resolveCanonicalAttackProficiency(runtime, actor).proficient === true; } catch { return false; } })();
   const requirementCtx = () => ({ hands: wield.hands, aoo: rollOptions.attackOfOpportunity === true, proficient: proficientNow, abilityKeys, operators: Number.isFinite(Number(rollOptions.operators)) ? Number(rollOptions.operators) : undefined, answers: answersWithTarget });
@@ -335,6 +359,7 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   }
   const ownedExtras = {
     ...(wield.hands ? { wieldedHands: wield.hands } : {}),
+    ...(sizing?.classification ? { weaponSizeClass: { classification: sizing.classification, effectiveSize: sizing.effectiveSize, source: sizing.source } } : {}),
     ...(rollOptions.attackOfOpportunity === true ? { opportunity: { choice: rollOptions.aooChoice ?? undefined, profileId: runtime.profile.id } } : {}),
     ...(forgoesDoubleStrength(targetReqs) ? { forgoDoubleStrength: true } : {}),
     ...(shape.reach && (shape.reach.bonusSquares > 0 || shape.reach.absoluteSquares !== null) ? { reach: { bonusSquares: shape.reach.bonusSquares, ...(shape.reach.absoluteSquares !== null ? { absoluteSquares: shape.reach.absoluteSquares } : {}) } } : {}),
@@ -379,6 +404,7 @@ export function buildAttackConditionContext(actor, target, rollOptions = {}, ext
   if (typeof aim === 'boolean') ctx.aimedBeforeAttack = aim;
   if (typeof rollOptions.braced === 'boolean') ctx.braced = rollOptions.braced;
   if (typeof rollOptions.mounted === 'boolean') ctx.mounted = rollOptions.mounted;
+  if (typeof rollOptions.beneficialSizeChoice === 'string' && rollOptions.beneficialSizeChoice) ctx.beneficialSizeChoice = rollOptions.beneficialSizeChoice;
   if (typeof rollOptions.crewRegulated === 'boolean') ctx.crewRegulated = rollOptions.crewRegulated;
   if (Number.isFinite(Number(rollOptions.wieldedHands))) ctx.wieldedHands = Number(rollOptions.wieldedHands);
   // Phase 5D-I-B: facts the OWNED weapon state observes (mounted, hands, this round's crew adjudication) fill what the attack did not state

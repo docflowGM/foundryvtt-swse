@@ -10,6 +10,7 @@
 const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 import { powerSourceRequirementOf } from './power-source.js';
 import { mountRuleOf } from './host-mount.js';
+import { sizeRulesOf, wornClassOf, designedTwoHandedOf } from './wielding-size.js';
 import { resolveTemporalConstraints } from './fire-state.js';
 import { resolveAreaShape } from './area-shape.js';
 import { buildWeaponDescriptor } from './weapon-descriptor.js';
@@ -172,6 +173,12 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
     mountRule: mountRuleOf(op, cs.configurationStates),
     size: typeof cs.size === 'string' ? cs.size : null,
     requiresHostLauncher: op.requiresGrenadeLauncher === true,
+    // Phase 5D-I-D-B2: size treatment (tripod / chosen / below-wearer), worn classification, two-handed design, held-together rule
+    sizeRules: sizeRulesOf(op, cs.wieldingRules),
+    worn: wornClassOf(op),
+    designedTwoHanded: designedTwoHandedOf(op, cs.wieldingRules),
+    heldTogether: op.multipleHeldOneHandCountsAsOneWeapon === true,
+    heldTogetherProfileId: typeof op.multipleHeldDamageProfile === 'string' ? op.multipleHeldDamageProfile : null,
     // temporal firing constraints (families in fire-state.js); owned readiness state lives on the Item, never here
     temporal: resolveTemporalConstraints(def, op, resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions),
     dualWield: Object.freeze({

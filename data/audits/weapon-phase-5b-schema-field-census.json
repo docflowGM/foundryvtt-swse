@@ -5,7 +5,7 @@
  "purpose": "Programmatic census of every field path present in the operational canonical weapons corpus (data/canonical/weapons.json). Paths normalise array indices to []; each path is attributed to its certified origin (Phase 3B / Phase 4H) or to the canonical-only wrapper (provenance/production). Audit-only roots not carried by the corpus are enumerated in auditOnlyRootsNotCarried.",
  "identities": 203,
  "inputs": {
-  "data/canonical/weapons.json": "f21b757ba43294edb757bcd274e154a2a27760fe8542cabd0515538a0bd7ccbe"
+  "data/canonical/weapons.json": "deea5adcbbdf4de3d5e30bf7d0588afe38d6814a35e2c839a4d9c1bb274f731e"
  },
  "auditOnlyRootsNotCarried": {
   "phase3B": [
@@ -21,10 +21,10 @@
   ]
  },
  "counts": {
-  "phase3BFieldPaths": 1555,
+  "phase3BFieldPaths": 1556,
   "phase4HFieldPaths": 662,
   "canonicalOnlyFieldPaths": 91,
-  "totalFieldPaths": 2308
+  "totalFieldPaths": 2309
  },
  "fields": [
   {
@@ -832,7 +832,7 @@
    "fieldPath": "canonicalStats.attackProfiles[]",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -846,7 +846,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].activationRequirements",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -860,8 +860,8 @@
    "fieldPath": "canonicalStats.attackProfiles[].activationRequirements[]",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 24,
-   "identityCount": 11,
+   "occurrenceCount": 25,
+   "identityCount": 12,
    "valueTypes": [
     "object"
    ],
@@ -907,8 +907,8 @@
    "fieldPath": "canonicalStats.attackProfiles[].activationRequirements[].condition",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 4,
-   "identityCount": 2,
+   "occurrenceCount": 5,
+   "identityCount": 3,
    "valueTypes": [
     "string"
    ],
@@ -1150,8 +1150,8 @@
    "fieldPath": "canonicalStats.attackProfiles[].activationRequirements[].type",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 24,
-   "identityCount": 11,
+   "occurrenceCount": 25,
+   "identityCount": 12,
    "valueTypes": [
     "string"
    ],
@@ -1184,7 +1184,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].area",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -1198,7 +1198,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].area.enabled",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -1215,7 +1215,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].area.heightSquares",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -1232,7 +1232,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].area.lengthSquares",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -1250,7 +1250,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].area.notes",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array",
@@ -1286,7 +1286,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].area.radiusSquares",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -1305,7 +1305,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].area.shape",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -1324,7 +1324,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].area.widthAtEndSquares",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -1342,7 +1342,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].area.widthSquares",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -1359,7 +1359,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].attackResolution",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -1373,7 +1373,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].attackResolution.defense",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -1391,7 +1391,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].attackResolution.ignoredDefenseComponents",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -1421,7 +1421,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].attackResolution.mode",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -1439,7 +1439,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].attackResolution.onMiss",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -1475,7 +1475,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].conditionalModifiers",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -1735,7 +1735,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].conditionalRangeRules",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -1842,7 +1842,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].criticalEffects",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -2064,7 +2064,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damage",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -2096,7 +2096,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damage.diceCount",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -2115,7 +2115,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damage.dieSize",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -2134,7 +2134,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damage.flatBonus",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -2153,7 +2153,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damage.formula",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -2172,7 +2172,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damage.mode",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -2206,7 +2206,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damageComponents",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -2456,7 +2456,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damageMultiplier",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "number"
@@ -2473,7 +2473,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damageType",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -2487,7 +2487,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damageType.mode",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -2505,7 +2505,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damageType.qualifiers",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -2552,7 +2552,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damageType.types",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -2566,7 +2566,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].damageType.types[]",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 291,
+   "occurrenceCount": 292,
    "identityCount": 196,
    "valueTypes": [
     "string"
@@ -2584,7 +2584,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].firingConstraints",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -2810,7 +2810,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].id",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -2828,7 +2828,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].kind",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -2846,15 +2846,15 @@
    "fieldPath": "canonicalStats.attackProfiles[].label",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
    ],
    "sampleValues": [
-    "\"Area shot\"",
     "\"Ascension Mode\"",
-    "\"Autofire\""
+    "\"Autofire\"",
+    "\"Blade\""
    ],
    "nullable": false,
    "conditional": false
@@ -2864,7 +2864,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].modifierPolicy",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null"
@@ -2878,7 +2878,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].notes",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -2910,7 +2910,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].preparedAttack",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -3223,7 +3223,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -3237,7 +3237,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities.accurate",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -3254,7 +3254,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities.arc",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -3271,7 +3271,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities.areaEffect",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -3288,7 +3288,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities.autofireOnly",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -3305,7 +3305,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities.doubleWeapon",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -3322,7 +3322,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities.ignoresDR",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -3339,7 +3339,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities.inaccurate",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -3356,7 +3356,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities.reach",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -3373,7 +3373,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].qualities.thrown",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -3390,7 +3390,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -3404,7 +3404,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.allowedBands",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 198,
+   "occurrenceCount": 199,
    "identityCount": 169,
    "valueTypes": [
     "array",
@@ -3437,7 +3437,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.bands",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -3580,7 +3580,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.basePenalties",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -3659,7 +3659,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.hardMaxSquares",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -3696,7 +3696,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.mode",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -3714,7 +3714,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.penaltyApplication",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -3732,7 +3732,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.profileId",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -3751,7 +3751,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.qualityEffects",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -3765,7 +3765,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.qualityEffects.longAllowed",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean",
@@ -3783,7 +3783,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.qualityEffects.mediumAllowed",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 198,
+   "occurrenceCount": 199,
    "identityCount": 169,
    "valueTypes": [
     "boolean",
@@ -3801,7 +3801,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.qualityEffects.pointBlankAllowed",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean",
@@ -3819,7 +3819,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].range.qualityEffects.shortPenaltyOverride",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -3966,7 +3966,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].rateOfFire",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array",
@@ -3999,7 +3999,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].resourceConsumption",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -4151,7 +4151,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].schemaFamily",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -4165,7 +4165,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].schemaFamily.branch",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -4198,7 +4198,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].schemaFamily.exoticWeaponIdentity",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 31,
+   "occurrenceCount": 32,
    "identityCount": 19,
    "valueTypes": [
     "string"
@@ -4216,7 +4216,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].schemaFamily.proficiency",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -4234,7 +4234,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].schemaFamily.subcategory",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -4252,7 +4252,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].stun",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "object"
@@ -4266,7 +4266,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].stun.activation",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -4318,7 +4318,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].stun.capability",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -4336,7 +4336,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].stun.damage",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -4565,7 +4565,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].stun.damageMode",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "string"
@@ -4583,7 +4583,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].stun.hasStunSetting",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "boolean"
@@ -4600,7 +4600,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].stun.rangeRule",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "null",
@@ -4778,7 +4778,7 @@
    "fieldPath": "canonicalStats.attackProfiles[].triggeredEffects",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 249,
+   "occurrenceCount": 250,
    "identityCount": 203,
    "valueTypes": [
     "array"
@@ -20190,6 +20190,22 @@
    ],
    "sampleValues": [
     "true"
+   ],
+   "nullable": false,
+   "conditional": true
+  },
+  {
+   "canonicalPath": "operation.multipleHeldDamageProfile",
+   "fieldPath": "operation.multipleHeldDamageProfile",
+   "namespace": "3B",
+   "sourceAuthority": "Phase 3B canonical mechanics",
+   "occurrenceCount": 1,
+   "identityCount": 1,
+   "valueTypes": [
+    "string"
+   ],
+   "sampleValues": [
+    "\"melee-grouped\""
    ],
    "nullable": false,
    "conditional": true
@@ -37214,7 +37230,7 @@
    "fieldPath": "provenance.postCertificationAmendments[]",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 40,
+   "occurrenceCount": 41,
    "identityCount": 32,
    "valueTypes": [
     "string"

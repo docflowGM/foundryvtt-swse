@@ -6,6 +6,7 @@
 // weapon-scope tokens (weaponGroups / requiresWeaponGroups / requiresWeaponText ...) are then joined to it by token EQUALITY
 // (singular/plural normalized) -- never substring search -- so "light" cannot match "lightsaber" and "blaster pistol" cannot match
 // "heavy blaster pistol".
+import { sizeRulesOf, effectiveSizeOf, wornClassOf, sizeIndexOf } from './wielding-size.js';
 const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 export const tokenOf = (v) => String(v ?? '').trim().replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 const stripPrefix = (s, p) => (String(s ?? '').startsWith(p) ? String(s).slice(p.length) : String(s ?? ''));
@@ -34,8 +35,7 @@ export function groupVocabSet(registry) {
   }
   return vocabCache.get(registry);
 }
-const SIZE_ORDER = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
-const sizeIndex = (s) => SIZE_ORDER.indexOf(String(s ?? '').trim().toLowerCase());
+const sizeIndex = sizeIndexOf; // the established size-rank vocabulary (condition-policy SIZE_RANK via wielding-size.js)
 const QUALITY_TOKEN = Object.freeze({ thrown: 'thrown', areaEffect: 'area-effect', accurate: 'accurate', inaccurate: 'inaccurate', reach: 'reach', arc: 'arc', ignoresDR: 'ignores-dr', doubleWeapon: 'double-weapon', autofireOnly: 'autofire-only' });
 
 /** Build the descriptor of the selected form. `area` = resolveAreaShape() result, `fireModes` = shape.fireModes. */
@@ -60,10 +60,15 @@ export function buildWeaponDescriptor(resolved, profileDef, { area = null, fireM
   if (fireModes?.autofire) add('autofire');
   if (profileDef?.stun?.capability === 'native-stun') add('stun');
   if (resolved?.operation?.weaponFinesseCountsAsLight === true) add('treated-as-light-for-weapon-finesse');
+  { const worn = wornClassOf(resolved?.operation); if (worn) { add('worn'); add(`worn-${worn.kind}`); } }
   return Object.freeze({
     exact, families: Object.freeze([...families].sort()),
     tokens: Object.freeze([...t].sort()), melee: branch === 'melee',
     sizeIndex: sizeIndex(resolved?.canonicalStats?.size ?? profileDef?.size ?? null),
+    // Phase 5D-I-D-B2: how this form's size is TREATED for wielding (tripod, a size the wielder may choose, a fixed offset below the wearer); the
+    // base size above is untouched. null = the record declares no size rule.
+    baseSize: resolved?.canonicalStats?.size ?? profileDef?.size ?? null,
+    sizeRules: sizeRulesOf(resolved?.operation, resolved?.canonicalStats?.wieldingRules),
   });
 }
 
@@ -80,7 +85,7 @@ const variants = (token) => {
  * @param {{tokens:string[], melee:boolean, sizeIndex:number}} d
  * @param {{wielderSize?:string}} [ctx]
  */
-export function descriptorMatchesAny(d, values, { wielderSize = null, forAbility = null, identitySlugs = null, groupVocab = null } = {}) {
+export function descriptorMatchesAny(d, values, { wielderSize = null, forAbility = null, identitySlugs = null, groupVocab = null, sizeState = null } = {}) {
   if (!d) return false;
   const have = new Set(d.tokens);
   const fams = new Set(d.families);
@@ -90,7 +95,9 @@ export function descriptorMatchesAny(d, values, { wielderSize = null, forAbility
     // 'light' / 'light melee (weapons)': relative to the wielder; forms that declare it count as light for Weapon Finesse
     if (tok === 'light' || tok === 'light-melee' || tok === 'light-melee-weapon' || tok === 'light-melee-weapons') {
       const w = sizeIndex(wielderSize);
-      if (d.melee && d.sizeIndex >= 0 && w >= 0 && d.sizeIndex < w) return true;
+      // Phase 5D-I-D-B2: the EFFECTIVE size (tripod mounted, a size the wielder chose, a fixed offset below the wearer) decides "smaller than the wielder"
+      const eff = d.sizeRules ? effectiveSizeOf(d.sizeRules, d.baseSize, { wielderSize, ...(sizeState ?? {}) }).index : d.sizeIndex;
+      if (d.melee && eff >= 0 && w >= 0 && eff < w) return true;
       if (forAbility === 'weapon-finesse' && have.has('treated-as-light-for-weapon-finesse')) return true;
       continue;
     }

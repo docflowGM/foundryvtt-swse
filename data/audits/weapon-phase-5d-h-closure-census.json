@@ -4,14 +4,14 @@
   "purpose": "Audit/verification artifact only: executable-field closure of the canonical weapon runtime. Every residual is named with a reason and an owner. Not a gameplay authority.",
   "counters": {
     "TOTAL_EXECUTION_FIELD_FAMILIES": 57,
-    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 37,
-    "PARTIAL_EXECUTION_FIELD_FAMILIES": 12,
+    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 38,
+    "PARTIAL_EXECUTION_FIELD_FAMILIES": 11,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
-    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 11,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 54,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 63,
+    "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 10,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 44,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 49,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 2,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
@@ -30,8 +30,8 @@
     "counters": {
       "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
       "EXECUTION_FIELD_FAMILIES": 57,
-      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 37,
-      "EXECUTION_FIELD_FAMILIES_PARTIAL": 12,
+      "EXECUTION_FIELD_FAMILIES_WITH_CONSUMER": 38,
+      "EXECUTION_FIELD_FAMILIES_PARTIAL": 11,
       "EXECUTION_FIELD_FAMILIES_WITHOUT_CONSUMER": 8
     },
     "familiesWithoutConsumer": [
@@ -52,7 +52,6 @@
       "3b.operation.concealment-stealth-sensing",
       "3b.operation.condition-and-persistent-effects",
       "3b.operation.configuration-and-wielding",
-      "3b.operation.crew-and-emplacement",
       "3b.operation.damage-modifiers",
       "3b.profile.conditional",
       "3b.profile.effects",
@@ -229,25 +228,16 @@
       },
       {
         "id": "3b.operation.configuration-and-wielding",
-        "fieldPaths": 62,
+        "fieldPaths": 63,
         "status": "PARTIAL",
-        "consumedKeys": 13,
+        "consumedKeys": 23,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 2
         },
         "executableUnconsumed": [
           "collapsedForm",
-          "designedForTwoHandedUse",
-          "encumbranceException",
-          "forearmMounted",
-          "mayCountAsSmallWhenBeneficial",
-          "mayTreatAsSizeWhenBeneficial",
-          "multipleHeldOneHandCountsAsOneWeapon",
-          "sizeRule",
-          "tripodTreatsAsOneSizeSmallerForWielding",
-          "wornAs",
-          "wornOnWrist"
+          "encumbranceException"
         ],
         "owner": "wielding & configuration state (post-5D-H)"
       },
@@ -260,12 +250,10 @@
       {
         "id": "3b.operation.crew-and-emplacement",
         "fieldPaths": 10,
-        "status": "PARTIAL",
-        "consumedKeys": 3,
+        "status": "CONSUMED",
+        "consumedKeys": 4,
         "nonExecutable": {},
-        "executableUnconsumed": [
-          "tripodEffectiveSize"
-        ],
+        "executableUnconsumed": [],
         "owner": "heavy-weapon crew / emplacement phase"
       },
       {
@@ -945,22 +933,32 @@
         "status": "PARTIAL"
       },
       "configuration-and-wielding": {
-        "keys": 40,
+        "keys": 41,
         "identities": 40,
         "consumed": [
           "cannotBeWieldedTwoHanded",
           "cannotWieldTwoHanded",
           "configurationResolution",
           "configurationSwitchAction",
+          "designedForTwoHandedUse",
           "disintegratesOnKillOrDestruction",
           "doubleWeapon",
+          "forearmMounted",
           "fragile",
           "handsRemainFree",
           "hostWeaponAugmentation",
+          "mayCountAsSmallWhenBeneficial",
+          "mayTreatAsSizeWhenBeneficial",
+          "multipleHeldDamageProfile",
+          "multipleHeldOneHandCountsAsOneWeapon",
           "requiresTwoHands",
           "sizeGate",
+          "sizeRule",
           "switchAction",
-          "wornNotHeld"
+          "tripodTreatsAsOneSizeSmallerForWielding",
+          "wornAs",
+          "wornNotHeld",
+          "wornOnWrist"
         ],
         "duplicates": {
           "assemblyAction": "configurationStates[assembled].transitionAction",
@@ -988,24 +986,13 @@
         },
         "executableUnconsumed": [
           "collapsedForm",
-          "designedForTwoHandedUse",
-          "encumbranceException",
-          "forearmMounted",
-          "mayCountAsSmallWhenBeneficial",
-          "mayTreatAsSizeWhenBeneficial",
-          "multipleHeldOneHandCountsAsOneWeapon",
-          "sizeRule",
-          "tripodTreatsAsOneSizeSmallerForWielding",
-          "wornAs",
-          "wornOnWrist"
+          "encumbranceException"
         ],
         "owner": "wielding & configuration state (post-5D-H)",
-        "executableUnconsumedOccurrences": 15,
+        "executableUnconsumedOccurrences": 2,
         "representativeIdentities": [
-          "lightsaber-chassis-archaic-lightfoil",
-          "lightsaber-chassis-modern-lightfoil",
-          "unmapped::Darkstick",
-          "unmapped::Stunning Gauntlet"
+          "weapon-plx-2m-portable-missile-launcher",
+          "weapon-snap-baton"
         ],
         "note": {
           "reason": "assembly/switch actions, two-hand rules and size gates need a wielding and configuration state model",
@@ -1019,26 +1006,23 @@
         "consumed": [
           "crewRegulation",
           "normallyRequiresTripod",
-          "requiresSecondCrewRegulation"
+          "requiresSecondCrewRegulation",
+          "tripodEffectiveSize"
         ],
         "duplicates": {
           "operatorRoles": "attackProfiles[].activationRequirements (type operators, roles)",
           "operatorsRequired": "attackProfiles[].activationRequirements (type operators, minimum)"
         },
         "nonExecutable": {},
-        "executableUnconsumed": [
-          "tripodEffectiveSize"
-        ],
+        "executableUnconsumed": [],
         "owner": "heavy-weapon crew / emplacement phase",
-        "executableUnconsumedOccurrences": 1,
-        "representativeIdentities": [
-          "weapon-e-web-repeating-blaster"
-        ],
+        "executableUnconsumedOccurrences": 0,
+        "representativeIdentities": [],
         "note": {
           "reason": "crew roles/tripod rules belong to the heavy-weapon crew model",
           "phase": "5D-I: crew / emplacement"
         },
-        "status": "PARTIAL"
+        "status": "CONSUMED"
       },
       "damage-modifiers": {
         "keys": 14,
@@ -1330,17 +1314,7 @@
       "concealment-stealth-sensing.silentInUse",
       "condition-and-persistent-effects.grievousWound",
       "configuration-and-wielding.collapsedForm",
-      "configuration-and-wielding.designedForTwoHandedUse",
       "configuration-and-wielding.encumbranceException",
-      "configuration-and-wielding.forearmMounted",
-      "configuration-and-wielding.mayCountAsSmallWhenBeneficial",
-      "configuration-and-wielding.mayTreatAsSizeWhenBeneficial",
-      "configuration-and-wielding.multipleHeldOneHandCountsAsOneWeapon",
-      "configuration-and-wielding.sizeRule",
-      "configuration-and-wielding.tripodTreatsAsOneSizeSmallerForWielding",
-      "configuration-and-wielding.wornAs",
-      "configuration-and-wielding.wornOnWrist",
-      "crew-and-emplacement.tripodEffectiveSize",
       "damage-modifiers.powerAttackExtraDamageAppliesToObjectsAndVehicles",
       "damage-modifiers.weaponDR",
       "damage-modifiers.weaponDRAppliesAgainstLightsabers",
@@ -1350,8 +1324,8 @@
       "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 54,
-    "rawOccurrencesUnconsumed": 63,
+    "uniqueKeysUnconsumed": 44,
+    "rawOccurrencesUnconsumed": 49,
     "problems": []
   },
   "relations": {
@@ -1789,7 +1763,7 @@
         "why": "canonical ability identity + structured weapon descriptor/relations",
         "canonicalWeapons": {
           "before": 16,
-          "after": 35,
+          "after": 36,
           "lost": [],
           "gained": [
             "unmapped::Club/Baton",
@@ -1804,6 +1778,7 @@
             "unmapped::Shock Whip",
             "unmapped::Short Sword",
             "unmapped::Shyarn",
+            "unmapped::Stunning Gauntlet",
             "unmapped::Survival Knife",
             "unmapped::Tehkla Blade",
             "unmapped::Vibroknucklers",
@@ -1979,7 +1954,7 @@
         "why": "canonical ability identity + structured weapon descriptor/relations",
         "canonicalWeapons": {
           "before": 16,
-          "after": 35,
+          "after": 36,
           "lost": [],
           "gained": [
             "unmapped::Club/Baton",
@@ -1994,6 +1969,7 @@
             "unmapped::Shock Whip",
             "unmapped::Short Sword",
             "unmapped::Shyarn",
+            "unmapped::Stunning Gauntlet",
             "unmapped::Survival Knife",
             "unmapped::Tehkla Blade",
             "unmapped::Vibroknucklers",
@@ -2588,7 +2564,7 @@
         "why": "canonical ability identity + structured weapon descriptor/relations",
         "canonicalWeapons": {
           "before": 16,
-          "after": 36,
+          "after": 37,
           "lost": [],
           "gained": [
             "unmapped::Blastsword",
@@ -2604,6 +2580,7 @@
             "unmapped::Shock Whip",
             "unmapped::Short Sword",
             "unmapped::Shyarn",
+            "unmapped::Stunning Gauntlet",
             "unmapped::Survival Knife",
             "unmapped::Tehkla Blade",
             "unmapped::Vibroknucklers",

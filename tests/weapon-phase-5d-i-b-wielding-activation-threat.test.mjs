@@ -243,9 +243,14 @@ try {
   reset(); assert.ok(await attack(a2, w2, { profileId: 'two-handed-base-override', wieldedHands: 2 }), 'two-handed: allowed');
   assert.deepEqual([wfOf().attackShape.wieldedHands, wfOf().attackShape.forgoDoubleStrength, wfOf().weaponForm.profileId], [2, true, 'two-handed-base-override'], 'hands and the choice persist in the workflow');
   assert.equal(state(w2).wielded, 'two-handed', 'the owned weapon remembers the hands the player chose');
-  const w3 = canon(LH); const a3 = makeActor({ items: [w3] }); const asked = ask(async () => true);
+  // Phase 5D-I-D-B2: the hands are unresolved (so the requirement is asked) only where the weapon's size class does not decide them. For a Large wielder the
+  // Long-Handle Lightsaber (Large) is one-handed class; for a Medium wielder it is two-handed class (Core Rulebook p.120), so both hands are already established.
+  const w3 = canon(LH); const a3 = makeActor({ items: [w3], size: 'large' }); const asked = ask(async () => true);
   reset(); assert.ok(await attack(a3, w3, { profileId: 'two-handed-base-override' })); assert.deepEqual(asked, ['requirement:wielding:two-handed']);
-  rt.setSpecialPromptProvider(async () => false); const w4 = canon(LH); reset(); assert.equal(await attack(makeActor({ items: [w4] }), w4, { profileId: 'two-handed-base-override' }), null, '"no" refuses'); rt.setSpecialPromptProvider(null);
+  const w3m = canon(LH); const a3m = makeActor({ items: [w3m] }); const askedM = ask(async () => true);
+  reset(); assert.ok(await attack(a3m, w3m, { profileId: 'two-handed-base-override' })); assert.deepEqual(askedM, [], 'a Large weapon is two-handed for a Medium wielder: nothing to ask'); assert.equal(wfOf().attackShape.wieldedHands, 2);
+  void asked;
+  rt.setSpecialPromptProvider(async () => false); const w4 = canon(LH); reset(); assert.equal(await attack(makeActor({ items: [w4], size: 'large' }), w4, { profileId: 'two-handed-base-override' }), null, '"no" refuses'); rt.setSpecialPromptProvider(null);
   // the damage roll uses the carried hands (not the Item's current state): changing the owned state later changes nothing
   reset(); const w5 = canon(LH); const a5 = makeActor({ items: [w5] }); a5.system.attributes.str = ab(4);
   assert.ok(await attack(a5, w5, { profileId: 'two-handed-base-override', wieldedHands: 2 })); const wf5 = wfOf();

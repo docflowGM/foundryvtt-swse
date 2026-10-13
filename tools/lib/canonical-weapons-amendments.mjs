@@ -28,7 +28,7 @@ const CORE_RULE = 'Core Rulebook: throwing a weapon is a ranged attack (attack r
  * amended) record; `log` receives one entry per amendment actually applied.
  */
 export function applyPostCertificationAmendments(rec, log = []) {
-  return applyIDB1Structure(applyICBStructure(applyICAStructure(applyIBStructure(applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log), log), log), log), log);
+  return applyIDB2Structure(applyIDB1Structure(applyICBStructure(applyICAStructure(applyIBStructure(applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log), log), log), log), log), log);
 }
 
 function applyThrownRanged(rec, log) {
@@ -401,5 +401,32 @@ function applyIDB1Structure(rec, log) {
     from: { rifleMountable: true }, to: { mountMechanicsDC: 15, mountTimeMinutes: 1, canUseStandalone: true },
     source: { book: 'canonical player text of weapon-grenade-launcher', page: 'as recorded', evidence: 'It can be mounted on a rifle in 1 minute with a DC 15 Mechanics check or used as a separate weapon.' },
     rule: 'The runtime reads structured fields only; prose is never parsed.', reason: 'The mounting check, time and standalone use were present only as prose, so the launcher could mount without the published check.' });
+  return out;
+}
+
+// ---- Phase 5D-I-D-B2: the Darkstick held-together damage ---------------------------------------------------------------------------------
+// Text on the record: "A proficient darkstick wielder can hold multiple darksticks in one hand; two or more increase the weapon's damage dice from 1d6 to 2d8."
+// The record carried the 1d6 profiles only. A melee profile at 2d8 (activation: proficient wielder; the held-together state is checked by the attack preflight) is added and named by
+// operation.multipleHeldDamageProfile so the damage is chosen by the existing profile-selection authority; more than two sticks do not raise it above 2d8.
+// The thrown profile is unchanged (the text does not say a thrown stick is part of a held bundle).
+export const IDB2_STRUCTURE_AMENDMENT_ID = '5D-I-D-B2-held-together-profile';
+function applyIDB2Structure(rec, log) {
+  if (rec.identityKey !== 'unmapped::Darkstick') return rec;
+  const out = clone(rec);
+  const profiles = out.canonicalStats.attackProfiles;
+  const melee = profiles.find((p) => p.id === 'melee');
+  need(melee && melee.damage?.formula === '1d6' && !profiles.some((p) => p.id === 'melee-grouped') && out.operation.multipleHeldOneHandCountsAsOneWeapon === true && out.operation.multipleHeldDamageProfile === undefined, 'darkstick has only the 1d6 profiles and the held-together boolean');
+  need(/two or more increase the weapon's damage dice from 1d6 to 2d8/.test(String(out.canonicalPlayerText ?? '')), 'darkstick text states the 2d8 held-together damage');
+  const grouped = clone(melee);
+  grouped.id = 'melee-grouped'; grouped.label = 'Melee (held together)';
+  grouped.damage = { diceCount: 2, dieSize: 8, flatBonus: 0, formula: '2d8', mode: 'dice' };
+  grouped.activationRequirements = [{ type: 'proficiency', condition: 'proficient-wielder' }];
+  profiles.splice(profiles.indexOf(melee) + 1, 0, grouped);
+  out.operation = { ...out.operation, multipleHeldDamageProfile: 'melee-grouped' };
+  out.provenance = { ...out.provenance, postCertificationAmendments: [...(out.provenance.postCertificationAmendments ?? []), IDB2_STRUCTURE_AMENDMENT_ID] };
+  log.push({ id: IDB2_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-D-B2', identityKey: out.identityKey, field: 'canonicalStats.attackProfiles[melee-grouped] + operation.multipleHeldDamageProfile',
+    from: null, to: { profile: 'melee-grouped', damage: '2d8', activationRequirements: grouped.activationRequirements, multipleHeldDamageProfile: 'melee-grouped' },
+    source: { book: 'canonical player text of unmapped::Darkstick', page: 'as recorded', evidence: 'A proficient darkstick wielder can hold multiple darksticks in one hand; two or more increase the weapon\'s damage dice from 1d6 to 2d8.' },
+    rule: 'The runtime reads structured fields only; prose is never parsed.', reason: 'The 2d8 held-together damage was prose only; the canonical profiles carried 1d6.' });
   return out;
 }

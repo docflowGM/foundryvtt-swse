@@ -35,24 +35,24 @@
   "adapterExposureGaps": 0
  },
  "summary": {
-  "fieldPaths": 2308,
+  "fieldPaths": 2309,
   "byImplementationState": {
    "ADAPTER_REQUIRED": 58,
    "ALREADY_CONSUMED_CORRECTLY": 2,
    "DISPLAY_ONLY": 23,
    "EXISTING_CONSUMER_WRONG_INPUT": 539,
    "LEGACY_COMPATIBILITY_ONLY": 79,
-   "NEW_CONSUMER_REQUIRED": 1205,
+   "NEW_CONSUMER_REQUIRED": 1206,
    "RECOMMENDATION_ONLY": 248,
    "STORE_ONLY": 25,
    "VALIDATION_ONLY": 129
   },
   "byClassification": {
    "DISPLAY": 425,
-   "EXECUTION": 1643,
+   "EXECUTION": 1644,
    "INVENTORY": 122,
-   "PLAYER_CHOICE": 450,
-   "PLAYER_STATE": 317,
+   "PLAYER_CHOICE": 451,
+   "PLAYER_STATE": 318,
    "PROVENANCE": 97,
    "RECOMMENDATION": 253,
    "SELECTOR": 520,
@@ -70,7 +70,7 @@
    "5D": 294,
    "5D/5E": 154,
    "5E": 548,
-   "5E/5F": 154,
+   "5E/5F": 155,
    "5E/5H": 162,
    "5F": 104,
    "5G": 46,
@@ -81,7 +81,7 @@
   "alreadyConsumedCorrectly": 2,
   "existingConsumerWrongInput": 539,
   "adapterRequired": 58,
-  "newConsumerRequired": 1205,
+  "newConsumerRequired": 1206,
   "nonRuntimeDisposition": 425
  },
  "entries": [
@@ -24633,6 +24633,27 @@
    "migrationPhase": "5E/5H",
    "ruleId": "3b.operation.ability-compatibility",
    "mechanicFamily": "ability-compatibility",
+   "registryField": "operation",
+   "resolvedProperty": "operation",
+   "runtimeCarried": true,
+   "note": null
+  },
+  {
+   "path": "3B:operation.multipleHeldDamageProfile",
+   "classification": [
+    "EXECUTION",
+    "PLAYER_CHOICE",
+    "PLAYER_STATE"
+   ],
+   "consumers": [
+    "configuration/wielding engine",
+    "FullAttackExecutor (double weapon)",
+    "EncumbranceEngine"
+   ],
+   "implementationState": "NEW_CONSUMER_REQUIRED",
+   "migrationPhase": "5E/5F",
+   "ruleId": "3b.operation.configuration-and-wielding",
+   "mechanicFamily": "configuration-and-wielding",
    "registryField": "operation",
    "resolvedProperty": "operation",
    "runtimeCarried": true,
