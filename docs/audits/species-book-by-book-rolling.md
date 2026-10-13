@@ -1278,3 +1278,9 @@ The final coverage scan reopened previously completed books for biological speci
 **Elom correction:** An earlier preliminary text search matched the planet name 'Elom' and the different species 'Elomin' in Galaxy of Intrigue. It did **not** find an additional Elom playable racial rules block. No Elom species audit claim is invented from that false substring hit.
 
 **Ledger after addendum:** **121** distinct species/profile identities over 12 books; no production file changes or live actor tests.
+
+---
+
+## Final 161-record species provenance reconciliation
+
+Read the [Final Book-Sweep Health Report](species-final-health-report.md) and [machine-readable provenance census](../../data/audits/species-final-provenance-census.json). The 12-book audit and follow-up source appendices now cover **121 identities** (119 ordinary non-droid species, two special profiles). Of the 161 pack identities, 39 other non-droid records require provenance and Replica Droid remains excluded. Across the ledger, 302 findings remain `applied:false`; Foundry runtime has not been tested.

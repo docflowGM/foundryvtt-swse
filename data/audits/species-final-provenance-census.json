@@ -1,0 +1,2796 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "repository": "docflowGM/foundryvtt-swse",
+  "branch": "audit/species-book-by-book-canonical",
+  "certification": "SOURCE_BOOK_SWEEP_COMPLETE; PROVENANCE_UNRESOLVED; RUNTIME_NOT_CERTIFIED",
+  "totals": {
+    "books": 12,
+    "pack": 161,
+    "sourceAuditedIdentities": 121,
+    "ordinaryNonDroidAudited": 119,
+    "nonGeneticSourceProfiles": 2,
+    "droidExcluded": 1,
+    "otherNonDroidProvenancePending": 39,
+    "missingPublishedSpeciesFromVerifiedBlocks": 0,
+    "wholeSourceCleanIdentities": 6,
+    "cleanNames": [
+      "Altiri",
+      "Anarrian",
+      "Duros",
+      "Human",
+      "Vultan",
+      "Zeltron"
+    ],
+    "issuesRecorded": 302,
+    "issuesChangeRequired": 97,
+    "issuesReviewRequired": 204,
+    "issuesNoChange": 1,
+    "issuesApplied": 0,
+    "actorRuntimeTested": 0
+  },
+  "nonDroidUnverified": [
+    {
+      "name": "Aing-Tii",
+      "id": "species-aing-tii",
+      "packSourceHint": "Unknown Regions",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Amani",
+      "id": "species-amani",
+      "packSourceHint": null,
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Anomid",
+      "id": "species-anomid",
+      "packSourceHint": "Scum & Villainy",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Anx",
+      "id": "species-anx",
+      "packSourceHint": "FU",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Arcona",
+      "id": "species-arcona",
+      "packSourceHint": "Clone Wars",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Bardottan",
+      "id": "species-bardottan",
+      "packSourceHint": "Clone Wars",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Besalisk",
+      "id": "species-besalisk",
+      "packSourceHint": "Clone Wars",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Chevin",
+      "id": "species-chevin",
+      "packSourceHint": "FU",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Drall",
+      "id": "species-drall",
+      "packSourceHint": "Corella System",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Dressellian",
+      "id": "species-dressellian",
+      "packSourceHint": "Rebellion",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Elom",
+      "id": "species-elom",
+      "packSourceHint": "FU",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Geonosian",
+      "id": "species-geonosian",
+      "packSourceHint": null,
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Gree",
+      "id": "species-gree",
+      "packSourceHint": "Clone Wars",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Gundark",
+      "id": "species-gundark",
+      "packSourceHint": "Scavenger",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Hapan",
+      "id": "species-hapan",
+      "packSourceHint": "Legacy",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Hiss'sssi",
+      "id": "species-hiss-sssi",
+      "packSourceHint": "Legacy",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Jenet",
+      "id": "species-jenet",
+      "packSourceHint": "Rebellion",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Kal-Dexar",
+      "id": "species-kal-dexar",
+      "packSourceHint": "Clone Wars",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Kessurian",
+      "id": "species-kessurian",
+      "packSourceHint": "Scum & Villainy",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Kiffar",
+      "id": "species-kiffar",
+      "packSourceHint": "FU",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Koorivar",
+      "id": "species-koorivar",
+      "packSourceHint": "Clone Wars",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Kubaz",
+      "id": "species-kubaz",
+      "packSourceHint": "Rebellion",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Mirialan",
+      "id": "species-mirialan",
+      "packSourceHint": "KOTOR",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Mustafarian",
+      "id": "species-mustafarian",
+      "packSourceHint": "Rebellion",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Muun",
+      "id": "species-muun",
+      "packSourceHint": "Rebellion",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Nazren",
+      "id": "species-nazren",
+      "packSourceHint": null,
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Nerf (Uplifted)",
+      "id": "species-nerf-uplifted",
+      "packSourceHint": "Scavenger",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Noghri",
+      "id": "species-noghri",
+      "packSourceHint": "Threats",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Ortolan",
+      "id": "species-ortolan",
+      "packSourceHint": "Rebellion",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Pau'an",
+      "id": "species-pau-an",
+      "packSourceHint": "Clone Wars",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Phindian",
+      "id": "species-phindian",
+      "packSourceHint": null,
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Polis Massan",
+      "id": "species-polis-massan",
+      "packSourceHint": null,
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Quermian",
+      "id": "species-quermian",
+      "packSourceHint": "Clone Wars",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Sith (Pureblood)",
+      "id": "species-sith-pureblood",
+      "packSourceHint": "KOTOR",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Skakoan",
+      "id": "species-skakoan",
+      "packSourceHint": null,
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Stereb",
+      "id": "species-stereb",
+      "packSourceHint": null,
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Theelin",
+      "id": "species-theelin",
+      "packSourceHint": "Legacy",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Tusken Raider",
+      "id": "species-tusken-raider",
+      "packSourceHint": null,
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    },
+    {
+      "name": "Vaathkree",
+      "id": "species-vaathkree",
+      "packSourceHint": "Unknown Regions",
+      "reason": "No independently certified published racial rules block yet established for this record; do not delete or declare noncanonical."
+    }
+  ],
+  "sourceConflictSpecies": [
+    "Bith",
+    "Chiss",
+    "Neimoidian",
+    "Krevaaki",
+    "Barabel",
+    "Chadra-Fan"
+  ],
+  "priorityFindings": [
+    {
+      "rank": "P0",
+      "id": "SWP-CORE-AQUALISH-01",
+      "species": "Aqualish",
+      "summary": "Unprinted Ferocity always-on melee damage",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "data/species-traits-migrated.json: Aqualish.conditionalTraits[Ferocity].rules",
+      "current": "Always-on +2 melee damage typed rule despite sidecar text requiring half HP",
+      "publishedRule": "Core p284 has NO Ferocity racial trait at all, only Toughness, breathe underwater, expert swimmer.",
+      "proposedAction": "Verify other-book provenance; at minimum prevent unconditional +2 melee damage and ensure no unsupported automatic boost.",
+      "book": "Saga Edition Core Rulebook",
+      "printedPage": 284,
+      "applied": false
+    },
+    {
+      "rank": "P0",
+      "id": "SWP-CORE-HUTT-01",
+      "species": "Hutt",
+      "summary": "Unprinted Fortitude +5 typed defense",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "data/species-traits-migrated.json: Hutt.structuralTraits[Immense Bulk].rules",
+      "current": "+5 species Fortitude always",
+      "publishedRule": "Core Hutt p284–285 prints Large size effects, speed 2, Force Resistance, Supreme Stability and Persuasion reroll, no species +5 Fort.",
+      "proposedAction": "Require independent published provenance; remove unsupported executable defense rule if unsourced.",
+      "book": "Saga Edition Core Rulebook",
+      "printedPage": 284,
+      "applied": false
+    },
+    {
+      "rank": "P0",
+      "id": "GOI-05-01",
+      "species": "Gotal",
+      "summary": "Gotal emotional reading incorrectly rendered as general blindsense",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "data/species-traits-migrated.json: Gotal.structuralTraits[Force Awareness].rules",
+      "current": "General always-on blindsense 6 squares",
+      "publishedRule": "Printed 6-square ability is an active Perception check versus Will to identify emotion; Sensor Cones allow two specific Use the Force applications untrained.",
+      "proposedAction": "Do not convert emotion reading into spatial blindsense; source-check alias then remove or scope unsupported sense rule.",
+      "book": "Galaxy of Intrigue",
+      "printedPage": 14,
+      "applied": false
+    },
+    {
+      "rank": "P0",
+      "id": "GOI-12-01",
+      "species": "Nyriaanan",
+      "summary": "Nyriaanan unprinted flight speed",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "data/species-traits-migrated.json: Nyriaanan.structuralTraits[Winged Glide].rules",
+      "current": "Always-on movement mode fly, speed 6, combatMovement true; text claims immunity to falling damage",
+      "publishedRule": "Published near-Human Nyriaanan has no wings or gliding trait. Its full sidebar lists Survival class skill, bonus feat, Low-Light Vision.",
+      "proposedAction": "Confirm no independent variant; surgically remove unsupported flying speed rule rather than alter canonical player-facing species.",
+      "book": "Galaxy of Intrigue",
+      "printedPage": 144,
+      "applied": false
+    },
+    {
+      "rank": "P0",
+      "id": "JATM-02-01",
+      "species": "Celegian",
+      "summary": "Celegian untrained Telepathy exception incorrectly grants Force Training",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "data/species-traits-migrated.json: Celegian.structuralTraits[Force Adaptation].rules[featGrant]",
+      "current": "featGrant Force Training unconditionally",
+      "publishedRule": "Broadcast Telepath permits ONLY the Telepathy application of Use the Force untrained without Force Sensitivity; willing within 60 squares LOS auto succeeds; does not grant Force Training",
+      "proposedAction": "Remove/unwire unconditional Force Training entitlement; preserve only scope-limited Telepathy and no extra powers.",
+      "book": "Jedi Academy Training Manual",
+      "printedPage": 106,
+      "applied": false
+    },
+    {
+      "rank": "P0",
+      "id": "THR-03-01",
+      "species": "Mantellian Savrip",
+      "summary": "Mantellian Savrip double/wrong Dexterity modifier",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "data/species-traits-migrated.json: Mantellian Savrip.structuralTraits[Ability Modifiers].rules",
+      "current": "Typed abilityScoreModifier dexterity -4 when always; pack has printed -2 DEX",
+      "publishedRule": "Threats p117 gives -2 DEX; -4 penalties are INT, WIS, CHA.",
+      "proposedAction": "Remove/correct duplicated or wrong -4 DEX typed rule, prove final actor has -2 only.",
+      "book": "Threats of the Galaxy",
+      "printedPage": 117,
+      "applied": false
+    },
+    {
+      "rank": "P0",
+      "id": "TFU-01-01",
+      "species": "Aleena",
+      "summary": "Aleena malformed languages",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "system.languages",
+      "current": "['Aleena','Basic Caamasi in: Species','Caamasi','Medium','6 more Caamasi 1 Edit']",
+      "publishedRule": "Automatic languages are Aleena and Basic.",
+      "proposedAction": "Replace malformed array with ['Aleena','Basic']; trace upstream parser and do not leak adjacent Caamasi page text.",
+      "book": "The Force Unleashed Campaign Guide",
+      "printedPage": "13-14",
+      "applied": false
+    },
+    {
+      "rank": "P0",
+      "id": "LEG-13-01",
+      "species": "Devaronian",
+      "summary": "Devaronian male stat profile",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Devaronian.system.abilityMods",
+      "current": "Default all zero",
+      "publishedRule": "Legacy p214 male receives +2 DEX, -2 WIS, -2 CHA.",
+      "proposedAction": "Implement canonical male profile or mandatory sex-based selection, without using a zero-adjustment fallback.",
+      "book": "Legacy Era Campaign Guide",
+      "printedPage": 214,
+      "applied": false
+    },
+    {
+      "rank": "P0",
+      "id": "LEG-13-02",
+      "species": "Devaronian",
+      "summary": "Devaronian female stat profile",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Devaronian.system.variants[devaronian-female].abilityMods",
+      "current": "Variant +2 WIS, -2 CHA; lacks +2 INT and -2 DEX",
+      "publishedRule": "Legacy p214 female receives +2 INT, +2 WIS, -2 DEX.",
+      "proposedAction": "Fix published female profile in source/selector; preserve choice identity and test final actor modifiers.",
+      "book": "Legacy Era Campaign Guide",
+      "printedPage": 214,
+      "applied": false
+    },
+    {
+      "rank": "P1",
+      "id": "THR-03-02",
+      "species": "Mantellian Savrip",
+      "summary": "Mantellian Savrip natural claws and poison",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "data/species-traits-migrated.json: Mantellian Savrip.structuralTraits[Natural Weapons,Poison].rules; packs/species.db: system.naturalWeapons",
+      "current": "Two independent 1d4 claw rules; no structured pack claw entry",
+      "publishedRule": "Threats p117 grants one 1d6 slashing +STR natural claw; poison is a rider on damaging a living target.",
+      "proposedAction": "Implement single 1d6 claw form and separate on-hit poison rule, not a second weapon.",
+      "book": "Threats of the Galaxy",
+      "printedPage": 117,
+      "applied": false
+    },
+    {
+      "rank": "P1",
+      "id": "UR-14-01",
+      "species": "Lugubraa",
+      "summary": "Lugubraa separate tooth natural attack",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Lugubraa.system.canonicalTraits[natural-weapons]; natural weapon projections",
+      "current": "Pack declares only 1d6 tentacle damage",
+      "publishedRule": "Printed Lugubraa are armed with barbed tentacles 1d6 AND teeth 1d4.",
+      "proposedAction": "Surgically represent both distinct natural attacks with correct damage and no duplicate materializations.",
+      "book": "The Unknown Regions",
+      "printedPage": 135,
+      "applied": false
+    },
+    {
+      "rank": "P1",
+      "id": "KOTOR-03-01",
+      "species": "Cathar",
+      "summary": "Cathar claw die size",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "system.naturalWeapons.Claws.damage and migrated Claws.rules.damage",
+      "current": "1d4 slashing",
+      "publishedRule": "1d6 slashing Cathar natural weapons",
+      "proposedAction": "Use 1d6 in both pack and sidecar; verify actor claw creation",
+      "book": "Knights of the Old Republic Campaign Guide",
+      "printedPage": "12",
+      "applied": false
+    },
+    {
+      "rank": "P1",
+      "id": "UR-12-01",
+      "species": "Ebruchi",
+      "summary": "Ebruchi Constitution prerequisite",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Ebruchi.system.canonicalTraits[bonus-feat]; both sidecars",
+      "current": "Pack grants Improved Damage Threshold to ALL Ebruchi",
+      "publishedRule": "Printed Conditional Bonus Feat only grants Improved Damage Threshold when CON score is 13 or greater.",
+      "proposedAction": "Change to a properly gated one-time racial entitlement and preserve stable species ID; verify at CON 12 vs 13.",
+      "book": "The Unknown Regions",
+      "printedPage": 127,
+      "applied": false
+    },
+    {
+      "rank": "P1",
+      "id": "UR-17-01",
+      "species": "Tof",
+      "summary": "Tof Mighty Swing prerequisite",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Tof.system.canonicalTraits[conditional-bonus-feat]",
+      "current": "Only Strength 13 required in pack; grants at first level",
+      "publishedRule": "Source requires BOTH Martial Arts I and STR 13 to take Mighty Swing as bonus feat.",
+      "proposedAction": "Apply both prerequisites; test negative paths and prevent unconditional feat grant.",
+      "book": "The Unknown Regions",
+      "printedPage": 149,
+      "applied": false
+    },
+    {
+      "rank": "P1",
+      "id": "UR-16-01",
+      "species": "Ssi-Ruuk",
+      "summary": "Ssi-Ruuk contaminated with Tof lore",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Ssi-Ruuk.system.canonicalTraits[the-tofs-come-from-the-darkest-and-most-obscure-portion-of-the-unknown-regions]",
+      "current": "Long Tof campaign narration mistakenly classified as a canonical Ssi-Ruuk trait",
+      "publishedRule": "The Ssi-ruuk printed species block has four traits: conditional feat, Force Blind, Keen Smell, Natural Armor.",
+      "proposedAction": "Remove just this accidental racial trait from source projection and dependent sidecars; preserve unrelated narrative as lore if appropriate.",
+      "book": "The Unknown Regions",
+      "printedPage": 147,
+      "applied": false
+    },
+    {
+      "rank": "P1",
+      "id": "UR-15-01",
+      "species": "Sorcerer of Rhand",
+      "summary": "Sorcerer of Rhand missing ability penalties",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Sorcerer of Rhand.system.abilityMods",
+      "current": "0 STR,0 DEX,+4 INT,+2 WIS,0 CHA",
+      "publishedRule": "Printed -2 STR/-2 DEX/+4 INT/+2 WIS/-2 CHA.",
+      "proposedAction": "Correct the existing profile's negative modifiers without silently treating transformation as a biological starting species.",
+      "book": "The Unknown Regions",
+      "printedPage": 143,
+      "applied": false
+    },
+    {
+      "rank": "P1",
+      "id": "GOI-08-01",
+      "species": "Neimoidian",
+      "summary": "Neimoidian stray language token",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Neimoidian.system.languages",
+      "current": "['speak','Basic','Neimoidian']",
+      "publishedRule": "Printed automatic languages are Basic and Neimoidian, with no language called 'speak'.",
+      "proposedAction": "Remove only the stray 'speak' language token; retain Basic/Neimoidian and stable identity.",
+      "book": "Galaxy of Intrigue",
+      "printedPage": 18,
+      "applied": false
+    },
+    {
+      "rank": "P1",
+      "id": "CW-10-01",
+      "species": "Republic Clone",
+      "summary": "Republic Clone one +2 ability choice",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Republic Clone.system.abilityChoice.{allocationMode,maxPerAbility,helpText}",
+      "current": "level-4-two-abilities; maximum +1 per ability; two separate +1 instructions",
+      "publishedRule": "Printed clone receives fixed 15/13/10/12/10/8 and ONE chosen ability +2 at creation.",
+      "proposedAction": "Align chooser to single +2 selection. Do not alter correct fixedScores/bonusValue=2; test preview and commit, avoid double spending/choosing.",
+      "book": "The Clone Wars Campaign Guide",
+      "printedPage": "91",
+      "applied": false
+    },
+    {
+      "rank": "P2",
+      "id": "UR-18-01",
+      "species": "Vagaari",
+      "summary": "Vagaari Frightening Visage conditional context",
+      "status": "CHANGE_REQUIRED",
+      "fileField": "packs/species.db: Vagaari.system.canonicalTraits[frightening-visage]",
+      "current": "Can reroll any intimidation Persuasion check and keep better result",
+      "publishedRule": "Source requires a FAILED Persuasion Intimidate check while clad in traditional masks AND garments; the Vagaari counts as trained in Persuasion FOR THAT ACTION.",
+      "proposedAction": "Restore all predicates without creating permanent Persuasion training.",
+      "book": "The Unknown Regions",
+      "printedPage": 153,
+      "applied": false
+    }
+  ],
+  "fullPackCensus": [
+    {
+      "name": "Advozse",
+      "foundryId": "species-advozse",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "199",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Aing-Tii",
+      "foundryId": "species-aing-tii",
+      "packSourceHint": "Unknown Regions",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Aleena",
+      "foundryId": "species-aleena",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "13-14",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Altiri",
+      "foundryId": "species-altiri",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "163",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Amani",
+      "foundryId": "species-amani",
+      "packSourceHint": null,
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Anarrian",
+      "foundryId": "species-anarrian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "163",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Anomid",
+      "foundryId": "species-anomid",
+      "packSourceHint": "Scum & Villainy",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Anx",
+      "foundryId": "species-anx",
+      "packSourceHint": "FU",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Anzati",
+      "foundryId": "species-anzati",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "11",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Aqualish",
+      "foundryId": "species-aqualish",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "284",
+          "ledgerSection": "coreAppendix"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Arcona",
+      "foundryId": "species-arcona",
+      "packSourceHint": "Clone Wars",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Arkanian",
+      "foundryId": "species-arkanian",
+      "packSourceHint": "KOTOR",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "11-12",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Arkanian Offshoot",
+      "foundryId": "species-arkanian-offshoot",
+      "packSourceHint": "KOTOR",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "12",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Balosar",
+      "foundryId": "species-balosar",
+      "packSourceHint": "Scum & Villainy",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "154",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Barabel",
+      "foundryId": "species-barabel",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "155",
+          "ledgerSection": "scumAndVillainy"
+        },
+        {
+          "book": "Galaxy at War",
+          "printedPages": "11",
+          "ledgerSection": "galaxyAtWar"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Bardottan",
+      "foundryId": "species-bardottan",
+      "packSourceHint": "Clone Wars",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Besalisk",
+      "foundryId": "species-besalisk",
+      "packSourceHint": "Clone Wars",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Bith",
+      "foundryId": "species-bith",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Threats of the Galaxy",
+          "printedPages": 26,
+          "ledgerSection": "threatsOfGalaxy"
+        },
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "11",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Blood Carver",
+      "foundryId": "species-blood-carver",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "6-7",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Bothan",
+      "foundryId": "species-bothan",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "23-24",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Caamasi",
+      "foundryId": "species-caamasi",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "14-15",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Cathar",
+      "foundryId": "species-cathar",
+      "packSourceHint": "KOTOR",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "12",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Celegian",
+      "foundryId": "species-celegian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Jedi Academy Training Manual",
+          "printedPages": "106",
+          "ledgerSection": "jediAcademy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Cerean",
+      "foundryId": "species-cerean",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "24-25",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Chadra-Fan",
+      "foundryId": "species-chadra-fan",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "211",
+          "ledgerSection": "legacyEra"
+        },
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "12",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Chagrian",
+      "foundryId": "species-chagrian",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "159",
+          "ledgerSection": "cloneWars"
+        },
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "11",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Chevin",
+      "foundryId": "species-chevin",
+      "packSourceHint": "FU",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Chiss",
+      "foundryId": "species-chiss",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "12",
+          "ledgerSection": "legacyEra"
+        },
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "126",
+          "ledgerSection": "unknownRegions"
+        },
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "192",
+          "ledgerSection": "forceUnleashedAppendix"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Chistori",
+      "foundryId": "species-chistori",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Threats of the Galaxy",
+          "printedPages": 34,
+          "ledgerSection": "threatsOfGalaxy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Clawdite",
+      "foundryId": "species-clawdite",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "7",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Codru-Ji",
+      "foundryId": "species-codru-ji",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "13",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Dashade",
+      "foundryId": "species-dashade",
+      "packSourceHint": "KOTOR",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy at War",
+          "printedPages": "12",
+          "ledgerSection": "galaxyAtWar"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Defel",
+      "foundryId": "species-defel",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "12",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Devaronian",
+      "foundryId": "species-devaronian",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "214",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Draethos",
+      "foundryId": "species-draethos",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "13",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Drall",
+      "foundryId": "species-drall",
+      "packSourceHint": "Corella System",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Dressellian",
+      "foundryId": "species-dressellian",
+      "packSourceHint": "Rebellion",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Dug",
+      "foundryId": "species-dug",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "11",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Duros",
+      "foundryId": "species-duros",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "25",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Ebruchi",
+      "foundryId": "species-ebruchi",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "127",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Elom",
+      "foundryId": "species-elom",
+      "packSourceHint": "FU",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Elomin",
+      "foundryId": "species-elomin",
+      "packSourceHint": "FU",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "133",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Ewok",
+      "foundryId": "species-ewok",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "25-26",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Falleen",
+      "foundryId": "species-falleen",
+      "packSourceHint": "Scum & Villainy",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "8",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Feeorin",
+      "foundryId": "species-feeorin",
+      "packSourceHint": "KOTOR",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "14",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Felucian",
+      "foundryId": "species-felucian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "15",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Fosh",
+      "foundryId": "species-fosh",
+      "packSourceHint": "Legacy",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "13",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Gamorrean",
+      "foundryId": "species-gamorrean",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "26",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Gand",
+      "foundryId": "species-gand",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "9",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Gen'Dai",
+      "foundryId": "species-gen-dai",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "12",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Geonosian",
+      "foundryId": "species-geonosian",
+      "packSourceHint": null,
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Givin",
+      "foundryId": "species-givin",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "13-14",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Gotal",
+      "foundryId": "species-gotal",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "14",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Gran",
+      "foundryId": "species-gran",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "16",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Gree",
+      "foundryId": "species-gree",
+      "packSourceHint": "Clone Wars",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Gundark",
+      "foundryId": "species-gundark",
+      "packSourceHint": "Scavenger",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Gungan",
+      "foundryId": "species-gungan",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "26-27",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Hapan",
+      "foundryId": "species-hapan",
+      "packSourceHint": "Legacy",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Herglic",
+      "foundryId": "species-herglic",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "15-16",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Hiss'sssi",
+      "foundryId": "species-hiss-sssi",
+      "packSourceHint": "Legacy",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Houk",
+      "foundryId": "species-houk",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "155-156",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Human",
+      "foundryId": "species-human",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "23",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Hutt",
+      "foundryId": "species-hutt",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "284",
+          "ledgerSection": "coreAppendix"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Iktotchi",
+      "foundryId": "species-iktotchi",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "12",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Ishi Tib",
+      "foundryId": "species-ishi-tib",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "12",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Ithorian",
+      "foundryId": "species-ithorian",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "27-28",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Jawa",
+      "foundryId": "species-jawa",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "10",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Jenet",
+      "foundryId": "species-jenet",
+      "packSourceHint": "Rebellion",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Kal-Dexar",
+      "foundryId": "species-kal-dexar",
+      "packSourceHint": "Clone Wars",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Kaleesh",
+      "foundryId": "species-kaleesh",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "13",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Kaminoan",
+      "foundryId": "species-kaminoan",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "14",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Kel Dor",
+      "foundryId": "species-kel-dor",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "28-29",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Kerkoiden",
+      "foundryId": "species-kerkoiden",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "15",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Kessurian",
+      "foundryId": "species-kessurian",
+      "packSourceHint": "Scum & Villainy",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Khil",
+      "foundryId": "species-khil",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "15",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Kiffar",
+      "foundryId": "species-kiffar",
+      "packSourceHint": "FU",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Killik",
+      "foundryId": "species-killik",
+      "packSourceHint": "Legacy",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "131",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Kissai",
+      "foundryId": "species-kissai",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "16",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Klatooinian",
+      "foundryId": "species-klatooinian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "14",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Koorivar",
+      "foundryId": "species-koorivar",
+      "packSourceHint": "Clone Wars",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Krevaaki",
+      "foundryId": "species-krevaaki",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Jedi Academy Training Manual",
+          "printedPages": "111",
+          "ledgerSection": "jediAcademy"
+        },
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "13",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Kubaz",
+      "foundryId": "species-kubaz",
+      "packSourceHint": "Rebellion",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Lugubraa",
+      "foundryId": "species-lugubraa",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "135",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Lurmen",
+      "foundryId": "species-lurmen",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy at War",
+          "printedPages": "13",
+          "ledgerSection": "galaxyAtWar"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Mantellian Savrip",
+      "foundryId": "species-mantellian-savrip",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Threats of the Galaxy",
+          "printedPages": 117,
+          "ledgerSection": "threatsOfGalaxy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Massassi",
+      "foundryId": "species-massassi",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "16",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Miraluka",
+      "foundryId": "species-miraluka",
+      "packSourceHint": "KOTOR",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "17",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Mirialan",
+      "foundryId": "species-mirialan",
+      "packSourceHint": "KOTOR",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Mon Calamari",
+      "foundryId": "species-mon-calamari",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "29",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Mrlssi",
+      "foundryId": "species-mrlssi",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "17",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Mustafarian",
+      "foundryId": "species-mustafarian",
+      "packSourceHint": "Rebellion",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Muun",
+      "foundryId": "species-muun",
+      "packSourceHint": "Rebellion",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Nagai",
+      "foundryId": "species-nagai",
+      "packSourceHint": "Legacy",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "15",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Nautolan",
+      "foundryId": "species-nautolan",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "15-16",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Nazren",
+      "foundryId": "species-nazren",
+      "packSourceHint": null,
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Near-Human",
+      "foundryId": "species-near-human",
+      "packSourceHint": "Multiple",
+      "class": "NON_GENETIC_TEMPLATE",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "17",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Neimoidian",
+      "foundryId": "species-neimoidian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "18",
+          "ledgerSection": "galaxyOfIntrigue"
+        },
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "285",
+          "ledgerSection": "coreAppendix"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Nelvaanian",
+      "foundryId": "species-nelvaanian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "16",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Nerf (Uplifted)",
+      "foundryId": "species-nerf-uplifted",
+      "packSourceHint": "Scavenger",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Nikto",
+      "foundryId": "species-nikto",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "14",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Noghri",
+      "foundryId": "species-noghri",
+      "packSourceHint": "Threats",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Nosaurian",
+      "foundryId": "species-nosaurian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "16-17",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Nyriaanan",
+      "foundryId": "species-nyriaanan",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "144",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "O'reenian",
+      "foundryId": "species-o-reenian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "180",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Ortolan",
+      "foundryId": "species-ortolan",
+      "packSourceHint": "Rebellion",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Pa'lowick",
+      "foundryId": "species-pa-lowick",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "131",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Pau'an",
+      "foundryId": "species-pau-an",
+      "packSourceHint": "Clone Wars",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Phindian",
+      "foundryId": "species-phindian",
+      "packSourceHint": null,
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Polis Massan",
+      "foundryId": "species-polis-massan",
+      "packSourceHint": null,
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Quarren",
+      "foundryId": "species-quarren",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "29-30",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Quermian",
+      "foundryId": "species-quermian",
+      "packSourceHint": "Clone Wars",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Rakata",
+      "foundryId": "species-rakata",
+      "packSourceHint": "KOTOR",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "18",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Replica Droid",
+      "foundryId": "species-replica-droid",
+      "packSourceHint": null,
+      "class": "DROID_EXCLUDED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Republic Clone",
+      "foundryId": "species-republic-clone",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "91",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Rodian",
+      "foundryId": "species-rodian",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "30",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Ryn",
+      "foundryId": "species-ryn",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "11",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Sakiyan",
+      "foundryId": "species-sakiyan",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "204",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Selkath",
+      "foundryId": "species-selkath",
+      "packSourceHint": "KOTOR",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "19",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Shard",
+      "foundryId": "species-shard",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Jedi Academy Training Manual",
+          "printedPages": "79",
+          "ledgerSection": "jediAcademy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Shistavanen",
+      "foundryId": "species-shistavanen",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "14",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Sith (Pureblood)",
+      "foundryId": "species-sith-pureblood",
+      "packSourceHint": "KOTOR",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Skakoan",
+      "foundryId": "species-skakoan",
+      "packSourceHint": null,
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Sluissi",
+      "foundryId": "species-sluissi",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "15",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Snivvian",
+      "foundryId": "species-snivvian",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Knights of the Old Republic Campaign Guide",
+          "printedPages": "20",
+          "ledgerSection": "kotor"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Sorcerer of Rhand",
+      "foundryId": "species-sorcerer-of-rhand",
+      "packSourceHint": null,
+      "class": "NON_GENETIC_TRANSFORMATION",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "143",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Squib",
+      "foundryId": "species-squib",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "16",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Ssi-Ruuk",
+      "foundryId": "species-ssi-ruuk",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "147",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Stereb",
+      "foundryId": "species-stereb",
+      "packSourceHint": null,
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Sullustan",
+      "foundryId": "species-sullustan",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "30-31",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Talz",
+      "foundryId": "species-talz",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "17-18",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Taung",
+      "foundryId": "species-taung",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy at War",
+          "printedPages": "14",
+          "ledgerSection": "galaxyAtWar"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Thakwaash",
+      "foundryId": "species-thakwaash",
+      "packSourceHint": "Scum & Villainy",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy at War",
+          "printedPages": "15",
+          "ledgerSection": "galaxyAtWar"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Theelin",
+      "foundryId": "species-theelin",
+      "packSourceHint": "Legacy",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Tof",
+      "foundryId": "species-tof",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "149",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Togorian",
+      "foundryId": "species-togorian",
+      "packSourceHint": "Threats",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "18",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Togruta",
+      "foundryId": "species-togruta",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "18-19",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Toydarian",
+      "foundryId": "species-toydarian",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "12",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Trandoshan",
+      "foundryId": "species-trandoshan",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "31",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Trianii",
+      "foundryId": "species-trianii",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy at War",
+          "printedPages": "16",
+          "ledgerSection": "galaxyAtWar"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Tusken Raider",
+      "foundryId": "species-tusken-raider",
+      "packSourceHint": null,
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Twi'lek",
+      "foundryId": "species-twi-lek",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "31-32",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Ubese",
+      "foundryId": "species-ubese",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "13",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Umbaran",
+      "foundryId": "species-umbaran",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy of Intrigue",
+          "printedPages": "19",
+          "ledgerSection": "galaxyOfIntrigue"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Utai",
+      "foundryId": "species-utai",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Threats of the Galaxy",
+          "printedPages": 127,
+          "ledgerSection": "threatsOfGalaxy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Vaathkree",
+      "foundryId": "species-vaathkree",
+      "packSourceHint": "Unknown Regions",
+      "class": "PROVENANCE_REQUIRED",
+      "sourceReferences": [],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Vagaari",
+      "foundryId": "species-vagaari",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "153",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Vahla",
+      "foundryId": "species-vahla",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "59",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Verpine",
+      "foundryId": "species-verpine",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Unknown Regions",
+          "printedPages": "16",
+          "ledgerSection": "unknownRegions"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Vultan",
+      "foundryId": "species-vultan",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Jedi Academy Training Manual",
+          "printedPages": "107",
+          "ledgerSection": "jediAcademy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Vurk",
+      "foundryId": "species-vurk",
+      "packSourceHint": "Clone Wars",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Clone Wars Campaign Guide",
+          "printedPages": "17",
+          "ledgerSection": "cloneWars"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Weequay",
+      "foundryId": "species-weequay",
+      "packSourceHint": "KOTOR",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "16",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Whiphid",
+      "foundryId": "species-whiphid",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "19-20",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Wookiee",
+      "foundryId": "species-wookiee",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "32-33",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Wroonian",
+      "foundryId": "species-wroonian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Scum and Villainy",
+          "printedPages": "156",
+          "ledgerSection": "scumAndVillainy"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Yarkora",
+      "foundryId": "species-yarkora",
+      "packSourceHint": "Threats",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "The Force Unleashed Campaign Guide",
+          "printedPages": "20",
+          "ledgerSection": "forceUnleashed"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Yevetha",
+      "foundryId": "species-yevetha",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy at War",
+          "printedPages": "16",
+          "ledgerSection": "galaxyAtWar"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Yuuzhan Vong",
+      "foundryId": "species-yuuzhan-vong",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "17",
+          "ledgerSection": "legacyEra"
+        },
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "285",
+          "ledgerSection": "coreAppendix"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Yuzzem",
+      "foundryId": "species-yuzzem",
+      "packSourceHint": "Rebellion",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy at War",
+          "printedPages": "17",
+          "ledgerSection": "galaxyAtWar"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Zabrak",
+      "foundryId": "species-zabrak",
+      "packSourceHint": "Core",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "printedPages": "33",
+          "ledgerSection": "core"
+        },
+        {
+          "book": "Rebellion Era Campaign Guide",
+          "printedPages": "31-36",
+          "ledgerSection": "rebellion"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Zeltron",
+      "foundryId": "species-zeltron",
+      "packSourceHint": "Legacy",
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "printedPages": "17",
+          "ledgerSection": "legacyEra"
+        }
+      ],
+      "runtimeCertified": false
+    },
+    {
+      "name": "Zygerrian",
+      "foundryId": "species-zygerrian",
+      "packSourceHint": null,
+      "class": "AUDITED_NON_DROID",
+      "sourceReferences": [
+        {
+          "book": "Galaxy at War",
+          "printedPages": "18",
+          "ledgerSection": "galaxyAtWar"
+        }
+      ],
+      "runtimeCertified": false
+    }
+  ],
+  "surgicalBatches": [
+    {
+      "priority": "P0",
+      "title": "Unsafe typed passives and fabricated powers",
+      "targets": [
+        "data/species-traits-migrated.json",
+        "packs/species.db (only for proven source defects)"
+      ],
+      "ids": [
+        "SWP-CORE-AQUALISH-01",
+        "SWP-CORE-HUTT-01",
+        "GOI-05-01",
+        "GOI-12-01",
+        "JATM-02-01"
+      ],
+      "test": "Untargeted attacks, defenses, senses and movement no longer gain unauthorized modifiers; the published legitimate narrow benefit remains."
+    },
+    {
+      "priority": "P0",
+      "title": "Ability scores, corrupted strings, and level-one variant choices",
+      "targets": [
+        "packs/species.db"
+      ],
+      "ids": [
+        "THR-03-01",
+        "TFU-01-01",
+        "LEG-13-01",
+        "LEG-13-02",
+        "UR-15-01",
+        "CW-10-01",
+        "GOI-08-01"
+      ],
+      "test": "On newly created actors, correct ability offsets, legal language tokens, exactly one clone +2 and legal male/female alternatives; keep IDs."
+    },
+    {
+      "priority": "P1",
+      "title": "Natural weapon records and on-hit conditional effects",
+      "targets": [
+        "packs/species.db",
+        "data/species-traits-migrated.json"
+      ],
+      "ids": [
+        "THR-03-02",
+        "UR-14-01",
+        "KOTOR-03-01"
+      ],
+      "test": "Exact natural weapon count, attack die/type, no duplicate claw or poison weapon; poison only on qualifying claw damage."
+    },
+    {
+      "priority": "P1",
+      "title": "First-level species feat eligibility and skill gates",
+      "targets": [
+        "packs/species.db",
+        "scripts/species/species-grant-ledger-builder.js (only if a failing test establishes runtime need)"
+      ],
+      "ids": [
+        "UR-12-01",
+        "UR-17-01",
+        "CW-10-01"
+      ],
+      "test": "Racial feat granted only if actual prerequisite holds; once-only grants; class skills resolve before skill training."
+    },
+    {
+      "priority": "P1",
+      "title": "Vision, immunities, and conditional bonuses",
+      "targets": [
+        "data/species-traits-migrated.json",
+        "packs/species.db"
+      ],
+      "ids": [
+        "SWP-CORE-HUTT-01",
+        "JATM-02-01"
+      ],
+      "test": "Printed specific affected defense and Use the Force conditions, not unconditional or blanket Force immunity."
+    },
+    {
+      "priority": "P2",
+      "title": "Special activated racial actions",
+      "targets": [
+        "existing species action/passive consumers only where tested"
+      ],
+      "ids": [
+        "UR-18-01",
+        "UR-16-01"
+      ],
+      "test": "Use correct range, action, attire/failure predicates and once-per-encounter charges; do not invent token position automation."
+    },
+    {
+      "priority": "HOLD",
+      "title": "Cross-book printed conflicts and variants",
+      "targets": [
+        "rolling source ledger and existing supported variants"
+      ],
+      "ids": [],
+      "test": "Choose explicit source precedence; never merge Bith, Chiss, Neimoidian, Krevaaki or Barabel contradictory printings into an invented composite."
+    },
+    {
+      "priority": "HOLD",
+      "title": "Unverified 39 pack identities",
+      "targets": [
+        "source provenance documentation only"
+      ],
+      "ids": [],
+      "test": "Find official primary book/page or Wizards web source or mark supplemental/homebrew/unconfirmed; no production deletion on absence of evidence."
+    }
+  ]
+}

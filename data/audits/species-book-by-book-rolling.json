@@ -284,6 +284,30 @@
       "productionMutations": 0,
       "actorTests": 0,
       "scope": "Uncounted source blocks in earlier book-specific audit were append-reconciled as separate source claims; no historical audit entries erased."
+    },
+    "finalCorpusReconciliation": {
+      "status": "BOOK_SOURCE_SWEEP_DONE_PROVENANCE_AND_RUNTIME_NOT_FULLY_CERTIFIED",
+      "reportPath": "docs/audits/species-final-health-report.md",
+      "inventoryPath": "data/audits/species-final-provenance-census.json",
+      "packRecords": 161,
+      "sourceAuditedRecords": 121,
+      "ordinarySpecies": 119,
+      "nonGeneticProfiles": 2,
+      "excludedDroid": 1,
+      "nonDroidProvenancePending": 39,
+      "allFindings": 302,
+      "changeRequired": 97,
+      "reviewRequired": 204,
+      "findingsNoChange": 1,
+      "applied": 0,
+      "explicitCleanNames": [
+        "Altiri",
+        "Anarrian",
+        "Duros",
+        "Human",
+        "Vultan",
+        "Zeltron"
+      ]
     }
   },
   "entries": [
