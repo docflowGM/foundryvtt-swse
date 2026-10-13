@@ -8,6 +8,12 @@
 
 **Sourcebook screening:** 13 of 14 project titles screened for non-droid species content. *Starships of the Galaxy* contains no new playable non-droid racial rules; *Scavenger's Guide to Droids* remains excluded by scope. **Eligible sourcebooks remaining: 0.** The 39 non-droid production records still awaiting provenance and Foundry actor tests are unresolved.
 
+## Supplemental 39-record research update (October 13, 2026)
+
+A [separate 39-record provenance investigation](species-39-provenance-reconciliation.md) and [machine matrix](../../data/audits/species-39-provenance-reconciliation.json) now classify all 39 formerly unlocated non-droid compendium records: **6 directly inspected official Wizards racial-rule sources** (Noghri, Geonosian, Tusken Raider, Stereb, Arcona and Nazren), **5 Wizards web-source leads still awaiting primary inspection**, **17 community/fan-attributed conversions**, and **11 ambiguous/special cases**. The discovered original rules appear outside conventional book species chapters, in the official Saga Edition Conversion Guide, Planet Hoppers, the University of Sanbra article, and Dawn of Defiance.
+
+**Reconciliation boundary:** The census table below remains the preceding certified rolling-ledger snapshot (**121 audited records; 39 unmatched**) until each of the six discovered published profiles has been individually entered into the main ledger and both species trait sidecars reviewed. The new supplement is **research evidence**, not a claim that the existing 302 finding statuses have changed or that 33 remaining sources are definitively noncanonical. No production species files were edited.
+
 ## 161-record census
 
 | Measure | Result |
