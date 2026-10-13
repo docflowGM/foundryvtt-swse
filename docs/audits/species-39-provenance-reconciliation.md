@@ -108,3 +108,26 @@ These classifications concern the *specific racial mechanics currently imported*
 **Boundary:** This is a supplementary research/discovery report; it does not retroactively certify all 161 species records or close the existing unresolved sourcebook discrepancy findings.
 
 **Primary PDF text verification addendum:** Arcona and Nazren were promoted from attributed-web leads after checking their original archived Wizards articles. Their race stat blocks agree with the pack's core species attributes. Source-PDF visual screenshot retrieval was unavailable, so this is a published-text comparison, not a visual-layout or runtime certification.
+
+---
+
+## Removal decision schema v2 (audit only)
+
+**Decision:** All **17 fan-attributed playable SWSE profiles** remain `MARKED_FOR_REMOVAL` from the canonical selectable species compendium. **Zero removed.** The underlying species' existence in Star Wars lore is not disputed by this designation. The authoritative [39-record JSON matrix](../../data/audits/species-39-provenance-reconciliation.json) now has `schemaVersion: 2`, an explicit `removalDecisionSchema`, and a new `removalReadiness` object on **only** those 17 candidates.
+
+| New field under `removalReadiness` | Initial value | Meaning |
+|---|---|---|
+| `sourceCountercheck` | `PENDING` | Last check for official WotC SWSE playable rules |
+| `dependencyAudit` | `PENDING` | Check species pack, both sidecars, registries, references and actors |
+| `existingActorPolicy` | `UNDECIDED` | Determine how existing player actors can continue loading |
+| `archiveSnapshot` | `NOT_CREATED` | Verified backup and rollback contents |
+| `implementationAuthorization` | `NOT_AUTHORIZED` | Distinguish a removal marking from permission to implement |
+| `implementationCommit` | `null` | Future commit documenting the implemented change |
+| `regressionVerification` | `NOT_RUN` | Future CharGen selection and saved-actor tests |
+| `rollbackReference` | `null` | Future archive/ref for recovery |
+
+**Retained existing fields:** `foundryId` (stable identity), `provenanceStatus`, `sourceOrLead`, `evidenceUrl`, `canonicalCompendiumDisposition`, `removalExecuted`, `removalScope`, `removalReason`, and `cloneWars2009SourceRecheck`. No existing evidence was replaced.
+
+**Runtime boundary:** Current `SpeciesRegistry._loadFromCompendium()` enumerates every compendium document, and `SpeciesStep` obtains its choices through `SpeciesRegistry.getAll()`. These audit-only flags are not read there and therefore **do not hide or delete any species**. Do not modify `template.json` or create a new species registry merely to store cleanup decisions. A separately approved surgical production patch must handle selection filtering/removal and existing character compatibility.
+
+**Validation invariants:** 39 matrix records; 17 candidates with community-attributed playable mechanics, 22 not marked; no record has `removalExecuted:true`; all 17 readiness statuses remain pending/not authorized; no species records or sidecar rule files modified.
