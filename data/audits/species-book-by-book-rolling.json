@@ -66,6 +66,14 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Scanned book PDF pages corresponding to printed pp.6-13 and 154-156 rendered and visually read; provided DJVU text used for quick searching only. Compared current pack with both trait sidecars.",
       "notes": "Twelve identities present; published ability adjustments, sizes, land speeds match pack. Extra unsourced sidecar mechanics require verification. Other publications may supply expansions. No production mutations or runtime execution."
+    },
+    {
+      "source": "Jedi Academy Training Manual",
+      "printedScope": "Shard p.79 (Iron Knights), Celegian p.106, Vultan p.107, Krevaaki p.111 (Holocron Lessons within Instructors & Alumni)",
+      "reviewedSpecies": 4,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "Original uploaded scanned Jedi Academy Training Manual PDF pages 80, 107, 108 and 112 rendered at high resolution and directly compared with current pack and both trait sidecars. Uploaded searchable transcription used for discovery/navigation.",
+      "notes": "Four complete printed playable species stat/rules blocks. Do not treat species of named NPCs without a racial-rules block as new playable species. Silicon Mind located below Shard species block, but is a genuine additional Shard racial trait. Vultan has NO_CHANGE in this source-data audit. Iron Knights are an affiliation/tradition, not a universal Shard class grant. No production changes or live Foundry tests."
     }
   ],
   "summary": {
@@ -86,7 +94,7 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 62,
+    "totalSpeciesInRollingLedger": 66,
     "forceUnleashed": {
       "species": 10,
       "noChange": 0,
@@ -126,6 +134,18 @@
       "confirmedIssues": 9,
       "reviewIssues": 23,
       "totalIssues": 32
+    },
+    "jediAcademy": {
+      "species": 4,
+      "publishedSpeciesBlocks": 4,
+      "packPresent": 4,
+      "noChange": 1,
+      "changeRequired": 3,
+      "reviewRequired": 0,
+      "confirmedIssues": 8,
+      "reviewIssues": 6,
+      "totalIssues": 14,
+      "explicitNoChangeFieldDecisions": 13
     }
   },
   "entries": [
@@ -702,6 +722,133 @@
           }
         ],
         "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Celegian",
+      "foundryId": "species-celegian",
+      "jediAcademy": {
+        "source": "Jedi Academy Training Manual",
+        "printedPages": "106",
+        "pdfPages": "107",
+        "section": "Chapter V — Ooroo / Holocron Lesson",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "publishedSize": "NO_CHANGE",
+          "packTraitsAndBothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods, size",
+            "status": "NO_CHANGE",
+            "current": "-2 DEX +2 INT; Medium",
+            "sourceNote": "Exact published race (NPC Ooroo is Large as an individual, not default race)"
+          },
+          {
+            "field": "system.movement.fly/hover/swim",
+            "status": "NO_CHANGE",
+            "current": "fly 6 hover, swim 10",
+            "sourceNote": "Exact published modes"
+          },
+          {
+            "field": "canonicalTraits.broadcast-telepath and expert-swimmer text",
+            "status": "NO_CHANGE",
+            "current": "Scoped Telepathy, reroll Swim must accept and take 10",
+            "sourceNote": "Text matches printed benefits"
+          }
+        ],
+        "findings": [
+          {
+            "id": "JATM-02-01",
+            "status": "CHANGE_REQUIRED",
+            "kind": "UNAUTHORIZED_FORCE_TRAINING_FEAT",
+            "target": "data/species-traits-migrated.json: Celegian.structuralTraits[Force Adaptation].rules[featGrant]",
+            "current": "featGrant Force Training unconditionally",
+            "publishedRule": "Broadcast Telepath permits ONLY the Telepathy application of Use the Force untrained without Force Sensitivity; willing within 60 squares LOS auto succeeds; does not grant Force Training",
+            "proposedAction": "Remove/unwire unconditional Force Training entitlement; preserve only scope-limited Telepathy and no extra powers.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 106,
+              "section": "Chapter V — Ooroo / Holocron Lesson",
+              "pdfPage": 107
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "JATM-02-02",
+            "status": "CHANGE_REQUIRED",
+            "kind": "UNPUBLISHED_LAND_SPEED",
+            "target": "packs/species.db: Celegian.system.speed / movement.walk; canonicalStats.speed/movement.walk",
+            "current": "Land speed 6 despite published mobility modes",
+            "publishedRule": "Printed Speed: fly 6 squares (hover), swim 10 squares; no walking speed is granted",
+            "proposedAction": "Represent no ordinary walking capability (using schema-supported null/zero after runtime study). Preserve fly/hover 6 and swim 10.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 106,
+              "section": "Chapter V — Ooroo / Holocron Lesson",
+              "pdfPage": 107
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "JATM-02-03",
+            "status": "CHANGE_REQUIRED",
+            "kind": "LANGUAGE_COMPREHENSION_VS_SPEECH",
+            "target": "packs/species.db: Celegian.system.languages and communication permissions",
+            "current": "['Basic'] without a basic-understand-only restriction",
+            "publishedRule": "Printed Languages: Basic (understand only); Broadcast Telepath supplies their communication with willing targets",
+            "proposedAction": "Encode comprehension-only language semantics without assuming Celegians speak Basic; preserve Broadcast Telepath and no automatic Force feat.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 106,
+              "section": "Chapter V — Ooroo / Holocron Lesson",
+              "pdfPage": 107
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "JATM-02-04",
+            "status": "REVIEW_REQUIRED",
+            "kind": "FLIGHT_HEAVY_LOAD_TEXT",
+            "target": "packs/species.db: Celegian.system.canonicalTraits[flight].description",
+            "current": "Celegian cannot fly carrying Heavy Load",
+            "publishedRule": "Printed block only says fly 6 (hover), swim 10; does not independently establish a heavy-load flight limitation",
+            "proposedAction": "Check general burden/flight rules before removing; avoid treating apparent cross-species boilerplate as a printed Celegian trait.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 106,
+              "section": "Chapter V — Ooroo / Holocron Lesson",
+              "pdfPage": 107
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "JATM-02-05",
+            "status": "REVIEW_REQUIRED",
+            "kind": "CYANOGEN_LIFE_SUPPORT_RUNTIME",
+            "target": "packs/species.db: Celegian.system.canonicalTraits[special-equipment], actor equipment/hazards",
+            "current": "Pack states Celegian suffocates unless in life-support chamber; no runtime proof",
+            "publishedRule": "Printed Cyanogen Breather: Celegians suffocate without special environmental chamber; NPC Ooroo's chamber grants additional benefits as equipped item, not default species abilities",
+            "proposedAction": "Verify breathable environment, starting gear entitlement and hazard condition; do not auto-grant Ooroo-specific chamber bonus/fly increase.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 106,
+              "section": "Chapter V — Ooroo / Holocron Lesson",
+              "pdfPage": 107
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Changes are source-backed candidates or scoped review items, not applied corrections."
       }
     },
     {
@@ -2443,6 +2590,150 @@
       }
     },
     {
+      "name": "Krevaaki",
+      "foundryId": "species-krevaaki",
+      "jediAcademy": {
+        "source": "Jedi Academy Training Manual",
+        "printedPages": "111",
+        "pdfPages": "112",
+        "section": "Chapter V — Vodo-Siosk Baas / Holocron Lesson",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "publishedSize": "NO_CHANGE",
+          "packTraitsAndBothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods, size, speed",
+            "status": "NO_CHANGE",
+            "current": "+2 WIS -2 CHA, Medium, speed 6",
+            "sourceNote": "Exact printed chassis"
+          },
+          {
+            "field": "canonicalTraits.grasping-tentacles Climb and Grapple parts",
+            "status": "NO_CHANGE",
+            "current": "+2 Climb and +2 Grapple",
+            "sourceNote": "Match printed components; Grab addition flagged separately"
+          },
+          {
+            "field": "canonicalTraits.carapace Reflex part",
+            "status": "NO_CHANGE",
+            "current": "+1 Natural Armor to Reflex",
+            "sourceNote": "Correct printed armor component"
+          }
+        ],
+        "findings": [
+          {
+            "id": "JATM-04-01",
+            "status": "CHANGE_REQUIRED",
+            "kind": "UNPUBLISHED_CONDITIONAL_SKILL_FOCUS",
+            "target": "packs/species.db: Krevaaki.system.canonicalTraits[conditional-bonus-feat] plus data/species-traits*.json",
+            "current": "Automatic bonus Skill Focus (Climb) when Climb trained",
+            "publishedRule": "Printed species box lists only Carapace, Stoic and Grasping Tentacles, without any Conditional Bonus Feat",
+            "proposedAction": "Identify if a separately published optional species variant supplies it; otherwise remove noncanonical grant from default profile and sidecar. The existing alternate profile may reflect printed three traits.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 111,
+              "section": "Chapter V — Vodo-Siosk Baas / Holocron Lesson",
+              "pdfPage": 112
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "JATM-04-02",
+            "status": "CHANGE_REQUIRED",
+            "kind": "CARAPACE_FORTITUDE_BONUS_TYPE",
+            "target": "packs/species.db: Krevaaki.system.canonicalTraits[carapace].description and derived bonus consumer",
+            "current": "Reflex +1 Natural Armor and Fortitude +1 Natural Armor",
+            "publishedRule": "Printed Carapace: Reflex +1 NATURAL ARMOR and Fortitude +1 BONUS (not identified as Natural Armor)",
+            "proposedAction": "Keep natural armor type on Reflex only; grant the printed +1 Fortitude with correctly supported bonus-type semantics and no double-count.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 111,
+              "section": "Chapter V — Vodo-Siosk Baas / Holocron Lesson",
+              "pdfPage": 112
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "JATM-04-03",
+            "status": "CHANGE_REQUIRED",
+            "kind": "GRASPING_TENTACLES_ADDS_GRAB",
+            "target": "packs/species.db: Krevaaki.system.canonicalTraits[grasping-tentacles].description / consumer",
+            "current": "+2 Climb, +2 Grab and +2 Grapple",
+            "publishedRule": "Printed Grasping Tentacles grants +2 Climb and +2 GRAPPLE; no bonus to initiating a Grab is printed",
+            "proposedAction": "Keep Climb/Grapple only unless published rules establish Grab equivalence; regression check difference.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 111,
+              "section": "Chapter V — Vodo-Siosk Baas / Holocron Lesson",
+              "pdfPage": 112
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "JATM-04-04",
+            "status": "REVIEW_REQUIRED",
+            "kind": "LANGUAGE_SOURCE_CONTRADICTION",
+            "target": "packs/species.db: Krevaaki.system.languages and variants[krevaaki-alternate].languages",
+            "current": "Basic and Kreva",
+            "publishedRule": "Printed species box lists Basic and Dromnyr, while the adjacent Vodo-Siosk Baas NPC knows Basic, Kreva and Tchuukthese, potentially a source typo or character-specific languages",
+            "proposedAction": "Record exact apparent contradiction and seek erratum/other book; do not silently replace language based only on NPC stats.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 111,
+              "section": "Chapter V — Vodo-Siosk Baas / Holocron Lesson",
+              "pdfPage": 112
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "JATM-04-05",
+            "status": "REVIEW_REQUIRED",
+            "kind": "STOIC_PERCEPTION_APPLICATION",
+            "target": "packs/species.db: Krevaaki.system.canonicalTraits[stoic].description and passive consumer",
+            "current": "-5 to Sense Deception and Sense Influence against Krevaaki",
+            "publishedRule": "Printed Stoic imposes -5 on Sense Motive application of Perception; equivalence to current named applications not certified",
+            "proposedAction": "Check Core Sense Motive alias/subapplications and ensure correct trigger, not a blanket Perception penalty.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 111,
+              "section": "Chapter V — Vodo-Siosk Baas / Holocron Lesson",
+              "pdfPage": 112
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "JATM-04-06",
+            "status": "REVIEW_REQUIRED",
+            "kind": "ALTERNATE_PROFILE_PROVENANCE",
+            "target": "packs/species.db: Krevaaki.system.variants[krevaaki-alternate]",
+            "current": "Alternate removes unpublished Climb Skill Focus while retaining three printed traits; labels 'Canonical alternate species traits'",
+            "publishedRule": "Jedi Academy box itself lists only three racial abilities, without naming an alternate profile",
+            "proposedAction": "After validating other books, reconcile default/alternate publication authority, preserving variant IDs until controlled patch.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 111,
+              "section": "Chapter V — Vodo-Siosk Baas / Holocron Lesson",
+              "pdfPage": 112
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Changes are source-backed candidates or scoped review items, not applied corrections."
+      }
+    },
+    {
       "name": "Massassi",
       "foundryId": "species-massassi",
       "kotor": {
@@ -3201,6 +3492,99 @@
       }
     },
     {
+      "name": "Shard",
+      "foundryId": "species-shard",
+      "jediAcademy": {
+        "source": "Jedi Academy Training Manual",
+        "printedPages": "79",
+        "pdfPages": "80",
+        "section": "Chapter IV — Iron Knights / New Species: Shards",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "publishedSize": "NO_CHANGE",
+          "packTraitsAndBothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods, size",
+            "status": "NO_CHANGE",
+            "current": "-2 DEX +2 WIS; Medium",
+            "sourceNote": "Exact printed profile"
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "current": "Basic and Binary",
+            "sourceNote": "Exact named automatic languages"
+          },
+          {
+            "field": "bonus-trained-skill authority",
+            "status": "NO_CHANGE",
+            "current": "Grant fixed Use Computer training",
+            "sourceNote": "Correct printed fixed skill; grant builder recognizes this named skill, pending live smoke"
+          }
+        ],
+        "findings": [
+          {
+            "id": "JATM-01-01",
+            "status": "CHANGE_REQUIRED",
+            "kind": "MISSING_CANONICAL_REACTION",
+            "target": "packs/species.db: Shard.system.canonicalTraits[Silicon Mind]",
+            "current": "No Silicon Mind trait; only Bonus Trained Skill and Droid Shell recorded",
+            "publishedRule": "Silicon Mind: spend Force Point as reaction for +CHA modifier (minimum +1) to Will Defense against ALL Use the Force checks until end of next turn",
+            "proposedAction": "Append distinct canonical Silicon Mind trait and wire reaction choice and expiry only through correct existing trait authority; do not grant permanent Will bonus.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 79,
+              "section": "Chapter IV — Iron Knights / New Species: Shards",
+              "pdfPage": 80
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "JATM-01-02",
+            "status": "CHANGE_REQUIRED",
+            "kind": "INCOMPLETE_DROID_SHELL_IMMUNITY",
+            "target": "packs/species.db: Shard.system.canonicalTraits[droid-shell].description and canonicalStats.traits",
+            "current": "Pack lists poison, radiation, atmospheric hazards and vacuum, but omits disease immunity",
+            "publishedRule": "Droid Shell explicitly grants immunity to poison, DISEASE, radiation, noncorrosive atmospheric hazards and vacuum",
+            "proposedAction": "Correct the canonical description/structured immunities. Legacy Crystalline Body already claims disease immunity; reconcile once-only, never add double immunities.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 79,
+              "section": "Chapter IV — Iron Knights / New Species: Shards",
+              "pdfPage": 80
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "JATM-01-03",
+            "status": "REVIEW_REQUIRED",
+            "kind": "DROID_SHELL_RUNTIME_SCOPE",
+            "target": "Shard.system.droidBuilder / SpeciesGrantLedgerBuilder / species runtime",
+            "current": "Required Shard droid-shell builder, retained Constitution, cybernetic ion status and restricted accessories are represented",
+            "publishedRule": "Printed shell: retain CON, mandatory maintenance, Mechanics Repair Droid only unless Force Repair, cybernetic ion interaction, accessory allowlist and x1 cost, Basic/Binary speech only with computer/vocabulator",
+            "proposedAction": "Verify CharGen shell restrictions, prohibited natural healing, proper healing/ion/maintenance and player communication gates with representative actor; no broad droid rewrite.",
+            "source": {
+              "book": "Jedi Academy Training Manual",
+              "printedPage": 79,
+              "section": "Chapter IV — Iron Knights / New Species: Shards",
+              "pdfPage": 80
+            },
+            "applied": false,
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "note": "Changes are source-backed candidates or scoped review items, not applied corrections."
+      }
+    },
+    {
       "name": "Snivvian",
       "foundryId": "species-snivvian",
       "kotor": {
@@ -3845,6 +4229,53 @@
           }
         ],
         "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
+      "name": "Vultan",
+      "foundryId": "species-vultan",
+      "jediAcademy": {
+        "source": "Jedi Academy Training Manual",
+        "printedPages": "107",
+        "pdfPages": "108",
+        "section": "Chapter V — Oss Willum / Holocron Lesson",
+        "status": "NO_CHANGE",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "publishedSize": "NO_CHANGE",
+          "packTraitsAndBothSidecarsInspected": true,
+          "actorRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods, size, speed",
+            "status": "NO_CHANGE",
+            "current": "+2 INT -2 WIS, Medium, speed 6",
+            "sourceNote": "Exact printed chassis"
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "current": "Basic and Dromnyr",
+            "sourceNote": "Exact published languages"
+          },
+          {
+            "field": "canonicalTraits.bonus-trained-skill",
+            "status": "NO_CHANGE",
+            "current": "One extra trained skill chosen from class list at 1st level",
+            "sourceNote": "Correct book text; generic class-skill choice recognized by existing grant builder"
+          },
+          {
+            "field": "canonicalTraits.conditional-bonus-feat",
+            "status": "NO_CHANGE",
+            "current": "Skill Focus in one already-trained Knowledge skill, if at least one trained",
+            "sourceNote": "Correct published conditional feat text; grant choice must be runtime-tested"
+          }
+        ],
+        "findings": [],
+        "note": "No changes identified in printed racial statistics, language list or abilities. Runtime grant/choice behavior still requires testing."
       }
     },
     {
