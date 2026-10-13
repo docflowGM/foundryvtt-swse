@@ -2980,7 +2980,13 @@
       "New-character filtering and saved-character reload regressions"
     ],
     "sourceMatrix": "data/audits/species-39-provenance-reconciliation.json",
-    "decisionReport": "docs/audits/species-audit-overall-roadmap.md"
+    "decisionReport": "docs/audits/species-audit-overall-roadmap.md",
+    "schemaVersion": 2,
+    "authoritativeRemovalDecision": "data/audits/species-39-provenance-reconciliation.json",
+    "auditOnly": true,
+    "implementationAuthorized": false,
+    "selectionFilteredInProduction": false,
+    "statusFieldsStoredOnOriginalCandidates": "removalReadiness"
   },
   "unverifiedRemovalCandidates": [
     {
