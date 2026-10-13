@@ -74,6 +74,14 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Original uploaded scanned Jedi Academy Training Manual PDF pages 80, 107, 108 and 112 rendered at high resolution and directly compared with current pack and both trait sidecars. Uploaded searchable transcription used for discovery/navigation.",
       "notes": "Four complete printed playable species stat/rules blocks. Do not treat species of named NPCs without a racial-rules block as new playable species. Silicon Mind located below Shard species block, but is a genuine additional Shard racial trait. Vultan has NO_CHANGE in this source-data audit. Iron Knights are an affiliation/tradition, not a universal Shard class grant. No production changes or live Foundry tests."
+    },
+    {
+      "source": "Galaxy at War",
+      "printedScope": "Chapter 1 New Species, printed pp.10-18, nine species including Barabel previously audited under Scum and Villainy",
+      "reviewedSpecies": 9,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "Directly rendered source PDF pages 11-19 corresponding to printed pp.10-18, and inspected printed species entries; uploaded Galaxy At War_djvu.txt used for exact text search.",
+      "notes": "Published ability/size/speed and languages align. Source printed GAW Barabel +5 radiation and stun resistance and supports pack, retaining historical Scum source discrepancy but resolving remediation. No production or runtime changes."
     }
   ],
   "summary": {
@@ -94,7 +102,7 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 66,
+    "totalSpeciesInRollingLedger": 74,
     "forceUnleashed": {
       "species": 10,
       "noChange": 0,
@@ -146,6 +154,19 @@
       "reviewIssues": 6,
       "totalIssues": 14,
       "explicitNoChangeFieldDecisions": 13
+    },
+    "galaxyAtWar": {
+      "species": 9,
+      "present": 9,
+      "newDistinctSpecies": 8,
+      "revisitedSpecies": 1,
+      "basicStatNoChange": 9,
+      "changeRequiredSpecies": 7,
+      "reviewOnlySpecies": 2,
+      "confirmedIssues": 8,
+      "reviewIssues": 17,
+      "totalIssues": 25,
+      "priorBarabelSourceQuestionsResolved": 2
     }
   },
   "entries": [
@@ -486,6 +507,106 @@
           }
         ],
         "note": "Source-specific race audit; no production modifications."
+      },
+      "galaxyAtWar": {
+        "source": "Galaxy at War",
+        "printedPages": "11",
+        "section": "Chapter 1: New Species",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModsSizeSpeed": "NO_CHANGE",
+          "languageNames": "NO_CHANGE",
+          "packAndBothTraitSidecarsReviewed": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Matches published source table and profile."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Matches printed Automatic Languages."
+          },
+          {
+            "field": "canonicalTraits[radiation-resistance]",
+            "status": "NO_CHANGE",
+            "note": "GAW p11 confirms +5 Fortitude vs radiation and no persistent radiation condition; Scum variant differs."
+          },
+          {
+            "field": "canonicalTraits[stun-resistance]",
+            "status": "NO_CHANGE",
+            "note": "GAW p11 explicitly grants +5 stun Damage Threshold."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GAW-01-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Natural attack records",
+            "target": "packs/species.db: Barabel.system.naturalWeapons",
+            "current": "claws 1d4, bite 1d6, tail missing",
+            "publishedRule": "Claws, bite and tail 1d6, respectively slashing/piercing/bludgeoning, always armed",
+            "proposedAction": "Correct claw formula and add missing tail in authoritative output; avoid duplicate attacks.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 11,
+              "pdfPage": 12
+            },
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "GAW-01-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unproven Reptilian Ferocity rule",
+            "target": "data/species-traits-migrated.json: Barabel.conditionalTraits[Reptilian Ferocity].rules",
+            "current": "+2 melee damage always, although own prose requires <= half HP",
+            "publishedRule": "Not in Galaxy at War printed Barabel traits",
+            "proposedAction": "Check variants; block always-on damage if no printed entitlement.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 11,
+              "pdfPage": 12
+            },
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "GAW-01-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Flat skill bonuses",
+            "target": "packs/species.db: Barabel.system.skillBonuses",
+            "current": "+2 Initiative/Stealth",
+            "publishedRule": "Printed grants Intimidate Persuasion reroll instead",
+            "proposedAction": "Review alternate provenance and active runtime.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 11,
+              "pdfPage": 12
+            },
+            "additionalSourceCheckRequired": true
+          }
+        ],
+        "crossBookResolutions": [
+          {
+            "priorBook": "Scum and Villainy",
+            "priorFindingId": "SV-10-02",
+            "disposition": "RECONCILED_NO_PRODUCTION_CHANGE",
+            "reason": "GAW p11 supports existing +5 radiation and persistent-condition immunity; do not reduce to older Scum p155 +2."
+          },
+          {
+            "priorBook": "Scum and Villainy",
+            "priorFindingId": "SV-10-03",
+            "disposition": "CONFIRMED_NO_CHANGE",
+            "reason": "GAW p11 explicitly supports existing +5 threshold vs stun."
+          }
+        ]
       }
     },
     {
@@ -1050,6 +1171,86 @@
           }
         ],
         "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
+      "name": "Dashade",
+      "foundryId": "species-dashade",
+      "galaxyAtWar": {
+        "source": "Galaxy at War",
+        "printedPages": "12",
+        "section": "Chapter 1: New Species",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModsSizeSpeed": "NO_CHANGE",
+          "languageNames": "NO_CHANGE",
+          "packAndBothTraitSidecarsReviewed": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Matches published source table and profile."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Matches printed Automatic Languages."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GAW-02-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Force Resistance missing Fortitude",
+            "target": "packs/species.db: Dashade.system.canonicalTraits[force-resistance]",
+            "current": "+5 Will vs Use the Force only",
+            "publishedRule": "Printed +5 Fortitude AND +5 Will vs all Use the Force checks",
+            "proposedAction": "Complete published bonus; narrow both to UTF targeting.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "GAW-02-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Incorrect Reflex passive",
+            "target": "data/species-traits-migrated.json: Dashade.structuralTraits[Force Resistance].rules",
+            "current": "+5 Reflex always",
+            "publishedRule": "No Reflex bonus; +5 Fort/Will conditional on UTF",
+            "proposedAction": "Remove/replace Reflex, verify no generic passive or double grant.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "GAW-02-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Stealth bonus and printed name",
+            "target": "packs/species.db: Dashade.system.skillBonuses / canonicalTraits[frightening-visage]",
+            "current": "+2 Stealth; trait called Frightening Visage",
+            "publishedRule": "No generic Stealth bonus; printed Fearsome Reputation rerolls Intimidate and keeps better",
+            "proposedAction": "Source-check skill bonus; normalize player-facing alias without altering reroll.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "additionalSourceCheckRequired": true
+          }
+        ]
       }
     },
     {
@@ -2734,6 +2935,86 @@
       }
     },
     {
+      "name": "Lurmen",
+      "foundryId": "species-lurmen",
+      "galaxyAtWar": {
+        "source": "Galaxy at War",
+        "printedPages": "13",
+        "section": "Chapter 1: New Species",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModsSizeSpeed": "NO_CHANGE",
+          "languageNames": "NO_CHANGE",
+          "packAndBothTraitSidecarsReviewed": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Matches published source table and profile."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Matches printed Automatic Languages."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GAW-03-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra Will bonus",
+            "target": "data/species-traits-migrated.json: Lurmen.structuralTraits[Pacifist Resolve].rules",
+            "current": "+2 Will always",
+            "publishedRule": "Printed Mender, Primitive, Roller and Take 10 Climb; no flat +2 Will",
+            "proposedAction": "Require independent source before enabling.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "GAW-03-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra skill bonuses",
+            "target": "packs/species.db: Lurmen.system.skillBonuses",
+            "current": "+2 Acrobatics/Stealth",
+            "publishedRule": "Printed Climb Take 10 and conditional Treat Injury DC reduction, not static skill modifiers",
+            "proposedAction": "Review printed provenance and consumers.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "GAW-03-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Roller and Mender execution",
+            "target": "packs/species.db: Lurmen.system.canonicalTraits[roller,mender]",
+            "current": "Correct printed text but no live execution proof",
+            "publishedRule": "Roller swift +4 speed with severe action restrictions; Mender reduces DC by trained healer's WIS modifier",
+            "proposedAction": "Test action gates/duration and conditional Treat Injury DC, no data rewrite.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "additionalSourceCheckRequired": true
+          }
+        ]
+      }
+    },
+    {
       "name": "Massassi",
       "foundryId": "species-massassi",
       "kotor": {
@@ -3774,6 +4055,150 @@
       }
     },
     {
+      "name": "Taung",
+      "foundryId": "species-taung",
+      "galaxyAtWar": {
+        "source": "Galaxy at War",
+        "printedPages": "14",
+        "section": "Chapter 1: New Species",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModsSizeSpeed": "NO_CHANGE",
+          "languageNames": "NO_CHANGE",
+          "packAndBothTraitSidecarsReviewed": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Matches published source table and profile."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Matches printed Automatic Languages."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GAW-04-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Warrior Culture melee attack leak",
+            "target": "data/species-traits-migrated.json: Taung.structuralTraits[Warrior Culture].rules",
+            "current": "+2 to all melee attacks always",
+            "publishedRule": "Warrior Culture rerolls Knowledge (Tactics), must accept new roll",
+            "proposedAction": "Replace invalid meleeCultureBonus with scoped skill reroll.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 14,
+              "pdfPage": 15
+            },
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "GAW-04-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Armor and three defenses runtime",
+            "target": "packs/species.db: Taung.system.canonicalTraits[armor-training,superior-defenses]",
+            "current": "Correct printed traits; runtime not tested",
+            "publishedRule": "+1 Max DEX of worn armor; +1 species to all three defenses",
+            "proposedAction": "Test stacking and capped DEX, retain pack authority.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 14,
+              "pdfPage": 15
+            },
+            "additionalSourceCheckRequired": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Thakwaash",
+      "foundryId": "species-thakwaash",
+      "galaxyAtWar": {
+        "source": "Galaxy at War",
+        "printedPages": "15",
+        "section": "Chapter 1: New Species",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModsSizeSpeed": "NO_CHANGE",
+          "languageNames": "NO_CHANGE",
+          "packAndBothTraitSidecarsReviewed": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Matches published source table and profile."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Matches printed Automatic Languages."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GAW-05-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Dual Brains false passive defenses",
+            "target": "data/species-traits-migrated.json: Thakwaash.structuralTraits[Dual Brains].rules",
+            "current": "Unconditional +2 Will (text also +2 Reflex)",
+            "publishedRule": "Printed Multiple Personalities negates/removes mind-affecting effect at start of turn, free action once/encounter; +1 Reflex natural armor is separate",
+            "proposedAction": "Remove/disable unsourced +2 defenses; preserve the printed timed ability.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 15,
+              "pdfPage": 16
+            },
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "GAW-05-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra Survival skill field",
+            "target": "packs/species.db: Thakwaash.system.skillBonuses",
+            "current": "+2 Survival",
+            "publishedRule": "Not among printed traits",
+            "proposedAction": "Check separate source and consumer.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 15,
+              "pdfPage": 16
+            },
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "GAW-05-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Multiple Personalities behavior",
+            "target": "packs/species.db: Thakwaash.system.canonicalTraits[irrepressible-mind]",
+            "current": "Correct effect described but activation not tested",
+            "publishedRule": "Once/encounter free action at START of turn remove/negate any mind-affecting effect",
+            "proposedAction": "Runtime-test window, expiration and charges; label can be aligned later.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 15,
+              "pdfPage": 16
+            },
+            "additionalSourceCheckRequired": true
+          }
+        ]
+      }
+    },
+    {
       "name": "Togorian",
       "foundryId": "species-togorian",
       "forceUnleashed": {
@@ -4077,6 +4502,70 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Trianii",
+      "foundryId": "species-trianii",
+      "galaxyAtWar": {
+        "source": "Galaxy at War",
+        "printedPages": "16",
+        "section": "Chapter 1: New Species",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModsSizeSpeed": "NO_CHANGE",
+          "languageNames": "NO_CHANGE",
+          "packAndBothTraitSidecarsReviewed": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Matches published source table and profile."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Matches printed Automatic Languages."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GAW-06-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Missing structured claws",
+            "target": "packs/species.db: Trianii.system.naturalWeapons",
+            "current": "[] (description includes 1d6 claws)",
+            "publishedRule": "1d6 slashing claws, always armed",
+            "proposedAction": "Trace producer and grant exactly one natural-weapon profile.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 16,
+              "pdfPage": 17
+            },
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "GAW-06-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Feline Instincts extra passive",
+            "target": "data/species-traits-migrated.json: Trianii.structuralTraits[Feline Instincts].rules",
+            "current": "+2 Initiative always",
+            "publishedRule": "Printed Acrobatics reroll, natural claws, prehensile tail; no bonus Initiative",
+            "proposedAction": "Check distinct published source before retaining.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 16,
+              "pdfPage": 17
+            },
+            "additionalSourceCheckRequired": true
+          }
+        ]
       }
     },
     {
@@ -4668,6 +5157,166 @@
       }
     },
     {
+      "name": "Yevetha",
+      "foundryId": "species-yevetha",
+      "galaxyAtWar": {
+        "source": "Galaxy at War",
+        "printedPages": "16",
+        "section": "Chapter 1: New Species",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModsSizeSpeed": "NO_CHANGE",
+          "languageNames": "NO_CHANGE",
+          "packAndBothTraitSidecarsReviewed": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Matches published source table and profile."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Matches printed Automatic Languages."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GAW-07-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Missing structured retractable claws",
+            "target": "packs/species.db: Yevetha.system.naturalWeapons",
+            "current": "[] (description includes 1d6 claws)",
+            "publishedRule": "1d6 slashing retractable claws, always armed",
+            "proposedAction": "Ensure one natural-weapon attack from generator/materializer.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 16,
+              "pdfPage": 17
+            },
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "GAW-07-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Militaristic Culture extra passive",
+            "target": "data/species-traits-migrated.json: Yevetha.structuralTraits[Militaristic Culture].rules",
+            "current": "+2 Initiative always",
+            "publishedRule": "Printed Mechanical Aptitude, claws and Xenophobia; no flat Initiative",
+            "proposedAction": "Seek variant/book provenance.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 16,
+              "pdfPage": 17
+            },
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "GAW-07-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Racial choice and Xenophobia runtime",
+            "target": "packs/species.db: Yevetha.system.canonicalTraits[mechanical-aptitude,xenophobia]",
+            "current": "Printed text present; consumer untested",
+            "publishedRule": "Natural-20 Mechanics once/encounter; +2 Will only against attitude-improving Persuasion from different species",
+            "proposedAction": "Test once-only roll and narrow social defense.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 16,
+              "pdfPage": 17
+            },
+            "additionalSourceCheckRequired": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Yuzzem",
+      "foundryId": "species-yuzzem",
+      "galaxyAtWar": {
+        "source": "Galaxy at War",
+        "printedPages": "17",
+        "section": "Chapter 1: New Species",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModsSizeSpeed": "NO_CHANGE",
+          "languageNames": "NO_CHANGE",
+          "packAndBothTraitSidecarsReviewed": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Matches published source table and profile."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Matches printed Automatic Languages."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GAW-08-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Missing 1d8 bite/claws profiles",
+            "target": "packs/species.db: Yuzzem.system.naturalWeapons",
+            "current": "[] (description covers both attacks)",
+            "publishedRule": "1d8 piercing bite, 1d8 slashing claws, always armed",
+            "proposedAction": "Ensure two distinct 1d8 natural attacks in authorized producer, once only.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 17,
+              "pdfPage": 18
+            },
+            "additionalSourceCheckRequired": false
+          },
+          {
+            "id": "GAW-08-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Rage sidecar provenance",
+            "target": "data/species-traits-migrated.json: Yuzzem.conditionalTraits[Rage].rules",
+            "current": "+2 melee attack after half HP; includes when:always",
+            "publishedRule": "Published trait block has no Rage",
+            "proposedAction": "Check other publication and verify gating; do not auto-grant.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 17,
+              "pdfPage": 18
+            },
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "GAW-08-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Legacy skill bonuses",
+            "target": "packs/species.db: Yuzzem.system.skillBonuses",
+            "current": "+2 Climb/Endurance",
+            "publishedRule": "Printed Climb reroll and Scent scope, not flat bonuses",
+            "proposedAction": "Review source and actual passive.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 17,
+              "pdfPage": 18
+            },
+            "additionalSourceCheckRequired": true
+          }
+        ]
+      }
+    },
+    {
       "name": "Zabrak",
       "foundryId": "species-zabrak",
       "core": {
@@ -4754,6 +5403,91 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Zygerrian",
+      "foundryId": "species-zygerrian",
+      "galaxyAtWar": {
+        "source": "Galaxy at War",
+        "printedPages": "18",
+        "section": "Chapter 1: New Species",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "recordPresent": true,
+          "identityStable": true,
+          "abilityModsSizeSpeed": "NO_CHANGE",
+          "languageNames": "NO_CHANGE",
+          "packAndBothTraitSidecarsReviewed": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods / system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Matches published source table and profile."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Matches printed Automatic Languages."
+          },
+          {
+            "field": "canonicalTraits[bonus-feat,iron-will,strength-of-conviction]",
+            "status": "NO_CHANGE",
+            "note": "All 3 printed racial benefits described accurately; runtime certification is distinct."
+          }
+        ],
+        "findings": [
+          {
+            "id": "GAW-09-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Dominating Presence sidecar",
+            "target": "data/species-traits-migrated.json: Zygerrian.structuralTraits[Dominating Presence].rules",
+            "current": "+2 Persuasion always",
+            "publishedRule": "Printed bonus Martial Arts I, +2 Will, CHA replaces WIS for Will; no Persuasion bonus",
+            "proposedAction": "Source-check supplemental variant before granting.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 18,
+              "pdfPage": 19
+            },
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "GAW-09-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Martial Arts I start grant runtime",
+            "target": "packs/species.db: Zygerrian.system.canonicalTraits[bonus-feat]",
+            "current": "Correct feat grant text; numeric bonusFeats projection 0",
+            "publishedRule": "Printed grants Martial Arts I automatically at 1st level",
+            "proposedAction": "Test species-grant builder/finalizer once-only; do not alter valid text solely due to counter.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 18,
+              "pdfPage": 19
+            },
+            "additionalSourceCheckRequired": true
+          },
+          {
+            "id": "GAW-09-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Will CHA substitution runtime",
+            "target": "packs/species.db: Zygerrian.system.canonicalTraits[strength-of-conviction]",
+            "current": "Correct substitution text; no runtime probe",
+            "publishedRule": "CHA replaces WIS (not added to it) for Will, alongside separate +2 species Iron Will",
+            "proposedAction": "Test derived Will modifiers and stacking.",
+            "applied": false,
+            "source": {
+              "book": "Galaxy at War",
+              "printedPage": 18,
+              "pdfPage": 19
+            },
+            "additionalSourceCheckRequired": true
+          }
+        ]
       }
     }
   ]
