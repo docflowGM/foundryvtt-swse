@@ -294,6 +294,11 @@ async function persistOwned(actor, weapon, patch, { strict = false } = {}) {
  */
 export async function setStockState(actor, weapon, stockState, { free = false } = {}) {
   if (stockState !== 'extended' && stockState !== 'retracted') return { ok: false, reason: 'invalid-stock-state' };
+  // Phase 5D-I-D-B5: a record that STATES it has no folding stock (operation.hasFoldingStock === false) has no stock state to hold. Only that stated
+  // absence refuses; a weapon that merely does not say (the stock is a purchase option or an installed modification) is not guessed at.
+  let stockShape = null;
+  try { stockShape = shapeOfWeapon(weapon, {}); } catch { stockShape = null; }
+  if (stockShape?.source === 'canonical' && stockShape.operation?.hasFoldingStock === false) return { ok: false, reason: 'no-stock' };
   if (!free && readFireState(weapon)?.stock !== stockState) {
     const spend = await spendRequiredActions(actor, [{ action: 'move', count: 1, family: 'stock', reason: `stock:${stockState}` }], { weaponName: weapon?.name });
     if (!spend.ok) return { ok: false, reason: 'action-unavailable' };

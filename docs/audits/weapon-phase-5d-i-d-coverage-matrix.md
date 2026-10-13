@@ -16,14 +16,14 @@ Two independent questions per row: **who establishes the circumstances** (bucket
 | Support state | Rows |
 |---|---:|
 | DATA_COMPLETENESS | 2 |
-| DUPLICATE_OR_NON_EXECUTABLE | 16 |
+| DUPLICATE_OR_NON_EXECUTABLE | 15 |
 | GM_FACING_SUPPORT_NEEDED | 13 |
-| IMPLEMENTED | 33 |
+| IMPLEMENTED | 34 |
 | MISSING_SUBSYSTEM | 3 |
 | SMALL_CONSUMER_NEEDED | 10 |
 | SOURCE_CLARIFICATION_NEEDED | 3 |
 
-Duplicate / non-executable claims: **12 mechanically verified** (carrier present on every identity + consumer probe), **4 asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **14**.
+Duplicate / non-executable claims: **12 mechanically verified** (carrier present on every identity + consumer probe), **3 asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **14**.
 
 ## By subpass
 
@@ -93,7 +93,7 @@ Duplicate / non-executable claims: **12 mechanically verified** (carrier present
 | `designedForTwoHandedUse` | vibrosword | AUTO | IMPLEMENTED | vibrosword is designed for two-handed use | wielding choice (player) | DONE (I-D-B2): shown in the readiness notes; hands stay the wielder's choice; the two-handed Strength doubling now executes for production records | — | two-handed Strength damage applies when wielded two-handed; one-handed stays legal |
 | `encumbranceException` | plx-2m-portable-missile-launcher | GM_ADJUDICATED | GM_FACING_SUPPORT_NEEDED | PLX-2M weight ignored while the weapon is the active drawn weapon | encumbrance is a GM / inventory total | exclude the weapon's weight from the carried total while drawn (inventory weight authority) or display the exception | it is not stated whether the rule affects the encumbrance total or only the carrying-capacity check | documented decision + test |
 | `forearmMounted` | wrist-rocket-launcher | AUTO | IMPLEMENTED | wrist rocket launcher is forearm-mounted | - | DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; worn classification (wornClassOf) shown and exposed as descriptor tokens; no hand rule invented | — | classification available; no new rule invented |
-| `hasFoldingStock` | targeting-blaster-rifle | AUTO | DUPLICATE_OR_NON_EXECUTABLE (ASSERTED) | targeting blaster rifle has no folding stock (false) | - | none: false states the absence of an option | — | no stock option offered |
+| `hasFoldingStock` | targeting-blaster-rifle | AUTO | IMPLEMENTED | targeting blaster rifle has no folding stock (false) | - | DONE (I-D-B5): FireStateStore.setStockState refuses no-stock when the record states hasFoldingStock=false | — | extending / folding the stock is refused with nothing spent or written |
 | `mayCountAsSmallWhenBeneficial` | lightsaber-chassis-archaic-lightfoil, lightsaber-chassis-modern-lightfoil | CONTEXTUAL | IMPLEMENTED | lightfoil may be treated as Small | the wielder's choice | DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; setSizeTreatment (owned, record-declared size only); never a free default; two-handed refusal unchanged | — | Small treatment only when chosen; cannot be wielded two-handed |
 | `mayTreatAsSizeWhenBeneficial` | lightfoil | CONTEXTUAL | IMPLEMENTED | lightfoil may be treated as Small | the wielder's choice | DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; same capability as mayCountAsSmallWhenBeneficial | — | same |
 | `mountableOnMinimumWeaponSize` | targeting-laser | AUTO | IMPLEMENTED | targeting laser mounts on a Medium or larger weapon | host canonical size | DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; host-size gate | — | mount refused on a Small host; accepted on Medium or larger |

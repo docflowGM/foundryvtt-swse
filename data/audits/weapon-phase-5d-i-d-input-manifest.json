@@ -18,13 +18,13 @@
     "I_D_INPUT_SPECIAL_MECHANICS": 3,
     "I_D_INPUT_RELATIONS": 2,
     "I_D_INPUT_TOTAL": 80,
-    "I_D_IMPLEMENTED": 33,
+    "I_D_IMPLEMENTED": 34,
     "I_D_DUPLICATES": 8,
-    "I_D_NON_EXECUTABLE": 2,
+    "I_D_NON_EXECUTABLE": 3,
     "I_D_DATA_DEFECT": 0,
     "I_D_DATA_COMPLETENESS": 4,
     "I_D_BLOCKED": 3,
-    "I_D_DEFERRED": 30,
+    "I_D_DEFERRED": 28,
     "I_D_UNCLASSIFIED": 0
   },
   "baseline": {
@@ -33,8 +33,8 @@
     "note": "post-I-C-C checkpoint; the live values below move only when a production consumer is demonstrated"
   },
   "closureCensusAtGeneration": {
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 42,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 47,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 41,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 46,
     "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 38,
     "PARTIAL_EXECUTION_FIELD_FAMILIES": 11,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
@@ -49,11 +49,11 @@
       "AUTO": 36
     },
     "support": {
-      "IMPLEMENTED": 33,
+      "IMPLEMENTED": 34,
       "DATA_COMPLETENESS": 2,
       "GM_FACING_SUPPORT_NEEDED": 13,
       "SMALL_CONSUMER_NEEDED": 10,
-      "DUPLICATE_OR_NON_EXECUTABLE": 16,
+      "DUPLICATE_OR_NON_EXECUTABLE": 15,
       "SOURCE_CLARIFICATION_NEEDED": 3,
       "MISSING_SUBSYSTEM": 3
     },
@@ -97,14 +97,14 @@
     "sourceAmbiguities": 14,
     "duplicateOrNonExecutable": {
       "verified": 12,
-      "asserted": 4
+      "asserted": 3
     }
   },
   "automationLevels": {
     "CONTEXTUAL": 25,
-    "GM_ADJUDICATED": 11,
-    "AUTO": 26,
-    "NOT_ASSESSED_YET": 18
+    "GM_ADJUDICATED": 12,
+    "AUTO": 27,
+    "NOT_ASSESSED_YET": 16
   },
   "supportGaps": {
     "CONTEXT_SURFACE_PENDING": 5,
@@ -1019,28 +1019,25 @@
       "key": "hasFoldingStock",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "targeting-blaster-rifle"
       ],
       "structuredSourceField": "operation.hasFoldingStock",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (\\bhasFoldingStock\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "DUPLICATE_OR_NON_EXECUTABLE",
+        "support": "IMPLEMENTED",
         "foundryKnows": "targeting blaster rifle has no folding stock (false)",
         "mustBeSupplied": "-",
-        "smallestImplementation": "none: false states the absence of an option",
+        "smallestImplementation": "DONE (I-D-B5): FireStateStore.setStockState refuses no-stock when the record states hasFoldingStock=false",
         "sourceAmbiguity": null,
-        "acceptance": "no stock option offered",
-        "proof": {
-          "status": "ASSERTED",
-          "note": "not mechanically proven; must gain a verify before any closure-ledger acceptance"
-        }
+        "acceptance": "extending / folding the stock is refused with nothing spent or written"
       },
-      "owner": "I-D-B",
-      "reason": "Stock configuration / construction option."
+      "reason": "Phase 5D-I-D-B5: the Targeting Blaster Rifle STATES it has no folding stock (false). FireStateStore.setStockState (the existing owned stock-state writer; Move action paid through the action economy) refuses with no-stock, even for a free GM correction, and writes nothing. Only the stated absence refuses; a weapon that does not say (purchase option, installed modification) is not guessed at. Stock position stays owned state; the canonical definition is never mutated."
     },
     {
       "kind": "operation-key",
@@ -1307,7 +1304,7 @@
       "key": "retractableStockOptional",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "NON_EXECUTABLE",
       "identityCount": 2,
       "rawOccurrences": 2,
       "representativeWeapons": [
@@ -1315,6 +1312,7 @@
         "blaster-rifle"
       ],
       "structuredSourceField": "operation.retractableStockOptional",
+      "automation": "GM_ADJUDICATED",
       "matrix": {
         "bucket": "GM_ADJUDICATED",
         "support": "DUPLICATE_OR_NON_EXECUTABLE",
@@ -1328,8 +1326,8 @@
           "note": "not mechanically proven; must gain a verify before any closure-ledger acceptance"
         }
       },
-      "owner": "I-D-B",
-      "reason": "Stock configuration / construction option."
+      "nonExecutableClass": "STORE",
+      "reason": "Blaster Rifle / Blaster Carbine: the retractable stock is a PURCHASE option with a price (retractableStockCostCredits / costWithoutRetractableStockCredits, already classified as store data). It states no attack rule. Fitting a stock is a persistent MODIFICATION (the retractable_stock upgrade through the upgrade authorities), whereas extending / folding one is an operational configuration (owned stock state, Move action); this key conflates neither and executes nothing."
     },
     {
       "kind": "operation-key",
