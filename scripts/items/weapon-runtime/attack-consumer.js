@@ -174,10 +174,31 @@ export function assertDamageSelectionResolvable(runtime, damageMode = null) {
 }
 
 /** Phase 5D-D: every pre-spend validation of the selected canonical form (damage mode, range band) in one place. */
-export function assertAttackFormResolvable(runtime, { damageMode = null, rangeBand = null } = {}) {
+export function assertAttackFormResolvable(runtime, { damageMode = null, rangeBand = null, distanceSquares = null, actor = null } = {}) {
   if (runtime?.source !== 'canonical') return;
   assertDamageSelectionResolvable(runtime, damageMode);
-  if (runtime.range?.status === 'banded' && runtime.branch === 'ranged') assertRangeSelectionResolvable(runtime.range, rangeBand);
+  if (runtime.range?.status === 'banded' && runtime.branch === 'ranged') {
+    assertRangeSelectionResolvable(runtime.range, rangeBand);
+    assertDistanceInRange(runtime, actor, rangeBand, distanceSquares);
+  }
+}
+
+/**
+ * Phase 5D-I-D-F: a STATED distance (squares) beyond every band the form (with the wielder's range grants) allows is an attack out of range:
+ * it is refused, never rolled with no range penalty. An explicit range band wins over a distance (the player named the band); no distance
+ * stated means nothing to validate (unknown is not out of range).
+ */
+export function assertDistanceInRange(runtime, actor, rangeBand, distanceSquares) {
+  if (distanceSquares === null || distanceSquares === undefined || distanceSquares === '') return;
+  if (rangeBand !== null && rangeBand !== undefined && rangeBand !== '') return;
+  const d = Number(distanceSquares);
+  const range = resolveActorRange(runtime, actor);
+  if (!Number.isFinite(d) || d < 0) {
+    throw new WeaponRuntimeError(ERROR_CODES.RANGE_DISTANCE_OUT_OF_RANGE, `${distanceSquares} is not a valid distance in squares`, { distanceSquares });
+  }
+  if (bandForDistance(range, d) === null) {
+    throw new WeaponRuntimeError(ERROR_CODES.RANGE_DISTANCE_OUT_OF_RANGE, `a target ${Math.floor(d)} squares away is out of range for the selected attack form`, { distanceSquares: d, allowedBands: [...(range?.allowedBands ?? [])] });
+  }
 }
 
 /** Canonical per-attack resource cost of the selected form (see canonical-resource.js). Pure: never mutates. */

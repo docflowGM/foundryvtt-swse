@@ -394,12 +394,23 @@ function buildWeaponConfigurationView(weapon) {
   } catch (_err) { return null; }
 }
 
+/** Power-source requirement of a canonical weapon and whether the player has confirmed it installed (null when it has none). Never throws into sheet rendering. */
+function buildWeaponPowerSourceView(weapon) {
+  if (!weapon) return null;
+  try {
+    const ps = FireStateStore.powerSourceOf(weapon);
+    if (!ps) return null;
+    const stateLabel = ps.state === 'installed' ? 'Installed' : ps.state === 'missing' ? 'Missing' : 'Unconfirmed';
+    return { state: ps.state, stateLabel, requirementLabel: `Requires ${ps.label}`, title: `Requires ${ps.label} (${stateLabel.toLowerCase()})` };
+  } catch (_err) { return null; }
+}
+
 /** live-Item weapon readiness + configuration views for one inventory entry (empty for non-weapons / the virtual unarmed entry) */
 function weaponStateViews(entry, isWeaponRow, actor) {
   if (!isWeaponRow || !actor || entry?.isVirtual || entry?.virtual) return {};
   const liveItem = actor.items?.get?.(entry?.id) ?? null;
   if (!liveItem) return {};
-  return { weaponReadiness: buildWeaponReadinessView(liveItem, actor), weaponConfiguration: buildWeaponConfigurationView(liveItem) };
+  return { weaponReadiness: buildWeaponReadinessView(liveItem, actor), weaponConfiguration: buildWeaponConfigurationView(liveItem), weaponPowerSource: buildWeaponPowerSourceView(liveItem) };
 }
 
 function buildInventoryGroups(inventoryPanel, actor) {
@@ -1771,6 +1782,7 @@ export function buildConceptSheetViewModel(context = {}) {
       visualKind: visualProfile?.kind || '',
       weaponReadiness: item ? buildWeaponReadinessView(item, actor) : null,
       weaponConfiguration: item ? buildWeaponConfigurationView(item) : null,
+      weaponPowerSource: item ? buildWeaponPowerSourceView(item) : null,
       visualColorHex: railHex,
       weaponRailStyle: railHex ? `--weapon-rail: ${railHex};` : ''
     };

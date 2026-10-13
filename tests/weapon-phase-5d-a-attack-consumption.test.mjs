@@ -243,7 +243,7 @@ const exoticChoice = (identity, name = 'Weapon Proficiency') => ({ name, flags: 
   const { readFile } = await import('node:fs/promises');
   const src = await readFile(new URL('../scripts/combat/rolls/attacks.js', import.meta.url), 'utf8');
   const fn = src.slice(src.indexOf('export async function rollAttack('), src.indexOf('export async function rollDamage('));
-  const resolveAt = fn.indexOf('withCanonicalWeaponRuntime(weapon, rollOptions)');
+  const resolveAt = fn.indexOf('withCanonicalWeaponRuntime(weapon, rollOptions, actor)');
   assert.ok(resolveAt > 0, 'rollAttack resolves the canonical runtime');
   for (const cost of ['CombatOptionResolver.collectAttackModifiers(', 'spendCoreAttackOptionCosts(', 'AmmoSystem.spendForWorkflow(']) {
     assert.ok(resolveAt < fn.indexOf(cost), `canonical resolution must precede ${cost}`);

@@ -9,21 +9,21 @@ Two independent questions per row: **who establishes the circumstances** (bucket
 
 | Bucket | Rows | Share |
 |---|---:|---:|
-| AUTO | 37 | 46.3% |
+| AUTO | 36 | 45.0% |
 | CONTEXTUAL | 31 | 38.8% |
-| GM_ADJUDICATED | 12 | 15.0% |
+| GM_ADJUDICATED | 13 | 16.3% |
 
 | Support state | Rows |
 |---|---:|
-| DATA_COMPLETENESS | 1 |
+| DATA_COMPLETENESS | 2 |
 | DUPLICATE_OR_NON_EXECUTABLE | 15 |
-| GM_FACING_SUPPORT_NEEDED | 18 |
-| IMPLEMENTED | 8 |
+| GM_FACING_SUPPORT_NEEDED | 14 |
+| IMPLEMENTED | 14 |
 | MISSING_SUBSYSTEM | 2 |
-| SMALL_CONSUMER_NEEDED | 31 |
-| SOURCE_CLARIFICATION_NEEDED | 5 |
+| SMALL_CONSUMER_NEEDED | 30 |
+| SOURCE_CLARIFICATION_NEEDED | 3 |
 
-Duplicate / non-executable claims: **11 mechanically verified** (carrier present on every identity + consumer probe), **4 asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **21**.
+Duplicate / non-executable claims: **11 mechanically verified** (carrier present on every identity + consumer probe), **4 asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **17**.
 
 ## By subpass
 
@@ -37,7 +37,7 @@ Duplicate / non-executable claims: **11 mechanically verified** (carrier present
 | I-D-C | 3 | 4 | 0 |
 | I-D-D | 1 | 0 | 0 |
 | I-D-E | 4 | 1 | 0 |
-| I-D-F | 6 | 6 | 0 |
+| I-D-F | 5 | 6 | 1 |
 
 ## I-D-A — umbrella: stealth / concealment / sensing / visibility rows settled by the census itself (proven duplicate, non-executable, source-silent, missing consumer)
 
@@ -151,16 +151,16 @@ Duplicate / non-executable claims: **11 mechanically verified** (carrier present
 
 | Row | Weapons | Bucket | Support | Foundry already knows | Must be supplied | Smallest implementation | Source ambiguity | Acceptance |
 |---|---|---|---|---|---|---|---|---|
-| `canSingleLoadShell` | mortar-launcher | AUTO | SOURCE_CLARIFICATION_NEEDED | mortar launcher: magazine holds five shells and AUTOMATICALLY feeds each shot | - | none until reconciled | canSingleLoadShell = true conflicts with the automatic-feed magazine text; the key may be a DATA_DEFECT | source ruling; then a data correction if confirmed |
+| `canSingleLoadShell` | mortar-launcher | CONTEXTUAL | IMPLEMENTED | mortar launcher: five-shell magazine that AUTOMATICALLY feeds each shot, AND (Galaxy at War p.40, source-confirmed) an alternative FIRING method: a single shell dropped down the open tube and launched by the electromagnet | the player choosing the Single Shell attack option (and supplying the shell) | DONE (I-D-F): attack-shape singleShellLaunch + the weapon-granted Single Shell attack option; an attack that asserts it draws nothing from the magazine; the magazine mode is untouched; no loose-shell inventory or separate action is invented | — | single-shell attack fires with the magazine empty and leaves it unchanged; ordinary shots still draw one shell; other weapons ignore the option; works with tracking on and off |
 | `capacityGrenades` | micro-grenade-launcher | AUTO | DUPLICATE_OR_NON_EXECUTABLE (VERIFIED) | micro grenade launcher holds four | - | none: ammo.capacityShots = 4 is consumed by the resource resolver | — | resource resolver reports capacity 4 |
 | `oneShotCapacity` | wrist-blaster | AUTO | DUPLICATE_OR_NON_EXECUTABLE (VERIFIED) | wrist blaster has one shot | - | none: ammo.capacityShots = 1 | — | resource resolver capacity 1 |
-| `powerCordDisconnectRule` | lightsaber-chassis-archaic-lightsaber | CONTEXTUAL | SOURCE_CLARIFICATION_NEEDED | archaic lightsaber uses an external cell connected by a cord | whether the cord is disconnected / cut (GM) | none stated: the record carries a boolean but the published text states no disconnect rule | no disconnect effect is stated in the canonical text; do not invent one | source-backed rule before any behaviour |
+| `powerCordDisconnectRule` | lightsaber-chassis-archaic-lightsaber | GM_ADJUDICATED | DATA_COMPLETENESS | archaic lightsaber: external power cell worn on the belt or back, connected to the hilt by a cord (Jedi Academy Training Manual p.51) | a published disconnect rule | none: the published text states a cord but no disconnect / cut mechanic, so none is invented | the boolean powerCordDisconnectRule has no published rule behind it; the text only says the pack is connected by a cord and that a special 600-credit pack is required | a source-backed rule before any behaviour |
 | `powerLevelSwitchAction` | heavy-variable-blaster, variable-blaster | AUTO | DUPLICATE_OR_NON_EXECUTABLE (VERIFIED) | variable blaster power switch is a swift action; 5x / 10x ammo | - | none: modeProfiles[].switchAction and resourceConsumption.multiplier are consumed (attack-shape / resource-resolver) | — | mode switch costs a Swift; higher modes consume more shots |
-| `requiresEnergyCell` | lightsaber-chassis-archaic-lightfoil, lightsaber-chassis-guard-shoto, lightsaber-chassis-longhandle, lightsaber-chassis-modern-lightfoil | CONTEXTUAL | GM_FACING_SUPPORT_NEEDED | weapon needs an energy cell to operate (no per-attack consumption is stated) | that a cell is installed (player / GM) | display the power requirement; optionally a powered / unpowered flag via the existing owned-item state | no charge accounting is published for energy-cell melee weapons | requirement shown; no fabricated charge counter |
-| `requiresEnergyCells` | San-Ni Staff, Vibro-Saw, gungan-electropole | CONTEXTUAL | GM_FACING_SUPPORT_NEEDED | needs two energy cells | cells installed | same capability as requiresEnergyCell (count shown) | — | same |
-| `requiresPowerPack` | Blastsword | CONTEXTUAL | GM_FACING_SUPPORT_NEEDED | needs a power pack to operate | pack installed | same display capability | no shot count is stated for this melee weapon | same |
-| `requiresPowerPacks` | battering-ram | CONTEXTUAL | GM_FACING_SUPPORT_NEEDED | battering ram needs four power packs | packs installed | same display capability (count 4) | ammo.capacityShots is null: the source states no shot count | requirement shown |
-| `secondCrewReloadAction` | e-web-missile-launcher | CONTEXTUAL | SMALL_CONSUMER_NEEDED | E-Web missile launcher is reloaded as a Move action by a second crew member (ammo.reloadAction is text) | whether a second crew member reloads (GM / crew) | cost the reload in the crew member's action economy through the existing reload path; structured action id instead of free text | — | reload Move is spent by the crew member, not the gunner |
+| `requiresEnergyCell` | lightsaber-chassis-archaic-lightfoil, lightsaber-chassis-guard-shoto, lightsaber-chassis-longhandle, lightsaber-chassis-modern-lightfoil | CONTEXTUAL | IMPLEMENTED | weapon needs an energy cell to operate (no per-attack consumption is stated) | that the source is installed (player-confirmed owned state; unknown is not missing) | DONE (I-D-F): powerSourceRequirementOf shows kind and count in the readiness notes and the weapon card; the player confirms installed / missing (FireStateStore.setPowerSourceState); only an explicit missing blocks the attack; nothing is consumed and no capacity or charge counter is invented; one reusable capability (power-source.js) shared by all four requires* keys | — | requirement shown; unconfirmed never blocks; confirmed missing refuses before any cost; no ammunition change |
+| `requiresEnergyCells` | San-Ni Staff, Vibro-Saw, gungan-electropole | CONTEXTUAL | IMPLEMENTED | needs two energy cells | that the source is installed (player-confirmed owned state; unknown is not missing) | DONE (I-D-F): powerSourceRequirementOf shows kind and count in the readiness notes and the weapon card; the player confirms installed / missing (FireStateStore.setPowerSourceState); only an explicit missing blocks the attack; nothing is consumed and no capacity or charge counter is invented | — | requirement shown; unconfirmed never blocks; confirmed missing refuses before any cost; no ammunition change |
+| `requiresPowerPack` | Blastsword | CONTEXTUAL | IMPLEMENTED | needs a power pack to operate | that the source is installed (player-confirmed owned state; unknown is not missing) | DONE (I-D-F): powerSourceRequirementOf shows kind and count in the readiness notes and the weapon card; the player confirms installed / missing (FireStateStore.setPowerSourceState); only an explicit missing blocks the attack; nothing is consumed and no capacity or charge counter is invented | — | requirement shown; unconfirmed never blocks; confirmed missing refuses before any cost; no ammunition change |
+| `requiresPowerPacks` | battering-ram | CONTEXTUAL | IMPLEMENTED | battering ram needs four power packs | that the source is installed (player-confirmed owned state; unknown is not missing) | DONE (I-D-F): powerSourceRequirementOf shows kind and count in the readiness notes and the weapon card; the player confirms installed / missing (FireStateStore.setPowerSourceState); only an explicit missing blocks the attack; nothing is consumed and no capacity or charge counter is invented | — | requirement shown; unconfirmed never blocks; confirmed missing refuses before any cost; no ammunition change |
+| `secondCrewReloadAction` | e-web-missile-launcher | CONTEXTUAL | IMPLEMENTED | E-Web missile launcher is reloaded as a Move action by a second crew member (operation.secondCrewReloadAction = move) | the crew member who reloads (supplied by the player; never inferred) | DONE (I-D-F): FireStateStore.reloadBySecondCrew charges the Move to the supplied crew member through the existing action economy and reloads through AmmoSystem.reloadWeapon; the sheet reload workflow asks once for such weapons | — | Move charged to the crew member, not the gunner; no crew -> nothing; no double reload; failed reload returns the action |
 | `singleShot` | wrist-rocket-launcher | AUTO | DUPLICATE_OR_NON_EXECUTABLE (VERIFIED) | wrist rocket launcher is single-shot, reload after every shot | - | none: firingConstraints.reloadRequiredAfterEachShot is consumed | — | second attack refused until reloaded (fire-state tests) |
 | `specialRateOfFire` | sonic-disruptor | AUTO | DUPLICATE_OR_NON_EXECUTABLE (VERIFIED) | sonic disruptor fires once every other round, no multi-shot abilities | - | none: firingConstraints.firesOnAlternatingRounds / cooldownRounds / prohibitsMultiShotAbilities are consumed | — | fire-state cooldown tests |
 

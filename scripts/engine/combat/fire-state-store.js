@@ -6,6 +6,7 @@
 // Legacy/custom weapons and canonical forms with no temporal constraint pass straight through: nothing is read or written.
 import { evaluateReadiness, stateAfterFire, stateAfterReload, evaluatePrime, statePrimed, evaluateBrace } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/fire-state.js";
 import { resolveAttackShapeFor, resolveAttackWeaponRuntime, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { powerSourceStatus, powerSourceLabel, POWER_SOURCE_STATES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/power-source.js";
 import { currentMachineState, machineTransitionAllowed, machineAfterTransition, evaluateUsage, recordUsage, usageKey, crewRegulationFor, crewRegulationRecord, patchOwnedState } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/owned-state.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
 
@@ -134,6 +135,20 @@ export function applyOwnedSelection(actor, weapon, rollOptions = {}) {
 }
 
 /**
+ * Phase 5D-I-D-F: the weapon's power-source requirement. Always a note (the player sees what the weapon needs); a BLOCKER only when the
+ * player has explicitly confirmed the source is missing -- an unconfirmed (unknown) source never blocks and nothing is consumed.
+ */
+function powerSourceReadiness(shape, state, rollOptions) {
+  const req = shape?.powerSource ?? null;
+  if (!req) return { blockers: [], notes: [], status: null };
+  const status = powerSourceStatus(state, rollOptions);
+  const label = powerSourceLabel(req);
+  const note = status.state === 'installed' ? `requires ${label} (confirmed installed)` : status.state === 'missing' ? `requires ${label} (confirmed missing)` : `requires ${label} (not confirmed installed)`;
+  const blockers = status.state === 'missing' ? [{ family: 'power-source', reason: 'power-source-missing', requirement: req }] : [];
+  return { blockers, notes: [{ family: 'power-source', note }], status: { ...status, requirement: req, label } };
+}
+
+/**
  * Non-mutating readiness of the selected canonical form. Safe for previews. Legacy weapons / unconstrained forms -> always ready.
  * @returns {{applies:boolean, ready:boolean, blockers:Array, requiredActions:Array, notes:Array, clock:object|null}}
  */
@@ -143,11 +158,15 @@ export function previewReadiness(actor, weapon, runtime, rollOptions = {}) {
   const state = readFireState(weapon);
   const clock = currentClock(actor);
   const owned = ownedStateStep(shape, state, clock);
+  const power = powerSourceReadiness(shape, state, rollOptions);
   const prepActions = [...rangePreparationActions(shape, rollOptions), ...stunSwitchActions(shape, state), ...owned.actions];
-  if (!shape.temporal.length) return { applies: prepActions.length > 0 || owned.blockers.length > 0, ready: owned.blockers.length === 0, blockers: owned.blockers, requiredActions: prepActions, notes: [], clock: null };
+  if (!shape.temporal.length) {
+    const blockers = [...owned.blockers, ...power.blockers];
+    return { applies: prepActions.length > 0 || blockers.length > 0, ready: blockers.length === 0, blockers, requiredActions: prepActions, notes: power.notes, powerSource: power.status, clock: null };
+  }
   const r = evaluateReadiness(shape.temporal, state, clock, context(actor, rollOptions));
-  const blockers = [...(r.blockers ?? []), ...owned.blockers];
-  return { applies: true, ...r, ready: blockers.length === 0, blockers, requiredActions: [...(r.requiredActions ?? []), ...prepActions], clock };
+  const blockers = [...(r.blockers ?? []), ...owned.blockers, ...power.blockers];
+  return { applies: true, ...r, ready: blockers.length === 0, blockers, requiredActions: [...(r.requiredActions ?? []), ...prepActions], notes: [...(r.notes ?? []), ...power.notes], powerSource: power.status, clock };
 }
 
 async function writeState(actor, weapon, state) {
@@ -179,7 +198,8 @@ export async function spendRequiredActions(actor, requiredActions = [], metadata
     }
     spends.push(res); paid.push(req);
   }
-  return { ok: true, paid, rollback: async () => { for (const s of [...spends].reverse()) await s.rollback?.(); } };
+  // committed: every spend was really recorded by the action economy (false for the established out-of-combat no-op)
+  return { ok: true, paid, committed: spends.length > 0 && spends.every((s) => s?.committed === true), rollback: async () => { for (const s of [...spends].reverse()) await s.rollback?.(); } };
 }
 
 /** Record that a shot was fired (after the attack resolved). No-op for unconstrained forms. */
@@ -268,6 +288,74 @@ export async function setWielding(actor, weapon, hands) {
   return { ok: true, state: await persistOwned(actor, weapon, { wielded: hands }) };
 }
 
+/**
+ * Player-confirmed power-source state ('installed' | 'missing' | null = unconfirmed). Owned state; the source states no action for it.
+ * Only 'missing' ever blocks an attack, and only because the player said so (unknown is not false).
+ */
+export async function setPowerSourceState(actor, weapon, powerSource) {
+  if (powerSource !== null && !POWER_SOURCE_STATES.includes(powerSource)) return { ok: false, reason: 'invalid-power-source-state' };
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return { ok: false, reason: 'not-canonical' }; }
+  if (shape.source !== 'canonical' || !shape.powerSource) return { ok: false, reason: 'no-power-source-requirement' };
+  return { ok: true, state: await persistOwned(actor, weapon, { powerSource }) };
+}
+
+/**
+ * Phase 5D-I-D-F: a weapon whose published reload is performed by a SECOND CREW MEMBER (operation.secondCrewReloadAction, E-Web missile
+ * launcher: "a Move action by a second crew member") is reloaded by that crew member: the action is charged to THEM, not the gunner, and
+ * the reload itself is the existing ammunition authority (AmmoSystem.reloadWeapon, which clears the awaiting-reload state).
+ * The crew member is only ever SUPPLIED (an Actor other than the gunner); none is inferred. Nothing is spent when the weapon is already
+ * loaded, when no distinct crew member is supplied, or when their action cannot be paid; a reload that then fails gives the action back.
+ */
+export async function reloadBySecondCrew(gunner, weapon, crewActor, { source = 'second-crew-reload' } = {}) {
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return { ok: false, reason: 'not-canonical' }; }
+  const action = shape.source === 'canonical' ? String(shape.operation?.secondCrewReloadAction ?? '').toLowerCase() : '';
+  if (!action) return { ok: false, reason: 'no-second-crew-reload' };
+  const owner = weapon?.actor ?? gunner;
+  if (!crewActor?.id || crewActor.id === owner?.id || crewActor.id === gunner?.id) return { ok: false, reason: 'second-crew-required' };
+  // The action economy treats an actor outside the active combat as an out-of-combat no-op, so a gunner in combat could otherwise pick an
+  // unrelated actor and reload for free. While the gunner is in an active combat the crew member must be a combatant of the SAME combat and
+  // their Move must really be recorded; with no combat for the gunner the established out-of-combat policy (no action economy) applies.
+  const combat = globalThis.game?.combat ?? null;
+  const inCombat = (a) => !!combat && Array.from(combat.combatants ?? []).some((c) => c?.actor?.id === a?.id || c?.actorId === a?.id);
+  const combatApplies = inCombat(owner) || inCombat(gunner);
+  if (combatApplies && !inCombat(crewActor)) return { ok: false, reason: 'crew-not-in-combat' };
+  const { AmmoSystem } = await import("/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js");
+  // numerical ammunition is only touched when the optional tracking rule is on AND the weapon has a pool; otherwise the reload only clears the awaiting-reload state
+  const tracked = AmmoSystem.isTrackingEnabled() && AmmoSystem.weaponUsesAmmunition(weapon);
+  const pool = weapon?.system?.ammunition ?? {};
+  const awaiting = readFireState(weapon)?.needsReload === true;
+  if (!awaiting && !(tracked && Number(pool.current) < Number(pool.max))) return { ok: false, reason: 'already-loaded' };
+  const spend = await spendRequiredActions(crewActor, [{ action, count: 1, family: 'second-crew-reload', reason: 'reload by second crew member' }], { weaponName: weapon?.name, source });
+  if (!spend.ok) return { ok: false, reason: 'crew-action-unavailable' };
+  if (combatApplies && spend.committed !== true) { await spend.rollback(); return { ok: false, reason: 'crew-action-not-committed' }; }
+  let reload;
+  try {
+    if (tracked) reload = await AmmoSystem.reloadWeapon(owner, weapon);
+    else { await clearReload(owner, weapon); reload = { success: true, reloadAmount: 0, message: `${weapon?.name ?? 'Weapon'} reloaded` }; }
+  } catch (err) { reload = { success: false, message: String(err?.message ?? err) }; }
+  if (reload?.success === false) { await spend.rollback(); return { ok: false, reason: 'reload-failed', message: reload.message }; }
+  return { ok: true, reload, action, chargedTo: { id: crewActor.id, name: crewActor.name ?? null }, gunnerId: owner?.id ?? null };
+}
+
+/** The weapon's power-source requirement and the player-confirmed state, for presentation (null when the weapon has no requirement). Read-only. */
+export function powerSourceOf(weapon) {
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return null; }
+  if (shape.source !== 'canonical' || !shape.powerSource) return null;
+  const status = powerSourceStatus(readFireState(weapon), {});
+  return { requirement: shape.powerSource, label: powerSourceLabel(shape.powerSource), state: status.state };
+}
+
+/** The published reload alternative of a canonical weapon (the second crew member's action). Read-only; legacy weapons declare none. */
+export function reloadOptions(weapon) {
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return { secondCrewAction: null }; }
+  const op = shape.source === 'canonical' ? (shape.operation ?? {}) : {};
+  return { secondCrewAction: typeof op.secondCrewReloadAction === 'string' && op.secondCrewReloadAction ? op.secondCrewReloadAction.toLowerCase() : null };
+}
+
 /** Mounted on a tripod / mount / rifle host (owned state; the source states no action). */
 export async function setMounted(actor, weapon, mounted) {
   return { ok: true, state: await persistOwned(actor, weapon, { mounted: mounted === true }) };
@@ -325,5 +413,5 @@ function configurationOptions(item) {
   } catch (_err) { return { canonical: false, states: [], defaultId: null }; }
 }
 
-export const FireStateStore = Object.freeze({ configurationOptions, currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, setWielding, setMounted, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
+export const FireStateStore = Object.freeze({ powerSourceOf, reloadOptions, setPowerSourceState, reloadBySecondCrew, configurationOptions, currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, setWielding, setMounted, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
 export default FireStateStore;

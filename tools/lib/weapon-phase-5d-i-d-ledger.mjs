@@ -60,6 +60,7 @@ const RESOLVER = 'scripts/engine/equipment/equipment-skill-hook-resolver.js';
 const impl = (key, family, automation, reason, probe = key) => op(key, family, 'I-D-A1', 'IMPLEMENTED', { automation, consumer: { file: RESOLVER, probe: `\\b${probe}\\b` }, reason });
 const SKILL_REASON = (what) => `${what}. CONTEXTUAL: it applies when the player states the object / terrain the check concerns. IMPLEMENTED in I-D-A1: EquipmentSkillHookResolver now derives the hook from the canonical registry (by identity) and rollSkill applies it; proven by tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs and tests/equipment-skill-hook-roll-regression.test.mjs.`;
 const CLOUD_REASON = (what) => `${what}. CONTEXTUAL: the concealment consequence already executes from the GM-selected concealment level in the attack dialog (None / 20% / 50%); who is inside the cloud is the GM's call and is never inferred from a map. Outstanding: surface the weapon-declared cloud, its duration and the rule into that workflow and track the duration on the existing combat / effect timing authority. No geometry, visibility or token-position engine is needed.`;
+const POWER_REASON = (what) => `${what}. CONTEXTUAL: the weapon REQUIRES a power source; the published text states no capacity, no charge counter and no per-attack consumption, so none is invented. IMPLEMENTED in I-D-F: one reusable reader (power-source.js, shared by requiresEnergyCell / requiresEnergyCells / requiresPowerPack / requiresPowerPacks) shows the requirement in the readiness notes and on the weapon card; the player confirms installed / missing (owned state), only an explicit missing blocks the attack, and an unconfirmed source never does (unknown is not false). Proven in tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs.`;
 const PRESENT_REASON = (what) => `${what}. GM_ADJUDICATED: the outcome depends on narrative judgment (who sees, hears or notices). Foundry presents the canonical rule in the attack / skill workflow and does not decide it; there is no numeric consumer, so nothing is simulated.`;
 
 export const I_D_ROWS = Object.freeze([
@@ -119,18 +120,60 @@ export const I_D_ROWS = Object.freeze([
   deferred('requiresGrenadeLauncher', 'ammo-resource-reload', 'I-D-B', 'Host-weapon requirement for a mounted weapon.'),
   deferred('retractableStockOptional', 'ammo-resource-reload', 'I-D-B', 'Stock configuration / construction option.'),
   deferred('rifleMountable', 'ammo-resource-reload', 'I-D-B', 'Host-weapon compatibility for mounting.'),
-  deferred('capacityGrenades', 'ammo-resource-reload', 'I-D-F', 'Grenade capacity of a launcher: needs inventory-level payload authority (deliberately deferred in the readiness UI work).'),
-  deferred('canSingleLoadShell', 'ammo-resource-reload', 'I-D-F', 'Single-shell loading special case.'),
-  deferred('oneShotCapacity', 'ammo-resource-reload', 'I-D-F', 'One-shot capacity special case.'),
-  deferred('powerCordDisconnectRule', 'ammo-resource-reload', 'I-D-F', 'Power-source disconnect rule.'),
-  deferred('powerLevelSwitchAction', 'ammo-resource-reload', 'I-D-F', 'Power-level switch action cost.'),
-  deferred('requiresEnergyCell', 'ammo-resource-reload', 'I-D-F', 'Power-source requirement.'),
-  deferred('requiresEnergyCells', 'ammo-resource-reload', 'I-D-F', 'Power-source requirement.'),
-  deferred('requiresPowerPack', 'ammo-resource-reload', 'I-D-F', 'Power-source requirement.'),
-  deferred('requiresPowerPacks', 'ammo-resource-reload', 'I-D-F', 'Power-source requirement.'),
-  deferred('secondCrewReloadAction', 'ammo-resource-reload', 'I-D-F', 'Crew reload action.'),
-  deferred('singleShot', 'ammo-resource-reload', 'I-D-F', 'Single-shot reload special case.'),
-  deferred('specialRateOfFire', 'ammo-resource-reload', 'I-D-F', 'Special rate-of-fire / reload interaction.'),
+  // ------------------------------------------------------------------ I-D-F : ammunition / power source / reload
+  op('capacityGrenades', 'ammo-resource-reload', 'I-D-F', 'DUPLICATE', {
+    carrier: 'canonicalStats.ammo.capacityShots (= 4) and the generated production projection system.ammunition.max',
+    consumer: { file: 'scripts/items/weapon-runtime/resource-resolver.js', probe: 'capacityShots' },
+    automation: 'AUTO',
+    verify: (reg) => { const r = reg.identities.filter((x) => x.operation && 'capacityGrenades' in x.operation); return r.length === 1 && r.every((x) => x.canonicalStats?.ammo?.capacityShots === x.operation.capacityGrenades); },
+    reason: 'Micro Grenade Launcher holds four grenades. The same number is the canonical ammo capacity, the resolved resource capacity and the production projection AmmoSystem spends from. Proven by tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs (four shots, the fifth refused, a reload restores four).',
+  }),
+  op('oneShotCapacity', 'ammo-resource-reload', 'I-D-F', 'DUPLICATE', {
+    carrier: 'canonicalStats.ammo.capacityShots (= 1) and the generated production projection system.ammunition.max',
+    consumer: { file: 'scripts/items/weapon-runtime/resource-resolver.js', probe: 'capacityShots' },
+    automation: 'AUTO',
+    verify: (reg) => { const r = reg.identities.filter((x) => x.operation && 'oneShotCapacity' in x.operation); return r.length === 1 && r.every((x) => x.canonicalStats?.ammo?.capacityShots === 1); },
+    reason: 'Wrist Blaster carries enough power for one shot; the canonical capacity of 1 is what AmmoSystem enforces (the second attack is refused). No larger capacity is invented. Proven in the I-D-F test.',
+  }),
+  op('singleShot', 'ammo-resource-reload', 'I-D-F', 'DUPLICATE', {
+    carrier: 'attackProfiles[].firingConstraints.reloadRequiredAfterEachShot and canonicalStats.ammo.capacityShots (= 1)',
+    consumer: { file: 'scripts/items/weapon-runtime/fire-state.js', probe: 'reloadRequiredAfterEachShot' },
+    automation: 'AUTO',
+    verify: (reg) => { const r = reg.identities.filter((x) => x.operation && 'singleShot' in x.operation); return r.length === 1 && r.every((x) => x.canonicalStats?.attackProfiles?.[0]?.firingConstraints?.reloadRequiredAfterEachShot === true && x.canonicalStats?.ammo?.capacityShots === 1); },
+    reason: 'Wrist Rocket Launcher: single shot, reload after every shot. The fire-state authority blocks the next attack until the reload action clears it. Proven in the I-D-F test (fire, refused, reload, fire).',
+  }),
+  op('specialRateOfFire', 'ammo-resource-reload', 'I-D-F', 'DUPLICATE', {
+    carrier: 'attackProfiles[].firingConstraints {firesOnAlternatingRounds, cooldownRounds, maxShotsPerRound, prohibitsMultiShotAbilities}',
+    consumer: { file: 'scripts/items/weapon-runtime/fire-state.js', probe: 'firesOnAlternatingRounds' },
+    automation: 'AUTO',
+    verify: (reg) => { const r = reg.identities.filter((x) => x.operation && 'specialRateOfFire' in x.operation); return r.length === 1 && r.every((x) => { const fc = x.canonicalStats?.attackProfiles?.[0]?.firingConstraints; return fc?.firesOnAlternatingRounds === true && fc.cooldownRounds === 1 && fc.maxShotsPerRound === 1 && fc.prohibitsMultiShotAbilities === true; }); },
+    reason: 'Sonic Disruptor fires once every other round and cannot use multi-shot abilities. The alternate-round firing constraint and the multi-shot prohibition are executed by the fire-state / attack-shape authorities. Proven in the I-D-F test (round 1 fires, round 2 refused, round 3 fires).',
+  }),
+  op('powerLevelSwitchAction', 'ammo-resource-reload', 'I-D-F', 'DUPLICATE', {
+    carrier: 'canonicalStats.modeProfiles[].switchAction (swift) with resourceConsumption.multiplier (5 / 10, heavy 10 / 20)',
+    consumer: { file: 'scripts/items/weapon-runtime/attack-shape.js', probe: 'switchAction' },
+    automation: 'AUTO',
+    verify: (reg) => { const r = reg.identities.filter((x) => x.operation && 'powerLevelSwitchAction' in x.operation); return r.length === 2 && r.every((x) => (x.canonicalStats?.modeProfiles ?? []).filter((m) => ['low', 'medium', 'high'].includes(m.id)).every((m) => m.switchAction === x.operation.powerLevelSwitchAction)); },
+    reason: 'Variable / Heavy Variable Blaster: changing the power level is a swift action. VERIFIED, not assumed: the persistent-setting machinery already charges the modeProfiles[].switchAction swift once per change of level (free at the baseline and when unchanged) and the per-level multipliers are the canonical resource cost. Proven in the I-D-F test (including an unpayable switch failing closed).',
+  }),
+  op('canSingleLoadShell', 'ammo-resource-reload', 'I-D-F', 'IMPLEMENTED', {
+    automation: 'CONTEXTUAL',
+    consumer: { file: 'scripts/items/weapon-runtime/attack-shape.js', probe: '\\bcanSingleLoadShell\\b' },
+    reason: 'Mortar Launcher. Galaxy at War p.40 (source-confirmed): a five-shell magazine that automatically feeds each shot AND an alternative FIRING method -- a single shell dropped down the open tube and launched by the electromagnet. The key is valid, not a data defect. Implemented as that firing mode, not a magazine refill: the attack shape exposes singleShellLaunch, the weapon offers a "Single Shell" attack option (CombatOptionResolver), and an attack that asserts it draws nothing from the magazine (and does not need one), while the automatic-feed magazine mode is untouched. The player supplies the shell (no loose-shell inventory exists and none is invented); no separate action is charged because the source states none. The option on a weapon that does not declare the method changes nothing. Proven in the I-D-F test with ammunition tracking on and off.',
+  }),
+  op('powerCordDisconnectRule', 'ammo-resource-reload', 'I-D-F', 'DATA_COMPLETENESS', {
+    owner: 'canonical weapon data (source-silent)', automation: 'GM_ADJUDICATED',
+    reason: 'Archaic Lightsaber (Jedi Academy Training Manual p.51): the published text says the external power cell is worn on the belt or back and connected to the hilt by a cord, and that a special 600-credit power pack is required. It states NO disconnect, cut or interruption mechanic, so none is invented and the boolean has nothing to execute. (The pack requirement itself belongs to the power-source capability.)',
+  }),
+  op('requiresEnergyCell', 'ammo-resource-reload', 'I-D-F', 'IMPLEMENTED', { automation: 'CONTEXTUAL', consumer: { file: 'scripts/items/weapon-runtime/power-source.js', probe: '\\brequiresEnergyCell\\b' }, reason: POWER_REASON('needs an energy cell (7 weapons)') }),
+  op('requiresEnergyCells', 'ammo-resource-reload', 'I-D-F', 'IMPLEMENTED', { automation: 'CONTEXTUAL', consumer: { file: 'scripts/items/weapon-runtime/power-source.js', probe: '\\brequiresEnergyCells\\b' }, reason: POWER_REASON('needs two energy cells (San-Ni Staff, Vibro-Saw, Gungan Electropole)') }),
+  op('requiresPowerPack', 'ammo-resource-reload', 'I-D-F', 'IMPLEMENTED', { automation: 'CONTEXTUAL', consumer: { file: 'scripts/items/weapon-runtime/power-source.js', probe: '\\brequiresPowerPack\\b' }, reason: POWER_REASON('needs a power pack (Blastsword)') }),
+  op('requiresPowerPacks', 'ammo-resource-reload', 'I-D-F', 'IMPLEMENTED', { automation: 'CONTEXTUAL', consumer: { file: 'scripts/items/weapon-runtime/power-source.js', probe: '\\brequiresPowerPacks\\b' }, reason: POWER_REASON('needs four power packs (Squib Battering Ram)') }),
+  op('secondCrewReloadAction', 'ammo-resource-reload', 'I-D-F', 'IMPLEMENTED', {
+    automation: 'CONTEXTUAL',
+    consumer: { file: 'scripts/engine/combat/fire-state-store.js', probe: '\\bsecondCrewReloadAction\\b' },
+    reason: 'E-Web Missile Launcher: a second crew member reloads it as a Move action. FireStateStore.reloadBySecondCrew charges the Move to the SUPPLIED crew member through the existing action economy and reloads through AmmoSystem.reloadWeapon (which clears the awaiting-reload state). No crew member is ever inferred; nothing is spent when none is supplied, when the launcher is already loaded, or when the action cannot be paid; a failed reload returns the action. Proven in the I-D-F test.',
+  }),
   deferred('remoteDetonationSafetyRule', 'area-splash-burst', 'I-D-C', 'Remote Grenade 100-meter safety restriction (remote operation preflight).'),
   deferred('allyAttackBonus', 'attack-modifiers-and-penalties', 'I-D-C', 'Targeting Laser: ally attack bonus from a cross-actor designation.'),
   deferred('allyEligibleWeapons', 'attack-modifiers-and-penalties', 'I-D-C', 'Targeting Laser: which ally weapons benefit from the designation.'),
