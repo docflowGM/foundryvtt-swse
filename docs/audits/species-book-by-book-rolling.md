@@ -914,4 +914,90 @@ Every entry has a stable issue ID and exact selector. All `applied:false`. `CHAN
 5. All 32 new findings are **unapplied**. No species, sidecar, class, weapon, chargen code, schema or builder changed. No Foundry runtime tests performed.
 6. The rolling JSON now includes **86 distinct species** across **9 books**.
 
-**Next sourcebook:** *Scavenger's Guide to Droids*. Identify actual new playable species/droid chassis rules first, then append individual `NO_CHANGE` records or source-backed corrections. Do not invent a biological species census for a book that primarily defines droid creation.
+**Next sourcebook:** *Threats of the Galaxy* (organic species only). **Scavenger's Guide to Droids and all droid races are out of scope.**
+
+---
+
+## Book 10 — Threats of the Galaxy (non-droid species only)
+
+**Scope:** Four directly printed playable/sapient biological species entries: **Bith p.26**, **Chistori p.34**, **Mantellian Savrips as Heroes p.117**, **Utai p.127**. Source PDF pages with corresponding numbers were rendered at high resolution and reviewed visually; searchable source transcription was used only for navigation. Although this book also prints a **Replica Droid** character-species block, **droids are explicitly out of scope**. No droid species, chassis, construction, or droid abilities were audited or modified.
+
+### Result
+
+| Check | Count |
+|---|---:|
+| Non-droid printed species blocks reviewed | **4** |
+| Existing Foundry species identities | **4/4** |
+| New distinct records in rolling ledger | **4** |
+| Whole species `NO_CHANGE` | **0** |
+| Species with source-backed corrections | **1** |
+| Species with review-only findings | **3** |
+| Confirmed individual correction candidates | **2** |
+| Additional source/runtime review items | **11** |
+| Total findings | **13** |
+| Explicit field-level `NO_CHANGE` decisions | **12** |
+| Production files touched | **None** |
+| Foundry runtime tests executed | **None** |
+
+### Species-by-species outcomes
+
+| Species | Printed page | Overall source audit status | Findings | NO_CHANGE decisions |
+|---|---:|---|---:|---:|
+| Bith | 26 | `REVIEW_REQUIRED` | 3 | 3 |
+| Chistori | 34 | `REVIEW_REQUIRED` | 2 | 3 |
+| Mantellian Savrip | 117 | `CHANGE_REQUIRED` | 5 | 3 |
+| Utai | 127 | `REVIEW_REQUIRED` | 3 | 3 |
+
+### Exact pending edits and source checks
+
+All 13 findings have `applied:false` and a printed source in the JSON. A `REVIEW_REQUIRED` result may indicate another book/variant, an untested consumer, or a questionable extra sidecar—not an approved deletion.
+
+| Species | Finding | Status | Rule issue | Exact target | Printed source | Recommended surgical action |
+|---|---|---|---|---|---|---|
+| Bith | `THR-01-01` | `REVIEW_REQUIRED` | Two different printed Bith versions | `system.abilityMods, system.languages` | Threats p26 lists +2 INT/-2 CON, language Bith. Later Galaxy of Intrigue prints +2 CHA and Basic+Bith, which supports current pack. | Preserve source versions; do not change pack until a definitive version/variant policy. |
+| Bith | `THR-01-02` | `REVIEW_REQUIRED` | Incompatible Evolved Intellect | `canonicalTraits[evolved-intellect]` | Threats p26 gives one Intelligence-skill check treated as natural 20 each encounter. | Certify which published Bith profile is used; don't combine both versions. |
+| Bith | `THR-01-03` | `REVIEW_REQUIRED` | Scent versus Heightened Awareness | `canonicalTraits[scent], legacy sidecar[Musical Savant,Fragile]` | Threats p26 grants Perception reroll, not Scent or flat modifiers; Galaxy of Intrigue instead prints Scent. | Source-version reconciliation, plus independent review of unsupported sidecar modifiers. |
+| Chistori | `THR-02-01` | `REVIEW_REQUIRED` | Unprinted Brute Strength bonus | `data/species-traits-migrated.json: Chistori.structuralTraits[Brute Strength].rules` | Threats p34 grants +2 melee attack and damage ONLY while voluntarily Raging, once/day swift. | Require other-book provenance; never leave conditional Rage bonus always-on. |
+| Chistori | `THR-02-02` | `REVIEW_REQUIRED` | Rage action/condition execution | `packs/species.db: Chistori.system.canonicalTraits[rage] / runtime` | 5+CON rounds after swift activation; concentration skill restrictions; -1 persistent CT until 10 minutes recovery. | Verify once/day timing, bonus and persistent condition in actor runtime. |
+| Mantellian Savrip | `THR-03-01` | `CHANGE_REQUIRED` | Incorrect Dexterity modifier sidecar | `data/species-traits-migrated.json: Mantellian Savrip.structuralTraits[Ability Modifiers].rules` | Threats p117 gives -2 DEX; -4 penalties are INT, WIS, CHA. | Remove/correct duplicated or wrong -4 DEX typed rule, prove final actor has -2 only. |
+| Mantellian Savrip | `THR-03-02` | `CHANGE_REQUIRED` | Natural weapon damage and duplicate claws | `data/species-traits-migrated.json: Mantellian Savrip.structuralTraits[Natural Weapons,Poison].rules; packs/species.db: system.naturalWeapons` | Threats p117 grants one 1d6 slashing +STR natural claw; poison is a rider on damaging a living target. | Implement single 1d6 claw form and separate on-hit poison rule, not a second weapon. |
+| Mantellian Savrip | `THR-03-03` | `REVIEW_REQUIRED` | Poison trigger and attack | `packs/species.db: Mantellian Savrip.system.canonicalTraits[poison] / runtime` | After successful claw damage to living foe, 1d20+Savrip level vs Fort; -1 CT; end of CT immobilized not unconscious. | Test exact trigger, target and condition; do not add poisoning to nonclaw attacks. |
+| Mantellian Savrip | `THR-03-04` | `REVIEW_REQUIRED` | Speak-only native language | `packs/species.db: Mantellian Savrip.system.languages` | Threats p117 says Savrip (speak only). | Model language capability without permitting automatic literacy if supported. |
+| Mantellian Savrip | `THR-03-05` | `REVIEW_REQUIRED` | Primitive/Rage actor behavior | `packs/species.db: Mantellian Savrip.system.canonicalTraits[primitive,rage]` | Suppress Heavy/Pistols/Rifles initial feats, 1/day swift Rage, finite duration and persistent condition recovery. | Run first-level and actor combat/condition regression; preserve existing correct prose. |
+| Utai | `THR-04-01` | `REVIEW_REQUIRED` | Darkvision in legacy sidecar | `data/species-traits.json: Utai.structuralTraits[Underground Adaptation]` | Threats p127 grants Low-Light Vision (no effect on Total Concealment). | Seek later source before upgrading vision; preserve printed base. |
+| Utai | `THR-04-02` | `REVIEW_REQUIRED` | Wrong unconditional Perception bonus | `data/species-traits-migrated.json: Utai.structuralTraits[Underground Adaptation].rules` | Printed Utai has no +2 Perception: Animal Handler, Cooperative, Low-Light Vision only. | Check provenance; condition underground if authorized instead of always. |
+| Utai | `THR-04-03` | `REVIEW_REQUIRED` | Animal Handler and Cooperative runtime | `packs/species.db: Utai.system.canonicalTraits[animal-handler,cooperative] / runtime` | Ride reroll must accept; Persuasion to shift undomesticated INT <=2 beasts; adjacent and audible auto-success Aid Another. | Verify action targets and reroll outcomes, no source-data rewrite. |
+
+### Explicit clean-field records
+
+| Species | Status | Correct source-aligned component |
+|---|---|---|
+| Bith | `NO_CHANGE` | Size Medium, speed 6 |
+| Bith | `NO_CHANGE` | INT +2 and CON -2 |
+| Bith | `NO_CHANGE` | Meditative Trance four hours |
+| Chistori | `NO_CHANGE` | +2 STR/-2 DEX, Medium/6 |
+| Chistori | `NO_CHANGE` | Cold-Blooded -5 Fort against extreme cold |
+| Chistori | `NO_CHANGE` | DR 2 and correct Rage description; language Chistori |
+| Mantellian Savrip | `NO_CHANGE` | Ability modifiers +4 STR/-2 DEX/+4 CON/-4 INT/-4 WIS/-4 CHA |
+| Mantellian Savrip | `NO_CHANGE` | Large/8 movement, language Savrip |
+| Mantellian Savrip | `NO_CHANGE` | Natural Armor +2, Primitive, and Rage prose |
+| Utai | `NO_CHANGE` | +2 CON/-2 CHA, Small/4 |
+| Utai | `NO_CHANGE` | Utapese automatic |
+| Utai | `NO_CHANGE` | Animal Handler, Cooperative, Low-Light Vision source text |
+
+### Key book-to-book rulings
+
+**Bith (p.26) — printed source variants, not an immediate pack defect.** *Threats* prints +2 INT / -2 CON, automatic Bith only, Evolved Intellect as **one Intelligence skill check treated as a natural 20 each encounter**, Heightened Awareness Perception reroll (must accept second), and Meditative Trance. **Galaxy of Intrigue** instead publishes the pack's +2 CHA in addition to +2 INT/-2 CON; Basic plus Bith languages; Scent; and a different Force Point-based *Evolved Intellect*. Those are genuine printed variant profiles. The latter source has already been located in its uploaded text for the coming book. Do not automatically delete +2 CHA or Scent just because the Threats profile differs; resolve final source precedence or expose a source-labelled variant. Sidecar unprinted `Perform +5` and `Fortitude -2` require independent provenance.
+
+**Chistori (p.34) — baseline correct; sidecar suspect.** Ability modifiers (+2 STR/-2 DEX), Medium/6, Chistori-only automatic language, Cold-Blooded (-5 Fortitude against extreme cold), DR 2 and once/day Rage text agree with the book. The migrated sidecar instead proposes unconditional +2 melee damage under *Brute Strength*. It is not a replacement for +2 melee attack/damage **only during Rage**. Source-check before retaining; test Rage's Swift Action, duration and persistent condition.
+
+**Mantellian Savrip (p.117) — serious typed-rule corrections.** The book explicitly allows **Savrip heroes** and grants +4 STR/-2 DEX/+4 CON/-4 INT/-4 WIS/-4 CHA, Large size, speed 8, natural armor +2, claws **1d6 slashing**, a conditional claw-hit poison rider, Primitive and Rage. The pack's base chassis is already correct, but the migrated sidecar writes an additional **-4 Dexterity** typed modifier, and two independent **1d4 claw weapons** (one incorrectly under Poison). These are **2 confirmed correction candidates** requiring minimal authority/consumer fixes and actor tests. Poison requires 1d20 + level against Fortitude *after damaging a living target with claws*, causing -1 condition track and immobilizing—not rendering unconscious—on the final CT step. Savrip automatic language is *speak only*; preserve that limitation if language capability supports it.
+
+**Utai (p.127) — no baseline rewrite.** Published +2 CON/-2 CHA, Small/4, Utapese, Animal Handler, Cooperative and **Low-Light Vision** all match. Sidecar `Underground Adaptation` claims Darkvision and grants +2 Perception `when:always`, unsupported by this printed Utai block. Source-check before removal. Test conditional beast-interaction/automatic-adjacent Aid Another behavior separately.
+
+### Guardrails and continuation
+
+- This is a **race/species source audit only**; do not expand into droids, droid chassis or droid species despite the droid-themed book appearing earlier in the original order.
+- Earlier Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, Jedi Academy, Galaxy at War and Legacy Era source claims are retained. The rolling file now tracks **90 distinct species** in **10 books**.
+- The existing pack and both trait-sidecar consumers were compared read-only. No claim of live Foundry execution is made. All findings remain unapplied.
+- **Next biological species source:** *Galaxy of Intrigue*. It will certify Bith's alternative printed profile and many additional playable species, including sidebars outside Chapter I. Then audit *The Unknown Regions*.
