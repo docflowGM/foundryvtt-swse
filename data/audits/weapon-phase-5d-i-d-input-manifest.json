@@ -18,13 +18,13 @@
     "I_D_INPUT_SPECIAL_MECHANICS": 3,
     "I_D_INPUT_RELATIONS": 2,
     "I_D_INPUT_TOTAL": 80,
-    "I_D_IMPLEMENTED": 14,
+    "I_D_IMPLEMENTED": 21,
     "I_D_DUPLICATES": 6,
     "I_D_NON_EXECUTABLE": 1,
     "I_D_DATA_DEFECT": 0,
     "I_D_DATA_COMPLETENESS": 2,
     "I_D_BLOCKED": 1,
-    "I_D_DEFERRED": 56,
+    "I_D_DEFERRED": 49,
     "I_D_UNCLASSIFIED": 0
   },
   "baseline": {
@@ -33,8 +33,8 @@
     "note": "post-I-C-C checkpoint; the live values below move only when a production consumer is demonstrated"
   },
   "closureCensusAtGeneration": {
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 61,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 70,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 54,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 63,
     "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 37,
     "PARTIAL_EXECUTION_FIELD_FAMILIES": 12,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
@@ -49,10 +49,10 @@
       "AUTO": 36
     },
     "support": {
-      "IMPLEMENTED": 14,
+      "IMPLEMENTED": 21,
       "DATA_COMPLETENESS": 2,
-      "GM_FACING_SUPPORT_NEEDED": 14,
-      "SMALL_CONSUMER_NEEDED": 30,
+      "GM_FACING_SUPPORT_NEEDED": 13,
+      "SMALL_CONSUMER_NEEDED": 24,
       "DUPLICATE_OR_NON_EXECUTABLE": 15,
       "SOURCE_CLARIFICATION_NEEDED": 3,
       "MISSING_SUBSYSTEM": 2
@@ -94,17 +94,17 @@
         "GM_ADJUDICATED": 1
       }
     },
-    "sourceAmbiguities": 17,
+    "sourceAmbiguities": 16,
     "duplicateOrNonExecutable": {
       "verified": 11,
       "asserted": 4
     }
   },
   "automationLevels": {
-    "CONTEXTUAL": 20,
+    "CONTEXTUAL": 22,
     "GM_ADJUDICATED": 9,
-    "AUTO": 7,
-    "NOT_ASSESSED_YET": 44
+    "AUTO": 12,
+    "NOT_ASSESSED_YET": 37
   },
   "supportGaps": {
     "CONTEXT_SURFACE_PENDING": 5,
@@ -861,48 +861,51 @@
       "key": "canMountOnRifle",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.canMountOnRifle",
+      "currentConsumer": "scripts/items/weapon-runtime/host-mount.js (\\bcanMountOnRifle\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "micro grenade launcher mounts on a rifle",
-        "mustBeSupplied": "the host rifle (owned item)",
-        "smallestImplementation": "mount validation in the customization workbench using canonical host rules",
+        "mustBeSupplied": "the host rifle (an owned canonical weapon of the rifles group)",
+        "smallestImplementation": "DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; the host is validated by canonical identity; nothing is written on refusal",
         "sourceAmbiguity": null,
-        "acceptance": "mount refused on a non-rifle host"
+        "acceptance": "mount refused on a non-rifle, legacy or self host; mount recorded on a rifle"
       },
-      "owner": "I-D-B",
-      "reason": "Mounting a weapon on a host weapon (construction / modification authority)."
+      "reason": "Phase 5D-I-D-B1: mount rule read by host-mount.js (mountRuleOf) into the attack shape; FireStateStore.mountOnHost validates the chosen HOST by canonical identity (owned, canonical, rifles group / minimum canonical size, not itself, not already mounted) and writes owned state mountedHostId + the mount configuration only on success. Micro Grenade Launcher: refused on a pistol / homebrew / itself."
     },
     {
       "kind": "operation-key",
       "key": "canUseStandalone",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
-      "identityCount": 1,
-      "rawOccurrences": 1,
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
       "representativeWeapons": [
+        "grenade-launcher",
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.canUseStandalone",
+      "currentConsumer": "scripts/items/weapon-runtime/host-mount.js (\\bcanUseStandalone\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "usable standalone",
         "mustBeSupplied": "-",
-        "smallestImplementation": "same mount capability (mounted OR standalone)",
+        "smallestImplementation": "DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; standalone stays the default configuration; leaving the mount configuration detaches",
         "sourceAmbiguity": null,
-        "acceptance": "standalone attack allowed unmounted"
+        "acceptance": "standalone attack allowed unmounted; detaches when set back to standalone"
       },
-      "owner": "I-D-B",
-      "reason": "Mounted-versus-standalone use of an attachment weapon."
+      "reason": "Phase 5D-I-D-B1: carried as mountRule.standalone; the standalone configuration stays the default, attacks are never blocked for being unmounted, and leaving the mount configuration detaches the weapon from its host (setConfiguration)."
     },
     {
       "kind": "operation-key",
@@ -1086,72 +1089,77 @@
       "key": "mountableOnMinimumWeaponSize",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "targeting-laser"
       ],
       "structuredSourceField": "operation.mountableOnMinimumWeaponSize",
+      "currentConsumer": "scripts/items/weapon-runtime/host-mount.js (\\bmountableOnMinimumWeaponSize\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "targeting laser mounts on a Medium or larger weapon",
-        "mustBeSupplied": "host weapon size (item)",
-        "smallestImplementation": "host-size gate in the mount validation",
+        "mustBeSupplied": "host canonical size",
+        "smallestImplementation": "DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; host-size gate",
         "sourceAmbiguity": null,
-        "acceptance": "mount refused on a Small host"
+        "acceptance": "mount refused on a Small host; accepted on Medium or larger"
       },
-      "owner": "I-D-B",
-      "reason": "Host-size gate for mounting."
+      "reason": "Phase 5D-I-D-B1: mount rule read by host-mount.js (mountRuleOf) into the attack shape; FireStateStore.mountOnHost validates the chosen HOST by canonical identity (owned, canonical, rifles group / minimum canonical size, not itself, not already mounted) and writes owned state mountedHostId + the mount configuration only on success. Targeting Laser: refused on a host smaller than Medium (canonical size)."
     },
     {
       "kind": "operation-key",
       "key": "mountMechanicsDC",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
-      "identityCount": 1,
-      "rawOccurrences": 1,
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
       "representativeWeapons": [
+        "grenade-launcher",
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.mountMechanicsDC",
+      "currentConsumer": "scripts/items/weapon-runtime/host-mount.js (\\bmountMechanicsDC\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "Mechanics DC 15 to mount",
         "mustBeSupplied": "the check result (player rolls)",
-        "smallestImplementation": "drive the mount through the existing Mechanics skill workflow in the workbench",
+        "smallestImplementation": "DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; the check is rolled through SWSERoll.rollSkill; cancel / failure write nothing",
         "sourceAmbiguity": null,
-        "acceptance": "mount completes only on a success vs DC 15"
+        "acceptance": "mount completes only on a success vs the record DC; no partial mutation"
       },
-      "owner": "I-D-B",
-      "reason": "Mounting check DC (construction / installation)."
+      "reason": "Phase 5D-I-D-B1: the Mechanics check is rolled through the existing skill-roll authority (SWSERoll.rollSkill) by FireStateStore.mountOnHost; a cancelled roll or a result below the DC writes nothing; success writes the mount. The DC comes from the record, never text."
     },
     {
       "kind": "operation-key",
       "key": "mountTimeMinutes",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
-      "identityCount": 1,
-      "rawOccurrences": 1,
+      "disposition": "IMPLEMENTED",
+      "identityCount": 2,
+      "rawOccurrences": 2,
       "representativeWeapons": [
+        "grenade-launcher",
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.mountTimeMinutes",
+      "currentConsumer": "scripts/items/weapon-runtime/host-mount.js (\\bmountTimeMinutes\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "GM_FACING_SUPPORT_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "1 minute to mount",
         "mustBeSupplied": "time passing (GM)",
-        "smallestImplementation": "display the time; outside combat the GM tracks it",
+        "smallestImplementation": "DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; the minutes are reported with the result and the sheet notice, never simulated; no action is spent",
         "sourceAmbiguity": null,
-        "acceptance": "time shown on the mount action"
+        "acceptance": "time shown on the mount result; no action spent"
       },
-      "owner": "I-D-B",
-      "reason": "Mounting time (construction / installation)."
+      "reason": "Phase 5D-I-D-B1: the minutes the record states are the GM's circumstance -- reported with the mount result and in the sheet notice, never simulated; no action is stated so none is spent."
     },
     {
       "kind": "operation-key",
@@ -1262,24 +1270,25 @@
       "key": "requiresGrenadeLauncher",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "electronet"
       ],
       "structuredSourceField": "operation.requiresGrenadeLauncher",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (\\brequiresGrenadeLauncher\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "electronet is fired only from a grenade launcher",
-        "mustBeSupplied": "launcher in hand",
-        "smallestImplementation": "payload-load validation (shares the payload / launcher compatibility gate)",
-        "sourceAmbiguity": "inventory-level payload consumption authority was deferred in the readiness UI work",
-        "acceptance": "electronet cannot be fired without a grenade launcher"
+        "mustBeSupplied": "the launcher it is loaded into",
+        "smallestImplementation": "DONE (I-D-B1): delegateLoadedPayload accepts a payload declaring requiresGrenadeLauncher into a full-size grenade launcher (not a micro launcher); a direct attack with it is refused by previewReadiness before any roll or cost",
+        "sourceAmbiguity": null,
+        "acceptance": "electronet loads into a grenade launcher, is refused by a micro launcher, and a direct attack is refused before any cost"
       },
-      "owner": "I-D-B",
-      "reason": "Host-weapon requirement for a mounted weapon."
+      "reason": "Phase 5D-I-D-B1: Electronet is ammunition fired only from a grenade launcher. A full-size grenade launcher accepts it by the record's declaration (delegateLoadedPayload; the electronet's families are not 'grenade'), a micro launcher / non-launcher does not, and a direct attack with it is refused by previewReadiness (requires-grenade-launcher) before any roll or cost, and the grapple-control tests now fire it through the loaded launcher. Uncertain source point (documented): whether Micro Grenade Launchers may fire it; refused conservatively."
     },
     {
       "kind": "operation-key",
@@ -1315,24 +1324,25 @@
       "key": "rifleMountable",
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "grenade-launcher"
       ],
       "structuredSourceField": "operation.rifleMountable",
+      "currentConsumer": "scripts/items/weapon-runtime/host-mount.js (\\brifleMountable\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "grenade launcher mounts on a rifle",
         "mustBeSupplied": "host rifle",
-        "smallestImplementation": "same mount validation as canMountOnRifle",
+        "smallestImplementation": "DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; same rule; the DC / time its text states are structured by the builder amendment 5D-I-D-B1-mount-check-backfill",
         "sourceAmbiguity": null,
-        "acceptance": "same"
+        "acceptance": "same; the Grenade Launcher record now carries DC 15 / 1 minute (builder amendment) and mounts only on that check"
       },
-      "owner": "I-D-B",
-      "reason": "Host-weapon compatibility for mounting."
+      "reason": "Phase 5D-I-D-B1: mount rule read by host-mount.js (mountRuleOf) into the attack shape; FireStateStore.mountOnHost validates the chosen HOST by canonical identity (owned, canonical, rifles group / minimum canonical size, not itself, not already mounted) and writes owned state mountedHostId + the mount configuration only on success. Grenade Launcher: same rule as canMountOnRifle. The published DC 15 Mechanics / 1 minute / standalone use were prose only; they are now structured by the builder amendment 5D-I-D-B1-mount-check-backfill (tools/lib/canonical-weapons-amendments.mjs), so the Grenade Launcher mounts only on the published check."
     },
     {
       "kind": "operation-key",

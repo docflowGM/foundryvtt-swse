@@ -6,6 +6,7 @@
 // Legacy/custom weapons and canonical forms with no temporal constraint pass straight through: nothing is read or written.
 import { evaluateReadiness, stateAfterFire, stateAfterReload, evaluatePrime, statePrimed, evaluateBrace } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/fire-state.js";
 import { resolveAttackShapeFor, resolveAttackWeaponRuntime, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { hostEligibility } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/host-mount.js";
 import { powerSourceStatus, powerSourceLabel, POWER_SOURCE_STATES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/power-source.js";
 import { currentMachineState, machineTransitionAllowed, machineAfterTransition, evaluateUsage, recordUsage, usageKey, crewRegulationFor, crewRegulationRecord, patchOwnedState } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/owned-state.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
@@ -159,6 +160,11 @@ export function previewReadiness(actor, weapon, runtime, rollOptions = {}) {
   const clock = currentClock(actor);
   const owned = ownedStateStep(shape, state, clock);
   const power = powerSourceReadiness(shape, state, rollOptions);
+  // Phase 5D-I-D-B1: mounted-form legality is enforced HERE, in the attack path, not only in setConfiguration. Selecting the mount configuration (by an
+  // explicit attack option or the owned state) requires a recorded, still-owned, still-eligible host; a recorded host that no longer exists blocks too.
+  power.blockers.push(...mountBlockers(actor, weapon, shape, state));
+  // Ammunition fired only from a grenade launcher (Electronet) is never attacked with directly: it is loaded into a launcher (delegated attack)
+  if (shape.requiresHostLauncher) power.blockers.push({ family: 'launcher', reason: 'requires-grenade-launcher' });
   const prepActions = [...rangePreparationActions(shape, rollOptions), ...stunSwitchActions(shape, state), ...owned.actions];
   if (!shape.temporal.length) {
     const blockers = [...owned.blockers, ...power.blockers];
@@ -169,7 +175,7 @@ export function previewReadiness(actor, weapon, runtime, rollOptions = {}) {
   return { applies: true, ...r, ready: blockers.length === 0, blockers, requiredActions: [...(r.requiredActions ?? []), ...prepActions], notes: [...(r.notes ?? []), ...power.notes], powerSource: power.status, clock };
 }
 
-async function writeState(actor, weapon, state) {
+async function writeState(actor, weapon, state, { strict = false } = {}) {
   if (!weapon) return;
   const owner = weapon.actor ?? actor;
   try {
@@ -180,6 +186,8 @@ async function writeState(actor, weapon, state) {
       await weapon.update({ [FLAG_PATH]: state });
     }
   } catch (err) {
+    // combat-state writes are best-effort (the attack still resolved); mount / unmount are strict and report the failure
+    if (strict) throw err;
     console.warn('[SWSE] Could not persist weapon fire state (the attack still resolved).', err);
   }
 }
@@ -261,9 +269,9 @@ export async function primePreparedAttack(actor, weapon, runtime, rollOptions = 
   return { ok: true, state: next };
 }
 
-async function persistOwned(actor, weapon, patch) {
+async function persistOwned(actor, weapon, patch, { strict = false } = {}) {
   const next = patchOwnedState(readFireState(weapon), patch);
-  await writeState(actor, weapon, next);
+  await writeState(actor, weapon, next, { strict });
   try { weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: next } }; } catch { /* see commitFired */ }
   return next;
 }
@@ -371,11 +379,110 @@ export async function setConfiguration(actor, weapon, configurationId) {
   if (shape.source !== 'canonical' || !shape.configuration.ids.includes(configurationId)) return { ok: false, reason: 'unknown-configuration' };
   const state = readFireState(weapon);
   if ((state?.configurationId ?? shape.configuration.defaultId) === configurationId) return { ok: true, state };
+  // Phase 5D-I-D-B1: the configuration that IS "mounted on a host" is entered only through mountOnHost (host validation + the Mechanics check);
+  // leaving it (back to standalone) also detaches the weapon from its host.
+  if (shape.mountRule?.configurationId && shape.mountRule.configurationId === configurationId) return { ok: false, reason: 'mount-requires-host' };
+  if (state?.mountedHostId) return unmountFromHost(actor, weapon);
   if (shape.configuration.transitionAction) {
     const spend = await spendRequiredActions(actor, [{ action: shape.configuration.transitionAction, count: 1, family: 'configuration-switch', reason: `configuration:${configurationId}` }], { weaponName: weapon?.name });
     if (!spend.ok) return { ok: false, reason: 'action-unavailable' };
   }
   return { ok: true, state: await persistOwned(actor, weapon, { configurationId }) };
+}
+
+/** Blockers for the mount state of the SELECTED form: the mount configuration needs a valid recorded host; any recorded host must still exist. */
+function mountBlockers(actor, weapon, shape, state) {
+  const out = [];
+  const rule = shape?.mountRule;
+  const hostId = state?.mountedHostId ?? null;
+  const needsHost = !!(rule?.configurationId && shape.configuration?.id === rule.configurationId);
+  // a stale host record only matters while the MOUNTED form is the one being used; standalone use is never blocked by it
+  if (!needsHost) return out;
+  if (!hostId) { out.push({ family: 'mount', reason: 'mount-host-required' }); return out; }
+  const host = ownedItemById(actor, hostId);
+  if (!host) { out.push({ family: 'mount', reason: 'mount-host-missing', hostId }); return out; }
+  {
+    let hs = null;
+    try { hs = shapeOfWeapon(host, {}); } catch { /* legacy host */ }
+    const elig = hostEligibility(rule, { source: hs?.source ?? null, groupKey: hs?.groupKey ?? null, size: hs?.size ?? null, mountedHostId: readFireState(host)?.mountedHostId ?? null }, { sameItem: host.id === weapon?.id });
+    if (!elig.ok) out.push({ family: 'mount', reason: 'mount-host-ineligible', detail: elig.reason, hostId });
+  }
+  return out;
+}
+
+const ownedItemById = (actor, id) => (id ? (actor?.items?.get?.(id) ?? Array.from(actor?.items ?? []).find((i) => i?.id === id) ?? null) : null);
+
+/**
+ * Phase 5D-I-D-B1 -- mount `weapon` on `host` (Micro Grenade Launcher / Grenade Launcher on a rifle, Targeting Laser on a Medium or larger weapon).
+ *   - the weapon's canonical mount rule says WHAT it mounts on; the host must be an owned CANONICAL weapon of that group / size (identity, never a name)
+ *   - the Mechanics check (DC from the record) is rolled through the existing skill-roll authority; a cancelled roll or a failure writes NOTHING
+ *   - the minutes the record states are the GM's circumstance: reported as `timeMinutes`, never simulated; no action is stated, none is spent
+ *   - already mounted on this same host -> idempotent (no second check)
+ * `skillRoller(actor, skill, options)` may be injected; the default is SWSERoll.rollSkill.
+ * @returns {{ok:boolean, reason?:string, check?:object, timeMinutes?:number|null, state?:object}}
+ */
+export async function mountOnHost(actor, weapon, host, { skillRoller = null, showDialog = true } = {}) {
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return { ok: false, reason: 'not-canonical' }; }
+  if (shape.source !== 'canonical' || !shape.mountRule) return { ok: false, reason: 'not-mountable' };
+  const rule = shape.mountRule;
+  // both participants must belong to the supplied actor (checked before any roll or write)
+  if (!weapon?.id || ownedItemById(actor, weapon.id) !== weapon) return { ok: false, reason: 'weapon-not-owned' };
+  const owned = ownedItemById(actor, host?.id);
+  if (!owned) return { ok: false, reason: 'host-not-owned' };
+  let hostShape = null;
+  try { hostShape = shapeOfWeapon(owned, {}); } catch { /* a legacy / custom host is refused below */ }
+  const elig = hostEligibility(rule, { source: hostShape?.source ?? null, groupKey: hostShape?.groupKey ?? null, size: hostShape?.size ?? null, mountedHostId: readFireState(owned)?.mountedHostId ?? null }, { sameItem: owned.id === weapon?.id });
+  if (!elig.ok) return elig;
+  const state = readFireState(weapon);
+  if (state?.mountedHostId === owned.id) return { ok: true, alreadyMounted: true, state, timeMinutes: rule.check?.timeMinutes ?? null };
+  let check = null;
+  if (rule.check) {
+    let result = null;
+    try {
+      const roll = skillRoller ?? (async (a, skill, opts) => (await import("/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js")).SWSERoll.rollSkill(a, skill, opts));
+      result = await roll(actor, rule.check.skill, { showDialog, sourceType: 'combat.weapon.mount', sourceLabel: `Mount ${weapon?.name ?? 'weapon'} on ${owned.name ?? 'host'}`, skillUse: { key: 'mount-weapon', label: 'Mount weapon' }, useKey: 'mount-weapon' });
+    } catch (err) { console.warn('[SWSE] Mount check could not be rolled.', err); }
+    if (!result) return { ok: false, reason: 'check-cancelled', dc: rule.check.dc };
+    const total = Number(result.total ?? result.roll?.total);
+    if (!Number.isFinite(total)) return { ok: false, reason: 'check-cancelled', dc: rule.check.dc };
+    check = { skill: rule.check.skill, dc: rule.check.dc, total, success: total >= rule.check.dc };
+    if (!check.success) return { ok: false, reason: 'check-failed', check, timeMinutes: rule.check.timeMinutes };
+  }
+  const patch = { mountedHostId: owned.id, ...(rule.configurationId ? { configurationId: rule.configurationId } : {}) };
+  try { return { ok: true, check, timeMinutes: rule.check?.timeMinutes ?? null, state: await persistOwned(actor, weapon, patch, { strict: true }) }; }
+  catch (err) { console.warn('[SWSE] Could not persist the mount.', err); return { ok: false, reason: 'persist-failed', check }; }
+}
+
+/** Does this weapon declare a mount rule (it can be mounted on a host)? */
+export function hasMountRule(weapon) {
+  try { const sh = shapeOfWeapon(weapon, {}); return sh.source === 'canonical' && !!sh.mountRule; } catch { return false; }
+}
+
+/** The actor's other weapons as candidate hosts for `weapon`, each with its eligibility (for the host picker); [] when the weapon is not mountable. */
+export function mountHostOptions(actor, weapon) {
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return []; }
+  if (shape.source !== 'canonical' || !shape.mountRule) return [];
+  const mountedOn = readFireState(weapon)?.mountedHostId ?? null;
+  return Array.from(actor?.items ?? []).filter((i) => i?.type === 'weapon' && i.id !== weapon.id).map((host) => {
+    let hs = null;
+    try { hs = shapeOfWeapon(host, {}); } catch { /* legacy host */ }
+    const elig = hostEligibility(shape.mountRule, { source: hs?.source ?? null, groupKey: hs?.groupKey ?? null, size: hs?.size ?? null, mountedHostId: readFireState(host)?.mountedHostId ?? null });
+    return { id: host.id, name: host.name, eligible: elig.ok, reason: elig.reason ?? null, current: host.id === mountedOn };
+  }).filter((o) => o.eligible || o.current);
+}
+
+/** Detach a mounted weapon from its host (no check / action is stated); it returns to its default configuration. */
+export async function unmountFromHost(actor, weapon) {
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return { ok: false, reason: 'not-canonical' }; }
+  if (shape.source !== 'canonical' || !shape.mountRule) return { ok: false, reason: 'not-mountable' };
+  if (!weapon?.id || ownedItemById(actor, weapon.id) !== weapon) return { ok: false, reason: 'weapon-not-owned' };
+  const state = readFireState(weapon);
+  if (!state?.mountedHostId) return { ok: true, state };
+  try { return { ok: true, state: await persistOwned(actor, weapon, { mountedHostId: null, configurationId: shape.configuration.defaultId ?? null }, { strict: true }) }; }
+  catch (err) { console.warn('[SWSE] Could not persist the unmount.', err); return { ok: false, reason: 'persist-failed' }; }
 }
 
 /** Canonical identity of the payload loaded into a payload-delegating launcher (validated against the launcher's accepted family by the attack stage). */
@@ -413,5 +520,5 @@ function configurationOptions(item) {
   } catch (_err) { return { canonical: false, states: [], defaultId: null }; }
 }
 
-export const FireStateStore = Object.freeze({ powerSourceOf, reloadOptions, setPowerSourceState, reloadBySecondCrew, configurationOptions, currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, setWielding, setMounted, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
+export const FireStateStore = Object.freeze({ powerSourceOf, reloadOptions, setPowerSourceState, reloadBySecondCrew, configurationOptions, currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, setWielding, setMounted, mountOnHost, unmountFromHost, mountHostOptions, hasMountRule, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
 export default FireStateStore;

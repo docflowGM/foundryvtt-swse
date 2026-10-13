@@ -303,7 +303,12 @@ function delegateLoadedPayload(runtime, loadedKey, context, form) {
   const rec = registry?.getByIdentityKey?.(loadedKey);
   const family = runtime.resolved.canonicalStats?.ammo?.acceptedPayloadFamily ?? null;
   const excluded = runtime.resolved.operation?.cannotFireThermalDetonators === true ? ['weapon-thermal-detonator'] : [];
-  const accepted = !!rec && !!family && (rec.selectors?.families ?? []).includes(`weapon-family:${family}`) && !excluded.includes(loadedKey);
+  // Phase 5D-I-D-B1: a payload whose record declares operation.requiresGrenadeLauncher (Electronet: "specialized ammunition fired from a grenade launcher")
+  // is accepted by a (full-size) grenade launcher by that structured declaration, not by sharing the 'grenade' family. A micro launcher is not a
+  // grenade launcher family member, so it does not take it.
+  const launcherFamilies = getSharedWeaponAuthorityRegistry()?.getByIdentityKey?.(runtime.identityKey)?.selectors?.families ?? [];
+  const hostLauncherPayload = rec?.operation?.requiresGrenadeLauncher === true && !!family && launcherFamilies.includes('weapon-family:grenade-launcher') && !launcherFamilies.includes('weapon-family:micro-grenade-launcher');
+  const accepted = !!rec && !!family && ((rec.selectors?.families ?? []).includes(`weapon-family:${family}`) || hostLauncherPayload) && !excluded.includes(loadedKey);
   if (!accepted) throw new WeaponRuntimeError(ERROR_CODES.PAYLOAD_NOT_ACCEPTED, `${runtime.identityKey} cannot fire ${loadedKey}`, { identityKey: runtime.identityKey, loadedIdentityKey: loadedKey, acceptedFamily: family });
   const payloadItem = { id: `loaded-${loadedKey}`, type: 'weapon', name: loadedKey, flags: { swse: { canonicalWeapon: { identityKey: loadedKey } } }, system: {} };
   const inner = resolveCanonicalDamage(payloadItem, { weaponForm: { identityKey: loadedKey, profileId: rec.canonicalStats.attackProfiles[0].id }, damageMode: context.damageMode ?? form?.damageMode ?? null, damageType: context.damageType ?? null });
