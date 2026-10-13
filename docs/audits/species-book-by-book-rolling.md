@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, and Jedi Academy audited. No production species data changed.  
+**Status:** Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, Jedi Academy, and Galaxy at War audited. No production species data changed.  
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -140,7 +140,7 @@ There is no evidence from this section for rewriting Core baseline species recor
 5. Clone Wars Campaign Guide — COMPLETED
 6. Scum and Villainy — COMPLETED
 7. Jedi Academy Training Manual — COMPLETED
-8. Galaxy at War
+8. Galaxy at War — COMPLETED
 9. Legacy Era Campaign Guide
 10. Scavenger's Guide to Droids
 11. Threats of the Galaxy / Galaxy of Intrigue / The Unknown Regions / other source supplements where species mechanics are actually printed
@@ -621,4 +621,136 @@ All findings appear in the rolling JSON as `entries[*].jediAcademy.findings`, wi
 - Optional/variant claims and possible sourcebook contradictions remain in **`REVIEW_REQUIRED`**, not destructive remediation.
 - If work proceeds to surgical fixes, adjust generator/authority first, apply minimal corrections, prove no duplicates, and run precise CharGen, actor, condition, Force, defense, and movement tests.
 
-**Next book: Galaxy at War.**
+**Next book: Legacy Era Campaign Guide.**
+
+---
+
+## Book 8 — Galaxy at War
+
+**Printed source:** *Galaxy at War*, Chapter 1, *New Species*, printed pp. **10–18**; ability adjustment Table 1-1 on printed p.10. **Nine** published species entries: Barabel, Dashade, Lurmen, Taung, Thakwaash, Trianii, Yevetha, Yuzzem, and Zygerrian. Source PDF pages 11–19 were rendered and visually checked, with the uploaded searchable transcription used for direct rules-text comparison.
+
+### Audit results
+
+| Audit measure | Result |
+|---|---:|
+| Species entries printed | **9** |
+| Foundry pack identities present | **9/9** |
+| New distinct species added to the rolling ledger | **8** |
+| Previously audited species revisited | **1 (Barabel)** |
+| Basic ability scores, size, speed `NO_CHANGE` | **9/9** |
+| Species with `CHANGE_REQUIRED` | **7** |
+| Species with only `REVIEW_REQUIRED` | **2** |
+| Confirmed source-backed individual correction candidates | **8** |
+| Additional source/runtime review items | **17** |
+| Total new recorded findings | **25** |
+| Older source-ambiguity findings clarified | **2** |
+| Runtime tests | **Not run** |
+| Production mutations | **None** |
+
+### Every printed species, including no-change decisions
+
+| Species | Printed p. | Book-to-ledger identity | Basic chassis | Species-wide disposition | Findings |
+|---|---:|---|---|---|---:|
+| Barabel | 11 | Revisited | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Dashade | 12 | New in rolling ledger | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Lurmen | 13 | New in rolling ledger | `NO_CHANGE` | `REVIEW_REQUIRED` | 3 |
+| Taung | 14 | New in rolling ledger | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Thakwaash | 15 | New in rolling ledger | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Trianii | 16 | New in rolling ledger | `NO_CHANGE` | `CHANGE_REQUIRED` | 2 |
+| Yevetha | 16 | New in rolling ledger | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Yuzzem | 17 | New in rolling ledger | `NO_CHANGE` | `CHANGE_REQUIRED` | 3 |
+| Zygerrian | 18 | New in rolling ledger | `NO_CHANGE` | `REVIEW_REQUIRED` | 3 |
+
+Seven species have at least one source-backed correction candidate. Lurmen and Zygerrian have review-only findings. Every species has explicit `NO_CHANGE` for published ability modifiers, size, walking speed, and automatic language names. This is NOT a claim of live runtime functionality.
+
+### Exact rolling correction and review ledger
+
+All findings have `applied:false` in the JSON. `CHANGE_REQUIRED` identifies a printed rule or hard mismatch; `REVIEW_REQUIRED` means source provenance, variant authority, or runtime behavior is unresolved. A legacy sidecar being absent from one book does **not** on its own authorize deletion.
+
+| Species | Finding ID | Status | Discrepancy | Exact target selector | Source rule | Minimum surgical action |
+|---|---|---|---|---|---|---|
+| Barabel | `GAW-01-01` | `CHANGE_REQUIRED` | Natural attack records | `packs/species.db: Barabel.system.naturalWeapons` | Claws, bite and tail 1d6, respectively slashing/piercing/bludgeoning, always armed | Correct claw formula and add missing tail in authoritative output; avoid duplicate attacks. |
+| Barabel | `GAW-01-02` | `REVIEW_REQUIRED` | Unproven Reptilian Ferocity rule | `data/species-traits-migrated.json: Barabel.conditionalTraits[Reptilian Ferocity].rules` | Not in Galaxy at War printed Barabel traits | Check variants; block always-on damage if no printed entitlement. |
+| Barabel | `GAW-01-03` | `REVIEW_REQUIRED` | Flat skill bonuses | `packs/species.db: Barabel.system.skillBonuses` | Printed grants Intimidate Persuasion reroll instead | Review alternate provenance and active runtime. |
+| Dashade | `GAW-02-01` | `CHANGE_REQUIRED` | Force Resistance missing Fortitude | `packs/species.db: Dashade.system.canonicalTraits[force-resistance]` | Printed +5 Fortitude AND +5 Will vs all Use the Force checks | Complete published bonus; narrow both to UTF targeting. |
+| Dashade | `GAW-02-02` | `CHANGE_REQUIRED` | Incorrect Reflex passive | `data/species-traits-migrated.json: Dashade.structuralTraits[Force Resistance].rules` | No Reflex bonus; +5 Fort/Will conditional on UTF | Remove/replace Reflex, verify no generic passive or double grant. |
+| Dashade | `GAW-02-03` | `REVIEW_REQUIRED` | Stealth bonus and printed name | `packs/species.db: Dashade.system.skillBonuses / canonicalTraits[frightening-visage]` | No generic Stealth bonus; printed Fearsome Reputation rerolls Intimidate and keeps better | Source-check skill bonus; normalize player-facing alias without altering reroll. |
+| Lurmen | `GAW-03-01` | `REVIEW_REQUIRED` | Extra Will bonus | `data/species-traits-migrated.json: Lurmen.structuralTraits[Pacifist Resolve].rules` | Printed Mender, Primitive, Roller and Take 10 Climb; no flat +2 Will | Require independent source before enabling. |
+| Lurmen | `GAW-03-02` | `REVIEW_REQUIRED` | Extra skill bonuses | `packs/species.db: Lurmen.system.skillBonuses` | Printed Climb Take 10 and conditional Treat Injury DC reduction, not static skill modifiers | Review printed provenance and consumers. |
+| Lurmen | `GAW-03-03` | `REVIEW_REQUIRED` | Roller and Mender execution | `packs/species.db: Lurmen.system.canonicalTraits[roller,mender]` | Roller swift +4 speed with severe action restrictions; Mender reduces DC by trained healer's WIS modifier | Test action gates/duration and conditional Treat Injury DC, no data rewrite. |
+| Taung | `GAW-04-01` | `CHANGE_REQUIRED` | Warrior Culture melee attack leak | `data/species-traits-migrated.json: Taung.structuralTraits[Warrior Culture].rules` | Warrior Culture rerolls Knowledge (Tactics), must accept new roll | Replace invalid meleeCultureBonus with scoped skill reroll. |
+| Taung | `GAW-04-02` | `REVIEW_REQUIRED` | Armor and three defenses runtime | `packs/species.db: Taung.system.canonicalTraits[armor-training,superior-defenses]` | +1 Max DEX of worn armor; +1 species to all three defenses | Test stacking and capped DEX, retain pack authority. |
+| Thakwaash | `GAW-05-01` | `CHANGE_REQUIRED` | Dual Brains false passive defenses | `data/species-traits-migrated.json: Thakwaash.structuralTraits[Dual Brains].rules` | Printed Multiple Personalities negates/removes mind-affecting effect at start of turn, free action once/encounter; +1 Reflex natural armor is separate | Remove/disable unsourced +2 defenses; preserve the printed timed ability. |
+| Thakwaash | `GAW-05-02` | `REVIEW_REQUIRED` | Extra Survival skill field | `packs/species.db: Thakwaash.system.skillBonuses` | Not among printed traits | Check separate source and consumer. |
+| Thakwaash | `GAW-05-03` | `REVIEW_REQUIRED` | Multiple Personalities behavior | `packs/species.db: Thakwaash.system.canonicalTraits[irrepressible-mind]` | Once/encounter free action at START of turn remove/negate any mind-affecting effect | Runtime-test window, expiration and charges; label can be aligned later. |
+| Trianii | `GAW-06-01` | `CHANGE_REQUIRED` | Missing structured claws | `packs/species.db: Trianii.system.naturalWeapons` | 1d6 slashing claws, always armed | Trace producer and grant exactly one natural-weapon profile. |
+| Trianii | `GAW-06-02` | `REVIEW_REQUIRED` | Feline Instincts extra passive | `data/species-traits-migrated.json: Trianii.structuralTraits[Feline Instincts].rules` | Printed Acrobatics reroll, natural claws, prehensile tail; no bonus Initiative | Check distinct published source before retaining. |
+| Yevetha | `GAW-07-01` | `CHANGE_REQUIRED` | Missing structured retractable claws | `packs/species.db: Yevetha.system.naturalWeapons` | 1d6 slashing retractable claws, always armed | Ensure one natural-weapon attack from generator/materializer. |
+| Yevetha | `GAW-07-02` | `REVIEW_REQUIRED` | Militaristic Culture extra passive | `data/species-traits-migrated.json: Yevetha.structuralTraits[Militaristic Culture].rules` | Printed Mechanical Aptitude, claws and Xenophobia; no flat Initiative | Seek variant/book provenance. |
+| Yevetha | `GAW-07-03` | `REVIEW_REQUIRED` | Racial choice and Xenophobia runtime | `packs/species.db: Yevetha.system.canonicalTraits[mechanical-aptitude,xenophobia]` | Natural-20 Mechanics once/encounter; +2 Will only against attitude-improving Persuasion from different species | Test once-only roll and narrow social defense. |
+| Yuzzem | `GAW-08-01` | `CHANGE_REQUIRED` | Missing 1d8 bite/claws profiles | `packs/species.db: Yuzzem.system.naturalWeapons` | 1d8 piercing bite, 1d8 slashing claws, always armed | Ensure two distinct 1d8 natural attacks in authorized producer, once only. |
+| Yuzzem | `GAW-08-02` | `REVIEW_REQUIRED` | Rage sidecar provenance | `data/species-traits-migrated.json: Yuzzem.conditionalTraits[Rage].rules` | Published trait block has no Rage | Check other publication and verify gating; do not auto-grant. |
+| Yuzzem | `GAW-08-03` | `REVIEW_REQUIRED` | Legacy skill bonuses | `packs/species.db: Yuzzem.system.skillBonuses` | Printed Climb reroll and Scent scope, not flat bonuses | Review source and actual passive. |
+| Zygerrian | `GAW-09-01` | `REVIEW_REQUIRED` | Dominating Presence sidecar | `data/species-traits-migrated.json: Zygerrian.structuralTraits[Dominating Presence].rules` | Printed bonus Martial Arts I, +2 Will, CHA replaces WIS for Will; no Persuasion bonus | Source-check supplemental variant before granting. |
+| Zygerrian | `GAW-09-02` | `REVIEW_REQUIRED` | Martial Arts I start grant runtime | `packs/species.db: Zygerrian.system.canonicalTraits[bonus-feat]` | Printed grants Martial Arts I automatically at 1st level | Test species-grant builder/finalizer once-only; do not alter valid text solely due to counter. |
+| Zygerrian | `GAW-09-03` | `REVIEW_REQUIRED` | Will CHA substitution runtime | `packs/species.db: Zygerrian.system.canonicalTraits[strength-of-conviction]` | CHA replaces WIS (not added to it) for Will, alongside separate +2 species Iron Will | Test derived Will modifiers and stacking. |
+
+### Explicit NO_CHANGE decisions
+
+| Species | Field | Status | Source verification |
+|---|---|---|---|
+| Barabel | `system.abilityMods / system.size / system.speed` | `NO_CHANGE` | Matches published source table and profile. |
+| Barabel | `system.languages` | `NO_CHANGE` | Matches printed Automatic Languages. |
+| Barabel | `canonicalTraits[radiation-resistance]` | `NO_CHANGE` | GAW p11 confirms +5 Fortitude vs radiation and no persistent radiation condition; Scum variant differs. |
+| Barabel | `canonicalTraits[stun-resistance]` | `NO_CHANGE` | GAW p11 explicitly grants +5 stun Damage Threshold. |
+| Dashade | `system.abilityMods / system.size / system.speed` | `NO_CHANGE` | Matches published source table and profile. |
+| Dashade | `system.languages` | `NO_CHANGE` | Matches printed Automatic Languages. |
+| Lurmen | `system.abilityMods / system.size / system.speed` | `NO_CHANGE` | Matches published source table and profile. |
+| Lurmen | `system.languages` | `NO_CHANGE` | Matches printed Automatic Languages. |
+| Taung | `system.abilityMods / system.size / system.speed` | `NO_CHANGE` | Matches published source table and profile. |
+| Taung | `system.languages` | `NO_CHANGE` | Matches printed Automatic Languages. |
+| Thakwaash | `system.abilityMods / system.size / system.speed` | `NO_CHANGE` | Matches published source table and profile. |
+| Thakwaash | `system.languages` | `NO_CHANGE` | Matches printed Automatic Languages. |
+| Trianii | `system.abilityMods / system.size / system.speed` | `NO_CHANGE` | Matches published source table and profile. |
+| Trianii | `system.languages` | `NO_CHANGE` | Matches printed Automatic Languages. |
+| Yevetha | `system.abilityMods / system.size / system.speed` | `NO_CHANGE` | Matches published source table and profile. |
+| Yevetha | `system.languages` | `NO_CHANGE` | Matches printed Automatic Languages. |
+| Yuzzem | `system.abilityMods / system.size / system.speed` | `NO_CHANGE` | Matches published source table and profile. |
+| Yuzzem | `system.languages` | `NO_CHANGE` | Matches printed Automatic Languages. |
+| Zygerrian | `system.abilityMods / system.size / system.speed` | `NO_CHANGE` | Matches published source table and profile. |
+| Zygerrian | `system.languages` | `NO_CHANGE` | Matches printed Automatic Languages. |
+| Zygerrian | `canonicalTraits[bonus-feat,iron-will,strength-of-conviction]` | `NO_CHANGE` | All 3 printed racial benefits described accurately; runtime certification is distinct. |
+
+### Cross-book reconciliation: Barabel
+
+Earlier *Scum and Villainy*, p.155, printed **+2 Fortitude against radiation** and did not include *Stun Resistance* in its species block. The current species pack instead contains **+5 Fortitude against radiation**, no persistent radiation condition, and **+5 damage threshold against stun**.
+
+**Galaxy at War p.11 explicitly publishes the current pack's stronger radiation rules and Stun Resistance.** Consequently:
+
+- Prior finding `SV-10-02` (radiation publication conflict) is now linked in JSON to `RECONCILED_NO_PRODUCTION_CHANGE`. **Do not change the pack from +5 down to +2 just to match the older Scum block.**
+- Prior finding `SV-10-03` (Stun Resistance not printed in Scum) is now linked to `CONFIRMED_NO_CHANGE`: the trait is published in Galaxy at War.
+- The older source claims and finding IDs remain in the ledger as historical evidence; a new `galaxyAtWar.crossBookResolutions` field records the updated resolution. No earlier audit entry was erased or rewritten.
+- The **unresolved** Barabel natural-weapon error remains: claws 1d4 in structured pack vs 1d6 printed, with no structured tail. A sidecar also declares Reptilian Ferocity `when:always` despite its own conditional benefit; source verification is still required.
+
+### Additional material findings
+
+**Dashade, p.12:** Printed Force Resistance gives **+5 Fortitude and +5 Will** against **Use the Force checks**, not unconditional Reflex. Current pack only describes Will, and an executable migrated sidecar incorrectly grants unconditional +5 Reflex. Two targeted mechanical corrections are required.
+
+**Taung, p.14:** The book grants *Warrior Culture* as a must-accept reroll to Knowledge (Tactics). An executable sidecar grants +2 to **every melee attack** instead; this must be surgically removed/replaced. The pack's other printed traits, *Armor Training* and *Superior Defenses*, should be runtime-tested, not rewritten.
+
+**Thakwaash, p.15:** Printed *Multiple Personalities* allows once/encounter free action at start of turn to negate/remove mind-affecting effects, alongside +1 natural armor Reflex. Sidecar instead grants +2 Will Defense (and its prose also promises +2 Reflex). Never replace an active timed effect with static defenses.
+
+**Trianii, p.16; Yevetha, p.16; Yuzzem, p.17:** Printed natural weapons are **Trianii 1d6 claws**, **Yevetha 1d6 retractable claws**, and **Yuzzem 1d8 bite or 1d8 claws**. Their pack descriptions mention them but all three `system.naturalWeapons` arrays are empty. Trace the existing weapon grant/materialization process before adding structured forms; duplicate attacks are not acceptable.
+
+**Lurmen, p.13:** Printed *Mender* and *Roller* semantics already match the pack. An extra sidecar +2 Will and generic +2 Acrobatics/Stealth skill fields have no support from this book; these are review items pending separate provenance, not approved deletions. The distinctive Roller action restriction deserves a live check.
+
+**Zygerrian, p.18:** The pack correctly describes Martial Arts I bonus feat, +2 species Will Defense, and replacing Wisdom with Charisma for Will. Its numeric `bonusFeats:0` projection alone does not prove the feat is missing, since the grant builder parses the canonical feat entitlement. Verify grant and substitution through real actor progression. A sidecar +2 Persuasion is not printed and remains `REVIEW_REQUIRED`.
+
+### Audit boundaries
+
+- The original Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, and Jedi Academy chapters remain unchanged in both files.
+- This book revisits Barabel but does not create a duplicate species identity; the global rolling ledger now contains **74 distinct species records**.
+- The same status vocabulary applies: `NO_CHANGE` is allowed for clean fields or whole species after source comparison; it does not certify runtime. `REVIEW_REQUIRED` never means automatic deletion.
+- No production species packs, sidecars, runtime source, or generators were changed; all **undefined** new findings remain `applied:false`.
+
+**Next book: Legacy Era Campaign Guide.** Continue the same append-only source rulings and rolling JSON/Markdown. Verify existing variants and name collisions separately from innate species grants.
