@@ -10,8 +10,8 @@
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 10,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 44,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 49,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 42,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 47,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 2,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
@@ -126,7 +126,7 @@
         "id": "3b.operation.ability-compatibility",
         "fieldPaths": 35,
         "status": "PARTIAL",
-        "consumedKeys": 6,
+        "consumedKeys": 8,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 1
@@ -134,9 +134,7 @@
         "executableUnconsumed": [
           "darkSideEmpowerment",
           "redirectionCrystalCompatibility",
-          "surveillanceTaggerCompatibility",
-          "surveillanceTaggerCompatible",
-          "upgradeRestrictions"
+          "surveillanceTaggerCompatibility"
         ],
         "owner": "grapple / Pin / Trip phase (allowedFeats/disallowedFeats) and ability-compatibility consumers"
       },
@@ -638,6 +636,8 @@
           "eligibleAsSecondWeaponForTwoWeaponFighting",
           "lightsaberTalentCompatibility",
           "prohibitsMultiShotAbilities",
+          "surveillanceTaggerCompatible",
+          "upgradeRestrictions",
           "weaponFinesseCountsAsLight"
         ],
         "duplicates": {
@@ -657,16 +657,13 @@
         "executableUnconsumed": [
           "darkSideEmpowerment",
           "redirectionCrystalCompatibility",
-          "surveillanceTaggerCompatibility",
-          "surveillanceTaggerCompatible",
-          "upgradeRestrictions"
+          "surveillanceTaggerCompatibility"
         ],
         "owner": "grapple / Pin / Trip phase (allowedFeats/disallowedFeats) and ability-compatibility consumers",
-        "executableUnconsumedOccurrences": 5,
+        "executableUnconsumedOccurrences": 3,
         "representativeIdentities": [
           "weapon-darter",
           "weapon-sith-sword",
-          "weapon-sniper-blaster-rifle",
           "weapon-xerrol-nightstinger"
         ],
         "note": {
@@ -1282,8 +1279,6 @@
       "ability-compatibility.darkSideEmpowerment",
       "ability-compatibility.redirectionCrystalCompatibility",
       "ability-compatibility.surveillanceTaggerCompatibility",
-      "ability-compatibility.surveillanceTaggerCompatible",
-      "ability-compatibility.upgradeRestrictions",
       "ammo-resource-reload.capacityGrenades",
       "ammo-resource-reload.hasFoldingStock",
       "ammo-resource-reload.oneShotCapacity",
@@ -1324,8 +1319,8 @@
       "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 44,
-    "rawOccurrencesUnconsumed": 49,
+    "uniqueKeysUnconsumed": 42,
+    "rawOccurrencesUnconsumed": 47,
     "problems": []
   },
   "relations": {

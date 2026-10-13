@@ -1,4 +1,5 @@
 import { UPGRADE_CATALOG, TEMPLATE_CATALOG } from '/systems/foundryvtt-swse/scripts/engine/customization/upgrade-catalog.js';
+import { weaponUpgradeAllowance, canonicalOperationOfItem } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/upgrade-compat.js';
 import { MetaResourceFeatResolver } from '/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js';
 
 export class UpgradeEligibilityEngine {
@@ -49,6 +50,13 @@ export class UpgradeEligibilityEngine {
     const itemCategory = profile.category === 'blaster' ? 'blaster' : profile.category;
     const matchesCategory = categorySet.has(itemCategory) || (itemCategory === 'blaster' && categorySet.has('weapon'));
     if (!matchesCategory) return { allowed: false, reason: 'category_mismatch', visible: false };
+
+    // Phase 5D-I-D-B3: the canonical weapon record's own upgrade restrictions / accepted payload capabilities (structured facts, no name matching).
+    if (profile.category === 'blaster' || profile.category === 'weapon') {
+      const operation = canonicalOperationOfItem(item);
+      const allowance = operation ? weaponUpgradeAllowance(operation, upgradeKey, upgrade) : { ok: true };
+      if (!allowance.ok) return { allowed: false, reason: allowance.reason, visible: true };
+    }
 
     const slotAccounting = this.slotEngine.getSlotAccounting(item);
     if (!slotAccounting.canAccommodate(upgrade.slotCost ?? 0)) return { allowed: false, reason: 'insufficient_slots' };
