@@ -82,6 +82,14 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Directly rendered source PDF pages 11-19 corresponding to printed pp.10-18, and inspected printed species entries; uploaded Galaxy At War_djvu.txt used for exact text search.",
       "notes": "Published ability/size/speed and languages align. Source printed GAW Barabel +5 radiation and stun resistance and supports pack, retaining historical Scum source discrepancy but resolving remediation. No production or runtime changes."
+    },
+    {
+      "source": "Legacy Era Campaign Guide",
+      "printedScope": "Chapter I pp.10-17 (8 species); Vahla sidebar p.59, Advozse p.199, Sakiyan p.204, Chadra-Fan p.211, Devaronian p.214 (5 additional species).",
+      "reviewedSpecies": 13,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "Scanned original PDF printed species pages visually reviewed (print page +1 = PDF page), and user-uploaded Legacy Era Campaign Guide_djvu.txt used as fast search index. Sakiyan rules absent from DJVU text and recovered directly from PDF p.204.",
+      "notes": "Chagrian overlaps Clone Wars and is attached to its existing record with cross-source confirmation. No new species identities created in production. Male/female Devaronian source profiles and Chiss/Chadra-Fan stats show substantial chargen defects; defer production changes."
     }
   ],
   "summary": {
@@ -102,7 +110,7 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 74,
+    "totalSpeciesInRollingLedger": 86,
     "forceUnleashed": {
       "species": 10,
       "noChange": 0,
@@ -167,9 +175,97 @@
       "reviewIssues": 17,
       "totalIssues": 25,
       "priorBarabelSourceQuestionsResolved": 2
+    },
+    "legacyEra": {
+      "speciesBlocks": 13,
+      "mainSpecies": 8,
+      "laterSidebarSpecies": 5,
+      "allFoundInPack": 13,
+      "previouslyAudited": 1,
+      "newSpeciesInLedger": 12,
+      "overallNoChange": 1,
+      "speciesChangeRequired": 6,
+      "speciesReviewRequired": 6,
+      "confirmedIssues": 13,
+      "reviewIssues": 19,
+      "totalFindings": 32,
+      "baseSizeSpeedNoChange": 13
     }
   },
   "entries": [
+    {
+      "name": "Advozse",
+      "foundryId": "species-advozse",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "199",
+        "part": "ADDENDUM",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-10-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unsupported Silver Tongue skill bonus and reroll",
+            "target": "data/species-traits-migrated.json: Advozse.structuralTraits[Silver Tongue] / conditionalTraits[Silver Tongue (Reroll)]",
+            "current": "+5 Persuasion and once/encounter reroll of Persuasion",
+            "publishedRule": "Legacy p199 prints Perception reroll, Low-Light Vision, +1 natural armor Reflex, not Persuasion traits.",
+            "proposedAction": "Find variant or later book source; do not substitute for actual Perception reroll.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 199,
+              "pdfPage": 200,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          },
+          {
+            "id": "LEG-10-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Flat Perception bonus separate from reroll",
+            "target": "packs/species.db: Advozse.system.skillBonuses",
+            "current": "+2 Perception",
+            "publishedRule": "Printed Heightened Awareness is a reroll with mandatory second result; no flat +2.",
+            "proposedAction": "Validate independent source and avoid double-count.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 199,
+              "pdfPage": 200,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      }
+    },
     {
       "name": "Aleena",
       "foundryId": "species-aleena",
@@ -1045,6 +1141,91 @@
       }
     },
     {
+      "name": "Chadra-Fan",
+      "foundryId": "species-chadra-fan",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "211",
+        "part": "ADDENDUM",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "CHANGE_REQUIRED",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-12-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Default ability profile disagrees with printed and alternate is correct",
+            "target": "packs/species.db: Chadra-Fan.system.abilityMods and variants[chadra-fan-alternate]",
+            "current": "Default +2 DEX -2 WIS; alternate +2 CHA -2 WIS",
+            "publishedRule": "Legacy p211 gives +2 Charisma and -2 Wisdom.",
+            "proposedAction": "Reconcile authority: make the published Legacy profile selectable/default as justified, preserving other genuinely sourced variants without silently erasing them.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 211,
+              "pdfPage": 212,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-12-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Default misses complete Tinkerer and class-skill access",
+            "target": "packs/species.db: Chadra-Fan.system.canonicalTraits[heightened-awareness,quality-repairs] and variants[chadra-fan-alternate]",
+            "current": "Default includes Perception reroll and repair bonus; no Mechanics reroll or permanent Mechanics class-skill entitlement. Alternate has printed full Tinkerer.",
+            "publishedRule": "Legacy p211 Tinkerer gives Mechanics reroll must accept, extra 1d8 HP repair/jury-rig, and always class skill.",
+            "proposedAction": "Ensure Legacy racial profile has all three Tinkerer benefits; preserve other printed variant separately.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 211,
+              "pdfPage": 212,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-12-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra unsourced +2 skills",
+            "target": "packs/species.db: Chadra-Fan.system.skillBonuses",
+            "current": "+2 Perception and +2 Mechanics",
+            "publishedRule": "Legacy p211 grants Mechanics reroll and class skill, not flat +2.",
+            "proposedAction": "Check alternate publication/variant and live consumer before granting.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 211,
+              "pdfPage": 212,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      }
+    },
+    {
       "name": "Chagrian",
       "foundryId": "species-chagrian",
       "cloneWars": {
@@ -1108,6 +1289,202 @@
           }
         ],
         "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
+      },
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "11",
+        "part": "CORE",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-01-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Foreign Codru-Ji anatomy contaminates Chagrian species",
+            "target": "packs/species.db: Chagrian.system.canonicalTraits[all-codru-ji-possess-six-limbs] and canonicalStats.traits",
+            "current": "Extra six-limbed Wyrwulves description in Chagrian species trait list",
+            "publishedRule": "Legacy p11 prints only Breathe Underwater, Low-Light Vision and Radiation Resistance; the Codru-Ji description belongs to the next race.",
+            "proposedAction": "Remove only imported Codru-Ji trait and derived projection through canonical source/generator; preserve Chagrian IDs and real traits.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 11,
+              "pdfPage": 12,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-01-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra Endurance skill bonus",
+            "target": "packs/species.db: Chagrian.system.skillBonuses",
+            "current": "+2 Endurance",
+            "publishedRule": "Legacy p11 species traits do not grant unconditional Endurance bonus.",
+            "proposedAction": "Check other source/variant; no generic passive without evidence.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 11,
+              "pdfPage": 12,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness.",
+        "crossBookNotes": [
+          {
+            "priorBook": "The Clone Wars Campaign Guide",
+            "priorFindingId": "CW-11-01",
+            "disposition": "SOURCE_RECONFIRMED_PENDING_CORRECTION",
+            "note": "Legacy p11 three-trait Chagrian list provides independent publication proof that Codru-Ji six-limb anatomy does not belong to Chagrian."
+          }
+        ]
+      }
+    },
+    {
+      "name": "Chiss",
+      "foundryId": "species-chiss",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "12",
+        "part": "CORE",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "CHANGE_REQUIRED",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "CHANGE_REQUIRED",
+            "note": "Extra Basic language vs printed Cheunh only."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-02-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Incorrect Chiss ability score and missing canonical modifiers provenance",
+            "target": "packs/species.db: Chiss.system.abilityMods / abilities",
+            "current": "INT +2, CHA -2",
+            "publishedRule": "Legacy p12 grants +2 Intelligence, no Charisma penalty.",
+            "proposedAction": "Correct Legacy-authoritative race data or introduce a sourced variant if required; preserve record identity.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 12,
+              "pdfPage": 13,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-02-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Missing published first-level bonus trained skill",
+            "target": "packs/species.db: Chiss.system.canonicalTraits / bonusTrainedSkills",
+            "current": "No canonicalTraits; bonusTrainedSkills=0",
+            "publishedRule": "Legacy p12: choose one additional trained skill from first-level class skill list.",
+            "proposedAction": "Add typed canonical bonus-trained-skill choice and validate finalizer/actor selection once. Do not conflate with fixed class skill.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 12,
+              "pdfPage": 13,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-02-03",
+            "status": "CHANGE_REQUIRED",
+            "title": "Chiss darkvision instead of Low-Light Vision",
+            "target": "data/species-traits-migrated.json: Chiss.structuralTraits[Darkvision].rules + pack vision traits",
+            "current": "Sidecar grants full darkvision; source species text is absent from pack",
+            "publishedRule": "Legacy p12 grants Low-Light Vision: ignore concealment but NOT total concealment caused by darkness.",
+            "proposedAction": "Use correct low-light sense on canonical authority and stop darkvision; verify vision in actor/token.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 12,
+              "pdfPage": 13,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-02-04",
+            "status": "CHANGE_REQUIRED",
+            "title": "Extra automatic Basic language",
+            "target": "packs/species.db: Chiss.system.languages",
+            "current": "Cheunh and Basic",
+            "publishedRule": "Legacy p12 Automatic Languages: Cheunh only.",
+            "proposedAction": "Preserve Basic as learnable language; remove unproven automatic grant or model separate sourced variant.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 12,
+              "pdfPage": 13,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-02-05",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted Tactical Training and Initiative bonuses",
+            "target": "data/species-traits-migrated.json: Chiss.structuralTraits[Tactical Training].rules; packs/species.db: Chiss.system.skillBonuses",
+            "current": "+2 Initiative always",
+            "publishedRule": "Legacy p12 printed Chiss base traits include bonus trained skill and Low-Light Vision; no +2 Initiative.",
+            "proposedAction": "Look for a separate sourcebook/variant; prevent unsupported passive addition until proven.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 12,
+              "pdfPage": 13,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
       }
     },
     {
@@ -1171,6 +1548,96 @@
           }
         ],
         "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
+      "name": "Codru-Ji",
+      "foundryId": "species-codru-ji",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "13",
+        "part": "CORE",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-03-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Skilled Grappler extended beyond grab attacks",
+            "target": "packs/species.db: Codru-Ji.system.canonicalTraits[skilled-grappler]",
+            "current": "Pack grants +5 to both Grab and Grapple checks",
+            "publishedRule": "Legacy p13 Skilled Grappler grants +5 species bonus to GRAB attacks; no independent Grapple bonus.",
+            "proposedAction": "Limit to published Grab attack checks; verify rules engine treats Grab/Grapple separately.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 13,
+              "pdfPage": 14,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-03-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Quad-Limbed sidecar injects melee attack bonus",
+            "target": "data/species-traits-migrated.json: Codru-Ji.structuralTraits[Quad-Limbed].rules",
+            "current": "+2 to every melee attackRoll (description claims grapple)",
+            "publishedRule": "Legacy p13 has Extra Arms (carry four items, no extra attacks) and Skilled Grappler +5 grab attacks; never +2 all melee.",
+            "proposedAction": "Remove/disable invented melee damageModifier and preserve Extra Arms/Grab semantics.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 13,
+              "pdfPage": 14,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-03-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Conditional Dual Weapon Mastery feat grant timing",
+            "target": "packs/species.db: Codru-Ji.system.canonicalTraits[conditional-bonus-feat] / advancement",
+            "current": "Text references Dual Weapon Mastery I with DEX 13 and BAB +1",
+            "publishedRule": "Legacy p13 grants Dual Weapon Mastery if its printed prerequisites (DEX 13 and BAB +1) are met.",
+            "proposedAction": "Test grant becomes available exactly when prerequisites are met, not automatically to ineligible level-one actor or permanently skipped.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 13,
+              "pdfPage": 14,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
       }
     },
     {
@@ -1251,6 +1718,108 @@
             "additionalSourceCheckRequired": true
           }
         ]
+      }
+    },
+    {
+      "name": "Devaronian",
+      "foundryId": "species-devaronian",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "214",
+        "part": "ADDENDUM",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "CHANGE_REQUIRED",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-13-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Male Devaronian stat choice unavailable",
+            "target": "packs/species.db: Devaronian.system.abilityMods",
+            "current": "Default all zero",
+            "publishedRule": "Legacy p214 male receives +2 DEX, -2 WIS, -2 CHA.",
+            "proposedAction": "Implement canonical male profile or mandatory sex-based selection, without using a zero-adjustment fallback.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 214,
+              "pdfPage": 215,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-13-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Female Devaronian variant stats incorrect",
+            "target": "packs/species.db: Devaronian.system.variants[devaronian-female].abilityMods",
+            "current": "Variant +2 WIS, -2 CHA; lacks +2 INT and -2 DEX",
+            "publishedRule": "Legacy p214 female receives +2 INT, +2 WIS, -2 DEX.",
+            "proposedAction": "Fix published female profile in source/selector; preserve choice identity and test final actor modifiers.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 214,
+              "pdfPage": 215,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-13-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra automatic Force Resistance bonus",
+            "target": "data/species-traits-migrated.json: Devaronian.structuralTraits[Force Resistance].rules",
+            "current": "+2 Will Defense when:always",
+            "publishedRule": "Legacy p214 only grants trained Deception conditional Skill Focus and Natural Curiosity action, not Force Resistance.",
+            "proposedAction": "Check another book/variant for legitimate resistance; do not grant unsourced Will bonus.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 214,
+              "pdfPage": 215,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          },
+          {
+            "id": "LEG-13-04",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted skill bonuses and Natural Curiosity runtime",
+            "target": "packs/species.db: Devaronian.system.skillBonuses / canonicalTraits[natural-curiosity]",
+            "current": "+2 Perception, +2 Persuasion; printed Natural Curiosity described but live effect untested",
+            "publishedRule": "Legacy p214 grants Deception-trained Skill Focus, once/encounter standard-action Perception vs DC15/Stealth for +1 insight attacks vs target.",
+            "proposedAction": "Source-check flat skills, and regression-test targeting, limit and nonstacking of insight bonus.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 214,
+              "pdfPage": 215,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
       }
     },
     {
@@ -2791,6 +3360,62 @@
       }
     },
     {
+      "name": "Klatooinian",
+      "foundryId": "species-klatooinian",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "14",
+        "part": "CORE",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-04-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted Hard Laborer passive",
+            "target": "data/species-traits-migrated.json: Klatooinian.structuralTraits[Hard Laborer].rules",
+            "current": "+2 Endurance always",
+            "publishedRule": "Legacy p14 only prints Iron Will +2 Will plus base chassis; no innate Endurance bonus.",
+            "proposedAction": "Check other printed source/variant before retaining as automatic species modifier.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 14,
+              "pdfPage": 15,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      }
+    },
+    {
       "name": "Krevaaki",
       "foundryId": "species-krevaaki",
       "jediAcademy": {
@@ -3180,6 +3805,79 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Nagai",
+      "foundryId": "species-nagai",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "15",
+        "part": "CORE",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-05-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Cold Adaptation sidecar applied unconditionally",
+            "target": "data/species-traits-migrated.json: Nagai.structuralTraits[Cold Adaptation].rules",
+            "current": "+2 Fortitude Defense when:always though sidecar prose limits to cold",
+            "publishedRule": "Legacy p15 inherent traits: Lightning Reflexes, Soothing Voice, tehk'la blade familiarity. No extra Fortitude.",
+            "proposedAction": "Seek source and if a valid cold-specific trait exists, gate to cold environment rather than always.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 15,
+              "pdfPage": 16,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": true
+          },
+          {
+            "id": "LEG-05-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted flat skills",
+            "target": "packs/species.db: Nagai.system.skillBonuses",
+            "current": "+2 Deception and +2 Stealth",
+            "publishedRule": "Legacy p15 Soothing Voice is a Persuasion reroll, not flat skill bonus.",
+            "proposedAction": "Source/variant check and verify passive pipeline consumption.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 15,
+              "pdfPage": 16,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
       }
     },
     {
@@ -3737,6 +4435,84 @@
           }
         ],
         "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
+      "name": "Sakiyan",
+      "foundryId": "species-sakiyan",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "204",
+        "part": "ADDENDUM",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          },
+          {
+            "field": "system.canonicalTraits[darkvision,conditional-bonus-feat,lightning-reflexes]",
+            "status": "NO_CHANGE",
+            "note": "Three published traits accurately present in pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-11-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Aerial Hunter extra Initiative passive",
+            "target": "data/species-traits-migrated.json: Sakiyan.conditionalTraits[Aerial Hunter].rules",
+            "current": "+2 Initiative when:always though own description says while flying",
+            "publishedRule": "Legacy p204 printed Sakiyan has Darkvision, conditional Skill Focus (Perception), +2 Reflex, and no species Flight.",
+            "proposedAction": "Check alternate source/feat before retaining; never apply flying-only bonus to nonflying Sakiyan.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 204,
+              "pdfPage": 205,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          },
+          {
+            "id": "LEG-11-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Flat Perception field rather than feat",
+            "target": "packs/species.db: Sakiyan.system.skillBonuses",
+            "current": "+2 Perception",
+            "publishedRule": "Book offers Skill Focus (Perception) IF already trained; not an unconditional +2.",
+            "proposedAction": "Source-check and verify conditional grant exactly once.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 204,
+              "pdfPage": 205,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
       }
     },
     {
@@ -4721,6 +5497,101 @@
       }
     },
     {
+      "name": "Vahla",
+      "foundryId": "species-vahla",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "59",
+        "part": "ADDENDUM",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          },
+          {
+            "field": "system.canonicalTraits[bonus-feat,dark-side-stigma,heightened-agility].description",
+            "status": "NO_CHANGE",
+            "note": "Three effects described correctly: bonus Force Sensitivity, 2 FP DSP redemption, Acrobatics reroll. Name alias is review-only."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-09-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Dark Side Affinity passive unsourced and ungated",
+            "target": "data/species-traits-migrated.json: Vahla.conditionalTraits[Dark Side Affinity].rules",
+            "current": "+2 Use the Force always despite sidecar prose requiring use of dark-side powers",
+            "publishedRule": "Legacy p59 grants Dark Side Stigma, bonus Force Sensitivity feat and Cartilaginous Skeleton Acrobatics reroll; no generic +2 Use the Force.",
+            "proposedAction": "Source-check any tradition/feat/optional bonus. If valid require dark-side-power context, never always-on.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 59,
+              "pdfPage": 60,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          },
+          {
+            "id": "LEG-09-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Cartilaginous Skeleton player-facing trait label",
+            "target": "packs/species.db: Vahla.system.canonicalTraits[heightened-agility].name",
+            "current": "Heightened Agility; correctly describes cartilage and Acrobatics reroll",
+            "publishedRule": "Legacy p59 calls this Cartilaginous Skeleton.",
+            "proposedAction": "Consider non-destructive display name/alias correction; preserve existing identity and mechanics.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 59,
+              "pdfPage": 60,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          },
+          {
+            "id": "LEG-09-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Dark Side Stigma cost and bonus feat runtime",
+            "target": "Vahla species grant ledger and Force Point/Dark Side adjustment consumers",
+            "current": "Pack text matches 2 FP per 1 DSP and automatic Force Sensitivity; live actor not tested",
+            "publishedRule": "Legacy p59 doubles Force Point redemption cost, and grants Force Sensitivity as a bonus feat at creation.",
+            "proposedAction": "Verify one-time feat grant and double cost without silently giving a flat +2 UTF.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 59,
+              "pdfPage": 60,
+              "section": "Later chapter sidebar: New Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      }
+    },
+    {
       "name": "Vultan",
       "foundryId": "species-vultan",
       "jediAcademy": {
@@ -4847,6 +5718,79 @@
           }
         ],
         "note": "Status addresses original printed species record and any executable sidecar; no production changes applied."
+      }
+    },
+    {
+      "name": "Weequay",
+      "foundryId": "species-weequay",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "16",
+        "part": "CORE",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-06-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted Will Defense sidecar",
+            "target": "data/species-traits-migrated.json: Weequay.structuralTraits[Stoic Resolve].rules",
+            "current": "+2 Will always",
+            "publishedRule": "Legacy p16 lists Endurance-trained Skill Focus, +1 natural armor Reflex, and 20-square tribal pheromones, not +2 Will.",
+            "proposedAction": "Seek source-specific authorization and prevent generic Will bonus if absent.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 16,
+              "pdfPage": 17,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": true
+          },
+          {
+            "id": "LEG-06-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Flat Endurance score instead of conditional feat",
+            "target": "packs/species.db: Weequay.system.skillBonuses",
+            "current": "+2 Endurance",
+            "publishedRule": "Published grants Skill Focus (Endurance) only IF Endurance trained.",
+            "proposedAction": "Check other source and ensure numeric field does not supplant trained-skill prerequisite.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 16,
+              "pdfPage": 17,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
       }
     },
     {
@@ -5237,6 +6181,96 @@
       }
     },
     {
+      "name": "Yuuzhan Vong",
+      "foundryId": "species-yuuzhan-vong",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "17",
+        "part": "CORE",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "LEG-07-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Malformed automatic Force immunity matcher",
+            "target": "data/species-traits-migrated.json: Yuuzhan Vong.structuralTraits[Force Immunity].rules",
+            "current": "immunity.immuneTo.values=['t']",
+            "publishedRule": "Legacy p17 grants immunity to Force effects TARGETING Will, plus ban Force Sensitivity, Use the Force checks, Force Points.",
+            "proposedAction": "Replace meaningless marker with typed scope-limited Will-targeting Force-effect immunity; test that attacks against Reflex/Fortitude are NOT blanket immune.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 17,
+              "pdfPage": 18,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-07-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Sidecar forbids all non-organic gear",
+            "target": "data/species-traits-migrated.json: Yuuzhan Vong.structuralTraits[Living Technology].rules",
+            "current": "restriction equipmentType inorganic-equipment, always",
+            "publishedRule": "Printed Technophobic withholds starting Heavy/Pistol/Rifle proficiency; it does not mechanically prohibit handling all inorganic equipment.",
+            "proposedAction": "Remove/unwire absolute inorganic equipment ban unless another rules source explicitly creates enforceable restriction; preserve cultural description and starting proficiency suppression.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 17,
+              "pdfPage": 18,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": false
+          },
+          {
+            "id": "LEG-07-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Biotech Proficiency extra beyond Legacy trait list",
+            "target": "packs/species.db: Yuuzhan Vong.system.canonicalTraits[biotech-proficiency]",
+            "current": "Automatic no penalties wielding Yuuzhan Vong Biotech",
+            "publishedRule": "Legacy p17 inherent traits only Force Immunity, Technophobic, Amphistaff familiarity.",
+            "proposedAction": "Verify separate printed biotech weapon rules/variant before removing or conferring an extra proficiency.",
+            "applied": false,
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "printedPage": 17,
+              "pdfPage": 18,
+              "section": "Chapter I — Species"
+            },
+            "otherBookVerificationRequired": true
+          }
+        ],
+        "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      }
+    },
+    {
       "name": "Yuzzem",
       "foundryId": "species-yuzzem",
       "galaxyAtWar": {
@@ -5403,6 +6437,49 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Zeltron",
+      "foundryId": "species-zeltron",
+      "legacyEra": {
+        "source": "Legacy Era Campaign Guide",
+        "printedPages": "17",
+        "part": "CORE",
+        "status": "NO_CHANGE",
+        "checked": {
+          "packExists": true,
+          "identityStable": true,
+          "printedSizeBaseSpeed": "NO_CHANGE",
+          "publishedAbilityAdjustments": "NO_CHANGE",
+          "canonicalTraitsInspected": true,
+          "bothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size / system.speed",
+            "status": "NO_CHANGE",
+            "note": "Published Medium/Small and base speed agree with pack."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Published automatic-language names match pack."
+          },
+          {
+            "field": "system.abilityMods",
+            "status": "NO_CHANGE",
+            "note": "Published racial ability modifiers match pack."
+          },
+          {
+            "field": "system.canonicalTraits[empathy,soothing-pheromones]",
+            "status": "NO_CHANGE",
+            "note": "Published scoped bonus CHA to sense deception/influence and +5 Persuasion to change attitude except Zeltrons match pack."
+          }
+        ],
+        "findings": [],
+        "notes": "No published source-data correction indicated for this species. Runtime entitlements still not certified."
       }
     },
     {
