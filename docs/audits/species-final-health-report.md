@@ -14,6 +14,14 @@ A [separate 39-record provenance investigation](species-39-provenance-reconcilia
 
 **Reconciliation boundary:** The census table below remains the preceding certified rolling-ledger snapshot (**121 audited records; 39 unmatched**) until each of the six discovered published profiles has been individually entered into the main ledger and both species trait sidecars reviewed. The new supplement is **research evidence**, not a claim that the existing 302 finding statuses have changed or that 33 remaining sources are definitively noncanonical. No production species files were edited.
 
+## Canonical cleanup decision — removal queue (October 13, 2026)
+
+**User-approved audit classification:** **17** community/fan-attributed playable species records are now `MARKED_FOR_REMOVAL` from the canonical player-selectable SWSE species compendium. The removal list is recorded under exact Foundry IDs in the [machine provenance matrix](../../data/audits/species-39-provenance-reconciliation.json), mirrored in the [161-record census](../../data/audits/species-final-provenance-census.json), and explained in the [overall report and roadmap](species-audit-overall-roadmap.md).
+
+**Marked species:** Aing-Tii, Anomid, Anx, Besalisk, Chevin, Drall, Dressellian, Gree, Jenet, Kessurian, Kiffar, Koorivar, Mirialan, Mustafarian, Muun, Ortolan, Quermian.
+
+**Important:** This is a *planned controlled removal*, not a production deletion. `packs/species.db`, both trait sidecars, actors, species registry, CharGen and V2 engines remain unchanged. Check actual official WotC SWSE racial source counterevidence before removal, inventory world actors and dependent IDs, preserve backups, and run save/load and new-character tests. The 6 directly verified official profiles, 5 pending Wizards web leads, and 11 special/unresolved cases are **not** marked for removal. The main rolling audit still contains 121 source-audited identities and 302 historical findings; supplemental discoveries have not yet been fully merged into its source claim records.
+
 ## 161-record census
 
 | Measure | Result |

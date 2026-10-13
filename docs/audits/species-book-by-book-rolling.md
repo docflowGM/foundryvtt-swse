@@ -1292,3 +1292,9 @@ Read the [Final Book-Sweep Health Report](species-final-health-report.md) and [m
 **Outcome:** `SCREENED_NO_NON_DROID_SPECIES_RULES` — **0** new published non-droid species profiles, **0** source-based racial corrections, and **0** production edits. The [source-scope memo](species-starships-of-the-galaxy-source-scope.md) records the PDF/TXT inspection and distinguishes species-specific cockpit usage from innate racial grants (Geonosian Nantex p.86, human Ginivex p.87, Mon Calamari cruiser pp.114–115).
 
 The source-audited ledger stays at **121 species/profile identities** and **302 existing unapplied findings**. In the **14-title project source set**, this finishes **13 in-scope book screenings**; the only other title, *Scavenger's Guide to Droids*, is intentionally excluded. **No eligible books remain**, but **39 existing non-droid pack records still lack independently verified species-rules provenance** and require a separate reconciliation.
+
+---
+
+## Community species removal queue — audit decision (October 13, 2026)
+
+The 39-record [supplemental provenance matrix](../../data/audits/species-39-provenance-reconciliation.json) has **17 community/fan-attributed playable SWSE species records marked `MARKED_FOR_REMOVAL`** from the canonical player-selectable compendium. Their exact Foundry IDs, source-attribution evidence and reversible cleanup gates are listed in the matrix and the [overall audit/remediation roadmap](species-audit-overall-roadmap.md). This is an explicit removal queue, **not deletion**: production packs, both sidecars, actor references, registries and CharGen remain untouched. The 6 newly recovered official original sources, 5 official web leads and 11 special/ambiguous profiles are not in this removal queue. Historical ledger census (**121 identities, 302 unapplied findings**) is preserved until source audits are incorporated and tested.

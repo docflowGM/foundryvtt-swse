@@ -32,7 +32,9 @@
     "nonDroidSpeciesSourcebooksWithProfiles": 12,
     "nonDroidSpeciesSourcebooksScreenedNoProfiles": 1,
     "excludedDroidSourcebooks": 1,
-    "eligibleBooksRemaining": 0
+    "eligibleBooksRemaining": 0,
+    "markedForCanonicalRemoval": 17,
+    "actualRemovedFromProduction": 0
   },
   "nonDroidUnverified": [
     {
@@ -567,7 +569,9 @@
       "packSourceHint": "Unknown Regions",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Aleena",
@@ -625,7 +629,9 @@
       "packSourceHint": "Scum & Villainy",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Anx",
@@ -633,7 +639,9 @@
       "packSourceHint": "FU",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Anzati",
@@ -746,7 +754,9 @@
       "packSourceHint": "Clone Wars",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Bith",
@@ -905,7 +915,9 @@
       "packSourceHint": "FU",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Chiss",
@@ -1035,7 +1047,9 @@
       "packSourceHint": "Corella System",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Dressellian",
@@ -1043,7 +1057,9 @@
       "packSourceHint": "Rebellion",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Dug",
@@ -1292,7 +1308,9 @@
       "packSourceHint": "Clone Wars",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Gundark",
@@ -1465,7 +1483,9 @@
       "packSourceHint": "Rebellion",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Kal-Dexar",
@@ -1542,7 +1562,9 @@
       "packSourceHint": "Scum & Villainy",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Khil",
@@ -1564,7 +1586,9 @@
       "packSourceHint": "FU",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Killik",
@@ -1614,7 +1638,9 @@
       "packSourceHint": "Clone Wars",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Krevaaki",
@@ -1719,7 +1745,9 @@
       "packSourceHint": "KOTOR",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Mon Calamari",
@@ -1760,7 +1788,9 @@
       "packSourceHint": "Rebellion",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Muun",
@@ -1768,7 +1798,9 @@
       "packSourceHint": "Rebellion",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Nagai",
@@ -1931,7 +1963,9 @@
       "packSourceHint": "Rebellion",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Pa'lowick",
@@ -1996,7 +2030,9 @@
       "packSourceHint": "Clone Wars",
       "class": "PROVENANCE_REQUIRED",
       "sourceReferences": [],
-      "runtimeCertified": false
+      "runtimeCertified": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "actualRemovedFromProduction": false
     },
     {
       "name": "Rakata",
@@ -2809,5 +2845,245 @@
       "status": "EXCLUDED_DROID_SPECIES_SCOPE",
       "scope": "Droid chassis/models not part of biological species audit"
     }
-  }
+  },
+  "removalQueue": {
+    "intent": "Mark community/fan-attributed playable profiles for removal from canonical species selection",
+    "status": "MARKED_FOR_REMOVAL_NOT_DELETED",
+    "date": "2026-10-13",
+    "count": 17,
+    "records": [
+      {
+        "name": "Aing-Tii",
+        "foundryId": "species-aing-tii",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Anomid",
+        "foundryId": "species-anomid",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Anx",
+        "foundryId": "species-anx",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Besalisk",
+        "foundryId": "species-besalisk",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Chevin",
+        "foundryId": "species-chevin",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Drall",
+        "foundryId": "species-drall",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Dressellian",
+        "foundryId": "species-dressellian",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Gree",
+        "foundryId": "species-gree",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Jenet",
+        "foundryId": "species-jenet",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Kessurian",
+        "foundryId": "species-kessurian",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Kiffar",
+        "foundryId": "species-kiffar",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Koorivar",
+        "foundryId": "species-koorivar",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Mirialan",
+        "foundryId": "species-mirialan",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Mustafarian",
+        "foundryId": "species-mustafarian",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Muun",
+        "foundryId": "species-muun",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Ortolan",
+        "foundryId": "species-ortolan",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      },
+      {
+        "name": "Quermian",
+        "foundryId": "species-quermian",
+        "status": "MARKED_FOR_REMOVAL",
+        "executed": false,
+        "evidenceClassification": "COMMUNITY_SOURCE_ATTRIBUTED"
+      }
+    ],
+    "gates": [
+      "Primary publisher-rule evidence recheck",
+      "Actor and compendium references inventory",
+      "Traits sidecar and species registry reference audit",
+      "Backup/export before physical changes",
+      "New-character filtering and saved-character reload regressions"
+    ],
+    "sourceMatrix": "data/audits/species-39-provenance-reconciliation.json",
+    "decisionReport": "docs/audits/species-audit-overall-roadmap.md"
+  },
+  "unverifiedRemovalCandidates": [
+    {
+      "name": "Aing-Tii",
+      "foundryId": "species-aing-tii",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Anomid",
+      "foundryId": "species-anomid",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Anx",
+      "foundryId": "species-anx",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Besalisk",
+      "foundryId": "species-besalisk",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Chevin",
+      "foundryId": "species-chevin",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Drall",
+      "foundryId": "species-drall",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Dressellian",
+      "foundryId": "species-dressellian",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Gree",
+      "foundryId": "species-gree",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Jenet",
+      "foundryId": "species-jenet",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Kessurian",
+      "foundryId": "species-kessurian",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Kiffar",
+      "foundryId": "species-kiffar",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Koorivar",
+      "foundryId": "species-koorivar",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Mirialan",
+      "foundryId": "species-mirialan",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Mustafarian",
+      "foundryId": "species-mustafarian",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Muun",
+      "foundryId": "species-muun",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Ortolan",
+      "foundryId": "species-ortolan",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    },
+    {
+      "name": "Quermian",
+      "foundryId": "species-quermian",
+      "status": "MARKED_FOR_REMOVAL",
+      "currentLedgerStatus": "SOURCE_NOT_FULLY_CERTIFIED"
+    }
+  ]
 }

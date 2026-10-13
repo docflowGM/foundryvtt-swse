@@ -323,7 +323,10 @@
       "excludedDroidOnlySourcebooks": [
         "Scavenger's Guide to Droids"
       ],
-      "eligibleBooksRemaining": 0
+      "eligibleBooksRemaining": 0,
+      "markedForRemoval": 17,
+      "removedProductionRecords": 0,
+      "removalPolicyReference": "docs/audits/species-audit-overall-roadmap.md"
     },
     "starshipsOfTheGalaxy": {
       "status": "SCREENED_NO_NON_DROID_SPECIES_RULES",
@@ -333,6 +336,37 @@
       "shipSpecificObservations": 3,
       "productionMutations": 0,
       "runtimeTests": 0
+    },
+    "canonicalHomebrewRemovalPolicy": {
+      "source": "data/audits/species-39-provenance-reconciliation.json",
+      "overallRoadmap": "docs/audits/species-audit-overall-roadmap.md",
+      "decisionDate": "2026-10-13",
+      "policy": "OFFICIAL_PUBLISHED_SWSE_SPECIES_ONLY_IN_CANONICAL_SELECTABLE_COMPENDIUM",
+      "status": "17_COMMUNITY_ATTRIBUTED_PROFILES_MARKED_FOR_REMOVAL",
+      "removalCandidateCount": 17,
+      "removalExecutedCount": 0,
+      "candidateFoundryIds": [
+        "species-aing-tii",
+        "species-anomid",
+        "species-anx",
+        "species-besalisk",
+        "species-chevin",
+        "species-drall",
+        "species-dressellian",
+        "species-gree",
+        "species-jenet",
+        "species-kessurian",
+        "species-kiffar",
+        "species-koorivar",
+        "species-mirialan",
+        "species-mustafarian",
+        "species-muun",
+        "species-ortolan",
+        "species-quermian"
+      ],
+      "mustRecheckOriginalOfficialSWSESources": true,
+      "mustVerifyActorAndSidecarDependenciesBeforeRemoval": true,
+      "other39GroupsAreNotMarked": true
     }
   },
   "entries": [
