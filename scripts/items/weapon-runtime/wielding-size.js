@@ -109,7 +109,9 @@ export function resolveEffectiveWieldingSize(shape, actorSize, { tripodMounted, 
   const cOff = classifySize(off.index, w), cOn = classifySize(on.index, w);
   if (cOff === cOn) return pack(off);
   const base0 = pack(off, (cOff === 'too-large' || cOn === 'too-large') ? null : true, 'tripod');
-  return Object.freeze({ ...base0, requiredHands: null, classification: null });
+  // both outcomes are exposed so a caller can tell WHETHER the unanswered question matters (a different grip, a different light class) and what each answer implies
+  const outcome = (e, c) => Object.freeze({ classification: c, effectiveSize: e.size, requiredHands: c === 'two-handed' ? 2 : null });
+  return Object.freeze({ ...base0, requiredHands: null, classification: null, outcomes: Object.freeze({ unmounted: outcome(off, cOff), mounted: outcome(on, cOn) }) });
 }
 
 /** The size state a consumer reads for ONE attack / classification: an explicit option wins over the owned state (never a free default). */
@@ -150,7 +152,7 @@ export function wornClassOf(operation) {
  * Attack preflight, damage and the dual-wield resolver all read this one result. `deps` = { shapeOf(item), proficient(weapon, actor) } (injected so this stays pure).
  * @returns {{ok:boolean, count:number, memberIds:string[], reason:string|null}}  ok false => the weapon is treated as held singly (count 1)
  */
-export function resolveHeldGroup(actor, weapon, { shapeOf, proficient } = {}, idsOverride = null) {
+export function resolveHeldGroup(actor, weapon, { shapeOf, proficient, equipped } = {}, idsOverride = null) {
   const single = (reason) => ({ ok: false, count: 1, memberIds: [], reason });
   let owned = null;
   try { owned = weapon?.flags?.swse?.fireState ?? weapon?.getFlag?.('swse', 'fireState') ?? null; } catch { owned = null; }
@@ -160,6 +162,9 @@ export function resolveHeldGroup(actor, weapon, { shapeOf, proficient } = {}, id
   if (!shape || shape.source !== 'canonical' || !shape.heldTogether) return single('not-holdable-together');
   if (new Set(ids).size !== ids.length || ids.includes(String(weapon?.id))) return single('duplicate-or-self');
   if (!(typeof proficient === 'function' && proficient(weapon, actor) === true)) return single('not-proficient');
+  // equipped / readied per the repository's own predicate (isItemEquipped), for the primary and every member; no predicate = nothing is held
+  const held = (it) => typeof equipped === 'function' && equipped(it, actor) === true;
+  if (!held(weapon)) return single('primary-not-equipped');
   const items = Array.from(actor?.items ?? []);
   const stateOf = (it) => { try { return it?.flags?.swse?.fireState ?? it?.getFlag?.('swse', 'fireState') ?? null; } catch { return null; } };
   for (const id of ids) {
@@ -167,7 +172,7 @@ export function resolveHeldGroup(actor, weapon, { shapeOf, proficient } = {}, id
     if (!it || it.type !== 'weapon') return single('member-missing');
     const sh = shapeOf(it);
     if (!sh || sh.source !== 'canonical' || sh.identityKey !== shape.identityKey) return single('member-not-same-weapon');
-    if (it.system?.equipped === false) return single('member-not-equipped');
+    if (!held(it)) return single('member-not-equipped');
     if (it.system?.isOffhand === true || it.system?.slot === 'offhand') return single('member-is-offhand');
     if (asArray(stateOf(it)?.heldTogetherIds).length) return single('member-has-its-own-group');
     if (items.some((o) => o?.id !== weapon?.id && o?.id !== id && asArray(stateOf(o)?.heldTogetherIds).map(String).includes(id))) return single('member-in-another-group');

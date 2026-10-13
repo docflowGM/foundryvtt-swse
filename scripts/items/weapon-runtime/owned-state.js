@@ -54,6 +54,8 @@ export function resolveWielding(constraints, { option, state, sizing } = {}) {
   // verdict that is not established (sizing.legal === null) refuses nothing. The hands in use are still the wielder's choice for light / one-handed weapons.
   const extra = sizing ? { sizing } : {};
   if (sizing?.legal === false) return { hands, source, legal: false, reason: sizing.reason ?? 'too-large-to-wield', constraints: c, ...extra };
+  // a one-handed grip that is only legal if the weapon IS on a tripod cannot be authorized by an unanswered tripod question (unknown is neither true nor false)
+  if (hands === 1 && sizing?.pending === 'tripod' && sizing.outcomes?.unmounted?.requiredHands === 2) return { hands, source, legal: false, reason: 'grip-requires-tripod-confirmation', constraints: c, ...extra };
   if (hands === undefined && sizing?.requiredHands === 2) { hands = 2; source = 'size'; }
   if (sizing?.requiredHands === 2 && hands === 1) return { hands, source, legal: false, reason: 'requires-two-hands', constraints: c, ...extra };
   if (c.cannotWieldTwoHanded && hands === 2) return { hands, source, legal: false, reason: 'cannot-wield-two-handed', constraints: c, ...extra };

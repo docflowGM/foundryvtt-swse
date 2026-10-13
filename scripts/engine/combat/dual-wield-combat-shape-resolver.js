@@ -3,7 +3,8 @@ import { EffectiveWeaponQualityResolver } from "/systems/foundryvtt-swse/scripts
 import {
   isLightWeaponForActor as canonicalIsLightWeaponForActor,
   isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly,
-  isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon
+  isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon,
+  isItemEquipped
 } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
 import { descriptorMatchesAny } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js';
@@ -159,7 +160,7 @@ function findOffhand(actor, primary = null) {
   // Phase 5D-I-D-B2: identical weapons the player ESTABLISHED as held together in one hand count as ONE weapon -- the group is the SAME validated result the attack
   // preflight uses (resolveHeldGroup: proficiency, ownership, equipped, no off-hand designation, no overlapping group), so a stale or invalid group frees its sticks
   // as separate weapons and never half-applies. Nothing is counted from the inventory alone.
-  const group = primary ? resolveHeldGroup(actor, primary, { shapeOf: (w) => { try { return shapeOfWeapon(w); } catch { return null; } }, proficient: (w, a) => isProficient(w, a) === true }) : { memberIds: [] };
+  const group = primary ? resolveHeldGroup(actor, primary, { shapeOf: (w) => { try { return shapeOfWeapon(w); } catch { return null; } }, proficient: (w, a) => isProficient(w, a) === true, equipped: (w, a) => isItemEquipped(w, a) }) : { memberIds: [] };
   const grouped = new Set(group.memberIds);
   const candidates = weapons.filter(item => primary && !sameWeapon(item, primary) && !grouped.has(item.id));
   return candidates.find(item => shapeOfWeapon(item).dualWield?.eligibleAsSecondWeapon === true) ?? candidates[0] ?? null;

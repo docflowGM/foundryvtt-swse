@@ -6,6 +6,7 @@
 // Legacy/custom weapons and canonical forms with no temporal constraint pass straight through: nothing is read or written.
 import { evaluateReadiness, stateAfterFire, stateAfterReload, evaluatePrime, statePrimed, evaluateBrace } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/fire-state.js";
 import { resolveAttackShapeFor, resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { hostEligibility } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/host-mount.js";
 import { resolveEffectiveWieldingSize, resolveHeldGroup, sizeStateOf, sizeIndexOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
 import { powerSourceStatus, powerSourceLabel, POWER_SOURCE_STATES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/power-source.js";
@@ -139,7 +140,7 @@ export function applyOwnedSelection(actor, weapon, rollOptions = {}) {
   return rollOptions;
 }
 
-const heldDeps = { shapeOf: (w) => { try { return shapeOfWeapon(w, {}); } catch { return null; } }, proficient: (w, a) => { try { return resolveCanonicalAttackProficiency(resolveAttackWeaponRuntime(w, {}), a).proficient === true; } catch { return false; } } };
+const heldDeps = { shapeOf: (w) => { try { return shapeOfWeapon(w, {}); } catch { return null; } }, proficient: (w, a) => { try { return resolveCanonicalAttackProficiency(resolveAttackWeaponRuntime(w, {}), a).proficient === true; } catch { return false; } }, equipped: (w, a) => isItemEquipped(w, a) };
 /** The held-together group of an owned weapon as it stands NOW (proficiency, ownership, equipped, off-hand designation, other groups all re-checked). */
 export function heldGroupOf(actor, weapon, idsOverride = null) { return resolveHeldGroup(actor, weapon, heldDeps, idsOverride); }
 const heldTogetherActive = (actor, weapon) => heldGroupOf(actor, weapon).count >= 2;
@@ -387,7 +388,7 @@ export function heldTogetherOptions(actor, weapon) {
   try { shape = shapeOfWeapon(weapon, {}); } catch { return null; }
   if (shape.source !== 'canonical' || !shape.heldTogether) return null;
   const sameWeapon = (i) => { const sh = heldDeps.shapeOf(i); return !!sh && sh.source === 'canonical' && sh.identityKey === shape.identityKey; };
-  const free = (i) => i?.type === 'weapon' && i.id !== weapon.id && i.system?.equipped !== false && i.system?.isOffhand !== true && i.system?.slot !== 'offhand';
+  const free = (i) => i?.type === 'weapon' && i.id !== weapon.id && isItemEquipped(i, actor) && i.system?.isOffhand !== true && i.system?.slot !== 'offhand';
   const candidates = Array.from(actor?.items ?? []).filter((i) => free(i) && sameWeapon(i)).map((i) => ({ id: i.id, label: i.name }));
   const group = heldGroupOf(actor, weapon);
   return { candidates, max: 1 + candidates.length, current: group.count, memberIds: group.memberIds };

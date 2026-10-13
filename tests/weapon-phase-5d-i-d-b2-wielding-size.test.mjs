@@ -274,6 +274,22 @@ try {
   answer(true); reset(); assert.ok(await attack(T, er, AF)); assert.equal(readState(er).mounted, true); assert.equal(wfOf().attackShape.weaponSizeClass.source, 'tripod');
   rt.setSpecialPromptProvider(async () => false); const er2 = owned('weapon-e-web-repeating-blaster'); const T2 = makeActor({ items: [er2] }); reset(); assert.equal(await attack(T2, er2, AF), null, '"no tripod": refused'); rt.setSpecialPromptProvider(null);
   const fc2 = owned('weapon-flame-cannon'); const T3 = makeActor({ items: [fc2] }); reset(); assert.ok(await attack(T3, fc2, {}), 'both answers are legal for the flame cannon: nothing is asked and nothing refused');
+  // tripod-dependent GRIP: a Medium wielder's Large flame cannon is two-handed off a tripod and one-handed on one; an unanswered tripod question never authorizes the one-handed grip
+  { const fcT = (extra = {}) => { const w = owned('weapon-flame-cannon'); return [makeActor({ items: [w], ...extra }), w]; };
+    let [A, w] = fcT(); reset(); assert.equal(await attack(A, w, { mounted: false, wieldedHands: 1 }), null, 'tripod false + one hand: refused'); assert.equal(used(), 0);
+    [A, w] = fcT(); reset(); assert.ok(await attack(A, w, { mounted: true, wieldedHands: 1 }), 'tripod true + one hand: accepted'); assert.deepEqual([wfOf().attackShape.weaponSizeClass.classification, wfOf().attackShape.wieldedHands], ['one-handed', 1]);
+    [A, w] = fcT(); reset(); assert.ok(await attack(A, w, { mounted: false, wieldedHands: 2 }), 'two hands is legal either way'); assert.equal(wfOf().attackShape.weaponSizeClass.classification, 'two-handed');
+    // unknown + one hand: asked once BEFORE the modifiers; the answer is the single resolved context
+    const ids = []; rt.setSpecialPromptProvider(async (q) => { ids.push(q.id); return true; });
+    [A, w] = fcT(); reset(); assert.ok(await attack(A, w, { wieldedHands: 1 })); assert.deepEqual(ids, ['requirement:mounted'], 'asked once'); assert.equal(readState(w).mounted, true); assert.deepEqual([wfOf().attackShape.weaponSizeClass.source, wfOf().attackShape.weaponSizeClass.classification, wfOf().attackShape.wieldedHands], ['tripod', 'one-handed', 1]);
+    ids.length = 0; await S.clearReload(A, w); reset(); assert.ok(await attack(A, w, { wieldedHands: 1 })); assert.deepEqual(ids, [], 'stored: not asked again');
+    rt.setSpecialPromptProvider(async () => false); [A, w] = fcT(); reset(); assert.equal(await attack(A, w, { wieldedHands: 1 }), null, 'answered "no tripod": one hand refused'); assert.equal(used(), 0);
+    rt.setSpecialPromptProvider(async () => null); [A, w] = fcT(); reset(); assert.equal(await attack(A, w, { wieldedHands: 1 }), null, 'unanswered: cannot masquerade as verified one-handed use'); assert.ok(notes.warn.some((m) => /grip requires tripod confirmation/.test(m))); assert.equal(used(), 0); assert.equal(readState(w)?.mounted, undefined, 'and nothing is guessed into the owned state');
+    ids.length = 0; rt.setSpecialPromptProvider(async (q) => { ids.push(q.id); return null; }); [A, w] = fcT(); reset(); assert.ok(await attack(A, w, { wieldedHands: 2 })); assert.deepEqual(ids, [], 'a grip legal under both answers asks nothing');
+    reset(); assert.ok(await attack(A, w, {})); assert.deepEqual(ids, [], 'no grip stated: nothing to decide, nothing asked'); rt.setSpecialPromptProvider(null);
+    // the attack-stage modifiers see the final resolved grip: the same attack bonus with the answer given up front or asked mid-attack
+    [A, w] = fcT(); const bUp = await bonusOf(A, w, { mounted: true, wieldedHands: 1 });
+    rt.setSpecialPromptProvider(async () => true); const [A2, w2] = fcT(); const bAsk = await bonusOf(A2, w2, { wieldedHands: 1 }); rt.setSpecialPromptProvider(null); assert.equal(bAsk, bUp); }
   // a rifle host is not a tripod
   const micro = owned('weapon-micro-grenade-launcher'), rifle = owned('weapon-blaster-rifle'); const H = makeActor({ items: [micro, rifle] });
   await S.mountOnHost(H, micro, rifle, { skillRoller: async () => ({ total: 30 }) }); assert.equal(readState(micro).mounted, undefined); assert.equal(notesOf(H, micro).some((n) => /tripod/.test(n)), false);
@@ -345,6 +361,20 @@ try {
     b.system = { ...b.system, isOffhand: true };
     assert.equal(await profileOf(A, a), 'melee', 'a stick designated as the off-hand weapon cannot also be in the primary group'); assert.equal(await profileOf(A, a, { profileId: 'melee-grouped' }), null);
     const sh = DW.resolve(A, { primaryWeapon: a }); assert.equal(sh.usingTwoWeapons, true); assert.equal(sh.offHand.weapon.id, b.id, 'it is a separate weapon, never in two slots'); }
+  // equipped state is the repository's own predicate (isItemEquipped), for the primary AND every member
+  { const [a, b] = mk(2); const A = makeActor({ items: [a, b], feats: [prof()] }); await S.setHeldTogether(A, a, [b.id]); assert.equal(await profileOf(A, a), 'melee-grouped');
+    const strip = (w) => { const { equipped, ...rest } = w.system; w.system = rest; };
+    const was = { ...b.system }; strip(b); assert.equal(S.heldGroupOf(A, a).reason, 'member-not-equipped', 'a missing equipped value is not "equipped"'); assert.equal(await profileOf(A, a), 'melee'); assert.equal(await profileOf(A, a, { profileId: 'melee-grouped' }), null);
+    b.system = { ...b.system, readied: true }; assert.equal(S.heldGroupOf(A, a).ok, true, 'readied counts (supported alternative representation)'); b.system = { ...was };
+    strip(b); b.flags = { ...b.flags, swse: { ...b.flags.swse, equipped: true } }; assert.equal(S.heldGroupOf(A, a).ok, true, 'a flag-based equipped state counts'); b.flags = { ...b.flags, swse: { ...b.flags.swse, equipped: false } }; b.system = { ...was, equipped: false };
+    assert.equal(S.heldGroupOf(A, a).reason, 'member-not-equipped'); b.system = { ...was }; b.flags = { ...b.flags, swse: { ...b.flags.swse } }; assert.equal(S.heldGroupOf(A, a).ok, true);
+    // the primary must be equipped too
+    const wasA = { ...a.system }; a.system = { ...a.system, equipped: false }; assert.equal(S.heldGroupOf(A, a).reason, 'primary-not-equipped'); assert.equal(await profileOf(A, a, { profileId: 'melee-grouped' }), null); strip(a); assert.equal(S.heldGroupOf(A, a).reason, 'primary-not-equipped'); a.system = { ...wasA };
+    // a formerly valid group is invalidated when the equipment changes, in the dual-wield planner as well
+    assert.equal(DW.resolve(A, { primaryWeapon: a }).usingTwoWeapons, false); b.system = { ...was, equipped: false }; assert.equal(S.heldGroupOf(A, a).ok, false); assert.equal(DW.resolve(A, { primaryWeapon: a }).usingTwoWeapons, false, 'an unequipped stick is not a second weapon either'); b.system = { ...was }; }
+  // two grouped sticks plus a genuinely separate third as the off-hand weapon stay legal
+  { const [a, b, c] = mk(3); const A = makeActor({ items: [a, b, c], feats: [prof()] }); c.system = { ...c.system, isOffhand: true }; assert.equal((await S.setHeldTogether(A, a, [b.id])).ok, true);
+    assert.equal(await profileOf(A, a), 'melee-grouped'); const sh = DW.resolve(A, { primaryWeapon: a }); assert.equal(sh.usingTwoWeapons, true); assert.equal(sh.offHand.weapon.id, c.id); }
   // the same stick in two groups; a member that has its own group
   { const [a, b, c] = mk(3); const A = makeActor({ items: [a, b, c], feats: [prof()] }); await S.setHeldTogether(A, a, [c.id]);
     assert.equal((await S.setHeldTogether(A, b, [c.id])).reason, 'member-in-another-group', 'a stick already in a group cannot join a second one');

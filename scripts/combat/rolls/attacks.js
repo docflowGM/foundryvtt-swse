@@ -281,7 +281,15 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   let tripod = typeof rollOptions.mounted === 'boolean' ? rollOptions.mounted : (typeof owned.mounted === 'boolean' ? owned.mounted : undefined);
   let sizing = sizeFor(tripod);
   // an unestablished tripod state that decides whether the weapon can be wielded at all is asked once (and stored), never guessed
-  if (sizing?.pending === 'tripod' && sizing.legal === null && tripod === undefined) {
+  // ... whenever it changes the legality of the requested grip, the light classification, or whether the weapon can be wielded at all
+  const tripodMatters = (sz) => {
+    if (sz?.pending !== 'tripod') return false;
+    if (sz.legal === null || !sz.outcomes) return true;
+    const asked = [rollOptions.wieldedHands, owned.wielded].map((v) => (v === 1 || v === '1' || v === 'one-handed' ? 1 : v === 2 || v === '2' || v === 'two-handed' ? 2 : undefined)).find((v) => v !== undefined);
+    if (asked === 1 && sz.outcomes.unmounted.requiredHands === 2) return true;
+    return shape.branch === 'melee' && (sz.outcomes.unmounted.classification === 'light') !== (sz.outcomes.mounted.classification === 'light');
+  };
+  if (tripodMatters(sizing) && tripod === undefined) {
     const ans = await askSpecialQuestion({ id: 'requirement:mounted', family: 'activation-requirement', question: `Is ${weapon?.name ?? 'the weapon'} mounted on a tripod? (its size for wielding depends on it)` });
     if (ans === true || ans === false) { tripod = ans; await FireStateStore.setMounted(actor, weapon, ans); sizing = sizeFor(tripod); }
   }
