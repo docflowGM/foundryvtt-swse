@@ -166,6 +166,11 @@ function summarizeAttackShape(shape) {
   // Phase 5D-I-B: owned-state facts the attack was resolved with (hands, the attack-of-opportunity choice, the forgo-doubling choice)
   if (shape.wieldedHands === 1 || shape.wieldedHands === 2) out.wieldedHands = shape.wieldedHands;
   if (shape.forgoDoubleStrength === true) out.forgoDoubleStrength = true;
+  // Phase 5D-I-D-B2: the weapon's size class as resolved for this attack (Core Rulebook p.120), carried so later stages never recompute it from the live Item
+  if (shape.weaponSizeClass && typeof shape.weaponSizeClass === 'object' && typeof shape.weaponSizeClass.classification === 'string') {
+    out.weaponSizeClass = { classification: shape.weaponSizeClass.classification };
+    for (const k of ['effectiveSize', 'source']) if (typeof shape.weaponSizeClass[k] === 'string') out.weaponSizeClass[k] = shape.weaponSizeClass[k];
+  }
   if (shape.reach && typeof shape.reach === 'object') {
     const r = {};
     for (const k of ['bonusSquares', 'absoluteSquares']) if (Number.isFinite(Number(shape.reach[k]))) r[k] = Number(shape.reach[k]);

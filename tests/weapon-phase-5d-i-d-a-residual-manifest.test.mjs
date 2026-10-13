@@ -13,7 +13,7 @@ assert.equal(m.counters.I_D_UNCLASSIFIED, 0);
 ok('manifest builds with no problems and zero unclassified');
 
 const closure = JSON.parse(fs.readFileSync(new URL('../data/audits/weapon-phase-5d-h-closure-census.json', import.meta.url), 'utf8'));
-assert.equal(m.counters.I_D_INPUT_OPERATION_KEYS, closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER + 21, '75 at the I-D baseline = unconsumed now + the 8 implemented in I-D-A1 + the 6 in I-D-F + the 7 in I-D-B1');
+assert.equal(m.counters.I_D_INPUT_OPERATION_KEYS, closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER + 31, '75 at the I-D baseline = unconsumed now + the 8 implemented in I-D-A1 + the 6 in I-D-F + the 7 in I-D-B1 + the 10 in I-D-B2');
 assert.equal(closure.counters.CANONICAL_NAME_TEXT_HEURISTIC_USAGE, 0);
 ok('every live unconsumed operation key has a row; canonical heuristic usage stays 0');
 
@@ -22,10 +22,10 @@ ok('committed manifest equals the regenerated one (deterministic)');
 
 // no consumption claimed: the I-D-A rows are BLOCKED / DUPLICATE / NON_EXECUTABLE, never IMPLEMENTED, and the manifest does not feed the closure census
 // I-D-A1: exactly the eight skill-bonus rows are IMPLEMENTED, each with a consumer probe found in the resolver's executable code and a key the closure census now sees consumed
-assert.deepEqual(m.rows.filter((r) => r.disposition === 'IMPLEMENTED').map((r) => r.key).sort(), ['concealmentContext', 'concealmentEquipmentBonus', 'concealmentSkill', 'concealmentStealthBonus', 'concealmentStealthPenalty', 'snipingSkill', 'snipingStealthEquipmentBonus', 'survivalBasicForestJungleBonusWhenProficientAndCarried'].concat(['canSingleLoadShell', 'requiresEnergyCell', 'requiresEnergyCells', 'requiresPowerPack', 'requiresPowerPacks', 'secondCrewReloadAction']).concat(['canMountOnRifle', 'canUseStandalone', 'mountMechanicsDC', 'mountTimeMinutes', 'mountableOnMinimumWeaponSize', 'requiresGrenadeLauncher', 'rifleMountable']).sort());
-assert.equal(m.counters.I_D_IMPLEMENTED, 21);
+assert.deepEqual(m.rows.filter((r) => r.disposition === 'IMPLEMENTED').map((r) => r.key).sort(), ['concealmentContext', 'concealmentEquipmentBonus', 'concealmentSkill', 'concealmentStealthBonus', 'concealmentStealthPenalty', 'snipingSkill', 'snipingStealthEquipmentBonus', 'survivalBasicForestJungleBonusWhenProficientAndCarried'].concat(['canSingleLoadShell', 'requiresEnergyCell', 'requiresEnergyCells', 'requiresPowerPack', 'requiresPowerPacks', 'secondCrewReloadAction']).concat(['canMountOnRifle', 'canUseStandalone', 'mountMechanicsDC', 'mountTimeMinutes', 'mountableOnMinimumWeaponSize', 'requiresGrenadeLauncher', 'rifleMountable']).concat(['designedForTwoHandedUse', 'forearmMounted', 'mayCountAsSmallWhenBeneficial', 'mayTreatAsSizeWhenBeneficial', 'multipleHeldOneHandCountsAsOneWeapon', 'sizeRule', 'tripodEffectiveSize', 'tripodTreatsAsOneSizeSmallerForWielding', 'wornAs', 'wornOnWrist']).sort());
+assert.equal(m.counters.I_D_IMPLEMENTED, 31);
 assert.ok(!fs.readFileSync(new URL('../tools/lib/weapon-phase-5d-h-ledgers.mjs', import.meta.url), 'utf8').includes('5d-i-d'));
-ok('only the eight I-D-A1 rows, the six I-D-F rows and the seven I-D-B1 rows are IMPLEMENTED (consumer-probed); the I-D ledger does not itself feed the 5D-H closure counters');
+ok('only the eight I-D-A1 rows, the six I-D-F rows and the seven I-D-B1 rows and the ten I-D-B2 rows are IMPLEMENTED (consumer-probed); the I-D ledger does not itself feed the 5D-H closure counters');
 
 // BLOCKED is reserved for a missing mechanical CONSUMER; an unobservable fact is CONTEXTUAL or GM_ADJUDICATED (docs/architecture/swse-automation-authority.md)
 const blockedRows = m.rows.filter((x) => x.disposition === 'BLOCKED');
@@ -71,7 +71,7 @@ ok('every deferral names its owning subpass');
   assert.equal(m.rows.filter((r) => !r.matrix).length, 0);
   assert.equal(Object.values(cm.buckets).reduce((a, b) => a + b, 0), m.counters.I_D_INPUT_TOTAL);
   assert.equal(Object.values(cm.support).reduce((a, b) => a + b, 0), m.counters.I_D_INPUT_TOTAL);
-  assert.equal(cm.support.IMPLEMENTED ?? 0, 21, 'support IMPLEMENTED only where the manifest disposition is IMPLEMENTED (checked per row by the census)');
+  assert.equal(cm.support.IMPLEMENTED ?? 0, 31, 'support IMPLEMENTED only where the manifest disposition is IMPLEMENTED (checked per row by the census)');
   assert.ok(cm.duplicateOrNonExecutable.verified >= 11, 'duplicate claims are proven against the registry + consumer probe, not asserted');
   for (const r of m.rows) {
     const x = r.matrix;

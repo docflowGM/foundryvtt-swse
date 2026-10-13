@@ -433,6 +433,7 @@
     "lacksEnergyLancePlasmaMode",
     "mayCountAsSmallWhenBeneficial",
     "mayTreatAsSizeWhenBeneficial",
+    "multipleHeldDamageProfile",
     "multipleHeldOneHandCountsAsOneWeapon",
     "reassembleAction",
     "requiresTwoHands",
@@ -1034,7 +1035,7 @@
   {
    "mechanic": "activation-requirements",
    "source": "structured attack-profile / canonicalStats field",
-   "identityCount": 11,
+   "identityCount": 12,
    "identities": [
     "lightsaber-chassis-dual-phase",
     "lightsaber-chassis-longhandle",
@@ -1042,6 +1043,7 @@
     "lightsaber-chassis-retrosaber",
     "unmapped::Amphistaff",
     "unmapped::Bayonet",
+    "unmapped::Darkstick",
     "unmapped::Vibrobayonet",
     "weapon-battering-ram",
     "weapon-siang-lance",

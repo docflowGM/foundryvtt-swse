@@ -5,8 +5,10 @@
 //   spend  : preparation/reset actions go through the existing ActionEconomyConsumption (with rollback)
 // Legacy/custom weapons and canonical forms with no temporal constraint pass straight through: nothing is read or written.
 import { evaluateReadiness, stateAfterFire, stateAfterReload, evaluatePrime, statePrimed, evaluateBrace } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/fire-state.js";
-import { resolveAttackShapeFor, resolveAttackWeaponRuntime, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackShapeFor, resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { hostEligibility } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/host-mount.js";
+import { resolveEffectiveWieldingSize, resolveHeldGroup, sizeStateOf, sizeIndexOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
 import { powerSourceStatus, powerSourceLabel, POWER_SOURCE_STATES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/power-source.js";
 import { currentMachineState, machineTransitionAllowed, machineAfterTransition, evaluateUsage, recordUsage, usageKey, crewRegulationFor, crewRegulationRecord, patchOwnedState } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/owned-state.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
@@ -123,6 +125,9 @@ export function applyOwnedSelection(actor, weapon, rollOptions = {}) {
     let wanted = null;
     if (shape.machine) wanted = currentMachineState(shape.machine, state.machine, currentClock(actor)).state;
     else if (typeof state.settingProfile === 'string') wanted = state.settingProfile;
+    // Phase 5D-I-D-B2: two or more identical weapons the player established as held together in one hand use the record's grouped damage profile -- only for a
+    // proficient wielder and only when the default melee form is the one selected (an explicit thrown / other profile is the player's choice and stays)
+    else if (shape.heldTogetherProfileId && heldTogetherActive(actor, weapon)) wanted = shape.heldTogetherProfileId;
     if (wanted) patch.profileId = wanted;
   }
   if (!Object.keys(patch).length) return rollOptions;
@@ -134,6 +139,11 @@ export function applyOwnedSelection(actor, weapon, rollOptions = {}) {
   }
   return rollOptions;
 }
+
+const heldDeps = { shapeOf: (w) => { try { return shapeOfWeapon(w, {}); } catch { return null; } }, proficient: (w, a) => { try { return resolveCanonicalAttackProficiency(resolveAttackWeaponRuntime(w, {}), a).proficient === true; } catch { return false; } }, equipped: (w, a) => isItemEquipped(w, a) };
+/** The held-together group of an owned weapon as it stands NOW (proficiency, ownership, equipped, off-hand designation, other groups all re-checked). */
+export function heldGroupOf(actor, weapon, idsOverride = null) { return resolveHeldGroup(actor, weapon, heldDeps, idsOverride); }
+const heldTogetherActive = (actor, weapon) => heldGroupOf(actor, weapon).count >= 2;
 
 /**
  * Phase 5D-I-D-F: the weapon's power-source requirement. Always a note (the player sees what the weapon needs); a BLOCKER only when the
@@ -165,6 +175,7 @@ export function previewReadiness(actor, weapon, runtime, rollOptions = {}) {
   power.blockers.push(...mountBlockers(actor, weapon, shape, state));
   // Ammunition fired only from a grenade launcher (Electronet) is never attacked with directly: it is loaded into a launcher (delegated attack)
   if (shape.requiresHostLauncher) power.blockers.push({ family: 'launcher', reason: 'requires-grenade-launcher' });
+  power.notes.push(...wieldingNotes(actor, weapon, shape, state, rollOptions));
   const prepActions = [...rangePreparationActions(shape, rollOptions), ...stunSwitchActions(shape, state), ...owned.actions];
   if (!shape.temporal.length) {
     const blockers = [...owned.blockers, ...power.blockers];
@@ -366,7 +377,61 @@ export function reloadOptions(weapon) {
 
 /** Mounted on a tripod / mount / rifle host (owned state; the source states no action). */
 export async function setMounted(actor, weapon, mounted) {
+  // Phase 5D-I-D-B2: the tripod / mount state drives the effective wielding size, so only the owning actor can record it
+  if (!weapon?.id || ownedItemById(actor, weapon.id) !== weapon) return { ok: false, reason: 'weapon-not-owned' };
   return { ok: true, state: await persistOwned(actor, weapon, { mounted: mounted === true }) };
+}
+
+/** The held-together choice a weapon offers (identical weapons held in one hand), or null. candidates = other owned, equipped, non-off-hand sticks of that identity. */
+export function heldTogetherOptions(actor, weapon) {
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return null; }
+  if (shape.source !== 'canonical' || !shape.heldTogether) return null;
+  const sameWeapon = (i) => { const sh = heldDeps.shapeOf(i); return !!sh && sh.source === 'canonical' && sh.identityKey === shape.identityKey; };
+  const free = (i) => i?.type === 'weapon' && i.id !== weapon.id && isItemEquipped(i, actor) && i.system?.isOffhand !== true && i.system?.slot !== 'offhand';
+  const candidates = Array.from(actor?.items ?? []).filter((i) => free(i) && sameWeapon(i)).map((i) => ({ id: i.id, label: i.name }));
+  const group = heldGroupOf(actor, weapon);
+  return { candidates, max: 1 + candidates.length, current: group.count, memberIds: group.memberIds };
+}
+
+/**
+ * Establish WHICH identical weapons are held together in one hand with `weapon` (Darkstick): the owned choice names the participating Item ids, and the group
+ * is validated against what the actor owns (same identity, equipped, not an off-hand weapon, not in another group) and the wielder's proficiency. An empty
+ * list clears it. Owned state; nothing is inferred from the inventory; a rejected write is reported.
+ */
+export async function setHeldTogether(actor, weapon, memberIds) {
+  if (!weapon?.id || ownedItemById(actor, weapon.id) !== weapon) return { ok: false, reason: 'weapon-not-owned' };
+  const opt = heldTogetherOptions(actor, weapon);
+  if (!opt) return { ok: false, reason: 'not-holdable-together' };
+  const ids = Array.from(new Set((Array.isArray(memberIds) ? memberIds : []).map(String)));
+  if (ids.length) {
+    const g = heldGroupOf(actor, weapon, ids);
+    if (!g.ok) return { ok: false, reason: g.reason ?? 'group-invalid' };
+  }
+  try { return { ok: true, state: await persistOwned(actor, weapon, { heldTogetherIds: ids.length ? ids : null }, { strict: true }) }; }
+  catch (err) { console.warn('[SWSE] Could not persist the held-together group.', err); return { ok: false, reason: 'persist-failed' }; }
+}
+
+/** The size treatment a weapon offers (a size its record lets the WIELDER choose), or null. `current` = the owned choice. */
+export function sizeTreatmentOptions(weapon) {
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return null; }
+  if (shape.source !== 'canonical' || !shape.sizeRules?.beneficial) return null;
+  const cur = readFireState(weapon)?.sizeTreatment ?? null;
+  return { size: shape.sizeRules.beneficial.size, current: cur && sizeIndexOf(cur) === sizeIndexOf(shape.sizeRules.beneficial.size) ? shape.sizeRules.beneficial.size : null };
+}
+
+/**
+ * The wielder's choice to treat the weapon as a smaller size "whenever beneficial" (Lightfoil: Small). Owned state; `null` clears it. Only the size the
+ * record declares is accepted, only on a weapon the actor owns, and a rejected write is reported (nothing is falsely confirmed).
+ */
+export async function setSizeTreatment(actor, weapon, size) {
+  if (!weapon?.id || ownedItemById(actor, weapon.id) !== weapon) return { ok: false, reason: 'weapon-not-owned' };
+  const opt = sizeTreatmentOptions(weapon);
+  if (!opt) return { ok: false, reason: 'no-size-treatment' };
+  if (size !== null && sizeIndexOf(size) !== sizeIndexOf(opt.size)) return { ok: false, reason: 'size-not-allowed' };
+  try { return { ok: true, state: await persistOwned(actor, weapon, { sizeTreatment: size === null ? null : opt.size }, { strict: true }) }; }
+  catch (err) { console.warn('[SWSE] Could not persist the size treatment.', err); return { ok: false, reason: 'persist-failed' }; }
 }
 
 /**
@@ -388,6 +453,34 @@ export async function setConfiguration(actor, weapon, configurationId) {
     if (!spend.ok) return { ok: false, reason: 'action-unavailable' };
   }
   return { ok: true, state: await persistOwned(actor, weapon, { configurationId }) };
+}
+
+/**
+ * Phase 5D-I-D-B2: what the weapon's record says about its size treatment, worn placement and two-handed design -- shown, never decided for the
+ * player. The effective size is computed from the CURRENT state (tripod mounted, size treatment chosen); an unchosen "whenever beneficial" is offered, not applied.
+ */
+function wieldingNotes(actor, weapon, shape, state, rollOptions) {
+  const notes = [];
+  const personal = actor?.type !== 'vehicle' && rollOptions?.vehicleWeapon !== true;
+  if (personal && shape.size) {
+    const wielder = actor?.system?.size ?? actor?.system?.details?.size ?? null;
+    const sizeState = sizeStateOf(state, rollOptions);
+    const sizing = resolveEffectiveWieldingSize(shape, wielder, { tripodMounted: typeof rollOptions?.mounted === 'boolean' ? rollOptions.mounted : (typeof state?.mounted === 'boolean' ? state.mounted : undefined), beneficialSizeChoice: sizeState.treatAs ?? undefined });
+    const label = { light: 'a light weapon', 'one-handed': 'one-handed', 'two-handed': 'two-handed (needs both hands)', 'too-large': 'too large to wield' }[sizing.classification];
+    if (label) notes.push({ family: 'size', note: `${sizing.effectiveSize} weapon for a ${sizing.actorSize} wielder: ${label}${sizing.source !== 'base' ? ` (${sizing.source === 'tripod' ? 'tripod mounted' : sizing.source === 'below-wearer' ? 'worn' : 'by choice'}; base ${sizing.baseSize ?? 'none'})` : ''}`, effectiveSize: sizing.effectiveSize, classification: sizing.classification, via: sizing.source });
+    else if (sizing.pending === 'tripod') notes.push({ family: 'size', note: 'size for wielding depends on whether it is tripod mounted (not established)' });
+    if (shape.sizeRules?.beneficial && sizing.source !== 'beneficial-choice') notes.push({ family: 'size', note: `may be treated as ${shape.sizeRules.beneficial.size} whenever beneficial (not chosen)` });
+    if (shape.sizeRules?.prepared) notes.push({ family: 'size', note: `treated as ${shape.sizeRules.prepared.size} while ${shape.sizeRules.prepared.id}d (the preparation; wielder ${shape.sizeRules.prepared.minimumWielderSize ?? 'any size'} or larger)` });
+    else if (sizing.legal === false) notes.push({ family: 'size', note: 'cannot be wielded by this wielder at this size', blocker: true });
+  }
+  if (shape.worn?.wearLocation) notes.push({ family: 'worn', note: `worn on the ${shape.worn.wearLocation}`, kind: shape.worn.wearLocation });
+  if (shape.designedTwoHanded) notes.push({ family: 'wielding', note: 'designed for two-handed use' });
+  if (shape.heldTogether && weapon) {
+    const g = heldGroupOf(actor, weapon);
+    if (g.count >= 2) notes.push({ family: 'wielding', note: `${g.count} held together in one hand (counts as one weapon)` });
+    else if (g.reason) notes.push({ family: 'wielding', note: `the held-together group is not valid (${g.reason}); held singly` });
+  }
+  return notes;
 }
 
 /** Blockers for the mount state of the SELECTED form: the mount configuration needs a valid recorded host; any recorded host must still exist. */
@@ -520,5 +613,5 @@ function configurationOptions(item) {
   } catch (_err) { return { canonical: false, states: [], defaultId: null }; }
 }
 
-export const FireStateStore = Object.freeze({ powerSourceOf, reloadOptions, setPowerSourceState, reloadBySecondCrew, configurationOptions, currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, setWielding, setMounted, mountOnHost, unmountFromHost, mountHostOptions, hasMountRule, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
+export const FireStateStore = Object.freeze({ powerSourceOf, reloadOptions, setPowerSourceState, reloadBySecondCrew, configurationOptions, currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, setWielding, setMounted, sizeTreatmentOptions, setSizeTreatment, heldTogetherOptions, setHeldTogether, heldGroupOf, mountOnHost, unmountFromHost, mountHostOptions, hasMountRule, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
 export default FireStateStore;

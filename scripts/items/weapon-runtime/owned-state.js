@@ -40,18 +40,27 @@ export function wieldingConstraintsOf(operation) {
  * The hands the wielder is ACTUALLY using for this attack.
  *   explicit attack option (1 | 2 | 'one-handed' | 'two-handed')  >  owned state  >  a weapon that requires two hands  >  unknown
  * Weapon size never decides the current state; canonical data only CONSTRAINS what is legal.
- * @returns {{hands:1|2|undefined, source:'option'|'state'|'required'|null, legal:boolean, reason?:string, constraints:object}}
+ * @returns {{hands:1|2|undefined, source:'option'|'state'|'required'|'size'|null, legal:boolean, reason?:string, constraints:object}}
  */
-export function resolveWielding(constraints, { option, state } = {}) {
+export function resolveWielding(constraints, { option, state, sizing } = {}) {
   const c = constraints ?? { requiresTwoHands: false, cannotWieldTwoHanded: false };
   const parse = (v) => (v === 2 || v === '2' || v === WIELDED.TWO ? 2 : v === 1 || v === '1' || v === WIELDED.ONE ? 1 : undefined);
   let hands, source = null;
   if (parse(option) !== undefined) { hands = parse(option); source = 'option'; }
   else if (parse(state?.wielded) !== undefined) { hands = parse(state.wielded); source = 'state'; }
   else if (c.requiresTwoHands) { hands = 2; source = 'required'; }
-  if (c.cannotWieldTwoHanded && hands === 2) return { hands, source, legal: false, reason: 'cannot-wield-two-handed', constraints: c };
-  if (c.requiresTwoHands && hands === 1) return { hands, source, legal: false, reason: 'requires-two-hands', constraints: c };
-  return { hands, source, legal: true, constraints: c };
+  // Phase 5D-I-D-B2: the EFFECTIVE size class (Core Rulebook p.120, wielding-size.js) is what the weapon requires: a weapon too large for the wielder cannot
+  // be used; a weapon one category larger needs both hands (the mandatory grip when none was chosen, a refusal of an explicit one-handed grip). A tripod
+  // verdict that is not established (sizing.legal === null) refuses nothing. The hands in use are still the wielder's choice for light / one-handed weapons.
+  const extra = sizing ? { sizing } : {};
+  if (sizing?.legal === false) return { hands, source, legal: false, reason: sizing.reason ?? 'too-large-to-wield', constraints: c, ...extra };
+  // a one-handed grip that is only legal if the weapon IS on a tripod cannot be authorized by an unanswered tripod question (unknown is neither true nor false)
+  if (hands === 1 && sizing?.pending === 'tripod' && sizing.outcomes?.unmounted?.requiredHands === 2) return { hands, source, legal: false, reason: 'grip-requires-tripod-confirmation', constraints: c, ...extra };
+  if (hands === undefined && sizing?.requiredHands === 2) { hands = 2; source = 'size'; }
+  if (sizing?.requiredHands === 2 && hands === 1) return { hands, source, legal: false, reason: 'requires-two-hands', constraints: c, ...extra };
+  if (c.cannotWieldTwoHanded && hands === 2) return { hands, source, legal: false, reason: 'cannot-wield-two-handed', constraints: c, ...extra };
+  if (c.requiresTwoHands && hands === 1) return { hands, source, legal: false, reason: 'requires-two-hands', constraints: c, ...extra };
+  return { hands, source, legal: true, constraints: c, ...extra };
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------

@@ -18,13 +18,13 @@
     "I_D_INPUT_SPECIAL_MECHANICS": 3,
     "I_D_INPUT_RELATIONS": 2,
     "I_D_INPUT_TOTAL": 80,
-    "I_D_IMPLEMENTED": 21,
-    "I_D_DUPLICATES": 6,
+    "I_D_IMPLEMENTED": 31,
+    "I_D_DUPLICATES": 7,
     "I_D_NON_EXECUTABLE": 1,
     "I_D_DATA_DEFECT": 0,
     "I_D_DATA_COMPLETENESS": 2,
     "I_D_BLOCKED": 1,
-    "I_D_DEFERRED": 49,
+    "I_D_DEFERRED": 38,
     "I_D_UNCLASSIFIED": 0
   },
   "baseline": {
@@ -33,10 +33,10 @@
     "note": "post-I-C-C checkpoint; the live values below move only when a production consumer is demonstrated"
   },
   "closureCensusAtGeneration": {
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 54,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 63,
-    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 37,
-    "PARTIAL_EXECUTION_FIELD_FAMILIES": 12,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 44,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 49,
+    "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 38,
+    "PARTIAL_EXECUTION_FIELD_FAMILIES": 11,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 2,
@@ -49,10 +49,10 @@
       "AUTO": 36
     },
     "support": {
-      "IMPLEMENTED": 21,
+      "IMPLEMENTED": 31,
       "DATA_COMPLETENESS": 2,
       "GM_FACING_SUPPORT_NEEDED": 13,
-      "SMALL_CONSUMER_NEEDED": 24,
+      "SMALL_CONSUMER_NEEDED": 14,
       "DUPLICATE_OR_NON_EXECUTABLE": 15,
       "SOURCE_CLARIFICATION_NEEDED": 3,
       "MISSING_SUBSYSTEM": 2
@@ -94,17 +94,17 @@
         "GM_ADJUDICATED": 1
       }
     },
-    "sourceAmbiguities": 16,
+    "sourceAmbiguities": 15,
     "duplicateOrNonExecutable": {
       "verified": 11,
       "asserted": 4
     }
   },
   "automationLevels": {
-    "CONTEXTUAL": 22,
+    "CONTEXTUAL": 24,
     "GM_ADJUDICATED": 9,
-    "AUTO": 12,
-    "NOT_ASSESSED_YET": 37
+    "AUTO": 21,
+    "NOT_ASSESSED_YET": 26
   },
   "supportGaps": {
     "CONTEXT_SURFACE_PENDING": 5,
@@ -133,7 +133,6 @@
       "3b.operation.concealment-stealth-sensing": "I-D-A (BLOCKED / DUPLICATE / NON_EXECUTABLE rows above)",
       "3b.operation.condition-and-persistent-effects": "I-D-A (carried Survival bonus), I-D-D (grievousWound)",
       "3b.operation.configuration-and-wielding": "I-D-B",
-      "3b.operation.crew-and-emplacement": "I-D-B",
       "3b.operation.damage-modifiers": "I-D-B",
       "3b.operation.proficiency-routes": "I-D-E",
       "3b.operation.utility-and-movement": "I-D-C",
@@ -912,13 +911,15 @@
       "key": "collapsedForm",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "DUPLICATE",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "snap-baton"
       ],
-      "structuredSourceField": "operation.collapsedForm",
+      "structuredSourceField": "canonicalStats.configurationStates (collapsed / expanded, transitionAction swift)",
+      "currentConsumer": "scripts/engine/combat/fire-state-store.js (transitionAction)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
         "support": "DUPLICATE_OR_NON_EXECUTABLE",
@@ -932,32 +933,32 @@
           "consumer": "scripts/engine/combat/fire-state-store.js (transitionAction)"
         }
       },
-      "owner": "I-D-B",
-      "reason": "Collapsed-form configuration / size."
+      "reason": "Snap Baton collapses and expands as a swift action. The same fact is the collapsed configuration state, whose swift transition FireStateStore.setConfiguration already pays."
     },
     {
       "kind": "operation-key",
       "key": "designedForTwoHandedUse",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "vibrosword"
       ],
       "structuredSourceField": "operation.designedForTwoHandedUse",
+      "currentConsumer": "scripts/items/weapon-runtime/wielding-size.js (\\bdesignedForTwoHandedUse\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "vibrosword is designed for two-handed use",
         "mustBeSupplied": "wielding choice (player)",
-        "smallestImplementation": "feed to the 5D-I-B wielding resolver as the weapon's natural grip",
+        "smallestImplementation": "DONE (I-D-B2): shown in the readiness notes; hands stay the wielder's choice; the two-handed Strength doubling now executes for production records",
         "sourceAmbiguity": null,
-        "acceptance": "two-handed Strength damage applies when wielded two-handed"
+        "acceptance": "two-handed Strength damage applies when wielded two-handed; one-handed stays legal"
       },
-      "owner": "I-D-B",
-      "reason": "Size-derived wielding."
+      "reason": "Phase 5D-I-D-B2: Vibrosword is an oversized vibroblade intended for two-handed use. The record states an intent, not a prohibition: one-handed use stays legal and the hands remain the wielder's choice (never inferred from size). The two-handed Strength doubling executes from the wielder's hands and the form's light classification; it did not run for production records (combat.damage.ability = 'str' returned the single modifier first) and now does. The design is shown in the readiness notes."
     },
     {
       "kind": "operation-key",
@@ -988,24 +989,25 @@
       "key": "forearmMounted",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "wrist-rocket-launcher"
       ],
       "structuredSourceField": "operation.forearmMounted",
+      "currentConsumer": "scripts/items/weapon-runtime/wielding-size.js (\\bforearmMounted\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
-        "foundryKnows": "wrist rocket launcher is forearm-mounted (cannot be disarmed / dropped is NOT stated here)",
+        "support": "IMPLEMENTED",
+        "foundryKnows": "wrist rocket launcher is forearm-mounted",
         "mustBeSupplied": "-",
-        "smallestImplementation": "worn-item classification feeding the existing disarm / drop guards",
-        "sourceAmbiguity": "record states mounting only, not the disarm rule (the stunning gauntlet text does)",
-        "acceptance": "classification available to the wielding resolver; no new rule invented"
+        "smallestImplementation": "DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; worn classification (wornClassOf) shown and exposed as descriptor tokens; no hand rule invented",
+        "sourceAmbiguity": null,
+        "acceptance": "classification available; no new rule invented"
       },
-      "owner": "I-D-B",
-      "reason": "Worn / mounted wielding."
+      "reason": "Phase 5D-I-D-B2: worn / mounted-on-the-body CLASSIFICATION (wornClassOf: wear location wrist | forearm) shown in the readiness notes and as descriptor tokens (worn, worn-forearm). The records do not say that a worn weapon occupies, frees or needs a hand, so no hand rule is invented. Wrist Rocket Launcher."
     },
     {
       "kind": "operation-key",
@@ -1040,7 +1042,7 @@
       "key": "mayCountAsSmallWhenBeneficial",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 2,
       "rawOccurrences": 2,
       "representativeWeapons": [
@@ -1048,41 +1050,43 @@
         "lightsaber-chassis-modern-lightfoil"
       ],
       "structuredSourceField": "operation.mayCountAsSmallWhenBeneficial",
+      "currentConsumer": "scripts/items/weapon-runtime/wielding-size.js (\\bmayCountAsSmallWhenBeneficial\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "lightfoil may be treated as Small",
-        "mustBeSupplied": "player chooses when beneficial",
-        "smallestImplementation": "size choice input in the 5D-I-B wielding resolver (never a free default)",
+        "mustBeSupplied": "the wielder's choice",
+        "smallestImplementation": "DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; setSizeTreatment (owned, record-declared size only); never a free default; two-handed refusal unchanged",
         "sourceAmbiguity": null,
         "acceptance": "Small treatment only when chosen; cannot be wielded two-handed"
       },
-      "owner": "I-D-B",
-      "reason": "Size-derived wielding."
+      "reason": "Phase 5D-I-D-B2: wielding-size.js sizeRulesOf/effectiveSizeOf compute the EFFECTIVE size from the record's declaration and the CURRENT state (owned mounted / size treatment, or the attack option); the base size is never changed. The effective size is classified against the wielder (Core Rulebook p.120: light / one-handed / two-handed / too large) and feeds resolveWielding and the attack preflight (a too-large weapon is refused before any cost; a two-handed class establishes both hands; a one-handed class leaves the grip to the wielder), the light-weapon classification (Weapon Finesse scope, two-weapon light check, two-handed Strength doubling) and the readiness notes. Exempt only: a VERIFIED vehicle / starship installation (a vehicle actor that owns the weapon; attack-option flags prove nothing). The Heavy Blaster Cannon uses its published preparation override (braced = Large, wielder Medium or larger) only when the readiness authority has the brace done or paid with the attack. Archaic / Modern Lightfoil: the WIELDER chooses (FireStateStore.setSizeTreatment, owned + record-declared size only, rejected writes reported); unchosen is never applied; choosing Small does not make two-handed use legal (cannot-be-wielded-two-handed stays enforced)."
     },
     {
       "kind": "operation-key",
       "key": "mayTreatAsSizeWhenBeneficial",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "lightfoil"
       ],
       "structuredSourceField": "operation.mayTreatAsSizeWhenBeneficial",
+      "currentConsumer": "scripts/items/weapon-runtime/wielding-size.js (\\bmayTreatAsSizeWhenBeneficial\\b)",
+      "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "lightfoil may be treated as Small",
-        "mustBeSupplied": "player choice",
-        "smallestImplementation": "same capability as mayCountAsSmallWhenBeneficial (one capability, two keys)",
+        "mustBeSupplied": "the wielder's choice",
+        "smallestImplementation": "DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; same capability as mayCountAsSmallWhenBeneficial",
         "sourceAmbiguity": null,
         "acceptance": "same"
       },
-      "owner": "I-D-B",
-      "reason": "Size-derived wielding."
+      "reason": "Phase 5D-I-D-B2: wielding-size.js sizeRulesOf/effectiveSizeOf compute the EFFECTIVE size from the record's declaration and the CURRENT state (owned mounted / size treatment, or the attack option); the base size is never changed. The effective size is classified against the wielder (Core Rulebook p.120: light / one-handed / two-handed / too large) and feeds resolveWielding and the attack preflight (a too-large weapon is refused before any cost; a two-handed class establishes both hands; a one-handed class leaves the grip to the wielder), the light-weapon classification (Weapon Finesse scope, two-weapon light check, two-handed Strength doubling) and the readiness notes. Exempt only: a VERIFIED vehicle / starship installation (a vehicle actor that owns the weapon; attack-option flags prove nothing). The Heavy Blaster Cannon uses its published preparation override (braced = Large, wielder Medium or larger) only when the readiness authority has the brace done or paid with the attack. Lightfoil: the same capability as mayCountAsSmallWhenBeneficial (one reader, two keys)."
     },
     {
       "kind": "operation-key",
@@ -1166,24 +1170,25 @@
       "key": "multipleHeldOneHandCountsAsOneWeapon",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "Darkstick"
       ],
       "structuredSourceField": "operation.multipleHeldOneHandCountsAsOneWeapon",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (\\bmultipleHeldOneHandCountsAsOneWeapon\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "darksticks held together count as one weapon",
-        "mustBeSupplied": "how many are held (owned items)",
-        "smallestImplementation": "wielding-count rule in the 5D-I-B resolver + the 2d8 multi-stick damage (profile)",
+        "mustBeSupplied": "owned equipped items",
+        "smallestImplementation": "DONE (I-D-B2): the proficient player establishes N held together (setHeldTogetherCount); the dual-wield resolver counts them as one weapon slot and the melee-grouped profile (2d8, builder amendment) is selected by the profile authority; an explicit off-hand designation still counts as a second weapon",
         "sourceAmbiguity": null,
-        "acceptance": "two held darksticks = one weapon for attack count"
+        "acceptance": "two held darksticks = one weapon slot and 2d8; one stick 1d6; unproficient claim refused"
       },
-      "owner": "I-D-B",
-      "reason": "Wielding count rule."
+      "reason": "Phase 5D-I-D-B2: The PROFICIENT player names the Darksticks held together in one hand (FireStateStore.setHeldTogether: Item ids, revalidated at every attack and in the dual-wield resolver against ownership, equipped / off-hand state and overlapping groups) and they are ONE weapon slot: the dual-wield shape resolver does not treat the members as a second weapon, and the melee-grouped profile (builder amendment 5D-I-D-B2-held-together-profile: 2d8, never more for a third stick) is selected by the existing profile authority; nothing is counted from the inventory; a stale, unproficient or forged group selects nothing (ordinary 1d6) and the grouped profile is refused when named. The thrown profile keeps 1d6 (the text does not extend the bundle to a throw)."
     },
     {
       "kind": "operation-key",
@@ -1349,7 +1354,7 @@
       "key": "sizeRule",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 2,
       "rawOccurrences": 2,
       "representativeWeapons": [
@@ -1357,17 +1362,18 @@
         "Vibroknucklers"
       ],
       "structuredSourceField": "operation.sizeRule",
+      "currentConsumer": "scripts/items/weapon-runtime/wielding-size.js (\\bsizeRule\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "worn gauntlet / knucklers are two sizes smaller than the wearer",
         "mustBeSupplied": "-",
-        "smallestImplementation": "effective-size input for worn items in the 5D-I-B wielding resolver; \"cannot be disarmed or dropped\" guard",
+        "smallestImplementation": "DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; fixed offset from the wearer feeds the light classification (the sizeless gauntlet is no longer never-light)",
         "sourceAmbiguity": null,
-        "acceptance": "effective size = wearer size - 2; disarm refused"
+        "acceptance": "effective size = wearer size - 2; disarm refusal already executes (cannotBeDisarmed)"
       },
-      "owner": "I-D-B",
-      "reason": "Size-derived wielding."
+      "reason": "Phase 5D-I-D-B2: wielding-size.js sizeRulesOf/effectiveSizeOf compute the EFFECTIVE size from the record's declaration and the CURRENT state (owned mounted / size treatment, or the attack option); the base size is never changed. The effective size is classified against the wielder (Core Rulebook p.120: light / one-handed / two-handed / too large) and feeds resolveWielding and the attack preflight (a too-large weapon is refused before any cost; a two-handed class establishes both hands; a one-handed class leaves the grip to the wielder), the light-weapon classification (Weapon Finesse scope, two-weapon light check, two-handed Strength doubling) and the readiness notes. Exempt only: a VERIFIED vehicle / starship installation (a vehicle actor that owns the weapon; attack-option flags prove nothing). The Heavy Blaster Cannon uses its published preparation override (braced = Large, wielder Medium or larger) only when the readiness authority has the brace done or paid with the attack. Stunning Gauntlet / Vibroknucklers: two sizes smaller than the wearer (a fixed offset, no choice). The Stunning Gauntlet states no size, so it used to be never light; the wearer offset now decides. The disarm / drop protection already executes from cannotBeDisarmed / cannotBeDropped."
     },
     {
       "kind": "operation-key",
@@ -1420,33 +1426,34 @@
     {
       "kind": "operation-key",
       "key": "tripodEffectiveSize",
-      "family": "3b.operation.crew-and-emplacement",
+      "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "e-web-repeating-blaster"
       ],
       "structuredSourceField": "operation.tripodEffectiveSize",
+      "currentConsumer": "scripts/items/weapon-runtime/wielding-size.js (\\btripodEffectiveSize\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
-        "foundryKnows": "E-Web effective size Large on a tripod (one smaller for wielding)",
-        "mustBeSupplied": "tripod mounted (state)",
-        "smallestImplementation": "tripod state input to the wielding resolver",
+        "support": "IMPLEMENTED",
+        "foundryKnows": "E-Web effective size Large on a tripod",
+        "mustBeSupplied": "tripod mounted (owner-only owned state or attack option)",
+        "smallestImplementation": "DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; classified against the wielder (Core p.120) and consumed by resolveWielding + the attack preflight (too large refused before any cost, two-handed class establishes both hands); tripod only when established (asked once, never guessed; one resolved value for hands, modifiers, damage and the carried snapshot)",
         "sourceAmbiguity": null,
-        "acceptance": "one size smaller only while mounted"
+        "acceptance": "one size smaller only while mounted; forged / unowned state ignored"
       },
-      "owner": "I-D-B",
-      "reason": "Tripod effective size (size-derived wielding)."
+      "reason": "Phase 5D-I-D-B2: wielding-size.js sizeRulesOf/effectiveSizeOf compute the EFFECTIVE size from the record's declaration and the CURRENT state (owned mounted / size treatment, or the attack option); the base size is never changed. The effective size is classified against the wielder (Core Rulebook p.120: light / one-handed / two-handed / too large) and feeds resolveWielding and the attack preflight (a too-large weapon is refused before any cost; a two-handed class establishes both hands; a one-handed class leaves the grip to the wielder), the light-weapon classification (Weapon Finesse scope, two-weapon light check, two-handed Strength doubling) and the readiness notes. Exempt only: a VERIFIED vehicle / starship installation (a vehicle actor that owns the weapon; attack-option flags prove nothing). The Heavy Blaster Cannon uses its published preparation override (braced = Large, wielder Medium or larger) only when the readiness authority has the brace done or paid with the attack. E-Web repeating blaster: Large only while tripod mounted (an absolute size)."
     },
     {
       "kind": "operation-key",
       "key": "tripodTreatsAsOneSizeSmallerForWielding",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 3,
       "rawOccurrences": 3,
       "representativeWeapons": [
@@ -1455,17 +1462,18 @@
         "tactical-tractor-beam"
       ],
       "structuredSourceField": "operation.tripodTreatsAsOneSizeSmallerForWielding",
+      "currentConsumer": "scripts/items/weapon-runtime/wielding-size.js (\\btripodTreatsAsOneSizeSmallerForWielding\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "tripod-mounted weapons wield one size smaller",
         "mustBeSupplied": "tripod mounted",
-        "smallestImplementation": "same tripod capability as tripodEffectiveSize (one capability, four weapons)",
+        "smallestImplementation": "DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; same capability as tripodEffectiveSize",
         "sourceAmbiguity": null,
         "acceptance": "same"
       },
-      "owner": "I-D-B",
-      "reason": "Tripod wielding size."
+      "reason": "Phase 5D-I-D-B2: wielding-size.js sizeRulesOf/effectiveSizeOf compute the EFFECTIVE size from the record's declaration and the CURRENT state (owned mounted / size treatment, or the attack option); the base size is never changed. The effective size is classified against the wielder (Core Rulebook p.120: light / one-handed / two-handed / too large) and feeds resolveWielding and the attack preflight (a too-large weapon is refused before any cost; a two-handed class establishes both hands; a one-handed class leaves the grip to the wielder), the light-weapon classification (Weapon Finesse scope, two-weapon light check, two-handed Strength doubling) and the readiness notes. Exempt only: a VERIFIED vehicle / starship installation (a vehicle actor that owns the weapon; attack-option flags prove nothing). The Heavy Blaster Cannon uses its published preparation override (braced = Large, wielder Medium or larger) only when the readiness authority has the brace done or paid with the attack. E-Web missile launcher, Flame Cannon, Tactical Tractor Beam: one size smaller only while tripod mounted. The mounted state is owner-only (FireStateStore.setMounted validates ownership) or an explicit attack option."
     },
     {
       "kind": "operation-key",
@@ -1569,48 +1577,50 @@
       "key": "wornAs",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "wrist-blaster"
       ],
       "structuredSourceField": "operation.wornAs",
+      "currentConsumer": "scripts/items/weapon-runtime/wielding-size.js (\\bwornAs\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "wrist blaster worn as bracelet",
         "mustBeSupplied": "-",
-        "smallestImplementation": "worn-item classification (shares forearmMounted / wornOnWrist)",
+        "smallestImplementation": "DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; same classification",
         "sourceAmbiguity": null,
         "acceptance": "classification only"
       },
-      "owner": "I-D-B",
-      "reason": "Worn-item classification."
+      "reason": "Phase 5D-I-D-B2: the same classification ('bracelet/jewelry' is a wrist item; the record's own value is kept). Wrist Blaster."
     },
     {
       "kind": "operation-key",
       "key": "wornOnWrist",
       "family": "3b.operation.configuration-and-wielding",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "concealed-dart-launcher"
       ],
       "structuredSourceField": "operation.wornOnWrist",
+      "currentConsumer": "scripts/items/weapon-runtime/wielding-size.js (\\bwornOnWrist\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "dart launcher worn on the wrist",
         "mustBeSupplied": "-",
-        "smallestImplementation": "worn-item classification (shares forearmMounted / wornAs)",
+        "smallestImplementation": "DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; same classification",
         "sourceAmbiguity": null,
         "acceptance": "classification only"
       },
-      "owner": "I-D-B",
-      "reason": "Worn-item classification."
+      "reason": "Phase 5D-I-D-B2: the same classification (wrist). Concealed Dart Launcher."
     },
     {
       "kind": "special-mechanic",

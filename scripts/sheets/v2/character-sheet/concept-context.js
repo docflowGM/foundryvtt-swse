@@ -390,6 +390,12 @@ function buildWeaponConfigurationView(weapon) {
       const hostId = readOwnedWeaponFireState(weapon)?.mountedHostId ?? null;
       return { currentId: hostId ? 'mounted' : 'standalone', currentLabel: hostId ? 'Mounted' : 'Not mounted', optionCount: 2 };
     }
+    // Phase 5D-I-D-B2: a weapon whose record lets the wielder choose a smaller size (Lightfoil) gets the same control
+    const sizeChoice = FireStateStore.sizeTreatmentOptions(weapon);
+    if (sizeChoice) return { currentId: sizeChoice.current ? 'treated' : 'normal', currentLabel: sizeChoice.current ? `Treated as ${sizeChoice.size}` : 'Normal size', optionCount: 2 };
+    // Phase 5D-I-D-B2: identical weapons that can be held together in one hand (Darkstick) get the same control when the actor owns more than one
+    const together = weapon.actor ? FireStateStore.heldTogetherOptions(weapon.actor, weapon) : null;
+    if (together && together.candidates.length) return { currentId: together.current >= 2 ? 'together' : 'single', currentLabel: together.current >= 2 ? `${together.current} held together` : 'Held singly', optionCount: together.max };
     if (configurations.length < 2) return null;
     const storedId = readOwnedWeaponFireState(weapon)?.configurationId ?? null;
     const defaultId = options.defaultId;

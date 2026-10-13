@@ -153,10 +153,11 @@
       "mandatory": true,
       "mechanicFamily": "activation-proficiency",
       "disposition": "IMPLEMENTED",
-      "identityCount": 1,
-      "rawOccurrences": 2,
+      "identityCount": 2,
+      "rawOccurrences": 3,
       "representativeWeapons": [
-        "Amphistaff"
+        "Amphistaff",
+        "Darkstick"
       ],
       "structuredSourceField": "attackProfiles[].activationRequirements",
       "currentConsumer": "scripts/items/weapon-runtime/activation-requirements.js (case 'proficiency')",

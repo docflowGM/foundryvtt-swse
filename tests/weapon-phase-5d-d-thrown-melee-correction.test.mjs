@@ -52,7 +52,8 @@ for (const [k, group, family] of [[DARK, 'Exotic Weapon', 'exotic'], [PIKE, 'Adv
   assert.equal(rec(k).weaponGroup, group, 'weapon-level group stays'); assert.equal(rec(k).schemaFamily.branch, 'melee', 'weapon-level family stays melee');
   assert.equal(rec(k).schemaFamily.proficiency, family);
   const rw = resolver.resolveIdentity(k);
-  assert.deepEqual(rw.profiles.map((p) => [p.id, p.branch]), [['melee', 'melee'], ['thrown', 'ranged']]);
+  // Phase 5D-I-D-B2: the Darkstick also carries the held-together damage profile (melee branch, 2d8)
+  assert.deepEqual(rw.profiles.map((p) => [p.id, p.branch]), k === 'unmapped::Darkstick' ? [['melee', 'melee'], ['melee-grouped', 'melee'], ['thrown', 'ranged']] : [['melee', 'melee'], ['thrown', 'ranged']]);
 }
 ok('Darkstick + Static Pike: melee profile melee, thrown profile ranged; weapon-level group/family (Exotic / Advanced Melee, melee) unchanged');
 
@@ -93,7 +94,7 @@ for (const [k, it] of [[DARK, darkItem()], [PIKE, pikeItem()]]) {
   assert.deepEqual(r.range.bandSquares.pointBlank, [0, 6]); assert.deepEqual(r.range.basePenalties, { pointBlank: 0, short: -2, medium: -5, long: -10 });
   const forms = rt.buildAttackForms(it).forms;
   assert.deepEqual(forms.filter((f) => f.branch === 'ranged').map((f) => f.profileId), ['thrown'], `${k} selector offers the thrown (ranged) form`);
-  assert.ok(forms.filter((f) => f.branch === 'melee').every((f) => f.profileId === 'melee') && forms.some((f) => f.branch === 'melee'), `${k} melee forms stay melee (Static Pike: lethal/stun modes)`);
+  assert.ok(forms.filter((f) => f.branch === 'melee').every((f) => f.profileId === 'melee' || (k === DARK && f.profileId === 'melee-grouped')) && forms.some((f) => f.branch === 'melee'), `${k} melee forms stay melee (Static Pike: lethal/stun modes)`);
   assert.doesNotThrow(() => rt.resolveCanonicalRange(resolver.resolveIdentity(k), resolver.resolveIdentity(k).profiles.find((p) => p.id === 'thrown')), 'not refused by the branch/range consistency guard');
   const comp = await computeFinalAttackComposition(k === DARK ? darkActor() : pikeActor(), it, { profileId: 'thrown', rangeBand: 'medium' });
   assert.equal(comp.ok, true); assert.equal(comp.attackBonusResolution.components['Range Penalty'], -5, 'thrown-weapons range behavior');
@@ -140,7 +141,7 @@ ok('both thrown profiles use the canonical thrown-weapons range, are offered by 
     ['5D-D-thrown-profile-ranged-branch', PIKE, 'DATA_DEFECT', 'canonicalStats.attackProfiles[id=thrown].schemaFamily.branch', 'melee', 'ranged'],
   ]);
   assert.match(log[0].source.page, /36/); assert.match(log[1].source.page, /36.*37/);
-  assert.deepEqual(rec(DARK).provenance.postCertificationAmendments, ['5D-D-thrown-profile-ranged-branch']);
+  assert.deepEqual(rec(DARK).provenance.postCertificationAmendments, ['5D-D-thrown-profile-ranged-branch', '5D-I-D-B2-held-together-profile']); // the Darkstick also carries the later held-together amendment
   // only these two records carry the amendment
   assert.equal(corpus.identities.filter((i) => i.provenance.postCertificationAmendments?.includes('5D-D-thrown-profile-ranged-branch')).length, 2);
   ok('census: no remaining branch/range contradictions; the amendment is logged with source/page/field/from/to and stamped only on the two records');

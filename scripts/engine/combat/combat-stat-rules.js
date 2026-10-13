@@ -350,6 +350,7 @@ import { canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon
 import { isItemActivated } from '/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js';
 import { shapeOfWeapon, attackSelectionOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
 import { descriptorMatchesAny } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js';
+import { ownedSizeStateOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js';
 
 // Attack-ability provenance (Phase 5D-B). Production/canonical weapons carry a PROJECTED system.attackAttribute (generated
 // from the item's branch; the projection vocabulary is only str/dex) that is not player intent. For a canonical weapon with a
@@ -900,19 +901,13 @@ export function getDamageAbilityContribution(actor, weapon, context = {}) {
 
   if (actorHasTalentNamed(actor, 'Ataru') && isLightsaberWeapon(weapon)) return SchemaAdapters.getAbilityMod(actor, 'dex');
 
-  if (explicit.includes('str2')) return SchemaAdapters.getAbilityMod(actor, 'str') * 2;
-  if (explicit.includes('dex2')) return SchemaAdapters.getAbilityMod(actor, 'dex') * 2;
-  if (explicit.includes('str')) return SchemaAdapters.getAbilityMod(actor, 'str');
-  if (explicit.includes('dex')) return SchemaAdapters.getAbilityMod(actor, 'dex');
-
-  // Phase 5D-I-A: a ranged weapon whose canonical operation says the Strength modifier applies to its damage (bow, sling) adds it ONCE.
-  // CONSUMER_DEFECT fixed: every other ranged weapon contributes no ability modifier, and these two silently lost the published Strength damage.
-  { const sh = shapeOfWeapon(weapon); if (sh.source === 'canonical' && sh.strengthAppliesToDamage === true) return SchemaAdapters.getAbilityMod(actor, 'str'); }
   // Phase 5D-I-B: Core Rulebook, Damage: "When you hit with a melee weapon that you are wielding two-handed, you add double your Strength bonus to
   // the damage. This higher Strength modifier does not apply to two-handed melee attacks with light weapons." The hands are the WIELDER'S ACTUAL
   // choice carried by the attack (never inferred from weapon size); a profile that embodies "forgo doubling the Strength bonus" (Long-Handle
   // Lightsaber's 2d10 base) adds the ordinary single Strength bonus instead. Canonical melee forms only -- legacy weapons keep the rules below.
-  {
+  // Phase 5D-I-D-B2: this runs BEFORE the explicit-ability shortcuts for the plain Strength case. Production melee weapons carry
+  // combat.damage.ability = 'str', which returned the single Strength modifier first, so the two-handed doubling above never executed for them.
+  if (explicit === '' || explicit === 'str') {
     const hands = Number(context?.wieldedHands ?? context?.attackShape?.wieldedHands);
     const form = context?.weaponForm ?? null;
     if (hands === 2 && form) {
@@ -921,11 +916,23 @@ export function getDamageAbilityContribution(actor, weapon, context = {}) {
       if (sh?.source === 'canonical' && sh.branch === 'melee') {
         const str = SchemaAdapters.getAbilityMod(actor, 'str');
         const forgo = context?.forgoDoubleStrength === true || context?.attackShape?.forgoDoubleStrength === true;
-        const light = descriptorMatchesAny(sh.descriptor, ['light'], { wielderSize: actor?.system?.size ?? 'medium' });
+        // the size class the attack was resolved with (carried in the workflow) wins over re-reading the live Item
+        const carriedClass = context?.weaponSizeClass ?? context?.attackShape?.weaponSizeClass ?? null;
+        const light = carriedClass && typeof carriedClass.classification === 'string'
+          ? carriedClass.classification === 'light'
+          : descriptorMatchesAny(sh.descriptor, ['light'], { wielderSize: actor?.system?.size ?? 'medium', sizeState: ownedSizeStateOf(weapon, context) });
         return !forgo && !light && str > 0 ? str * 2 : str;
       }
     }
   }
+  if (explicit.includes('str2')) return SchemaAdapters.getAbilityMod(actor, 'str') * 2;
+  if (explicit.includes('dex2')) return SchemaAdapters.getAbilityMod(actor, 'dex') * 2;
+  if (explicit.includes('str')) return SchemaAdapters.getAbilityMod(actor, 'str');
+  if (explicit.includes('dex')) return SchemaAdapters.getAbilityMod(actor, 'dex');
+
+  // Phase 5D-I-A: a ranged weapon whose canonical operation says the Strength modifier applies to its damage (bow, sling) adds it ONCE.
+  // CONSUMER_DEFECT fixed: every other ranged weapon contributes no ability modifier, and these two silently lost the published Strength damage.
+  { const sh = shapeOfWeapon(weapon); if (sh.source === 'canonical' && sh.strengthAppliesToDamage === true) return SchemaAdapters.getAbilityMod(actor, 'str'); }
   if (isRangedWeapon(weapon) && !isThrownMeleeWeapon(weapon)) return 0;
   const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
   if (system.twoHanded === true || system.wieldedTwoHanded === true) return Math.floor(strMod * 1.5);

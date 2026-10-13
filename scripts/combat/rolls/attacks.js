@@ -35,6 +35,7 @@ import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/f
 import { summarizeAreaShape, validateDetonationTimer } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
 import { abilityProhibitedForShape } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 import { resolveWielding, resolveOpportunityEligibility, crewRegulationFor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/owned-state.js";
+import { resolveEffectiveWieldingSize } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
 import { evaluateProfileRequirements, forgoesDoubleStrength, slugOfIdentity } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/activation-requirements.js";
 import { abilityKeysOfActor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
@@ -264,8 +265,36 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   // Phase 5D-I-B: what the OWNED weapon state already says (hands, mount, this round's crew adjudication) -- read once, never rediscovered later
   const shape = resolveAttackShapeFor(runtime, rollOptions);
   const owned = FireStateStore.readFireState(weapon) ?? {};
-  const wield = resolveWielding(shape.wielding, { option: rollOptions.wieldedHands, state: owned });
-  const ownedFacts = { wieldedHands: wield.hands, mounted: typeof owned.mounted === 'boolean' ? owned.mounted : undefined, crewRegulated: FireStateStore.storedCrewRegulation(actor, weapon) };
+  // Phase 5D-I-D-B2: the EFFECTIVE size class (Core Rulebook p.120) joins the hands resolution. Only a VERIFIED vehicle / starship installation keeps its own
+  // mounting rules (a caller-supplied flag proves nothing); everything else is personally wielded. All facts that decide the size (the tripod answer, a size the
+  // wielder chose, a size-changing preparation) are resolved ONCE here, before the conditional modifiers are evaluated, and carried with the attack.
+  const personallyWielded = !verifiedVehicleInstallation(actor, weapon, rollOptions);
+  const wielderSize = actor?.system?.size ?? actor?.system?.details?.size ?? null;
+  const beneficialSizeChoice = rollOptions.beneficialSizeChoice ?? owned.sizeTreatment ?? undefined;
+  // a preparation that temporarily changes the size (the braced Heavy Blaster Cannon) counts only when the readiness authority says it is done this round or is
+  // paid with this attack; a wielder exempt from the preparation does not get its size (it is not braced)
+  const preparedForSize = (() => {
+    if (!shape.sizeRules?.prepared) return false;
+    try { const st = FireStateStore.previewReadiness(actor, weapon, runtime, rollOptions).preparation?.state; return st === 'prepared' || st === 'required'; } catch { return false; }
+  })();
+  const sizeFor = (tripodMounted) => (personallyWielded ? resolveEffectiveWieldingSize(shape, wielderSize, { tripodMounted, beneficialSizeChoice, prepared: preparedForSize }) : undefined);
+  let tripod = typeof rollOptions.mounted === 'boolean' ? rollOptions.mounted : (typeof owned.mounted === 'boolean' ? owned.mounted : undefined);
+  let sizing = sizeFor(tripod);
+  // an unestablished tripod state that decides whether the weapon can be wielded at all is asked once (and stored), never guessed
+  // ... whenever it changes the legality of the requested grip, the light classification, or whether the weapon can be wielded at all
+  const tripodMatters = (sz) => {
+    if (sz?.pending !== 'tripod') return false;
+    if (sz.legal === null || !sz.outcomes) return true;
+    const asked = [rollOptions.wieldedHands, owned.wielded].map((v) => (v === 1 || v === '1' || v === 'one-handed' ? 1 : v === 2 || v === '2' || v === 'two-handed' ? 2 : undefined)).find((v) => v !== undefined);
+    if (asked === 1 && sz.outcomes.unmounted.requiredHands === 2) return true;
+    return shape.branch === 'melee' && (sz.outcomes.unmounted.classification === 'light') !== (sz.outcomes.mounted.classification === 'light');
+  };
+  if (tripodMatters(sizing) && tripod === undefined) {
+    const ans = await askSpecialQuestion({ id: 'requirement:mounted', family: 'activation-requirement', question: `Is ${weapon?.name ?? 'the weapon'} mounted on a tripod? (its size for wielding depends on it)` });
+    if (ans === true || ans === false) { tripod = ans; await FireStateStore.setMounted(actor, weapon, ans); sizing = sizeFor(tripod); }
+  }
+  let wield = resolveWielding(shape.wielding, { option: rollOptions.wieldedHands, state: owned, sizing });
+  const ownedFacts = { wieldedHands: wield.hands, mounted: tripod, ...(sizing?.classification ? { weaponSizeClass: { classification: sizing.classification, effectiveSize: sizing.effectiveSize, source: sizing.source } } : {}), crewRegulated: FireStateStore.storedCrewRegulation(actor, weapon) };
   const stage = await resolveAttackStageModifiers(mechanics, { targetSize: target?.system?.size ?? null, answers: carried, activeUses, attackContext: buildAttackConditionContext(actor, target, rollOptions, ownedFacts) });
   if (typeof stage.answers['fact:crewRegulated'] === 'boolean' && carried['fact:crewRegulated'] === undefined) await FireStateStore.recordCrewRegulation(actor, weapon, stage.answers['fact:crewRegulated']);
   if (stage.unresolved.length) ui?.notifications?.warn?.(`${weapon?.name ?? 'Weapon'}: ${stage.unresolved.length} conditional attack modifier(s) could not be evaluated and were not applied (GM adjudication).`);
@@ -295,13 +324,21 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
     if (!eligibility.eligible) refuseOnce('attack-of-opportunity', `attack of opportunity: ${eligibility.reason}`);
   }
   if (shape.crew?.normallyRequiresTripod) {
-    let mountedNow = typeof rollOptions.mounted === 'boolean' ? rollOptions.mounted : (typeof owned.mounted === 'boolean' ? owned.mounted : undefined);
+    let mountedNow = tripod;
     if (mountedNow === undefined) {
       const ans = await askSpecialQuestion({ id: 'requirement:mounted', family: 'activation-requirement', question: `Is ${weapon?.name ?? 'the weapon'} mounted on a tripod? (it can normally be fired only when mounted)` });
       if (ans === true || ans === false) { mountedNow = ans; await FireStateStore.setMounted(actor, weapon, ans); }
     }
     if (mountedNow === false) refuseOnce('tripod-required', 'mount: tripod-required');
+    // an answer that arrived only now settles a tripod-dependent size verdict too
+    if (mountedNow !== tripod && typeof mountedNow === 'boolean') {
+      tripod = mountedNow; sizing = sizeFor(tripod);
+      wield = resolveWielding(shape.wielding, { option: rollOptions.wieldedHands, state: FireStateStore.readFireState(weapon) ?? owned, sizing });
+      if (!wield.legal) refuseOnce('wielding', `wielding: ${wield.reason}`);
+    }
   }
+  // Phase 5D-I-D-B2: the grouped (held-together) profile is legal only when the player has established two or more held together (owned state), however it was selected
+  if (shape.heldTogetherProfileId && runtime.profile?.id === shape.heldTogetherProfileId && FireStateStore.heldGroupOf(actor, weapon).count < 2) refuseOnce('held-together-required', 'held together: no valid group of two or more is established');
   const abilityKeys = abilityKeysOfActor(actor);
   const proficientNow = (() => { try { return resolveCanonicalAttackProficiency(runtime, actor).proficient === true; } catch { return false; } })();
   const requirementCtx = () => ({ hands: wield.hands, aoo: rollOptions.attackOfOpportunity === true, proficient: proficientNow, abilityKeys, operators: Number.isFinite(Number(rollOptions.operators)) ? Number(rollOptions.operators) : undefined, answers: answersWithTarget });
@@ -335,6 +372,7 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   }
   const ownedExtras = {
     ...(wield.hands ? { wieldedHands: wield.hands } : {}),
+    ...(sizing?.classification ? { weaponSizeClass: { classification: sizing.classification, effectiveSize: sizing.effectiveSize, source: sizing.source } } : {}),
     ...(rollOptions.attackOfOpportunity === true ? { opportunity: { choice: rollOptions.aooChoice ?? undefined, profileId: runtime.profile.id } } : {}),
     ...(forgoesDoubleStrength(targetReqs) ? { forgoDoubleStrength: true } : {}),
     ...(shape.reach && (shape.reach.bonusSquares > 0 || shape.reach.absoluteSquares !== null) ? { reach: { bonusSquares: shape.reach.bonusSquares, ...(shape.reach.absoluteSquares !== null ? { absoluteSquares: shape.reach.absoluteSquares } : {}) } } : {}),
@@ -379,6 +417,7 @@ export function buildAttackConditionContext(actor, target, rollOptions = {}, ext
   if (typeof aim === 'boolean') ctx.aimedBeforeAttack = aim;
   if (typeof rollOptions.braced === 'boolean') ctx.braced = rollOptions.braced;
   if (typeof rollOptions.mounted === 'boolean') ctx.mounted = rollOptions.mounted;
+  if (typeof rollOptions.beneficialSizeChoice === 'string' && rollOptions.beneficialSizeChoice) ctx.beneficialSizeChoice = rollOptions.beneficialSizeChoice;
   if (typeof rollOptions.crewRegulated === 'boolean') ctx.crewRegulated = rollOptions.crewRegulated;
   if (Number.isFinite(Number(rollOptions.wieldedHands))) ctx.wieldedHands = Number(rollOptions.wieldedHands);
   // Phase 5D-I-B: facts the OWNED weapon state observes (mounted, hands, this round's crew adjudication) fill what the attack did not state
@@ -627,6 +666,18 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
  * - Hit/damage resolution is a separate workflow (rollDamage) and is not
  *   gated by this function's cost transaction.
  */
+/** A VERIFIED vehicle / starship installation: the attack routes to a vehicle domain through a real vehicle-type actor that owns this very weapon Item. A flag in the attack options proves nothing. */
+function verifiedVehicleInstallation(actor, weapon, rollOptions = {}) {
+  try {
+    const route = resolveAttackDomain({ actor, item: weapon, vehicle: rollOptions.vehicleActor ?? null, sourceContext: { vehicleActor: rollOptions.vehicleActor ?? null, abstractCrewQuality: rollOptions.abstractCrewQuality ?? null } });
+    if (!route?.ok || route.domain === 'character') return false;
+    const vehicle = route.normalizedContext?.vehicleActor ?? null;
+    if (!vehicle || vehicle.type !== 'vehicle') return false;
+    const held = vehicle.items?.get?.(weapon?.id) ?? Array.from(vehicle.items ?? []).find((i) => i?.id === weapon?.id);
+    return !!held && held === weapon;
+  } catch { return false; }
+}
+
 export async function rollAttack(actor, weapon, options = {}) {
   let rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null));
   if (!actor || !weapon) {

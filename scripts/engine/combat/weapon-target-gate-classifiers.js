@@ -17,6 +17,7 @@
 import { shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { canonicalSelectionFromContext } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 import { abilityChoiceMatchesWeapon, canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { ownedSizeStateOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
 import { descriptorMatchesAny, identitySlugSet, groupVocabSet } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js";
 import { getSharedWeaponAuthorityRegistry } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-authority-registry.js";
 export { canonicalSelectionFromContext };
@@ -107,7 +108,7 @@ function canonicalScope(weapon, context = {}) {
 function scopeOptions(weapon, context = {}) {
   const registry = getSharedWeaponAuthorityRegistry();
   const wielderSize = context.wielderSize ?? context.actor?.system?.size ?? weapon?.actor?.system?.size ?? weapon?.actor?.system?.details?.size ?? null;
-  return { wielderSize, forAbility: context.abilityKey ?? null, identitySlugs: identitySlugSet(registry), groupVocab: groupVocabSet(registry) };
+  return { wielderSize, forAbility: context.abilityKey ?? null, identitySlugs: identitySlugSet(registry), groupVocab: groupVocabSet(registry), sizeState: ownedSizeStateOf(weapon, context) };
 }
 
 export function weaponMatchesGroup(weapon, groups = [], context = {}) {

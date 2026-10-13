@@ -1262,10 +1262,11 @@
       "family": "3b.profile.conditional",
       "key": "activationRequirements.proficiency",
       "mechanicFamily": "activation-proficiency",
-      "identityCount": 1,
-      "rawOccurrences": 2,
+      "identityCount": 2,
+      "rawOccurrences": 3,
       "representativeWeapons": [
-        "Amphistaff"
+        "Amphistaff",
+        "Darkstick"
       ],
       "structuredSourceField": "attackProfiles[].activationRequirements",
       "currentConsumer": null,

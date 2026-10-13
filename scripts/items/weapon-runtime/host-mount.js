@@ -3,8 +3,7 @@
 // (minutes). This module reads those structured facts and validates a chosen host by its canonical identity; it never reads a weapon name. The check itself
 // is rolled through the existing skill-roll authority by FireStateStore.mountOnHost; the time is the GM's circumstance (reported, never simulated).
 
-const SIZES = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
-const sizeIndex = (s) => SIZES.indexOf(String(s ?? '').trim().toLowerCase());
+import { sizeIndexOf as sizeIndex } from './wielding-size.js';
 
 /**
  * The structured mount rule of a canonical weapon, or null when it declares none.
