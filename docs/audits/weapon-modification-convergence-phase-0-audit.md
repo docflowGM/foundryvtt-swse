@@ -371,4 +371,3 @@ Scope: weapon items first; armor/equipment share the slot authority but not modi
 - Section 3.3: lightsaber rows rewritten around the Jedi Academy one-modification allowance and its Tech Specialist exception; chassis/crystal/accessory `upgradeSlots` kept as evidence; `tech_device_upgrade_slot` marked source-unverified (OCR of the Starships table agrees with v2); powered-armor row corrected (mutable-name classification fallback).
 - Section 4.3: further id-based and armor `installedUpgrades` readers noted. Section 4.4: field classification. Section 6.1: forged-call and bypass trace. Section 9.2: v2's frozen items recorded. Sections 12-13: v2 conformance table and dry-run plan.
 - Baseline `9cca145` unchanged. No runtime, catalog, data or test file changed.
-
