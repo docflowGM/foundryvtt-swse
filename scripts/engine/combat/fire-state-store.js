@@ -175,7 +175,7 @@ export function previewReadiness(actor, weapon, runtime, rollOptions = {}) {
   return { applies: true, ...r, ready: blockers.length === 0, blockers, requiredActions: [...(r.requiredActions ?? []), ...prepActions], notes: [...(r.notes ?? []), ...power.notes], powerSource: power.status, clock };
 }
 
-async function writeState(actor, weapon, state) {
+async function writeState(actor, weapon, state, { strict = false } = {}) {
   if (!weapon) return;
   const owner = weapon.actor ?? actor;
   try {
@@ -186,6 +186,8 @@ async function writeState(actor, weapon, state) {
       await weapon.update({ [FLAG_PATH]: state });
     }
   } catch (err) {
+    // combat-state writes are best-effort (the attack still resolved); mount / unmount are strict and report the failure
+    if (strict) throw err;
     console.warn('[SWSE] Could not persist weapon fire state (the attack still resolved).', err);
   }
 }
@@ -267,9 +269,9 @@ export async function primePreparedAttack(actor, weapon, runtime, rollOptions = 
   return { ok: true, state: next };
 }
 
-async function persistOwned(actor, weapon, patch) {
+async function persistOwned(actor, weapon, patch, { strict = false } = {}) {
   const next = patchOwnedState(readFireState(weapon), patch);
-  await writeState(actor, weapon, next);
+  await writeState(actor, weapon, next, { strict });
   try { weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: next } }; } catch { /* see commitFired */ }
   return next;
 }
@@ -448,7 +450,8 @@ export async function mountOnHost(actor, weapon, host, { skillRoller = null, sho
     if (!check.success) return { ok: false, reason: 'check-failed', check, timeMinutes: rule.check.timeMinutes };
   }
   const patch = { mountedHostId: owned.id, ...(rule.configurationId ? { configurationId: rule.configurationId } : {}) };
-  return { ok: true, check, timeMinutes: rule.check?.timeMinutes ?? null, state: await persistOwned(actor, weapon, patch) };
+  try { return { ok: true, check, timeMinutes: rule.check?.timeMinutes ?? null, state: await persistOwned(actor, weapon, patch, { strict: true }) }; }
+  catch (err) { console.warn('[SWSE] Could not persist the mount.', err); return { ok: false, reason: 'persist-failed', check }; }
 }
 
 /** Does this weapon declare a mount rule (it can be mounted on a host)? */
@@ -475,9 +478,11 @@ export async function unmountFromHost(actor, weapon) {
   let shape;
   try { shape = shapeOfWeapon(weapon, {}); } catch { return { ok: false, reason: 'not-canonical' }; }
   if (shape.source !== 'canonical' || !shape.mountRule) return { ok: false, reason: 'not-mountable' };
+  if (!weapon?.id || ownedItemById(actor, weapon.id) !== weapon) return { ok: false, reason: 'weapon-not-owned' };
   const state = readFireState(weapon);
   if (!state?.mountedHostId) return { ok: true, state };
-  return { ok: true, state: await persistOwned(actor, weapon, { mountedHostId: null, configurationId: shape.configuration.defaultId ?? null }) };
+  try { return { ok: true, state: await persistOwned(actor, weapon, { mountedHostId: null, configurationId: shape.configuration.defaultId ?? null }, { strict: true }) }; }
+  catch (err) { console.warn('[SWSE] Could not persist the unmount.', err); return { ok: false, reason: 'persist-failed' }; }
 }
 
 /** Canonical identity of the payload loaded into a payload-delegating launcher (validated against the launcher's accepted family by the attack stage). */

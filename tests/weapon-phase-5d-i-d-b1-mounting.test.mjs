@@ -265,6 +265,30 @@ try {
   assert.equal(r2.reason, 'host-not-owned'); assert.equal(calls.length, 0); assert.equal(readState(micro), null);
   ok('cross-actor mount (host on A, attachment on B, either way) is refused before any roll or write');
 }
+// ---- C4. unmount ownership and persistence failure ------------------------------------------------------------------------------------
+{
+  reinstall();
+  const micro = owned('weapon-micro-grenade-launcher'), rifle = owned('weapon-blaster-rifle');
+  const A = makeActor({ items: [micro, rifle] }); const B = makeActor({ items: [] }); B.id = 'a2';
+  await FireStateStoreRef.mountOnHost(A, micro, rifle, { skillRoller: rolling(20) });
+  assert.equal(readState(micro).mountedHostId, rifle.id);
+  // another actor cannot unmount it -- directly or through setConfiguration
+  assert.equal((await FireStateStoreRef.unmountFromHost(B, micro)).reason, 'weapon-not-owned'); assert.equal(readState(micro).mountedHostId, rifle.id);
+  assert.equal((await FireStateStoreRef.setConfiguration(B, micro, 'standalone')).reason, 'weapon-not-owned'); assert.equal(readState(micro).mountedHostId, rifle.id);
+  // a rejected ActorEngine write: mount and unmount report failure and leave the local state untouched
+  const realUpd = ActorEngine.updateOwnedItems; ActorEngine.updateOwnedItems = async () => { throw new Error('write rejected'); };
+  const warn = console.warn; console.warn = () => {};
+  try {
+    assert.equal((await FireStateStoreRef.unmountFromHost(A, micro)).reason, 'persist-failed'); assert.equal(readState(micro).mountedHostId, rifle.id, 'not falsely unmounted');
+    const fresh = owned('weapon-micro-grenade-launcher'); A.items.push(fresh); fresh.actor = A;
+    const r = await FireStateStoreRef.mountOnHost(A, fresh, rifle, { skillRoller: rolling(20) });
+    assert.equal(r.ok, false); assert.equal(r.reason, 'persist-failed'); assert.equal(readState(fresh), null, 'not falsely mounted');
+    // ordinary combat-state writes keep their best-effort behaviour
+    assert.equal((await FireStateStoreRef.setWielding(A, fresh, 'two-handed')).ok, true);
+  } finally { ActorEngine.updateOwnedItems = realUpd; console.warn = warn; }
+  assert.equal((await FireStateStoreRef.unmountFromHost(A, micro)).ok, true); assert.equal(readState(micro).mountedHostId, null);
+  ok('unmount (direct and via setConfiguration) requires the owning actor; a rejected write is reported as persist-failed with no falsely confirmed state; ordinary combat-state writes stay best-effort');
+}
 // ---- D. a mounted weapon whose host is gone is not fireable as mounted; unconfirmed is never a block -----------------------------
 {
   reinstall();

@@ -26,6 +26,8 @@ Seven residual operation keys, one capability: a weapon is mounted on a **host w
 - **Ownership**: `mountOnHost` requires BOTH the attachment and the host to belong to the supplied actor (`weapon-not-owned` / `host-not-owned`), before any roll or write.
 - **One attachment per host**: no published limit was found, so none is enforced. The only structural guard is that a weapon already mounted on something cannot itself be a host (`host-is-itself-mounted`), which prevents chaining; it is a defensive guard, not a stated rule.
 
+- **Unmount ownership and persistence**: `unmountFromHost` (and the `setConfiguration` path into it) requires the owning actor. Mount and unmount write strictly: a rejected `ActorEngine` write returns `persist-failed` and leaves the local state untouched. Ordinary combat-state writes keep their best-effort behaviour.
+
 ## Remaining source points
 - Targeting Laser states no check or time: it mounts on a Medium-or-larger host with no roll.
 - Whether a *micro* launcher may fire an electronet is not stated; refused conservatively.
