@@ -1,0 +1,100 @@
+# SWSE — Supplemental Species Provenance Reconciliation (39 Records)
+
+**Audit date:** 13 October 2026  
+**Repository:** `docflowGM/foundryvtt-swse`  
+**Branch:** `audit/species-book-by-book-canonical`  
+**Scope:** The 39 non-droid species identities present in `packs/species.db` but missing from the preceding 121-identity species source audit.
+
+## Result
+
+| Evidence class | Records | Interpretation |
+|---|---:|---|
+| Original official SWSE source inspected | **4** | Primary racial rules block or official conversion table located |
+| Wizards web-enhancement attribution; primary copy pending | **7** | Strong publication lead, not yet static rules certification |
+| Community/fan conversion attribution | **17** | Not evidence of official SWSE publication; usable only by homebrew policy |
+| Ambiguous, non-playable or unverified origin | **11** | No independently confirmed official player species block yet |
+| **Total** | **39** | No production records removed or modified |
+
+An original book sweep limited to species chapters is insufficient: published SWSE race rules also occur alongside NPC entries and in separate Wizards PDFs and web enhancements. A verified **alternate published profile** must not be blended with another official race profile just because the race has the same name.
+
+## Four directly verified official source locations
+
+| Species | Published source | Finding |
+|---|---|---|
+| Noghri | [The Force Unleashed Campaign Guide p.185](https://github.com/docflowGM/foundryvtt-swse) | Published species-traits sidebar in Imperial/Noghri material, outside the species chapter. |
+| Geonosian | [Saga Edition Conversion Guide, table 1, p.3](https://www.swse.xphilesrealm.com/SWRPG_Saga_Conversion.pdf) | Official WotC conversion: different racial ability profile than current pack; preserve as an alternate source. |
+| Tusken Raider | [Saga Edition Conversion Guide, table 1, p.3](https://www.swse.xphilesrealm.com/SWRPG_Saga_Conversion.pdf) | Official WotC race conversion; verify Stealth reroll wording before changing pack. |
+| Stereb | [Dawn of Defiance IX: Sword of the Empire, p.12](https://swse.xphilesrealm.com/Dawn%20of%20Defiance/pdf/SW_DD_09_Sword_of_the_Empire.pdf) | Full published Stereb race sidebar in a free official adventure, outside supplied hardbacks. |
+
+**Noghri:** The Force Unleashed p.185 prints Small, speed 4, DEX +2 / WIS +2 / CHA −4, Honoghran, conditional Running Attack, Primitive and Scent. The current pack largely matches, but its `source: Threats` hint and flat `+2 Stealth` / `+2 Survival` fields are not supported by that block. Flag for other-source/consumer review rather than deleting automatically.
+
+**Geonosian:** The original Wizards *Saga Edition Conversion Guide* table lists STR +2 / INT −2 / WIS −2 / CHA −2 and fly speed 8; the pack lacks the WIS penalty and stores its flying trait differently. This is a **published-source conflict**, not an approved production correction.
+
+**Tusken Raider:** The original conversion table supports CON +2 / INT −2 / WIS −2 and both Stealth and Survival rerolls. Check whether the pack's more restricted 'Stealth checks to sneak' wording is intentional or erroneous.
+
+**Stereb:** The race block is in *Dawn of Defiance IX*, a separate Wizards PDF adventure; the pack contains its major stats and traits. No actor or trait-sidecar runtime proof is claimed.
+
+## Seven official web-source leads (original article still required)
+
+| Species | Credited Wizards source | Index/evidence |
+|---|---|---|
+| Amani | Wizards Star Wars Miniatures Previews (Amani Scout / The Fringe) | [Reference](https://swse.fandom.com/wiki/Amani) |
+| Arcona | Planet Hoppers: Cona (Eric Cagle) | [Reference](https://swse.fandom.com/wiki/Arcona) |
+| Nazren | Wizards web enhancement: The Nazren (Eric Cagle) | [Reference](https://swse.fandom.com/wiki/The_Nazren) |
+| Pau'an | Wizards web enhancement: The Pau'ans (Rodney Thompson) | [Reference](https://swse.fandom.com/wiki/The_Pau%27ans) |
+| Phindian | Planet Hoppers: Phindar (Eric Cagle) | [Reference](https://swse.fandom.com/wiki/Phindian) |
+| Polis Massan | Clone Wars Enhancement 1: Polis Massan (Gary Astleford) | [Reference](https://swse.fandom.com/wiki/Polis_Massan) |
+| Skakoan | Planet Hoppers: Skako (Eric Cagle) | [Reference](https://swse.fandom.com/wiki/Skakoan) |
+
+These are **attributed** to Wizards-origin articles by the community index. For exact racial rules and reliable source certification, retrieve the original Wizards article, archival copy, or original downloadable rules file first. Do not treat a secondary wiki transcription as publisher-primary evidence.
+
+## Seventeen community/fan-attributed playable profiles
+
+| Species | Community provenance | Evidence |
+|---|---|---|
+| Aing-Tii | Fan-created Aing-Tii playable species; do not confuse with official Force tradition. | [Community attribution](https://swse.fandom.com/wiki/Aing-Tii) |
+| Anomid | Fan conversion from Ultimate Alien Anthology. | [Community attribution](https://swse.fandom.com/wiki/Anomid) |
+| Anx | Community species-conversion catalog; no matching published SWSE block checked. | [Community attribution](https://swse.fandom.com/wiki/Species) |
+| Besalisk | Fan conversion from Ultimate Alien Anthology. | [Community attribution](https://swse.fandom.com/wiki/Besalisk) |
+| Chevin | Community-listed homebrew playable species; an author credit alone does not confirm WotC publication. | [Community attribution](https://swse.fandom.com/wiki/Chevin) |
+| Drall | Fan conversion from Ultimate Alien Anthology. | [Community attribution](https://swse.fandom.com/wiki/Drall) |
+| Dressellian | Community fan-sourcebook playable treatment. | [Community attribution](https://swse.fandom.com/wiki/Species) |
+| Gree | Community species-conversion list, distinct from official Gree lore/technology. | [Community attribution](https://swse.fandom.com/wiki/Species) |
+| Jenet | Fan conversion from Ultimate Alien Anthology. | [Community attribution](https://swse.fandom.com/wiki/Jenet) |
+| Kessurian | Community-created species entry. | [Community attribution](https://swse.fandom.com/wiki/Kessurian) |
+| Kiffar | Community near-Human species profile, not established by official mentions of Kiffar. | [Community attribution](https://swse.fandom.com/wiki/Kiffar) |
+| Koorivar | Clone Wars Saga Edition Fan Sourcebook conversion. | [Community attribution](https://swse.fandom.com/wiki/Koorivar) |
+| Mirialan | Community-authored Mirialan race block. | [Community attribution](https://swse.fandom.com/wiki/Mirialan) |
+| Mustafarian | Northern/southern Mustafarian fan-sourcebook variants. | [Community attribution](https://swse.fandom.com/wiki/Mustafarian%2C_Northern) |
+| Muun | Fan conversion from Ultimate Alien Anthology. | [Community attribution](https://swse.fandom.com/wiki/Muun) |
+| Ortolan | Fan New Republic Campaign Guide treatment. | [Community attribution](https://swse.fandom.com/wiki/Ortolan) |
+| Quermian | Fan conversion from Ultimate Alien Anthology. | [Community attribution](https://swse.fandom.com/wiki/Quermian) |
+
+These classifications concern the *specific racial mechanics currently imported*, not whether the species exists in Star Wars lore. They should remain available if a GM enables homebrew, but should not be silently certified as Wizards-published SWSE rules.
+
+## Eleven unresolved/special classifications
+
+| Record | Why it is not yet a certified SWSE playable species |
+|---|---|
+| Bardottan | Known Star Wars species, but no official SWSE player racial block directly verified. |
+| Elom | Elom species ≠ planet Elom ≠ Elomin; no independent Elom racial block located. |
+| Gundark | Official beast/creature statistics do not confer playable species features. |
+| Hapan | Galaxy of Intrigue discusses Hapan near-Human physiology; no standalone racial rules profile verified. |
+| Hiss'sssi | Pack identity/spelling and original mechanical source remain unverified. |
+| Kal-Dexar | No matching published playable racial block located in supplied sources. |
+| Kubaz | Lore and NPC appearances not enough to certify a playable SWSE profile. |
+| Nerf (Uplifted) | Uplifted animal profile requires explicit species-creation/homebrew provenance. |
+| Sith (Pureblood) | Do not equate automatically with published Massassi racial profile. |
+| Theelin | Near-Human lore/variant examples do not establish fixed packet of racial modifiers. |
+| Vaathkree | Pack points to Unknown Regions, but independent full playable species block not verified. |
+
+## Reconciliation and next gates
+
+1. **Primary-source recovered:** 4 / 39. **Still lacking independently inspected official racial-rule text:** 35 / 39, of which 7 have especially promising publisher-web leads.
+2. **Do not change production:** No `packs/species.db`, normal/migrated trait sidecars, CharGen or runtime code should be modified from this provenance research alone.
+3. **Verify additional article texts:** Retrieve original Wizards files for the seven web leads; record exact printed/page/section locator and compare all pack fields and sidecars.
+4. **Keep source-specific variants separate:** Geonosian is already an example. Reconcile the competing printed profiles before changing its race modifiers.
+5. **Classify remainder:** Record explicit optional homebrew provenance for fan conversions; distinguish a near-Human variant, animal, species name and complete player race entry.
+6. **Runtime later:** Grant timing, conditions, vision, skill access, feats and movement still require actor tests after a surgical fix is authorized.
+
+**Boundary:** This is a supplementary research/discovery report; it does not retroactively certify all 161 species records or close the existing unresolved sourcebook discrepancy findings.
