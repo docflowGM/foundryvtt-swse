@@ -16,14 +16,14 @@ Two independent questions per row: **who establishes the circumstances** (bucket
 | Support state | Rows |
 |---|---:|
 | DATA_COMPLETENESS | 2 |
-| DUPLICATE_OR_NON_EXECUTABLE | 15 |
+| DUPLICATE_OR_NON_EXECUTABLE | 16 |
 | GM_FACING_SUPPORT_NEEDED | 13 |
-| IMPLEMENTED | 31 |
+| IMPLEMENTED | 33 |
 | MISSING_SUBSYSTEM | 2 |
-| SMALL_CONSUMER_NEEDED | 14 |
+| SMALL_CONSUMER_NEEDED | 11 |
 | SOURCE_CLARIFICATION_NEEDED | 3 |
 
-Duplicate / non-executable claims: **11 mechanically verified** (carrier present on every identity + consumer probe), **4 asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **15**.
+Duplicate / non-executable claims: **12 mechanically verified** (carrier present on every identity + consumer probe), **4 asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **14**.
 
 ## By subpass
 
@@ -107,11 +107,11 @@ Duplicate / non-executable claims: **11 mechanically verified** (carrier present
 | `retractableStockOptional` | blaster-carbine, blaster-rifle | GM_ADJUDICATED | DUPLICATE_OR_NON_EXECUTABLE (ASSERTED) | some models have a retractable stock (price only) | - | none: a purchase option, not an attack rule | — | no runtime behaviour |
 | `rifleMountable` | grenade-launcher | AUTO | IMPLEMENTED | grenade launcher mounts on a rifle | host rifle | DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; same rule; the DC / time its text states are structured by the builder amendment 5D-I-D-B1-mount-check-backfill | — | same; the Grenade Launcher record now carries DC 15 / 1 minute (builder amendment) and mounts only on that check |
 | `sizeRule` | Stunning Gauntlet, Vibroknucklers | AUTO | IMPLEMENTED | worn gauntlet / knucklers are two sizes smaller than the wearer | - | DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; fixed offset from the wearer feeds the light classification (the sizeless gauntlet is no longer never-light) | — | effective size = wearer size - 2; disarm refusal already executes (cannotBeDisarmed) |
-| `surveillanceTaggerCompatibility` | darter | AUTO | SMALL_CONSUMER_NEEDED | darter dart can carry a surveillance tagger (equipment p.67) | tagger item installed / loaded (inventory) | compatibility check in the existing upgrade / payload install path; the tagger mechanic itself is a separate equipment record | full tagger mechanics are not in the weapon record | a tagger can only be loaded into a compatible weapon |
-| `surveillanceTaggerCompatible` | darter | AUTO | SMALL_CONSUMER_NEEDED | darter compatible = true | tagger item | same as surveillanceTaggerCompatibility (one capability) | — | same |
+| `surveillanceTaggerCompatibility` | darter | AUTO | DUPLICATE_OR_NON_EXECUTABLE (VERIFIED) | darter dart can carry a surveillance tagger (equipment p.67) | - | none: same fact as surveillanceTaggerCompatible | — | covered by surveillanceTaggerCompatible |
+| `surveillanceTaggerCompatible` | darter | AUTO | IMPLEMENTED | darter compatible = true | tagger upgrade declaring requiresWeaponCapability | DONE (I-D-B3, weapon-side gate only): upgrade-compat.js + UpgradeEligibilityEngine gate | the tagger equipment / install producer does not exist (no catalog record) and was not invented; it belongs to the equipment authority | a tagger-requiring upgrade is accepted only by a weapon declaring the capability |
 | `tripodEffectiveSize` | e-web-repeating-blaster | AUTO | IMPLEMENTED | E-Web effective size Large on a tripod | tripod mounted (owner-only owned state or attack option) | DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; classified against the wielder (Core p.120) and consumed by resolveWielding + the attack preflight (too large refused before any cost, two-handed class establishes both hands); tripod only when established (asked once, never guessed; one resolved value for hands, modifiers, damage and the carried snapshot) | — | one size smaller only while mounted; forged / unowned state ignored |
 | `tripodTreatsAsOneSizeSmallerForWielding` | e-web-missile-launcher, flame-cannon, tactical-tractor-beam | AUTO | IMPLEMENTED | tripod-mounted weapons wield one size smaller | tripod mounted | DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; same capability as tripodEffectiveSize | — | same |
-| `upgradeRestrictions` | sniper-blaster-rifle | AUTO | SMALL_CONSUMER_NEEDED | sniper rifle cannot take the rapid recycler | - | read the canonical restriction in UpgradeSlotEngine / UpgradeService install validation (installedUpgrades already tracked) | spelled "rapid-recycler" in the weapon record vs "rapid recycler" in the text; match by upgrade key | installing the rapid recycler on the sniper rifle is refused before any cost |
+| `upgradeRestrictions` | sniper-blaster-rifle | AUTO | IMPLEMENTED | sniper rifle cannot take the rapid recycler | - | DONE (I-D-B3): upgrade-compat.js + UpgradeEligibilityEngine gate (key-normalized) | — | installing the rapid recycler on the sniper rifle is refused before any cost |
 | `weaponDR` | electrostaff | CONTEXTUAL | MISSING_SUBSYSTEM | electrostaff DR 20 (canonicalStats.objectDurability.damageReduction) | that the weapon OBJECT is being damaged (GM / sunder action) | a weapon-object damage event: apply DR to damage dealt TO the weapon. None exists; do not reuse target damage | — | damage to the weapon object is reduced by DR 20; damage dealt BY the weapon unaffected |
 | `weaponDRAppliesAgainstLightsabers` | Shockstaff, electrostaff | AUTO | SMALL_CONSUMER_NEEDED | DR is not ignored by lightsabers (phrik) | attacker is a lightsaber | flag read by the same weapon-object damage event (and by the existing lightsaber DR-ignore rule) | — | lightsaber damage to a shockstaff / electrostaff is reduced by its DR |
 | `weaponDRValue` | Shockstaff | GM_ADJUDICATED | SOURCE_CLARIFICATION_NEEDED | shockstaff DR value is "not_stated_in_KOTOR_entry" | a source-stated value | none: the DR value is unknown | KOTOR entry gives no DR number; do not invent one | value supplied by a source or the GM per table |

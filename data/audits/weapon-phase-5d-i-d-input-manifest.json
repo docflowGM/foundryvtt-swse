@@ -18,13 +18,13 @@
     "I_D_INPUT_SPECIAL_MECHANICS": 3,
     "I_D_INPUT_RELATIONS": 2,
     "I_D_INPUT_TOTAL": 80,
-    "I_D_IMPLEMENTED": 31,
-    "I_D_DUPLICATES": 7,
-    "I_D_NON_EXECUTABLE": 1,
+    "I_D_IMPLEMENTED": 33,
+    "I_D_DUPLICATES": 8,
+    "I_D_NON_EXECUTABLE": 2,
     "I_D_DATA_DEFECT": 0,
     "I_D_DATA_COMPLETENESS": 2,
     "I_D_BLOCKED": 1,
-    "I_D_DEFERRED": 38,
+    "I_D_DEFERRED": 34,
     "I_D_UNCLASSIFIED": 0
   },
   "baseline": {
@@ -33,8 +33,8 @@
     "note": "post-I-C-C checkpoint; the live values below move only when a production consumer is demonstrated"
   },
   "closureCensusAtGeneration": {
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 44,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 49,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 42,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 47,
     "FULLY_CONSUMED_EXECUTION_FIELD_FAMILIES": 38,
     "PARTIAL_EXECUTION_FIELD_FAMILIES": 11,
     "UNCONSUMED_EXECUTION_FIELD_FAMILIES": 8,
@@ -49,11 +49,11 @@
       "AUTO": 36
     },
     "support": {
-      "IMPLEMENTED": 31,
+      "IMPLEMENTED": 33,
       "DATA_COMPLETENESS": 2,
       "GM_FACING_SUPPORT_NEEDED": 13,
-      "SMALL_CONSUMER_NEEDED": 14,
-      "DUPLICATE_OR_NON_EXECUTABLE": 15,
+      "SMALL_CONSUMER_NEEDED": 11,
+      "DUPLICATE_OR_NON_EXECUTABLE": 16,
       "SOURCE_CLARIFICATION_NEEDED": 3,
       "MISSING_SUBSYSTEM": 2
     },
@@ -94,17 +94,17 @@
         "GM_ADJUDICATED": 1
       }
     },
-    "sourceAmbiguities": 15,
+    "sourceAmbiguities": 14,
     "duplicateOrNonExecutable": {
-      "verified": 11,
+      "verified": 12,
       "asserted": 4
     }
   },
   "automationLevels": {
     "CONTEXTUAL": 24,
-    "GM_ADJUDICATED": 9,
-    "AUTO": 21,
-    "NOT_ASSESSED_YET": 26
+    "GM_ADJUDICATED": 10,
+    "AUTO": 24,
+    "NOT_ASSESSED_YET": 22
   },
   "supportGaps": {
     "CONTEXT_SURFACE_PENDING": 5,
@@ -1247,13 +1247,14 @@
       "key": "redirectionCrystalCompatibility",
       "family": "3b.operation.ability-compatibility",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "NON_EXECUTABLE",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "xerrol-nightstinger"
       ],
       "structuredSourceField": "operation.redirectionCrystalCompatibility",
+      "automation": "GM_ADJUDICATED",
       "matrix": {
         "bucket": "GM_ADJUDICATED",
         "support": "DUPLICATE_OR_NON_EXECUTABLE",
@@ -1267,8 +1268,8 @@
           "note": "not mechanically proven; must gain a verify before any closure-ledger acceptance"
         }
       },
-      "owner": "I-D-B",
-      "reason": "Redirection crystal is a separate equipment record installed on a weapon: upgrade / installation compatibility."
+      "nonExecutableClass": "DISPLAY",
+      "reason": "Xerrol Nightstinger: the record only notes that a redirection crystal is a common tactic and remains a separate equipment record (Equipment p.67). It states no installation rule for this weapon, so there is nothing to execute weapon-side; no compatibility is invented. The crystal record owns any rule."
     },
     {
       "kind": "operation-key",
@@ -1380,48 +1381,54 @@
       "key": "surveillanceTaggerCompatibility",
       "family": "3b.operation.ability-compatibility",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "DUPLICATE",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "darter"
       ],
-      "structuredSourceField": "operation.surveillanceTaggerCompatibility",
+      "structuredSourceField": "operation.surveillanceTaggerCompatible (true)",
+      "currentConsumer": "scripts/items/weapon-runtime/upgrade-compat.js (surveillanceTaggerCompatible)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "DUPLICATE_OR_NON_EXECUTABLE",
         "foundryKnows": "darter dart can carry a surveillance tagger (equipment p.67)",
-        "mustBeSupplied": "tagger item installed / loaded (inventory)",
-        "smallestImplementation": "compatibility check in the existing upgrade / payload install path; the tagger mechanic itself is a separate equipment record",
-        "sourceAmbiguity": "full tagger mechanics are not in the weapon record",
-        "acceptance": "a tagger can only be loaded into a compatible weapon"
+        "mustBeSupplied": "-",
+        "smallestImplementation": "none: same fact as surveillanceTaggerCompatible",
+        "sourceAmbiguity": null,
+        "acceptance": "covered by surveillanceTaggerCompatible",
+        "proof": {
+          "status": "VERIFIED",
+          "consumer": "scripts/items/weapon-runtime/upgrade-compat.js (surveillanceTaggerCompatible)"
+        }
       },
-      "owner": "I-D-B",
-      "reason": "Surveillance tagger installation compatibility (upgrade authority)."
+      "reason": "Darter: the prose carrier (with the equipment-authority page) states the same fact as surveillanceTaggerCompatible = true, which the upgrade compatibility gate executes."
     },
     {
       "kind": "operation-key",
       "key": "surveillanceTaggerCompatible",
       "family": "3b.operation.ability-compatibility",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "darter"
       ],
       "structuredSourceField": "operation.surveillanceTaggerCompatible",
+      "currentConsumer": "scripts/items/weapon-runtime/upgrade-compat.js (\\bsurveillanceTaggerCompatible\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "darter compatible = true",
-        "mustBeSupplied": "tagger item",
-        "smallestImplementation": "same as surveillanceTaggerCompatibility (one capability)",
-        "sourceAmbiguity": null,
-        "acceptance": "same"
+        "mustBeSupplied": "tagger upgrade declaring requiresWeaponCapability",
+        "smallestImplementation": "DONE (I-D-B3, weapon-side gate only): upgrade-compat.js + UpgradeEligibilityEngine gate",
+        "sourceAmbiguity": "the tagger equipment / install producer does not exist (no catalog record) and was not invented; it belongs to the equipment authority",
+        "acceptance": "a tagger-requiring upgrade is accepted only by a weapon declaring the capability"
       },
-      "owner": "I-D-B",
-      "reason": "Surveillance tagger installation compatibility (upgrade authority)."
+      "reason": "Phase 5D-I-D-B3, WEAPON-SIDE GATE ONLY: upgrade-compat.js exposes the accepted payload capability (surveillance-tagger, only on an explicit true) and UpgradeEligibilityEngine.canInstallUpgrade refuses an upgrade that declares requiresWeaponCapability on a canonical weapon that does not accept it (weapon_incompatible), on the path UpgradeService.applyUpgrade and InstallRemoveEngine share. NOT COMPLETED: the Surveillance Tagger equipment / install functionality itself (Equipment p.67). No tagger upgrade or equipment record exists in the catalog and none was invented, so no player can install a tagger today; the gate is exercised with a synthetic catalog entry on the real Darter record and applies the day a tagger record declares the capability. That missing producer belongs to the equipment authority, not to this weapon key."
     },
     {
       "kind": "operation-key",
@@ -1480,24 +1487,25 @@
       "key": "upgradeRestrictions",
       "family": "3b.operation.ability-compatibility",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "IMPLEMENTED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "sniper-blaster-rifle"
       ],
       "structuredSourceField": "operation.upgradeRestrictions",
+      "currentConsumer": "scripts/items/weapon-runtime/upgrade-compat.js (\\bupgradeRestrictions\\b)",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "IMPLEMENTED",
         "foundryKnows": "sniper rifle cannot take the rapid recycler",
         "mustBeSupplied": "-",
-        "smallestImplementation": "read the canonical restriction in UpgradeSlotEngine / UpgradeService install validation (installedUpgrades already tracked)",
-        "sourceAmbiguity": "spelled \"rapid-recycler\" in the weapon record vs \"rapid recycler\" in the text; match by upgrade key",
+        "smallestImplementation": "DONE (I-D-B3): upgrade-compat.js + UpgradeEligibilityEngine gate (key-normalized)",
+        "sourceAmbiguity": null,
         "acceptance": "installing the rapid recycler on the sniper rifle is refused before any cost"
       },
-      "owner": "I-D-B",
-      "reason": "Weapon-specific upgrade installation restrictions (UpgradeSlotEngine / UpgradeService)."
+      "reason": "Phase 5D-I-D-B3: upgrade-compat.js reads the weapon canonical restriction list (keys normalized: rapid-recycler == rapid_recycler) and UpgradeEligibilityEngine.canInstallUpgrade refuses with weapon_restriction:<key>, before slots, cost or any write; UpgradeService.applyUpgrade and InstallRemoveEngine both go through it. Proven on the PRODUCTION Sniper Blaster Rifle record (system.category weapon): the catalog blaster class is read from the record weapon-family selectors, so the rapid recycler reaches and is refused by the canonical restriction instead of category_mismatch. A weapon with no canonical identity declares nothing; a declared identity that cannot be resolved (unknown stamp, registry not loaded) is refused (canonical_unresolved)."
     },
     {
       "kind": "operation-key",
