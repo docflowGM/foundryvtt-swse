@@ -90,6 +90,14 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Scanned original PDF printed species pages visually reviewed (print page +1 = PDF page), and user-uploaded Legacy Era Campaign Guide_djvu.txt used as fast search index. Sakiyan rules absent from DJVU text and recovered directly from PDF p.204.",
       "notes": "Chagrian overlaps Clone Wars and is attached to its existing record with cross-source confirmation. No new species identities created in production. Male/female Devaronian source profiles and Chiss/Chadra-Fan stats show substantial chargen defects; defer production changes."
+    },
+    {
+      "source": "Threats of the Galaxy",
+      "printedScope": "Bith p26; Chistori p34; Mantellian Savrips as Heroes p117; Utai p127. Replica Droid species intentionally excluded.",
+      "reviewedSpecies": 4,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "Scanned PDF pages 26,34,117,127 were rendered and reviewed directly; searchable Threats TXT used for navigation and comparing, Galaxy of Intrigue Bith passage checked for later edition difference.",
+      "notes": "Organics-only species audit; later Galaxy of Intrigue explicitly supports current Bith race version. Do not erase prior race/profile based on Threats. No Foundry runtime or production changes."
     }
   ],
   "summary": {
@@ -110,7 +118,7 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 86,
+    "totalSpeciesInRollingLedger": 90,
     "forceUnleashed": {
       "species": 10,
       "noChange": 0,
@@ -190,6 +198,21 @@
       "reviewIssues": 19,
       "totalFindings": 32,
       "baseSizeSpeedNoChange": 13
+    },
+    "threatsOfGalaxy": {
+      "speciesBlocks": 4,
+      "foundInPack": 4,
+      "newDistinctSpecies": 4,
+      "wholeSpeciesNoChange": 0,
+      "changeRequiredSpecies": 1,
+      "reviewOnlySpecies": 3,
+      "confirmedIssues": 2,
+      "reviewItems": 11,
+      "totalFindings": 13,
+      "explicitCleanFieldDecisions": 12,
+      "excludedDroidSpecies": [
+        "Replica Droid"
+      ]
     }
   },
   "entries": [
@@ -703,6 +726,91 @@
             "reason": "GAW p11 explicitly supports existing +5 threshold vs stun."
           }
         ]
+      }
+    },
+    {
+      "name": "Bith",
+      "foundryId": "species-bith",
+      "threatsOfGalaxy": {
+        "source": "Threats of the Galaxy",
+        "printedPage": 26,
+        "section": "Black Sun Vigo species sidebar",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "printedPdfInspected": true,
+          "packAndBothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "Size Medium, speed 6",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          },
+          {
+            "field": "INT +2 and CON -2",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          },
+          {
+            "field": "Meditative Trance four hours",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "THR-01-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Two different printed Bith versions",
+            "target": "system.abilityMods, system.languages",
+            "current": "Pack +2 INT/-2 CON/+2 CHA; Basic and Bith",
+            "publishedRule": "Threats p26 lists +2 INT/-2 CON, language Bith. Later Galaxy of Intrigue prints +2 CHA and Basic+Bith, which supports current pack.",
+            "proposedAction": "Preserve source versions; do not change pack until a definitive version/variant policy.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 26,
+              "pdfPage": 26
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          },
+          {
+            "id": "THR-01-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Incompatible Evolved Intellect",
+            "target": "canonicalTraits[evolved-intellect]",
+            "current": "Pack awards a temporary Intelligence-only Force Point after spending FP",
+            "publishedRule": "Threats p26 gives one Intelligence-skill check treated as natural 20 each encounter.",
+            "proposedAction": "Certify which published Bith profile is used; don't combine both versions.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 26,
+              "pdfPage": 26
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          },
+          {
+            "id": "THR-01-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Scent versus Heightened Awareness",
+            "target": "canonicalTraits[scent], legacy sidecar[Musical Savant,Fragile]",
+            "current": "Pack grants Scent; sidecar +5 nonexistent Perform and -2 Fortitude",
+            "publishedRule": "Threats p26 grants Perception reroll, not Scent or flat modifiers; Galaxy of Intrigue instead prints Scent.",
+            "proposedAction": "Source-version reconciliation, plus independent review of unsupported sidecar modifiers.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 26,
+              "pdfPage": 26
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Organics/sapient species only. No droid rules reviewed or production data changed."
       }
     },
     {
@@ -1485,6 +1593,75 @@
           }
         ],
         "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      }
+    },
+    {
+      "name": "Chistori",
+      "foundryId": "species-chistori",
+      "threatsOfGalaxy": {
+        "source": "Threats of the Galaxy",
+        "printedPage": 34,
+        "section": "New Species: Chistori",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "printedPdfInspected": true,
+          "packAndBothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "+2 STR/-2 DEX, Medium/6",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          },
+          {
+            "field": "Cold-Blooded -5 Fort against extreme cold",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          },
+          {
+            "field": "DR 2 and correct Rage description; language Chistori",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "THR-02-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted Brute Strength bonus",
+            "target": "data/species-traits-migrated.json: Chistori.structuralTraits[Brute Strength].rules",
+            "current": "+2 species melee damage always",
+            "publishedRule": "Threats p34 grants +2 melee attack and damage ONLY while voluntarily Raging, once/day swift.",
+            "proposedAction": "Require other-book provenance; never leave conditional Rage bonus always-on.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 34,
+              "pdfPage": 34
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          },
+          {
+            "id": "THR-02-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Rage action/condition execution",
+            "target": "packs/species.db: Chistori.system.canonicalTraits[rage] / runtime",
+            "current": "Correct printed prose but no actor-based execution test",
+            "publishedRule": "5+CON rounds after swift activation; concentration skill restrictions; -1 persistent CT until 10 minutes recovery.",
+            "proposedAction": "Verify once/day timing, bonus and persistent condition in actor runtime.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 34,
+              "pdfPage": 34
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Organics/sapient species only. No droid rules reviewed or production data changed."
       }
     },
     {
@@ -3640,6 +3817,123 @@
       }
     },
     {
+      "name": "Mantellian Savrip",
+      "foundryId": "species-mantellian-savrip",
+      "threatsOfGalaxy": {
+        "source": "Threats of the Galaxy",
+        "printedPage": 117,
+        "section": "Mantellian Savrips as Heroes",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "printedPdfInspected": true,
+          "packAndBothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "Ability modifiers +4 STR/-2 DEX/+4 CON/-4 INT/-4 WIS/-4 CHA",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          },
+          {
+            "field": "Large/8 movement, language Savrip",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          },
+          {
+            "field": "Natural Armor +2, Primitive, and Rage prose",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "THR-03-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Incorrect Dexterity modifier sidecar",
+            "target": "data/species-traits-migrated.json: Mantellian Savrip.structuralTraits[Ability Modifiers].rules",
+            "current": "Typed abilityScoreModifier dexterity -4 when always; pack has printed -2 DEX",
+            "publishedRule": "Threats p117 gives -2 DEX; -4 penalties are INT, WIS, CHA.",
+            "proposedAction": "Remove/correct duplicated or wrong -4 DEX typed rule, prove final actor has -2 only.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 117,
+              "pdfPage": 117
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": false
+          },
+          {
+            "id": "THR-03-02",
+            "status": "CHANGE_REQUIRED",
+            "title": "Natural weapon damage and duplicate claws",
+            "target": "data/species-traits-migrated.json: Mantellian Savrip.structuralTraits[Natural Weapons,Poison].rules; packs/species.db: system.naturalWeapons",
+            "current": "Two independent 1d4 claw rules; no structured pack claw entry",
+            "publishedRule": "Threats p117 grants one 1d6 slashing +STR natural claw; poison is a rider on damaging a living target.",
+            "proposedAction": "Implement single 1d6 claw form and separate on-hit poison rule, not a second weapon.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 117,
+              "pdfPage": 117
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": false
+          },
+          {
+            "id": "THR-03-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Poison trigger and attack",
+            "target": "packs/species.db: Mantellian Savrip.system.canonicalTraits[poison] / runtime",
+            "current": "Correct text but no typed on-hit Fortitude CT application certified",
+            "publishedRule": "After successful claw damage to living foe, 1d20+Savrip level vs Fort; -1 CT; end of CT immobilized not unconscious.",
+            "proposedAction": "Test exact trigger, target and condition; do not add poisoning to nonclaw attacks.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 117,
+              "pdfPage": 117
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          },
+          {
+            "id": "THR-03-04",
+            "status": "REVIEW_REQUIRED",
+            "title": "Speak-only native language",
+            "target": "packs/species.db: Mantellian Savrip.system.languages",
+            "current": "Savrip listed without speech-only designation",
+            "publishedRule": "Threats p117 says Savrip (speak only).",
+            "proposedAction": "Model language capability without permitting automatic literacy if supported.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 117,
+              "pdfPage": 117
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          },
+          {
+            "id": "THR-03-05",
+            "status": "REVIEW_REQUIRED",
+            "title": "Primitive/Rage actor behavior",
+            "target": "packs/species.db: Mantellian Savrip.system.canonicalTraits[primitive,rage]",
+            "current": "Text agrees; actual proficiencies and Rage effects untested",
+            "publishedRule": "Suppress Heavy/Pistols/Rifles initial feats, 1/day swift Rage, finite duration and persistent condition recovery.",
+            "proposedAction": "Run first-level and actor combat/condition regression; preserve existing correct prose.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 117,
+              "pdfPage": 117
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Organics/sapient species only. No droid rules reviewed or production data changed."
+      }
+    },
+    {
       "name": "Massassi",
       "foundryId": "species-massassi",
       "kotor": {
@@ -5494,6 +5788,91 @@
           }
         ],
         "note": "Source-specific race audit; no production modifications."
+      }
+    },
+    {
+      "name": "Utai",
+      "foundryId": "species-utai",
+      "threatsOfGalaxy": {
+        "source": "Threats of the Galaxy",
+        "printedPage": 127,
+        "section": "Utai Varactyl Handler species sidebar",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "speciesPackPresent": true,
+          "identityStable": true,
+          "printedPdfInspected": true,
+          "packAndBothSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "+2 CON/-2 CHA, Small/4",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          },
+          {
+            "field": "Utapese automatic",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          },
+          {
+            "field": "Animal Handler, Cooperative, Low-Light Vision source text",
+            "status": "NO_CHANGE",
+            "note": "Published race rule component agrees with pack."
+          }
+        ],
+        "findings": [
+          {
+            "id": "THR-04-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Darkvision in legacy sidecar",
+            "target": "data/species-traits.json: Utai.structuralTraits[Underground Adaptation]",
+            "current": "Claims Darkvision",
+            "publishedRule": "Threats p127 grants Low-Light Vision (no effect on Total Concealment).",
+            "proposedAction": "Seek later source before upgrading vision; preserve printed base.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 127,
+              "pdfPage": 127
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          },
+          {
+            "id": "THR-04-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Wrong unconditional Perception bonus",
+            "target": "data/species-traits-migrated.json: Utai.structuralTraits[Underground Adaptation].rules",
+            "current": "+2 species Perception always, despite sidecar underground-only description",
+            "publishedRule": "Printed Utai has no +2 Perception: Animal Handler, Cooperative, Low-Light Vision only.",
+            "proposedAction": "Check provenance; condition underground if authorized instead of always.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 127,
+              "pdfPage": 127
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          },
+          {
+            "id": "THR-04-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Animal Handler and Cooperative runtime",
+            "target": "packs/species.db: Utai.system.canonicalTraits[animal-handler,cooperative] / runtime",
+            "current": "Published benefit descriptions present; no actor roll tests",
+            "publishedRule": "Ride reroll must accept; Persuasion to shift undomesticated INT <=2 beasts; adjacent and audible auto-success Aid Another.",
+            "proposedAction": "Verify action targets and reroll outcomes, no source-data rewrite.",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "printedPage": 127,
+              "pdfPage": 127
+            },
+            "applied": false,
+            "otherSourceCheckNeeded": true
+          }
+        ],
+        "notes": "Organics/sapient species only. No droid rules reviewed or production data changed."
       }
     },
     {
