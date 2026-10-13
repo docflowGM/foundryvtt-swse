@@ -3,7 +3,7 @@
 **Status:** audit only. No runtime, pack, template, or data change accompanies this document.
 **Baseline:** `9cca1452a3f9b65dca2713ad0e534b3cb3da7361`, which is current `origin/main` (re-fetched for revision 2). Revision 1 of this document said `origin/main` had moved to `811462e`. That was wrong: `811462e` is a stale **local** `main` branch ref in the session checkout, not the remote. The baseline did not move.
 **Branch:** `claude/weapon-modification-roadmap-iq4c8w`
-**Revision 2:** corrections from the independent Phase 0 review of PR #1031. Documentation only; see section 12 for the change list.
+**Revision 2 and 3:** corrections from the independent Phase 0 review of PR #1031. Documentation only; see section 12 for the change list.
 
 ## 0. Read this first: input provenance and limits
 
@@ -118,7 +118,15 @@ The earlier handoff's heavy-armor value of 1 was wrong. This audit never adopted
 
 ### 4.2 Persistent state locations for a single weapon
 
-`flags.foundryvtt-swse.customization.{structural,installedUpgrades,appliedTemplates,operationLog,overrides}` · `system.installedUpgrades` · `system.upgradeSlots` · `system.sizeIncreaseApplied` · `system.gearTemplate(Secondary)` · `flags.swse.{blasterUpgrades,meleeUpgrades,armorUpgrades,gearMods,appliedTemplates,customizationStructural}` · `flags.swse.techSpecialist.*` · `flags.{foundryvtt-swse,swse}.alchemy` · `flags.{foundryvtt-swse,swse}.lightsaberConfig` · `system.modifiers` · and the direct stat keys listed in §5. `SafetyEngine.normalizeCustomizationState` (`safety-engine.js` ≈ lines 270-345) already merges the legacy `system.installedUpgrades` and the `flags.swse.*Upgrades` arrays into the canonical shape on read; this is the existing migration adapter.
+`flags.foundryvtt-swse.customization.{structural,installedUpgrades,appliedTemplates,operationLog,overrides}` · `system.installedUpgrades` · `system.upgradeSlots` · `system.sizeIncreaseApplied` · `system.gearTemplate(Secondary)` · `flags.swse.{blasterUpgrades,meleeUpgrades,armorUpgrades,gearMods,appliedTemplates,customizationStructural}` · `flags.swse.techSpecialist.*` · `flags.{foundryvtt-swse,swse}.alchemy` · `flags.{foundryvtt-swse,swse}.lightsaberConfig` · `system.modifiers` · and the direct stat keys listed in §5. **Legacy recovery is conditional and incomplete** (corrected in revision 3; revision 2 overstated it). `SafetyEngine.normalizeCustomizationState` (`safety-engine.js:83-128`) recovers legacy data **only when `flags.foundryvtt-swse.customization` is absent** (`:88-97`, via `#recoverFromLegacySources`). When the canonical flag exists, it normalizes that flag alone and does **not** merge any legacy array. The recovery path itself reads:
+
+- `system.installedUpgrades` (mapped to instances; `slotsUsed` becomes `slotCost`, `Number(...) || 0`);
+- `flags.swse.meleeUpgrades`, `flags.swse.gearMods` and `flags.swse.armorUpgrades`, each looked up in `MELEE_UPGRADES`, `GEAR_MODS`, `ARMOR_UPGRADES` and assigned `slotCost: 1`, de-duplicated by `upgradeKey` against the first source;
+- `system.gearTemplate` / `gearTemplateSecondary` (templates); `system.strippedFeatures` and `system.sizeIncreaseApplied` (structural).
+
+It does **not** read `flags.swse.blasterUpgrades`, `flags.swse.appliedTemplates` or `flags.swse.customizationStructural`, so blaster upgrades and the Workbench's legacy template/structural mirrors are never recovered by this function.
+
+**Coexistence/omission risk.** The Workbench writes the canonical flag **and** the `flags.swse.*` mirrors on every apply, and `UpgradeService.applyUpgrade` writes only `system.installedUpgrades`. An item can therefore hold upgrades in both representations. When the canonical flag exists, an upgrade present only in `system.installedUpgrades` (e.g. installed through `UpgradeService`) or only in `flags.swse.blasterUpgrades` is **invisible to `UpgradeSlotEngine`** (omitted from `used`), while the Workbench separately unions canonical and legacy keys (`_getCanonicalInstalledUpgradeKeys`, `_getCanonicalTemplateKeys`), so the two consumers can disagree on the same item. A future slot authority must neither silently drop nor double-count either representation. *Static reading; runtime validation needed.*
 
 ### 4.3 Consumers of modification state
 
@@ -257,7 +265,7 @@ Method notes:
 | `stockSlotOverride` | **D/E** pending decision |
 | `TechSpecialistModificationService` direct stat writes | **B** convergence candidate (per v1.2 §1.1) |
 
-## 12. Revision 2 change list (documentation only)
+## 12. Revision 2 and 3 change lists (documentation only)
 
 - Baseline note corrected: `origin/main` is `9cca145`; `811462e` was a stale local ref.
 - Section 0: input provenance restated; v2 handoff file not present; certified items distinguished from OCR items.
@@ -267,3 +275,17 @@ Method notes:
 - Sections 7-9: uncertified list updated; Phase 1 split so 1a is read-only and consumer rewiring and integration tests moved to later gates; binding decisions recorded; open items separated.
 - No runtime file, catalog, compendium data or test was changed.
 
+**Revision 3** (review correction, documentation only):
+
+- Section 4.2: corrected the description of `SafetyEngine.normalizeCustomizationState` (conditional legacy recovery; no `blasterUpgrades`, `appliedTemplates` or `customizationStructural` recovery) and documented the coexistence/omission risk.
+- Section 8: added the future migration regression scenarios below.
+- Baseline `9cca145` unchanged. No runtime, catalog, data or test file changed.
+
+### Future migration regression scenarios (not implemented in Phase 0)
+
+1. Canonical customization flag present **and** an upgrade only in `system.installedUpgrades` → reported as a conflict or unresolved occupancy; never silently dropped and never double-counted.
+2. Canonical flag present and `flags.swse.blasterUpgrades` populated → same.
+3. Canonical flag absent, legacy arrays present → recovered once; a blaster-flag-only item is flagged as unrecoverable by the current adapter, not assumed empty.
+4. The same upgrade in both canonical and legacy representations (matching key) → counted once, provenance records both.
+5. Legacy entry with missing `slotsUsed` → `slotCost` unresolved (current adapter coerces to 0; decision 9.1 forbids defaulting).
+6. Workbench-only keys (not in `UPGRADE_CATALOG`) present in the legacy flags → surfaced as unmapped, not costed.
