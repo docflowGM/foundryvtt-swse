@@ -19,8 +19,8 @@ Two independent questions per row: **who establishes the circumstances** (bucket
 | DUPLICATE_OR_NON_EXECUTABLE | 16 |
 | GM_FACING_SUPPORT_NEEDED | 13 |
 | IMPLEMENTED | 33 |
-| MISSING_SUBSYSTEM | 2 |
-| SMALL_CONSUMER_NEEDED | 11 |
+| MISSING_SUBSYSTEM | 3 |
+| SMALL_CONSUMER_NEEDED | 10 |
 | SOURCE_CLARIFICATION_NEEDED | 3 |
 
 Duplicate / non-executable claims: **12 mechanically verified** (carrier present on every identity + consumer probe), **4 asserted** (need a verify before any closure-ledger acceptance). Rows carrying a source ambiguity: **14**.
@@ -113,7 +113,7 @@ Duplicate / non-executable claims: **12 mechanically verified** (carrier present
 | `tripodTreatsAsOneSizeSmallerForWielding` | e-web-missile-launcher, flame-cannon, tactical-tractor-beam | AUTO | IMPLEMENTED | tripod-mounted weapons wield one size smaller | tripod mounted | DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; same capability as tripodEffectiveSize | — | same |
 | `upgradeRestrictions` | sniper-blaster-rifle | AUTO | IMPLEMENTED | sniper rifle cannot take the rapid recycler | - | DONE (I-D-B3): upgrade-compat.js + UpgradeEligibilityEngine gate (key-normalized) | — | installing the rapid recycler on the sniper rifle is refused before any cost |
 | `weaponDR` | electrostaff | CONTEXTUAL | MISSING_SUBSYSTEM | electrostaff DR 20 (canonicalStats.objectDurability.damageReduction) | that the weapon OBJECT is being damaged (GM / sunder action) | a weapon-object damage event: apply DR to damage dealt TO the weapon. None exists; do not reuse target damage | — | damage to the weapon object is reduced by DR 20; damage dealt BY the weapon unaffected |
-| `weaponDRAppliesAgainstLightsabers` | Shockstaff, electrostaff | AUTO | SMALL_CONSUMER_NEEDED | DR is not ignored by lightsabers (phrik) | attacker is a lightsaber | flag read by the same weapon-object damage event (and by the existing lightsaber DR-ignore rule) | — | lightsaber damage to a shockstaff / electrostaff is reduced by its DR |
+| `weaponDRAppliesAgainstLightsabers` | Shockstaff, electrostaff | AUTO | MISSING_SUBSYSTEM | DR is not ignored by lightsabers (phrik) | attacker is a lightsaber | flag read by the same weapon-object damage event (and by the existing lightsaber DR-ignore rule) | — | lightsaber damage to a shockstaff / electrostaff is reduced by its DR |
 | `weaponDRValue` | Shockstaff | GM_ADJUDICATED | SOURCE_CLARIFICATION_NEEDED | shockstaff DR value is "not_stated_in_KOTOR_entry" | a source-stated value | none: the DR value is unknown | KOTOR entry gives no DR number; do not invent one | value supplied by a source or the GM per table |
 | `wornAs` | wrist-blaster | AUTO | IMPLEMENTED | wrist blaster worn as bracelet | - | DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; same classification | — | classification only |
 | `wornOnWrist` | concealed-dart-launcher | AUTO | IMPLEMENTED | dart launcher worn on the wrist | - | DONE (I-D-B2): wielding-size.js effective size from the record rule + current state; same classification | — | classification only |
