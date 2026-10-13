@@ -136,14 +136,12 @@ There is no evidence from this section for rewriting Core baseline species recor
 2. Rebellion Era Campaign Guide — 48 sourcebook species-feat identities reconciled
 3. Knights of the Old Republic Campaign Guide — 12/12 species baseline and sidecar audit
 
-**Pending sourcebooks**
-5. Clone Wars Campaign Guide — COMPLETED
-6. Scum and Villainy — COMPLETED
-7. Jedi Academy Training Manual — COMPLETED
-8. Galaxy at War — COMPLETED
-9. Legacy Era Campaign Guide — COMPLETED
-10. Scavenger's Guide to Droids
-11. Threats of the Galaxy / Galaxy of Intrigue / The Unknown Regions / other source supplements where species mechanics are actually printed
+**Book completion and scope**
+- Books 1–9: Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, Jedi Academy, Galaxy at War, Legacy Era — COMPLETED.
+- Book 10: Threats of the Galaxy (organic races only) — COMPLETED.
+- Book 11: Galaxy of Intrigue — NEXT.
+- Book 12: The Unknown Regions — PENDING.
+- Scavenger's Guide to Droids and all droid races/chassis — OUT OF SCOPE by user direction.
 
 For every subsequent book: inventory species entries, variants, feats that modify traits, and any corrected/reprinted rules; append a provenance-linked decision for every affected species and explicit `NO_CHANGE` for every species entry reviewed without an edit. Respect publication/variant specificity. Keep a rolling JSON + MD together.
 
