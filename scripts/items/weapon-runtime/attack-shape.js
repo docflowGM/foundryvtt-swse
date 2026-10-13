@@ -163,6 +163,9 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
     stunSetting: stunSettingOf(def, resolved, op),
     // Phase 5D-I-D-F: the weapon's power-source REQUIREMENT (energy cell(s) / power pack(s)); a requirement, never a per-shot ammunition cost
     powerSource: powerSourceRequirementOf(op),
+    // Phase 5D-I-D-F: operation.canSingleLoadShell (Mortar Launcher, Galaxy at War p.40): the alternative FIRING method -- a single shell dropped down the
+    // open tube and launched by the electromagnet instead of fed from the five-shell magazine. The magazine is neither used nor refilled by it.
+    singleShellLaunch: op.canSingleLoadShell === true,
     // temporal firing constraints (families in fire-state.js); owned readiness state lives on the Item, never here
     temporal: resolveTemporalConstraints(def, op, resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions),
     dualWield: Object.freeze({

@@ -1960,18 +1960,18 @@
         "mortar-launcher"
       ],
       "structuredSourceField": "operation.canSingleLoadShell",
-      "currentConsumer": "scripts/engine/inventory/ammo-system.js (\\bcanSingleLoadShell\\b)",
+      "currentConsumer": "scripts/items/weapon-runtime/attack-shape.js (\\bcanSingleLoadShell\\b)",
       "automation": "CONTEXTUAL",
       "matrix": {
         "bucket": "CONTEXTUAL",
         "support": "IMPLEMENTED",
-        "foundryKnows": "mortar launcher: five-shell magazine that automatically feeds each shot, AND (Galaxy at War p.40, source-confirmed) a shell may instead be dropped singly down the open tube",
-        "mustBeSupplied": "the player choosing single-round loading in the reload dialog",
-        "smallestImplementation": "DONE (I-D-F): AmmoSystem.loadSingleRound adds ONE round to the one ammunition pool (capped at capacity) when the weapon declares operation.canSingleLoadShell; the sheet reload workflow offers the choice only for such weapons; no separate action is charged (the source states none)",
+        "foundryKnows": "mortar launcher: five-shell magazine that AUTOMATICALLY feeds each shot, AND (Galaxy at War p.40, source-confirmed) an alternative FIRING method: a single shell dropped down the open tube and launched by the electromagnet",
+        "mustBeSupplied": "the player choosing the Single Shell attack option (and supplying the shell)",
+        "smallestImplementation": "DONE (I-D-F): attack-shape singleShellLaunch + the weapon-granted Single Shell attack option; an attack that asserts it draws nothing from the magazine; the magazine mode is untouched; no loose-shell inventory or separate action is invented",
         "sourceAmbiguity": null,
-        "acceptance": "single round loads and the magazine refill still works; a weapon without the capability refuses; no over-fill; one reload action"
+        "acceptance": "single-shell attack fires with the magazine empty and leaves it unchanged; ordinary shots still draw one shell; other weapons ignore the option; works with tracking on and off"
       },
-      "reason": "Mortar Launcher. Galaxy at War p.40 (source-confirmed): a five-shell magazine that automatically feeds each shot AND an alternative of dropping a single shell down the open tube. The key is valid, not a data defect. AmmoSystem.loadSingleRound adds one round to the one ammunition pool (capped at capacity); the reload workflow offers it only for weapons declaring the key. No separate action is charged because the source states none. Proven in the I-D-F test."
+      "reason": "Mortar Launcher. Galaxy at War p.40 (source-confirmed): a five-shell magazine that automatically feeds each shot AND an alternative FIRING method -- a single shell dropped down the open tube and launched by the electromagnet. The key is valid, not a data defect. Implemented as that firing mode, not a magazine refill: the attack shape exposes singleShellLaunch, the weapon offers a \"Single Shell\" attack option (CombatOptionResolver), and an attack that asserts it draws nothing from the magazine (and does not need one), while the automatic-feed magazine mode is untouched. The player supplies the shell (no loose-shell inventory exists and none is invented); no separate action is charged because the source states none. The option on a weapon that does not declare the method changes nothing. Proven in the I-D-F test with ammunition tracking on and off."
     },
     {
       "kind": "operation-key",

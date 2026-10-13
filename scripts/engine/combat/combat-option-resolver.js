@@ -275,6 +275,9 @@ function weaponGrantedOptions(weapon, context = {}) {
   // Stacks with Far Shot (both are one-step-closer adjustments, summed by getRangePenaltyAdjustment).
   const rp = shape.rangePreparation;
   if (rp?.complete && rp.steps === 1) out.push({ id: "preparedRangeReduction", label: "Range Preparation", control: "toggle", requiresAttackType: "ranged", rangePenaltyAdjustment: "oneStepCloser", rangeSteps: rp.steps, expendsMultipleShots: false, sourceName: "weapon", summary: `Spend ${rp.requiredActions.map((a) => `${a.count} ${a.action}`).join(" + ")} before the attack: treat the target's range as ${rp.steps} step${rp.steps === 1 ? "" : "s"} shorter.` });
+  // Phase 5D-I-D-F: the Mortar Launcher's published alternative firing method (a single shell dropped in the open tube, launched by the electromagnet).
+  // The player asserts they supply the shell; the shot then does not draw on the magazine. The ordinary automatic-feed magazine mode is untouched.
+  if (shape.singleShellLaunch && shape.branch !== "melee") out.push({ id: "singleShellLaunch", label: "Single Shell", control: "toggle", requiresAttackType: "ranged", expendsMultipleShots: false, sourceName: "weapon", summary: "Drop one shell down the open tube instead of using the magazine: the magazine is not used or refilled. You supply the shell." });
   return out;
 }
 function optionProhibitedByCanonicalShape(option, item, weapon, context = {}) {

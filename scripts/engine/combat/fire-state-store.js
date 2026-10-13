@@ -198,7 +198,8 @@ export async function spendRequiredActions(actor, requiredActions = [], metadata
     }
     spends.push(res); paid.push(req);
   }
-  return { ok: true, paid, rollback: async () => { for (const s of [...spends].reverse()) await s.rollback?.(); } };
+  // committed: every spend was really recorded by the action economy (false for the established out-of-combat no-op)
+  return { ok: true, paid, committed: spends.length > 0 && spends.every((s) => s?.committed === true), rollback: async () => { for (const s of [...spends].reverse()) await s.rollback?.(); } };
 }
 
 /** Record that a shot was fired (after the attack resolved). No-op for unconstrained forms. */
@@ -313,13 +314,22 @@ export async function reloadBySecondCrew(gunner, weapon, crewActor, { source = '
   if (!action) return { ok: false, reason: 'no-second-crew-reload' };
   const owner = weapon?.actor ?? gunner;
   if (!crewActor?.id || crewActor.id === owner?.id || crewActor.id === gunner?.id) return { ok: false, reason: 'second-crew-required' };
+  // The action economy treats an actor outside the active combat as an out-of-combat no-op, so a gunner in combat could otherwise pick an
+  // unrelated actor and reload for free. While the gunner is in an active combat the crew member must be a combatant of the SAME combat and
+  // their Move must really be recorded; with no combat for the gunner the established out-of-combat policy (no action economy) applies.
+  const combat = globalThis.game?.combat ?? null;
+  const inCombat = (a) => !!combat && Array.from(combat.combatants ?? []).some((c) => c?.actor?.id === a?.id || c?.actorId === a?.id);
+  const combatApplies = inCombat(owner) || inCombat(gunner);
+  if (combatApplies && !inCombat(crewActor)) return { ok: false, reason: 'crew-not-in-combat' };
   const { AmmoSystem } = await import("/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js");
-  const tracked = AmmoSystem.weaponUsesAmmunition(weapon);
+  // numerical ammunition is only touched when the optional tracking rule is on AND the weapon has a pool; otherwise the reload only clears the awaiting-reload state
+  const tracked = AmmoSystem.isTrackingEnabled() && AmmoSystem.weaponUsesAmmunition(weapon);
   const pool = weapon?.system?.ammunition ?? {};
   const awaiting = readFireState(weapon)?.needsReload === true;
   if (!awaiting && !(tracked && Number(pool.current) < Number(pool.max))) return { ok: false, reason: 'already-loaded' };
   const spend = await spendRequiredActions(crewActor, [{ action, count: 1, family: 'second-crew-reload', reason: 'reload by second crew member' }], { weaponName: weapon?.name, source });
   if (!spend.ok) return { ok: false, reason: 'crew-action-unavailable' };
+  if (combatApplies && spend.committed !== true) { await spend.rollback(); return { ok: false, reason: 'crew-action-not-committed' }; }
   let reload;
   try {
     if (tracked) reload = await AmmoSystem.reloadWeapon(owner, weapon);
@@ -338,12 +348,12 @@ export function powerSourceOf(weapon) {
   return { requirement: shape.powerSource, label: powerSourceLabel(shape.powerSource), state: status.state };
 }
 
-/** The published reload alternatives of a canonical weapon (second crew member's action; single-round loading). Read-only; legacy weapons declare none. */
+/** The published reload alternative of a canonical weapon (the second crew member's action). Read-only; legacy weapons declare none. */
 export function reloadOptions(weapon) {
   let shape;
-  try { shape = shapeOfWeapon(weapon, {}); } catch { return { secondCrewAction: null, canSingleLoad: false }; }
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return { secondCrewAction: null }; }
   const op = shape.source === 'canonical' ? (shape.operation ?? {}) : {};
-  return { secondCrewAction: typeof op.secondCrewReloadAction === 'string' && op.secondCrewReloadAction ? op.secondCrewReloadAction.toLowerCase() : null, canSingleLoad: op.canSingleLoadShell === true };
+  return { secondCrewAction: typeof op.secondCrewReloadAction === 'string' && op.secondCrewReloadAction ? op.secondCrewReloadAction.toLowerCase() : null };
 }
 
 /** Mounted on a tripod / mount / rifle host (owned state; the source states no action). */

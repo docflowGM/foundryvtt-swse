@@ -221,7 +221,11 @@ function withCanonicalWeaponRuntime(weapon, rollOptions, actor = null) {
     const shape = resolveAttackShapeFor(weaponRuntime, rollOptions);
     assertAttackShapeLegal(shape, rollOptions);
     const resource = resolveAttackResourceCost(weaponRuntime, { damageMode: damageMode ?? null });
-    const canonicalAmmoUnits = resource && resource.status !== 'pending' ? resource.units : undefined;
+    let canonicalAmmoUnits = resource && resource.status !== 'pending' ? resource.units : undefined;
+    // Phase 5D-I-D-F: the Mortar Launcher's single-shell firing method draws nothing from the magazine (the player supplies the shell). Honoured only
+    // for a form that declares it; the option on any other weapon changes nothing.
+    const singleShellAsserted = rollOptions.combatOptions?.singleShellLaunch ?? rollOptions.attackOptions?.singleShellLaunch;
+    if (shape.singleShellLaunch && singleShellAsserted && singleShellAsserted !== '0') canonicalAmmoUnits = 0;
     return { rollOptions: { ...rollOptions, ...(damageMode === 'stun' ? { damageMode } : {}), weaponRuntime, canonicalResource: resource, canonicalAutofireUnits: shape.autofireUnits ?? undefined, ...(canonicalAmmoUnits !== undefined ? { canonicalAmmoUnits } : {}), ...(weaponRuntime.branch ? { attackType: weaponRuntime.branch } : {}) } };
   } catch (err) {
     if (!(err instanceof WeaponRuntimeError)) throw err;

@@ -158,8 +158,8 @@ export const I_D_ROWS = Object.freeze([
   }),
   op('canSingleLoadShell', 'ammo-resource-reload', 'I-D-F', 'IMPLEMENTED', {
     automation: 'CONTEXTUAL',
-    consumer: { file: 'scripts/engine/inventory/ammo-system.js', probe: '\\bcanSingleLoadShell\\b' },
-    reason: 'Mortar Launcher. Galaxy at War p.40 (source-confirmed): a five-shell magazine that automatically feeds each shot AND an alternative of dropping a single shell down the open tube. The key is valid, not a data defect. AmmoSystem.loadSingleRound adds one round to the one ammunition pool (capped at capacity); the reload workflow offers it only for weapons declaring the key. No separate action is charged because the source states none. Proven in the I-D-F test.',
+    consumer: { file: 'scripts/items/weapon-runtime/attack-shape.js', probe: '\\bcanSingleLoadShell\\b' },
+    reason: 'Mortar Launcher. Galaxy at War p.40 (source-confirmed): a five-shell magazine that automatically feeds each shot AND an alternative FIRING method -- a single shell dropped down the open tube and launched by the electromagnet. The key is valid, not a data defect. Implemented as that firing mode, not a magazine refill: the attack shape exposes singleShellLaunch, the weapon offers a "Single Shell" attack option (CombatOptionResolver), and an attack that asserts it draws nothing from the magazine (and does not need one), while the automatic-feed magazine mode is untouched. The player supplies the shell (no loose-shell inventory exists and none is invented); no separate action is charged because the source states none. The option on a weapon that does not declare the method changes nothing. Proven in the I-D-F test with ammunition tracking on and off.',
   }),
   op('powerCordDisconnectRule', 'ammo-resource-reload', 'I-D-F', 'DATA_COMPLETENESS', {
     owner: 'canonical weapon data (source-silent)', automation: 'GM_ADJUDICATED',

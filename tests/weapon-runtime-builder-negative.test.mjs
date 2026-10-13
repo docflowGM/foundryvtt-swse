@@ -45,7 +45,6 @@ const ALLOWED_RUNTIME_CONSUMERS = new Set([
   'scripts/engine/combat/features/combat-feature-handlers.js',
   'scripts/engine/feat/scoped-combat-feat-resolver.js', // 5D-G: Weapon Focus/Specialization selector join
   'scripts/engine/combat/fire-state-store.js', // 5D-G: owned fire state (readiness) for the selected form
-  'scripts/engine/inventory/ammo-system.js', // 5D-I-D-F: the ammunition SSOT reads operation.canSingleLoadShell (single-round loading) through the canonical shape
   'scripts/engine/combat/damage-type-rules.js', // 5D-H: CANNOT_NEGATE_ATTACK relation -> reaction negation exclusions
   // 5D-I-C-B weapon control: the declarative control contract is read by the control executor, the falling-object authority and the existing grapple
   // adapter (canonical feat identity + weapon entitlement); no builder / census / manifest is ever read at runtime

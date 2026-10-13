@@ -280,31 +280,6 @@ export class AmmoSystem {
     }
   }
 
-  /**
-   * Phase 5D-I-D-F: load ONE round into a weapon that canonically supports single loading (operation.canSingleLoadShell, Mortar Launcher:
-   * the wielder may drop a single shell down the open tube instead of relying on the automatically feeding magazine; Galaxy at War p.40).
-   * The shell is added to the weapon's one ammunition pool (capped at its capacity). The source states no separate action for this
-   * alternative, so none is charged here: the caller's reload action is the only cost. A weapon that does not declare the capability is
-   * refused; a full weapon is not over-filled.
-   */
-  static async loadSingleRound(actor, weapon) {
-    if (!actor || !weapon) return { success: false, message: 'Invalid actor or weapon' };
-    let supported = false;
-    try {
-      const { shapeOfWeapon } = await import("/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js");
-      const shape = shapeOfWeapon(weapon, {});
-      supported = shape.source === 'canonical' && shape.operation?.canSingleLoadShell === true;
-    } catch (_err) { supported = false; }
-    if (!supported) return { success: false, reason: 'single-load-not-supported', message: `${weapon.name} cannot be loaded one round at a time` };
-    const max = asNumber(weapon.system?.ammunition?.max, 0);
-    const current = asNumber(weapon.system?.ammunition?.current, 0);
-    if (max <= 0) return { success: false, reason: 'no-ammunition-pool', message: `${weapon.name} does not use tracked ammunition` };
-    if (current >= max) return { success: true, loaded: 0, reason: 'already-full', message: `${weapon.name} is already fully loaded` };
-    const result = await this.setAmmunition(actor, weapon, current + 1);
-    if (result?.success === false) return result;
-    return { success: true, loaded: 1, previousAmmo: current, newAmmo: current + 1, message: `${weapon.name}: one round loaded (${current} → ${current + 1})` };
-  }
-
   /** Phase 5D-G: a reload clears the owned "awaiting reload" fire state (separate from the ammunition counter). Best effort. */
   static async #clearFireStateReload(actor, weapon) {
     try {

@@ -335,6 +335,33 @@ try {
     const lg = legacy({ ammunition: { current: 0, max: 1 } }); const L = makeActor({ items: [lg] });
     assert.equal((await FireStateStoreRef.reloadBySecondCrew(L, lg, crewActor('crew-5'))).reason, 'no-second-crew-reload');
   }
+  {
+    // IN an active combat the crew member must be a combatant of that combat and their Move must really be recorded
+    const { ew, G } = await fresh();
+    const inCombat = (...ids) => { globalThis.game = { ...(globalThis.game ?? {}), combat: { id: 'c1', started: true, round: 1, combatants: ids.map((id) => ({ actor: { id } })) }, user: { targets: { first: () => null } } }; };
+    inCombat('gunner', 'crew-1');
+    // an unrelated world actor: refused, nothing mutated, no free reload
+    const stranger = crewActor('stranger');
+    const refused = await FireStateStoreRef.reloadBySecondCrew(G, ew, stranger);
+    assert.equal(refused.ok, false); assert.equal(refused.reason, 'crew-not-in-combat');
+    assert.deepEqual(crewSpends, [], 'nothing spent'); assert.equal(ammoOf(ew), 0); assert.equal(ew.flags.swse.fireState.needsReload, true, 'still awaiting reload');
+    // the gunner as crew / no crew: still refused in combat
+    assert.equal((await FireStateStoreRef.reloadBySecondCrew(G, ew, G)).reason, 'second-crew-required');
+    assert.equal((await FireStateStoreRef.reloadBySecondCrew(G, ew, null)).reason, 'second-crew-required');
+    // a combatant crew member whose Move is not actually recorded (committed: false) is refused and rolled back
+    ActionEconomyConsumption.spend = async (actor, type) => { crewSpends.push({ actor: actor.id, type }); return { allowed: true, committed: false, rollback: async () => { crewSpends.pop(); } }; };
+    const notCommitted = await FireStateStoreRef.reloadBySecondCrew(G, ew, crewActor('crew-1'));
+    assert.equal(notCommitted.reason, 'crew-action-not-committed'); assert.deepEqual(crewSpends, []); assert.equal(ammoOf(ew), 0);
+    // an eligible combatant: exactly one Move on that actor
+    installCrewEcon(true);
+    const good = await FireStateStoreRef.reloadBySecondCrew(G, ew, crewActor('crew-1'));
+    assert.equal(good.ok, true); assert.deepEqual(crewSpends, [{ actor: 'crew-1', type: 'move' }]); assert.equal(ammoOf(ew), 1);
+    // the gunner NOT in the combat but the crew in it: the combat does not apply to the gunner's reload (established out-of-combat policy)
+    reset(); assert.ok(await attack(G, ew, {})); crewSpends.length = 0; inCombat('crew-1');
+    const outOfCombatGunner = await FireStateStoreRef.reloadBySecondCrew(G, ew, crewActor('stranger'));
+    assert.equal(outOfCombatGunner.ok, true, 'no combat for the gunner: the out-of-combat policy applies');
+    globalThis.game = { ...(globalThis.game ?? {}), combat: null };
+  }
   ActionEconomyConsumption.spend = origSpend;
   noRealAmmo(); restoreHarness(); reinstall();
   ok('second-crew reload: Move charged to the supplied crew member only; no crew / the gunner as crew -> nothing; no double reload; unpayable or failed reload leaves state and returns the action; other / legacy weapons ineligible');
@@ -390,28 +417,56 @@ try {
     SWSEDialogV2.prompt = origPrompt; ActionEconomyConsumption.spend = origSpend;
   }
 
-  // mortar: both published loading methods
-  { const ml = owned('weapon-mortar-launcher'); const A = makeActor({ items: [ml] }); A.id = 'mort'; A.name = 'Mortar Team';
+  // tracking OFF x second crew (the intersection): the Move is charged to the crew, the awaiting-reload state clears, the numerical pool is NOT touched
+  { const ew = owned('weapon-e-web-missile-launcher'); const G = makeActor({ items: [ew] }); G.id = 'gunner'; G.name = 'Gunner';
+    AmmoSystem.isTrackingEnabled = () => false;
+    reset(); assert.ok(await attack(G, ew, {})); assert.equal(ew.flags.swse.fireState.needsReload, true);
+    ew.system.ammunition.current = 0; // an untracked pool is left exactly as it is
+    const crewSpends = []; const origSpend = ActionEconomyConsumption.spend;
+    ActionEconomyConsumption.spend = async (a, type) => { crewSpends.push({ actor: a.id, type }); return { allowed: true, committed: true, rollback: async () => {} }; };
+    charges.length = 0;
+    const res = await run(mkSheet(G), { weaponId: ew.id }, { secondCrewActorId: 'crew-9' });
+    assert.equal(res.ok, true); assert.deepEqual(crewSpends, [{ actor: 'crew-9', type: 'move' }], 'Move charged to the crew member'); assert.deepEqual(charges, [], 'not to the gunner');
+    assert.equal(ew.flags.swse.fireState.needsReload, undefined, 'awaiting-reload cleared'); assert.equal(ammoOf(ew), 0, 'the untracked numerical pool was not manipulated');
+    assert.equal(res.reload.reloadAmount, 0);
+    reset(); assert.ok(await attack(G, ew, {}), 'fires again');
+    ActionEconomyConsumption.spend = origSpend; AmmoSystem.isTrackingEnabled = () => true;
+  }
+
+  // mortar: the single-shell FIRING method (Galaxy at War p.40); the five-shell automatic-feed magazine is intact
+  { assert.equal(typeof AmmoSystem.loadSingleRound, 'undefined', 'single-shell use is not a magazine refill helper');
+    const ml = owned('weapon-mortar-launcher'); const A = makeActor({ items: [ml] }); A.id = 'mort'; A.name = 'Mortar Team';
     assert.equal(reg('weapon-mortar-launcher').operation.canSingleLoadShell, true); assert.equal(ammoOf(ml), 5);
-    for (let i = 0; i < 3; i++) { reset(); assert.ok(await attack(A, ml, {}), `shell ${i + 1}`); }
-    assert.equal(ammoOf(ml), 2);
-    // the magazine auto-feeds each shot (an ordinary attack spends one shell, no reload between shots)
-    // single shell: one round into the same pool, capped at capacity
-    const one = await AmmoSystem.loadSingleRound(A, ml); assert.deepEqual([one.success, one.loaded], [true, 1]); assert.equal(ammoOf(ml), 3);
-    assert.equal((await AmmoSystem.reloadWeapon(A, ml)).reloadAmount, 2, 'the magazine refill is unchanged'); assert.equal(ammoOf(ml), 5);
-    const full = await AmmoSystem.loadSingleRound(A, ml); assert.deepEqual([full.success, full.loaded, full.reason], [true, 0, 'already-full']); assert.equal(ammoOf(ml), 5, 'never over-filled');
-    // through the sheet: an explicit option, one reload action, no invented extra cost
-    reset(); assert.ok(await attack(A, ml, {})); assert.equal(ammoOf(ml), 4); charges.length = 0;
-    const viaSheet = await run(mkSheet(A), { weaponId: ml.id }, { loadSingleRound: true });
-    assert.equal(viaSheet.loaded, 1); assert.equal(ammoOf(ml), 5); assert.deepEqual(charges, [{ actor: 'mort', type: 'standard' }], 'only the workflow\'s own reload action; the source states no separate action');
-    // the weapons that do not publish single loading refuse it
+    const optionIds = (actor, weapon) => (CombatOptionResolver.getAttackOptionsWithState(actor, weapon, {}) ?? []).map((o) => o.id ?? o.option?.id);
+    assert.ok(optionIds(A, ml).includes('singleShellLaunch'), 'the mortar offers the single-shell firing mode');
+    const mg0 = owned('weapon-micro-grenade-launcher'); const B0 = makeActor({ items: [mg0] });
+    assert.ok(!optionIds(B0, mg0).includes('singleShellLaunch'), 'no other weapon offers it');
+    // the magazine feeds each ordinary shot
+    reset(); assert.ok(await attack(A, ml, {})); assert.equal(ammoOf(ml), 4, 'ordinary shot: one shell from the magazine');
+    // single shell: fires without touching the magazine, no reload action, no refill
+    reset(); assert.ok(await attack(A, ml, { combatOptions: { singleShellLaunch: true } })); assert.equal(ammoOf(ml), 4, 'the magazine is neither used nor refilled'); assert.deepEqual(spent.actions, [], 'no separate action is charged');
+    // with an EMPTY magazine the ordinary shot is refused but the single shell still fires
+    ml.system.ammunition.current = 0;
+    reset(); assert.equal(await attack(A, ml, {}), null, 'empty magazine: ordinary shot refused'); assert.equal(spent.rolls, 0);
+    reset(); assert.ok(await attack(A, ml, { combatOptions: { singleShellLaunch: true } }), 'a supplied shell fires through the open tube'); assert.equal(ammoOf(ml), 0, 'the magazine stays empty');
+    reset(); assert.equal(await attack(A, ml, { combatOptions: { singleShellLaunch: '0' } }), null, 'option off -> the ordinary (empty) magazine rule');
+    // the option is honoured only for a weapon that declares the method
     const mg = owned('weapon-micro-grenade-launcher'); const B = makeActor({ items: [mg] });
-    reset(); assert.ok(await attack(B, mg, {})); assert.equal((await AmmoSystem.loadSingleRound(B, mg)).reason, 'single-load-not-supported'); assert.equal(ammoOf(mg), 3);
-    const lg = legacy({ ammunition: { current: 0, max: 5 } }); const L = makeActor({ items: [lg] });
-    assert.equal((await AmmoSystem.loadSingleRound(L, lg)).reason, 'single-load-not-supported');
+    reset(); assert.ok(await attack(B, mg, { combatOptions: { singleShellLaunch: true } })); assert.equal(ammoOf(mg), 3, 'the asserted option changes nothing for a launcher that does not declare it');
+    // the sheet reload still offers no single-round "refill": the mortar's reload is the ordinary magazine reload
+    const viaSheet = await run(mkSheet(A), { weaponId: ml.id }, { loadSingleRound: true });
+    assert.equal(viaSheet.reloadAmount, 5, 'a reload refills the whole magazine (the single-round option no longer exists)'); assert.equal(ammoOf(ml), 5);
+    // ammunition tracking OFF: the single shell fires, nothing is counted either way
+    AmmoSystem.isTrackingEnabled = () => false;
+    reset(); assert.ok(await attack(A, ml, { combatOptions: { singleShellLaunch: true } })); assert.equal(ammoOf(ml), 5);
+    reset(); assert.ok(await attack(A, ml, {})); assert.equal(ammoOf(ml), 5, 'untracked ordinary shot: pool untouched');
+    AmmoSystem.isTrackingEnabled = () => true;
+    // legacy untouched
+    const lg = legacy({ ammunition: { current: 1, max: 5 } }); const L = makeActor({ items: [lg] });
+    reset(); assert.ok(await attack(L, lg, { combatOptions: { singleShellLaunch: true } })); assert.equal(lg.system.ammunition.current, 0, 'a legacy weapon spends its ordinary round');
   }
   SWSEDialogV2.prompt = origPrompt; noRealAmmo(); restoreHarness(); reinstall();
-  ok('sheet reload workflow: tracking-off awaiting-reload still resolves; second crew charged to the crew only; solo / cancel keep the ordinary reload / nothing; mortar single round and magazine refill both work, capped, one action');
+  ok('sheet reload workflow: tracking-off awaiting-reload still resolves; second crew charged to the crew only; solo / cancel keep the ordinary reload / nothing; tracking-off second crew leaves the untracked pool alone; the mortar single-shell is a firing mode that skips the magazine');
 }
 
 // ---- H. a stated distance beyond every band is out of range: refused, never rolled with no penalty --------------------------------

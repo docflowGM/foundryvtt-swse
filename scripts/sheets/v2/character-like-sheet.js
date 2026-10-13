@@ -6864,8 +6864,7 @@ const forcePoints = [];
     if (!allowed) return null;
 
     let result;
-    if (mode.kind === 'single-round') result = await AmmoSystem.loadSingleRound(this.actor, weapon);
-    else if (trackingOn) result = await AmmoSystem.reloadWeapon(this.actor, weapon);
+    if (trackingOn) result = await AmmoSystem.reloadWeapon(this.actor, weapon);
     else { await FireStateStore.clearReload(this.actor, weapon); result = { success: true, message: `${weapon.name} reloaded` }; }
     if (result?.success === false) {
       ui?.notifications?.error?.(result.message || 'Reload failed.');
@@ -6887,28 +6886,25 @@ const forcePoints = [];
 
   /**
    * Phase 5D-I-D-F: which published reload applies. A weapon with only the ordinary reload returns it without asking. A weapon that publishes
-   * an alternative (operation.secondCrewReloadAction: a Move action by a second crew member; operation.canSingleLoadShell: one shell dropped
-   * in the open tube) asks ONCE per reload; an explicit option skips the question. No crew member is ever inferred: the second crew member is
+   * an alternative (operation.secondCrewReloadAction: a Move action by a second crew member) asks ONCE per reload; an explicit option skips the question. No crew member is ever inferred: the second crew member is
    * the actor the player names (from the active combat's other combatants), and "reload it myself" keeps the ordinary reload.
-   * @returns {Promise<{kind:'full'|'single-round'|'second-crew', crew?:Actor}|null>} null = cancelled
+   * @returns {Promise<{kind:'full'|'second-crew', crew?:Actor}|null>} null = cancelled
    */
   async _chooseReloadMode(weapon, options = {}, context = {}) {
-    const { secondCrewAction: crewAction, canSingleLoad: canSingle } = FireStateStore.reloadOptions(weapon);
-    if (options?.loadSingleRound === true && canSingle) return { kind: 'single-round' };
+    const { secondCrewAction: crewAction } = FireStateStore.reloadOptions(weapon);
     const suppliedCrewId = options?.secondCrewActorId ?? context?.secondCrewActorId ?? null;
     if (suppliedCrewId && crewAction) {
       const crew = game?.actors?.get?.(suppliedCrewId) ?? null;
       return crew ? { kind: 'second-crew', crew } : { kind: 'full' };
     }
-    if (!crewAction && !canSingle) return { kind: 'full' };
+    if (!crewAction) return { kind: 'full' };
 
     const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const crewChoices = crewAction
       ? Array.from(game?.combat?.combatants ?? []).map((c) => c?.actor).filter((a) => a?.id && a.id !== this.actor.id)
       : [];
     const rows = [
-      `<label class="swse-weapon-choice"><input type="radio" name="reload" value="full" checked> <span>${canSingle ? 'Refill the magazine' : 'Reload it myself'}</span></label>`,
-      ...(canSingle ? ['<label class="swse-weapon-choice"><input type="radio" name="reload" value="single-round"> <span>Load a single round</span></label>'] : []),
+      '<label class="swse-weapon-choice"><input type="radio" name="reload" value="full" checked> <span>Reload it myself</span></label>',
       ...crewChoices.map((a) => `<label class="swse-weapon-choice"><input type="radio" name="reload" value="crew:${esc(a.id)}"> <span>${esc(a.name)} reloads it (${esc(crewAction)} action)</span></label>`)
     ];
     const picked = await SWSEDialogV2.prompt({
@@ -6922,7 +6918,6 @@ const forcePoints = [];
       }
     });
     if (!picked) return null;
-    if (picked === 'single-round') return { kind: 'single-round' };
     if (picked.startsWith('crew:')) {
       const crew = game?.actors?.get?.(picked.slice(5)) ?? crewChoices.find((a) => a.id === picked.slice(5)) ?? null;
       return crew ? { kind: 'second-crew', crew } : null;
