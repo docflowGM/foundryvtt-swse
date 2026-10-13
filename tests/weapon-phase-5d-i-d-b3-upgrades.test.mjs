@@ -301,6 +301,28 @@ for (const k of ['weapon-sniper-blaster-rifle', 'weapon-blaster-pistol', 'weapon
   ok('17. family-token blaster set is pinned against the 203-weapon registry; ranged-energy needs ranged + energy damage, not just the family');
 }
 
+{
+  // integration: a canonical, blaster-classified weapon whose RECORD is not ranged-energy cannot pass through a forged mutable weaponSubtype
+  const data = JSON.parse(JSON.stringify(registryData));
+  const base = data.identities.find((r) => r.identityKey === 'weapon-blaster-pistol');
+  const sonic = JSON.parse(JSON.stringify(base)); sonic.identityKey = 'weapon-test-sonic-blaster';
+  sonic.canonicalStats.damageType = { mode: 'single', qualifiers: [], types: ['sonic'] };
+  data.identities.push(sonic);
+  const synth = new rt.WeaponAuthorityRegistry(data);
+  rt.setSharedWeaponAuthorityRegistry(synth);
+  try {
+    const mk = (identityKey, subtype) => { const it = prod('weapon-blaster-pistol'); it.flags.swse.canonicalWeapon.identityKey = identityKey; it.system.weaponSubtype = subtype; it.system.weaponType = subtype; return it; };
+    const forged = mk('weapon-test-sonic-blaster', 'ranged_energy');
+    assert.equal(compat.canonicalWeaponStateOf(forged).blaster, true);
+    assert.equal(compat.canonicalWeaponStateOf(forged).rangedEnergy, false);
+    assert.equal(eng.canInstallUpgrade(forged, 'ion_charger').reason, 'requires_ranged_energy', 'forged weaponSubtype must not satisfy ranged_energy');
+    assert.equal(eng.canInstallUpgrade(forged, 'rapid_recycler').allowed, true, 'a plain ranged requirement is unaffected');
+    const real = mk('weapon-blaster-pistol', 'melee_generic');
+    assert.notEqual(eng.canInstallUpgrade(real, 'ion_charger').reason, 'requires_ranged_energy', 'the record, not the subtype, grants ranged-energy');
+  } finally { rt.setSharedWeaponAuthorityRegistry(registry); }
+  ok('18. forged weaponSubtype cannot satisfy ranged_energy for a canonical blaster whose record is not energy (and a melee-looking subtype cannot revoke it)');
+}
+
 // ---- pure helpers ------------------------------------------------------------------------------------------------------------------------------
 {
   assert.equal(compat.normalizeUpgradeKey('Rapid Recycler'), 'rapid_recycler');

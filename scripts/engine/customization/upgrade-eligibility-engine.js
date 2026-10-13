@@ -74,7 +74,9 @@ export class UpgradeEligibilityEngine {
     }
 
     if ((upgrade.requires ?? []).includes('ranged') && !profile.traits.hasRange) return { allowed: false, reason: 'requires_ranged' };
-    if ((upgrade.requires ?? []).includes('ranged_energy') && !(isCanonical && canonical.rangedEnergy) && !String(profile.weaponSubtype ?? '').includes('ranged')) return { allowed: false, reason: 'requires_ranged_energy' };
+    // A resolved canonical weapon answers from its record alone; the mutable weaponSubtype is consulted for genuine legacy weapons only.
+    const passesRangedEnergy = isCanonical ? canonical.rangedEnergy === true : String(profile.weaponSubtype ?? '').includes('ranged');
+    if ((upgrade.requires ?? []).includes('ranged_energy') && !passesRangedEnergy) return { allowed: false, reason: 'requires_ranged_energy' };
     if ((upgrade.requires ?? []).includes('stun_setting') && !profile.traits.hasStunSetting) return { allowed: false, reason: 'requires_stun_setting' };
     if ((upgrade.requires ?? []).includes('autofire') && !profile.traits.hasAutofire) return { allowed: false, reason: 'requires_autofire' };
 
