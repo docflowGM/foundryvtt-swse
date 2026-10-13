@@ -24,7 +24,8 @@
       "reviewedSpecies": 17,
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "printed Core species blocks checked against fast-search Core Rulebook_djvu.txt; previously rendered PDF pages for targeted rules",
-      "note": "Review includes core pack data and both sidecar consumers. Every species has explicit NO_CHANGE, CHANGE_REQUIRED, or REVIEW_REQUIRED."
+      "note": "Review includes core pack data and both sidecar consumers. Every species has explicit NO_CHANGE, CHANGE_REQUIRED, or REVIEW_REQUIRED.",
+      "coverageSweepAddendum": "Four OTHER SPECIES race blocks on printed pp284–285: Aqualish, Hutt, Neimoidian, Yuuzhan Vong; first two new ledger identities; addendum recorded separately from original 17 chapter-2 rows."
     },
     {
       "source": "Rebellion Era Campaign Guide",
@@ -49,7 +50,8 @@
       "reviewedSpecies": 10,
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Original scanned Force Unleashed Campaign Guide PDF chapter pp. 11-20 rendered and visually mapped to printed pagination (PDF page is printed page +1), searchable user-uploaded DJVU transcription used to compare named trait details.",
-      "notes": "All 10 have pack identities and accurate ability adjustments, size and speed. Several sidecar mechanics and natural weapon materializations differ. No production edits; sourcebook does not itself confer optional species feats as automatic racial grants."
+      "notes": "All 10 have pack identities and accurate ability adjustments, size and speed. Several sidecar mechanics and natural weapon materializations differ. No production edits; sourcebook does not itself confer optional species feats as automatic racial grants.",
+      "coverageSweepAddendum": "One previously omitted Chiss printed species block beside Admiral Thrawn, p192; agrees with the separate Unknown Regions Chiss profile, differs from Legacy."
     },
     {
       "source": "The Clone Wars Campaign Guide",
@@ -134,7 +136,7 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 119,
+    "totalSpeciesInRollingLedger": 121,
     "forceUnleashed": {
       "species": 10,
       "noChange": 0,
@@ -268,6 +270,20 @@
       "explicitNoChangeFieldDecisions": 42,
       "productionMutations": 0,
       "foundryRuntimeTests": 0
+    },
+    "finalSweepAddendum": {
+      "coreAdditionalRacialEntries": 4,
+      "coreNewSpecies": 2,
+      "coreExistingCrossBookRecords": 2,
+      "forceUnleashedAdditionalEntry": 1,
+      "forceUnleashedCrossBook": 1,
+      "sourceBlocksAdded": 5,
+      "uniqueRecordsAdded": 2,
+      "rollingEntries": 121,
+      "droidsAudited": 0,
+      "productionMutations": 0,
+      "actorTests": 0,
+      "scope": "Uncounted source blocks in earlier book-specific audit were append-reconciled as separate source claims; no historical audit entries erased."
     }
   },
   "entries": [
@@ -509,6 +525,87 @@
           }
         ],
         "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
+      }
+    },
+    {
+      "name": "Aqualish",
+      "foundryId": "species-aqualish",
+      "coreAppendix": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "284",
+        "section": "Chapter XVI Allies and Opponents — Other Species",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "originalPdfPageRenderedAndRead": true,
+          "packAndBothSidecarsInspected": true,
+          "foundryRuntimeTested": false,
+          "sourceVersionReconciled": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods/size/speed",
+            "status": "NO_CHANGE",
+            "note": "+2 CON/-2 WIS/-2 CHA, Medium/6 match source."
+          },
+          {
+            "field": "canonicalTraits[bonus-feat,breathe-underwater,expert-swimmer]",
+            "status": "NO_CHANGE",
+            "note": "Toughness, amphibious breathing and reroll Swim/take 10 effects correspond to source."
+          },
+          {
+            "field": "system.languages",
+            "status": "NO_CHANGE",
+            "note": "Aqualish and Basic agree."
+          }
+        ],
+        "findings": [
+          {
+            "id": "SWP-CORE-AQUALISH-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Ferocity bonus violates conditional trigger",
+            "target": "data/species-traits-migrated.json: Aqualish.conditionalTraits[Ferocity].rules",
+            "current": "Always-on +2 melee damage typed rule despite sidecar text requiring half HP",
+            "publishedRule": "Core p284 has NO Ferocity racial trait at all, only Toughness, breathe underwater, expert swimmer.",
+            "proposedAction": "Verify other-book provenance; at minimum prevent unconditional +2 melee damage and ensure no unsupported automatic boost.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 284,
+              "pdfPage": 285
+            }
+          },
+          {
+            "id": "SWP-CORE-AQUALISH-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Extraneous Climb flat bonus",
+            "target": "packs/species.db: Aqualish.system.skillBonuses",
+            "current": "+2 Climb",
+            "publishedRule": "Core Aqualish race block has no +2 Climb bonus.",
+            "proposedAction": "Check other sources/consumer before any surgical deletion.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 284,
+              "pdfPage": 285
+            }
+          },
+          {
+            "id": "SWP-CORE-AQUALISH-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Bonus Toughness and Swim functionality not certified",
+            "target": "packs/species.db: Aqualish.system.canonicalTraits[bonus-feat,expert-swimmer] / grants",
+            "current": "Toughness and Swim text correct; actor untested",
+            "publishedRule": "Toughness starts as racial feat and Swim reroll accepts second; Take 10 even under threat.",
+            "proposedAction": "Test feat only once and Swim take-10/reroll through existing progression engine.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 284,
+              "pdfPage": 285
+            }
+          }
+        ],
+        "notes": "Final source-coverage addendum; original historical book census retained unchanged; no production mutation."
       }
     },
     {
@@ -1964,6 +2061,66 @@
         "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification.",
         "crossBookNotes": [
           "Prior Legacy Era Chiss claim remains in the ledger; this later regional profile is a source conflict, not permission for silent replacement."
+        ]
+      },
+      "forceUnleashedAppendix": {
+        "source": "The Force Unleashed Campaign Guide",
+        "printedPages": "192",
+        "section": "Empire chapter — Chiss species block beside Admiral Thrawn",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "originalPdfPageRenderedAndRead": true,
+          "packAndBothSidecarsInspected": true,
+          "foundryRuntimeTested": false,
+          "sourceVersionReconciled": true
+        },
+        "fieldDecisions": [
+          {
+            "field": "Medium/6 and +2 INT",
+            "status": "NO_CHANGE",
+            "note": "All sources reviewed agree on shared speed, size and INT benefit."
+          },
+          {
+            "field": "Force Unleashed/Unknown Regions low-light and skill grant",
+            "status": "NO_CHANGE",
+            "note": "Force Unleashed p192 and Unknown Regions p126 agree on low-light, one trained class skill, Cheunh as native automatic language."
+          }
+        ],
+        "findings": [
+          {
+            "id": "SWP-TFU-CHISS-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Two sources agree against Legacy-derived Chiss pack version",
+            "target": "packs/species.db: Chiss.system.abilityMods,system.languages",
+            "current": "Current pack +2 INT/-2 CHA and Cheunh+Basic; flat +2 Initiative",
+            "publishedRule": "TFU p192 grants +2 INT only, Cheunh only, trained class skill, Low-Light Vision; Unknown Regions p126 confirms these; Legacy Era publishes alternate profile.",
+            "proposedAction": "Preserve all three source claims. Two-book agreement does not override Legacy automatically; decide era/source precedence explicitly.",
+            "applied": false,
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPage": 192,
+              "pdfPage": 193
+            }
+          },
+          {
+            "id": "SWP-TFU-CHISS-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Chiss trained skill and vision need actor runtime test",
+            "target": "packs/species.db: Chiss canonical and progression / species runtime",
+            "current": "No separate canonical trait projection in current pack output; no test completed",
+            "publishedRule": "TFU p192 chooses one extra trained CLASS skill at level 1, Low-Light Vision.",
+            "proposedAction": "Test actual training options/grants and vision instead of assuming source labels guarantee behavior.",
+            "applied": false,
+            "source": {
+              "book": "The Force Unleashed Campaign Guide",
+              "printedPage": 192,
+              "pdfPage": 193
+            }
+          }
+        ],
+        "notes": "Final source-coverage addendum; original historical book census retained unchanged; no production mutation.",
+        "crossBookNotes": [
+          "This is the Force Unleashed NPC/sidebar reprint omitted by the earlier book census. It materially corroborates the separate Unknown Regions profile but does not erase Legacy's claim."
         ]
       }
     },
@@ -3860,6 +4017,82 @@
       }
     },
     {
+      "name": "Hutt",
+      "foundryId": "species-hutt",
+      "coreAppendix": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "284",
+        "section": "Chapter XVI Allies and Opponents — Other Species",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "originalPdfPageRenderedAndRead": true,
+          "packAndBothSidecarsInspected": true,
+          "foundryRuntimeTested": false,
+          "sourceVersionReconciled": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.abilityMods/size/speed",
+            "status": "NO_CHANGE",
+            "note": "+2 STR/-6 DEX/+2 CON/+2 INT, Large/2 agree; Hutt species block spans pp284–285."
+          },
+          {
+            "field": "system.languages/canonicalTraits",
+            "status": "NO_CHANGE",
+            "note": "Basic+Huttese, Force Resistance +5 Will vs Use the Force, immune prone/trip, better-result Persuasion reroll agree."
+          }
+        ],
+        "findings": [
+          {
+            "id": "SWP-CORE-HUTT-01",
+            "status": "CHANGE_REQUIRED",
+            "title": "Unsupported Immense Bulk typed Fortitude +5",
+            "target": "data/species-traits-migrated.json: Hutt.structuralTraits[Immense Bulk].rules",
+            "current": "+5 species Fortitude always",
+            "publishedRule": "Core Hutt p284–285 prints Large size effects, speed 2, Force Resistance, Supreme Stability and Persuasion reroll, no species +5 Fort.",
+            "proposedAction": "Require independent published provenance; remove unsupported executable defense rule if unsourced.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 284,
+              "pdfPage": 285
+            }
+          },
+          {
+            "id": "SWP-CORE-HUTT-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Slow sidecar may duplicate already reduced speed",
+            "target": "data/species-traits.json: Hutt.structuralTraits[Slow] / packs/species.db Hutt.system.speed",
+            "current": "Pack land speed already 2; sidecar says speed reduced by 2 squares",
+            "publishedRule": "Printed speed IS 2, not 6 reduced by additional 2 after creation.",
+            "proposedAction": "Test movement derive to ensure speed is 2 with no further stacking; keep correct pack chassis.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 284,
+              "pdfPage": 285
+            }
+          },
+          {
+            "id": "SWP-CORE-HUTT-03",
+            "status": "REVIEW_REQUIRED",
+            "title": "Large size and Force Resistance scope",
+            "target": "packs/species.db: Hutt.system.size / canonicalTraits[force-resistance,supreme-stability]",
+            "current": "Correct descriptions; untested runtime",
+            "publishedRule": "Large -1 Reflex/-5 Stealth/+5 DT; Will +5 only against a Use the Force check; prone/trip immunity.",
+            "proposedAction": "Verify derived size, conditional defense and immunity in existing runtime.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 284,
+              "pdfPage": 285
+            }
+          }
+        ],
+        "notes": "Final source-coverage addendum; original historical book census retained unchanged; no production mutation."
+      }
+    },
+    {
       "name": "Iktotchi",
       "foundryId": "species-iktotchi",
       "cloneWars": {
@@ -5671,6 +5904,66 @@
           }
         ],
         "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
+      },
+      "coreAppendix": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "285",
+        "section": "Chapter XVI Allies and Opponents — Other Species",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "originalPdfPageRenderedAndRead": true,
+          "packAndBothSidecarsInspected": true,
+          "foundryRuntimeTested": false,
+          "sourceVersionReconciled": true
+        },
+        "fieldDecisions": [
+          {
+            "field": "size/speed",
+            "status": "NO_CHANGE",
+            "note": "Medium/6 common to both Core and Galaxy of Intrigue variants."
+          },
+          {
+            "field": "conditional Skill Focus (Deception)",
+            "status": "NO_CHANGE",
+            "note": "Core and Galaxy of Intrigue both grant Skill Focus (Deception) when trained."
+          }
+        ],
+        "findings": [
+          {
+            "id": "SWP-CORE-NEIMOIDIAN-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Conflicting Core and Galaxy of Intrigue ability and language profiles",
+            "target": "packs/species.db: Neimoidian.system.abilityMods,system.languages",
+            "current": "Current pack -2 STR/+2 CHA and Basic+Neimoidian plus erroneous 'speak' token",
+            "publishedRule": "Core p285 prints +2 INT/+2 WIS/-2 STR, Basic+Neimoidian+Pak Pak; Galaxy of Intrigue p18 prints +2 CHA/-2 STR, Basic+Neimoidian.",
+            "proposedAction": "Keep both documented source profiles, choose source-specific precedence/variant deliberately; independently remove invalid 'speak' token under GOI finding.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 285,
+              "pdfPage": 286
+            }
+          },
+          {
+            "id": "SWP-CORE-NEIMOIDIAN-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Core Deception reroll absent from later pack profile",
+            "target": "packs/species.db: Neimoidian.system.canonicalTraits / sidecars",
+            "current": "Current pack has conditional Skill Focus (Deception) and Persuasion but no Core Deception reroll",
+            "publishedRule": "Core p285 explicitly allows a Deception reroll requiring second result; GOI p18 differs by adding conditional Persuasion Skill Focus.",
+            "proposedAction": "Store as distinct Core version, not a free extra trait stacked with later profile.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 285,
+              "pdfPage": 286
+            }
+          }
+        ],
+        "notes": "Final source-coverage addendum; original historical book census retained unchanged; no production mutation.",
+        "crossBookNotes": [
+          "Earlier GOI findings remain intact. Core and GOI printed Neimoidian profiles are materially incompatible."
+        ]
       }
     },
     {
@@ -8913,6 +9206,66 @@
           }
         ],
         "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      },
+      "coreAppendix": {
+        "source": "Saga Edition Core Rulebook",
+        "printedPages": "285",
+        "section": "Chapter XVI Allies and Opponents — Other Species",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "originalPdfPageRenderedAndRead": true,
+          "packAndBothSidecarsInspected": true,
+          "foundryRuntimeTested": false,
+          "sourceVersionReconciled": true
+        },
+        "fieldDecisions": [
+          {
+            "field": "system.size/speed/abilityMods/languages",
+            "status": "NO_CHANGE",
+            "note": "Medium/6 +2 STR/-2 WIS and Yuuzhan Vong language match Core source."
+          },
+          {
+            "field": "canonicalTraits[force-immunity,weapon-familiarity]",
+            "status": "NO_CHANGE",
+            "note": "Force prohibition/Will-target Force immunity and Amphistaff familiarity concepts match this source in part."
+          }
+        ],
+        "findings": [
+          {
+            "id": "SWP-CORE-YUUZHANVONG-01",
+            "status": "REVIEW_REQUIRED",
+            "title": "Core Technophobic versus current Primitive/biotech version",
+            "target": "packs/species.db: Yuuzhan Vong.system.canonicalTraits[primitive,biotech-proficiency]",
+            "current": "Current profile suppresses standard weapon proficiencies and allows biotech use; no Core Technophobic entry",
+            "publishedRule": "Core p285 prints -5 attack/skill with mechanical weapons/tools (Technophobic) and amphistaff Simple Weapon Familiarity; later source may have revised treatment.",
+            "proposedAction": "Reconcile explicit publication priority; never silently stack primitive, penalty and biotech rules without checking later books.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 285,
+              "pdfPage": 286
+            }
+          },
+          {
+            "id": "SWP-CORE-YUUZHANVONG-02",
+            "status": "REVIEW_REQUIRED",
+            "title": "Core Force-immunity and sidecar typed effect scope",
+            "target": "data/species-traits-migrated.json: Yuuzhan Vong.structuralTraits[Force Immunity].rules",
+            "current": "Typed immunity values ['t'] and blanket sidecar text",
+            "publishedRule": "Core immunity only applies to Force effects that TARGET WILL defense; native cannot get Force Sensitivity/Use the Force/FP.",
+            "proposedAction": "Preserve narrow printed targeting (later Legacy finding); correct malformed rule in later surgical pass.",
+            "applied": false,
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "printedPage": 285,
+              "pdfPage": 286
+            }
+          }
+        ],
+        "notes": "Final source-coverage addendum; original historical book census retained unchanged; no production mutation.",
+        "crossBookNotes": [
+          "Prior Legacy Era Yuuzhan Vong source findings remain authoritative for that printed version."
+        ]
       }
     },
     {

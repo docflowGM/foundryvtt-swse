@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core through The Unknown Regions (12 sourcebooks) audited. Production species data unchanged.
+**Status:** Twelve sourcebooks audited plus final coverage-sweep addenda; production species files remain unchanged.
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -1215,3 +1215,66 @@ All new findings use printed source pages, exact production targets, current obs
 The ledger now contains **119 distinct non-droid species/profile identity records** after **12 completed sourcebooks**. Two new records in this book are explicitly flagged as a near-Human template and an acquired Sorcerer state rather than ordinary genetic species; the eventual biological-species census must separate them.
 
 **Next step:** Final published-sourcebook coverage sweep, 161-pack reconciliation with droid/out-of-scope exclusions, and a source-based, runtime-aware surgical correction queue. No production mutation yet.
+
+---
+
+## Final source sweep — additional published species blocks (append-only reconciliation)
+
+The final coverage scan reopened previously completed books for biological species rules outside their initial chapter scope. **Historical book row counts remain the originally published pass counts; these are additional certified source-specific appendices, not rewritten earlier records.** Source PDFs were rendered and compared with the existing pack and both sidecars. All corrections remain unapplied.
+
+| Source and printed page | Species | Audit status | New rolling identity? |
+|---|---|---|---|
+| Core pp.284–285 | Aqualish | `CHANGE_REQUIRED` | Yes |
+| Core pp.284–285 | Hutt | `CHANGE_REQUIRED` | Yes |
+| Core p.285 | Neimoidian | `REVIEW_REQUIRED` | No (Galaxy of Intrigue) |
+| Core p.285 | Yuuzhan Vong | `REVIEW_REQUIRED` | No (Legacy) |
+| The Force Unleashed p.192 | Chiss | `REVIEW_REQUIRED` | No (Legacy/Unknown Regions) |
+
+### Individual source decisions, exact targets and proposed surgical changes
+
+**Aqualish** — existing identity `species-aqualish`, `CHANGE_REQUIRED` on printed p.284.
+- `NO_CHANGE` system.abilityMods/size/speed: +2 CON/-2 WIS/-2 CHA, Medium/6 match source.
+- `NO_CHANGE` canonicalTraits[bonus-feat,breathe-underwater,expert-swimmer]: Toughness, amphibious breathing and reroll Swim/take 10 effects correspond to source.
+- `NO_CHANGE` system.languages: Aqualish and Basic agree.
+- `SWP-CORE-AQUALISH-01` `CHANGE_REQUIRED` — Ferocity bonus violates conditional trigger. **Existing:** Always-on +2 melee damage typed rule despite sidecar text requiring half HP. **Printed:** Core p284 has NO Ferocity racial trait at all, only Toughness, breathe underwater, expert swimmer.. **Target:** `data/species-traits-migrated.json: Aqualish.conditionalTraits[Ferocity].rules`. **Action:** Verify other-book provenance; at minimum prevent unconditional +2 melee damage and ensure no unsupported automatic boost. Unapplied.
+- `SWP-CORE-AQUALISH-02` `REVIEW_REQUIRED` — Extraneous Climb flat bonus. **Existing:** +2 Climb. **Printed:** Core Aqualish race block has no +2 Climb bonus.. **Target:** `packs/species.db: Aqualish.system.skillBonuses`. **Action:** Check other sources/consumer before any surgical deletion. Unapplied.
+- `SWP-CORE-AQUALISH-03` `REVIEW_REQUIRED` — Bonus Toughness and Swim functionality not certified. **Existing:** Toughness and Swim text correct; actor untested. **Printed:** Toughness starts as racial feat and Swim reroll accepts second; Take 10 even under threat.. **Target:** `packs/species.db: Aqualish.system.canonicalTraits[bonus-feat,expert-swimmer] / grants`. **Action:** Test feat only once and Swim take-10/reroll through existing progression engine. Unapplied.
+
+**Hutt** — existing identity `species-hutt`, `CHANGE_REQUIRED` on printed p.284.
+- `NO_CHANGE` system.abilityMods/size/speed: +2 STR/-6 DEX/+2 CON/+2 INT, Large/2 agree; Hutt species block spans pp284–285.
+- `NO_CHANGE` system.languages/canonicalTraits: Basic+Huttese, Force Resistance +5 Will vs Use the Force, immune prone/trip, better-result Persuasion reroll agree.
+- `SWP-CORE-HUTT-01` `CHANGE_REQUIRED` — Unsupported Immense Bulk typed Fortitude +5. **Existing:** +5 species Fortitude always. **Printed:** Core Hutt p284–285 prints Large size effects, speed 2, Force Resistance, Supreme Stability and Persuasion reroll, no species +5 Fort.. **Target:** `data/species-traits-migrated.json: Hutt.structuralTraits[Immense Bulk].rules`. **Action:** Require independent published provenance; remove unsupported executable defense rule if unsourced. Unapplied.
+- `SWP-CORE-HUTT-02` `REVIEW_REQUIRED` — Slow sidecar may duplicate already reduced speed. **Existing:** Pack land speed already 2; sidecar says speed reduced by 2 squares. **Printed:** Printed speed IS 2, not 6 reduced by additional 2 after creation.. **Target:** `data/species-traits.json: Hutt.structuralTraits[Slow] / packs/species.db Hutt.system.speed`. **Action:** Test movement derive to ensure speed is 2 with no further stacking; keep correct pack chassis. Unapplied.
+- `SWP-CORE-HUTT-03` `REVIEW_REQUIRED` — Large size and Force Resistance scope. **Existing:** Correct descriptions; untested runtime. **Printed:** Large -1 Reflex/-5 Stealth/+5 DT; Will +5 only against a Use the Force check; prone/trip immunity.. **Target:** `packs/species.db: Hutt.system.size / canonicalTraits[force-resistance,supreme-stability]`. **Action:** Verify derived size, conditional defense and immunity in existing runtime. Unapplied.
+
+**Neimoidian** — existing identity `species-neimoidian`, `REVIEW_REQUIRED` on printed p.285.
+- `NO_CHANGE` size/speed: Medium/6 common to both Core and Galaxy of Intrigue variants.
+- `NO_CHANGE` conditional Skill Focus (Deception): Core and Galaxy of Intrigue both grant Skill Focus (Deception) when trained.
+- `SWP-CORE-NEIMOIDIAN-01` `REVIEW_REQUIRED` — Conflicting Core and Galaxy of Intrigue ability and language profiles. **Existing:** Current pack -2 STR/+2 CHA and Basic+Neimoidian plus erroneous 'speak' token. **Printed:** Core p285 prints +2 INT/+2 WIS/-2 STR, Basic+Neimoidian+Pak Pak; Galaxy of Intrigue p18 prints +2 CHA/-2 STR, Basic+Neimoidian.. **Target:** `packs/species.db: Neimoidian.system.abilityMods,system.languages`. **Action:** Keep both documented source profiles, choose source-specific precedence/variant deliberately; independently remove invalid 'speak' token under GOI finding. Unapplied.
+- `SWP-CORE-NEIMOIDIAN-02` `REVIEW_REQUIRED` — Core Deception reroll absent from later pack profile. **Existing:** Current pack has conditional Skill Focus (Deception) and Persuasion but no Core Deception reroll. **Printed:** Core p285 explicitly allows a Deception reroll requiring second result; GOI p18 differs by adding conditional Persuasion Skill Focus.. **Target:** `packs/species.db: Neimoidian.system.canonicalTraits / sidecars`. **Action:** Store as distinct Core version, not a free extra trait stacked with later profile. Unapplied.
+
+**Yuuzhan Vong** — existing identity `species-yuuzhan-vong`, `REVIEW_REQUIRED` on printed p.285.
+- `NO_CHANGE` system.size/speed/abilityMods/languages: Medium/6 +2 STR/-2 WIS and Yuuzhan Vong language match Core source.
+- `NO_CHANGE` canonicalTraits[force-immunity,weapon-familiarity]: Force prohibition/Will-target Force immunity and Amphistaff familiarity concepts match this source in part.
+- `SWP-CORE-YUUZHANVONG-01` `REVIEW_REQUIRED` — Core Technophobic versus current Primitive/biotech version. **Existing:** Current profile suppresses standard weapon proficiencies and allows biotech use; no Core Technophobic entry. **Printed:** Core p285 prints -5 attack/skill with mechanical weapons/tools (Technophobic) and amphistaff Simple Weapon Familiarity; later source may have revised treatment.. **Target:** `packs/species.db: Yuuzhan Vong.system.canonicalTraits[primitive,biotech-proficiency]`. **Action:** Reconcile explicit publication priority; never silently stack primitive, penalty and biotech rules without checking later books. Unapplied.
+- `SWP-CORE-YUUZHANVONG-02` `REVIEW_REQUIRED` — Core Force-immunity and sidecar typed effect scope. **Existing:** Typed immunity values ['t'] and blanket sidecar text. **Printed:** Core immunity only applies to Force effects that TARGET WILL defense; native cannot get Force Sensitivity/Use the Force/FP.. **Target:** `data/species-traits-migrated.json: Yuuzhan Vong.structuralTraits[Force Immunity].rules`. **Action:** Preserve narrow printed targeting (later Legacy finding); correct malformed rule in later surgical pass. Unapplied.
+
+**Chiss** — existing identity `species-chiss`, `REVIEW_REQUIRED` on printed p.192.
+- `NO_CHANGE` Medium/6 and +2 INT: All sources reviewed agree on shared speed, size and INT benefit.
+- `NO_CHANGE` Force Unleashed/Unknown Regions low-light and skill grant: Force Unleashed p192 and Unknown Regions p126 agree on low-light, one trained class skill, Cheunh as native automatic language.
+- `SWP-TFU-CHISS-01` `REVIEW_REQUIRED` — Two sources agree against Legacy-derived Chiss pack version. **Existing:** Current pack +2 INT/-2 CHA and Cheunh+Basic; flat +2 Initiative. **Printed:** TFU p192 grants +2 INT only, Cheunh only, trained class skill, Low-Light Vision; Unknown Regions p126 confirms these; Legacy Era publishes alternate profile.. **Target:** `packs/species.db: Chiss.system.abilityMods,system.languages`. **Action:** Preserve all three source claims. Two-book agreement does not override Legacy automatically; decide era/source precedence explicitly. Unapplied.
+- `SWP-TFU-CHISS-02` `REVIEW_REQUIRED` — Chiss trained skill and vision need actor runtime test. **Existing:** No separate canonical trait projection in current pack output; no test completed. **Printed:** TFU p192 chooses one extra trained CLASS skill at level 1, Low-Light Vision.. **Target:** `packs/species.db: Chiss canonical and progression / species runtime`. **Action:** Test actual training options/grants and vision instead of assuming source labels guarantee behavior. Unapplied.
+
+### Cross-source reconciliation
+
+**Neimoidian:** Core p285 gives +2 INT/+2 WIS/-2 STR, Basic/Neimoidian/Pak Pak and Deception reroll; Galaxy of Intrigue p18 gives +2 CHA/-2 STR, Basic/Neimoidian and two trained-skill conditional feat choices. They are distinct published rules versions, not additive racial entitlements.
+
+**Chiss:** Force Unleashed p192 and Unknown Regions p126 both give +2 INT, Low-Light Vision, one free trained class skill, and Cheunh. Legacy and current pack instead use +2 INT/-2 CHA; retain source-specific variants pending an explicit priority policy.
+
+**Yuuzhan Vong:** Core p285 includes Technophobic and precise Will-target Force Immunity, while later profile includes Primitive / biotechnology rules. Preserve source variation, verify both published versions and restrict typed immunity to actual Will-targeting effects.
+
+**Hutt and Aqualish** are FULL official Core published race blocks in 'Other Species' pages; omission from the original Core chapter-2 pass was a coverage miss. This addendum reconciles the audit without rewinding or erasing the original Core records.
+
+**Elom correction:** An earlier preliminary text search matched the planet name 'Elom' and the different species 'Elomin' in Galaxy of Intrigue. It did **not** find an additional Elom playable racial rules block. No Elom species audit claim is invented from that false substring hit.
+
+**Ledger after addendum:** **121** distinct species/profile identities over 12 books; no production file changes or live actor tests.
