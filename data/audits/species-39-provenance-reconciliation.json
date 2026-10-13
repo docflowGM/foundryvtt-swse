@@ -199,7 +199,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Anomid",
@@ -222,7 +234,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Anx",
@@ -245,7 +269,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "LORE_ONLY",
+        "originalBookEvidence": "Anx scientist Pollux Poi identified as creator of A-Series assassin droids; no Anx racial rules block.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Besalisk",
@@ -268,7 +304,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Chevin",
@@ -291,7 +339,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Drall",
@@ -314,7 +374,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Dressellian",
@@ -337,7 +409,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Gree",
@@ -360,7 +444,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "FALSE_NAME_COLLISION",
+        "originalBookEvidence": "Commander Gree is a clone trooper name; no Gree race racial rules block.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Jenet",
@@ -383,7 +479,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Kessurian",
@@ -406,7 +514,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Kiffar",
@@ -429,7 +549,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NPC_OR_NEAR_HUMAN",
+        "originalBookEvidence": "Quinlan Vos is described as Kiffar (Near-Human) with an NPC class/stat block; no independent playable Kiffar species-traits package.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Koorivar",
@@ -452,7 +584,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "LORE_ORGANIZATION",
+        "originalBookEvidence": "Confederacy Corporate Alliance leader Passel Argente and Koorivar Fusiliers are mentioned; no Koorivar playable racial trait list.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": true,
+        "fandomFanSourcebookUrl": "https://swse.fandom.com/wiki/CWSB_Species",
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Mirialan",
@@ -475,7 +619,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Mustafarian",
@@ -498,7 +654,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "PLANET_LORE",
+        "originalBookEvidence": "Mustafar gazetteer identifies northern and southern Mustafarian subspecies; no playable racial ability/trait block.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": true,
+        "fandomFanSourcebookUrl": "https://swse.fandom.com/wiki/CWSB_Species",
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Muun",
@@ -521,7 +689,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "PLANET_FACTION_LORE",
+        "originalBookEvidence": "Muunilinst and InterGalactic Banking Clan/Muun guard material mention the people; no playable Muun species traits.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": true,
+        "fandomFanSourcebookUrl": "https://swse.fandom.com/wiki/CWSB_Species",
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Ortolan",
@@ -544,7 +724,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": true,
+        "fandomFanSourcebookUrl": "https://swse.fandom.com/wiki/CWSB_Species",
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Quermian",
@@ -567,7 +759,19 @@
         "Preserve a recoverable snapshot and decide migration behavior for existing characters",
         "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
       ],
-      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK",
+      "cloneWars2009SourceRecheck": {
+        "originalBook": "The Clone Wars Campaign Guide (Wizards of the Coast, 2009)",
+        "originalBookInspected": true,
+        "originalPrintedRacialBlockFound": false,
+        "originalBookFinding": "NO_STANDALONE_MATCH_FOUND",
+        "originalBookEvidence": "No distinct printed playable species rule block or attributable race-stat profile found in original scanned book and searchable transcription.",
+        "cloneWarsFanSourcebookListsPlayableSpecies": false,
+        "fandomFanSourcebookUrl": null,
+        "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
+        "productionDeletionAuthorized": false,
+        "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      }
     },
     {
       "name": "Bardottan",
@@ -771,5 +975,25 @@
       "Ortolan",
       "Quermian"
     ]
+  },
+  "cloneWars2009CrossCheck": {
+    "date": "2026-10-13",
+    "officialBook": "The Clone Wars Campaign Guide",
+    "searchCorpus": "Original user-supplied scanned 225-page PDF, searchable supplied Clone Wars Campaign Guide_djvu.txt; PDF Chapter I scanned/inspected; NPC/Republic/Confederacy/planet passages searched",
+    "reviewedMarkedRecords": 17,
+    "racialBlocksLocatedForMarkedRecords": 0,
+    "recordsWithLoreOrNameMentions": 6,
+    "fandomCloneWarsFanSourcebookPlayableProfiles": [
+      "Koorivar",
+      "Mustafarian",
+      "Muun",
+      "Ortolan"
+    ],
+    "originalBookVsFanBookDistinct": true,
+    "claimedOfficialFandomGeonosianListCaveat": "CWCG_Species fandom index lists Geonosian, but the PDF Chapter I table/main species traits sequence has no Geonosian racial block; Geonosian appears in official NPC/planet material and an earlier Wizards conversion guide. Separate source-profile version check, not removal queue.",
+    "removedMarks": 0,
+    "newlyMarked": 0,
+    "productionChanges": 0,
+    "notePath": "docs/audits/species-clone-wars-canonical-vs-fan-recheck.md"
   }
 }

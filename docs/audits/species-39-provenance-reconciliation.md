@@ -9,6 +9,10 @@
 
 **Project decision (October 13, 2026):** All 17 species records attributed to fan/community-created playable SWSE mechanics are now **`MARKED_FOR_REMOVAL`** from the official/canonical player-selectable species compendium. This is a planned controlled removal, **not an executed deletion**. Before removal, verify contrary official evidence, resolve actor/compendium/sidecar dependencies, archive originals and test saved-character compatibility. The 6 official primary records, 5 official-source leads and 11 special/unresolved records are **not** marked for removal. See the [overall audit and next steps](species-audit-overall-roadmap.md).
 
+## Official Clone Wars versus fan-sourcebook cross-check
+
+The [Clone Wars source recheck](species-clone-wars-canonical-vs-fan-recheck.md) inspected the **actual 2009 Wizards hardcover** and differentiated it from the Fandom site's **Clone Wars Saga Edition Fan Sourcebook**. Koorivar, Mustafarian, Muun and Ortolan have the latter's fan-published playable rules; their setting mentions do not certify their rules. No standalone playable traits block was found for any of the 17 marked-for-removal records in the Wizards hardcover. **All 17 removal flags remain; no data has been deleted.**
+
 ## Result
 
 | Evidence class | Records | Interpretation |

@@ -60,7 +60,24 @@
       "reviewedSpecies": 11,
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Source PDF rendered and visually checked for main species table, Kaminoan resistant, Republic Clone source (PDF p92), Chagrian source (PDF p160); user-supplied searchable DJVU transcription used for per-entry text and exact traits.",
-      "notes": "No distinct Talz/Togruta racial traits are printed in this book's player species chapter, despite those pack records having 'Clone Wars' source labels. Their Force Unleashed audit decisions are unchanged; revisit additional source provenance separately. Printed size/base speed/ability adjustments match all 11 records, with Republic Clone fixed array correctly represented by separate choice data."
+      "notes": "No distinct Talz/Togruta racial traits are printed in this book's player species chapter, despite those pack records having 'Clone Wars' source labels. Their Force Unleashed audit decisions are unchanged; revisit additional source provenance separately. Printed size/base speed/ability adjustments match all 11 records, with Republic Clone fixed array correctly represented by separate choice data.",
+      "postAuditFanSourceRecheck": {
+        "date": "2026-10-13",
+        "recordsCheckedAgainstOriginal": 17,
+        "additionalPublishedPlayableSpeciesForThose": 0,
+        "foundNamedLoreOrNpcMentions": [
+          "Anx",
+          "Gree (Commander name; not race)",
+          "Kiffar",
+          "Koorivar",
+          "Mustafarian",
+          "Muun"
+        ],
+        "noProductionMutation": true,
+        "disposition": "MARKED_FOR_REMOVAL_UNCHANGED_PENDING_OTHER_WOTC_PRIMARY_PROVENANCE",
+        "sourceDocument": "docs/audits/species-clone-wars-canonical-vs-fan-recheck.md",
+        "geonosianFandomAttributionFlag": "Fandom CWCG_Species index lists Geonosian, but no standalone Chapter I Geonosian racial-traits block in uploaded official scan; earlier official conversion guide available, leave source/version status OPEN."
+      }
     },
     {
       "source": "Scum and Villainy",

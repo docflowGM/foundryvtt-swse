@@ -5,6 +5,12 @@
 **Audit branch:** `audit/species-book-by-book-canonical`  
 **Disposition:** SOURCE AUDIT DOCUMENTED / PROVENANCE IN PROGRESS / PRODUCTION NOT YET CORRECTED
 
+## Clone Wars official-versus-fan source recheck
+
+After clarifying that the imported list originated on SWSE Fandom, the actual Wizards **Clone Wars Campaign Guide (2009)** was re-screened across original Chapter I and other NPC, planet and Confederacy mentions. **None of the 17 marked-for-removal profiles has an independently printed playable race-traits block in that official book.** Koorivar, Mustafarian, Muun and Ortolan receive playable rules in the **separate Clone Wars Saga Edition Fan Sourcebook**, explicitly homebrew; Kiffar appears as a near-Human NPC; Mirialan's Fandom species mechanics are community-authored. The [source recheck memo](species-clone-wars-canonical-vs-fan-recheck.md) documents all 17, including why named Commander Gree does not establish a Gree species block.
+
+**Decision:** Preserve the **17 marked / 0 deleted** status. Continue official-publication counterchecks and dependency-safe removal preparation; no automatic deletion.
+
 ## Executive assessment
 
 The SWSE species compendium contains both **canonical-data defects** and **uncertain source authority**. The 13-book non-droid screen plus supplemental official source search show that many apparent omissions are tucked away in NPC chapters, official Wizards web PDFs, conversion guides, or the Dawn of Defiance campaign. A separate cluster of 17 playable race profiles is attributed to fan/community rules. **Per project decision, all 17 are MARKED FOR REMOVAL from the canonical selectable species compendium, pending a final original-source and dependency check.** No production file is deleted by this documentation action.
