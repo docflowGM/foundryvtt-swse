@@ -9,21 +9,23 @@
 
 | Evidence class | Records | Interpretation |
 |---|---:|---|
-| Original official SWSE source inspected | **4** | Primary racial rules block or official conversion table located |
-| Wizards web-enhancement attribution; primary copy pending | **7** | Strong publication lead, not yet static rules certification |
+| Original official SWSE source inspected | **6** | Primary racial rules block or official conversion table located |
+| Wizards web-enhancement attribution; primary copy pending | **5** | Strong publication lead, not yet static rules certification |
 | Community/fan conversion attribution | **17** | Not evidence of official SWSE publication; usable only by homebrew policy |
 | Ambiguous, non-playable or unverified origin | **11** | No independently confirmed official player species block yet |
 | **Total** | **39** | No production records removed or modified |
 
 An original book sweep limited to species chapters is insufficient: published SWSE race rules also occur alongside NPC entries and in separate Wizards PDFs and web enhancements. A verified **alternate published profile** must not be blended with another official race profile just because the race has the same name.
 
-## Four directly verified official source locations
+## Six directly verified official source locations
 
 | Species | Published source | Finding |
 |---|---|---|
 | Noghri | [The Force Unleashed Campaign Guide p.185](https://github.com/docflowGM/foundryvtt-swse) | Published species-traits sidebar in Imperial/Noghri material, outside the species chapter. |
 | Geonosian | [Saga Edition Conversion Guide, table 1, p.3](https://www.swse.xphilesrealm.com/SWRPG_Saga_Conversion.pdf) | Official WotC conversion: different racial ability profile than current pack; preserve as an alternate source. |
 | Tusken Raider | [Saga Edition Conversion Guide, table 1, p.3](https://www.swse.xphilesrealm.com/SWRPG_Saga_Conversion.pdf) | Official WotC race conversion; verify Stealth reroll wording before changing pack. |
+| Arcona | [Planet Hoppers: Cona, p.2](https://swse.xphilesrealm.com/Planet%20Hoppers_%20Cona.pdf) | Original Wizards text: WIS -2, CHA +2; Medium; Fortitude +2; Scent within 10 sq; Basic+Arconese. Pack static profile matches; extra +2 Initiative/Perception still requires separate provenance. |
+| Nazren | [The University of Sanbra Guide to Intelligent Life: The Nazren, printed p.4](https://www.swse.xphilesrealm.com/WizardsOfTheCoast/Univ_Sanbra_Nazren.pdf) | Original Wizards text: STR+2 CON+2 DEX-2 CHA-2, Medium/6, Basic+Nazren; once/encounter Resilience protects condition track by one step. Pack static fields match. |
 | Stereb | [Dawn of Defiance IX: Sword of the Empire, p.12](https://swse.xphilesrealm.com/Dawn%20of%20Defiance/pdf/SW_DD_09_Sword_of_the_Empire.pdf) | Full published Stereb race sidebar in a free official adventure, outside supplied hardbacks. |
 
 **Noghri:** The Force Unleashed p.185 prints Small, speed 4, DEX +2 / WIS +2 / CHA −4, Honoghran, conditional Running Attack, Primitive and Scent. The current pack largely matches, but its `source: Threats` hint and flat `+2 Stealth` / `+2 Survival` fields are not supported by that block. Flag for other-source/consumer review rather than deleting automatically.
@@ -39,8 +41,6 @@ An original book sweep limited to species chapters is insufficient: published SW
 | Species | Credited Wizards source | Index/evidence |
 |---|---|---|
 | Amani | Wizards Star Wars Miniatures Previews (Amani Scout / The Fringe) | [Reference](https://swse.fandom.com/wiki/Amani) |
-| Arcona | Planet Hoppers: Cona (Eric Cagle) | [Reference](https://swse.fandom.com/wiki/Arcona) |
-| Nazren | Wizards web enhancement: The Nazren (Eric Cagle) | [Reference](https://swse.fandom.com/wiki/The_Nazren) |
 | Pau'an | Wizards web enhancement: The Pau'ans (Rodney Thompson) | [Reference](https://swse.fandom.com/wiki/The_Pau%27ans) |
 | Phindian | Planet Hoppers: Phindar (Eric Cagle) | [Reference](https://swse.fandom.com/wiki/Phindian) |
 | Polis Massan | Clone Wars Enhancement 1: Polis Massan (Gary Astleford) | [Reference](https://swse.fandom.com/wiki/Polis_Massan) |
@@ -90,11 +90,13 @@ These classifications concern the *specific racial mechanics currently imported*
 
 ## Reconciliation and next gates
 
-1. **Primary-source recovered:** 4 / 39. **Still lacking independently inspected official racial-rule text:** 35 / 39, of which 7 have especially promising publisher-web leads.
+1. **Primary-source recovered:** 6 / 39. **Still lacking independently inspected official racial-rule text:** 33 / 39, of which 5 have especially promising publisher-web leads.
 2. **Do not change production:** No `packs/species.db`, normal/migrated trait sidecars, CharGen or runtime code should be modified from this provenance research alone.
-3. **Verify additional article texts:** Retrieve original Wizards files for the seven web leads; record exact printed/page/section locator and compare all pack fields and sidecars.
+3. **Verify additional article texts:** Retrieve original Wizards files for the five remaining web leads; record exact printed/page/section locator and compare all pack fields and sidecars.
 4. **Keep source-specific variants separate:** Geonosian is already an example. Reconcile the competing printed profiles before changing its race modifiers.
 5. **Classify remainder:** Record explicit optional homebrew provenance for fan conversions; distinguish a near-Human variant, animal, species name and complete player race entry.
 6. **Runtime later:** Grant timing, conditions, vision, skill access, feats and movement still require actor tests after a surgical fix is authorized.
 
 **Boundary:** This is a supplementary research/discovery report; it does not retroactively certify all 161 species records or close the existing unresolved sourcebook discrepancy findings.
+
+**Primary PDF text verification addendum:** Arcona and Nazren were promoted from attributed-web leads after checking their original archived Wizards articles. Their race stat blocks agree with the pack's core species attributes. Source-PDF visual screenshot retrieval was unavailable, so this is a published-text comparison, not a visual-layout or runtime certification.
