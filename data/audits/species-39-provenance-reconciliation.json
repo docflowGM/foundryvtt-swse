@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "asOf": "2026-10-13",
   "branch": "audit/species-book-by-book-canonical",
   "repository": "docflowGM/foundryvtt-swse",
@@ -211,6 +211,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -246,6 +256,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -281,6 +301,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -316,6 +346,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -351,6 +391,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -386,6 +436,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -421,6 +481,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -456,6 +526,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -491,6 +571,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -526,6 +616,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -561,6 +661,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -596,6 +706,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -631,6 +751,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -666,6 +796,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -701,6 +841,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -736,6 +886,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -771,6 +931,16 @@
         "projectDisposition": "RETAIN_MARKED_FOR_REMOVAL",
         "productionDeletionAuthorized": false,
         "evidenceLimitation": "Absence of a racial block in this book is not proof none exists in any other official source."
+      },
+      "removalReadiness": {
+        "sourceCountercheck": "PENDING",
+        "dependencyAudit": "PENDING",
+        "existingActorPolicy": "UNDECIDED",
+        "archiveSnapshot": "NOT_CREATED",
+        "implementationAuthorization": "NOT_AUTHORIZED",
+        "implementationCommit": null,
+        "regressionVerification": "NOT_RUN",
+        "rollbackReference": null
       }
     },
     {
@@ -974,7 +1144,12 @@
       "Muun",
       "Ortolan",
       "Quermian"
-    ]
+    ],
+    "schemaVersion": 2,
+    "authority": "data/audits/species-39-provenance-reconciliation.json",
+    "auditOnly": true,
+    "implementationAuthorized": false,
+    "selectionFilterImplemented": false
   },
   "cloneWars2009CrossCheck": {
     "date": "2026-10-13",
@@ -995,5 +1170,54 @@
     "newlyMarked": 0,
     "productionChanges": 0,
     "notePath": "docs/audits/species-clone-wars-canonical-vs-fan-recheck.md"
+  },
+  "removalDecisionSchema": {
+    "version": 2,
+    "authority": "data/audits/species-39-provenance-reconciliation.json",
+    "recordIdentityKey": "foundryId",
+    "candidateField": "canonicalCompendiumDisposition",
+    "candidateValue": "MARKED_FOR_REMOVAL",
+    "removedField": "removalExecuted",
+    "consumerStatus": "AUDIT_ONLY_NOT_LOADED_BY_FOUNDRY",
+    "decision": "Keep 17 fan-attributed species marked for removal. Do not delete or hide until a separate approved production patch.",
+    "readinessFields": {
+      "sourceCountercheck": [
+        "PENDING",
+        "CLEARED",
+        "OFFICIAL_SOURCE_FOUND"
+      ],
+      "dependencyAudit": [
+        "PENDING",
+        "COMPLETED"
+      ],
+      "existingActorPolicy": [
+        "UNDECIDED",
+        "PRESERVE_LEGACY",
+        "MIGRATION_APPROVED"
+      ],
+      "archiveSnapshot": [
+        "NOT_CREATED",
+        "VERIFIED"
+      ],
+      "implementationAuthorization": [
+        "NOT_AUTHORIZED",
+        "AUTHORIZED"
+      ],
+      "implementationCommit": "null or commit SHA",
+      "regressionVerification": [
+        "NOT_RUN",
+        "PASSED",
+        "FAILED"
+      ],
+      "rollbackReference": "null or recoverable snapshot reference"
+    },
+    "gates": [
+      "Official WotC SWSE species-rule countercheck",
+      "Dependency inventory across saved actors, sidecars, registry and CharGen",
+      "Existing actor compatibility policy",
+      "Verified source backup",
+      "Explicit implementation approval",
+      "Committed code and regression tests"
+    ]
   }
 }
