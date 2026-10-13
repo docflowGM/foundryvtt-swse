@@ -49,7 +49,7 @@ All 21 printed racial profiles have an existing stable Foundry species ID. The t
 
 **Neimoidian publication variance:** Core p.285 grants +2 INT, +2 WIS, −2 STR, Basic/Neimoidian/Pak Pak, trained Deception conditional Skill Focus and Deception reroll. *Galaxy of Intrigue* p.18 has a different ability/language/conditional feat profile. Preserve the Core claim as its own version and **do not combine the two**.
 
-**Yuuzhan Vong publication variance:** Core p.285 provides +2 STR/−2 WIS, Technophobic restrictions, amphibstaff weapon familiarity and Force-related restrictions. Later sourcebooks represent some abilities differently. Preserve Core text separately until explicit edition/variant reconciliation. (Original printed Core spells the weapon **amphistaff**.)
+**Yuuzhan Vong publication variance:** Core p.285 provides +2 STR/−2 WIS, Technophobic restrictions, amphistaff weapon familiarity and Force-related restrictions. Later sourcebooks represent some abilities differently. Preserve Core text separately until explicit edition/variant reconciliation.
 
 ## Status boundaries
 
