@@ -22,9 +22,9 @@
     "I_D_DUPLICATES": 8,
     "I_D_NON_EXECUTABLE": 2,
     "I_D_DATA_DEFECT": 0,
-    "I_D_DATA_COMPLETENESS": 2,
-    "I_D_BLOCKED": 1,
-    "I_D_DEFERRED": 34,
+    "I_D_DATA_COMPLETENESS": 4,
+    "I_D_BLOCKED": 3,
+    "I_D_DEFERRED": 30,
     "I_D_UNCLASSIFIED": 0
   },
   "baseline": {
@@ -52,10 +52,10 @@
       "IMPLEMENTED": 33,
       "DATA_COMPLETENESS": 2,
       "GM_FACING_SUPPORT_NEEDED": 13,
-      "SMALL_CONSUMER_NEEDED": 11,
+      "SMALL_CONSUMER_NEEDED": 10,
       "DUPLICATE_OR_NON_EXECUTABLE": 16,
       "SOURCE_CLARIFICATION_NEEDED": 3,
-      "MISSING_SUBSYSTEM": 2
+      "MISSING_SUBSYSTEM": 3
     },
     "bucketsBySubpass": {
       "I-D-A": {
@@ -101,14 +101,14 @@
     }
   },
   "automationLevels": {
-    "CONTEXTUAL": 24,
-    "GM_ADJUDICATED": 10,
-    "AUTO": 24,
-    "NOT_ASSESSED_YET": 22
+    "CONTEXTUAL": 25,
+    "GM_ADJUDICATED": 11,
+    "AUTO": 26,
+    "NOT_ASSESSED_YET": 18
   },
   "supportGaps": {
     "CONTEXT_SURFACE_PENDING": 5,
-    "MISSING_CONSUMER": 1,
+    "MISSING_CONSUMER": 3,
     "PRESENTATION_PENDING": 7
   },
   "bySubpass": {
@@ -174,6 +174,11 @@
     "no-persistent-area-zone": {
       "kind": "count",
       "note": "the only scene-region / template creation is the droid sheet (unrelated); no persistent area-effect zone owner exists",
+      "holds": true
+    },
+    "no-weapon-object-damage": {
+      "kind": "none",
+      "note": "no weapon-object damage event: nothing applies damage TO a weapon Item (sunder / GM-applied), so object DR and the fragile-disable rule have no consumer",
       "holds": true
     },
     "no-direction-use": {
@@ -1195,13 +1200,14 @@
       "key": "powerAttackExtraDamageAppliesToObjectsAndVehicles",
       "family": "3b.operation.damage-modifiers",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "DATA_COMPLETENESS",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "Power Hammer"
       ],
       "structuredSourceField": "operation.powerAttackExtraDamageAppliesToObjectsAndVehicles",
+      "automation": "AUTO",
       "matrix": {
         "bucket": "AUTO",
         "support": "SOURCE_CLARIFICATION_NEEDED",
@@ -1211,8 +1217,8 @@
         "sourceAmbiguity": "general Power Attack rules for objects vs this exception must be reconciled with the source before coding",
         "acceptance": "reconciled rule + test"
       },
-      "owner": "I-D-B",
-      "reason": "Damage to weapon-adjacent objects / vehicles (object damage semantics)."
+      "owner": "canonical weapon data / source reconciliation",
+      "reason": "Power Hammer: carried only by the UNMAPPED Power Hammer record (no canonical identity exists, so no runtime weapon can carry it today). The record says its Power Attack extra damage applies to objects and vehicles, but the general Power Attack rule for objects must be reconciled with this exception against the source before it is coded, and no object / vehicle target type feeds the Power Attack damage term. Nothing is guessed; it needs a mapped identity and a reconciled rule."
     },
     {
       "kind": "operation-key",
@@ -1512,13 +1518,19 @@
       "key": "weaponDR",
       "family": "3b.operation.damage-modifiers",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "BLOCKED",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "electrostaff"
       ],
       "structuredSourceField": "operation.weaponDR",
+      "automation": "CONTEXTUAL",
+      "supportGap": "MISSING_CONSUMER",
+      "missingConsumer": "weapon-object damage event (damage dealt TO a weapon Item: sunder / GM-applied), with object hit points and the Core Damage-to-Objects DR rules",
+      "tripwires": [
+        "no-weapon-object-damage"
+      ],
       "matrix": {
         "bucket": "CONTEXTUAL",
         "support": "MISSING_SUBSYSTEM",
@@ -1528,15 +1540,15 @@
         "sourceAmbiguity": null,
         "acceptance": "damage to the weapon object is reduced by DR 20; damage dealt BY the weapon unaffected"
       },
-      "owner": "I-D-B",
-      "reason": "Weapon-object DR / durability (Electrostaff, Shockstaff)."
+      "owner": "weapon-object damage subsystem (future)",
+      "reason": "Electrostaff: DR 20 applies to damage dealt TO the weapon object (carrier: canonicalStats.objectDurability.damageReduction = 20; breakDC and strength are null). No event in the runtime applies damage to a weapon Item, no object hit points are recorded, and the target-damage path must not be reused for it. B4 inspected the combat, customization and item code and found no sunder / object-damage authority; building one would fabricate object hit points. BLOCKED on a weapon-object damage subsystem (tripwire no-weapon-object-damage)."
     },
     {
       "kind": "operation-key",
       "key": "weaponDRAppliesAgainstLightsabers",
       "family": "3b.operation.damage-modifiers",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "BLOCKED",
       "identityCount": 2,
       "rawOccurrences": 2,
       "representativeWeapons": [
@@ -1544,30 +1556,37 @@
         "electrostaff"
       ],
       "structuredSourceField": "operation.weaponDRAppliesAgainstLightsabers",
+      "automation": "AUTO",
+      "supportGap": "MISSING_CONSUMER",
+      "missingConsumer": "weapon-object damage event (damage dealt TO a weapon Item: sunder / GM-applied), with object hit points and the Core Damage-to-Objects DR rules",
+      "tripwires": [
+        "no-weapon-object-damage"
+      ],
       "matrix": {
         "bucket": "AUTO",
-        "support": "SMALL_CONSUMER_NEEDED",
+        "support": "MISSING_SUBSYSTEM",
         "foundryKnows": "DR is not ignored by lightsabers (phrik)",
         "mustBeSupplied": "attacker is a lightsaber",
         "smallestImplementation": "flag read by the same weapon-object damage event (and by the existing lightsaber DR-ignore rule)",
         "sourceAmbiguity": null,
         "acceptance": "lightsaber damage to a shockstaff / electrostaff is reduced by its DR"
       },
-      "owner": "I-D-B",
-      "reason": "Weapon-object DR versus lightsabers."
+      "owner": "weapon-object damage subsystem (future)",
+      "reason": "Electrostaff / Shockstaff: the DR is NOT ignored by lightsabers (phrik). It is a flag read by the same weapon-object damage event as weaponDR; the existing lightsaber DR-ignore rule applies to damage dealt to creatures and must not be reused for it. Same missing subsystem, same tripwire."
     },
     {
       "kind": "operation-key",
       "key": "weaponDRValue",
       "family": "3b.operation.damage-modifiers",
       "subpass": "I-D-B",
-      "disposition": "DEFERRED_TO_I_D_B",
+      "disposition": "DATA_COMPLETENESS",
       "identityCount": 1,
       "rawOccurrences": 1,
       "representativeWeapons": [
         "Shockstaff"
       ],
       "structuredSourceField": "operation.weaponDRValue",
+      "automation": "GM_ADJUDICATED",
       "matrix": {
         "bucket": "GM_ADJUDICATED",
         "support": "SOURCE_CLARIFICATION_NEEDED",
@@ -1577,8 +1596,8 @@
         "sourceAmbiguity": "KOTOR entry gives no DR number; do not invent one",
         "acceptance": "value supplied by a source or the GM per table"
       },
-      "owner": "I-D-B",
-      "reason": "Weapon-object DR value."
+      "owner": "canonical weapon data (source-silent)",
+      "reason": "Shockstaff (UNMAPPED record): the KOTOR entry states no DR value (the record carries 'not_stated_in_KOTOR_entry'). No number is invented; it needs a source-stated value or a GM ruling at the table. It would also need the weapon-object damage subsystem to be consumed at all (see weaponDR)."
     },
     {
       "kind": "operation-key",
@@ -1652,7 +1671,7 @@
         "acceptance": "a disabled weapon cannot attack; repair clears it"
       },
       "owner": "I-D-B",
-      "reason": "Disabled when the WEAPON OBJECT takes damage; needs a legitimate weapon-object damage event."
+      "reason": "Disabled when the WEAPON OBJECT takes damage; needs a legitimate weapon-object damage event, which does not exist (see weaponDR and the no-weapon-object-damage tripwire). Left deferred, not claimed."
     },
     {
       "kind": "operation-key",

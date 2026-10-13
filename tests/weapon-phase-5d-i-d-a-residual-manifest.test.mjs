@@ -29,7 +29,7 @@ ok('only the eight I-D-A1 rows, the six I-D-F rows and the seven I-D-B1 rows and
 
 // BLOCKED is reserved for a missing mechanical CONSUMER; an unobservable fact is CONTEXTUAL or GM_ADJUDICATED (docs/architecture/swse-automation-authority.md)
 const blockedRows = m.rows.filter((x) => x.disposition === 'BLOCKED');
-assert.deepEqual(blockedRows.map((r) => r.key), ['radiationExposure']);
+assert.deepEqual(blockedRows.map((r) => r.key).sort(), ['radiationExposure', 'weaponDR', 'weaponDRAppliesAgainstLightsabers']);
 for (const r of blockedRows) { assert.ok(r.missingConsumer && r.owner && r.tripwires?.length, r.key); assert.equal(r.supportGap, 'MISSING_CONSUMER'); }
 for (const r of m.rows.filter((x) => x.subpass.startsWith('I-D-A') && x.disposition.startsWith('DEFERRED_TO_'))) {
   assert.ok(['AUTO', 'CONTEXTUAL', 'GM_ADJUDICATED'].includes(r.automation), `${r.key} states its automation level`);
