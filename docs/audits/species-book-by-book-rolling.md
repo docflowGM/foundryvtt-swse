@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars and Scum and Villainy audited. No production species data changed.  
+**Status:** Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, and Jedi Academy audited. No production species data changed.  
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -139,7 +139,7 @@ There is no evidence from this section for rewriting Core baseline species recor
 **Pending sourcebooks**
 5. Clone Wars Campaign Guide — COMPLETED
 6. Scum and Villainy — COMPLETED
-7. Jedi Academy Training Manual
+7. Jedi Academy Training Manual — COMPLETED
 8. Galaxy at War
 9. Legacy Era Campaign Guide
 10. Scavenger's Guide to Droids
@@ -528,4 +528,97 @@ Each finding has a published source location, exact target selector, existing de
 - No Foundry V13 scene/actor runtime smoke tests or full rolling suite were executed.
 - No production race records, sidecars, compendium packs, generators, or consumers were modified.
 
-**Next book:** *Jedi Academy Training Manual*, followed by *Galaxy at War*. Continue the same rolling JSON and Markdown files, with per-source `NO_CHANGE` records even where no edit is necessary.
+**Next book:** *Galaxy at War*. Continue the same rolling JSON and Markdown files, with per-source `NO_CHANGE` records even where no edit is necessary.
+
+---
+
+## Book 7 — Jedi Academy Training Manual
+
+**Printed pages:** Shard p. **79** (Chapter IV Iron Knights), Celegian p. **106**, Vultan p. **107**, Krevaaki p. **111** (Chapter V Holocron Lessons, within NPC profiles). Source PDF pages **80, 107, 108, 112** respectively were rendered at high resolution and directly visually reviewed. The uploaded searchable transcription was a navigation aid, not a replacement for the printed rules.
+
+### Audit scope and totals
+
+| Measure | Result |
+|---|---:|
+| Published playable-species rules blocks found | **4** |
+| Existing Foundry species records | **4/4** |
+| Species with `CHANGE_REQUIRED` issues | **3** |
+| Species with only `REVIEW_REQUIRED` issues | **0** |
+| Species entirely `NO_CHANGE` for printed data | **1** |
+| Specific source-backed correction candidates | **8** |
+| Additional source/variant/runtime review items | **6** |
+| Explicit clean-field `NO_CHANGE` decisions | **13** |
+| Foundry runtime tests performed | **None** |
+| Production species files changed | **None** |
+
+**Source-coverage guardrail:** A named NPC being an unusual species does not by itself establish a published playable-species trait block. Only the four explicit racial-stat/rules blocks are included. The Iron Knight affiliation/tradition is not a racial starting class or automatic Jedi Knight prestige qualification for all Shards.
+
+### Full per-species disposition
+
+| Species | Printed p. | Overall outcome | Corrections | Reviews | Clean fields |
+|---|---:|---|---:|---:|---:|
+| Celegian | 106 | `CHANGE_REQUIRED` | 3 | 2 | 3 |
+| Krevaaki | 111 | `CHANGE_REQUIRED` | 3 | 3 | 3 |
+| Shard | 79 | `CHANGE_REQUIRED` | 2 | 1 | 3 |
+| Vultan | 107 | `NO_CHANGE` | 0 | 0 | 4 |
+
+**Vultan is `NO_CHANGE`.** Its +2 INT/-2 WIS, Medium/6 movement, Basic/Dromnyr automatic languages, one extra first-level trained class skill, and conditional Skill Focus for an already trained Knowledge skill match the printed p. 107 box. The existing species-grant ledger builder recognizes a generic trained-skill choice and conditional feat identity by canonical trait IDs. Live entitlement and actor finalization were not run, so this is **source-data parity**, not full functional certification.
+
+### Full source-backed correction / review inventory
+
+All findings appear in the rolling JSON as `entries[*].jediAcademy.findings`, with current state, printed rule, exact file/field selector, proposed surgical action, printed PDF page, and `applied:false`. No patch is authorized by recording an item.
+
+| Species | Finding | Classification | Kind | Exact target | Published authority | Proposed surgical handling |
+|---|---|---|---|---|---|---|
+| Celegian | `JATM-02-01` | `CHANGE_REQUIRED` | UNAUTHORIZED_FORCE_TRAINING_FEAT | `data/species-traits-migrated.json: Celegian.structuralTraits[Force Adaptation].rules[featGrant]` | Broadcast Telepath permits ONLY the Telepathy application of Use the Force untrained without Force Sensitivity; willing within 60 squares LOS auto succeeds; does not grant Force Training | Remove/unwire unconditional Force Training entitlement; preserve only scope-limited Telepathy and no extra powers. |
+| Celegian | `JATM-02-02` | `CHANGE_REQUIRED` | UNPUBLISHED_LAND_SPEED | `packs/species.db: Celegian.system.speed / movement.walk; canonicalStats.speed/movement.walk` | Printed Speed: fly 6 squares (hover), swim 10 squares; no walking speed is granted | Represent no ordinary walking capability (using schema-supported null/zero after runtime study). Preserve fly/hover 6 and swim 10. |
+| Celegian | `JATM-02-03` | `CHANGE_REQUIRED` | LANGUAGE_COMPREHENSION_VS_SPEECH | `packs/species.db: Celegian.system.languages and communication permissions` | Printed Languages: Basic (understand only); Broadcast Telepath supplies their communication with willing targets | Encode comprehension-only language semantics without assuming Celegians speak Basic; preserve Broadcast Telepath and no automatic Force feat. |
+| Celegian | `JATM-02-04` | `REVIEW_REQUIRED` | FLIGHT_HEAVY_LOAD_TEXT | `packs/species.db: Celegian.system.canonicalTraits[flight].description` | Printed block only says fly 6 (hover), swim 10; does not independently establish a heavy-load flight limitation | Check general burden/flight rules before removing; avoid treating apparent cross-species boilerplate as a printed Celegian trait. |
+| Celegian | `JATM-02-05` | `REVIEW_REQUIRED` | CYANOGEN_LIFE_SUPPORT_RUNTIME | `packs/species.db: Celegian.system.canonicalTraits[special-equipment], actor equipment/hazards` | Printed Cyanogen Breather: Celegians suffocate without special environmental chamber; NPC Ooroo's chamber grants additional benefits as equipped item, not default species abilities | Verify breathable environment, starting gear entitlement and hazard condition; do not auto-grant Ooroo-specific chamber bonus/fly increase. |
+| Krevaaki | `JATM-04-01` | `CHANGE_REQUIRED` | UNPUBLISHED_CONDITIONAL_SKILL_FOCUS | `packs/species.db: Krevaaki.system.canonicalTraits[conditional-bonus-feat] plus data/species-traits*.json` | Printed species box lists only Carapace, Stoic and Grasping Tentacles, without any Conditional Bonus Feat | Identify if a separately published optional species variant supplies it; otherwise remove noncanonical grant from default profile and sidecar. The existing alternate profile may reflect printed three traits. |
+| Krevaaki | `JATM-04-02` | `CHANGE_REQUIRED` | CARAPACE_FORTITUDE_BONUS_TYPE | `packs/species.db: Krevaaki.system.canonicalTraits[carapace].description and derived bonus consumer` | Printed Carapace: Reflex +1 NATURAL ARMOR and Fortitude +1 BONUS (not identified as Natural Armor) | Keep natural armor type on Reflex only; grant the printed +1 Fortitude with correctly supported bonus-type semantics and no double-count. |
+| Krevaaki | `JATM-04-03` | `CHANGE_REQUIRED` | GRASPING_TENTACLES_ADDS_GRAB | `packs/species.db: Krevaaki.system.canonicalTraits[grasping-tentacles].description / consumer` | Printed Grasping Tentacles grants +2 Climb and +2 GRAPPLE; no bonus to initiating a Grab is printed | Keep Climb/Grapple only unless published rules establish Grab equivalence; regression check difference. |
+| Krevaaki | `JATM-04-04` | `REVIEW_REQUIRED` | LANGUAGE_SOURCE_CONTRADICTION | `packs/species.db: Krevaaki.system.languages and variants[krevaaki-alternate].languages` | Printed species box lists Basic and Dromnyr, while the adjacent Vodo-Siosk Baas NPC knows Basic, Kreva and Tchuukthese, potentially a source typo or character-specific languages | Record exact apparent contradiction and seek erratum/other book; do not silently replace language based only on NPC stats. |
+| Krevaaki | `JATM-04-05` | `REVIEW_REQUIRED` | STOIC_PERCEPTION_APPLICATION | `packs/species.db: Krevaaki.system.canonicalTraits[stoic].description and passive consumer` | Printed Stoic imposes -5 on Sense Motive application of Perception; equivalence to current named applications not certified | Check Core Sense Motive alias/subapplications and ensure correct trigger, not a blanket Perception penalty. |
+| Krevaaki | `JATM-04-06` | `REVIEW_REQUIRED` | ALTERNATE_PROFILE_PROVENANCE | `packs/species.db: Krevaaki.system.variants[krevaaki-alternate]` | Jedi Academy box itself lists only three racial abilities, without naming an alternate profile | After validating other books, reconcile default/alternate publication authority, preserving variant IDs until controlled patch. |
+| Shard | `JATM-01-01` | `CHANGE_REQUIRED` | MISSING_CANONICAL_REACTION | `packs/species.db: Shard.system.canonicalTraits[Silicon Mind]` | Silicon Mind: spend Force Point as reaction for +CHA modifier (minimum +1) to Will Defense against ALL Use the Force checks until end of next turn | Append distinct canonical Silicon Mind trait and wire reaction choice and expiry only through correct existing trait authority; do not grant permanent Will bonus. |
+| Shard | `JATM-01-02` | `CHANGE_REQUIRED` | INCOMPLETE_DROID_SHELL_IMMUNITY | `packs/species.db: Shard.system.canonicalTraits[droid-shell].description and canonicalStats.traits` | Droid Shell explicitly grants immunity to poison, DISEASE, radiation, noncorrosive atmospheric hazards and vacuum | Correct the canonical description/structured immunities. Legacy Crystalline Body already claims disease immunity; reconcile once-only, never add double immunities. |
+| Shard | `JATM-01-03` | `REVIEW_REQUIRED` | DROID_SHELL_RUNTIME_SCOPE | `Shard.system.droidBuilder / SpeciesGrantLedgerBuilder / species runtime` | Printed shell: retain CON, mandatory maintenance, Mechanics Repair Droid only unless Force Repair, cybernetic ion interaction, accessory allowlist and x1 cost, Basic/Binary speech only with computer/vocabulator | Verify CharGen shell restrictions, prohibited natural healing, proper healing/ion/maintenance and player communication gates with representative actor; no broad droid rewrite. |
+
+### Explicit NO_CHANGE field-level rulings
+
+| Species | Field / feature | Status | Verification |
+|---|---|---|---|
+| Celegian | `system.abilityMods, size` | `NO_CHANGE` | Exact published race (NPC Ooroo is Large as an individual, not default race) |
+| Celegian | `system.movement.fly/hover/swim` | `NO_CHANGE` | Exact published modes |
+| Celegian | `canonicalTraits.broadcast-telepath and expert-swimmer text` | `NO_CHANGE` | Text matches printed benefits |
+| Krevaaki | `system.abilityMods, size, speed` | `NO_CHANGE` | Exact printed chassis |
+| Krevaaki | `canonicalTraits.grasping-tentacles Climb and Grapple parts` | `NO_CHANGE` | Match printed components; Grab addition flagged separately |
+| Krevaaki | `canonicalTraits.carapace Reflex part` | `NO_CHANGE` | Correct printed armor component |
+| Shard | `system.abilityMods, size` | `NO_CHANGE` | Exact printed profile |
+| Shard | `system.languages` | `NO_CHANGE` | Exact named automatic languages |
+| Shard | `bonus-trained-skill authority` | `NO_CHANGE` | Correct printed fixed skill; grant builder recognizes this named skill, pending live smoke |
+| Vultan | `system.abilityMods, size, speed` | `NO_CHANGE` | Exact printed chassis |
+| Vultan | `system.languages` | `NO_CHANGE` | Exact published languages |
+| Vultan | `canonicalTraits.bonus-trained-skill` | `NO_CHANGE` | Correct book text; generic class-skill choice recognized by existing grant builder |
+| Vultan | `canonicalTraits.conditional-bonus-feat` | `NO_CHANGE` | Correct published conditional feat text; grant choice must be runtime-tested |
+
+### High-impact corrections
+
+**Shard — p. 79.** The book grants a distinct **Silicon Mind** reaction *below* the boxed species-trait text: spend a Force Point as a reaction for a bonus to Will Defense equal to CHA modifier (minimum +1) against **all Use the Force checks** until the end of the following turn. This published racial feature is absent from the pack's canonical traits. The Shard Droid Shell description also omits **disease immunity** from its printed list, although a legacy `Crystalline Body` sidecar mentions it. Reconcile into one accurate immunity authority; do not duplicate bonuses or replace the droid-builder implementation.
+
+**Celegian — p. 106.** Printed **Broadcast Telepath** allows a *specific application* (Telepathy) of Use the Force **untrained** without Force Sensitivity, with automatic success to willing targets in line of sight within 60 squares. The migrated sidecar instead automatically **grants Force Training**, which is a fundamentally different entitlement and must be corrected. The printed movement is **fly 6 (hover), swim 10**; the current pack additionally invents **walk 6**. Printed language is **Basic (understand only)**, not speaking Basic. The adjacent Ooroo NPC is *Large* with enhanced equipment but the species default is **Medium** and does not inherit his personal chamber benefits. Existing Flight text's heavy-load restriction needs separate general-rules verification.
+
+**Krevaaki — p. 111.** Printed inherent features are **Carapace, Stoic, Grasping Tentacles**. The pack additionally inserts a Conditional Bonus Feat (Skill Focus [Climb]) absent from this printed list; check for another explicit optional profile before deleting or applying it. Carapace is **+1 natural armor to Reflex and +1 bonus to Fortitude**; the repository describes a Natural Armor bonus for both, which is not how the Fortitude wording is printed. Grasping Tentacles grant **+2 Climb and +2 grapple**, not an independently printed +2 to initiating grabs. Printed automatic languages are **Basic and Dromnyr**, while the pack says **Basic and Kreva**; importantly, the adjacent Vodo-Siosk Baas NPC is shown knowing Kreva, so source reconciliation/errata checking is needed before automatically replacing an apparently contradictory printed language. Stoic is printed against the **Sense Motive application of Perception**, which needs mapping to the exact system consumer without broadening the effect.
+
+**Vultan — p. 107.** No published-data correction. Do not modify its feat/skill entitlements merely because `bonusTrainedSkills` numeric projection equals zero; the species-grant ledger classifies the canonical `bonus-trained-skill` record and maintains a player choice. Validate grant finalization as a later runtime test rather than changing valid racial data.
+
+### Roll-forward rules
+
+- Keep prior **Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars and Scum and Villainy** findings unchanged. These remain separately attributable published claims.
+- `NO_CHANGE` means no correction to the **source-data comparison in scope**, not a promise of live Foundry behavior.
+- Keep new finding states `applied:false`; do not edit `packs/species.db`, both sidecars, runtime consumers, species IDs, or versions during this read-only phase.
+- Optional/variant claims and possible sourcebook contradictions remain in **`REVIEW_REQUIRED`**, not destructive remediation.
+- If work proceeds to surgical fixes, adjust generator/authority first, apply minimal corrections, prove no duplicates, and run precise CharGen, actor, condition, Force, defense, and movement tests.
+
+**Next book: Galaxy at War.**
