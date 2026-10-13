@@ -13,7 +13,7 @@ assert.equal(m.counters.I_D_UNCLASSIFIED, 0);
 ok('manifest builds with no problems and zero unclassified');
 
 const closure = JSON.parse(fs.readFileSync(new URL('../data/audits/weapon-phase-5d-h-closure-census.json', import.meta.url), 'utf8'));
-assert.equal(m.counters.I_D_INPUT_OPERATION_KEYS, closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER + 31, '75 at the I-D baseline = unconsumed now + the 8 implemented in I-D-A1 + the 6 in I-D-F + the 7 in I-D-B1 + the 10 in I-D-B2');
+assert.equal(m.counters.I_D_INPUT_OPERATION_KEYS, closure.counters.UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER + 33, '75 at the I-D baseline = unconsumed now + the 8 implemented in I-D-A1 + the 6 in I-D-F + the 7 in I-D-B1 + the 10 in I-D-B2 + the 2 in I-D-B3');
 assert.equal(closure.counters.CANONICAL_NAME_TEXT_HEURISTIC_USAGE, 0);
 ok('every live unconsumed operation key has a row; canonical heuristic usage stays 0');
 

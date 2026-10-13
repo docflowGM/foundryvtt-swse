@@ -51,6 +51,7 @@ const ALLOWED_RUNTIME_CONSUMERS = new Set([
   'scripts/engine/combat/weapon-control-effects.js',
   'scripts/engine/equipment/equipment-skill-hook-resolver.js', // 5D-I-D-A1: weapon-carried skill hooks derived from canonical operation.* keys (identity via resolveCanonicalIdentity, never the name)
   'scripts/engine/combat/falling-object-rules.js',
+  'scripts/engine/customization/upgrade-eligibility-engine.js', // 5D-I-D-B3: weapon-side upgrade restrictions via upgrade-compat.js (canonical identity, never the name)
   'scripts/combat/systems/grappling-system.js',
   // 5D-I-C-C reaction / defense: the one reaction-weapon context (eligibility, modifiers, passive defense, disarm protection) and the live Block / Deflect /
   // Redirect Shot executor that reads it (identity-first talent ownership)
