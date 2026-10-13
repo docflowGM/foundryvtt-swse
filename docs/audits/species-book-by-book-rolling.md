@@ -1310,3 +1310,14 @@ See [the 17-species evidence memo](species-clone-wars-canonical-vs-fan-recheck.m
 ## Removal decision schema v2 cross-reference (October 13, 2026)
 
 The authoritative [39-record provenance matrix](../../data/audits/species-39-provenance-reconciliation.json) now includes versioned `removalDecisionSchema` metadata and `removalReadiness` states for the 17 already marked fan-attributed candidate species. See the [schema field appendix](species-39-provenance-reconciliation.md#removal-decision-schema-v2-audit-only) for source countercheck, dependency audit, existing actor policy, backup, implementation approval, commit, regression and rollback fields. **All 17 remain `MARKED_FOR_REMOVAL`; zero have been removed or hidden in Foundry.** The base rolling ledger's 121 audited identities and 302 historical findings are unchanged. The current V2 species selection uses `SpeciesRegistry.getAll()`, not these audit flags.
+
+---
+
+## Phase 0 and Phase 1-A — new provenance workflow checkpoint (October 13, 2026)
+
+**Phase 0:** [17 fan-attributed species marked for removal](species-phase-0-removal-markers.md), with stable Foundry IDs and eight readiness fields. **17 marked, 0 removed, 0 hidden in V2 selection.**
+
+**Phase 1-A:** [Core Rulebook published provenance](species-phase-1a-core-provenance.md) verified from the scanned original, printed pages **23–33** and **284–285**: **17 main chapter species plus four Other Species profiles (Aqualish, Hutt, Neimoidian, Yuuzhan Vong)**, 21 existing stable pack IDs. Printed source/version differences for Neimoidian and Yuuzhan Vong are preserved; attributes/features/runtime are deferred to Phases 2, 3, and 4.
+
+**JSON storage policy changed at user direction:** the new Phase 0 and 1-A JSON manifests are downloadable artifacts **only in the current chat**, not versioned to GitHub. This checkpoint updates **Markdown only**. Prior committed audit JSON remains historical evidence and has not been edited in this phase. Existing rolling figures (121 distinct audited identities and 302 historic unapplied findings) remain unchanged.
+
