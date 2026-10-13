@@ -7,7 +7,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
 import { descriptorMatchesAny } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js';
-import { ownedSizeStateOf, countsAsOneHeldWeapon } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js';
+import { ownedSizeStateOf, resolveHeldGroup } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js';
 
 function normalizeKey(value) {
   return String(value ?? '')
@@ -127,7 +127,12 @@ function isLightWeapon(weapon, context = {}, actor = null) {
   if (qualities.has('light') || qualities.has('light-weapon')) return true;
   // Phase 5D-H: a canonical weapon is light when its selected form's structured size is below the wielder's -- not by Item text or name
   { const shape = shapeOfWeapon(weapon, context);
-    if (shape.source === 'canonical') return descriptorMatchesAny(shape.descriptor, ['light'], { wielderSize: actor?.system?.size ?? 'medium', sizeState: ownedSizeStateOf(weapon, context) });
+    if (shape.source === 'canonical') {
+      // the size class the attack was RESOLVED with (carried in the workflow) wins over re-reading the live Item
+      const carried = context?.weaponSizeClass ?? context?.attackShape?.weaponSizeClass ?? null;
+      if (carried && typeof carried.classification === 'string') return carried.classification === 'light';
+      return descriptorMatchesAny(shape.descriptor, ['light'], { wielderSize: actor?.system?.size ?? 'medium', sizeState: ownedSizeStateOf(weapon, context) });
+    }
     if (shape.source === 'error') return false; }
   const size = effectiveSize(weapon, context);
   if (size === 'tiny' || size === 'small') return true;
@@ -151,14 +156,12 @@ function findOffhand(actor, primary = null) {
   if (explicit) return explicit;
   // Phase 5D-F: a structurally eligible second weapon (canonical eligibleAsSecondWeaponForTwoWeaponFighting: worn, hands stay free)
   // is the off-hand when none is designated -- structure, not a feat and not a weapon name
-  // Phase 5D-I-D-B2: identical weapons the player ESTABLISHED as held together in one hand (owned held-together count on the primary, proficient wielder) count
-  // as ONE weapon: the other (count - 1) sticks are not a second weapon. Nothing is counted from the inventory alone; a stick explicitly designated as the
-  // off-hand weapon (above) is still a second weapon.
-  const primaryShape = primary ? shapeOfWeapon(primary) : null;
-  const together = primaryShape?.heldTogether ? Math.max(1, Number(primary?.flags?.swse?.fireState?.heldTogetherCount) || 1) : 1;
-  let budget = together - 1;
-  const heldWithPrimary = (item) => { if (budget > 0 && countsAsOneHeldWeapon(primaryShape, shapeOfWeapon(item))) { budget -= 1; return true; } return false; };
-  const candidates = weapons.filter(item => primary && !sameWeapon(item, primary) && !heldWithPrimary(item));
+  // Phase 5D-I-D-B2: identical weapons the player ESTABLISHED as held together in one hand count as ONE weapon -- the group is the SAME validated result the attack
+  // preflight uses (resolveHeldGroup: proficiency, ownership, equipped, no off-hand designation, no overlapping group), so a stale or invalid group frees its sticks
+  // as separate weapons and never half-applies. Nothing is counted from the inventory alone.
+  const group = primary ? resolveHeldGroup(actor, primary, { shapeOf: (w) => { try { return shapeOfWeapon(w); } catch { return null; } }, proficient: (w, a) => isProficient(w, a) === true }) : { memberIds: [] };
+  const grouped = new Set(group.memberIds);
+  const candidates = weapons.filter(item => primary && !sameWeapon(item, primary) && !grouped.has(item.id));
   return candidates.find(item => shapeOfWeapon(item).dualWield?.eligibleAsSecondWeapon === true) ?? candidates[0] ?? null;
 }
 

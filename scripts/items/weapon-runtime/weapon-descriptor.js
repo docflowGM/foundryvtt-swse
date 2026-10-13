@@ -6,7 +6,7 @@
 // weapon-scope tokens (weaponGroups / requiresWeaponGroups / requiresWeaponText ...) are then joined to it by token EQUALITY
 // (singular/plural normalized) -- never substring search -- so "light" cannot match "lightsaber" and "blaster pistol" cannot match
 // "heavy blaster pistol".
-import { sizeRulesOf, effectiveSizeOf, wornClassOf, sizeIndexOf } from './wielding-size.js';
+import { sizeRulesOf, resolveEffectiveWieldingSize, classifySize, wornClassOf, sizeIndexOf } from './wielding-size.js';
 const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 export const tokenOf = (v) => String(v ?? '').trim().replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 const stripPrefix = (s, p) => (String(s ?? '').startsWith(p) ? String(s).slice(p.length) : String(s ?? ''));
@@ -68,7 +68,7 @@ export function buildWeaponDescriptor(resolved, profileDef, { area = null, fireM
     // Phase 5D-I-D-B2: how this form's size is TREATED for wielding (tripod, a size the wielder may choose, a fixed offset below the wearer); the
     // base size above is untouched. null = the record declares no size rule.
     baseSize: resolved?.canonicalStats?.size ?? profileDef?.size ?? null,
-    sizeRules: sizeRulesOf(resolved?.operation, resolved?.canonicalStats?.wieldingRules),
+    sizeRules: sizeRulesOf(resolved?.operation, resolved?.canonicalStats?.wieldingRules, profileDef?.preparedAttack),
   });
 }
 
@@ -95,9 +95,12 @@ export function descriptorMatchesAny(d, values, { wielderSize = null, forAbility
     // 'light' / 'light melee (weapons)': relative to the wielder; forms that declare it count as light for Weapon Finesse
     if (tok === 'light' || tok === 'light-melee' || tok === 'light-melee-weapon' || tok === 'light-melee-weapons') {
       const w = sizeIndex(wielderSize);
-      // Phase 5D-I-D-B2: the EFFECTIVE size (tripod mounted, a size the wielder chose, a fixed offset below the wearer) decides "smaller than the wielder"
-      const eff = d.sizeRules ? effectiveSizeOf(d.sizeRules, d.baseSize, { wielderSize, ...(sizeState ?? {}) }).index : d.sizeIndex;
-      if (d.melee && eff >= 0 && w >= 0 && eff < w) return true;
+      // Phase 5D-I-D-B2: the EFFECTIVE size (tripod mounted, a size the wielder chose, a fixed offset below the wearer) decides "smaller than the wielder"; the
+      // shared resolver keeps an unanswered tripod question unanswered (no classification), so an unknown state never grants light status
+      const cls = d.sizeRules
+        ? resolveEffectiveWieldingSize({ size: d.baseSize, sizeRules: d.sizeRules }, wielderSize, { tripodMounted: sizeState?.mounted, beneficialSizeChoice: sizeState?.treatAs ?? undefined }).classification
+        : classifySize(d.sizeIndex, w);
+      if (d.melee && cls === 'light') return true;
       if (forAbility === 'weapon-finesse' && have.has('treated-as-light-for-weapon-finesse')) return true;
       continue;
     }

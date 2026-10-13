@@ -2614,9 +2614,9 @@
     ]
   },
   "heuristics": {
-    "totalSites": 218,
+    "totalSites": 220,
     "byClass": {
-      "DISPLAY": 121,
+      "DISPLAY": 123,
       "IDENTITY_FALLBACK": 25,
       "LEGACY_GATED": 58,
       "NON_COMBAT_DOMAIN": 5,

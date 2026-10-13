@@ -174,7 +174,7 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
     size: typeof cs.size === 'string' ? cs.size : null,
     requiresHostLauncher: op.requiresGrenadeLauncher === true,
     // Phase 5D-I-D-B2: size treatment (tripod / chosen / below-wearer), worn classification, two-handed design, held-together rule
-    sizeRules: sizeRulesOf(op, cs.wieldingRules),
+    sizeRules: sizeRulesOf(op, cs.wieldingRules, def.preparedAttack),
     worn: wornClassOf(op),
     designedTwoHanded: designedTwoHandedOf(op, cs.wieldingRules),
     heldTogether: op.multipleHeldOneHandCountsAsOneWeapon === true,

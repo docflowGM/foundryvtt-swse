@@ -20,7 +20,7 @@ const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
  * The structured size rules of a canonical record, or null when it declares none.
  * @returns {{tripod:{mode:'absolute'|'one-smaller', size:string|null}|null, beneficial:{size:string}|null, belowWearer:number|null, keys:string[]}|null}
  */
-export function sizeRulesOf(operation, wieldingRules = []) {
+export function sizeRulesOf(operation, wieldingRules = [], preparedAttack = null) {
   const op = operation ?? {};
   const keys = [];
   let tripod = null;
@@ -34,16 +34,24 @@ export function sizeRulesOf(operation, wieldingRules = []) {
   let belowWearer = null;
   const m = /^(one|two|three)_sizes?_smaller_than_wearer$/.exec(String(op.sizeRule ?? ''));
   if (m) { belowWearer = NUMBER_WORDS[m[1]]; keys.push('sizeRule'); }
-  if (!tripod && !beneficial && belowWearer === null) return null;
-  return Object.freeze({ tripod: tripod && Object.freeze(tripod), beneficial: beneficial && Object.freeze(beneficial), belowWearer, keys: Object.freeze(keys) });
+  // a PREPARATION that temporarily changes the size (Heavy Blaster Cannon, Legacy Era Campaign Guide: braced = Large, wielder at least Medium). Structured only.
+  let prepared = null;
+  const ov = preparedAttack?.temporaryOverrides;
+  if (ov && sizeIndexOf(ov.effectiveWeaponSize) >= 0) {
+    const minimum = ov.wielderEligibility?.minimumWielderSize;
+    prepared = { id: String(preparedAttack.id ?? 'prepare'), size: ov.effectiveWeaponSize, minimumWielderSize: sizeIndexOf(minimum) >= 0 ? minimum : null };
+    keys.push('preparedAttack.temporaryOverrides');
+  }
+  if (!tripod && !beneficial && belowWearer === null && !prepared) return null;
+  return Object.freeze({ tripod: tripod && Object.freeze(tripod), beneficial: beneficial && Object.freeze(beneficial), belowWearer, prepared: prepared && Object.freeze(prepared), keys: Object.freeze(keys) });
 }
 
 /**
  * Effective size for wielding. `state` = { mounted?:boolean, treatAs?:string }. A choice is honoured only when it names exactly the size the record
  * allows; an unknown / forged value is ignored, and no rule engages without its state. When several rules engage the SMALLEST result applies.
- * @returns {{index:number, size:string|null, via:'base'|'tripod'|'beneficial-choice'|'below-wearer', engaged:string[]}}
+ * @returns {{index:number, size:string|null, via:'base'|'tripod'|'prepared'|'beneficial-choice'|'below-wearer', engaged:string[]}}
  */
-export function effectiveSizeOf(rules, baseSize, { wielderSize = null, mounted = false, treatAs = null } = {}) {
+export function effectiveSizeOf(rules, baseSize, { wielderSize = null, mounted = undefined, treatAs = null, prepared = false } = {}) {
   const baseIdx = sizeIndexOf(baseSize);
   const wielderIdx = sizeIndexOf(wielderSize);
   let best = { index: baseIdx, via: 'base' };
@@ -54,6 +62,7 @@ export function effectiveSizeOf(rules, baseSize, { wielderSize = null, mounted =
     if (rules.tripod.mode === 'absolute') consider(sizeIndexOf(rules.tripod.size), 'tripod');
     else if (baseIdx >= 0) consider(baseIdx - 1, 'tripod');
   }
+  if (rules?.prepared && prepared === true) consider(sizeIndexOf(rules.prepared.size), 'prepared');
   if (rules?.beneficial && treatAs && sizeIndexOf(treatAs) === sizeIndexOf(rules.beneficial.size)) consider(sizeIndexOf(rules.beneficial.size), 'beneficial-choice');
   return Object.freeze({ index: best.index, size: sizeLabel(best.index), via: best.via, engaged: Object.freeze(engaged) });
 }
@@ -74,19 +83,24 @@ export function classifySize(eff, wielder) {
  *   requiredHands:2|null, source:'base'|'tripod'|'beneficial-choice'|'below-wearer', legal:boolean|null, pending:string|null, reason?:string}}
  *   legal false = definitely too large; legal null = depends on a tripod state that is not established (unknown is neither true nor false)
  */
-export function resolveEffectiveWieldingSize(shape, actorSize, { tripodMounted, beneficialSizeChoice = null } = {}) {
+export function resolveEffectiveWieldingSize(shape, actorSize, { tripodMounted, beneficialSizeChoice = null, prepared = false } = {}) {
   const rules = shape?.sizeRules ?? null;
   const base = shape?.size ?? null;
   const w = sizeIndexOf(actorSize);
-  const at = (tripod) => effectiveSizeOf(rules, base, { wielderSize: actorSize, mounted: tripod, treatAs: beneficialSizeChoice });
-  const pack = (eff, legal = undefined, pending = null) => {
+  const at = (tripod) => effectiveSizeOf(rules, base, { wielderSize: actorSize, mounted: tripod, treatAs: beneficialSizeChoice, prepared });
+  const pack = (eff, legal = undefined, pending = null, reason = undefined) => {
     const classification = classifySize(eff.index, w);
+    const tooLarge = classification === 'too-large';
+    // a preparation that changes the size also needs a wielder of at least the stated size (the braced cannon: Medium or larger)
+    const minIdx = eff.via === 'prepared' ? sizeIndexOf(rules?.prepared?.minimumWielderSize) : -1;
+    const belowMin = minIdx >= 0 && w >= 0 && w < minIdx;
+    const verdict = belowMin ? false : (legal === undefined ? !tooLarge : legal);
     return Object.freeze({
       baseSize: base, effectiveSize: eff.size, actorSize: sizeLabel(w) ?? actorSize ?? null,
       sizeDelta: eff.index >= 0 && w >= 0 ? eff.index - w : null, classification,
       requiredHands: classification === 'two-handed' ? 2 : null, source: eff.via,
-      legal: legal === undefined ? classification !== 'too-large' : legal, pending,
-      ...((legal === undefined ? classification === 'too-large' : legal === false) ? { reason: 'too-large-to-wield' } : {}),
+      legal: verdict, pending,
+      ...(verdict === false ? { reason: belowMin ? 'below-minimum-wielder-size' : (reason ?? 'too-large-to-wield') } : {}),
     });
   };
   if (typeof tripodMounted === 'boolean' || !rules?.tripod) return pack(at(tripodMounted === true));
@@ -100,7 +114,8 @@ export function resolveEffectiveWieldingSize(shape, actorSize, { tripodMounted, 
 
 /** The size state a consumer reads for ONE attack / classification: an explicit option wins over the owned state (never a free default). */
 export function sizeStateOf(ownedState, context = {}) {
-  const mounted = typeof context?.mounted === 'boolean' ? context.mounted : ownedState?.mounted === true;
+  // tri-state: true / false / undefined (not established) -- an unanswered tripod question is never silently false
+  const mounted = typeof context?.mounted === 'boolean' ? context.mounted : (typeof ownedState?.mounted === 'boolean' ? ownedState.mounted : undefined);
   const treatAs = context?.beneficialSizeChoice ?? ownedState?.sizeTreatment ?? null;
   return { mounted, treatAs: typeof treatAs === 'string' ? treatAs : null };
 }
@@ -129,12 +144,37 @@ export function wornClassOf(operation) {
 }
 
 /**
- * Do `a` and `b` count as ONE weapon when held together (Darkstick: several held in one hand)? Both must be the same canonical identity that
- * declares multipleHeldOneHandCountsAsOneWeapon; an explicit second-weapon designation by the player is decided by the caller.
+ * The Darkstick group the player established, validated against what the actor ACTUALLY has right now. The owned choice names the other participating
+ * Item ids (`heldTogetherIds`); the group is valid only if the wielder is proficient, every named Item is an owned, equipped weapon of the same canonical
+ * identity, none is the primary or designated as an off-hand weapon, none is the primary of a group of its own, and none is claimed by another group.
+ * Attack preflight, damage and the dual-wield resolver all read this one result. `deps` = { shapeOf(item), proficient(weapon, actor) } (injected so this stays pure).
+ * @returns {{ok:boolean, count:number, memberIds:string[], reason:string|null}}  ok false => the weapon is treated as held singly (count 1)
  */
-export function countsAsOneHeldWeapon(shapeA, shapeB) {
-  return !!shapeA && !!shapeB && shapeA.source === 'canonical' && shapeB.source === 'canonical'
-    && shapeA.heldTogether === true && shapeB.heldTogether === true && shapeA.identityKey === shapeB.identityKey;
+export function resolveHeldGroup(actor, weapon, { shapeOf, proficient } = {}, idsOverride = null) {
+  const single = (reason) => ({ ok: false, count: 1, memberIds: [], reason });
+  let owned = null;
+  try { owned = weapon?.flags?.swse?.fireState ?? weapon?.getFlag?.('swse', 'fireState') ?? null; } catch { owned = null; }
+  const ids = asArray(idsOverride ?? owned?.heldTogetherIds).map(String).filter(Boolean);
+  if (!ids.length) return single(null);
+  const shape = shapeOf?.(weapon);
+  if (!shape || shape.source !== 'canonical' || !shape.heldTogether) return single('not-holdable-together');
+  if (new Set(ids).size !== ids.length || ids.includes(String(weapon?.id))) return single('duplicate-or-self');
+  if (!(typeof proficient === 'function' && proficient(weapon, actor) === true)) return single('not-proficient');
+  const items = Array.from(actor?.items ?? []);
+  const stateOf = (it) => { try { return it?.flags?.swse?.fireState ?? it?.getFlag?.('swse', 'fireState') ?? null; } catch { return null; } };
+  for (const id of ids) {
+    const it = items.find((i) => i?.id === id);
+    if (!it || it.type !== 'weapon') return single('member-missing');
+    const sh = shapeOf(it);
+    if (!sh || sh.source !== 'canonical' || sh.identityKey !== shape.identityKey) return single('member-not-same-weapon');
+    if (it.system?.equipped === false) return single('member-not-equipped');
+    if (it.system?.isOffhand === true || it.system?.slot === 'offhand') return single('member-is-offhand');
+    if (asArray(stateOf(it)?.heldTogetherIds).length) return single('member-has-its-own-group');
+    if (items.some((o) => o?.id !== weapon?.id && o?.id !== id && asArray(stateOf(o)?.heldTogetherIds).map(String).includes(id))) return single('member-in-another-group');
+  }
+  if (weapon?.system?.isOffhand === true || weapon?.system?.slot === 'offhand') return single('primary-is-offhand');
+  if (items.some((o) => o?.id !== weapon?.id && asArray(stateOf(o)?.heldTogetherIds).map(String).includes(String(weapon?.id)))) return single('primary-is-member-of-another-group');
+  return { ok: true, count: 1 + ids.length, memberIds: ids, reason: null };
 }
 
 /** The two-handed design of a record: operation.designedForTwoHandedUse or the structured wieldingRules effect. */

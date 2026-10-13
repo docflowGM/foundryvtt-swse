@@ -12,7 +12,7 @@ One shared pure resolver (`scripts/items/weapon-runtime/wielding-size.js`, using
 | `sizeRule` (`two_sizes_smaller_than_wearer`) | AUTO | IMPLEMENTED | wearer rank − 2, clamped to Fine; feeds the light classification (the sizeless Stunning Gauntlet used to be never-light) |
 | `designedForTwoHandedUse` | AUTO | IMPLEMENTED | metadata + note only; **not** a mandatory grip (the size class decides that); the two-handed Strength result is the existing single doubling |
 | `forearmMounted`, `wornOnWrist`, `wornAs` | AUTO | IMPLEMENTED | normalized `wearLocation` (`wrist` / `forearm`; `bracelet/jewelry` is a wrist item): notes and descriptor tokens only. No disarm immunity, hand rule or attack change is derived; disarm protection stays with `resolveDisarmProtection` (Stunning Gauntlet / Vibroknucklers own declarations) |
-| `multipleHeldOneHandCountsAsOneWeapon` | AUTO | IMPLEMENTED | the **proficient player establishes** N Darksticks held together in one hand (`setHeldTogetherCount`; never counted from the inventory): one weapon slot in `DualWieldCombatShapeResolver` (no two-weapon penalty, no extra attack), and the `melee-grouped` profile (2d8, same for a third stick) is selected through the existing profile authority; thrown stays 1d6; an unproficient / forged / unnamed claim fails |
+| `multipleHeldOneHandCountsAsOneWeapon` | AUTO | IMPLEMENTED | the **proficient player names the Item ids** held together in one hand (`setHeldTogether`; never counted from the inventory). `resolveHeldGroup` revalidates the group at every use — proficiency, owned, equipped, not designated off-hand, no overlap with another group — and the attack preflight, profile selection, notes and `DualWieldCombatShapeResolver` all read that one result. A valid group is one weapon slot (no extra attack, no two-weapon penalty) and selects the `melee-grouped` profile (2d8, the same for a third stick); an invalid / stale / forged group falls back to ordinary 1d6 and the grouped profile cannot be named. Thrown stays 1d6. |
 | `collapsedForm` | AUTO | DUPLICATE | collapsed/expanded `configurationStates`, swift transition already paid by `setConfiguration` |
 
 ## Defect found and fixed: the two-handed Strength doubling never ran for production records
@@ -21,8 +21,13 @@ One shared pure resolver (`scripts/items/weapon-runtime/wielding-size.js`, using
 ## Data amendment (builder, not hand edit)
 `5D-I-D-B2-held-together-profile` adds the Darkstick `melee-grouped` profile (2d8; activation: held-together ≥ 2 + proficient wielder) and `operation.multipleHeldDamageProfile`, with a precondition on the record's own text. Registry and `packs/weapons*.db` regenerated; only the Darkstick record changed.
 
+## Review corrections (PR #1027)
+- **Vehicle exemption**: only a verified installation — the attack routes to a vehicle domain through a real `vehicle` actor that owns this very weapon Item. `vehicleWeapon` / `starshipWeapon` / `weaponSystem` options (or a vehicle that does not own the weapon) prove nothing and are refused.
+- **Heavy Blaster Cannon**: the blanket exemption is gone. The record's own `preparedAttack.temporaryOverrides` (braced → Large, wielder Medium or larger) is read as a size rule and applied only when the readiness authority reports the brace done this round or paid with this attack; a Small wielder cannot brace it, a wielder exempt from the brace is not treated as braced, and an unpayable brace refuses the attack.
+- **Tripod**: `sizeStateOf` keeps true / false / unknown. The question is asked once when the answer decides legality, **before** the attack-stage conditional modifiers are evaluated, and the single resolved value feeds hands, modifiers, the light classification, damage and the carried `weaponSizeClass`; completed attacks read the carried class instead of re-reading the live Item.
+- **Darkstick group**: see the table.
+
 ## Judgment calls to confirm
-- **Exempt from the size gate**: vehicle / starship weapons (`actor.type === 'vehicle'` or the existing vehicle-weapon flags) and forms with a published size-dependent preparation rule (`exemptAboveWielderSize`: the heavy-weapon brace). Certified behaviour has a Medium wielder bracing the Huge Heavy Blaster Cannon, so Core p.120 cannot gate it; the brace rule is its published route.
 - The thrown Darkstick keeps 1d6 (the text does not say a thrown stick is a held bundle).
 - `encumbranceException`, the stock-option keys and `preferredMode` remain with a later owner; the Great Lightsaber `sizeGate` was not touched.
 

@@ -916,7 +916,11 @@ export function getDamageAbilityContribution(actor, weapon, context = {}) {
       if (sh?.source === 'canonical' && sh.branch === 'melee') {
         const str = SchemaAdapters.getAbilityMod(actor, 'str');
         const forgo = context?.forgoDoubleStrength === true || context?.attackShape?.forgoDoubleStrength === true;
-        const light = descriptorMatchesAny(sh.descriptor, ['light'], { wielderSize: actor?.system?.size ?? 'medium', sizeState: ownedSizeStateOf(weapon, context) });
+        // the size class the attack was resolved with (carried in the workflow) wins over re-reading the live Item
+        const carriedClass = context?.weaponSizeClass ?? context?.attackShape?.weaponSizeClass ?? null;
+        const light = carriedClass && typeof carriedClass.classification === 'string'
+          ? carriedClass.classification === 'light'
+          : descriptorMatchesAny(sh.descriptor, ['light'], { wielderSize: actor?.system?.size ?? 'medium', sizeState: ownedSizeStateOf(weapon, context) });
         return !forgo && !light && str > 0 ? str * 2 : str;
       }
     }

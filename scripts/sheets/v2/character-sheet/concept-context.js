@@ -395,7 +395,7 @@ function buildWeaponConfigurationView(weapon) {
     if (sizeChoice) return { currentId: sizeChoice.current ? 'treated' : 'normal', currentLabel: sizeChoice.current ? `Treated as ${sizeChoice.size}` : 'Normal size', optionCount: 2 };
     // Phase 5D-I-D-B2: identical weapons that can be held together in one hand (Darkstick) get the same control when the actor owns more than one
     const together = weapon.actor ? FireStateStore.heldTogetherOptions(weapon.actor, weapon) : null;
-    if (together && together.max >= 2) return { currentId: together.current >= 2 ? 'together' : 'single', currentLabel: together.current >= 2 ? `${together.current} held together` : 'Held singly', optionCount: together.max };
+    if (together && together.candidates.length) return { currentId: together.current >= 2 ? 'together' : 'single', currentLabel: together.current >= 2 ? `${together.current} held together` : 'Held singly', optionCount: together.max };
     if (configurations.length < 2) return null;
     const storedId = readOwnedWeaponFireState(weapon)?.configurationId ?? null;
     const defaultId = options.defaultId;

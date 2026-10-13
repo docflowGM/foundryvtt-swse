@@ -83,7 +83,7 @@ const sameCombat = (state, clock) => !!clock && !!state && state.combatId === cl
  */
 export function evaluateReadiness(constraints, state, clock, ctx = {}) {
   const blockers = [], requiredActions = [], notes = [];
-  let prepared = null;
+  let prepared = null, preparation = null;
   for (const c of asArray(constraints)) {
     switch (c.family) {
       case TEMPORAL_FAMILY.PREPARED_ATTACK: {
@@ -119,15 +119,17 @@ export function evaluateReadiness(constraints, state, clock, ctx = {}) {
         break;
       case TEMPORAL_FAMILY.PREPARED_REQUIRED: {
         const exempt = c.exemptAboveWielderSize && sizeIndex(ctx.wielderSize) > sizeIndex(c.exemptAboveWielderSize) && sizeIndex(ctx.wielderSize) >= 0;
-        if (exempt) { notes.push({ family: c.family, note: 'wielder size exempts the preparation requirement' }); break; }
-        const prepared = !!clock && sameCombat(state, clock) && state?.prepared?.round === clock.round && state.prepared.id === c.preparationId;
-        if (!prepared) for (const a of c.actions) requiredActions.push({ action: a, count: 1, family: c.family, reason: `prepare:${c.preparationId}`, preparationId: c.preparationId });
+        if (exempt) { preparation = { id: c.preparationId, state: 'exempt' }; notes.push({ family: c.family, note: 'wielder size exempts the preparation requirement' }); break; }
+        const donePrep = !!clock && sameCombat(state, clock) && state?.prepared?.round === clock.round && state.prepared.id === c.preparationId;
+        // 'prepared' = already done this round; 'required' = the actions below are paid with this attack (a failed payment refuses the attack)
+        preparation = { id: c.preparationId, state: donePrep ? 'prepared' : 'required' };
+        if (!donePrep) for (const a of c.actions) requiredActions.push({ action: a, count: 1, family: c.family, reason: `prepare:${c.preparationId}`, preparationId: c.preparationId });
         break;
       }
       default: break;
     }
   }
-  return { ready: blockers.length === 0, blockers, requiredActions, notes, prepared };
+  return { ready: blockers.length === 0, blockers, requiredActions, notes, prepared, preparation };
 }
 
 /**
