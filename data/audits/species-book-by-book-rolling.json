@@ -383,7 +383,15 @@
       ],
       "mustRecheckOriginalOfficialSWSESources": true,
       "mustVerifyActorAndSidecarDependenciesBeforeRemoval": true,
-      "other39GroupsAreNotMarked": true
+      "other39GroupsAreNotMarked": true,
+      "removalDecisionSchemaVersion": 2,
+      "authoritativeReadinessData": "data/audits/species-39-provenance-reconciliation.json",
+      "removalField": "canonicalCompendiumDisposition",
+      "removalExecutionField": "removalExecuted",
+      "auditOnly": true,
+      "productionSelectionFiltered": false,
+      "implementationAuthorized": false,
+      "validationStatus": "17_CANDIDATES_0_REMOVED"
     }
   },
   "entries": [
