@@ -106,6 +106,14 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "Original user-uploaded Galaxy of Intrigue PDF text and targeted page renders compared to uploaded searchable DJVU transcription; PDF page is printed page +1. Repo species pack and both sidecars compared read-only.",
       "notes": "All 12 published non-droid species blocks matched existing pack identities. Bith retains earlier Threats source claims while Galaxy of Intrigue confirms current pack's distinct later profile. Three later-chapter sidebars inventoried. No production data or Foundry runtime mutated."
+    },
+    {
+      "source": "The Unknown Regions",
+      "printedScope": "Chapter 1 pp.10-18: 9 racial entries and near-Human template; regional species blocks and examples pp.126-180 including Chiss reprint, Ebruchi, Killik, Lugubraa, Sorcerer of Rhand condition, Ssi-ruuk, Tof, Vagaari, Altiri, Anarrian and O'reenian.",
+      "reviewedSpecies": 21,
+      "status": "REVIEWED_WITH_FINDINGS",
+      "sourceAuthority": "User-uploaded original The Unknown Regions PDF text plus targeted page renders visually reviewed, user-uploaded Unknown Regions_djvu.txt used for rapid navigation. PDF page = printed page+1. Read-only comparison to current species pack and both sidecars.",
+      "notes": "21 non-droid species/variant/profile rules entries reviewed, including near-Human template and Sorcerer of Rhand acquired transformation, both labeled as non-genetic species classes. Source conflicts with prior Legacy/Jedi Academy preserved. No production data modified."
     }
   ],
   "summary": {
@@ -126,7 +134,7 @@
       "reviewIssues": 13,
       "baseStatNoChange": 12
     },
-    "totalSpeciesInRollingLedger": 101,
+    "totalSpeciesInRollingLedger": 119,
     "forceUnleashed": {
       "species": 10,
       "noChange": 0,
@@ -238,6 +246,28 @@
       "productionMutations": 0,
       "foundryRuntimeTests": 0,
       "priorBithSourceClaimsRetained": true
+    },
+    "unknownRegions": {
+      "auditedRulesProfiles": 21,
+      "chapterOneSpecies": 9,
+      "chapterOneNearHumanTemplate": 1,
+      "laterRegionalProfiles": 11,
+      "allFoundInPack": 21,
+      "previouslyAuditedProfiles": 3,
+      "newSpeciesOrProfilesInLedger": 18,
+      "knownNonGeneticProfiles": [
+        "Near-Human variant generator",
+        "Sorcerer of Rhand acquired transformation"
+      ],
+      "sourceDataNoChangeProfiles": 2,
+      "changeRequiredProfiles": 9,
+      "reviewOnlyProfiles": 10,
+      "confirmedIssues": 12,
+      "reviewItems": 28,
+      "totalFindings": 40,
+      "explicitNoChangeFieldDecisions": 42,
+      "productionMutations": 0,
+      "foundryRuntimeTests": 0
     }
   },
   "entries": [
@@ -365,6 +395,120 @@
           }
         ],
         "notes": "Field-level NO_CHANGE for published size/speed/ability modifiers. Species-wide status reflects other fields and rule sidecars."
+      }
+    },
+    {
+      "name": "Altiri",
+      "foundryId": "species-altiri",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "163",
+        "section": "Unknown Regions planet Altiria/Anarris — Altiri near-Human species",
+        "status": "NO_CHANGE",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/languages",
+            "status": "NO_CHANGE",
+            "note": "Human-derived zero modifiers, Medium/6, Altirish+Basic match."
+          },
+          {
+            "field": "published features",
+            "status": "NO_CHANGE",
+            "note": "One extra trained class skill at level 1 and doubled positive CHA bonus for Persuasion on Humans/near-Humans are accurately described; both sidecars mirror pack."
+          }
+        ],
+        "findings": [],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification.",
+        "profileClassification": "SPECIFIC_NEAR_HUMAN_SPECIES"
+      }
+    },
+    {
+      "name": "Anarrian",
+      "foundryId": "species-anarrian",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "163",
+        "section": "Unknown Regions planet Altiria/Anarris — Anarrian near-Human species",
+        "status": "NO_CHANGE",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/languages",
+            "status": "NO_CHANGE",
+            "note": "Human-derived zero modifiers, Medium/6, Anarrese+Basic match."
+          },
+          {
+            "field": "published features",
+            "status": "NO_CHANGE",
+            "note": "A level-1 bonus feat and one-per-encounter Strength Surge alternate reroll/damage effect are accurately described in pack and sidecars."
+          }
+        ],
+        "findings": [],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification.",
+        "profileClassification": "SPECIFIC_NEAR_HUMAN_SPECIES"
+      }
+    },
+    {
+      "name": "Anzati",
+      "foundryId": "species-anzati",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "11",
+        "section": "Chapter 1 — Anzati species block",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed",
+            "status": "NO_CHANGE",
+            "note": "No racial modifiers, Medium and land 6 agree."
+          },
+          {
+            "field": "languages and traits",
+            "status": "NO_CHANGE",
+            "note": "Anzat+Basic, Presence Sense, Mesmerize, Soup Drinking (pack Energy Drain), Hunter's Instincts (pack Bonus Class Skills), and Low-Light Vision have matching mechanical prose."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Source trait names differ from equivalent pack aliases",
+            "target": "packs/species.db: Anzati.system.canonicalTraits[energy-drain,bonus-class-skills]",
+            "current": "Energy Drain and Bonus Class Skills",
+            "publishedRule": "Published titles are Soup Drinking and Hunter's Instincts; mechanical effects match.",
+            "proposedAction": "Keep stable IDs; consider two display-name aliases only after testing grab/CT/temporary HP, standard-action Mesmerize and skill-grant consumers.",
+            "id": "UR-01-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 11,
+              "pdfPage": 12
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
       }
     },
     {
@@ -1435,6 +1579,68 @@
           }
         ],
         "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      },
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "12",
+        "section": "Chapter 1 — Chadra-Fan traits",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/languages",
+            "status": "NO_CHANGE",
+            "note": "+2 DEX/-2 WIS, Small/4, Basic+Chadra-Fan match."
+          },
+          {
+            "field": "printed features",
+            "status": "NO_CHANGE",
+            "note": "Darkvision, mandatory-result Perception reroll and +1d8 HP repaired by Mechanics match pack effects."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Extra unprinted flat skill bonuses",
+            "target": "packs/species.db: Chadra-Fan.system.skillBonuses",
+            "current": "+2 Perception, +2 Mechanics",
+            "publishedRule": "Unknown Regions p.12 grants no flat +2; only normal Small size +5 Stealth, Heightened Awareness, Tinkerer, Darkvision.",
+            "proposedAction": "Check cross-source provenance and whether pack field runs; keep earlier Legacy findings intact.",
+            "id": "UR-02-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Tinkerer renamed Quality Repairs and runtime untested",
+            "target": "packs/species.db: Chadra-Fan.system.canonicalTraits[quality-repairs]",
+            "current": "Correct extra 1d8 repair text under Quality Repairs name",
+            "publishedRule": "Published trait is Tinkerer, adding 1d8 HP to repair or jury-rig of droid or device.",
+            "proposedAction": "Keep existing internal ID; test trigger once per repair action and compare Legacy source profile before display rename.",
+            "id": "UR-02-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification.",
+        "crossBookNotes": [
+          "Revisit earlier legacyEra Chadra-Fan claims; this book repeats source-correct size and basic mechanics but uses printed name Tinkerer."
+        ]
       }
     },
     {
@@ -1697,6 +1903,68 @@
           }
         ],
         "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      },
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "126",
+        "section": "Unknown Regions species reprint in Chiss regional chapter",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "size/speed and INT",
+            "status": "NO_CHANGE",
+            "note": "Medium/6 and +2 INT match shared portion."
+          },
+          {
+            "field": "bonus trained skill",
+            "status": "NO_CHANGE",
+            "note": "New trained class skill at level 1 matches printed Chiss source concept."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Chiss source ability/language profiles differ",
+            "target": "packs/species.db: Chiss.system.abilityMods,system.languages",
+            "current": "Pack +2 INT/-2 CHA and Cheunh+Basic",
+            "publishedRule": "Unknown Regions p.126 prints +2 INT only and automatic Cheunh only, with Bonus Trained Skill and Low-Light Vision. Legacy Era source is different.",
+            "proposedAction": "Preserve both publication variants and earlier Legacy findings; determine explicit source precedence instead of overwriting pack.",
+            "id": "UR-11-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 126,
+              "pdfPage": 127
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted Initiative bonus and trait visibility",
+            "target": "packs/species.db: Chiss.system.skillBonuses / canonicalTraits",
+            "current": "Pack +2 Initiative and no canonical trait list in current output",
+            "publishedRule": "Unknown Regions block does not grant flat Initiative, explicitly gives low-light vision and chosen trained skill.",
+            "proposedAction": "Check other-book authority and runtime; ensure printed low-light and chosen training are not lost due to trait projection.",
+            "id": "UR-11-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 126,
+              "pdfPage": 127
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification.",
+        "crossBookNotes": [
+          "Prior Legacy Era Chiss claim remains in the ledger; this later regional profile is a source conflict, not permission for silent replacement."
+        ]
       }
     },
     {
@@ -2332,6 +2600,69 @@
         ],
         "issues": [],
         "note": "These are player-selected feats requiring species prerequisites, not innate species grants or automatic class bonus feats. Feat mechanics and live entitlement not recertified by this audit."
+      }
+    },
+    {
+      "name": "Ebruchi",
+      "foundryId": "species-ebruchi",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "127",
+        "section": "Unknown Regions species block — Ebruchi",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/language",
+            "status": "NO_CHANGE",
+            "note": "+2 STR/+2 CON/-2 WIS/-2 CHA, Medium/6, Ebruchese match."
+          },
+          {
+            "field": "Iron Will / Unsettling",
+            "status": "NO_CHANGE",
+            "note": "Pack +2 species Will and condition-track intimidation option text agree."
+          }
+        ],
+        "findings": [
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Improved Damage Threshold missing required Constitution 13",
+            "target": "packs/species.db: Ebruchi.system.canonicalTraits[bonus-feat]; both sidecars",
+            "current": "Pack grants Improved Damage Threshold to ALL Ebruchi",
+            "publishedRule": "Printed Conditional Bonus Feat only grants Improved Damage Threshold when CON score is 13 or greater.",
+            "proposedAction": "Change to a properly gated one-time racial entitlement and preserve stable species ID; verify at CON 12 vs 13.",
+            "id": "UR-12-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 127,
+              "pdfPage": 128
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Unsettling intimidation reactive option requires runtime certification",
+            "target": "packs/species.db: Ebruchi.system.canonicalTraits[unsettling] / Persuasion runtime",
+            "current": "Correct general description; no live check",
+            "publishedRule": "Once/encounter on successful Intimidate, target within 6 squares, replace standard effect with -1 CT until end of encounter; mind-affecting.",
+            "proposedAction": "Test action choice, max range, successful prerequisite, encounter limit and duration.",
+            "id": "UR-12-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 127,
+              "pdfPage": 128
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
       }
     },
     {
@@ -3595,6 +3926,69 @@
       }
     },
     {
+      "name": "Ishi Tib",
+      "foundryId": "species-ishi-tib",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "12",
+        "section": "Chapter 1 — Ishi Tib species block",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability and speeds",
+            "status": "NO_CHANGE",
+            "note": "+2 INT, Medium, land 6 and swim 4 are represented in system.movement."
+          },
+          {
+            "field": "published features",
+            "status": "NO_CHANGE",
+            "note": "Basic+Tibranese, underwater breathing, reroll/take 10 Swim, Knowledge (life sciences) best-of-two, 1d6 piercing beak and low-light vision match pack text."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted pack Perception and Survival bonuses",
+            "target": "packs/species.db: Ishi Tib.system.skillBonuses",
+            "current": "+2 Perception and +2 Survival",
+            "publishedRule": "Unknown Regions block contains no flat bonuses to either skill.",
+            "proposedAction": "Trace provenance/consumer before removal.",
+            "id": "UR-03-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Water movement and natural beak require runtime checks",
+            "target": "packs/species.db: Ishi Tib.system.movement.swim / canonicalTraits[natural-weapons]",
+            "current": "Correct swim 4 and 1d6 piercing natural weapon text; no actor test",
+            "publishedRule": "Aquatic speed 4, natural bite/beak armed 1d6 piercing and amphibious breath ability.",
+            "proposedAction": "Test swim mobility, armed state and a single natural attack; avoid duplicated natural weapons.",
+            "id": "UR-03-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 12,
+              "pdfPage": 13
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
+      }
+    },
+    {
       "name": "Ithorian",
       "foundryId": "species-ithorian",
       "core": {
@@ -4097,6 +4491,69 @@
       }
     },
     {
+      "name": "Killik",
+      "foundryId": "species-killik",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "131",
+        "section": "Unknown Regions chapter Killik species traits pp.131-132",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "Medium form ability and speed",
+            "status": "NO_CHANGE",
+            "note": "+2 CON/-2 INT, Medium/6 align with the published typical Medium Killik profile."
+          },
+          {
+            "field": "published abilities",
+            "status": "NO_CHANGE",
+            "note": "Joiners, low-light, telepathic Hive Mind, four-limbed multiattack penalty reduction, natural armor and 1d6 slashing claws are text-represented."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Single Medium actor chassis versus highly variable Killik size forms",
+            "target": "packs/species.db: Killik.system.size/movement/abilityMods and canonicalTraits[size,additional-traits]",
+            "current": "Pack uses Medium/6 default; optional size chart embedded as long natural-language trait",
+            "publishedRule": "Published Killiks range Small-Huge and Fine-Colossal extremes; Huge+ speed 4; custom forms use beast size modifiers and optional special traits.",
+            "proposedAction": "Treat Medium as default source version; record variants instead of applying all form statistics to all Killiks.",
+            "id": "UR-13-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 131,
+              "pdfPage": 132
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Joiner and multiattack restrictions need runtime certification",
+            "target": "packs/species.db: Killik.system.canonicalTraits[joiners,multiple-limbs]",
+            "current": "Pack prose only, no evidence of actor-applied reactions",
+            "publishedRule": "Requires helpless sentient INT>=3; after incapacitation, 1 minute exposure makes Joiner with daily INT DC20 escape; four limbs reduce multiple-attack penalty by 2.",
+            "proposedAction": "Test mechanics safely; do not automate GM adjudication beyond existing workflow authority.",
+            "id": "UR-13-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 131,
+              "pdfPage": 132
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
+      }
+    },
+    {
       "name": "Kissai",
       "foundryId": "species-kissai",
       "kotor": {
@@ -4327,6 +4784,131 @@
           }
         ],
         "note": "Changes are source-backed candidates or scoped review items, not applied corrections."
+      },
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "13",
+        "section": "Chapter 1 — Krevaaki traits",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed",
+            "status": "NO_CHANGE",
+            "note": "+2 WIS/-2 CHA, Medium, land 6 agree."
+          },
+          {
+            "field": "defense / skill feat",
+            "status": "NO_CHANGE",
+            "note": "+1 natural armor Reflex/Fort, conditional Skill Focus (Climb) correctly described."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Conflicting printed native language",
+            "target": "packs/species.db: Krevaaki.system.languages",
+            "current": "Basic and Kreva",
+            "publishedRule": "Unknown Regions p.13 explicitly prints Basic and Dromnyr; earlier Jedi Academy source must be consulted for alternative naming.",
+            "proposedAction": "Preserve both book claims; do not automatically replace Kreva with Dromnyr until provenance/variant is resolved.",
+            "id": "UR-04-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Stoic and Tentacles effect wording diverges",
+            "target": "packs/species.db: Krevaaki.system.canonicalTraits[stoic,grasping-tentacles]",
+            "current": "Stoic imposes -5 to Sense Deception OR Sense Influence, tentacles +2 to Climb plus Grab and Grapple",
+            "publishedRule": "Unknown Regions prints -5 on Sense Motive Perception; Tentacles +2 Climb and grapple checks, without separately stating grab.",
+            "proposedAction": "Reconcile published skill terminology and previous Jedi Academy profile; prevent expansion of penalties or bonus types without authority.",
+            "id": "UR-04-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 13,
+              "pdfPage": 14
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification.",
+        "crossBookNotes": [
+          "Cross-book conflict with Jedi Academy Krevaaki record: native-language and Stoic wording must be reconciled without erasing prior findings."
+        ]
+      }
+    },
+    {
+      "name": "Lugubraa",
+      "foundryId": "species-lugubraa",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "135",
+        "section": "Unknown Regions species traits — Lugubraa",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/languages",
+            "status": "NO_CHANGE",
+            "note": "+2 STR/-2 DEX/+2 CON/-2 WIS, Medium/6, Lugubraal match."
+          },
+          {
+            "field": "source traits",
+            "status": "NO_CHANGE",
+            "note": "Free Improved Damage Threshold, echolocation darkvision, lockbite +5 Grapple and age-based INT cap/increase are described."
+          }
+        ],
+        "findings": [
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Missing second natural weapon (teeth)",
+            "target": "packs/species.db: Lugubraa.system.canonicalTraits[natural-weapons]; natural weapon projections",
+            "current": "Pack declares only 1d6 tentacle damage",
+            "publishedRule": "Printed Lugubraa are armed with barbed tentacles 1d6 AND teeth 1d4.",
+            "proposedAction": "Surgically represent both distinct natural attacks with correct damage and no duplicate materializations.",
+            "id": "UR-14-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 135,
+              "pdfPage": 136
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Age-gated Intelligence and lockbite need certification",
+            "target": "packs/species.db: Lugubraa.system.canonicalTraits[accelerated-learning,lockbite]",
+            "current": "Pack prose includes INT maximum 8 under age 50 and gain 1d4+2 at about 50",
+            "publishedRule": "Printed trait Lugubraa Learning sets age cap and eventual increase; successful grapple allows teeth latch for +5 subsequent grapples vs same foe.",
+            "proposedAction": "Test age-dependent creation and grapple state; preserve existing trait IDs and GM choice.",
+            "id": "UR-14-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 135,
+              "pdfPage": 136
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
       }
     },
     {
@@ -4949,6 +5531,70 @@
       }
     },
     {
+      "name": "Near-Human",
+      "foundryId": "species-near-human",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "17",
+        "section": "Chapter 1 — Creating Near-Humans template pp.17-18",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "base Human chassis",
+            "status": "NO_CHANGE",
+            "note": "Medium/6 and Basic are consistent with a Human-derived baseline."
+          },
+          {
+            "field": "classification",
+            "status": "NO_CHANGE",
+            "note": "The published text describes a flexible Human-derived construction system, not a single immutable racial stat block."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Generic near-Human selectable profile lacks defined trait tradeoff",
+            "target": "packs/species.db: Near-Human.system / data/species-traits-migrated.json: Near-Human.structuralTraits[Genetic Drift]",
+            "current": "Placeholder Genetic Drift has empty description, without selectable rule tradeoffs",
+            "publishedRule": "Near-Humans start with Human and choose ONE variant trait REPLACING either Human bonus trained skill or bonus feat; then 1–3 minor cosmetic variations.",
+            "proposedAction": "Reconcile a selectable template using existing species-variant architecture only; do not invent a parallel archetype/chargen engine.",
+            "id": "UR-10-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 17,
+              "pdfPage": 18
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Avoid treating variant morphology as universal innate bonus",
+            "target": "packs/species.db: Near-Human.system.canonicalTraits / actor race construction",
+            "current": "No fixed variant choices encoded",
+            "publishedRule": "Table 1-4 trait choice and Table 1-5 visual variation choices depend on player/GM; Wroonian/Theelin examples are not generic mandatory grants.",
+            "proposedAction": "Test construction ownership, retained Human entitlement and variant choice without granting every option.",
+            "id": "UR-10-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 17,
+              "pdfPage": 18
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification.",
+        "profileClassification": "VARIANT_GENERATOR_NOT_BIOLOGICAL_SPECIES"
+      }
+    },
+    {
       "name": "Neimoidian",
       "foundryId": "species-neimoidian",
       "galaxyOfIntrigue": {
@@ -5078,6 +5724,69 @@
       }
     },
     {
+      "name": "Nikto",
+      "foundryId": "species-nikto",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "14",
+        "section": "Chapter 1 — Nikto and five environmental subspecies",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed",
+            "status": "NO_CHANGE",
+            "note": "+2 STR/-2 INT/-2 CHA, Medium/6 agree."
+          },
+          {
+            "field": "great-fortitude/natural-armor/survival-instinct",
+            "status": "NO_CHANGE",
+            "note": "+2 Fort, +2 natural armor Reflex and Survival reroll mandatory second agree mechanically."
+          }
+        ],
+        "findings": [
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Missing automatic Basic-or-Huttese language choice",
+            "target": "packs/species.db: Nikto.system.languages",
+            "current": "Nikto only",
+            "publishedRule": "Printed automatic languages are Nikto AND either Basic or Huttese.",
+            "proposedAction": "Provide selected second language as a race-specific chargen choice; do not grant both by default.",
+            "id": "UR-05-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 14,
+              "pdfPage": 15
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Pack Endurance bonus and Hardy Physiology sidecar",
+            "target": "packs/species.db: Nikto.system.skillBonuses; data/species-traits-migrated.json: Nikto.structuralTraits[Hardy Physiology]",
+            "current": "+2 Endurance absent from printed race; sidecar adds +2 Fort which may duplicate pack Great Fortitude",
+            "publishedRule": "The source supports one +2 species Fortitude and one +2 natural armor Reflex, not a second Fort grant.",
+            "proposedAction": "Check field provenance and verify a single Fortitude species modifier at runtime; keep subspecies descriptive variants distinct.",
+            "id": "UR-05-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 14,
+              "pdfPage": 15
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
+      }
+    },
+    {
       "name": "Nosaurian",
       "foundryId": "species-nosaurian",
       "forceUnleashed": {
@@ -5192,6 +5901,70 @@
           }
         ],
         "notes": "Source-data audit only. NO_CHANGE does not certify runtime. No production changes authorized."
+      }
+    },
+    {
+      "name": "O'reenian",
+      "foundryId": "species-o-reenian",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "180",
+        "section": "Unknown Regions O'reen — explicitly described near-Human variant",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "base chassis",
+            "status": "NO_CHANGE",
+            "note": "Medium, land 6, no static ability modifiers match Human-derived base."
+          },
+          {
+            "field": "variant options",
+            "status": "NO_CHANGE",
+            "note": "Heightened Awareness and Persistent correspond to the two traits expressly named for O'reenians."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Near-Human variant grant policy for O'reenians",
+            "target": "packs/species.db: O'reenian.system.canonicalTraits; near-human variant consumer",
+            "current": "Both Heightened Awareness and Persistent in pack, but no shown Human base-feat/skill tradeoff",
+            "publishedRule": "Source expressly names both racial traits along with orange Skin Color and black Iris variant; Chapter 1 generic rule otherwise replaces one Human free feat or skill per variant.",
+            "proposedAction": "Determine explicit species-specific exception/approved entitlement policy rather than silently adding the Human base feat and free skill on top.",
+            "id": "UR-21-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 180,
+              "pdfPage": 181
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Native O'reenian vs Basic language inheritance",
+            "target": "packs/species.db: O'reenian.system.languages",
+            "current": "Only O'reenian native dialect",
+            "publishedRule": "O'reenians are near-Human, while their native dialect is a form of Bocce; generic near-Human/Human Basic inheritance requires source review.",
+            "proposedAction": "Do not automatically grant or delete Basic until explicit near-Human species interpretation is certified.",
+            "id": "UR-21-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 180,
+              "pdfPage": 181
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification.",
+        "profileClassification": "SPECIFIC_NEAR_HUMAN_SPECIES"
       }
     },
     {
@@ -5800,6 +6573,132 @@
       }
     },
     {
+      "name": "Shistavanen",
+      "foundryId": "species-shistavanen",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "14",
+        "section": "Chapter 1 — Shistavanen",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/language",
+            "status": "NO_CHANGE",
+            "note": "+2 DEX/-2 INT/-2 CHA, Medium/6, Shistavanen match."
+          },
+          {
+            "field": "published race effects",
+            "status": "NO_CHANGE",
+            "note": "Claws 1d6 slashing, Initiative reroll, conditional Skill Focus (Perception), Survival class skill, and low-light vision agree."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted flat +2 Perception and Survival",
+            "target": "packs/species.db: Shistavanen.system.skillBonuses",
+            "current": "+2 Perception and +2 Survival",
+            "publishedRule": "Published Uncanny Tracker makes Survival a class skill; neither skill gets a flat +2 bonus.",
+            "proposedAction": "Check other official provenance and runtime before removing either field.",
+            "id": "UR-06-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 14,
+              "pdfPage": 15
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Natural weapons and progression grants",
+            "target": "packs/species.db: Shistavanen.system.canonicalTraits[natural-weapons,bonus-class-skill,conditional-bonus-feat]",
+            "current": "Source-correct descriptions; migrated sidecar has no executable rules",
+            "publishedRule": "1d6 slashing claws always armed, Survival always class skill, Perception trained grants Skill Focus.",
+            "proposedAction": "Test damage, no-duplicate claw materialization, skill access and one-time bonus feat.",
+            "id": "UR-06-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 14,
+              "pdfPage": 15
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
+      }
+    },
+    {
+      "name": "Sluissi",
+      "foundryId": "species-sluissi",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "15",
+        "section": "Chapter 1 — Sluissi",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed",
+            "status": "NO_CHANGE",
+            "note": "-2 DEX/+2 INT, Medium/6 agree."
+          },
+          {
+            "field": "published abilities",
+            "status": "NO_CHANGE",
+            "note": "Mechanics +10 when twice normal time, Tech Specialist when trained Mechanics, automatic running start and anti-Trip +5 stability described correctly."
+          }
+        ],
+        "findings": [
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Native language misspelling",
+            "target": "packs/species.db: Sluissi.system.languages",
+            "current": "Basic and Sluiussese",
+            "publishedRule": "Unknown Regions p.15 prints Basic and Sluissese.",
+            "proposedAction": "Correct only the native language token; verify existing language registry and do not duplicate entitlements.",
+            "id": "UR-07-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 15,
+              "pdfPage": 16
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Tech Specialist grant and careful-worker timing",
+            "target": "packs/species.db: Sluissi.system.canonicalTraits[conditional-bonus-feat,careful-worker,serpentine] / actor consumers",
+            "current": "Correct source prose but no proof that conditions execute",
+            "publishedRule": "Trained Mechanics gives Tech Specialist (official web/Starships p21), x2 time adds +10 circumstance Mechanics, Jump always running start, anti-Trip +5.",
+            "proposedAction": "Test conditional feat, time predicate, jumping and grapples through existing engines.",
+            "id": "UR-07-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 15,
+              "pdfPage": 16
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
+      }
+    },
+    {
       "name": "Snivvian",
       "foundryId": "species-snivvian",
       "kotor": {
@@ -5845,6 +6744,226 @@
           }
         ],
         "notes": "Published ability adjustments, size and speed agree with the live species pack. Status tracks other trait/sidecar defects separately."
+      }
+    },
+    {
+      "name": "Sorcerer of Rhand",
+      "foundryId": "species-sorcerer-of-rhand",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "143",
+        "section": "Unknown Regions species-traits style transformation — Sorcerers of Rhand",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "size/speed/lang/Force grants",
+            "status": "NO_CHANGE",
+            "note": "Medium/6, Basic, free Force Sensitivity and constrained Force Training are consistent with shared printed components."
+          },
+          {
+            "field": "classification",
+            "status": "NO_CHANGE",
+            "note": "Source says Sorcerers are united by a common condition, not a shared genetic code; this is an acquired identity profile."
+          }
+        ],
+        "findings": [
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Missing three negative ability modifiers",
+            "target": "packs/species.db: Sorcerer of Rhand.system.abilityMods",
+            "current": "0 STR,0 DEX,+4 INT,+2 WIS,0 CHA",
+            "publishedRule": "Printed -2 STR/-2 DEX/+4 INT/+2 WIS/-2 CHA.",
+            "proposedAction": "Correct the existing profile's negative modifiers without silently treating transformation as a biological starting species.",
+            "id": "UR-15-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 143,
+              "pdfPage": 144
+            },
+            "applied": false
+          },
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Special Qualities count and selection converted to fixed Beastly Traits",
+            "target": "packs/species.db: Sorcerer of Rhand.system.canonicalTraits[beastly-traits]",
+            "current": "Two Beastly Traits only",
+            "publishedRule": "Source says ONE to THREE Special Qualities chosen/created with GM, possibly from Creature Generator; not exactly two beastly traits.",
+            "proposedAction": "Restore 1–3 GM-approved special quality selection using available consumer, not a fixed unsupported pair.",
+            "id": "UR-15-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 143,
+              "pdfPage": 144
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Transformed state wrongly presented as hereditary species",
+            "target": "packs/species.db: Sorcerer of Rhand species category / progression",
+            "current": "Stored as species record",
+            "publishedRule": "Source explicitly states Sorcerers vary in genetics and are transformed from original races.",
+            "proposedAction": "Record nonbiological/conditional classification now; defer structural routing decision to later surgical architecture review.",
+            "id": "UR-15-03",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 143,
+              "pdfPage": 144
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification.",
+        "profileClassification": "ACQUIRED_TRANSFORMATION_PROFILE_NOT_GENETIC_SPECIES"
+      }
+    },
+    {
+      "name": "Squib",
+      "foundryId": "species-squib",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "16",
+        "section": "Chapter 1 — Squib",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/language",
+            "status": "NO_CHANGE",
+            "note": "-2 STR/+2 DEX, Small/6, Basic+Squibbian agree."
+          },
+          {
+            "field": "Natural Diplomat / Tech Savvy",
+            "status": "NO_CHANGE",
+            "note": "Pack captures +5 haggling Persuasion and always-class-skill plus Knowledge (technology) reroll and untrained use."
+          }
+        ],
+        "findings": [
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Squib tensor rifle proficiency missing required Rifle feat",
+            "target": "packs/species.db: Squib.system.canonicalTraits[weapon-familiarity]",
+            "current": "Treats Squib Tensor Rifle as Rifle unconditionally",
+            "publishedRule": "Source grants proficiency with Squib tensor rifle only to Squibs who HAVE Weapon Proficiency (rifle).",
+            "proposedAction": "Gate familiarity on actual Rifle proficiency; do not silently award a proficiency or bypass its feat prerequisite.",
+            "id": "UR-08-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 16,
+              "pdfPage": 17
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Haggling class-skill and Knowledge exception runtime",
+            "target": "packs/species.db: Squib.system.canonicalTraits[natural-diplomat,tech-savvy]",
+            "current": "Correct prose but no executable skill predicates certified",
+            "publishedRule": "+5 Persuasion only to Haggle, class-skill access always, Knowledge (technology) untrained beyond common knowledge, mandatory second result reroll.",
+            "proposedAction": "Test conditional contexts and untrained knowledge rules.",
+            "id": "UR-08-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 16,
+              "pdfPage": 17
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
+      }
+    },
+    {
+      "name": "Ssi-Ruuk",
+      "foundryId": "species-ssi-ruuk",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "147",
+        "section": "Unknown Regions species traits — Ssi-ruuk",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/language",
+            "status": "NO_CHANGE",
+            "note": "+2 STR/-2 WIS, Medium/6, Ssi-ruuvi match."
+          },
+          {
+            "field": "known race benefits",
+            "status": "NO_CHANGE",
+            "note": "Force Blind, +2 natural armor Reflex, conditional Skill Focus (Persuasion) appear in pack."
+          }
+        ],
+        "findings": [
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Unrelated Tof prose injected as fifth racial trait",
+            "target": "packs/species.db: Ssi-Ruuk.system.canonicalTraits[the-tofs-come-from-the-darkest-and-most-obscure-portion-of-the-unknown-regions]",
+            "current": "Long Tof campaign narration mistakenly classified as a canonical Ssi-Ruuk trait",
+            "publishedRule": "The Ssi-ruuk printed species block has four traits: conditional feat, Force Blind, Keen Smell, Natural Armor.",
+            "proposedAction": "Remove just this accidental racial trait from source projection and dependent sidecars; preserve unrelated narrative as lore if appropriate.",
+            "id": "UR-16-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 147,
+              "pdfPage": 148
+            },
+            "applied": false
+          },
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Keen Smell misnamed Silver Tongued and missing strict trigger",
+            "target": "packs/species.db: Ssi-Ruuk.system.canonicalTraits[silver-tongued]",
+            "current": "Unrestricted Persuasion reroll keeping better",
+            "publishedRule": "Keen Smell applies only WITHIN 6 squares of the target IN THE SAME ROOM/OPEN AREA, reroll Persuasion against that target taking better.",
+            "proposedAction": "Add spatial target/reach limitation (metadata/advisory where appropriate) and correct player-facing trait name without replacing ID.",
+            "id": "UR-16-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 147,
+              "pdfPage": 148
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Force Blind prohibition must survive chargen and Force Point routes",
+            "target": "packs/species.db: Ssi-Ruuk.system.canonicalTraits[force-blind] / progression/Force consumers",
+            "current": "Pack describes no Force Sensitivity, no Use the Force checks and no Force Points",
+            "publishedRule": "Published prohibition is absolute, though other beings can target Ssi-ruuk with Force effects.",
+            "proposedAction": "Test no FP entitlement or Force feat leakage even when class/other sources grant normally; do not immunize the creature to Force.",
+            "id": "UR-16-03",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 147,
+              "pdfPage": 148
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
       }
     },
     {
@@ -6130,6 +7249,84 @@
             "additionalSourceCheckRequired": true
           }
         ]
+      }
+    },
+    {
+      "name": "Tof",
+      "foundryId": "species-tof",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "149",
+        "section": "Unknown Regions species traits — Tofs",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/language",
+            "status": "NO_CHANGE",
+            "note": "+2 STR/-2 DEX/-2 WIS/+2 CHA, Large/6, Tof match."
+          },
+          {
+            "field": "initial bonus choice",
+            "status": "NO_CHANGE",
+            "note": "A starting bonus Rapid Shot OR Rapid Strike is described."
+          }
+        ],
+        "findings": [
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Mighty Swing entitlement omits Martial Arts I prerequisite",
+            "target": "packs/species.db: Tof.system.canonicalTraits[conditional-bonus-feat]",
+            "current": "Only Strength 13 required in pack; grants at first level",
+            "publishedRule": "Source requires BOTH Martial Arts I and STR 13 to take Mighty Swing as bonus feat.",
+            "proposedAction": "Apply both prerequisites; test negative paths and prevent unconditional feat grant.",
+            "id": "UR-17-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 149,
+              "pdfPage": 150
+            },
+            "applied": false
+          },
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Tof Fearlessness altered into broader permanent fear modifier",
+            "target": "packs/species.db: Tof.system.canonicalTraits[fearless]",
+            "current": "Always-on +5 species Will vs fear effects/intimidate; omitted once-per-encounter effect ignore",
+            "publishedRule": "Source grants once/encounter IGNORE one fear-related OR mind-affecting effect; +5 Will specifically when resisting Intimidate.",
+            "proposedAction": "Restore discrete limited immunity option; restrict +5 Will to Intimidation rather than every fear check.",
+            "id": "UR-17-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 149,
+              "pdfPage": 150
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Large-size defenses and feat acquisition",
+            "target": "packs/species.db: Tof.system.canonicalTraits[bonus-feat,conditional-bonus-feat] / actor",
+            "current": "Correct Large and bonus-choice description, no actor tests",
+            "publishedRule": "Large means -1 Reflex, -5 Stealth, +5 DT; Rapid Shot/Rapid Strike choice is one feat not both.",
+            "proposedAction": "Verify derived size, feat chooser and second conditional feat independently.",
+            "id": "UR-17-03",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 149,
+              "pdfPage": 150
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
       }
     },
     {
@@ -6819,6 +8016,69 @@
       }
     },
     {
+      "name": "Vagaari",
+      "foundryId": "species-vagaari",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "153",
+        "section": "Unknown Regions species traits — Vagaari",
+        "status": "CHANGE_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/languages",
+            "status": "NO_CHANGE",
+            "note": "+2 STR/-2 WIS, Medium/6, Vagaari+Sy Bisti match."
+          },
+          {
+            "field": "Bioknowledge and conditional feat",
+            "status": "NO_CHANGE",
+            "note": "Knowledge (life sciences)/Treat Injury mandatory second reroll, trained Deception Skill Focus match."
+          }
+        ],
+        "findings": [
+          {
+            "status": "CHANGE_REQUIRED",
+            "title": "Frightening Visage omits clothing, failed-check and trained-for-action limits",
+            "target": "packs/species.db: Vagaari.system.canonicalTraits[frightening-visage]",
+            "current": "Can reroll any intimidation Persuasion check and keep better result",
+            "publishedRule": "Source requires a FAILED Persuasion Intimidate check while clad in traditional masks AND garments; the Vagaari counts as trained in Persuasion FOR THAT ACTION.",
+            "proposedAction": "Restore all predicates without creating permanent Persuasion training.",
+            "id": "UR-18-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 153,
+              "pdfPage": 154
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Bioknowledge rerolls and conditional feat need runtime",
+            "target": "packs/species.db: Vagaari.system.canonicalTraits[bioknowledge,conditional-bonus-feat]",
+            "current": "Correct prose; no typed rules",
+            "publishedRule": "Knowledge life sciences OR Treat Injury reroll must accept second; trained Deception grants Skill Focus (Deception).",
+            "proposedAction": "Test exact skill IDs and choice; enforce one-time bonus feat.",
+            "id": "UR-18-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 153,
+              "pdfPage": 154
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
+      }
+    },
+    {
       "name": "Vahla",
       "foundryId": "species-vahla",
       "legacyEra": {
@@ -6911,6 +8171,69 @@
           }
         ],
         "notes": "Source-specific corrections/review items; do not infer overall actor runtime correctness."
+      }
+    },
+    {
+      "name": "Verpine",
+      "foundryId": "species-verpine",
+      "unknownRegions": {
+        "source": "The Unknown Regions",
+        "printedPages": "16",
+        "section": "Chapter 1 — Verpine",
+        "status": "REVIEW_REQUIRED",
+        "checked": {
+          "sourcePdfInspected": true,
+          "sourceTextTranscriptionSearched": true,
+          "packExists": true,
+          "identityStable": true,
+          "standardAndMigratedSidecarsInspected": true,
+          "foundryRuntimeTested": false
+        },
+        "fieldDecisions": [
+          {
+            "field": "ability/size/speed/language",
+            "status": "NO_CHANGE",
+            "note": "No modifiers, Medium/6, Basic+Verpine agree."
+          },
+          {
+            "field": "core printed skills/traits",
+            "status": "NO_CHANGE",
+            "note": "+1 natural armor Reflex, Perception reroll, 1 km Verpine-to-Verpine mental communication, conditional Skill Focus Mechanics match pack effect."
+          }
+        ],
+        "findings": [
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted weapon familiarity in pack",
+            "target": "packs/species.db: Verpine.system.canonicalTraits[weapon-familiarity]",
+            "current": "Verpine shattergun treated as pistol rather than exotic",
+            "publishedRule": "Unknown Regions p.16 species traits do not grant this weapon familiarity.",
+            "proposedAction": "Check independent Starships or other source; do not delete before provenance verified.",
+            "id": "UR-09-01",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 16,
+              "pdfPage": 17
+            },
+            "applied": false
+          },
+          {
+            "status": "REVIEW_REQUIRED",
+            "title": "Unprinted +2 Mechanics/+2 Perception in pack",
+            "target": "packs/species.db: Verpine.system.skillBonuses",
+            "current": "+2 Mechanics and +2 Perception",
+            "publishedRule": "Published traits do not include flat bonuses to either skill.",
+            "proposedAction": "Source-check and audit skillBonus consumer to avoid double rewards alongside conditional Skill Focus.",
+            "id": "UR-09-02",
+            "source": {
+              "book": "The Unknown Regions",
+              "printedPage": 16,
+              "pdfPage": 17
+            },
+            "applied": false
+          }
+        ],
+        "notes": "Read-only source audit. NO_CHANGE is scoped to data, never a live runtime certification."
       }
     },
     {

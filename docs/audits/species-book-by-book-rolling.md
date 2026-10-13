@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core through Galaxy of Intrigue (11 sourcebooks) audited. Production species data unchanged.
+**Status:** Core through The Unknown Regions (12 sourcebooks) audited. Production species data unchanged.
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -1109,3 +1109,109 @@ All 34 findings are `applied:false`; `REVIEW_REQUIRED` is not permission to dele
 **No production changes.** This is an append-only source-data audit. `packs/species.db`, `data/species-traits.json`, `data/species-traits-migrated.json`, registries, grant ledger and CharGen were not modified. Foundry actors have not been tested.
 
 **Next book:** *The Unknown Regions* (playable non-droid species only).
+
+---
+
+## Book 12 — The Unknown Regions (non-droid species and selectable profiles)
+
+**Primary source:** Original *The Unknown Regions* PDF and the searchable `Unknown Regions_djvu.txt` index. Relevant primary pages were rendered and visually inspected; PDF page = printed page +1. This pass searched Chapter 1 and the regional/planetary chapters, not just the table of contents.
+
+### Profile/identity inventory
+
+| Check | Count |
+|---|---:|
+| Non-droid species/racial/profile entries reviewed | **21** |
+| Chapter 1 named species | 9 |
+| Chapter 1 near-Human template | 1 |
+| Later-chapter published profiles and reprints | 11 |
+| Existing Foundry records found | 21/21 |
+| New records added to rolling ledger (including classified templates/states) | **18** |
+| Existing identities with new source claim | 3 (Chadra-Fan, Krevaaki, Chiss) |
+| Total rolling species/profile identities | **119** |
+| Whole-source NO_CHANGE profiles | 2 |
+| Whole-source CHANGE_REQUIRED profiles | 9 |
+| Whole-source REVIEW_REQUIRED profiles | 10 |
+| Confirmed correction candidates | **12** |
+| Source/variant/runtime review findings | **28** |
+| Total findings | **40** |
+| Explicit clean-field decisions | **42** |
+| Production files modified / actor runtime tested | 0/0 |
+
+### Species and source decisions
+
+| Species/profile | Source page | Existing record ID | Audit status | Findings |
+|---|---:|---|---|---:|
+| Anzati | 11 | `species-anzati` | `REVIEW_REQUIRED` | 1 |
+| Chadra-Fan | 12 | `species-chadra-fan` | `REVIEW_REQUIRED` | 2 |
+| Ishi Tib | 12 | `species-ishi-tib` | `REVIEW_REQUIRED` | 2 |
+| Krevaaki | 13 | `species-krevaaki` | `REVIEW_REQUIRED` | 2 |
+| Nikto | 14 | `species-nikto` | `CHANGE_REQUIRED` | 2 |
+| Shistavanen | 14 | `species-shistavanen` | `REVIEW_REQUIRED` | 2 |
+| Sluissi | 15 | `species-sluissi` | `CHANGE_REQUIRED` | 2 |
+| Squib | 16 | `species-squib` | `CHANGE_REQUIRED` | 2 |
+| Verpine | 16 | `species-verpine` | `REVIEW_REQUIRED` | 2 |
+| Near-Human | 17 | `species-near-human` | `REVIEW_REQUIRED` | 2 |
+| Chiss | 126 | `species-chiss` | `REVIEW_REQUIRED` | 2 |
+| Ebruchi | 127 | `species-ebruchi` | `CHANGE_REQUIRED` | 2 |
+| Killik | 131 | `species-killik` | `REVIEW_REQUIRED` | 2 |
+| Lugubraa | 135 | `species-lugubraa` | `CHANGE_REQUIRED` | 2 |
+| Sorcerer of Rhand | 143 | `species-sorcerer-of-rhand` | `CHANGE_REQUIRED` | 3 |
+| Ssi-Ruuk | 147 | `species-ssi-ruuk` | `CHANGE_REQUIRED` | 3 |
+| Tof | 149 | `species-tof` | `CHANGE_REQUIRED` | 3 |
+| Vagaari | 153 | `species-vagaari` | `CHANGE_REQUIRED` | 2 |
+| Altiri | 163 | `species-altiri` | `NO_CHANGE` | 0 |
+| Anarrian | 163 | `species-anarrian` | `NO_CHANGE` | 0 |
+| O'reenian | 180 | `species-o-reenian` | `REVIEW_REQUIRED` | 2 |
+
+### Exact pending findings
+
+All new findings use printed source pages, exact production targets, current observed data, proposed minimal corrections and `applied:false`. Findings affecting previous species identities are appended under those same identities without replacing older book sections.
+
+| Finding | Status | Source finding | Surgical direction |
+|---|---|---|---|
+| `UR-02-01` Chadra-Fan (p.12) | `REVIEW_REQUIRED` | **Extra unprinted flat skill bonuses:** +2 Perception, +2 Mechanics | Check cross-source provenance and whether pack field runs; keep earlier Legacy findings intact. |
+| `UR-02-02` Chadra-Fan (p.12) | `REVIEW_REQUIRED` | **Tinkerer renamed Quality Repairs and runtime untested:** Correct extra 1d8 repair text under Quality Repairs name | Keep existing internal ID; test trigger once per repair action and compare Legacy source profile before display rename. |
+| `UR-04-01` Krevaaki (p.13) | `REVIEW_REQUIRED` | **Conflicting printed native language:** Basic and Kreva | Preserve both book claims; do not automatically replace Kreva with Dromnyr until provenance/variant is resolved. |
+| `UR-04-02` Krevaaki (p.13) | `REVIEW_REQUIRED` | **Stoic and Tentacles effect wording diverges:** Stoic imposes -5 to Sense Deception OR Sense Influence, tentacles +2 to Climb plus Grab and Grapple | Reconcile published skill terminology and previous Jedi Academy profile; prevent expansion of penalties or bonus types without authority. |
+| `UR-11-01` Chiss (p.126) | `REVIEW_REQUIRED` | **Chiss source ability/language profiles differ:** Pack +2 INT/-2 CHA and Cheunh+Basic | Preserve both publication variants and earlier Legacy findings; determine explicit source precedence instead of overwriting pack. |
+| `UR-11-02` Chiss (p.126) | `REVIEW_REQUIRED` | **Unprinted Initiative bonus and trait visibility:** Pack +2 Initiative and no canonical trait list in current output | Check other-book authority and runtime; ensure printed low-light and chosen training are not lost due to trait projection. |
+
+### Explicitly clean source-data fields
+
+- **Anzati** — ability/size/speed: No racial modifiers, Medium and land 6 agree. languages and traits: Anzat+Basic, Presence Sense, Mesmerize, Soup Drinking (pack Energy Drain), Hunter's Instincts (pack Bonus Class Skills), and Low-Light Vision have matching mechanical prose.
+- **Chadra-Fan** — ability/size/speed/languages: +2 DEX/-2 WIS, Small/4, Basic+Chadra-Fan match. printed features: Darkvision, mandatory-result Perception reroll and +1d8 HP repaired by Mechanics match pack effects.
+- **Ishi Tib** — ability and speeds: +2 INT, Medium, land 6 and swim 4 are represented in system.movement. published features: Basic+Tibranese, underwater breathing, reroll/take 10 Swim, Knowledge (life sciences) best-of-two, 1d6 piercing beak and low-light vision match pack text.
+- **Krevaaki** — ability/size/speed: +2 WIS/-2 CHA, Medium, land 6 agree. defense / skill feat: +1 natural armor Reflex/Fort, conditional Skill Focus (Climb) correctly described.
+- **Nikto** — ability/size/speed: +2 STR/-2 INT/-2 CHA, Medium/6 agree. great-fortitude/natural-armor/survival-instinct: +2 Fort, +2 natural armor Reflex and Survival reroll mandatory second agree mechanically.
+- **Shistavanen** — ability/size/speed/language: +2 DEX/-2 INT/-2 CHA, Medium/6, Shistavanen match. published race effects: Claws 1d6 slashing, Initiative reroll, conditional Skill Focus (Perception), Survival class skill, and low-light vision agree.
+- **Sluissi** — ability/size/speed: -2 DEX/+2 INT, Medium/6 agree. published abilities: Mechanics +10 when twice normal time, Tech Specialist when trained Mechanics, automatic running start and anti-Trip +5 stability described correctly.
+- **Squib** — ability/size/speed/language: -2 STR/+2 DEX, Small/6, Basic+Squibbian agree. Natural Diplomat / Tech Savvy: Pack captures +5 haggling Persuasion and always-class-skill plus Knowledge (technology) reroll and untrained use.
+- **Verpine** — ability/size/speed/language: No modifiers, Medium/6, Basic+Verpine agree. core printed skills/traits: +1 natural armor Reflex, Perception reroll, 1 km Verpine-to-Verpine mental communication, conditional Skill Focus Mechanics match pack effect.
+- **Near-Human** — base Human chassis: Medium/6 and Basic are consistent with a Human-derived baseline. classification: The published text describes a flexible Human-derived construction system, not a single immutable racial stat block.
+- **Chiss** — size/speed and INT: Medium/6 and +2 INT match shared portion. bonus trained skill: New trained class skill at level 1 matches printed Chiss source concept.
+- **Ebruchi** — ability/size/speed/language: +2 STR/+2 CON/-2 WIS/-2 CHA, Medium/6, Ebruchese match. Iron Will / Unsettling: Pack +2 species Will and condition-track intimidation option text agree.
+- **Killik** — Medium form ability and speed: +2 CON/-2 INT, Medium/6 align with the published typical Medium Killik profile. published abilities: Joiners, low-light, telepathic Hive Mind, four-limbed multiattack penalty reduction, natural armor and 1d6 slashing claws are text-represented.
+- **Lugubraa** — ability/size/speed/languages: +2 STR/-2 DEX/+2 CON/-2 WIS, Medium/6, Lugubraal match. source traits: Free Improved Damage Threshold, echolocation darkvision, lockbite +5 Grapple and age-based INT cap/increase are described.
+- **Sorcerer of Rhand** — size/speed/lang/Force grants: Medium/6, Basic, free Force Sensitivity and constrained Force Training are consistent with shared printed components. classification: Source says Sorcerers are united by a common condition, not a shared genetic code; this is an acquired identity profile.
+- **Ssi-Ruuk** — ability/size/speed/language: +2 STR/-2 WIS, Medium/6, Ssi-ruuvi match. known race benefits: Force Blind, +2 natural armor Reflex, conditional Skill Focus (Persuasion) appear in pack.
+- **Tof** — ability/size/speed/language: +2 STR/-2 DEX/-2 WIS/+2 CHA, Large/6, Tof match. initial bonus choice: A starting bonus Rapid Shot OR Rapid Strike is described.
+- **Vagaari** — ability/size/speed/languages: +2 STR/-2 WIS, Medium/6, Vagaari+Sy Bisti match. Bioknowledge and conditional feat: Knowledge (life sciences)/Treat Injury mandatory second reroll, trained Deception Skill Focus match.
+- **Altiri** — ability/size/speed/languages: Human-derived zero modifiers, Medium/6, Altirish+Basic match. published features: One extra trained class skill at level 1 and doubled positive CHA bonus for Persuasion on Humans/near-Humans are accurately described; both sidecars mirror pack.
+- **Anarrian** — ability/size/speed/languages: Human-derived zero modifiers, Medium/6, Anarrese+Basic match. published features: A level-1 bonus feat and one-per-encounter Strength Surge alternate reroll/damage effect are accurately described in pack and sidecars.
+- **O'reenian** — base chassis: Medium, land 6, no static ability modifiers match Human-derived base. variant options: Heightened Awareness and Persistent correspond to the two traits expressly named for O'reenians.
+
+### Cross-book, classification and mechanics guardrails
+
+1. **Chiss:** This book p.126 prints +2 INT only, Cheunh, Bonus Trained Skill and Low-Light Vision, conflicting with the Legacy Era-based pack +2 INT/-2 CHA and Basic+Cheunh. Preserve both publication claims; do not overwrite before variant policy.
+2. **Krevaaki:** This book p.13 prints Basic+Dromnyr, Stoic against Sense Motive and +2 grapple, whereas the pack uses Basic+Kreva and broader/nonidentical descriptors. Keep earlier Jedi Academy claims and reconcile explicitly.
+3. **Near-Humans:** p.17-18 is a HUMAN-DERIVED VARIANT GENERATOR, not a single innate 'Genetic Drift' species. The existing Near-Human record is audited as a non-droid selectable profile but not misrepresented as a unique biological species.
+4. **Sorcerers of Rhand:** p.143 traits are from an ACQUIRED CONDITION, not a shared genetic code. The current selectable pack profile has three missing -2 ability modifiers and a fixed two Beastly Traits where one to three GM-approved Special Qualities are printed. Keep its classification flagged; do not silently convert all original races into Sorcerers.
+5. **Ssi-ruuk:** The species record accidentally includes Tof campaign prose as a racial trait, and an ungated Persuasion reroll obscures Keen Smell's strict within-6-squares / same-area constraint. Force Blind also requires independent chargen validation.
+6. **Ebruchi:** Improved Damage Threshold is conditional on CON 13, not unconditional. **Tof:** Mighty Swing also requires Martial Arts I, and printed Fearlessness has a once/encounter effect-ignore option absent from pack. **Vagaari:** Frightening Visage has disguise/failed-check and action-specific skill-training restrictions. **Lugubraa:** two natural weapons, tentacles 1d6 and teeth 1d4, must both exist.
+7. **Published optional Nikto subraces and highly variable Killik forms** should remain variants/options; a default playable Medium profile does not authorize auto-granting every optional size or Creature Generator ability.
+8. **Wroonian and Theelin** appear as examples of near-Humans, not stand-alone new racial rule blocks in this book. Do not duplicate source identities based on example art or story mentions.
+9. **Runtime not certified:** sidecar prose without typed rules does not prove that a feat grant, skill unlock, condition-track ability, movement speed, reroll, or reaction executes. This audit changes neither species data nor infrastructure.
+
+The ledger now contains **119 distinct non-droid species/profile identity records** after **12 completed sourcebooks**. Two new records in this book are explicitly flagged as a near-Human template and an acquired Sorcerer state rather than ordinary genetic species; the eventual biological-species census must separate them.
+
+**Next step:** Final published-sourcebook coverage sweep, 161-pack reconciliation with droid/out-of-scope exclusions, and a source-based, runtime-aware surgical correction queue. No production mutation yet.
