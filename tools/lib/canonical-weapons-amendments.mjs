@@ -28,7 +28,7 @@ const CORE_RULE = 'Core Rulebook: throwing a weapon is a ranged attack (attack r
  * amended) record; `log` receives one entry per amendment actually applied.
  */
 export function applyPostCertificationAmendments(rec, log = []) {
-  return applyICBStructure(applyICAStructure(applyIBStructure(applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log), log), log), log);
+  return applyIDB1Structure(applyICBStructure(applyICAStructure(applyIBStructure(applyOperationStructureBackfill(applyGrenadeFamily(applyAreaGeometryBackfill(applyThrownRanged(rec, log), log), log), log), log), log), log), log);
 }
 
 function applyThrownRanged(rec, log) {
@@ -381,5 +381,25 @@ function applyICBStructure(rec, log) {
     entry('operation.tractorControl', null, out.operation.tractorControl, { book: 'Galaxy at War / Core Rulebook', page: '42 / 174', evidence: 'The tactical tractor beam functions like a tractor beam on a starship, but it can affect only Huge or smaller targets. If it has successfully grabbed an object, it can move the object up to 10 squares in any direction. A tactical tractor beam operator can hurl a grabbed object at another target within 10 squares, making a ranged attack roll with the weapon against the new target. If the attack roll equals or exceeds the target\'s Reflex Defense, the target takes damage based on the size of the object hurled (Table 14-2: Damage from Falling Objects). Starship tractor beam (Core): the attack hits if you equal or exceed the target\'s Reflex Defense; if you hit, make an opposed grapple check; if you win, the target is grabbed; each round on your turn you must make another opposed grapple check.' },
       'The acquisition / maintenance / hurl sequence was prose only and referenced the starship rules.');
   }
+  return out;
+}
+
+// ---- Phase 5D-I-D-B1: the Grenade Launcher's published mounting check ------------------------------------------------------------------------
+// Text on the canonical record: "It can be mounted on a rifle in 1 minute with a DC 15 Mechanics check or used as a separate weapon." The record
+// carried only the boolean rifleMountable; the Micro Grenade Launcher already carries mountMechanicsDC / mountTimeMinutes / canUseStandalone. The same three
+// facts are added so both launchers use the one mount capability (host-mount.js) and neither mounts without the published check.
+export const IDB1_STRUCTURE_AMENDMENT_ID = '5D-I-D-B1-mount-check-backfill';
+function applyIDB1Structure(rec, log) {
+  if (rec.identityKey !== 'weapon-grenade-launcher') return rec;
+  const out = clone(rec);
+  const op = out.operation ?? {};
+  need(op.rifleMountable === true && op.mountMechanicsDC === undefined && op.mountTimeMinutes === undefined && op.canUseStandalone === undefined, 'grenade launcher declares only rifleMountable');
+  need(/mounted on a rifle in 1 minute with a DC 15 Mechanics check or used as a separate weapon/.test(String(out.canonicalPlayerText ?? '')), 'grenade launcher text states the mounting check, time and standalone use');
+  out.operation = { ...op, mountMechanicsDC: 15, mountTimeMinutes: 1, canUseStandalone: true };
+  out.provenance = { ...out.provenance, postCertificationAmendments: [...(out.provenance.postCertificationAmendments ?? []), IDB1_STRUCTURE_AMENDMENT_ID] };
+  log.push({ id: IDB1_STRUCTURE_AMENDMENT_ID, classification: 'DATA_COMPLETENESS', phase: '5D-I-D-B1', identityKey: out.identityKey, field: 'operation.mountMechanicsDC + operation.mountTimeMinutes + operation.canUseStandalone',
+    from: { rifleMountable: true }, to: { mountMechanicsDC: 15, mountTimeMinutes: 1, canUseStandalone: true },
+    source: { book: 'canonical player text of weapon-grenade-launcher', page: 'as recorded', evidence: 'It can be mounted on a rifle in 1 minute with a DC 15 Mechanics check or used as a separate weapon.' },
+    rule: 'The runtime reads structured fields only; prose is never parsed.', reason: 'The mounting check, time and standalone use were present only as prose, so the launcher could mount without the published check.' });
   return out;
 }

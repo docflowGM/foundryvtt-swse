@@ -160,11 +160,11 @@ export function previewReadiness(actor, weapon, runtime, rollOptions = {}) {
   const clock = currentClock(actor);
   const owned = ownedStateStep(shape, state, clock);
   const power = powerSourceReadiness(shape, state, rollOptions);
-  // Phase 5D-I-D-B1: a weapon recorded as mounted on a host that is no longer among the actor's items cannot be fired as mounted
-  if (state?.mountedHostId && !ownedItemById(actor, state.mountedHostId)) power.blockers.push({ family: 'mount', reason: 'mount-host-missing', hostId: state.mountedHostId });
-  // Phase 5D-I-D-B1: ammunition fired only from a grenade launcher (Electronet) is loaded into one; attacked with directly it is a NOTE, not a block (the
-  // delegated launcher attack is the production path; the control-resolution tests attack the payload record itself)
-  if (shape.requiresHostLauncher) power.notes.push({ family: 'launcher', note: 'fired only from a grenade launcher - load it into one' });
+  // Phase 5D-I-D-B1: mounted-form legality is enforced HERE, in the attack path, not only in setConfiguration. Selecting the mount configuration (by an
+  // explicit attack option or the owned state) requires a recorded, still-owned, still-eligible host; a recorded host that no longer exists blocks too.
+  power.blockers.push(...mountBlockers(actor, weapon, shape, state));
+  // Ammunition fired only from a grenade launcher (Electronet) is never attacked with directly: it is loaded into a launcher (delegated attack)
+  if (shape.requiresHostLauncher) power.blockers.push({ family: 'launcher', reason: 'requires-grenade-launcher' });
   const prepActions = [...rangePreparationActions(shape, rollOptions), ...stunSwitchActions(shape, state), ...owned.actions];
   if (!shape.temporal.length) {
     const blockers = [...owned.blockers, ...power.blockers];
@@ -388,6 +388,26 @@ export async function setConfiguration(actor, weapon, configurationId) {
   return { ok: true, state: await persistOwned(actor, weapon, { configurationId }) };
 }
 
+/** Blockers for the mount state of the SELECTED form: the mount configuration needs a valid recorded host; any recorded host must still exist. */
+function mountBlockers(actor, weapon, shape, state) {
+  const out = [];
+  const rule = shape?.mountRule;
+  const hostId = state?.mountedHostId ?? null;
+  const needsHost = !!(rule?.configurationId && shape.configuration?.id === rule.configurationId);
+  // a stale host record only matters while the MOUNTED form is the one being used; standalone use is never blocked by it
+  if (!needsHost) return out;
+  if (!hostId) { out.push({ family: 'mount', reason: 'mount-host-required' }); return out; }
+  const host = ownedItemById(actor, hostId);
+  if (!host) { out.push({ family: 'mount', reason: 'mount-host-missing', hostId }); return out; }
+  {
+    let hs = null;
+    try { hs = shapeOfWeapon(host, {}); } catch { /* legacy host */ }
+    const elig = hostEligibility(rule, { source: hs?.source ?? null, groupKey: hs?.groupKey ?? null, size: hs?.size ?? null, mountedHostId: readFireState(host)?.mountedHostId ?? null }, { sameItem: host.id === weapon?.id });
+    if (!elig.ok) out.push({ family: 'mount', reason: 'mount-host-ineligible', detail: elig.reason, hostId });
+  }
+  return out;
+}
+
 const ownedItemById = (actor, id) => (id ? (actor?.items?.get?.(id) ?? Array.from(actor?.items ?? []).find((i) => i?.id === id) ?? null) : null);
 
 /**
@@ -404,6 +424,8 @@ export async function mountOnHost(actor, weapon, host, { skillRoller = null, sho
   try { shape = shapeOfWeapon(weapon, {}); } catch { return { ok: false, reason: 'not-canonical' }; }
   if (shape.source !== 'canonical' || !shape.mountRule) return { ok: false, reason: 'not-mountable' };
   const rule = shape.mountRule;
+  // both participants must belong to the supplied actor (checked before any roll or write)
+  if (!weapon?.id || ownedItemById(actor, weapon.id) !== weapon) return { ok: false, reason: 'weapon-not-owned' };
   const owned = ownedItemById(actor, host?.id);
   if (!owned) return { ok: false, reason: 'host-not-owned' };
   let hostShape = null;

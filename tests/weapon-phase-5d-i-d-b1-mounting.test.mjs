@@ -148,7 +148,7 @@ try {
   assert.equal(m.hostGroup, 'rifles'); assert.equal(m.standalone, true); assert.equal(m.configurationId, 'rifle-mounted');
   assert.deepEqual({ ...m.check }, { skill: 'mechanics', dc: 15, timeMinutes: 1 });
   const gl = rt.shapeOfWeapon(owned('weapon-grenade-launcher'), {}).mountRule;
-  assert.equal(gl.hostGroup, 'rifles'); assert.equal(gl.check, null, 'the Grenade Launcher record carries no DC / time (data gap, reported)');
+  assert.equal(gl.hostGroup, 'rifles'); assert.deepEqual({ ...gl.check }, { skill: 'mechanics', dc: 15, timeMinutes: 1 }, 'the Grenade Launcher record now carries its published DC 15 Mechanics / 1 minute (builder amendment)'); assert.equal(gl.standalone, true);
   const laser = rt.shapeOfWeapon(owned('weapon-targeting-laser'), {}).mountRule;
   assert.equal(laser.minHostSize, 'Medium'); assert.equal(laser.hostGroup, null); assert.equal(laser.check, null);
   assert.equal(rt.shapeOfWeapon(owned('weapon-blaster-pistol'), {}).mountRule, null, 'a weapon that declares no mount rule has none');
@@ -224,13 +224,54 @@ try {
   assert.deepEqual(FireStateStoreRef.mountHostOptions(A, pistol), []);
   ok('host picker offers only eligible canonical hosts; non-mountable weapons offer none');
 }
+// ---- C2. mounted-form legality in the ATTACK path (not only the setter) ---------------------------------------------------------------
+{
+  reinstall();
+  const mkL = () => { const micro = owned('weapon-micro-grenade-launcher'), rifle = owned('weapon-blaster-rifle'), pistol = owned('weapon-blaster-pistol'); return [makeActor({ items: [micro, rifle, pistol] }), micro, rifle, pistol]; };
+  const viaOption = { configurationId: 'rifle-mounted' };
+  for (const [label, opt] of [['attack option', viaOption]]) {
+    let [A, micro, rifle] = mkL(); await FireStateStoreRef.setLoadedPayload(A, micro, 'weapon-frag-grenade');
+    reset(); assert.equal(await attack(A, micro, opt), null, `${label}: mounted form with no recorded host is refused`); assert.equal(spent.rolls + spent.ammo + spent.actions.length, 0, `${label}: nothing spent`);
+    assert.ok(FireStateStoreRef.previewReadiness(A, micro, rt.resolveAttackWeaponRuntime(micro, opt), opt).blockers.some((b) => b.reason === 'mount-host-required'));
+    // standalone use stays available (explicit and default)
+    reset(); assert.ok(await attack(A, micro, { configurationId: 'standalone' }), `${label}: standalone is legal`);
+    reset(); assert.ok(await attack(A, micro, {}), 'default (standalone) is legal');
+    // recorded eligible host: allowed
+    await FireStateStoreRef.mountOnHost(A, micro, rifle, { skillRoller: rolling(20) });
+    reset(); assert.ok(await attack(A, micro, opt), `${label}: recorded eligible host -> allowed`);
+    reset(); assert.ok(await attack(A, micro, {}), 'the owned mounted configuration applies by default and is legal');
+    // the recorded host is removed
+    A.items = col(A.items.filter((i) => i.id !== rifle.id));
+    reset(); assert.equal(await attack(A, micro, opt), null, `${label}: recorded host removed -> refused`); assert.equal(spent.rolls + spent.ammo + spent.actions.length, 0);
+    reset(); assert.equal(await attack(A, micro, {}), null, 'and the owned mounted state is refused too');
+    reset(); assert.ok(await attack(A, micro, { configurationId: 'standalone' }), 'standalone remains available after the host is gone');
+  }
+  // a recorded host that has become ineligible (forged / stale state: points at a pistol) is refused
+  { const [A, micro, , pistol] = mkL(); await FireStateStoreRef.setLoadedPayload(A, micro, 'weapon-frag-grenade');
+    micro.flags = { ...micro.flags, swse: { ...micro.flags.swse, fireState: { v: 1, mountedHostId: pistol.id, configurationId: 'rifle-mounted' } } };
+    reset(); assert.equal(await attack(A, micro, viaOption), null, 'a recorded host that is not a rifle cannot satisfy the mounted form');
+    assert.ok(FireStateStoreRef.previewReadiness(A, micro, rt.resolveAttackWeaponRuntime(micro, viaOption), viaOption).blockers.some((b) => b.reason === 'mount-host-ineligible')); }
+  ok('mounted attack form: refused with no recorded host / removed host / ineligible host (explicit attack option and owned state), before any cost; standalone and valid mounted use stay legal');
+}
+// ---- C3. ownership of BOTH participants ---------------------------------------------------------------------------------------------
+{
+  reinstall();
+  const micro = owned('weapon-micro-grenade-launcher'), rifle = owned('weapon-blaster-rifle');
+  const A = makeActor({ items: [rifle] }); const B = makeActor({ items: [micro] }); B.id = 'a2';
+  const calls = [];
+  const r = await FireStateStoreRef.mountOnHost(A, micro, rifle, { skillRoller: rolling(30, calls) });
+  assert.equal(r.reason, 'weapon-not-owned'); assert.equal(calls.length, 0, 'no check is rolled'); assert.equal(readState(micro), null); assert.equal(readState(rifle), null);
+  const r2 = await FireStateStoreRef.mountOnHost(B, micro, rifle, { skillRoller: rolling(30, calls) });
+  assert.equal(r2.reason, 'host-not-owned'); assert.equal(calls.length, 0); assert.equal(readState(micro), null);
+  ok('cross-actor mount (host on A, attachment on B, either way) is refused before any roll or write');
+}
 // ---- D. a mounted weapon whose host is gone is not fireable as mounted; unconfirmed is never a block -----------------------------
 {
   reinstall();
   const micro = owned('weapon-micro-grenade-launcher'), rifle = owned('weapon-blaster-rifle');
   const A = makeActor({ items: [micro, rifle] });
   await FireStateStoreRef.mountOnHost(A, micro, rifle, { skillRoller: rolling(20) });
-  const rtm = rt.resolveAttackWeaponRuntime(micro, {});
+  const rtm = rt.resolveAttackWeaponRuntime(micro, { configurationId: 'rifle-mounted' });
   assert.equal(FireStateStoreRef.previewReadiness(A, micro, rtm, {}).blockers.some((b) => b.reason === 'mount-host-missing'), false);
   A.items = col(A.items.filter((i) => i.id !== rifle.id));
   const pre = FireStateStoreRef.previewReadiness(A, micro, rtm, {});
@@ -251,9 +292,11 @@ try {
   assert.ok(['host-too-small'].includes(bad.reason), bad.reason); assert.equal(readState(laser), null);
   const good = await FireStateStoreRef.mountOnHost(A, laser, medium, { skillRoller: rolling(30, calls) });
   assert.equal(good.ok, true); assert.equal(good.check, null); assert.equal(calls.length, 0, 'the laser record states no check'); assert.equal(readState(laser).mountedHostId, medium.id);
-  const g = await FireStateStoreRef.mountOnHost(A, gl, medium, { skillRoller: rolling(30, calls) });
-  assert.equal(g.ok, true); assert.equal(g.check, null, 'the Grenade Launcher record carries no DC: nothing is invented, the GM adjudicates'); assert.equal(calls.length, 0);
-  ok('Targeting Laser needs a Medium or larger host; the Grenade Launcher mounts on a rifle without an invented DC (data gap reported)');
+  const glCalls = [];
+  for (const [total, why] of [[null, 'check-cancelled'], [14, 'check-failed']]) { const r = await FireStateStoreRef.mountOnHost(A, gl, medium, { skillRoller: rolling(total, glCalls) }); assert.equal(r.reason, why); assert.equal(readState(gl), null, `${why}: the Grenade Launcher does not mount`); }
+  const g = await FireStateStoreRef.mountOnHost(A, gl, medium, { skillRoller: rolling(15, glCalls) });
+  assert.equal(g.ok, true); assert.equal(g.check.dc, 15); assert.equal(g.timeMinutes, 1); assert.equal(glCalls.length, 3); assert.equal(glCalls[0].skill, 'mechanics'); assert.equal(readState(gl).mountedHostId, medium.id);
+  ok('Targeting Laser needs a Medium or larger host; the Grenade Launcher mounts on a rifle only on the published DC 15 Mechanics check (cancel / fail write nothing)');
 }
 // ---- F. Electronet: fired only from a grenade launcher ------------------------------------------------------------------------------
 {
@@ -267,12 +310,13 @@ try {
   // the grenade path is unchanged
   assert.equal(L(gl, 'weapon-frag-grenade').delegatedFrom.payload, 'weapon-frag-grenade');
   assert.equal(await code(() => L(gl, 'weapon-thermal-detonator')), 'payload-not-accepted');
-  // attacked with directly it is a readiness NOTE (the delegated launcher attack is the production path), never a silent success
-  const A = makeActor({ items: [net] });
-  const pre = FireStateStoreRef.previewReadiness(A, net, rt.resolveAttackWeaponRuntime(net, {}), {});
-  assert.ok(pre.notes.some((n) => /grenade launcher/.test(n.note)), 'the requirement is surfaced'); assert.equal(pre.blockers.length, 0);
-  assert.equal(FireStateStoreRef.previewReadiness(makeActor({ items: [gl] }), gl, rt.resolveAttackWeaponRuntime(gl, {}), {}).notes.some((n) => /grenade launcher - load/.test(n.note)), false);
-  ok('Electronet is accepted by a grenade launcher (declaration, not a family guess), refused by a micro launcher, ignored by a non-launcher; a direct attack carries a readiness note; the grenade path is unchanged');
+  // attacked with directly it is refused BEFORE any roll or cost; the delegated launcher attack remains the legitimate path
+  const A = makeActor({ items: [net, gl] }); reset();
+  assert.equal(await attack(A, net), null, 'a direct electronet attack is refused'); assert.equal(spent.rolls + spent.ammo + spent.actions.length, 0, 'no roll, ammunition or action cost');
+  assert.ok(FireStateStoreRef.previewReadiness(A, net, rt.resolveAttackWeaponRuntime(net, {}), {}).blockers.some((b) => b.reason === 'requires-grenade-launcher'));
+  await FireStateStoreRef.setLoadedPayload(A, gl, 'weapon-electronet'); reset();
+  assert.ok(await attack(A, gl), 'the launcher with the electronet loaded attacks');
+  ok('Electronet is accepted by a grenade launcher (declaration, not a family guess), refused by a micro launcher, ignored by a non-launcher; a direct attack is refused before any cost, the loaded launcher attacks; the grenade path is unchanged');
 }
 // ---- G. attack, damage and ammo math unchanged by mounting ------------------------------------------------------------------------
 {

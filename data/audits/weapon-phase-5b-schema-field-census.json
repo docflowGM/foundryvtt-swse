@@ -5,7 +5,7 @@
  "purpose": "Programmatic census of every field path present in the operational canonical weapons corpus (data/canonical/weapons.json). Paths normalise array indices to []; each path is attributed to its certified origin (Phase 3B / Phase 4H) or to the canonical-only wrapper (provenance/production). Audit-only roots not carried by the corpus are enumerated in auditOnlyRootsNotCarried.",
  "identities": 203,
  "inputs": {
-  "data/canonical/weapons.json": "531ebc40a75ea6f46b46464d6ad8dd4c892236c7d4ca1c185ab3daf069ef7f80"
+  "data/canonical/weapons.json": "f21b757ba43294edb757bcd274e154a2a27760fe8542cabd0515538a0bd7ccbe"
  },
  "auditOnlyRootsNotCarried": {
   "phase3B": [
@@ -17148,8 +17148,8 @@
    "fieldPath": "operation.canUseStandalone",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "boolean"
    ],
@@ -20041,8 +20041,8 @@
    "fieldPath": "operation.mountMechanicsDC",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "number"
    ],
@@ -20057,8 +20057,8 @@
    "fieldPath": "operation.mountTimeMinutes",
    "namespace": "3B",
    "sourceAuthority": "Phase 3B canonical mechanics",
-   "occurrenceCount": 1,
-   "identityCount": 1,
+   "occurrenceCount": 2,
+   "identityCount": 2,
    "valueTypes": [
     "number"
    ],
@@ -37200,8 +37200,8 @@
    "fieldPath": "provenance.postCertificationAmendments",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 31,
-   "identityCount": 31,
+   "occurrenceCount": 32,
+   "identityCount": 32,
    "valueTypes": [
     "array"
    ],
@@ -37214,8 +37214,8 @@
    "fieldPath": "provenance.postCertificationAmendments[]",
    "namespace": "CANON",
    "sourceAuthority": "Phase 5C canonical corpus (provenance/production)",
-   "occurrenceCount": 39,
-   "identityCount": 31,
+   "occurrenceCount": 40,
+   "identityCount": 32,
    "valueTypes": [
     "string"
    ],

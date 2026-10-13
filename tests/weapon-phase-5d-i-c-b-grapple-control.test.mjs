@@ -545,7 +545,7 @@ try {
 // F. ELECTRONET / NET / STOKHLI SPRAY STICK                                                                           [points 53-57]
 // ======================================================================================================================================
 {
-  const net = canon('weapon-net'); const en = withAmmo('weapon-electronet'); const A = makeActor({ items: [net, en] }); const T = mkT(); world(A, T); noAsk();
+  const net = canon('weapon-net'); const en = withAmmo('weapon-electronet'); const gl = withAmmo('weapon-grenade-launcher'); const A = makeActor({ items: [net, en, gl] }); const T = mkT(); world(A, T); noAsk();
   // 53: Net: ranged grab; Pin / Trip allowed, Crush / Throw disallowed; Acrobatics 15 / Strength 20; effect-only card; a hit grabs
   const dn = declOf('weapon-net'); assert.deepEqual([dn.grab.ranged, dn.maneuvers.allowed.sort(), dn.maneuvers.prohibited.sort(), dn.escape.map((e) => `${e.method}:${e.dc}`).sort()], [true, ['pin', 'trip'], ['crush', 'throw'], ['acrobatics:15', 'strength:20']]);
   const hit = await attackWith(A, net, T, { rangeBand: 'short' }); assert.equal(hit.r.isHit, true);
@@ -554,11 +554,16 @@ try {
   ok('Net: ranged grab with Pin / Trip allowed, Crush / Throw disallowed and the DC 15 / 20 escapes; an effect-only card whose hit grabs');
 
   // 54: Electronet: a hit grabs "as with a normal net" (same control path) and its stun damage is the weapon's ordinary damage on the same card
-  const T2 = mkT(); world(A, T2); const eh = await attackWith(A, en, T2, { rangeBand: 'short' });
+  // Phase 5D-I-D-B1: the electronet is ammunition fired ONLY from a grenade launcher -- a direct attack with it is refused before any roll, and the
+  // legitimate path is the launcher with the electronet loaded (delegation), which resolves the same control and stun.
+  const T2 = mkT(); world(A, T2);
+  assert.equal((await attackWith(A, en, T2, { rangeBand: 'short' })).r, null, 'a direct electronet attack is refused'); assert.equal(spent.ammo + spent.actions.length, 0, 'nothing is spent');
+  await FireStateStore.setLoadedPayload(A, gl, 'weapon-electronet');
+  const eh = await attackWith(A, gl, T2, { rangeBand: 'short' });
   assert.equal(eh.r.isHit, true); const de = declOf('weapon-electronet');
   assert.equal(de.stunOnGrab.formula, '3d8'); assert.equal(de.stunOnGrab.carriedByBaseDamage, true);
   const ecd = rt.resolveCanonicalDamage(en, { weaponForm: { identityKey: 'weapon-electronet', profileId: 'primary' } }); assert.equal(ecd.base, '3d8');
-  reset(); await applyFx(eh.special, T2, { attacker: A, weapon: en, hpBefore: 40, hpAfter: 30, rawAmount: 10 });
+  reset(); await applyFx(eh.special, T2, { attacker: A, weapon: gl, hpBefore: 40, hpAfter: 30, rawAmount: 10 });
   assert.equal(stateOf(T2), 'grabbed'); assert.equal(damage.length, 0); assert.equal(controlOn(T2, A).control.recurring.length, 1);
   ok('Electronet hit: grabs through the same control path; its 3d8 stun is the ordinary card damage (never rolled twice)');
 

@@ -887,9 +887,10 @@
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
       "disposition": "IMPLEMENTED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
+      "identityCount": 2,
+      "rawOccurrences": 2,
       "representativeWeapons": [
+        "grenade-launcher",
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.canUseStandalone",
@@ -1114,9 +1115,10 @@
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
       "disposition": "IMPLEMENTED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
+      "identityCount": 2,
+      "rawOccurrences": 2,
       "representativeWeapons": [
+        "grenade-launcher",
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.mountMechanicsDC",
@@ -1139,9 +1141,10 @@
       "family": "3b.operation.ammo-resource-reload",
       "subpass": "I-D-B",
       "disposition": "IMPLEMENTED",
-      "identityCount": 1,
-      "rawOccurrences": 1,
+      "identityCount": 2,
+      "rawOccurrences": 2,
       "representativeWeapons": [
+        "grenade-launcher",
         "micro-grenade-launcher"
       ],
       "structuredSourceField": "operation.mountTimeMinutes",
@@ -1281,11 +1284,11 @@
         "support": "IMPLEMENTED",
         "foundryKnows": "electronet is fired only from a grenade launcher",
         "mustBeSupplied": "the launcher it is loaded into",
-        "smallestImplementation": "DONE (I-D-B1): delegateLoadedPayload accepts a payload declaring requiresGrenadeLauncher into a full-size grenade launcher (not a micro launcher); a direct attack with it carries a readiness note (previewReadiness), not a block",
+        "smallestImplementation": "DONE (I-D-B1): delegateLoadedPayload accepts a payload declaring requiresGrenadeLauncher into a full-size grenade launcher (not a micro launcher); a direct attack with it is refused by previewReadiness before any roll or cost",
         "sourceAmbiguity": null,
-        "acceptance": "electronet loads into a grenade launcher, is refused by a micro launcher, and a direct attack shows the requirement as a note"
+        "acceptance": "electronet loads into a grenade launcher, is refused by a micro launcher, and a direct attack is refused before any cost"
       },
-      "reason": "Phase 5D-I-D-B1: Electronet is ammunition fired only from a grenade launcher. A full-size grenade launcher accepts it by the record's declaration (delegateLoadedPayload; the electronet's families are not 'grenade'), a micro launcher / non-launcher does not, and a direct attack with it shows a readiness note (not a block: the control-resolution tests attack the payload record itself; the delegated launcher attack is the production path). Uncertain source point (documented): whether Micro Grenade Launchers may fire it; refused conservatively."
+      "reason": "Phase 5D-I-D-B1: Electronet is ammunition fired only from a grenade launcher. A full-size grenade launcher accepts it by the record's declaration (delegateLoadedPayload; the electronet's families are not 'grenade'), a micro launcher / non-launcher does not, and a direct attack with it is refused by previewReadiness (requires-grenade-launcher) before any roll or cost, and the grapple-control tests now fire it through the loaded launcher. Uncertain source point (documented): whether Micro Grenade Launchers may fire it; refused conservatively."
     },
     {
       "kind": "operation-key",
@@ -1335,11 +1338,11 @@
         "support": "IMPLEMENTED",
         "foundryKnows": "grenade launcher mounts on a rifle",
         "mustBeSupplied": "host rifle",
-        "smallestImplementation": "DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; same rule; the record lacks the DC / time its text states (data gap reported, no invented check)",
+        "smallestImplementation": "DONE (I-D-B1): host-mount.js mountRuleOf + FireStateStore.mountOnHost/unmountFromHost/mountHostOptions; same rule; the DC / time its text states are structured by the builder amendment 5D-I-D-B1-mount-check-backfill",
         "sourceAmbiguity": null,
-        "acceptance": "same; mounts without a roll because the record states none"
+        "acceptance": "same; the Grenade Launcher record now carries DC 15 / 1 minute (builder amendment) and mounts only on that check"
       },
-      "reason": "Phase 5D-I-D-B1: mount rule read by host-mount.js (mountRuleOf) into the attack shape; FireStateStore.mountOnHost validates the chosen HOST by canonical identity (owned, canonical, rifles group / minimum canonical size, not itself, not already mounted) and writes owned state mountedHostId + the mount configuration only on success. Grenade Launcher: same rule as canMountOnRifle. DATA GAP reported: the record states no DC / time / configurationStates although its text states 1 minute and DC 15 Mechanics, so mounting rolls no check (GM adjudicates); nothing is invented."
+      "reason": "Phase 5D-I-D-B1: mount rule read by host-mount.js (mountRuleOf) into the attack shape; FireStateStore.mountOnHost validates the chosen HOST by canonical identity (owned, canonical, rifles group / minimum canonical size, not itself, not already mounted) and writes owned state mountedHostId + the mount configuration only on success. Grenade Launcher: same rule as canMountOnRifle. The published DC 15 Mechanics / 1 minute / standalone use were prose only; they are now structured by the builder amendment 5D-I-D-B1-mount-check-backfill (tools/lib/canonical-weapons-amendments.mjs), so the Grenade Launcher mounts only on the published check."
     },
     {
       "kind": "operation-key",
