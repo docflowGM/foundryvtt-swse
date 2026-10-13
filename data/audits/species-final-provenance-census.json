@@ -5,7 +5,7 @@
   "branch": "audit/species-book-by-book-canonical",
   "certification": "SOURCE_BOOK_SWEEP_COMPLETE; PROVENANCE_UNRESOLVED; RUNTIME_NOT_CERTIFIED",
   "totals": {
-    "books": 12,
+    "books": 13,
     "pack": 161,
     "sourceAuditedIdentities": 121,
     "ordinaryNonDroidAudited": 119,
@@ -27,7 +27,12 @@
     "issuesReviewRequired": 204,
     "issuesNoChange": 1,
     "issuesApplied": 0,
-    "actorRuntimeTested": 0
+    "actorRuntimeTested": 0,
+    "projectBookCount": 14,
+    "nonDroidSpeciesSourcebooksWithProfiles": 12,
+    "nonDroidSpeciesSourcebooksScreenedNoProfiles": 1,
+    "excludedDroidSourcebooks": 1,
+    "eligibleBooksRemaining": 0
   },
   "nonDroidUnverified": [
     {
@@ -2792,5 +2797,17 @@
       "ids": [],
       "test": "Find official primary book/page or Wizards web source or mark supplemental/homebrew/unconfirmed; no production deletion on absence of evidence."
     }
-  ]
+  ],
+  "sourcebookScreening": {
+    "starshipsOfTheGalaxy": {
+      "status": "SCREENED_NO_NON_DROID_SPECIES_RULES",
+      "newIdentities": 0,
+      "newFindings": 0,
+      "documentation": "docs/audits/species-starships-of-the-galaxy-source-scope.md"
+    },
+    "scavengersGuideToDroids": {
+      "status": "EXCLUDED_DROID_SPECIES_SCOPE",
+      "scope": "Droid chassis/models not part of biological species audit"
+    }
+  }
 }

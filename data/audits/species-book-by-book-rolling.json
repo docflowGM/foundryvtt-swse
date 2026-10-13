@@ -15,7 +15,8 @@
     "CHANGE_REQUIRED": "Source-backed discrepancy exists, pending a targeted corrective patch.",
     "REVIEW_REQUIRED": "Supplemental or ambiguous issue; additional source or runtime proof needed.",
     "NO_SPECIES_BASE_CHANGE": "Later book adds choices but does not replace innate species record.",
-    "FOUND_UNIQUE_SPECIES_FEAT": "One canonical feat identity matches exact title and source book; not runtime certification."
+    "FOUND_UNIQUE_SPECIES_FEAT": "One canonical feat identity matches exact title and source book; not runtime certification.",
+    "SCREENED_NO_NON_DROID_SPECIES_RULES": "Book checked for published non-droid racial rules and none found. Does not imply Foundry runtime certification."
   },
   "books": [
     {
@@ -116,6 +117,15 @@
       "status": "REVIEWED_WITH_FINDINGS",
       "sourceAuthority": "User-uploaded original The Unknown Regions PDF text plus targeted page renders visually reviewed, user-uploaded Unknown Regions_djvu.txt used for rapid navigation. PDF page = printed page+1. Read-only comparison to current species pack and both sidecars.",
       "notes": "21 non-droid species/variant/profile rules entries reviewed, including near-Human template and Sorcerer of Rhand acquired transformation, both labeled as non-genetic species classes. Source conflicts with prior Legacy/Jedi Academy preserved. No production data modified."
+    },
+    {
+      "source": "Starships of the Galaxy",
+      "printedScope": "Introduction pp.4-7; Starship Adventures pp.8-21; Starship Combat pp.22-35; Starship Modifications pp.36-53; Starship Codex pp.54-160",
+      "reviewedSpecies": 0,
+      "status": "SCREENED_NO_NON_DROID_SPECIES_RULES",
+      "sourceAuthority": "Original scanned PDF table of contents (printed p.3, PDF p.4) visually verified; scanned printed p.86 Geonosian Nantex and p.87 Ginivex inspected. Complete uploaded DJVU transcription searched for species, racial traits, and profile blocks.",
+      "notes": "No printed biological/non-droid playable species rules blocks. Geonosian ship controls, human Ginivex cockpit design and Mon Calamari ship crew are vehicle-only context. No individual species claims added.",
+      "auditDocumentation": "docs/audits/species-starships-of-the-galaxy-source-scope.md"
     }
   ],
   "summary": {
@@ -307,7 +317,22 @@
         "Human",
         "Vultan",
         "Zeltron"
-      ]
+      ],
+      "sourcebooksScreened": 13,
+      "totalBooksInProjectSet": 14,
+      "excludedDroidOnlySourcebooks": [
+        "Scavenger's Guide to Droids"
+      ],
+      "eligibleBooksRemaining": 0
+    },
+    "starshipsOfTheGalaxy": {
+      "status": "SCREENED_NO_NON_DROID_SPECIES_RULES",
+      "publishedNonDroidSpeciesBlocks": 0,
+      "newFindings": 0,
+      "newIdentities": 0,
+      "shipSpecificObservations": 3,
+      "productionMutations": 0,
+      "runtimeTests": 0
     }
   },
   "entries": [

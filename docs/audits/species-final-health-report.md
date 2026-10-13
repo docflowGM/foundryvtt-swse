@@ -4,13 +4,15 @@
 **Repository:** `docflowGM/foundryvtt-swse`  
 **Branch:** `audit/species-book-by-book-canonical`
 
-**Verdict:** The 12-book published-rule comparison and final omitted-block sweep are documented, but **full species provenance and actor-runtime certification are not complete**. This is a read-only source health assessment and correction queue, **not authorization for a mass rewrite**.
+**Verdict:** The 12 books contributing published species claims, the Starships of the Galaxy no-species screening, and final omitted-block sweep are documented, but **full species provenance and actor-runtime certification are not complete**. This is a read-only source health assessment and correction queue, **not authorization for a mass rewrite**.
+
+**Sourcebook screening:** 13 of 14 project titles screened for non-droid species content. *Starships of the Galaxy* contains no new playable non-droid racial rules; *Scavenger's Guide to Droids* remains excluded by scope. **Eligible sourcebooks remaining: 0.** The 39 non-droid production records still awaiting provenance and Foundry actor tests are unresolved.
 
 ## 161-record census
 
 | Measure | Result |
 |---|---:|
-| Production species records | **161** |
+| Published book titles screened for non-droid species rules | **13 of 14** (1 droid-only excluded) |\n| Eligible sourcebooks remaining | **0** |\n| Production species records | **161** |
 | Source-audited species/profile identities | **121** |
 | Ordinary non-droid species in audited entries | **119** |
 | Non-genetic profiles audited | **2** — Near-Human generator and Sorcerer of Rhand transformation |
@@ -22,11 +24,13 @@
 | `CHANGE_REQUIRED` / `REVIEW_REQUIRED` / `NO_CHANGE` finding | **97 / 204 / 1** |
 | Applied source fixes / live actor certifications | **0 / 0** |
 
-The 121-record count is **not** 121 biological species: 119 ordinary species plus two special profiles. Every published racial block verified in the 12 audited books is represented in the pack, but that does not certify outside supplemental sources or the 39 unmatched non-droid records. All 302 findings remain `applied:false`.
+The 121-record count is **not** 121 biological species: 119 ordinary species plus two special profiles. Every published racial block verified in the 12 books with species content is represented in the pack, but that does not certify outside supplemental sources or the 39 unmatched non-droid records. All 302 findings remain `applied:false`.
 
 ## Source-comparison positives and caveats
 
 **Explicitly clean source records:** Altiri, Anarrian, Duros, Human, Vultan, Zeltron. `NO_CHANGE` means the inspected published fields align; it does not prove a working actor grant, vision calculation or reroll.
+
+**Starships source-scope verification:** The [book-specific source audit](species-starships-of-the-galaxy-source-scope.md) finds no non-droid racial species profiles or new source correction candidates. The Geonosian Nantex cockpit p.86, human-designed Ginivex p.87, and Mon Calamari bridge controls pp.114–115 are vehicle-specific, not racial traits. No production species data was changed.
 
 **Final sweep correction:** Core p284–285 has playable Aqualish and Hutt rules that the original Core chapter-2 audit missed. The same section has materially different Core Neimoidian and Yuuzhan Vong source claims. *The Force Unleashed* p192 prints Chiss; its stats agree with *Unknown Regions* p126, not the current Legacy-based pack. All five source-specific claims have been appended and committed without rewriting historical findings. The name Elom in *Galaxy of Intrigue* is a planetary reference; no extra Elom racial block was invented from that search match.
 
