@@ -1,5 +1,5 @@
 import { UPGRADE_CATALOG, TEMPLATE_CATALOG } from '/systems/foundryvtt-swse/scripts/engine/customization/upgrade-catalog.js';
-import { weaponUpgradeAllowance, canonicalOperationOfItem } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/upgrade-compat.js';
+import { weaponUpgradeAllowance, canonicalWeaponStateOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/upgrade-compat.js';
 import { MetaResourceFeatResolver } from '/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js';
 
 export class UpgradeEligibilityEngine {
@@ -46,15 +46,20 @@ export class UpgradeEligibilityEngine {
 
     const profile = this.profileResolver.getNormalizedProfile(item);
     if (!profile.customizable) return { allowed: false, reason: `unsupported_category:${profile.category}` };
+    // Phase 5D-I-D-B3: a weapon is classified from its canonical record. Production weapons carry system.category 'weapon', so the catalog's blaster class
+    // comes from the record's weapon-family selectors; a declared-but-unresolvable canonical identity is refused (never treated as legacy).
+    const isWeaponItem = profile.category === 'blaster' || profile.category === 'weapon';
+    const canonical = isWeaponItem ? canonicalWeaponStateOf(item) : { state: 'legacy' };
+    if (canonical.state === 'unresolved') return { allowed: false, reason: `canonical_unresolved:${canonical.reason}`, visible: true };
+    const isBlaster = profile.category === 'blaster' || (canonical.state === 'canonical' && canonical.blaster);
+
     const categorySet = new Set(upgrade.appliesTo ?? []);
-    const itemCategory = profile.category === 'blaster' ? 'blaster' : profile.category;
-    const matchesCategory = categorySet.has(itemCategory) || (itemCategory === 'blaster' && categorySet.has('weapon'));
+    const itemCategory = isBlaster ? 'blaster' : profile.category;
+    const matchesCategory = categorySet.has(itemCategory) || (isBlaster && categorySet.has('weapon')) || (itemCategory === 'weapon' && categorySet.has('weapon'));
     if (!matchesCategory) return { allowed: false, reason: 'category_mismatch', visible: false };
 
-    // Phase 5D-I-D-B3: the canonical weapon record's own upgrade restrictions / accepted payload capabilities (structured facts, no name matching).
-    if (profile.category === 'blaster' || profile.category === 'weapon') {
-      const operation = canonicalOperationOfItem(item);
-      const allowance = operation ? weaponUpgradeAllowance(operation, upgradeKey, upgrade) : { ok: true };
+    if (canonical.state === 'canonical') {
+      const allowance = weaponUpgradeAllowance(canonical.operation ?? {}, upgradeKey, upgrade);
       if (!allowance.ok) return { allowed: false, reason: allowance.reason, visible: true };
     }
 
@@ -67,7 +72,7 @@ export class UpgradeEligibilityEngine {
     }
 
     if ((upgrade.requires ?? []).includes('ranged') && !profile.traits.hasRange) return { allowed: false, reason: 'requires_ranged' };
-    if ((upgrade.requires ?? []).includes('ranged_energy') && !String(profile.weaponSubtype ?? '').includes('ranged')) return { allowed: false, reason: 'requires_ranged_energy' };
+    if ((upgrade.requires ?? []).includes('ranged_energy') && !(isBlaster && canonical.state === 'canonical') && !String(profile.weaponSubtype ?? '').includes('ranged')) return { allowed: false, reason: 'requires_ranged_energy' };
     if ((upgrade.requires ?? []).includes('stun_setting') && !profile.traits.hasStunSetting) return { allowed: false, reason: 'requires_stun_setting' };
     if ((upgrade.requires ?? []).includes('autofire') && !profile.traits.hasAutofire) return { allowed: false, reason: 'requires_autofire' };
 

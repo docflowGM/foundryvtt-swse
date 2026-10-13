@@ -1424,11 +1424,11 @@
         "support": "IMPLEMENTED",
         "foundryKnows": "darter compatible = true",
         "mustBeSupplied": "tagger upgrade declaring requiresWeaponCapability",
-        "smallestImplementation": "DONE (I-D-B3): upgrade-compat.js + UpgradeEligibilityEngine gate",
-        "sourceAmbiguity": "no tagger upgrade record exists yet; none invented",
+        "smallestImplementation": "DONE (I-D-B3, weapon-side gate only): upgrade-compat.js + UpgradeEligibilityEngine gate",
+        "sourceAmbiguity": "the tagger equipment / install producer does not exist (no catalog record) and was not invented; it belongs to the equipment authority",
         "acceptance": "a tagger-requiring upgrade is accepted only by a weapon declaring the capability"
       },
-      "reason": "Phase 5D-I-D-B3: upgrade-compat.js exposes the accepted payload capability (surveillance-tagger, only on an explicit true) and UpgradeEligibilityEngine.canInstallUpgrade refuses an upgrade that declares requiresWeaponCapability on a weapon that does not accept it (weapon_incompatible), on the path UpgradeService.applyUpgrade and InstallRemoveEngine share. NOTE: no surveillance-tagger upgrade / equipment record exists in the upgrade catalog today and none was invented; the gate is exercised in tests with a synthetic catalog entry and applies the day a tagger record declares the capability."
+      "reason": "Phase 5D-I-D-B3, WEAPON-SIDE GATE ONLY: upgrade-compat.js exposes the accepted payload capability (surveillance-tagger, only on an explicit true) and UpgradeEligibilityEngine.canInstallUpgrade refuses an upgrade that declares requiresWeaponCapability on a canonical weapon that does not accept it (weapon_incompatible), on the path UpgradeService.applyUpgrade and InstallRemoveEngine share. NOT COMPLETED: the Surveillance Tagger equipment / install functionality itself (Equipment p.67). No tagger upgrade or equipment record exists in the catalog and none was invented, so no player can install a tagger today; the gate is exercised with a synthetic catalog entry on the real Darter record and applies the day a tagger record declares the capability. That missing producer belongs to the equipment authority, not to this weapon key."
     },
     {
       "kind": "operation-key",
@@ -1505,7 +1505,7 @@
         "sourceAmbiguity": null,
         "acceptance": "installing the rapid recycler on the sniper rifle is refused before any cost"
       },
-      "reason": "Phase 5D-I-D-B3: upgrade-compat.js reads the weapon canonical restriction list (keys normalized: rapid-recycler == rapid_recycler) and UpgradeEligibilityEngine.canInstallUpgrade refuses with weapon_restriction:<key>, before slots, cost or any write; UpgradeService.applyUpgrade and InstallRemoveEngine both go through it. Sniper Blaster Rifle: rapid recycler refused. A weapon with no canonical identity declares nothing (unknown is not a refusal)."
+      "reason": "Phase 5D-I-D-B3: upgrade-compat.js reads the weapon canonical restriction list (keys normalized: rapid-recycler == rapid_recycler) and UpgradeEligibilityEngine.canInstallUpgrade refuses with weapon_restriction:<key>, before slots, cost or any write; UpgradeService.applyUpgrade and InstallRemoveEngine both go through it. Proven on the PRODUCTION Sniper Blaster Rifle record (system.category weapon): the catalog blaster class is read from the record weapon-family selectors, so the rapid recycler reaches and is refused by the canonical restriction instead of category_mismatch. A weapon with no canonical identity declares nothing; a declared identity that cannot be resolved (unknown stamp, registry not loaded) is refused (canonical_unresolved)."
     },
     {
       "kind": "operation-key",

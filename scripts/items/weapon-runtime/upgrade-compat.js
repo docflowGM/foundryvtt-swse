@@ -1,10 +1,14 @@
 // Phase 5D-I-D-B3 -- weapon-side upgrade / payload compatibility. The canonical record states which upgrades a weapon REFUSES (operation.upgradeRestrictions)
 // and which payload capabilities it ACCEPTS (operation.surveillanceTaggerCompatible). This module only reads those structured facts and answers for ONE
 // upgrade key; the install gate itself stays in UpgradeEligibilityEngine (the path UpgradeService.applyUpgrade and InstallRemoveEngine both go through).
-// It never reads a weapon name or text. A weapon that cannot be resolved canonically (legacy / custom) declares nothing: unknown is not a refusal.
+// It never reads a weapon name or text. Three states, following the attack runtime's own convention:
+//   legacy      no canonical identity is declared (no stamp, no compendium source): the weapon asserts nothing, so nothing is refused here
+//   canonical   the identity resolved: its published restrictions / capabilities / blaster class apply
+//   unresolved  an identity IS declared but cannot be resolved (unknown stamp, registry not loaded): installation is REFUSED, never treated as legacy
 
-import { getSharedWeaponAuthorityRegistry } from './weapon-authority-registry.js';
+import { getSharedWeaponAuthorityRegistry, getWeaponAuthorityRegistryLoadFailure } from './weapon-authority-registry.js';
 import { resolveCanonicalIdentity } from './canonical-identity.js';
+import { hasCanonicalHint } from './attack-consumer.js';
 
 /** "rapid-recycler", "Rapid Recycler" and the catalog key "rapid_recycler" are the same upgrade key. */
 export function normalizeUpgradeKey(key) {
@@ -36,11 +40,33 @@ export function weaponUpgradeAllowance(operation, upgradeKey, upgradeDef = null)
   return { ok: true };
 }
 
-/** The canonical operation of an owned/world weapon Item, or null when it is not a canonical weapon. */
-export function canonicalOperationOfItem(item, registry = getSharedWeaponAuthorityRegistry()) {
-  if (!item || !registry) return null;
-  try {
-    const id = resolveCanonicalIdentity(item, registry);
-    return id.kind === 'canonical' ? (registry.getByIdentityKey(id.identityKey)?.operation ?? null) : null;
-  } catch { return null; }
+/**
+ * Is this canonical weapon a "blaster" for the upgrade catalog (appliesTo: ['blaster'])? Production weapons all carry system.category 'weapon', so the catalog
+ * class cannot be read from the Item. The canonical record's own weapon-family selectors are the structured authority: a family id is a token string
+ * (weapon-family:blaster-pistol, weapon-family:e-web-repeating-blaster, weapon-family:microblaster ...); the weapon is a blaster when any of its family ids
+ * has the token blaster / microblaster / longblaster. Display names, descriptions and weapon group are never read, and a ranged weapon is NOT a blaster
+ * merely for being ranged (Darter, slugthrowers, ion/sonic/disruptor weapons whose families do not say blaster stay non-blasters).
+ */
+const BLASTER_FAMILY_TOKENS = new Set(['blaster', 'microblaster', 'longblaster']);
+export function isBlasterFamily(record) {
+  const families = Array.isArray(record?.selectors?.families) ? record.selectors.families : [];
+  return families.some((f) => String(f).split(':').pop().split('-').some((t) => BLASTER_FAMILY_TOKENS.has(t)));
+}
+
+/**
+ * @returns {{state:'legacy'}|{state:'canonical', identityKey:string, operation:object|null, blaster:boolean}|{state:'unresolved', reason:string}}
+ */
+export function canonicalWeaponStateOf(item, registry = getSharedWeaponAuthorityRegistry()) {
+  if (!item) return { state: 'legacy' };
+  if (!registry) {
+    if (getWeaponAuthorityRegistryLoadFailure() && hasCanonicalHint(item)) return { state: 'unresolved', reason: 'registry_load_failed' };
+    if (item?.flags?.swse?.canonicalWeapon?.identityKey) return { state: 'unresolved', reason: 'registry_not_loaded' };
+    return { state: 'legacy' };
+  }
+  let id;
+  try { id = resolveCanonicalIdentity(item, registry); } catch (_e) { return { state: 'unresolved', reason: 'identity_unresolvable' }; }
+  if (id.kind !== 'canonical') return { state: 'legacy' };
+  const record = registry.getByIdentityKey(id.identityKey);
+  if (!record) return { state: 'unresolved', reason: 'identity_unresolvable' };
+  return { state: 'canonical', identityKey: id.identityKey, operation: record.operation ?? null, blaster: isBlasterFamily(record) };
 }

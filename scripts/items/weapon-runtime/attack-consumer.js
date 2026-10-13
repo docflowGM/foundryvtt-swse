@@ -35,7 +35,7 @@ const requestedSelection = (weapon, context) => {
 };
 const sameRequest = (a, b) => !!a && !!b && a.weaponId === b.weaponId && SELECTION_KEYS.every((k) => a[k] === b[k]);
 
-const hasCanonicalHint = (weapon) => !!(weapon?.flags?.swse?.canonicalWeapon?.identityKey
+export const hasCanonicalHint = (weapon) => !!(weapon?.flags?.swse?.canonicalWeapon?.identityKey
   || weapon?._stats?.compendiumSource || weapon?.flags?.core?.sourceId || weapon?.flags?.swse?.sourceId);
 
 /**
