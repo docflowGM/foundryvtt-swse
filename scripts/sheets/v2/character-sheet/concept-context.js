@@ -385,6 +385,11 @@ function buildWeaponConfigurationView(weapon) {
     const options = FireStateStore.configurationOptions(weapon);
     if (!options.canonical) return null;
     const configurations = options.states;
+    // Phase 5D-I-D-B1: a weapon with a mount rule (Targeting Laser, launchers) gets the same control, which opens the host picker
+    if (FireStateStore.hasMountRule(weapon)) {
+      const hostId = readOwnedWeaponFireState(weapon)?.mountedHostId ?? null;
+      return { currentId: hostId ? 'mounted' : 'standalone', currentLabel: hostId ? 'Mounted' : 'Not mounted', optionCount: 2 };
+    }
     if (configurations.length < 2) return null;
     const storedId = readOwnedWeaponFireState(weapon)?.configurationId ?? null;
     const defaultId = options.defaultId;

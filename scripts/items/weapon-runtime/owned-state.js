@@ -7,6 +7,7 @@
 // Owned-state fields (all optional; only what RAW or a player choice requires):
 //   wielded        'one-handed' | 'two-handed'              the player's current hands choice (never inferred from weapon size)
 //   mounted        boolean                                   on a tripod / mount / rifle host
+//   mountedHostId  string                                    id of the owned HOST weapon this weapon is mounted on (Micro Grenade Launcher on a rifle; Targeting Laser)
 //   stock          'extended' | 'retracted'                  retractable stock (5D-H)
 //   configurationId  string                                  current configuration (Amphistaff quarterstaff / spear / whip ...)
 //   settingProfile string                                    persistent setting currently in effect (stun setting, extended blade) (5D-I-A)

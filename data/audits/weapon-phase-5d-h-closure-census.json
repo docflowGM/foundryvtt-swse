@@ -10,8 +10,8 @@
     "TOTAL_CERTIFIED_WEAPON_FIELD_FAMILIES": 87,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES": 17,
     "UNIQUE_OPERATION_MECHANIC_FAMILIES_WITHOUT_CONSUMER": 11,
-    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 61,
-    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 70,
+    "UNIQUE_OPERATION_KEYS_WITHOUT_CONSUMER": 54,
+    "RAW_OPERATION_KEY_OCCURRENCES_WITHOUT_CONSUMER": 63,
     "EXECUTABLE_FORM_MECHANICS_DEFERRED": 3,
     "EXECUTABLE_RELATION_FAMILIES_DEFERRED": 2,
     "EXECUTABLE_RELATION_FAMILIES_UNCLASSIFIED": 0,
@@ -145,25 +145,18 @@
         "id": "3b.operation.ammo-resource-reload",
         "fieldPaths": 46,
         "status": "PARTIAL",
-        "consumedKeys": 13,
+        "consumedKeys": 20,
         "nonExecutable": {
           "DISPLAY": 1,
           "STORE": 1
         },
         "executableUnconsumed": [
-          "canMountOnRifle",
-          "canUseStandalone",
           "capacityGrenades",
           "hasFoldingStock",
-          "mountMechanicsDC",
-          "mountTimeMinutes",
-          "mountableOnMinimumWeaponSize",
           "oneShotCapacity",
           "powerCordDisconnectRule",
           "powerLevelSwitchAction",
-          "requiresGrenadeLauncher",
           "retractableStockOptional",
-          "rifleMountable",
           "singleShot",
           "specialRateOfFire"
         ],
@@ -700,16 +693,23 @@
         "consumed": [
           "autofireOnly",
           "bayonetMount",
+          "canMountOnRifle",
           "canSingleLoadShell",
+          "canUseStandalone",
           "cannotFireThermalDetonators",
           "firingConstraints",
           "maxShotsPerRound",
+          "mountMechanicsDC",
+          "mountTimeMinutes",
+          "mountableOnMinimumWeaponSize",
           "mountedOnRifle",
           "reloadAction",
           "requiresEnergyCell",
           "requiresEnergyCells",
+          "requiresGrenadeLauncher",
           "requiresPowerPack",
           "requiresPowerPacks",
+          "rifleMountable",
           "secondCrewReloadAction"
         ],
         "duplicates": {
@@ -726,29 +726,22 @@
           ]
         },
         "executableUnconsumed": [
-          "canMountOnRifle",
-          "canUseStandalone",
           "capacityGrenades",
           "hasFoldingStock",
-          "mountMechanicsDC",
-          "mountTimeMinutes",
-          "mountableOnMinimumWeaponSize",
           "oneShotCapacity",
           "powerCordDisconnectRule",
           "powerLevelSwitchAction",
-          "requiresGrenadeLauncher",
           "retractableStockOptional",
-          "rifleMountable",
           "singleShot",
           "specialRateOfFire"
         ],
         "owner": "resource / reload rules (inventory phase)",
-        "executableUnconsumedOccurrences": 17,
+        "executableUnconsumedOccurrences": 10,
         "representativeIdentities": [
           "lightsaber-chassis-archaic-lightsaber",
           "weapon-blaster-carbine",
           "weapon-blaster-rifle",
-          "weapon-electronet"
+          "weapon-heavy-variable-blaster"
         ],
         "note": {
           "reason": "mounting, power-source requirements, single-load and reload special cases need inventory/reload rules beyond per-shot resource spending",
@@ -1307,19 +1300,12 @@
       "ability-compatibility.surveillanceTaggerCompatibility",
       "ability-compatibility.surveillanceTaggerCompatible",
       "ability-compatibility.upgradeRestrictions",
-      "ammo-resource-reload.canMountOnRifle",
-      "ammo-resource-reload.canUseStandalone",
       "ammo-resource-reload.capacityGrenades",
       "ammo-resource-reload.hasFoldingStock",
-      "ammo-resource-reload.mountMechanicsDC",
-      "ammo-resource-reload.mountTimeMinutes",
-      "ammo-resource-reload.mountableOnMinimumWeaponSize",
       "ammo-resource-reload.oneShotCapacity",
       "ammo-resource-reload.powerCordDisconnectRule",
       "ammo-resource-reload.powerLevelSwitchAction",
-      "ammo-resource-reload.requiresGrenadeLauncher",
       "ammo-resource-reload.retractableStockOptional",
-      "ammo-resource-reload.rifleMountable",
       "ammo-resource-reload.singleShot",
       "ammo-resource-reload.specialRateOfFire",
       "area-splash-burst.remoteDetonationSafetyRule",
@@ -1364,8 +1350,8 @@
       "proficiency-routes.wookieeTreatsAsProficientWithWeaponProficiencyRifles",
       "utility-and-movement.ascensionMode"
     ],
-    "uniqueKeysUnconsumed": 61,
-    "rawOccurrencesUnconsumed": 70,
+    "uniqueKeysUnconsumed": 54,
+    "rawOccurrencesUnconsumed": 63,
     "problems": []
   },
   "relations": {
@@ -2651,9 +2637,9 @@
     ]
   },
   "heuristics": {
-    "totalSites": 217,
+    "totalSites": 218,
     "byClass": {
-      "DISPLAY": 120,
+      "DISPLAY": 121,
       "IDENTITY_FALLBACK": 25,
       "LEGACY_GATED": 58,
       "NON_COMBAT_DOMAIN": 5,

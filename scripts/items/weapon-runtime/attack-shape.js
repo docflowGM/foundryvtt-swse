@@ -9,6 +9,7 @@
 
 const asArray = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 import { powerSourceRequirementOf } from './power-source.js';
+import { mountRuleOf } from './host-mount.js';
 import { resolveTemporalConstraints } from './fire-state.js';
 import { resolveAreaShape } from './area-shape.js';
 import { buildWeaponDescriptor } from './weapon-descriptor.js';
@@ -166,6 +167,11 @@ export function resolveAttackShape(runtime, { hostAugmentations = null, context 
     // Phase 5D-I-D-F: operation.canSingleLoadShell (Mortar Launcher, Galaxy at War p.40): the alternative FIRING method -- a single shell dropped down the
     // open tube and launched by the electromagnet instead of fed from the five-shell magazine. The magazine is neither used nor refilled by it.
     singleShellLaunch: op.canSingleLoadShell === true,
+    // Phase 5D-I-D-B1: mounting on a HOST weapon (canMountOnRifle / rifleMountable / mountableOnMinimumWeaponSize + the Mechanics check) and the host
+    // facts other weapons are validated against (canonical size). requiresHostLauncher (Electronet): a payload that is only fired from a grenade launcher.
+    mountRule: mountRuleOf(op, cs.configurationStates),
+    size: typeof cs.size === 'string' ? cs.size : null,
+    requiresHostLauncher: op.requiresGrenadeLauncher === true,
     // temporal firing constraints (families in fire-state.js); owned readiness state lives on the Item, never here
     temporal: resolveTemporalConstraints(def, op, resolved.abilityInteractions ?? resolved.canonicalStats?.abilityInteractions),
     dualWield: Object.freeze({

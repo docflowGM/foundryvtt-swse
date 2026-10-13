@@ -3676,6 +3676,7 @@ const forcePoints = [];
 
   /** Weapon configuration chooser. Reads the canonical configuration states and the owned configuration; applies ONLY through FireStateStore.setConfiguration. */
   async _openWeaponConfigurationDialog(weapon) {
+    if (FireStateStore.hasMountRule(weapon)) return this._openWeaponMountDialog(weapon);
     const states = FireStateStore.configurationOptions(weapon).states;
     if (states.length < 2) return;
     const owned = (() => { try { return weapon.flags?.swse?.fireState ?? weapon.getFlag?.("swse", "fireState") ?? null; } catch (_err) { return null; } })();
@@ -3700,6 +3701,38 @@ const forcePoints = [];
       return;
     }
     await this.requestSurfaceRender({ reason: "weapon-configuration-change" });
+  }
+
+  /**
+   * Phase 5D-I-D-B1: mount a weapon on one of the actor's eligible host weapons (or detach it). Applies ONLY through FireStateStore.mountOnHost /
+   * unmountFromHost: the host is validated by canonical identity and the record's Mechanics check is rolled before anything is written.
+   */
+  async _openWeaponMountDialog(weapon) {
+    const hosts = FireStateStore.mountHostOptions(this.actor, weapon);
+    const mountedId = FireStateStore.readFireState(weapon)?.mountedHostId ?? null;
+    const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const rows = [`<label class="swse-weapon-choice"><span class="swse-weapon-choice__name"><input type="radio" name="host" value="" ${mountedId ? "" : "checked"}/> Not mounted</span></label>`]
+      .concat(hosts.map((h) => `<label class="swse-weapon-choice ${h.current ? "is-selected" : ""}"><span class="swse-weapon-choice__name"><input type="radio" name="host" value="${esc(h.id)}" ${h.current ? "checked" : ""}/> ${esc(h.name)}${h.current ? " (current)" : ""}</span></label>`)).join("");
+    const picked = await SWSEDialogV2.prompt({
+      title: `${weapon.name} - Mount on host`,
+      content: `<form class="swse-dialog"><div class="swse-weapon-choice-list">${rows}</div></form>`,
+      label: "Apply",
+      callback: (html) => {
+        const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+        const form = root?.querySelector?.("form") ?? root;
+        return String(new FormData(form).get("host") ?? "");
+      }
+    });
+    if (picked === null || picked === undefined || picked === (mountedId ?? "")) return;
+    const host = picked ? this.actor.items.get(picked) : null;
+    const result = picked ? await FireStateStore.mountOnHost(this.actor, weapon, host) : await FireStateStore.unmountFromHost(this.actor, weapon);
+    if (!result?.ok) {
+      ui?.notifications?.warn?.(`${weapon.name}: cannot mount (${String(result?.reason ?? "unavailable").replace(/-/g, " ")}${result?.check ? `, Mechanics ${result.check.total} vs DC ${result.check.dc}` : ""}).`);
+      return;
+    }
+    if (picked && Number.isFinite(result.timeMinutes)) ui?.notifications?.info?.(`${weapon.name}: mounting takes ${result.timeMinutes} minute(s) - the GM adjudicates the circumstances.`);
+    else if (picked && result.check === null && !result.alreadyMounted && FireStateStore.readFireState(weapon)?.mountedHostId) ui?.notifications?.info?.(`${weapon.name}: mounted. The record states no check or time; the GM adjudicates if one applies.`);
+    await this.requestSurfaceRender({ reason: "weapon-mount-change" });
   }
 
   /**
