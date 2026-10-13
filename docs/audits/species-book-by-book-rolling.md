@@ -751,6 +751,6 @@ Earlier *Scum and Villainy*, p.155, printed **+2 Fortitude against radiation** a
 - The original Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, and Jedi Academy chapters remain unchanged in both files.
 - This book revisits Barabel but does not create a duplicate species identity; the global rolling ledger now contains **74 distinct species records**.
 - The same status vocabulary applies: `NO_CHANGE` is allowed for clean fields or whole species after source comparison; it does not certify runtime. `REVIEW_REQUIRED` never means automatic deletion.
-- No production species packs, sidecars, runtime source, or generators were changed; all **undefined** new findings remain `applied:false`.
+- No production species packs, sidecars, runtime source, or generators were changed; all **25** new findings remain `applied:false`.
 
 **Next book: Legacy Era Campaign Guide.** Continue the same append-only source rulings and rolling JSON/Markdown. Verify existing variants and name collisions separately from innate species grants.
