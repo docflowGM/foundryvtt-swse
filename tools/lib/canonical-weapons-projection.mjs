@@ -110,7 +110,10 @@ export function projectSystem(rec) {
   // ---- canonical-owned projections ----
   const cost = cs.costCredits ?? sys.cost ?? 0;
   const weight = cs.weightKg ?? sys.weight ?? 0;
-  const ammoCap = cs.ammo?.capacityShots ?? cs.resource?.capacityShots ?? null;
+  // A multi-resource weapon (ammo.mode 'multiple': Heavy Variable Blaster 500-shot pack + syntherope, Ascension Gun, SG-4) keeps ONE counter on the Item:
+  // the FIRST listed pool, exactly the pool the runtime resolver (canonical-resource.js) treats as the Item counter; the other resources are 'untracked'.
+  const primaryPool = cs.ammo?.mode === 'multiple' ? (cs.ammo.profiles ?? [])[0] ?? null : null;
+  const ammoCap = cs.ammo?.capacityShots ?? cs.resource?.capacityShots ?? primaryPool?.capacityShots ?? null;
   sys.description = html(rec.canonicalPlayerText);
   sys.cost = cost; sys.costNumeric = cost; sys.weight = weight; sys.economics = { weight, cost };
   sys.damage = dmg.formula === '0' && cap?.damage ? cap.damage : dmg.formula; // no canonical dice model: keep the existing legacy sentinel
@@ -118,7 +121,7 @@ export function projectSystem(rec) {
   sys.damageType = (cap?.damageType && dmg.mappedTypes.includes(cap.damageType)) ? cap.damageType : (dmg.legacyType ?? sys.damageType ?? 'kinetic');
   sys.weaponCategory = branch;
   sys.proficiency = proficiency;
-  sys.ammunition = ammoCap && ammoCap > 0 ? { type: cs.ammo?.type ?? cs.resource?.kind ?? 'ammunition', current: ammoCap, max: ammoCap } : { type: 'none', current: 0, max: 0 };
+  sys.ammunition = ammoCap && ammoCap > 0 ? { type: cs.ammo?.type ?? primaryPool?.type ?? cs.resource?.kind ?? 'ammunition', current: ammoCap, max: ammoCap } : { type: 'none', current: 0, max: 0 };
   if (rofHasAuto(prof)) sys.autofire = true; else if ('autofire' in sys) sys.autofire = false;
   if ((cs.attackProfiles.length > 1 || cs.modeProfiles?.length) ) notes.add('multiProfile');
   if ((rec.conditionalQualities ?? []).length || (cs.triggeredEffects ?? []).length || prof.conditionalModifiers?.length || prof.criticalEffects?.length) notes.add('conditional');
