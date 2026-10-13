@@ -5,6 +5,10 @@
 **Branch:** `audit/species-book-by-book-canonical`  
 **Scope:** The 39 non-droid species identities present in `packs/species.db` but missing from the preceding 121-identity species source audit.
 
+## Canonical-compendium cleanup decision — 17 marked for removal
+
+**Project decision (October 13, 2026):** All 17 species records attributed to fan/community-created playable SWSE mechanics are now **`MARKED_FOR_REMOVAL`** from the official/canonical player-selectable species compendium. This is a planned controlled removal, **not an executed deletion**. Before removal, verify contrary official evidence, resolve actor/compendium/sidecar dependencies, archive originals and test saved-character compatibility. The 6 official primary records, 5 official-source leads and 11 special/unresolved records are **not** marked for removal. See the [overall audit and next steps](species-audit-overall-roadmap.md).
+
 ## Result
 
 | Evidence class | Records | Interpretation |
@@ -36,7 +40,7 @@ An original book sweep limited to species chapters is insufficient: published SW
 
 **Stereb:** The race block is in *Dawn of Defiance IX*, a separate Wizards PDF adventure; the pack contains its major stats and traits. No actor or trait-sidecar runtime proof is claimed.
 
-## Seven official web-source leads (original article still required)
+## Five official web-source leads (original article still required)
 
 | Species | Credited Wizards source | Index/evidence |
 |---|---|---|
@@ -70,7 +74,7 @@ These are **attributed** to Wizards-origin articles by the community index. For 
 | Ortolan | Fan New Republic Campaign Guide treatment. | [Community attribution](https://swse.fandom.com/wiki/Ortolan) |
 | Quermian | Fan conversion from Ultimate Alien Anthology. | [Community attribution](https://swse.fandom.com/wiki/Quermian) |
 
-These classifications concern the *specific racial mechanics currently imported*, not whether the species exists in Star Wars lore. They should remain available if a GM enables homebrew, but should not be silently certified as Wizards-published SWSE rules.
+These classifications concern the *specific racial mechanics currently imported*, not whether the species exists in Star Wars lore. **Per project policy, all 17 are marked for removal from the canonical player-selectable species compendium.** An optional homebrew archive may be retained separately only if desired; their continued appearance in the canonical list is not the target state.
 
 ## Eleven unresolved/special classifications
 
@@ -94,7 +98,7 @@ These classifications concern the *specific racial mechanics currently imported*
 2. **Do not change production:** No `packs/species.db`, normal/migrated trait sidecars, CharGen or runtime code should be modified from this provenance research alone.
 3. **Verify additional article texts:** Retrieve original Wizards files for the five remaining web leads; record exact printed/page/section locator and compare all pack fields and sidecars.
 4. **Keep source-specific variants separate:** Geonosian is already an example. Reconcile the competing printed profiles before changing its race modifiers.
-5. **Classify remainder:** Record explicit optional homebrew provenance for fan conversions; distinguish a near-Human variant, animal, species name and complete player race entry.
+5. **Prepare removal:** All 17 fan-attributed playable conversions are `MARKED_FOR_REMOVAL`; check primary-source counterevidence and actor/sidecar/registry dependencies before actual removal. Distinguish near-Human variants, NPC creatures, and unresolved rules from this set.
 6. **Runtime later:** Grant timing, conditions, vision, skill access, feats and movement still require actor tests after a surgical fix is authorized.
 
 **Boundary:** This is a supplementary research/discovery report; it does not retroactively certify all 161 species records or close the existing unresolved sourcebook discrepancy findings.

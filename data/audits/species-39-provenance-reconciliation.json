@@ -34,7 +34,9 @@
       "note": "Published species-traits sidebar in Imperial/Noghri material, outside the species chapter.",
       "primaryWizardsRacialTextRead": true,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Geonosian",
@@ -46,7 +48,9 @@
       "note": "Official WotC conversion: different racial ability profile than current pack; preserve as an alternate source.",
       "primaryWizardsRacialTextRead": true,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Tusken Raider",
@@ -58,7 +62,9 @@
       "note": "Official WotC race conversion; verify Stealth reroll wording before changing pack.",
       "primaryWizardsRacialTextRead": true,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Stereb",
@@ -70,7 +76,9 @@
       "note": "Full published Stereb race sidebar in a free official adventure, outside supplied hardbacks.",
       "primaryWizardsRacialTextRead": true,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Amani",
@@ -82,7 +90,9 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Arcona",
@@ -94,7 +104,9 @@
       "note": "Original Wizards text: WIS -2, CHA +2; Medium; Fortitude +2; Scent within 10 sq; Basic+Arconese. Pack static profile matches; extra +2 Initiative/Perception still requires separate provenance.",
       "primaryWizardsRacialTextRead": true,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Nazren",
@@ -106,7 +118,9 @@
       "note": "Original Wizards text: STR+2 CON+2 DEX-2 CHA-2, Medium/6, Basic+Nazren; once/encounter Resilience protects condition track by one step. Pack static fields match.",
       "primaryWizardsRacialTextRead": true,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Pau'an",
@@ -118,7 +132,9 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Phindian",
@@ -130,7 +146,9 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Polis Massan",
@@ -142,7 +160,9 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Skakoan",
@@ -154,7 +174,9 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Aing-Tii",
@@ -166,7 +188,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Anomid",
@@ -178,7 +211,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Anx",
@@ -190,7 +234,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Besalisk",
@@ -202,7 +257,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Chevin",
@@ -214,7 +280,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Drall",
@@ -226,7 +303,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Dressellian",
@@ -238,7 +326,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Gree",
@@ -250,7 +349,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Jenet",
@@ -262,7 +372,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Kessurian",
@@ -274,7 +395,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Kiffar",
@@ -286,7 +418,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Koorivar",
@@ -298,7 +441,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Mirialan",
@@ -310,7 +464,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Mustafarian",
@@ -322,7 +487,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Muun",
@@ -334,7 +510,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Ortolan",
@@ -346,7 +533,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Quermian",
@@ -358,7 +556,18 @@
       "note": null,
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "MARKED_FOR_REMOVAL",
+      "removalScope": "CANONICAL_PLAYER_SELECTABLE_SPECIES",
+      "removalReason": "Current SWSE playable species mechanics are attributed to a fan/community conversion, not an independently verified official Wizards SWSE racial rules source.",
+      "removalExecuted": false,
+      "preRemovalChecks": [
+        "Recheck original WotC species-rule provenance and document any counterevidence",
+        "Locate compendium references, actor selections, aliases, variants, and trait-sidecar/registry dependencies",
+        "Preserve a recoverable snapshot and decide migration behavior for existing characters",
+        "Verify no removed species remains newly selectable after cleanup; run CharGen and regression tests"
+      ],
+      "removalReviewStatus": "PENDING_EVIDENCE_AND_DEPENDENCY_CHECK"
     },
     {
       "name": "Bardottan",
@@ -370,7 +579,9 @@
       "note": "Known Star Wars species, but no official SWSE player racial block directly verified.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Elom",
@@ -382,7 +593,9 @@
       "note": "Elom species ≠ planet Elom ≠ Elomin; no independent Elom racial block located.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Gundark",
@@ -394,7 +607,9 @@
       "note": "Official beast/creature statistics do not confer playable species features.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Hapan",
@@ -406,7 +621,9 @@
       "note": "Galaxy of Intrigue discusses Hapan near-Human physiology; no standalone racial rules profile verified.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Hiss'sssi",
@@ -418,7 +635,9 @@
       "note": "Pack identity/spelling and original mechanical source remain unverified.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Kal-Dexar",
@@ -430,7 +649,9 @@
       "note": "No matching published playable racial block located in supplied sources.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Kubaz",
@@ -442,7 +663,9 @@
       "note": "Lore and NPC appearances not enough to certify a playable SWSE profile.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Nerf (Uplifted)",
@@ -454,7 +677,9 @@
       "note": "Uplifted animal profile requires explicit species-creation/homebrew provenance.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Sith (Pureblood)",
@@ -466,7 +691,9 @@
       "note": "Do not equate automatically with published Massassi racial profile.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Theelin",
@@ -478,7 +705,9 @@
       "note": "Near-Human lore/variant examples do not establish fixed packet of racial modifiers.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     },
     {
       "name": "Vaathkree",
@@ -490,7 +719,57 @@
       "note": "Pack points to Unknown Regions, but independent full playable species block not verified.",
       "primaryWizardsRacialTextRead": false,
       "foundryActorTested": false,
-      "productionChanged": false
+      "productionChanged": false,
+      "canonicalCompendiumDisposition": "NOT_MARKED_FOR_REMOVAL",
+      "removalExecuted": false
     }
-  ]
+  ],
+  "canonicalCleanupPolicy": {
+    "intent": "Official published SWSE playable species only in the canonical species compendium",
+    "disposition": "MARK_FAN_ATTRIBUTED_PROFILES_FOR_REMOVAL",
+    "candidateCount": 17,
+    "removalExecuted": 0,
+    "requiresPrimarySourceCrosscheck": true,
+    "requiresDependencyAndActorMigrationReview": true,
+    "statusSemantics": "MARKED_FOR_REMOVAL means an explicit candidate selected for the controlled cleanup queue, NOT deleted or determined fictional in Star Wars lore.",
+    "exceptionPolicy": "If an independently verified official SWSE playable racial rules block is recovered for a candidate, review or clear its removal designation before deletion.",
+    "candidateFoundryIds": [
+      "species-aing-tii",
+      "species-anomid",
+      "species-anx",
+      "species-besalisk",
+      "species-chevin",
+      "species-drall",
+      "species-dressellian",
+      "species-gree",
+      "species-jenet",
+      "species-kessurian",
+      "species-kiffar",
+      "species-koorivar",
+      "species-mirialan",
+      "species-mustafarian",
+      "species-muun",
+      "species-ortolan",
+      "species-quermian"
+    ],
+    "candidateNames": [
+      "Aing-Tii",
+      "Anomid",
+      "Anx",
+      "Besalisk",
+      "Chevin",
+      "Drall",
+      "Dressellian",
+      "Gree",
+      "Jenet",
+      "Kessurian",
+      "Kiffar",
+      "Koorivar",
+      "Mirialan",
+      "Mustafarian",
+      "Muun",
+      "Ortolan",
+      "Quermian"
+    ]
+  }
 }
