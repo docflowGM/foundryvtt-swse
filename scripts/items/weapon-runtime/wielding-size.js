@@ -161,11 +161,13 @@ export function resolveHeldGroup(actor, weapon, { shapeOf, proficient, equipped 
   const shape = shapeOf?.(weapon);
   if (!shape || shape.source !== 'canonical' || !shape.heldTogether) return single('not-holdable-together');
   if (new Set(ids).size !== ids.length || ids.includes(String(weapon?.id))) return single('duplicate-or-self');
+  // the primary must BE one of the acting actor's own Items (object identity in the collection -- an id, an equipped flag or a `weapon.actor` pointer prove nothing)
+  const items = Array.from(actor?.items ?? []);
+  if (!items.some((i) => i === weapon)) return single('primary-not-owned');
   if (!(typeof proficient === 'function' && proficient(weapon, actor) === true)) return single('not-proficient');
   // equipped / readied per the repository's own predicate (isItemEquipped), for the primary and every member; no predicate = nothing is held
   const held = (it) => typeof equipped === 'function' && equipped(it, actor) === true;
   if (!held(weapon)) return single('primary-not-equipped');
-  const items = Array.from(actor?.items ?? []);
   const stateOf = (it) => { try { return it?.flags?.swse?.fireState ?? it?.getFlag?.('swse', 'fireState') ?? null; } catch { return null; } };
   for (const id of ids) {
     const it = items.find((i) => i?.id === id);

@@ -361,6 +361,15 @@ try {
     b.system = { ...b.system, isOffhand: true };
     assert.equal(await profileOf(A, a), 'melee', 'a stick designated as the off-hand weapon cannot also be in the primary group'); assert.equal(await profileOf(A, a, { profileId: 'melee-grouped' }), null);
     const sh = DW.resolve(A, { primaryWeapon: a }); assert.equal(sh.usingTwoWeapons, true); assert.equal(sh.offHand.weapon.id, b.id, 'it is a separate weapon, never in two slots'); }
+  // the primary must be the acting actor's own Item: a stored group on another actor's Darkstick grants nothing to this actor
+  { const [a, b] = mk(2); const owner = makeActor({ items: [a, b], feats: [prof()] }); assert.equal((await S.setHeldTogether(owner, a, [b.id])).ok, true); assert.equal(await profileOf(owner, a), 'melee-grouped', 'owned primary: grouping legal');
+    const thief = makeActor({ items: [], feats: [prof()] }); thief.id = 'a9'; const [m] = mk(1); thief.items.push(m); m.actor = thief;
+    a.flags = { ...a.flags, swse: { ...a.flags.swse, fireState: { v: 1, heldTogetherIds: [m.id] } } };   // the foreign primary's stored group names a stick the thief owns
+    assert.equal(S.heldGroupOf(thief, a).reason, 'primary-not-owned'); assert.equal(S.heldGroupOf(thief, a).count, 1);
+    reset(); const r = await attack(thief, a, { profileId: 'melee-grouped' }); assert.equal(r, null, 'explicit melee-grouped with an unowned primary: refused'); assert.equal(used(), 0, 'before any roll or cost');
+    reset(); const r1 = await attack(thief, a, {}); if (r1) assert.equal(wfOf().weaponForm.profileId, 'melee', 'and the default selection is the ordinary profile');
+    { const sh = DW.resolve(thief, { primaryWeapon: a }); assert.equal(sh.offHand?.weapon?.id, m.id, 'the planner gives the foreign primary no group: the thief\'s own stick stays a separate weapon'); }
+    assert.equal(S.heldGroupOf(owner, b).count, 1, 'a member that is not the primary of a group is held singly'); }
   // equipped state is the repository's own predicate (isItemEquipped), for the primary AND every member
   { const [a, b] = mk(2); const A = makeActor({ items: [a, b], feats: [prof()] }); await S.setHeldTogether(A, a, [b.id]); assert.equal(await profileOf(A, a), 'melee-grouped');
     const strip = (w) => { const { equipped, ...rest } = w.system; w.system = rest; };
