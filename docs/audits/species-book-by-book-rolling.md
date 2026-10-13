@@ -1,6 +1,6 @@
 # SWSE Species — Rolling Book-by-Book Canonical Audit
 
-**Status:** Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, Jedi Academy, and Galaxy at War audited. No production species data changed.  
+**Status:** Core, Rebellion Era, KOTOR, Force Unleashed, Clone Wars, Scum and Villainy, Jedi Academy, Galaxy at War and Legacy Era audited. No production species data changed.  
 **Branch:** `audit/species-book-by-book-canonical`  
 **Machine ledger:** `data/audits/species-book-by-book-rolling.json`  
 **Source of production truth:** existing `packs/species.db` / `SpeciesRegistry` with current supplementary rule consumers; these files have **not** been changed.
@@ -141,7 +141,7 @@ There is no evidence from this section for rewriting Core baseline species recor
 6. Scum and Villainy — COMPLETED
 7. Jedi Academy Training Manual — COMPLETED
 8. Galaxy at War — COMPLETED
-9. Legacy Era Campaign Guide
+9. Legacy Era Campaign Guide — COMPLETED
 10. Scavenger's Guide to Droids
 11. Threats of the Galaxy / Galaxy of Intrigue / The Unknown Regions / other source supplements where species mechanics are actually printed
 
@@ -621,7 +621,7 @@ All findings appear in the rolling JSON as `entries[*].jediAcademy.findings`, wi
 - Optional/variant claims and possible sourcebook contradictions remain in **`REVIEW_REQUIRED`**, not destructive remediation.
 - If work proceeds to surgical fixes, adjust generator/authority first, apply minimal corrections, prove no duplicates, and run precise CharGen, actor, condition, Force, defense, and movement tests.
 
-**Next book: Legacy Era Campaign Guide.**
+**Next book: Scavenger's Guide to Droids.**
 
 ---
 
@@ -754,3 +754,164 @@ Earlier *Scum and Villainy*, p.155, printed **+2 Fortitude against radiation** a
 - No production species packs, sidecars, runtime source, or generators were changed; all **25** new findings remain `applied:false`.
 
 **Next book: Legacy Era Campaign Guide.** Continue the same append-only source rulings and rolling JSON/Markdown. Verify existing variants and name collisions separately from innate species grants.
+
+---
+
+## Book 9 — Legacy Era Campaign Guide
+
+**Primary source:** *Legacy Era Campaign Guide*, printed species chapter pp. **10–17** (8 playable races) plus five **New Species** sidebars: **Vahla p.59**, **Advozse p.199**, **Sakiyan p.204**, **Chadra-Fan p.211**, and **Devaronian p.214**. The original scanned PDF was rendered for printed page comparisons (PDF page = printed page +1), with the uploaded searchable transcription used for fast lookup. **Sakiyan was missing from the text transcription and recovered from the original printed PDF on p.204**, preventing a false incomplete census.
+
+### Book-level result
+
+| Check | Count |
+|---|---:|
+| Published species blocks audited | **13** |
+| Chapter I species | 8 |
+| Additional later-chapter sidebars | 5 |
+| Existing Foundry species identities found | **13/13** |
+| Species previously reviewed in another book | **1** (Chagrian) |
+| New distinct species appended to rolling ledger | 12 |
+| Published size and speed correct | **13/13** |
+| Overall `NO_CHANGE` | **1** (Zeltron) |
+| Species with `CHANGE_REQUIRED` | 6 |
+| Species with only `REVIEW_REQUIRED` | 6 |
+| Source-backed correction candidates | **13** |
+| Additional source/variant/runtime reviews | **19** |
+| Total tracked new findings | **32** |
+
+**Interpretation:** This is a read-only, static source/sidecar audit. All 13 have explicit `NO_CHANGE` decisions on published size/base speed; ten have matching ability score modifiers, while **Chiss, Chadra-Fan, and Devaronian** require profile reconciliation. A source-data `NO_CHANGE` does not certify runtime.
+
+### Full species index
+
+| Species | Printed page | Location | Existing audit history | Overall disposition | Findings |
+|---|---:|---|---|---|---:|
+| Chagrian | 11 | Ch. I | Previously reviewed | `CHANGE_REQUIRED` | 2 |
+| Chiss | 12 | Ch. I | New to rolling ledger | `CHANGE_REQUIRED` | 5 |
+| Codru-Ji | 13 | Ch. I | New to rolling ledger | `CHANGE_REQUIRED` | 3 |
+| Klatooinian | 14 | Ch. I | New to rolling ledger | `REVIEW_REQUIRED` | 1 |
+| Nagai | 15 | Ch. I | New to rolling ledger | `REVIEW_REQUIRED` | 2 |
+| Weequay | 16 | Ch. I | New to rolling ledger | `REVIEW_REQUIRED` | 2 |
+| Yuuzhan Vong | 17 | Ch. I | New to rolling ledger | `CHANGE_REQUIRED` | 3 |
+| Zeltron | 17 | Ch. I | New to rolling ledger | `NO_CHANGE` | 0 |
+| Vahla | 59 | Sidebar | New to rolling ledger | `REVIEW_REQUIRED` | 3 |
+| Advozse | 199 | Sidebar | New to rolling ledger | `REVIEW_REQUIRED` | 2 |
+| Sakiyan | 204 | Sidebar | New to rolling ledger | `REVIEW_REQUIRED` | 2 |
+| Chadra-Fan | 211 | Sidebar | New to rolling ledger | `CHANGE_REQUIRED` | 3 |
+| Devaronian | 214 | Sidebar | New to rolling ledger | `CHANGE_REQUIRED` | 4 |
+
+### Complete surgical correction and source-review inventory
+
+Every entry has a stable issue ID and exact selector. All `applied:false`. `CHANGE_REQUIRED` means this publication directly contradicts data in the current representation; `REVIEW_REQUIRED` defers a possibly valid later source, a variant, or an untested consumer. Do not delete optional traits merely because one printed base-race entry omits them.
+
+| Species | ID | State | Discrepancy | Source file / selector | Printed authority | Proposed minimum action |
+|---|---|---|---|---|---|---|
+| Chagrian | `LEG-01-01` | `CHANGE_REQUIRED` | Foreign Codru-Ji anatomy contaminates Chagrian species | `packs/species.db: Chagrian.system.canonicalTraits[all-codru-ji-possess-six-limbs] and canonicalStats.traits` | Legacy p11 prints only Breathe Underwater, Low-Light Vision and Radiation Resistance; the Codru-Ji description belongs to the next race. | Remove only imported Codru-Ji trait and derived projection through canonical source/generator; preserve Chagrian IDs and real traits. |
+| Chagrian | `LEG-01-02` | `REVIEW_REQUIRED` | Extra Endurance skill bonus | `packs/species.db: Chagrian.system.skillBonuses` | Legacy p11 species traits do not grant unconditional Endurance bonus. | Check other source/variant; no generic passive without evidence. |
+| Chiss | `LEG-02-01` | `CHANGE_REQUIRED` | Incorrect Chiss ability score and missing canonical modifiers provenance | `packs/species.db: Chiss.system.abilityMods / abilities` | Legacy p12 grants +2 Intelligence, no Charisma penalty. | Correct Legacy-authoritative race data or introduce a sourced variant if required; preserve record identity. |
+| Chiss | `LEG-02-02` | `CHANGE_REQUIRED` | Missing published first-level bonus trained skill | `packs/species.db: Chiss.system.canonicalTraits / bonusTrainedSkills` | Legacy p12: choose one additional trained skill from first-level class skill list. | Add typed canonical bonus-trained-skill choice and validate finalizer/actor selection once. Do not conflate with fixed class skill. |
+| Chiss | `LEG-02-03` | `CHANGE_REQUIRED` | Chiss darkvision instead of Low-Light Vision | `data/species-traits-migrated.json: Chiss.structuralTraits[Darkvision].rules + pack vision traits` | Legacy p12 grants Low-Light Vision: ignore concealment but NOT total concealment caused by darkness. | Use correct low-light sense on canonical authority and stop darkvision; verify vision in actor/token. |
+| Chiss | `LEG-02-04` | `CHANGE_REQUIRED` | Extra automatic Basic language | `packs/species.db: Chiss.system.languages` | Legacy p12 Automatic Languages: Cheunh only. | Preserve Basic as learnable language; remove unproven automatic grant or model separate sourced variant. |
+| Chiss | `LEG-02-05` | `REVIEW_REQUIRED` | Unprinted Tactical Training and Initiative bonuses | `data/species-traits-migrated.json: Chiss.structuralTraits[Tactical Training].rules; packs/species.db: Chiss.system.skillBonuses` | Legacy p12 printed Chiss base traits include bonus trained skill and Low-Light Vision; no +2 Initiative. | Look for a separate sourcebook/variant; prevent unsupported passive addition until proven. |
+| Codru-Ji | `LEG-03-01` | `CHANGE_REQUIRED` | Skilled Grappler extended beyond grab attacks | `packs/species.db: Codru-Ji.system.canonicalTraits[skilled-grappler]` | Legacy p13 Skilled Grappler grants +5 species bonus to GRAB attacks; no independent Grapple bonus. | Limit to published Grab attack checks; verify rules engine treats Grab/Grapple separately. |
+| Codru-Ji | `LEG-03-02` | `CHANGE_REQUIRED` | Quad-Limbed sidecar injects melee attack bonus | `data/species-traits-migrated.json: Codru-Ji.structuralTraits[Quad-Limbed].rules` | Legacy p13 has Extra Arms (carry four items, no extra attacks) and Skilled Grappler +5 grab attacks; never +2 all melee. | Remove/disable invented melee damageModifier and preserve Extra Arms/Grab semantics. |
+| Codru-Ji | `LEG-03-03` | `REVIEW_REQUIRED` | Conditional Dual Weapon Mastery feat grant timing | `packs/species.db: Codru-Ji.system.canonicalTraits[conditional-bonus-feat] / advancement` | Legacy p13 grants Dual Weapon Mastery if its printed prerequisites (DEX 13 and BAB +1) are met. | Test grant becomes available exactly when prerequisites are met, not automatically to ineligible level-one actor or permanently skipped. |
+| Klatooinian | `LEG-04-01` | `REVIEW_REQUIRED` | Unprinted Hard Laborer passive | `data/species-traits-migrated.json: Klatooinian.structuralTraits[Hard Laborer].rules` | Legacy p14 only prints Iron Will +2 Will plus base chassis; no innate Endurance bonus. | Check other printed source/variant before retaining as automatic species modifier. |
+| Nagai | `LEG-05-01` | `REVIEW_REQUIRED` | Cold Adaptation sidecar applied unconditionally | `data/species-traits-migrated.json: Nagai.structuralTraits[Cold Adaptation].rules` | Legacy p15 inherent traits: Lightning Reflexes, Soothing Voice, tehk'la blade familiarity. No extra Fortitude. | Seek source and if a valid cold-specific trait exists, gate to cold environment rather than always. |
+| Nagai | `LEG-05-02` | `REVIEW_REQUIRED` | Unprinted flat skills | `packs/species.db: Nagai.system.skillBonuses` | Legacy p15 Soothing Voice is a Persuasion reroll, not flat skill bonus. | Source/variant check and verify passive pipeline consumption. |
+| Weequay | `LEG-06-01` | `REVIEW_REQUIRED` | Unprinted Will Defense sidecar | `data/species-traits-migrated.json: Weequay.structuralTraits[Stoic Resolve].rules` | Legacy p16 lists Endurance-trained Skill Focus, +1 natural armor Reflex, and 20-square tribal pheromones, not +2 Will. | Seek source-specific authorization and prevent generic Will bonus if absent. |
+| Weequay | `LEG-06-02` | `REVIEW_REQUIRED` | Flat Endurance score instead of conditional feat | `packs/species.db: Weequay.system.skillBonuses` | Published grants Skill Focus (Endurance) only IF Endurance trained. | Check other source and ensure numeric field does not supplant trained-skill prerequisite. |
+| Yuuzhan Vong | `LEG-07-01` | `CHANGE_REQUIRED` | Malformed automatic Force immunity matcher | `data/species-traits-migrated.json: Yuuzhan Vong.structuralTraits[Force Immunity].rules` | Legacy p17 grants immunity to Force effects TARGETING Will, plus ban Force Sensitivity, Use the Force checks, Force Points. | Replace meaningless marker with typed scope-limited Will-targeting Force-effect immunity; test that attacks against Reflex/Fortitude are NOT blanket immune. |
+| Yuuzhan Vong | `LEG-07-02` | `CHANGE_REQUIRED` | Sidecar forbids all non-organic gear | `data/species-traits-migrated.json: Yuuzhan Vong.structuralTraits[Living Technology].rules` | Printed Technophobic withholds starting Heavy/Pistol/Rifle proficiency; it does not mechanically prohibit handling all inorganic equipment. | Remove/unwire absolute inorganic equipment ban unless another rules source explicitly creates enforceable restriction; preserve cultural description and starting proficiency suppression. |
+| Yuuzhan Vong | `LEG-07-03` | `REVIEW_REQUIRED` | Biotech Proficiency extra beyond Legacy trait list | `packs/species.db: Yuuzhan Vong.system.canonicalTraits[biotech-proficiency]` | Legacy p17 inherent traits only Force Immunity, Technophobic, Amphistaff familiarity. | Verify separate printed biotech weapon rules/variant before removing or conferring an extra proficiency. |
+| Vahla | `LEG-09-01` | `REVIEW_REQUIRED` | Dark Side Affinity passive unsourced and ungated | `data/species-traits-migrated.json: Vahla.conditionalTraits[Dark Side Affinity].rules` | Legacy p59 grants Dark Side Stigma, bonus Force Sensitivity feat and Cartilaginous Skeleton Acrobatics reroll; no generic +2 Use the Force. | Source-check any tradition/feat/optional bonus. If valid require dark-side-power context, never always-on. |
+| Vahla | `LEG-09-02` | `REVIEW_REQUIRED` | Cartilaginous Skeleton player-facing trait label | `packs/species.db: Vahla.system.canonicalTraits[heightened-agility].name` | Legacy p59 calls this Cartilaginous Skeleton. | Consider non-destructive display name/alias correction; preserve existing identity and mechanics. |
+| Vahla | `LEG-09-03` | `REVIEW_REQUIRED` | Dark Side Stigma cost and bonus feat runtime | `Vahla species grant ledger and Force Point/Dark Side adjustment consumers` | Legacy p59 doubles Force Point redemption cost, and grants Force Sensitivity as a bonus feat at creation. | Verify one-time feat grant and double cost without silently giving a flat +2 UTF. |
+| Advozse | `LEG-10-01` | `REVIEW_REQUIRED` | Unsupported Silver Tongue skill bonus and reroll | `data/species-traits-migrated.json: Advozse.structuralTraits[Silver Tongue] / conditionalTraits[Silver Tongue (Reroll)]` | Legacy p199 prints Perception reroll, Low-Light Vision, +1 natural armor Reflex, not Persuasion traits. | Find variant or later book source; do not substitute for actual Perception reroll. |
+| Advozse | `LEG-10-02` | `REVIEW_REQUIRED` | Flat Perception bonus separate from reroll | `packs/species.db: Advozse.system.skillBonuses` | Printed Heightened Awareness is a reroll with mandatory second result; no flat +2. | Validate independent source and avoid double-count. |
+| Sakiyan | `LEG-11-01` | `REVIEW_REQUIRED` | Aerial Hunter extra Initiative passive | `data/species-traits-migrated.json: Sakiyan.conditionalTraits[Aerial Hunter].rules` | Legacy p204 printed Sakiyan has Darkvision, conditional Skill Focus (Perception), +2 Reflex, and no species Flight. | Check alternate source/feat before retaining; never apply flying-only bonus to nonflying Sakiyan. |
+| Sakiyan | `LEG-11-02` | `REVIEW_REQUIRED` | Flat Perception field rather than feat | `packs/species.db: Sakiyan.system.skillBonuses` | Book offers Skill Focus (Perception) IF already trained; not an unconditional +2. | Source-check and verify conditional grant exactly once. |
+| Chadra-Fan | `LEG-12-01` | `CHANGE_REQUIRED` | Default ability profile disagrees with printed and alternate is correct | `packs/species.db: Chadra-Fan.system.abilityMods and variants[chadra-fan-alternate]` | Legacy p211 gives +2 Charisma and -2 Wisdom. | Reconcile authority: make the published Legacy profile selectable/default as justified, preserving other genuinely sourced variants without silently erasing them. |
+| Chadra-Fan | `LEG-12-02` | `CHANGE_REQUIRED` | Default misses complete Tinkerer and class-skill access | `packs/species.db: Chadra-Fan.system.canonicalTraits[heightened-awareness,quality-repairs] and variants[chadra-fan-alternate]` | Legacy p211 Tinkerer gives Mechanics reroll must accept, extra 1d8 HP repair/jury-rig, and always class skill. | Ensure Legacy racial profile has all three Tinkerer benefits; preserve other printed variant separately. |
+| Chadra-Fan | `LEG-12-03` | `REVIEW_REQUIRED` | Extra unsourced +2 skills | `packs/species.db: Chadra-Fan.system.skillBonuses` | Legacy p211 grants Mechanics reroll and class skill, not flat +2. | Check alternate publication/variant and live consumer before granting. |
+| Devaronian | `LEG-13-01` | `CHANGE_REQUIRED` | Male Devaronian stat choice unavailable | `packs/species.db: Devaronian.system.abilityMods` | Legacy p214 male receives +2 DEX, -2 WIS, -2 CHA. | Implement canonical male profile or mandatory sex-based selection, without using a zero-adjustment fallback. |
+| Devaronian | `LEG-13-02` | `CHANGE_REQUIRED` | Female Devaronian variant stats incorrect | `packs/species.db: Devaronian.system.variants[devaronian-female].abilityMods` | Legacy p214 female receives +2 INT, +2 WIS, -2 DEX. | Fix published female profile in source/selector; preserve choice identity and test final actor modifiers. |
+| Devaronian | `LEG-13-03` | `REVIEW_REQUIRED` | Extra automatic Force Resistance bonus | `data/species-traits-migrated.json: Devaronian.structuralTraits[Force Resistance].rules` | Legacy p214 only grants trained Deception conditional Skill Focus and Natural Curiosity action, not Force Resistance. | Check another book/variant for legitimate resistance; do not grant unsourced Will bonus. |
+| Devaronian | `LEG-13-04` | `REVIEW_REQUIRED` | Unprinted skill bonuses and Natural Curiosity runtime | `packs/species.db: Devaronian.system.skillBonuses / canonicalTraits[natural-curiosity]` | Legacy p214 grants Deception-trained Skill Focus, once/encounter standard-action Perception vs DC15/Stealth for +1 insight attacks vs target. | Source-check flat skills, and regression-test targeting, limit and nonstacking of insight bonus. |
+
+### Explicit clean-field judgments
+
+| Species | Reviewed source field | Status | Basis |
+|---|---|---|---|
+| Chagrian | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Chagrian | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Chagrian | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Chiss | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Codru-Ji | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Codru-Ji | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Codru-Ji | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Klatooinian | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Klatooinian | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Klatooinian | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Nagai | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Nagai | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Nagai | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Weequay | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Weequay | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Weequay | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Yuuzhan Vong | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Yuuzhan Vong | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Yuuzhan Vong | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Zeltron | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Zeltron | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Zeltron | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Zeltron | `system.canonicalTraits[empathy,soothing-pheromones]` | `NO_CHANGE` | Published scoped bonus CHA to sense deception/influence and +5 Persuasion to change attitude except Zeltrons match pack. |
+| Vahla | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Vahla | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Vahla | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Vahla | `system.canonicalTraits[bonus-feat,dark-side-stigma,heightened-agility].description` | `NO_CHANGE` | Three effects described correctly: bonus Force Sensitivity, 2 FP DSP redemption, Acrobatics reroll. Name alias is review-only. |
+| Advozse | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Advozse | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Advozse | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Sakiyan | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Sakiyan | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Sakiyan | `system.abilityMods` | `NO_CHANGE` | Published racial ability modifiers match pack. |
+| Sakiyan | `system.canonicalTraits[darkvision,conditional-bonus-feat,lightning-reflexes]` | `NO_CHANGE` | Three published traits accurately present in pack. |
+| Chadra-Fan | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Chadra-Fan | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+| Devaronian | `system.size / system.speed` | `NO_CHANGE` | Published Medium/Small and base speed agree with pack. |
+| Devaronian | `system.languages` | `NO_CHANGE` | Published automatic-language names match pack. |
+
+### Priority source conclusions
+
+**Chiss — p.12: multiple CharGen-critical discrepancies.** The book prints **+2 Intelligence only** (no Charisma penalty), **one extra first-level trained class skill**, **Low-Light Vision**, and **Cheunh only** as an automatic language. The current pack has `+2 INT/-2 CHA`, no pack canonical trait records or bonus-trained-skill choice, Cheunh and Basic, while a legacy sidecar grants **Darkvision** and an unsourced +2 Initiative. These are multiple independent corrections. Preserve the `species-chiss` identity; don't infer Chiss Force restrictions from surrounding flavor text.
+
+**Devaronian — p.214: gender-dependent ability profiles.** Printed **male: +2 DEX, -2 WIS, -2 CHA** and **female: +2 INT, +2 WIS, -2 DEX**. The repo's default is six zero adjustments; the female variant instead has +2 WIS/-2 CHA. Correct both published options through a source-aware choice/profile without inventing zero-adjustment characters. Printed conditional Skill Focus (Deception) and once-per-encounter Natural Curiosity belong to **both**, and must be tested without adding the sidecar's unsupported +2 Will.
+
+**Chadra-Fan — p.211: printed profile currently relegated to an alternate.** The printed species has **+2 CHA/-2 WIS**, Small/4, Darkvision, and **Tinkerer**: must-accept Mechanics reroll, extra 1d8 healing from repair/jury-rig, and Mechanics always a class skill. The current default has **+2 DEX/-2 WIS** and omits the reroll/class-skill portions; the alternate profile contains the complete printed package. **Do not simply delete the default variant** before its other published source is located; ensure the Legacy profile has correct explicit selection/default authority.
+
+**Codru-Ji — p.13: melee exploit risk.** The printed species has Extra Arms (no bonus attacks), +5 species to **Grab attacks**, and conditional Dual Weapon Mastery when DEX 13/BAB +1 prerequisites are satisfied. The pack extends +5 to Grapple and the sidecar adds +2 to all melee attack rolls. Neither is justified by this printed base-race entry. Test Grab vs Grapple as separate actions and the conditional feat timing.
+
+**Yuuzhan Vong — p.17: malformed immunity and over-restrictive equipment.** The printed Force Immunity forbids Force Sensitivity, Use the Force checks and Force Points, and protects against **Force effects that target Will Defense**, not all attacks with Force-related effects. The migrated sidecar's immunity matcher literally has `values:['t']`; a second rule categorically forbids inorganic equipment, while **Technophobic only withholds starting ranged weapon proficiencies**. Preserve permitted Amphistaff familiarity, and do not turn cultural aversion into an unconditional equipment prohibition.
+
+**Chagrian — p.11: independently confirmed wrong-species import.** Printed only Breathe Underwater, Low-Light Vision and Radiation Resistance. The Codru-Ji six-limb/Wyrwulves anatomy in the pack is definitively misplaced. Existing Clone Wars issue `CW-11-01` remains open and is linked here as a second authoritative proof; **do not create a second Chagrian species record** or overwrite older findings.
+
+**Vahla — p.59: legitimate Force Sensitivity grant, questionable passive bonus.** All Vahla explicitly gain Force Sensitivity; Dark Side Stigma doubles Force Point cost to reduce Dark Side Score, and Cartilaginous Skeleton grants the must-accept Acrobatics reroll. The pack describes all three correctly, though the latter trait is displayed as Heightened Agility. Sidecar `Dark Side Affinity` adds unconditional +2 Use the Force and is **not** an automatic printed Vahla grant. Verify provenance before any unconditional bonus.
+
+**Advozse — p.199:** Base modifiers **-2 DEX/+2 CON/+2 WIS**, Perception reroll with mandatory second result, Low-Light Vision, and +1 natural armor Reflex all match. Sidecar introduces extra generic Persuasion bonuses/rerolls; verify printed source elsewhere. The +2 Perception legacy field must not replace the actual reroll.
+
+**Sakiyan — p.204:** This printed species sidebar did not survive the uploaded text extraction. The PDF confirms size Medium/6, **no ability adjustments**, Darkvision, trained-Perception-conditional Skill Focus, and +2 species Reflex; pack matches these. Sidecar `Aerial Hunter` adds +2 Initiative `when:always` despite a description about flying, and **Sakiyan receives no innate flight in this book**. Preserve accurate canonical three-trait block; review bonus provenance.
+
+**Zeltron — p.17: `NO_CHANGE`.** +2 CHA/-2 WIS, Basic, Empathy adding positive CHA to Perception Sense Deception/Influence, and +5 Persuasion to **change attitudes** excluding other Zeltrons are already correctly described. No replacement of those scoped abilities with unconditional +5 Persuasion. Runtime entitlement remains untested.
+
+**Klatooinian, Nagai, Weequay:** Printed foundational chassis/traits match pack, but migrated sidecars inject extra Endurance, Will, or cold Fortitude bonuses not supported by these Legacy species blocks. These remain `REVIEW_REQUIRED` pending other publications, not automatic deletions.
+
+### Cross-book and runtime boundaries
+
+1. **Chagrian** joins the previously indexed record (from Clone Wars), with `legacyEra.crossBookNotes` linking earlier `CW-11-01`. Older source findings remain unchanged.
+2. **Published race gender and alternate profiles** (Devaronian, Chadra-Fan) must be reviewed using source/variant identity, not overwritten by a name-based importer.
+3. **Player-selected or conditional racial feats** (Chiss trained skill, Vahla Force Sensitivity, Codru-Ji conditional Dual Weapon Mastery) require a one-time level-up/CharGen entitlement test, not merely presence of English text.
+4. **Source-specific force rules** (Vahla Dark Side Stigma, Yuuzhan Vong Force Immunity, Zeltron Empathy) must not become blanket modifiers or generic immunities.
+5. All 32 new findings are **unapplied**. No species, sidecar, class, weapon, chargen code, schema or builder changed. No Foundry runtime tests performed.
+6. The rolling JSON now includes **86 distinct species** across **9 books**.
+
+**Next sourcebook:** *Scavenger's Guide to Droids*. Identify actual new playable species/droid chassis rules first, then append individual `NO_CHANGE` records or source-backed corrections. Do not invent a biological species census for a book that primarily defines droid creation.
