@@ -144,6 +144,18 @@ export async function applyCanonicalSpeciesToActor(actor, pendingContext) {
       Object.assign(mutations, abilityItemMutations.flags);
     }
 
+    // PHASE 10B: Conditional species bonus feats with structured requirements are recorded against this grant and
+    // granted by SpeciesConditionalGrantResolver once the requirement holds (never unconditionally).
+    {
+      const grantKeyForFeats = computeSpeciesGrantKey(pendingContext.identity);
+      const deferredFeats = (pendingContext.traits || [])
+        .filter(t => t.classification === 'grant' && t.source === 'bonusFeat')
+        .flatMap(t => t.grants || [])
+        .filter(g => g.grantType === 'feat' && g.target && Array.isArray(g.requirements) && g.requirements.length)
+        .map(g => ({ name: g.target, requirements: g.requirements.map(r => ({ ...r })), frequency: g.frequency, species: pendingContext.identity.name, grantKey: grantKeyForFeats }));
+      mutations['flags.swse.deferredSpeciesBonusFeats'] = deferredFeats;
+    }
+
     // PHASE 11: Source-aware reconciliation (revoke the previous species/variant grant,
     // never duplicate this one). See species-grant-reconciliation.js.
     const grantKey = computeSpeciesGrantKey(pendingContext.identity);

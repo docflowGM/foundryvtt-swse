@@ -67,10 +67,11 @@ assert.ok(await ctx(ark, { id: getAbilityChoiceOptions(arkApplied)[0].id }), 'a 
   assert.equal(restored.identity.abilityChoice.id, 'female');
   // A different actor (no record) is a new selection and is rejected.
   assert.equal(await quiet(() => buildPendingSpeciesContext(makeActor(), dev.id, { source: 'progression' })), null);
-  // Recorded species but a legacy actor with no recorded choice: restoring is allowed (nothing is invented).
+  // Recorded species but a legacy actor with no recorded choice: the option is never inferred, so nothing is
+  // rematerialized (its stored racial modifiers are preserved) — see species-conditional-feat-lifecycle.test.mjs.
   const legacy = makeActor();
   legacy.system.species = { name: 'Devaronian' };
-  assert.ok(await quiet(() => buildPendingSpeciesContext(legacy, dev.id, { source: 'progression' })));
+  assert.equal(await quiet(() => buildPendingSpeciesContext(legacy, dev.id, { source: 'progression' })), null);
 }
 // ---- Drag-and-drop plan building rejects before any mutation ----
 {

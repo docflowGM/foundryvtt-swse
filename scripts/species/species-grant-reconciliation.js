@@ -32,6 +32,7 @@ export const SPECIES_EXCLUSIVE_RESETS = Object.freeze({
   'system.speciesCustomName': null,
   'flags.swse.speciesVariant': null,
   'flags.swse.speciesAbilityChoice': null,
+  'flags.swse.deferredSpeciesBonusFeats': [],
   'flags.swse.speciesFeatsRequired': 0,
   'flags.swse.speciesBonusSpeed': 0,
   'flags.swse.speciesTraitIds': [],

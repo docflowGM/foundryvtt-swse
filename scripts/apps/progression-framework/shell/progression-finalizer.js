@@ -17,6 +17,7 @@
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionDocumentTargetPolicy } from '../policies/progression-document-target-policy.js';
 // PHASE 3: Species materialization
+import { computeSpeciesGrantKey } from '/systems/foundryvtt-swse/scripts/species/species-grant-reconciliation.js';
 import { applyCanonicalSpeciesToActor } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-species-to-actor.js';
 // PHASE 3: Background materialization
 import { applyCanonicalBackgroundsToActor } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-backgrounds-to-actor.js';
@@ -2887,6 +2888,7 @@ export class ProgressionFinalizer {
 
     const sessionId = sessionState?.sessionId || 'unknown';
     const speciesName = pendingSpeciesContext.identity?.name || 'Unknown';
+    const grantKey = computeSpeciesGrantKey(pendingSpeciesContext.identity);
 
     const existingByTypeAndName = new Set(
       (actor.items || []).map((item) => `${String(item.type || '').toLowerCase()}::${String(item.name || '').toLowerCase()}`)
@@ -2906,14 +2908,14 @@ export class ProgressionFinalizer {
 
       if (hasFreeformOnly) {
         // Freeform condition text with no structured requirements — defer, do not auto-grant.
-        deferred.push({ name, condition: grant.condition, requirements: grant.requirements || [], frequency: grant.frequency, species: speciesName });
+        deferred.push({ name, condition: grant.condition, requirements: grant.requirements || [], frequency: grant.frequency, species: speciesName, grantKey });
         continue;
       }
 
       if (hasStructuredRequirements) {
         const { met } = this._evaluateSpeciesBonusFeatRequirements(grant.requirements, selections);
         if (!met) {
-          deferred.push({ name, condition: grant.condition, requirements: grant.requirements, frequency: grant.frequency, species: speciesName });
+          deferred.push({ name, condition: grant.condition, requirements: grant.requirements, frequency: grant.frequency, species: speciesName, grantKey });
           continue;
         }
         // Requirements met — fall through to grant.
@@ -2924,7 +2926,13 @@ export class ProgressionFinalizer {
 
       const resolvedDoc = await ProgressionContentAuthority.getFeatDocument({ name, id: name });
       const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
-      const baseItem = resolvedData || { name, type: 'feat', system: {} };
+      if (!resolvedData) {
+        // Fail closed: no substitute item for an unresolved canonical feat; keep the grant pending (retried by the resolver).
+        swseLogger.warn(`[ProgressionFinalizer] Species feat "${name}" could not be resolved; grant stays pending`);
+        deferred.push({ name, condition: grant.condition ?? null, requirements: grant.requirements || [], frequency: grant.frequency, species: speciesName, grantKey, pendingReason: 'FEAT_DOCUMENT_UNRESOLVED' });
+        continue;
+      }
+      const baseItem = resolvedData;
       baseItem.name = baseItem.name || name;
       baseItem.type = baseItem.type || 'feat';
       baseItem.system = foundry.utils.mergeObject(baseItem.system || {}, {
@@ -2941,6 +2949,7 @@ export class ProgressionFinalizer {
           },
           speciesGranted: true,
           sourceSpecies: speciesName,
+          ...(grantKey ? { speciesGrantKey: grantKey } : {}),
         },
       }, { inplace: false, recursive: true });
       items.push(baseItem);

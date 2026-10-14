@@ -128,7 +128,9 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
     const recordedChoice = actor?.flags?.swse?.speciesAbilityChoice ?? null;
     const restoring = isRecordedConfigurationRestore(actor, speciesEntry, selectedVariantId);
     const choiceCheck = resolveAbilityChoice(variantAppliedSpeciesEntry, suppliedAbilityChoice ?? (restoring && recordedChoice?.id ? { id: recordedChoice.id } : null));
-    if (!choiceCheck.ok && !(choiceCheck.code === 'MISSING_CHOICE' && restoring)) {
+    // An existing actor whose option was never recorded cannot be rematerialized exactly (the option is not inferred);
+    // fail closed so its stored racial modifiers are preserved.
+    if (!choiceCheck.ok) {
       SWSELogger.warn(`[PendingSpeciesContext] ${speciesEntry.name} requires a valid published ability choice (${choiceCheck.code}); no context built`, { requested: suppliedAbilityChoice?.id ?? null, source });
       return null;
     }

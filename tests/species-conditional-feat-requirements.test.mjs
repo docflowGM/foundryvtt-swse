@@ -6,6 +6,9 @@ import { makeActor, selectSpecies } from './helpers/species-actor-sim.mjs';
 // Gran (The Force Unleashed Campaign Guide): Precise Shot when the Gran has Point Blank Shot.
 // Requirements are structured data evaluated by the existing SpeciesConditionalGrantResolver — never an unconditional grant.
 const { SpeciesConditionalGrantResolver } = await import('/systems/foundryvtt-swse/scripts/engine/species/SpeciesConditionalGrantResolver.js');
+const { ProgressionContentAuthority } = await import('/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js');
+ProgressionContentAuthority.initialize = async () => {};
+ProgressionContentAuthority.getFeatDocument = async ({ name }) => ({ toObject: () => ({ name, type: 'feat', system: {}, flags: {} }) });
 const quiet = async fn => { const l = console.log, w = console.warn; console.log = () => {}; console.warn = () => {}; try { return await fn(); } finally { console.log = l; console.warn = w; } };
 
 async function deferredFor(species) {
