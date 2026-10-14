@@ -12,7 +12,7 @@
 | Supplementary research Markdown (unchanged, staged by the owner) | `docs/audits/modification-rolling-authority-v1.5.md` |
 | Version-pinned manifest (hashes, counts, vocabularies, known deviations, waiver) | `data/audits/modification-rolling-authority-v1.5.manifest.json` |
 | Read-only validator and CLI | `tools/validate-modification-registry.mjs` |
-| Positive and negative tests (28 checks) | `tests/modification-registry-validator.test.mjs` |
+| Positive and negative tests (35 checks) | `tests/modification-registry-validator.test.mjs` |
 | CI step | `.github/workflows/rolling-system-validation.yml` ("Guard — modification registry snapshot (G1, read-only)") |
 | Byte-preservation attributes | `.gitattributes` (`-text` for the two source files) |
 | Authority classification (regenerated, not hand-edited) | `data/audits/phase-5c-authority-classification.json`, `docs/audits/phase-5c-authority-classification.md` |
@@ -49,6 +49,12 @@ On 2026-10-14 the owner ruled that independent verification of the Markdown agai
 | V9 | Known price types; `credits` requires a finite amount >= 0; `not_stated` may never carry a number |
 | V10 | Not applicable in G1 (no crosswalk exists) and reported as such |
 
+### Trust boundary (pinned in the validator, not in the manifest)
+
+- **Canonical paths.** The validator requires exactly `data/audits/modification-rolling-authority-v1.5.json` and `docs/audits/modification-rolling-authority-v1.5.md` (exported constants `REGISTRY_PATH`, `MARKDOWN_PATH`). A manifest that names any other path fails with `ARTIFACT_PATH_NOT_CANONICAL`, and the CLI reads the pinned paths, never paths taken from the manifest. A manifest for any registry version other than `1.5` is rejected.
+- **Approved deviations.** The three owner-approved identities are constants inside the validator (`APPROVED_DEVIATIONS`: version, code, path, observed, expected). The manifest's `knownDeviations` must equal that set. Any extra entry fails with `DEVIATION_NOT_APPROVED` (so a manifest cannot authorize its own exception, even for a defect it matches exactly), and a missing approved entry fails with `APPROVED_DEVIATION_MISSING`.
+- **Fail closed on malformed structures.** A null or non-object definition or procedure, a malformed typed definition, non-array reference lists, a registry whose top level is not an object, non-byte inputs, and malformed nested manifest vocabularies, counts or rules all produce structured failures (`DEFINITION_NOT_OBJECT`, `PROCEDURE_NOT_OBJECT`, `TYPED_DEFINITIONS_INVALID`, `TYPED_DEFINITION_NOT_OBJECT`, `REGISTRY_SHAPE_INVALID`, `REGISTRY_UNREADABLE`, `MANIFEST_INVALID`). A catch-all `VALIDATOR_INTERNAL_ERROR` exists only as a last-resort net and is asserted never to be the reason in the tests.
+
 ### Known deviations (exact, version-pinned)
 
 Matching requires the registry version, error code, exact path, observed value and expected value to agree. An unlisted failure, a stale or drifted exception, an invalid or duplicate exception, or an exception for another registry version fails validation. Matched exceptions are always printed.
@@ -71,7 +77,7 @@ These are the three owner-approved R1 findings (definitions `reb-stygian-tripris
 
 ## 5. Tests and CI
 
-`node tests/modification-registry-validator.test.mjs` runs 28 checks with independently specified literal expectations (hashes, counts, ids, error codes). They cover the real snapshot and negative variants for every check V1-V9, known-deviation drift (changed observed value, stale or mismatched expected value, moved path, other version, incomplete or duplicate exception, defect no longer present), non-mutation and determinism, the Markdown waiver, the runtime-reference and packaging guards, and the CLI exit code. The existing rolling-system runner (`tools/run-rolling-tests.mjs`) discovers every `tests/*.test.mjs` file, so the new test runs in CI without a runner change; the new workflow step runs the validator itself.
+`node tests/modification-registry-validator.test.mjs` runs 35 checks with independently specified literal expectations (hashes, counts, ids, error codes). They cover the real snapshot and negative variants for every check V1-V9, known-deviation drift (changed observed or expected value, moved path, other version, incomplete or duplicate exception, defect no longer present), a fourth defect with a matching self-authorized exception, removal of an approved exception, altered artifact paths and registry versions, malformed registry and manifest structures that must not throw, non-mutation and determinism, the Markdown waiver, the runtime-reference and packaging guards, and the CLI exit code. The existing rolling-system runner (`tools/run-rolling-tests.mjs`) discovers every `tests/*.test.mjs` file, so the new test runs in CI without a runner change; the new workflow step runs the validator itself.
 
 ## 6. Deliberately not done
 

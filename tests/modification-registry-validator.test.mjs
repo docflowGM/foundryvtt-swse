@@ -14,7 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { validateRegistry, MANIFEST_PATH } from '../tools/validate-modification-registry.mjs';
+import { validateRegistry, MANIFEST_PATH, REGISTRY_PATH, MARKDOWN_PATH, APPROVED_DEVIATIONS, APPROVED_REGISTRY_VERSION } from '../tools/validate-modification-registry.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel));
@@ -305,33 +305,81 @@ check('known deviations: an unlisted defect is an unexpected failure even when t
   assert.equal(r.matchedKnownDeviations.length, 3);
 });
 
-check('known deviations: a changed observed value, a stale or mismatched expected value, a moved path and another version each fail', () => {
+check('known deviations: a changed observed or expected value, a moved path and another version are rejected (not the approved identities)', () => {
   const observed = clone(manifest);
   observed.knownDeviations[0].observed = 'something_else';
   const o = validateRegistry({ registryBytes, markdownBytes, manifest: observed });
   assert.equal(o.ok, false);
-  assert.equal(o.staleKnownDeviations.length, 1);
-  assert.ok(hasFailure(o, 'REF_SOURCE_FAMILY_UNDECLARED', R1_PATHS[0]));
+  assert.ok(o.invalidKnownDeviations.some((i) => i.code === 'DEVIATION_NOT_APPROVED' && i.path === R1_PATHS[0]));
+  assert.ok(o.invalidKnownDeviations.some((i) => i.code === 'APPROVED_DEVIATION_MISSING' && i.path === R1_PATHS[0]));
+  assert.ok(hasFailure(o, 'REF_SOURCE_FAMILY_UNDECLARED', R1_PATHS[0]), 'the defect itself is no longer tolerated');
 
   const expected = clone(manifest);
   expected.knownDeviations[1].expected = 'member of the declared families';
   const e = validateRegistry({ registryBytes, markdownBytes, manifest: expected });
   assert.equal(e.ok, false);
-  assert.equal(e.staleKnownDeviations.length, 1);
-  assert.equal(e.staleKnownDeviations[0].path, R1_PATHS[1]);
+  assert.ok(e.invalidKnownDeviations.some((i) => i.code === 'DEVIATION_NOT_APPROVED' && i.path === R1_PATHS[1]));
   assert.ok(hasFailure(e, 'REF_SOURCE_FAMILY_UNDECLARED', R1_PATHS[1]));
 
   const moved = clone(manifest);
   moved.knownDeviations[2].path = '/definitions/139/sourceFamily';
   const mv = validateRegistry({ registryBytes, markdownBytes, manifest: moved });
   assert.equal(mv.ok, false);
-  assert.equal(mv.staleKnownDeviations.length, 1);
+  assert.ok(mv.invalidKnownDeviations.some((i) => i.code === 'DEVIATION_NOT_APPROVED'));
+  assert.ok(mv.staleKnownDeviations.length === 0);
 
   const version = clone(manifest);
   version.knownDeviations[0].registryVersion = '1.6';
   const vr = validateRegistry({ registryBytes, markdownBytes, manifest: version });
   assert.equal(vr.ok, false);
   assert.equal(vr.invalidKnownDeviations[0].code, 'DEVIATION_VERSION_MISMATCH');
+});
+
+check('known deviations: the approved identities are pinned in the validator, independently of the manifest', () => {
+  assert.equal(APPROVED_REGISTRY_VERSION, '1.5');
+  assert.deepEqual(
+    APPROVED_DEVIATIONS.map((d) => [d.registryVersion, d.errorCode, d.path, d.observed, d.expected]),
+    [
+      ['1.5', 'REF_SOURCE_FAMILY_UNDECLARED', '/definitions/136/sourceFamily', 'armor_template', 'member of sourceFamilies'],
+      ['1.5', 'REF_SOURCE_FAMILY_UNDECLARED', '/definitions/137/sourceFamily', 'purchase_quality_talent', 'member of sourceFamilies'],
+      ['1.5', 'REF_SOURCE_FAMILY_UNDECLARED', '/definitions/138/sourceFamily', 'improvised_equipment_explosive', 'member of sourceFamilies']
+    ]
+  );
+  assert.ok(Object.isFrozen(APPROVED_DEVIATIONS) && APPROVED_DEVIATIONS.every((d) => Object.isFrozen(d)));
+});
+
+check('known deviations: a fourth defect with a matching fourth exception in the manifest still fails (a manifest cannot authorize itself)', () => {
+  const extra = {
+    registryVersion: '1.5',
+    errorCode: 'REF_SOURCE_FAMILY_UNDECLARED',
+    path: '/definitions/0/sourceFamily',
+    observed: 'invented_family',
+    expected: 'member of sourceFamilies',
+    reason: 'self-authorized exception',
+    approvalReference: 'none'
+  };
+  const r = variant((reg) => { findDef(reg, 'sv-cheater').sourceFamily = 'invented_family'; }, (m) => { m.knownDeviations.push(extra); });
+  assert.equal(r.ok, false);
+  assert.ok(r.invalidKnownDeviations.some((i) => i.code === 'DEVIATION_NOT_APPROVED' && i.path === '/definitions/0/sourceFamily'));
+  assert.ok(hasFailure(r, 'REF_SOURCE_FAMILY_UNDECLARED', '/definitions/0/sourceFamily'), 'the fourth defect stays an unexpected failure');
+  assert.equal(r.matchedKnownDeviations.length, 3);
+
+  // A defect of a different kind, with an exception written to match it exactly, is rejected the same way.
+  const countDefect = variant((reg) => { reg.definitions.pop(); }, (m) => {
+    m.knownDeviations.push({ registryVersion: '1.5', errorCode: 'COUNT_MISMATCH', path: '/definitions', observed: 185, expected: 186, reason: 'self-authorized', approvalReference: 'none' });
+  });
+  assert.equal(countDefect.ok, false);
+  assert.ok(countDefect.invalidKnownDeviations.some((i) => i.code === 'DEVIATION_NOT_APPROVED' && i.errorCode === 'COUNT_MISMATCH'));
+  assert.ok(hasFailure(countDefect, 'COUNT_MISMATCH', '/definitions'));
+});
+
+check('known deviations: removing an approved exception fails (all three must be present)', () => {
+  const m = clone(manifest);
+  m.knownDeviations.pop();
+  const r = validateRegistry({ registryBytes, markdownBytes, manifest: m });
+  assert.equal(r.ok, false);
+  assert.ok(r.invalidKnownDeviations.some((i) => i.code === 'APPROVED_DEVIATION_MISSING' && i.path === R1_PATHS[2]));
+  assert.ok(hasFailure(r, 'REF_SOURCE_FAMILY_UNDECLARED', R1_PATHS[2]));
 });
 
 check('known deviations: an exception whose defect no longer exists is stale, not silently accepted', () => {
@@ -367,6 +415,133 @@ check('known deviations: with none listed the three findings fail the run', () =
   assert.equal(r.ok, false);
   assert.deepEqual(r.unexpectedFailures.map((f) => f.path), R1_PATHS);
   assert.deepEqual(r.unexpectedFailures.map((f) => f.code), ['REF_SOURCE_FAMILY_UNDECLARED', 'REF_SOURCE_FAMILY_UNDECLARED', 'REF_SOURCE_FAMILY_UNDECLARED']);
+});
+
+/* ------------------------------------------------------------------ canonical paths */
+
+check('canonical artifact paths are contract constants the manifest cannot redefine', () => {
+  assert.equal(REGISTRY_PATH, 'data/audits/modification-rolling-authority-v1.5.json');
+  assert.equal(MARKDOWN_PATH, 'docs/audits/modification-rolling-authority-v1.5.md');
+  assert.equal(manifest.files.registry.path, REGISTRY_PATH);
+  assert.equal(manifest.files.companionMarkdown.path, MARKDOWN_PATH);
+  for (const bad of ['data/audits/other-registry.json', 'data/audits/modification-rolling-authority-v1.4.json', '../data/audits/modification-rolling-authority-v1.5.json', '', null]) {
+    const m = clone(manifest);
+    m.files.registry.path = bad;
+    const r = validateRegistry({ registryBytes, markdownBytes, manifest: m });
+    assert.equal(r.ok, false, String(bad));
+    assert.ok(hasFailure(r, 'ARTIFACT_PATH_NOT_CANONICAL', '/files/registry/path'), String(bad));
+    const md = clone(manifest);
+    md.files.companionMarkdown.path = bad;
+    const rm = validateRegistry({ registryBytes, markdownBytes, manifest: md });
+    assert.equal(rm.ok, false);
+    assert.ok(hasFailure(rm, 'ARTIFACT_PATH_NOT_CANONICAL', '/files/companionMarkdown/path'));
+  }
+  // Even with a re-synced hash and counts, a redirected path is not accepted.
+  const redirected = variant(() => {}, (m) => { m.files.registry.path = 'data/audits/elsewhere.json'; });
+  assert.equal(redirected.ok, false);
+  assert.ok(hasFailure(redirected, 'ARTIFACT_PATH_NOT_CANONICAL'));
+  // A manifest for another registry version is not accepted either.
+  const other = clone(manifest);
+  other.registryVersion = '1.6';
+  assert.equal(validateRegistry({ registryBytes, markdownBytes, manifest: other }).ok, false);
+  // The CLI reads the pinned paths, never paths taken from the manifest.
+  const src = read('tools/validate-modification-registry.mjs').toString('utf8');
+  assert.match(src, /readBytes\(REGISTRY_PATH\)/);
+  assert.match(src, /readBytes\(MARKDOWN_PATH\)/);
+  assert.ok(!/readBytes\(manifest/.test(src));
+});
+
+/* ------------------------------------------------------------------ malformed input fails closed */
+
+const doesNotThrow = (fn) => {
+  let r;
+  assert.doesNotThrow(() => { r = fn(); });
+  return r;
+};
+
+check('malformed registry structures return structured failures, never exceptions', () => {
+  const cases = [
+    ['null definition', (reg) => { reg.definitions[3] = null; }, 'DEFINITION_NOT_OBJECT', '/definitions/3'],
+    ['scalar definition', (reg) => { reg.definitions[5] = 42; }, 'DEFINITION_NOT_OBJECT', '/definitions/5'],
+    ['array definition', (reg) => { reg.definitions[6] = []; }, 'DEFINITION_NOT_OBJECT', '/definitions/6'],
+    ['null procedure', (reg) => { reg.procedures[0] = null; }, 'PROCEDURE_NOT_OBJECT', '/procedures/0'],
+    ['string typedDefinitions', (reg) => { findDef(reg, 'sv-cheater').typedDefinitions = 'x'; }, 'TYPED_DEFINITIONS_INVALID', '/definitions/0/typedDefinitions'],
+    ['null typed definition', (reg) => { findDef(reg, 'sv-cheater').typedDefinitions.equipment = null; }, 'TYPED_DEFINITION_NOT_OBJECT', '/definitions/0/typedDefinitions/equipment'],
+    ['string sourceFamilies', (reg) => { reg.sourceFamilies = 'abc'; }, 'REGISTRY_SHAPE_INVALID', '/sourceFamilies'],
+    ['null bookLedger', (reg) => { reg.bookLedger = null; }, 'REGISTRY_SHAPE_INVALID', '/bookLedger'],
+    ['null schema.required', (reg) => { reg.definitionsSchema.required = null; }, 'REGISTRY_SHAPE_INVALID', '/definitionsSchema/required'],
+    ['missing allowed states', (reg) => { delete reg.definitionsSchema.allowedCertificationStates; }, 'REGISTRY_SHAPE_INVALID', '/definitionsSchema/allowedCertificationStates']
+  ];
+  for (const [label, mutate, code, at] of cases) {
+    const r = doesNotThrow(() => variant(mutate));
+    assert.equal(r.ok, false, label);
+    assert.ok(hasFailure(r, code, at), `${label}: ${JSON.stringify(r.unexpectedFailures.slice(0, 3))}`);
+    assert.ok(!hasFailure(r, 'VALIDATOR_INTERNAL_ERROR'), `${label}: specific failure expected, not the internal-error net`);
+  }
+  // Malformed leaf values inside otherwise valid records: structured failures, no exception, no internal-error net.
+  for (const [label, mutate] of [
+    ['null source', (reg) => { findDef(reg, 'sv-cheater').source = null; }],
+    ['null originalSlotCost', (reg) => { findDef(reg, 'sv-cheater').originalSlotCost = null; }],
+    ['null originalCost', (reg) => { findDef(reg, 'sv-cheater').originalCost = null; }],
+    ['string candidateHostDomains', (reg) => { findDef(reg, 'sv-cheater').candidateHostDomains = 'equipment'; }],
+    ['null bookLedger entry', (reg) => { reg.bookLedger[0] = null; }],
+    ['null indexSummary', (reg) => { reg.indexSummary = null; }]
+  ]) {
+    const r = doesNotThrow(() => variant(mutate));
+    assert.equal(r.ok, false, label);
+    assert.ok(!hasFailure(r, 'VALIDATOR_INTERNAL_ERROR'), label);
+  }
+});
+
+check('registry JSON of the wrong top-level type and non-byte inputs fail closed', () => {
+  for (const text of ['null', '[]', '"x"', '42', 'true']) {
+    const bytes = Buffer.from(text, 'utf8');
+    const m = clone(manifest);
+    m.files.registry.byteLength = bytes.length;
+    m.files.registry.sha256 = sha(bytes);
+    const r = doesNotThrow(() => validateRegistry({ registryBytes: bytes, markdownBytes, manifest: m }));
+    assert.equal(r.ok, false, text);
+    assert.ok(hasFailure(r, 'REGISTRY_SHAPE_INVALID', '/'), text);
+  }
+  for (const bad of [undefined, null, 'text', {}, 7]) {
+    const r = doesNotThrow(() => validateRegistry({ registryBytes: bad, markdownBytes, manifest }));
+    assert.equal(r.ok, false);
+    assert.ok(hasFailure(r, 'REGISTRY_UNREADABLE'));
+    const m = doesNotThrow(() => validateRegistry({ registryBytes, markdownBytes: bad === null ? 'x' : bad, manifest }));
+    assert.equal(m.ok, false);
+  }
+  assert.equal(doesNotThrow(() => validateRegistry()).ok, false);
+  assert.equal(doesNotThrow(() => validateRegistry({})).ok, false);
+});
+
+check('malformed manifest structures fail closed with MANIFEST_INVALID, never an exception', () => {
+  const edits = [
+    ['string vocabulary array', (m) => { m.expected.vocabularies.domains = 'weapon'; }],
+    ['null vocabulary array', (m) => { m.expected.vocabularies.consumerStatus = null; }],
+    ['missing vocabulary array', (m) => { delete m.expected.vocabularies.priceTypes; }],
+    ['non-string vocabulary entry', (m) => { m.expected.vocabularies.slotCostTypes = ['fixed', 7]; }],
+    ['non-object counts', (m) => { m.expected.counts = []; }],
+    ['non-object typedDefinitions count', (m) => { m.expected.counts.typedDefinitions = 'x'; }],
+    ['negative count entry', (m) => { m.expected.counts.mechanicalCertification.PENDING_RULES_TEXT = -1; }],
+    ['missing eligibleCandidateRule', (m) => { delete m.expected.eligibleCandidateRule; }],
+    ['non-array excludedDefinitionIds', (m) => { m.expected.eligibleCandidateRule.excludedDefinitionIds = 'x'; }],
+    ['null registrySummaryAgreement', (m) => { m.expected.registrySummaryAgreement = null; }],
+    ['non-object files', (m) => { m.files = 'x'; }],
+    ['null file entry', (m) => { m.files.registry = null; }],
+    ['non-array attestations', (m) => { m.slotCostPageAttestations = {}; }]
+  ];
+  for (const [label, edit] of edits) {
+    const m = clone(manifest);
+    edit(m);
+    const r = doesNotThrow(() => validateRegistry({ registryBytes, markdownBytes, manifest: m }));
+    assert.equal(r.ok, false, label);
+    assert.ok(hasFailure(r, 'MANIFEST_INVALID'), `${label}: ${JSON.stringify(r.unexpectedFailures.slice(0, 2))}`);
+    assert.ok(!hasFailure(r, 'VALIDATOR_INTERNAL_ERROR'), label);
+  }
+  for (const bad of [undefined, null, 'x', 7, []]) {
+    const r = doesNotThrow(() => validateRegistry({ registryBytes, markdownBytes, manifest: bad }));
+    assert.equal(r.ok, false);
+  }
 });
 
 /* ------------------------------------------------------------------ no repair, no runtime loading, packaging */
