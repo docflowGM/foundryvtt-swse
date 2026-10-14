@@ -154,8 +154,9 @@ export async function applyCanonicalSpeciesToActor(actor, pendingContext) {
       actorState: { skills: actor.system?.skills, conBase: actor.system?.attributes?.con?.base },
       items: Array.from(actor.items || []),
       speciesName: pendingContext.identity.name,
+      readCurrent: key => key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), actor),
     });
-    Object.assign(mutations, reconciliation.resets);
+    Object.assign(mutations, reconciliation.resets, reconciliation.rewrites);
     if (reconciliation.itemsToCreate.length) mutations.itemsToCreate = reconciliation.itemsToCreate;
     else delete mutations.itemsToCreate;
     if (reconciliation.itemsToDelete.length) mutations.itemsToDelete = reconciliation.itemsToDelete;

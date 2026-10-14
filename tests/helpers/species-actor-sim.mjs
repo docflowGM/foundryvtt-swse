@@ -22,11 +22,24 @@ export function makeActor() {
   return { id: 'actor1', type: 'character', system: { attributes: attrs, skills, size: 'medium', speed: 6 }, flags: { swse: {} }, items: [], _next: 1 };
 }
 
-function setPath(obj, path, value) {
+const isPlainObject = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+
+/** Foundry update semantics: object values deep-MERGE into existing objects, arrays/scalars replace, `-=key: null` deletes. */
+function mergeInto(target, key, value) {
+  if (key.startsWith('-=')) { delete target[key.slice(2)]; return; }
+  if (isPlainObject(value) && isPlainObject(target[key])) {
+    for (const [k, v] of Object.entries(value)) mergeInto(target[key], k, v);
+  } else if (isPlainObject(value)) {
+    target[key] = {};
+    for (const [k, v] of Object.entries(value)) mergeInto(target[key], k, v);
+  } else target[key] = structuredClone(value);
+}
+
+export function setPath(obj, path, value) {
   const keys = path.split('.');
   let o = obj;
   for (const k of keys.slice(0, -1)) o = o[k] ??= {};
-  o[keys.at(-1)] = structuredClone(value);
+  mergeInto(o, keys.at(-1), value);
 }
 
 /** Apply a species mutation plan the way the three production consumers do (deletes, then fields, then creates). */

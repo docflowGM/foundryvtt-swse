@@ -64,6 +64,21 @@ export function computeSpeciesGrantKey(identity) {
   return `${species}|${identity?.variant?.id || 'base'}`;
 }
 
+const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+/**
+ * Foundry deep-MERGES object values on update, so writing a smaller object leaves
+ * the previous object's keys behind. Return `next` with `-=key: null` entries for
+ * every key the actor currently has that `next` omits (recursively).
+ */
+export function withStaleDeletions(current, next) {
+  if (!isPlainObject(next) || !isPlainObject(current)) return next;
+  const out = {};
+  for (const [key, value] of Object.entries(next)) out[key] = withStaleDeletions(current[key], value);
+  for (const key of Object.keys(current)) if (!(key in next) && !key.startsWith('-=')) out[`-=${key}`] = null;
+  return out;
+}
+
 function getPath(obj, path) {
   return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
 }
@@ -76,9 +91,10 @@ function getPath(obj, path) {
  * @param {object} args.actorState          { skills: {key:{trained,classSkill}}, conBase }
  * @param {Array}  args.items               actor items: [{id,type,name,flags:{swse:{...}}}]
  * @param {string} args.speciesName         new species name (legacy item reconciliation)
- * @returns {{ resets: object, itemsToDelete: string[], itemsToCreate: Array, manifest: object }}
+ * @param {Function} [args.readCurrent]   (dottedKey) => current actor value, used for stale-key deletion in object writes
+ * @returns {{ resets: object, rewrites: object, itemsToDelete: string[], itemsToCreate: Array, manifest: object }}
  */
-export function reconcileSpeciesGrant({ grantKey, plan, manifest, actorState = {}, items = [], speciesName }) {
+export function reconcileSpeciesGrant({ grantKey, plan, manifest, actorState = {}, items = [], speciesName, readCurrent = () => undefined }) {
   const previous = manifest && typeof manifest === 'object' ? manifest : null;
   const sameGrant = !!previous && previous.grantKey === grantKey;
   const resets = {};
@@ -159,5 +175,14 @@ export function reconcileSpeciesGrant({ grantKey, plan, manifest, actorState = {
   }
   const nextManifest = { grantKey, written, trainedSkills, classSkills, conBaseBefore };
 
-  return { resets, itemsToDelete, itemsToCreate, manifest: nextManifest };
+  // 7. Object-valued writes must also delete the previous object's stale keys (Foundry merges objects).
+  const rewrites = {};
+  for (const [key, value] of Object.entries({ ...plan, ...resets })) {
+    if (!isPlainObject(value)) continue;
+    const fixed = withStaleDeletions(readCurrent(key), value);
+    if (fixed !== value) rewrites[key] = fixed;
+  }
+  const manifestFixed = withStaleDeletions(readCurrent(MANIFEST_FLAG), nextManifest);
+
+  return { resets, rewrites, itemsToDelete, itemsToCreate, manifest: manifestFixed };
 }
