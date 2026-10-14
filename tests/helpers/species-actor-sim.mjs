@@ -56,10 +56,10 @@ export function applyPlan(actor, mutations) {
  * project owner's ruling RD-001 requires to keep working. `strict: true` exercises a NEW selection, where a species
  * with several verified publications needs an explicit, valid version.
  */
-export async function selectSpecies(actor, name, variantId = null, { strict = false } = {}) {
+export async function selectSpecies(actor, name, variantId = null, { strict = false, abilityChoice = null } = {}) {
   const entry = SpeciesRegistry.getByName(name);
   if (!entry) throw new Error(`no species ${name}`);
-  const identity = variantId ? { ...entry, selectedVariantId: variantId, variantId } : entry.id; // mirrors species-step.js
+  const identity = (variantId || abilityChoice) ? { ...entry, ...(variantId ? { selectedVariantId: variantId, variantId } : {}), ...(abilityChoice ? { selectedAbilityChoice: abilityChoice } : {}) } : entry.id; // mirrors species-step.js
   // Non-strict = an existing actor that already records this species/variant; the builder derives that from the actor.
   const saved = { species: actor.system.species, variant: actor.system.speciesVariant, flagVariant: actor.flags?.swse?.speciesVariant };
   if (!strict) {

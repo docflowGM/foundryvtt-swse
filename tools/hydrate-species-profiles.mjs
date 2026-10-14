@@ -26,6 +26,7 @@ const also = new Set(args.includes('--also') ? args[args.indexOf('--also') + 1].
 const only = args.includes('--only') ? new Set(args[args.indexOf('--only') + 1].split(',')) : null;
 if (!bundlePath) { console.error('usage: hydrate-species-profiles.mjs <bundle.json> [--write] [--only ID,ID]'); process.exit(2); }
 
+const PROVENANCE = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/data/species-legacy-variant-provenance.json'), 'utf8'));
 const bundle = JSON.parse(fs.readFileSync(bundlePath, 'utf8'));
 const perIdentity = new Map();
 for (const p of bundle.sourceProfiles) perIdentity.set(p.speciesAuditIdentityKey, (perIdentity.get(p.speciesAuditIdentityKey) ?? 0) + 1);
@@ -45,13 +46,14 @@ for (const profile of bundle.sourceProfiles) {
   if (idx === undefined) { held.push([tag, 'no species record']); continue; }
   const rec = recs[idx];
   let out;
-  try { out = hydrateProfile(profile, rec); } catch (err) {
+  try { out = hydrateProfile(profile, rec, { provenance: PROVENANCE }); } catch (err) {
     if (err instanceof HoldProfile) { held.push([tag, err.reason]); continue; }
     throw err;
   }
   const { variant, expectation } = out;
   const multi = perIdentity.get(profile.speciesAuditIdentityKey) > 1;
-  rec.system.variants = multi ? [...(rec.system.variants ?? []).filter(v => v.id !== variant.id), variant] : [variant];
+  const legacyKept = (rec.system.variants ?? []).filter(v => v.completeSnapshot !== true);
+  rec.system.variants = multi ? [...(rec.system.variants ?? []).filter(v => v.id !== variant.id), variant] : [...legacyKept, variant];
   if (!multi) {
     // Base display fields mirror the sole canonical profile (so lists/cards never show unprinted legacy data).
     Object.assign(rec.system, {
@@ -108,6 +110,18 @@ if (write) {
   ].join('\n');
   fs.writeFileSync(STATUS, text);
 }
+// Legacy variant provenance: annotate (never delete or rename) every legacy variant that has audited evidence.
+let annotated = 0;
+for (const entry of PROVENANCE) {
+  const idx = byId.get(`species-${slug(entry.species)}`);
+  const v = idx === undefined ? null : recs[idx].system.variants?.find(x => x.id === entry.variantId);
+  if (!v) continue;
+  if (entry.supersededBy) v.supersededBy = entry.supersededBy; else delete v.supersededBy;
+  v.legacyProvenance = { classification: entry.classification, hideFromNewSelection: entry.hideFromNewSelection, matchedProfiles: entry.evidence.map(e => e.sourceProfileId) };
+  annotated++;
+}
+if (write) fs.writeFileSync(PACK, recs.map((r, i) => (r ? JSON.stringify(r) : lines[i])).join('\n'));
+console.log(`legacy variants annotated: ${annotated}`);
 const counts = {};
 for (const [, , auto] of done) for (const a of auto) counts[a.automation] = (counts[a.automation] ?? 0) + 1;
 console.log(`${write ? 'WROTE' : 'dry run:'} ${done.length} hydrated, ${held.length} held; feature automation`, counts);

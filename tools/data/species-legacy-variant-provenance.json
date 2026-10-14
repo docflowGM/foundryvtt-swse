@@ -1,0 +1,325 @@
+[
+ {
+  "species": "Chadra-Fan",
+  "variantId": "chadra-fan-alternate",
+  "classification": "DUPLICATE_OF_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "LEG-2C-12",
+    "publication": "Legacy Era Campaign Guide",
+    "printedPages": [
+     211
+    ]
+   }
+  ],
+  "differs": [],
+  "supersededBy": "chadra-fan-leg-2c-12",
+  "hideFromNewSelection": true
+ },
+ {
+  "species": "Yuuzhan Vong",
+  "variantId": "yuuzhan-vong-alternate",
+  "classification": "DUPLICATE_OF_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "CORE-2A-21",
+    "publication": "Core Rulebook (2007)",
+    "printedPages": [
+     285
+    ]
+   },
+   {
+    "sourceProfileId": "LEG-2C-07",
+    "publication": "Legacy Era Campaign Guide",
+    "printedPages": [
+     16
+    ]
+   }
+  ],
+  "differs": [],
+  "supersededBy": null,
+  "hideFromNewSelection": true,
+  "note": "Identical numbers in both printed profiles; the record cannot be attributed to one of them."
+ },
+ {
+  "species": "Bith",
+  "variantId": "bith-alternate",
+  "classification": "NEAR_DUPLICATE_OF_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "TOG-2K-01",
+    "publication": "Threats of the Galaxy",
+    "printedPages": [
+     26
+    ]
+   }
+  ],
+  "differs": [
+   "languages (adds Basic, which the printed line omits; see register RD-008)"
+  ],
+  "supersededBy": "bith-tog-2k-01",
+  "hideFromNewSelection": true
+ },
+ {
+  "species": "Krevaaki",
+  "variantId": "krevaaki-alternate",
+  "classification": "NEAR_DUPLICATE_OF_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "JATM-2J-04",
+    "publication": "Jedi Academy Training Manual",
+    "printedPages": [
+     111
+    ]
+   },
+   {
+    "sourceProfileId": "UR-2B-04",
+    "publication": "The Unknown Regions",
+    "printedPages": [
+     13
+    ]
+   }
+  ],
+  "differs": [
+   "languages (Kreva vs printed Dromnyr; see register RD-006)",
+   "trait name (Grasping Tentacles vs Tentacles)"
+  ],
+  "supersededBy": "krevaaki-jatm-2j-04",
+  "hideFromNewSelection": true
+ },
+ {
+  "species": "Neimoidian",
+  "variantId": "neimoidian-alternate",
+  "classification": "NO_MATCHING_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "CORE-2A-20",
+    "publication": "Core Rulebook (2007)",
+    "printedPages": [
+     285
+    ]
+   },
+   {
+    "sourceProfileId": "GOI-2G-08",
+    "publication": "Galaxy of Intrigue",
+    "printedPages": [
+     18
+    ]
+   }
+  ],
+  "differs": [
+   "abilityMods (STR -2, INT +2, CHA +2 is printed by neither profile)",
+   "languages",
+   "traits (Deceptive not printed)"
+  ],
+  "supersededBy": null,
+  "hideFromNewSelection": true,
+  "note": "Combines modifiers and languages from two different publications."
+ },
+ {
+  "species": "Devaronian",
+  "variantId": "devaronian-female",
+  "classification": "WITHIN_PROFILE_CHOICE",
+  "evidence": [
+   {
+    "sourceProfileId": "LEG-2C-13",
+    "publication": "Legacy Era Campaign Guide",
+    "printedPages": [
+     214
+    ]
+   }
+  ],
+  "differs": [
+   "abilityMods (printed female set is +2 INT, +2 WIS, -2 DEX)",
+   "skillBonuses (not printed)"
+  ],
+  "supersededBy": "devaronian-leg-2c-13",
+  "hideFromNewSelection": true,
+  "note": "The printed profile gives mutually exclusive male and female modifier sets; the choice is implemented as the existing ability choice."
+ },
+ {
+  "species": "Gand",
+  "variantId": "gand-force-sensitive",
+  "classification": "NO_MATCHING_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "SV-2F-04",
+    "publication": "Scum and Villainy",
+    "printedPages": [
+     9
+    ]
+   }
+  ],
+  "differs": [
+   "skillBonuses (not printed)",
+   "traits not recorded on the variant"
+  ],
+  "supersededBy": "gand-sv-2f-04",
+  "hideFromNewSelection": true,
+  "note": "Ability modifiers equal the printed profile; the Force-sensitive distinction is not printed in the audited profile."
+ },
+ {
+  "species": "Gand",
+  "variantId": "gand-non-force-sensitive",
+  "classification": "NO_MATCHING_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "SV-2F-04",
+    "publication": "Scum and Villainy",
+    "printedPages": [
+     9
+    ]
+   }
+  ],
+  "differs": [
+   "abilityMods (+2 CON is not printed)",
+   "skillBonuses (not printed)"
+  ],
+  "supersededBy": "gand-sv-2f-04",
+  "hideFromNewSelection": true
+ },
+ {
+  "species": "Jawa",
+  "variantId": "jawa-alternate",
+  "classification": "NO_MATCHING_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "SV-2F-05",
+    "publication": "Scum and Villainy",
+    "printedPages": [
+     10
+    ]
+   }
+  ],
+  "differs": [
+   "abilityMods (-2 CHA not printed)",
+   "languages",
+   "traits (Tinkerer not printed)"
+  ],
+  "supersededBy": "jawa-sv-2f-05",
+  "hideFromNewSelection": true
+ },
+ {
+  "species": "Kaminoan",
+  "variantId": "kaminoan-alternate",
+  "classification": "NO_MATCHING_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "CW-2H-05",
+    "publication": "The Clone Wars Campaign Guide",
+    "printedPages": [
+     14
+    ]
+   }
+  ],
+  "differs": [
+   "abilityMods (+2 CON; printed is +2 INT)",
+   "traits (Ocean Dweller, Reroll not printed)"
+  ],
+  "supersededBy": "kaminoan-cw-2h-05",
+  "hideFromNewSelection": true
+ },
+ {
+  "species": "Nautolan",
+  "variantId": "nautolan-variant",
+  "classification": "NO_MATCHING_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "CW-2H-07",
+    "publication": "The Clone Wars Campaign Guide",
+    "printedPages": [
+     15
+    ]
+   }
+  ],
+  "differs": [
+   "abilityMods (-2 WIS not recorded)",
+   "skillBonuses (not printed)"
+  ],
+  "supersededBy": "nautolan-cw-2h-07",
+  "hideFromNewSelection": true
+ },
+ {
+  "species": "Noghri",
+  "variantId": "noghri-alternate",
+  "classification": "NO_MATCHING_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "TFU-2E-11",
+    "publication": "The Force Unleashed Campaign Guide",
+    "printedPages": [
+     185
+    ]
+   }
+  ],
+  "differs": [
+   "abilityMods (+2 WIS not recorded)",
+   "speed",
+   "traits"
+  ],
+  "supersededBy": "noghri-tfu-2e-11",
+  "hideFromNewSelection": true
+ },
+ {
+  "species": "Quarren",
+  "variantId": "quarren-variant",
+  "classification": "NO_MATCHING_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "CORE-2A-11",
+    "publication": "Core Rulebook (2007)",
+    "printedPages": [
+     29
+    ]
+   }
+  ],
+  "differs": [
+   "abilityMods (-2 INT; printed is -2 WIS, -2 CHA)",
+   "languages",
+   "traits"
+  ],
+  "supersededBy": null,
+  "hideFromNewSelection": true,
+  "note": "Core Quarren is reconciled on the base record; this legacy variant matches no printed profile."
+ },
+ {
+  "species": "Umbaran",
+  "variantId": "umbaran-alternate",
+  "classification": "NO_MATCHING_PUBLISHED_PROFILE",
+  "evidence": [
+   {
+    "sourceProfileId": "GOI-2G-09",
+    "publication": "Galaxy of Intrigue",
+    "printedPages": [
+     19
+    ]
+   }
+  ],
+  "differs": [
+   "abilityMods",
+   "traits"
+  ],
+  "supersededBy": "umbaran-goi-2g-09",
+  "hideFromNewSelection": true
+ },
+ {
+  "species": "Elom",
+  "variantId": "elomite-variant",
+  "classification": "UNVERIFIABLE_OUTSIDE_AUDIT",
+  "evidence": [],
+  "differs": [],
+  "supersededBy": null,
+  "hideFromNewSelection": false,
+  "note": "Elom is not in the Phase 4-B audit inventory and no audited sourcebook prints this profile."
+ },
+ {
+  "species": "Pau'an",
+  "variantId": "pau-an-variant",
+  "classification": "UNVERIFIABLE_OUTSIDE_AUDIT",
+  "evidence": [],
+  "differs": [],
+  "supersededBy": null,
+  "hideFromNewSelection": false,
+  "note": "Pau'an is not in the Phase 4-B audit inventory and no audited sourcebook prints this profile."
+ }
+]

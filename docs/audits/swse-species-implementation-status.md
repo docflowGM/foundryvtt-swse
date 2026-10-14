@@ -6,7 +6,7 @@ Certification: every row is `SOURCE_VERIFIED` against the audit, `DATA_RECONCILE
 not automated (`MECHANIC_SPECIFIED`/`IMPLEMENTED` not claimed). **Engine-mapped** activations reuse an existing activated-ability
 engine entry by name; the engine entry is pre-existing and its fidelity to the printed text is not re-verified here.
 
-## Hydrated once-published profiles (79)
+## Hydrated once-published profiles (87)
 
 | Profile | Variant id | Structured (automated) | Engine-mapped activation | Display-only |
 |---|---|---|---|---|
@@ -32,7 +32,9 @@ engine entry by name; the engine entry is pre-existing and its fidelity to the p
 | LEG-2C-09 Vahla | `vahla-leg-2c-09` | Force Sensitivity, Cartilaginous Skeleton | — | Dark Side Stigma (FORCE_POINT_COST_MODIFIER) |
 | LEG-2C-10 Advozse | `advozse-leg-2c-10` | Heightened Awareness, Natural Armor | — | Low-Light Vision (VISION) |
 | LEG-2C-11 Sakiyan | `sakiyan-leg-2c-11` | Conditional Bonus Feat, Lightning Reflexes | — | Darkvision (VISION) |
+| LEG-2C-13 Devaronian | `devaronian-leg-2c-13` | Conditional Bonus Feat | — | Natural Curiosity (ENCOUNTER_STANDARD_ACTION_TARGETED_INSIGHT) |
 | KOTOR-2D-01 Arkanian | `arkanian-kotor-2d-01` | — | — | Darkvision (VISION); Intellectual Reputation (ABILITY_MODIFIER_SUBSTITUTION); Flash of Genius (ENCOUNTER_CONDITIONAL_SKILL_BONUS) |
+| KOTOR-2D-02 Arkanian Offshoot | `arkanian-offshoot-kotor-2d-02` | — | — | Conditional Bonus Feat (CONDITIONAL_FEAT_GRANT); Determination (ENCOUNTER_FAILED_SKILL_REROLL) |
 | KOTOR-2D-03 Cathar | `cathar-kotor-2d-03` | — | — | Natural Weapons (SPECIES_NATURAL_WEAPON_ATTACK); Reactive Claw (ENCOUNTER_SWIFT_FOLLOW_UP_NATURAL_ATTACK); Cathar Instincts (CLASS_SKILL_EXPANSION) |
 | KOTOR-2D-04 Draethos | `draethos-kotor-2d-04` | Natural Armor, Bonus Feat | Natural Telepath | Low-Light Vision (VISION) |
 | KOTOR-2D-05 Feeorin | `feeorin-kotor-2d-05` | Great Fortitude | — | Brutal (ENCOUNTER_DAMAGE_THRESHOLD_OVERRIDE); Inborn Resilience (SECOND_WIND_UNCONSCIOUS_EXCEPTION); Low-Light Vision (VISION); Stronger by Age (AGE_TIER_CHECK_BONUS_AND_ABILITY_AGE_EXCEPTION) |
@@ -52,9 +54,12 @@ engine entry by name; the engine entry is pre-existing and its fidelity to the p
 | TFU-2E-08 Togruta | `togruta-tfu-2e-08` | — | — | Pack Hunter (CONDITIONAL_MELEE_DAMAGE); Sneaky (SKILL_REROLL); Spatial Awareness (PERCEPTION_SPECIAL_SENSE) |
 | TFU-2E-09 Whiphid | `whiphid-tfu-2e-09` | — | — | Insulating Fur (CONDITIONAL_DEFENSE_BONUS); Natural Weapon (Claws) (NATURAL_WEAPON); Scent (PERCEPTION_SPECIAL_SENSE) |
 | TFU-2E-10 Yarkora | `yarkora-tfu-2e-10` | Deceptive, Streetwise | Confusion | — |
+| TFU-2E-11 Noghri | `noghri-tfu-2e-11` | — | — | Conditional Bonus Feat (Running Attack) (CONDITIONAL_FEAT_GRANT); Scent (PERCEPTION_SPECIAL_SENSE) |
 | SV-2F-01 Blood Carver | `blood-carver-sv-2f-01` | Conditional Bonus Feat (Skill Focus Acrobatics) | — | Deathstrike (CONDITIONAL_MELEE_EXTRA_DAMAGE) |
 | SV-2F-02 Clawdite | `clawdite-sv-2f-02` | — | Shapeshift, Startle | — |
 | SV-2F-03 Falleen | `falleen-sv-2f-03` | — | Pheromones | Hold Breath (BREATH_HOLDING); Pheromone Acclimation (CONDITIONAL_DEFENSE_BONUS) |
+| SV-2F-04 Gand | `gand-sv-2f-04` | — | — | Darkvision (VISION); Hardy (SECOND_WIND_MODIFIER); Special Equipment (Breathing Apparatus) (ENVIRONMENTAL_EQUIPMENT_DEPENDENCY); Limb Regeneration (LONG_TERM_RECOVERY) |
+| SV-2F-05 Jawa | `jawa-sv-2f-05` | — | — | Darkvision (VISION); Desert Dweller (CONDITIONAL_SKILL_REROLL); Scavenger (CONDITIONAL_ION_DAMAGE_BONUS); Mechanics Aptitude (CLASS_SKILL_AND_REROLL) |
 | SV-2F-06 Ryn | `ryn-sv-2f-06` | — | — | Musical Beak (DECEPTION_REROLL_AND_DISTRACTION); Prehensile Tail (CARRYING_EXTRA_LIMB); Connections (GATHER_INFORMATION_COST_EXEMPTION); Sabacc Fortune-Telling Sidebar (OPTIONAL_SPECIES_CONTEXT_RULE) |
 | SV-2F-07 Toydarian | `toydarian-sv-2f-07` | Conditional Bonus Feat (Skill Focus Deception) | — | Flight (Hover Restrictions) (MOVEMENT_MODE_RESTRICTION); Force Resistance (CONDITIONAL_DEFENSE_BONUS) |
 | SV-2F-08 Ubese | `ubese-sv-2f-08` | Survival Instinct, Conditional Bonus Feat (Skill Focus Perception) | — | Aggressive (CHARGE_TRIGGERED_ENCOUNTER_ATTACK_BONUS); Special Equipment (Environment Suit) (ENVIRONMENTAL_EQUIPMENT_DEPENDENCY) |
@@ -68,6 +73,7 @@ engine entry by name; the engine entry is pre-existing and its fidelity to the p
 | GOI-2G-05 Gotal | `gotal-goi-2g-05` | — | — | Energy Reading (ACTIVATED_PERCEPTION_VS_DEFENSE); Low-Light Vision (VISION); Sensor Cones (USE_THE_FORCE_UNTRAINED_APPLICATIONS) |
 | GOI-2G-06 Herglic | `herglic-goi-2g-06` | Conditional Bonus Feat (Skill Focus Gather Information) | — | Sturdy (SECOND_WIND_EXTRA_HEALING) |
 | GOI-2G-07 Mrlssi | `mrlssi-goi-2g-07` | Skills (Mechanics), Conditional Bonus Feat (Skill Focus Persuasion) | — | Scholarly Inclination (BONUS_TRAINED_SKILL_CHOICE) |
+| GOI-2G-09 Umbaran | `umbaran-goi-2g-09` | Stealthy, Conditional Bonus Feat (Skill Focus Gather Information) | — | Darkvision (VISION) |
 | GOI-2G-10 Pa'lowick | `pa-lowick-goi-2g-10` | — | — | Expert Swimmer (SKILL_REROLL_AND_TAKE10_EXCEPTION); Hold Breath (EXTENDED_BREATH_HOLDING) |
 | GOI-2G-11 Elomin | `elomin-goi-2g-11` | — | — | Impose Order (ONCE_PER_ENCOUNTER_ALLY_REPOSITION); Logical Mind (CONDITIONAL_DEFENSE_BONUS) |
 | GOI-2G-12 Nyriaanan | `nyriaanan-goi-2g-12` | Bonus Class Skill (Survival), Bonus Feat | — | Low-Light Vision (VISION) |
@@ -75,7 +81,9 @@ engine entry by name; the engine entry is pre-existing and its fidelity to the p
 | CW-2H-02 Gen'Dai | `gen-dai-cw-2h-02` | — | — | Gen'Dai Surge (SECOND_WIND_TRIGGERED_REGENERATION); Hibernation (FORCE_TRANCE_EXCEPTION_AND_INDEFINITE_SUSPENSION); Mental Instability (AGE_CATEGORY_ABILITY_ADJUSTMENT); Regeneration (LIMB_REGROWTH); Resilient Physiology (DEATH_ONLY_DAMAGE_THRESHOLD_MULTIPLIER) |
 | CW-2H-03 Iktotchi | `iktotchi-cw-2h-03` | Natural Armor, Expert Pilot | — | Limited Precognition (ONCE_PER_ENCOUNTER_REACTION_DEFENSE) |
 | CW-2H-04 Kaleesh | `kaleesh-cw-2h-04` | Conditional Bonus Feat (Skill Focus Survival), Persistent | — | Darkvision (VISION); Driven (CONDITIONAL_DEFENSE_BONUS) |
+| CW-2H-05 Kaminoan | `kaminoan-cw-2h-05` | Conditional Bonus Feat (Skill Focus Treat Injury), Resistant | — | — |
 | CW-2H-06 Kerkoiden | `kerkoiden-cw-2h-06` | — | — | Predator's Heritage (TARGET_HISTORY_CONDITIONAL_DAMAGE); Social Cunning (SKILL_ABILITY_SUBSTITUTION) |
+| CW-2H-07 Nautolan | `nautolan-cw-2h-07` | — | — | Breathe Underwater (AQUATIC_RESPIRATION); Expert Swimmer (SKILL_REROLL_AND_TAKE10_EXCEPTION); Low-Light Vision (VISION); Natural Damage Reduction (DAMAGE_REDUCTION); Pheromonal Sensor (CONDITIONAL_SKILL_REROLL) |
 | CW-2H-08 Nelvaanian | `nelvaanian-cw-2h-08` | — | — | Low-Light Vision (VISION); Scent (ENHANCED_PERCEPTION_TRACKING); Shadow Swiftness (CONDITIONAL_MOVEMENT_AOO_EXCEPTION) |
 | CW-2H-09 Vurk | `vurk-cw-2h-09` | Nomads | — | Breathe Underwater (AQUATIC_RESPIRATION); Expert Swimmer (SKILL_REROLL_AND_TAKE10_EXCEPTION); Placid (ONCE_PER_ENCOUNTER_FREE_ACTION_CONDITION_REMOVAL) |
 | GAW-2I-01 Barabel | `barabel-gaw-2i-01` | Natural Armor | — | Natural Weapons (SPECIES_GRANTED_NATURAL_ATTACK_CHOICE); Stun Resistance (CONDITIONAL_DAMAGE_THRESHOLD_BONUS); Radiation Resistance (ENVIRONMENTAL_RESISTANCE_WITH_CONDITION_EXCEPTION); Darkvision (VISION); Intimidation Skill Reroll (SKILL_REROLL); Jedi Respect (contextual sidebar) (OPTIONAL_CONTEXTUAL_ATTITUDE_RULE) |
@@ -98,7 +106,7 @@ engine entry by name; the engine entry is pre-existing and its fidelity to the p
 - Darkvision / Low-light Vision, conditional skill bonuses and defenses, and all activated abilities without an engine entry are display-only.
 - Small-size Stealth (+5) is a general size rule and is not applied by species data (see register RD-007).
 
-## Held (50)
+## Held (42)
 
 | Profile | Reason |
 |---|---|
@@ -132,19 +140,11 @@ engine entry by name; the engine entry is pre-existing and its fidelity to the p
 | LEG-2C-02 Chiss | published in several profiles (separate path) |
 | LEG-2C-07 Yuuzhan Vong | published in several profiles (separate path) |
 | LEG-2C-12 Chadra-Fan | published in several profiles (separate path) |
-| LEG-2C-13 Devaronian | ability-choice / ability generation support |
-| KOTOR-2D-02 Arkanian Offshoot | ability-choice / ability generation support |
 | TFU-2E-03 Felucian | proficiency suppression without a feat list |
-| TFU-2E-11 Noghri | legacy variant(s) noghri-alternate pending provenance reconciliation |
 | TFU-2E-12 Chiss | published in several profiles (separate path) |
-| SV-2F-04 Gand | legacy variant(s) gand-force-sensitive, gand-non-force-sensitive pending provenance reconciliation |
-| SV-2F-05 Jawa | legacy variant(s) jawa-alternate pending provenance reconciliation |
 | GOI-2G-01 Bith | published in several profiles (separate path) |
 | GOI-2G-08 Neimoidian | published in several profiles (separate path) |
-| GOI-2G-09 Umbaran | legacy variant(s) umbaran-alternate pending provenance reconciliation |
-| CW-2H-05 Kaminoan | legacy variant(s) kaminoan-alternate pending provenance reconciliation |
-| CW-2H-07 Nautolan | legacy variant(s) nautolan-variant pending provenance reconciliation |
-| CW-2H-10 Republic Clone | ability-choice / ability generation support |
+| CW-2H-10 Republic Clone | ability score generation support (fixed array) |
 | CW-2H-11 Chagrian | published in several profiles (separate path) |
 | GAW-2I-02 Dashade | automatic languages not recorded in the audit |
 | JATM-2J-01 Shard | droid integration deferred |

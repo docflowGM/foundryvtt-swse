@@ -307,6 +307,9 @@ export class SpeciesRegistry {
           languages: Array.isArray(variant.languages) ? variant.languages : [],
           description: String(variant.description ?? '').trim(),
           traits,
+          // Legacy variant provenance (tools/data/species-legacy-variant-provenance.json): superseded by a verified profile.
+          ...(variant.supersededBy ? { supersededBy: String(variant.supersededBy) } : {}),
+          ...(variant.legacyProvenance && typeof variant.legacyProvenance === 'object' ? { legacyProvenance: variant.legacyProvenance } : {}),
           // Complete-snapshot (single published profile) fields. See species-variant-profile.js.
           ...(variant.completeSnapshot === true ? {
             completeSnapshot: true,

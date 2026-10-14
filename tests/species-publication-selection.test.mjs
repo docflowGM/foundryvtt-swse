@@ -27,11 +27,12 @@ for (const [name, count] of Object.entries(MULTI)) {
   assert.equal(getPublicationVersions(entry(name)).length, count, `${name} versions`);
   assert.equal(requiresPublicationSelection(entry(name)), true, name);
 }
-for (const name of ['Human', 'Wookiee', 'Devaronian', 'Gand']) {
+for (const name of ['Human', 'Wookiee', 'Devaronian', 'Gand', 'Elom']) {
   assert.equal(requiresPublicationSelection(entry(name)), false, `${name} needs no extra selection`);
   assert.equal(checkPublicationSelection(entry(name), null).ok, true);
 }
-assert.ok(entry('Devaronian').variants.length > 0, 'precondition: Devaronian keeps its legacy (non-publication) variant');
+assert.ok(entry('Devaronian').variants.some(v => v.id === 'devaronian-female'), 'Devaronian keeps its legacy variant id for existing actors');
+assert.equal(getSoleSnapshotVersion(entry('Devaronian'))?.sourceProfileId, 'LEG-2C-13', 'and its audited profile (with the existing ability choice) is the canonical one');
 // Barabel: two audited publications, both hydrated (natural attacks through the existing item path) -> explicit version choice.
 assert.equal(getPublicationVersions(entry('Barabel')).length, 2);
 assert.equal(getPublicationStatus(entry('Barabel')), PUBLICATION_STATUS.MULTIPLE_VERIFIED);
@@ -142,7 +143,7 @@ assert.equal(getPublicationStatus(entry('Chiss')), PUBLICATION_STATUS.MULTIPLE_V
 // ---- A species published exactly once applies its sole profile; it is not an alternative to pick ----
 {
   assert.equal(getSoleSnapshotVersion(entry('Nikto'))?.sourceProfileId, 'UR-2B-05');
-  for (const name of ['Chiss', 'Barabel', 'Devaronian', 'Human', 'Wookiee']) assert.equal(getSoleSnapshotVersion(entry(name)), null, `${name}: not a sole-snapshot species`);
+  for (const name of ['Chiss', 'Barabel', 'Human', 'Wookiee', 'Elom']) assert.equal(getSoleSnapshotVersion(entry(name)), null, `${name}: not a sole-snapshot species`);
   assert.equal(requiresPublicationSelection(entry('Nikto')), false, 'nothing to choose');
   const step = Object.create(SpeciesStep.prototype);
   step._selectedVariantBySpeciesId = new Map(); step._selectedAbilityChoiceBySpeciesId = new Map();
@@ -239,8 +240,12 @@ const makeStep = () => { const s = Object.create(SpeciesStep.prototype); s._sele
   assert.ok(!effective.publicationUnselected);
 
   // Species without publications keep their original selector (Default + legacy variants).
-  const dev = step._formatSpeciesVariants(entry('Devaronian'));
-  assert.ok(dev.length > 0 && !dev[0].traitRows);
+  // (Elom's legacy variant cannot be verified from the audit, so it stays offered exactly as before.)
+  const elom = step._formatSpeciesVariants(entry('Elom'));
+  assert.ok(elom.length > 0 && !elom[0].traitRows);
+  assert.equal(requiresPublicationSelection(entry('Elom')), false);
+  // Devaronian's printed male/female sets are a within-profile choice (existing ability choice), not a variant list.
+  assert.deepEqual(step._formatSpeciesVariants(entry('Devaronian')), []);
   assert.equal(requiresPublicationSelection(entry('Devaronian')), false);
 }
 {

@@ -301,3 +301,15 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+---
+
+## SPECIES-RD-011 — PROGRESS NOTE (appended; the original entry above is preserved unchanged)
+
+| Field | |
+|---|---|
+| Nature | Provenance was established from the printed profiles in the Phase 4-B audit instead of asking for per-variant rulings. |
+| Result | 14 of 16 legacy variants classified from evidence (see `docs/audits/swse-species-variant-audit.md`): 2 duplicates, 2 near-duplicates (language differences only; RD-006/RD-008), 1 within-profile choice (Devaronian, now the existing ability choice inside its verified profile), 9 matching no printed profile (no longer offered for new selections; ids preserved). |
+| Still open | Elom and Pau'an are not in the audit inventory, so their variants cannot be verified; they are left unchanged. This is a coverage gap, not a rules question. |
+| Decision needed from the owner | None for classification. The owner may veto hiding any "no matching profile" variant from new selections. |
+| Status | `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |

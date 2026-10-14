@@ -237,6 +237,40 @@
    "flash-of-genius": "display-only"
   }
  },
+ "arkanian-offshoot-kotor-2d-02": {
+  "species": "Arkanian Offshoot",
+  "sourceProfileId": "KOTOR-2D-02",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": -2,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Arkanian",
+   "Basic"
+  ],
+  "traitIds": [
+   "conditional-bonus-feat-text",
+   "determination"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat-text": "display-only",
+   "determination": "display-only"
+  }
+ },
  "balosar-sv-2f-09": {
   "species": "Balosar",
   "sourceProfileId": "SV-2F-09",
@@ -679,6 +713,47 @@
    "special-equipment-ultraviolet-visor": "display-only"
   }
  },
+ "devaronian-leg-2c-13": {
+  "species": "Devaronian",
+  "sourceProfileId": "LEG-2C-13",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Devaronese"
+  ],
+  "traitIds": [
+   "conditional-bonus-feat",
+   "natural-curiosity"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Deception)",
+    "requiresTrained": [
+     "deception"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat": "structured-rule",
+   "natural-curiosity": "display-only"
+  }
+ },
  "draethos-kotor-2d-04": {
   "species": "Draethos",
   "sourceProfileId": "KOTOR-2D-04",
@@ -953,6 +1028,43 @@
   "automation": {
    "deceptive": "structured-rule",
    "healing-glands": "display-only"
+  }
+ },
+ "gand-sv-2f-04": {
+  "species": "Gand",
+  "sourceProfileId": "SV-2F-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Gand"
+  ],
+  "traitIds": [
+   "darkvision",
+   "hardy",
+   "special-equipment-breathing-apparatus",
+   "limb-regeneration"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "hardy": "display-only",
+   "special-equipment-breathing-apparatus": "display-only",
+   "limb-regeneration": "display-only"
   }
  },
  "gen-dai-cw-2h-02": {
@@ -1277,6 +1389,44 @@
    "low-light-vision": "display-only"
   }
  },
+ "jawa-sv-2f-05": {
+  "species": "Jawa",
+  "sourceProfileId": "SV-2F-05",
+  "abilityMods": {
+   "str": -2,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Small",
+  "speed": 4,
+  "languages": [
+   "Jawa",
+   "Jawa Trade Language"
+  ],
+  "traitIds": [
+   "darkvision",
+   "desert-dweller",
+   "scavenger",
+   "mechanics-aptitude"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "desert-dweller": "display-only",
+   "scavenger": "display-only",
+   "mechanics-aptitude": "display-only"
+  }
+ },
  "kaleesh-cw-2h-04": {
   "species": "Kaleesh",
   "sourceProfileId": "CW-2H-04",
@@ -1325,6 +1475,52 @@
    "darkvision": "display-only",
    "driven": "display-only",
    "persistent": "structured-rule"
+  }
+ },
+ "kaminoan-cw-2h-05": {
+  "species": "Kaminoan",
+  "sourceProfileId": "CW-2H-05",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Kaminoan"
+  ],
+  "traitIds": [
+   "conditional-bonus-feat-skill-focus-treat-injury",
+   "resistant"
+  ],
+  "defense": {
+   "fortitude": {
+    "value": 2,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Treat Injury)",
+    "requiresTrained": [
+     "treatInjury"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat-skill-focus-treat-injury": "structured-rule",
+   "resistant": "structured-rule"
   }
  },
  "kerkoiden-cw-2h-06": {
@@ -1695,6 +1891,46 @@
    "weapon-familiarity": "display-only"
   }
  },
+ "nautolan-cw-2h-07": {
+  "species": "Nautolan",
+  "sourceProfileId": "CW-2H-07",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": -2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Nautila"
+  ],
+  "traitIds": [
+   "breathe-underwater",
+   "expert-swimmer",
+   "low-light-vision",
+   "natural-damage-reduction",
+   "pheromonal-sensor"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "breathe-underwater": "display-only",
+   "expert-swimmer": "display-only",
+   "low-light-vision": "display-only",
+   "natural-damage-reduction": "display-only",
+   "pheromonal-sensor": "display-only"
+  }
+ },
  "nelvaanian-cw-2h-08": {
   "species": "Nelvaanian",
   "sourceProfileId": "CW-2H-08",
@@ -1783,6 +2019,45 @@
    "great-fortitude": "structured-rule",
    "natural-armor": "structured-rule",
    "survival-instincts": "structured-rule"
+  }
+ },
+ "noghri-tfu-2e-11": {
+  "species": "Noghri",
+  "sourceProfileId": "TFU-2E-11",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": -4
+  },
+  "size": "Small",
+  "speed": 4,
+  "languages": [
+   "Honoghran"
+  ],
+  "traitIds": [
+   "primitive",
+   "conditional-bonus-feat-running-attack",
+   "scent"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "primitive": "structured-field",
+   "conditional-bonus-feat-running-attack": "display-only",
+   "scent": "display-only"
   }
  },
  "nosaurian-tfu-2e-05": {
@@ -2709,6 +2984,54 @@
    "survival-instinct": "structured-rule",
    "conditional-bonus-feat-skill-focus-perception": "structured-rule",
    "special-equipment-environment-suit": "display-only"
+  }
+ },
+ "umbaran-goi-2g-09": {
+  "species": "Umbaran",
+  "sourceProfileId": "GOI-2G-09",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Umbarese"
+  ],
+  "traitIds": [
+   "darkvision",
+   "stealthy",
+   "conditional-bonus-feat-skill-focus-gather-information"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "stealth",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Gather Information)",
+    "requiresTrained": [
+     "gatherInformation"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "stealthy": "structured-rule",
+   "conditional-bonus-feat-skill-focus-gather-information": "structured-rule"
   }
  },
  "utai-tog-2k-04": {

@@ -5,6 +5,7 @@ import { makeActor, selectSpecies, speciesFootprint, computeDefenses, SpeciesReg
 // Every once-published species hydrated from the audited source profiles (tools/hydrate-species-profiles.mjs) applies
 // its sole canonical profile and ONLY what that profile establishes. tests/fixtures/species-profile-expectations.json
 // holds derived numbers/ids/skill names (no rules text), generated from the audit by the same tool.
+const { getSoleSnapshotVersion, isSupersededLegacyVariant } = await import('/systems/foundryvtt-swse/scripts/species/species-publication-selection.js');
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/species-profile-expectations.json', import.meta.url), 'utf8'));
 const log = console.log, warn = console.warn;
 const quiet = async fn => { console.log = () => {}; console.warn = () => {}; try { return await fn(); } finally { console.log = log; console.warn = warn; } };
@@ -19,7 +20,14 @@ for (const [variantId, exp] of Object.entries(fixture)) {
   assert.ok(variant?.completeSnapshot && variant.sourceProfileId === exp.sourceProfileId, `${exp.species}: snapshot ${variantId} present with provenance`);
   // Once-published species apply their sole profile implicitly; a multi-publication species (Barabel) needs the explicit version (RD-001).
   const pick = entry.variants.length > 1 ? variantId : null;
-  if (!pick) assert.equal(entry.variants.length, 1, `${exp.species}: sole canonical profile, no legacy variants beside it`);
+  if (!pick) {
+    assert.equal(getSoleSnapshotVersion(entry)?.id, variantId, `${exp.species}: the audited profile is the sole canonical profile`);
+    // Legacy variants beside it keep resolving for existing actors, but are documented and hidden from new selections.
+    for (const legacy of entry.variants.filter(v => v.id !== variantId)) {
+      assert.equal(legacy.supersededBy, variantId, `${exp.species}/${legacy.id}: provenance recorded`);
+      assert.ok(isSupersededLegacyVariant(legacy, entry), `${legacy.id}: hidden from new selections`);
+    }
+  }
 
   // A NEW selection needs no version choice (published once) and still applies the snapshot; no variant id is passed.
   const actor = makeActor();
@@ -78,4 +86,15 @@ for (const [variantId, exp] of Object.entries(fixture)) {
   checked++;
 }
 assert.ok(checked >= 70, `fixture covers the hydrated profiles (${checked})`);
+// ---- Legacy variants: never deleted; every one is documented; documented ones are not offered for new selection ----
+{
+  const provenance = JSON.parse(readFileSync(new URL('../tools/data/species-legacy-variant-provenance.json', import.meta.url), 'utf8'));
+  const legacyInPack = SpeciesRegistry._entries.flatMap(e => e.variants.filter(v => v.completeSnapshot !== true).map(v => ({ entry: e, v })));
+  assert.equal(legacyInPack.length, provenance.length, 'every legacy variant id is still present (none deleted or renamed) and documented');
+  for (const { entry, v } of legacyInPack) {
+    const p = provenance.find(x => x.variantId === v.id && x.species === entry.name);
+    assert.ok(p, `${v.id}: provenance recorded`);
+    assert.equal(isSupersededLegacyVariant(v, entry), p.hideFromNewSelection, `${v.id}: hidden from new selection iff documented as such`);
+  }
+}
 console.log(`PASS: species profile invariants (${checked} profiles)`);

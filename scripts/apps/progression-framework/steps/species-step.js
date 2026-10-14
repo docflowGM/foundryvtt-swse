@@ -9,7 +9,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
-import { buildPublicationComparison, checkPublicationSelection, getSoleSnapshotVersion, PUBLICATION_SELECTION_ERRORS } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
+import { buildPublicationComparison, checkPublicationSelection, getSoleSnapshotVersion, isSupersededLegacyVariant, PUBLICATION_SELECTION_ERRORS } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
 import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { normalizeSpecies } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithPicker, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
@@ -247,7 +247,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
       const ability = String(target?.dataset?.ability || '').toLowerCase();
       const choiceIndex = Number(target?.dataset?.choiceIndex ?? -1);
       const species = speciesId ? this._resolveSpeciesEntry(speciesId) : null;
-      const choice = species ? this._formatSpeciesAbilityChoices(species).find(option => option.index === choiceIndex || option.ability === ability) : null;
+      const choices = species ? this._formatSpeciesAbilityChoices(species) : [];
+      const choice = choices.find(option => option.index === choiceIndex) || choices.find(option => option.ability === ability) || null;
       if (speciesId && choice) {
         this._selectedAbilityChoiceBySpeciesId.set(speciesId, {
           id: choice.id,
@@ -1277,7 +1278,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
    */
   _variantAppliedEntry(species) {
     if (!species) return species;
-    const variantId = this._selectedVariantBySpeciesId.get(species.id) || null;
+    const variantId = this._selectedVariantBySpeciesId.get(species.id) || getSoleSnapshotVersion(species)?.id || null;
     const variant = variantId ? (species.variants || []).find(option => String(option?.id) === String(variantId)) : null;
     if (!variant) return species;
     try {
@@ -1844,17 +1845,24 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const options = Array.isArray(choice.chooseOne) ? choice.chooseOne : [];
     return options.map((rawOption, index) => {
       const mods = normalize(rawOption);
-      const [ability, value] = Object.entries(mods)[0] || [null, null];
+      const nonzero = Object.entries(mods).filter(([, v]) => v !== 0);
+      const [ability, value] = nonzero[0] || Object.entries(mods)[0] || [null, null];
       const signed = Number(value) > 0 ? `+${Number(value)}` : `${Number(value)}`;
-      const fixedText = Object.entries(fixed).map(([key, val]) => `${val > 0 ? '+' : ''}${val} ${labelMap[key] || key.toUpperCase()}`).join(', ');
+      const fixedText = Object.entries(fixed).filter(([, val]) => val !== 0).map(([key, val]) => `${val > 0 ? '+' : ''}${val} ${labelMap[key] || key.toUpperCase()}`).join(', ');
+      // A published option may set several abilities at once (e.g. Devaronian male/female) and carry its own id/label.
+      const named = !!rawOption?.id;
+      const modsText = nonzero.map(([key, val]) => `${val > 0 ? '+' : ''}${val} ${labelMap[key] || key.toUpperCase()}`).join(', ');
+      const singleText = `${signed} ${labelMap[ability] || String(ability || '').toUpperCase()}`;
+      const optionId = named ? String(rawOption.id) : `${ability || 'choice'}-${index}`;
+      const label = nonzero.length > 1 || rawOption?.label ? (rawOption?.label ? `${rawOption.label}: ${modsText}` : modsText) : singleText;
       return {
-        id: `${ability || 'choice'}-${index}`,
+        id: optionId,
         index,
         ability,
-        label: `${signed} ${labelMap[ability] || String(ability || '').toUpperCase()}`,
-        detail: fixedText ? `${signed} ${labelMap[ability] || ability}; ${fixedText}` : `${signed} ${labelMap[ability] || ability}`,
+        label,
+        detail: fixedText ? `${label}; ${fixedText}` : label,
         mods,
-        isSelected: selected?.id === `${ability || 'choice'}-${index}` || selected?.ability === ability,
+        isSelected: selected?.id === optionId || (!named && selected?.ability === ability),
       };
     });
   }
@@ -1875,7 +1883,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     }
     // The sole verified profile of a once-published species is its canonical profile, not an alternative to pick.
     const sole = getSoleSnapshotVersion(species);
-    const variants = (Array.isArray(species?.variants) ? species.variants : []).filter(variant => variant !== sole);
+    const variants = (Array.isArray(species?.variants) ? species.variants : []).filter(variant => variant !== sole && !isSupersededLegacyVariant(variant, species));
     if (!variants.length) {
       return [];
     }

@@ -194,29 +194,61 @@ function compileNaturalWeapons(snap, speciesSlug) {
   return out;
 }
 
+/**
+ * Printed mutually exclusive modifier sets within ONE publication (e.g. Devaronian male/female, Arkanian
+ * Offshoot Strength or Dexterity) become the existing `abilityChoice` (type "choice"): the modifiers every option
+ * shares are fixed, each option carries its own remaining modifiers, and the player chooses exactly one.
+ */
+function compileAbilityChoice(snap) {
+  const variants = snap.abilityModifierVariants ?? [];
+  if (!variants.length) return null;
+  if (variants.length < 2 || variants.some(v => !v.selector || ABILITIES.some(k => !Number.isFinite(v.abilityModifiers?.[k])))) throw new HoldProfile('ability choice options incomplete');
+  if (Object.values(snap.abilityModifiers ?? {}).some(v => v)) throw new HoldProfile('ability choice combined with a separate fixed modifier set');
+  const common = Object.fromEntries(ABILITIES.map(k => [k, variants.every(v => v.abilityModifiers[k] === variants[0].abilityModifiers[k]) ? variants[0].abilityModifiers[k] : null]));
+  const differing = ABILITIES.filter(k => common[k] === null);
+  const commonFull = Object.fromEntries(ABILITIES.map(k => [k, common[k] ?? 0]));
+  return {
+    common: commonFull,
+    abilityChoice: {
+      type: 'choice',
+      label: 'Ability modifiers',
+      fixed: Object.fromEntries(ABILITIES.map(k => [k.toLowerCase(), commonFull[k]])),
+      chooseOne: variants.map(v => ({
+        id: slug(v.selector),
+        label: titleWords(v.selector.replace(/^(\w)/, c => c.toUpperCase())),
+        ...Object.fromEntries(differing.map(k => [k.toLowerCase(), v.abilityModifiers[k]])),
+      })),
+    },
+  };
+}
+
 const SUPPRESSION = new Set(['STARTING_PROFICIENCY_SUPPRESSION', 'STARTING_CLASS_FEAT_OVERRIDE', 'LEVEL_ONE_STARTING_PROFICIENCY_SUPPRESSION', 'FIRST_LEVEL_WEAPON_PROFICIENCY_SUPPRESSION', 'STARTING_PROFICIENCY_RESTRICTION']);
 const suppressionFeats = m => (m.suppressedStartingClassFeats || m.suppressStartingClassBonusFeats || m.denyClassStartingFeats
   || (Array.isArray(m.suppressStartingClassWeaponProficiencies) ? m.suppressStartingClassWeaponProficiencies.map(g => `Weapon Proficiency (${g})`) : null) || []);
 const titleCase = text => String(text).replace(/\b([a-z])/g, c => c.toUpperCase());
 
 /** @returns {{variant: object, expectation: object, automation: Array<{feature:string, automation:string}>}} */
-export function hydrateProfile(profile, record) {
+export function hydrateProfile(profile, record, { provenance = [] } = {}) {
   if (profile.disposition === 'DEFERRED_DROID_INTEGRATION') throw new HoldProfile('droid integration deferred');
   const snap = profile.sourceRuleSnapshot;
-  if (snap.abilityModifierVariants?.length || snap.abilityScoreGeneration) throw new HoldProfile('ability-choice / ability generation support');
+  if (snap.abilityScoreGeneration) throw new HoldProfile('ability score generation support (fixed array)');
+  const choice = compileAbilityChoice(snap);
   if (snap.sizeVariation) throw new HoldProfile('size variation support');
   const naturalWeapons = compileNaturalWeapons(snap, slug(profile.speciesDisplayName));
   if (!snap.features) throw new HoldProfile('no audited features');
   if (!Array.isArray(snap.automaticLanguages) || !snap.automaticLanguages.length) throw new HoldProfile('automatic languages not recorded in the audit');
   const m = snap.movementSquares;
   if (!Number.isFinite(m?.land)) throw new HoldProfile(`land speed not printed/resolved (${JSON.stringify(m)})`);
-  if (ABILITIES.some(k => !Number.isFinite(snap.abilityModifiers?.[k]))) throw new HoldProfile('ability modifiers not all printed');
+  const baseMods = choice ? choice.common : snap.abilityModifiers;
+  if (ABILITIES.some(k => !Number.isFinite(baseMods?.[k]))) throw new HoldProfile('ability modifiers not all printed');
+  const newId = `${slug(profile.speciesDisplayName)}-${profile.sourceProfileId.toLowerCase()}`;
   const legacy = (record?.system?.variants ?? []).filter(v => v.completeSnapshot !== true);
-  if (legacy.length) throw new HoldProfile(`legacy variant(s) ${legacy.map(v => v.id).join(', ')} pending provenance reconciliation`);
+  const unexplained = legacy.filter(v => !provenance.some(p => p.variantId === v.id && p.supersededBy === newId));
+  if (unexplained.length) throw new HoldProfile(`legacy variant(s) ${unexplained.map(v => v.id).join(', ')} pending provenance reconciliation`);
 
-  const abilityMods = Object.fromEntries(ABILITIES.map(k => [k.toLowerCase(), snap.abilityModifiers[k]]));
-  const abilityText = ABILITIES.filter(k => snap.abilityModifiers[k]).sort((a, b) => snap.abilityModifiers[b] - snap.abilityModifiers[a])
-    .map(k => `${snap.abilityModifiers[k] > 0 ? '+' : ''}${snap.abilityModifiers[k]} ${k[0] + k.slice(1).toLowerCase()}`).join(', ');
+  const abilityMods = Object.fromEntries(ABILITIES.map(k => [k.toLowerCase(), baseMods[k]]));
+  const abilityText = ABILITIES.filter(k => baseMods[k]).sort((a, b) => baseMods[b] - baseMods[a])
+    .map(k => `${baseMods[k] > 0 ? '+' : ''}${baseMods[k]} ${k[0] + k.slice(1).toLowerCase()}`).join(', ');
   const movement = { walk: m.land, swim: m.swim ?? null, fly: m.fly ?? null, climb: null, hover: null, glide: null, burrow: null, bySize: {} };
 
   const compiled = snap.features.map(compileFeature);
@@ -243,7 +275,7 @@ export function hydrateProfile(profile, record) {
     movement,
     abilities: abilityText,
     abilityMods,
-    abilityChoice: null,
+    abilityChoice: choice ? choice.abilityChoice : null,
     skillBonuses: [],
     special: traits.map(t => t.name),
     languages: snap.automaticLanguages.map(l => l.name),

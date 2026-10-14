@@ -75,8 +75,18 @@ export function getSoleSnapshotVersion(entry) {
   if (getPublicationStatus(entry) !== PUBLICATION_STATUS.SINGLE_PROFILE) return null;
   const variants = Array.isArray(entry?.variants) ? entry.variants : [];
   const verified = getPublicationVersions(entry);
-  if (verified.length !== 1 || variants.length !== 1) return null;
-  return verified[0];
+  if (verified.length !== 1) return null;
+  // Legacy variants stay in the data for existing actors but must be explicitly superseded by this profile
+  // (documented provenance); an unexplained legacy variant keeps the species out of the sole-profile path.
+  const others = variants.filter(variant => variant !== verified[0]);
+  return others.every(variant => variant?.supersededBy === verified[0].id) ? verified[0] : null;
+}
+
+/** Legacy variants hidden from new selections because a verified profile supersedes them. */
+export function isSupersededLegacyVariant(variant, entry) {
+  if (!variant || variant.completeSnapshot === true) return false;
+  if (variant.legacyProvenance?.hideFromNewSelection === true) return true;
+  return !!variant.supersededBy && getPublicationVersions(entry).some(version => version.id === variant.supersededBy);
 }
 
 /** A species requires an explicit publication choice whenever several publications are known. */
