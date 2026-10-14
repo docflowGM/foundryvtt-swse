@@ -184,7 +184,12 @@ const titleWords = text => String(text).replace(/-/g, ' ').replace(/\b([a-z])/g,
  * the properties that path carries are accepted: a name, a dice damage, a printed damage type, always armed. A profile
  * carrying anything else (unprinted damage type, no-AoO / counts-as properties, ...) is held, never approximated.
  */
-function compileNaturalWeapons(snap, speciesSlug) {
+// Profiles whose natural attacks print dice but NO damage type. By owner policy the disputed behavior is left unautomated:
+// the attacks stay display-only text (no weapon item, no invented type) while the rest of the verified profile hydrates.
+// Each entry names the open register item. Everything else with an unprinted type is still held.
+export const DISPLAY_ONLY_UNTYPED_NATURAL_ATTACKS = new Map([['UR-2B-13', 'SPECIES-RD-015']]);
+
+function compileNaturalWeapons(snap, speciesSlug, { allowUntyped = false } = {}) {
   const profiles = (snap.naturalAttackProfiles ?? []).length ? snap.naturalAttackProfiles : (snap.naturalWeapons ?? []);
   const out = [];
   for (const p of profiles) {
@@ -199,6 +204,7 @@ function compileNaturalWeapons(snap, speciesSlug) {
     const damage = typeof p.damage === 'string' ? p.damage : first?.damage?.formula;
     const type = p.type ?? p.damageType ?? first?.damage?.type;
     if (!name || !/^\d+d\d+$/.test(String(damage ?? ''))) throw new HoldProfile(`natural attack without printed dice damage (${name ?? 'unnamed'})`);
+    if (!type && allowUntyped) continue;
     if (!type) throw new HoldProfile(`natural attack "${name}": damage type not printed`);
     // Riders the weapon item can carry: no attack of opportunity (attackOptions.noProvokeOpportunity), counts as a simple weapon
     // (proficiency group), threatens adjacent squares (every armed melee weapon does), Strength damage (the standard melee rule).
@@ -306,7 +312,7 @@ export function hydrateProfile(profile, record, { provenance = [] } = {}) {
   // the other sizes are GM-defined, stay unautomated and are noted on the variant.
   const sizeVariation = snap.sizeVariation;
   if (sizeVariation && !(sizeVariation.mode === 'GM_DEFINED_VARIANT' && sizeVariation.baseline === snap.size)) throw new HoldProfile('size variation support');
-  const naturalWeapons = compileNaturalWeapons(snap, slug(profile.speciesDisplayName));
+  const naturalWeapons = compileNaturalWeapons(snap, slug(profile.speciesDisplayName), { allowUntyped: DISPLAY_ONLY_UNTYPED_NATURAL_ATTACKS.has(profile.sourceProfileId) });
   if (!snap.features) throw new HoldProfile('no audited features');
   if (!Array.isArray(snap.automaticLanguages) || !snap.automaticLanguages.length) throw new HoldProfile('automatic languages not recorded in the audit');
   const m = snap.movementSquares;

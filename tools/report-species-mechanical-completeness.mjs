@@ -24,10 +24,12 @@ for (const { label, species: speciesName, variant, spec } of profiles) {
     const applied = isApplied(obs, t.mechanic);
     const any = hasAnyEffect(obs, t.mechanic);
     const measured = t.mechanic.kind === 'text' ? 'display-only' : applied ? (t.automation === 'partial' ? 'partial' : 'automated') : any ? 'incorrect' : 'display-only';
-    rows.push({ species, trait: t.name, kind: t.mechanic.kind, declared: t.automation, measured, note: t.note ?? '' });
+    const category = measured === 'display-only' ? (t.ownerRuling ? 'display-only (owner ruling needed)' : 'display-only (engine lacks mechanic)') : measured;
+    rows.push({ species, trait: t.name, kind: t.mechanic.kind, declared: t.automation, measured, category, ruling: t.ownerRuling ?? '', note: t.note ?? '' });
   }
 }
 const count = s => rows.filter(r => r.measured === s).length;
+const countCat = c => rows.filter(r => r.category === c).length;
 const need = r => ({
   reroll: 'Closed reroll rule (existing `reroll` rule type); skill and outcome are printed. Kel Dor Keen Force Sense and the Wookiee Skills reroll are application-limited and need the application expressed as a condition, not a plain skill reroll.',
   conditionalFeat: 'Closed `featGrant` rule with a `skillTrained` requirement (existing conditional-feat lifecycle).',
@@ -45,7 +47,7 @@ const text = [
   'A populated field is not working mechanics: each row below is the observed engine state for one printed trait. `OFFLINE_TESTED` only; nothing here is `FOUNDRY_TESTED`.',
   '',
   `- Printed traits verified: ${rows.length} across ${profiles.length} profiles (names, text key words and automation state pinned by \`tests/species-core-trait-verification.test.mjs\` and \`tests/species-multi-publication-trait-verification.test.mjs\`).`,
-  `- Automated: ${count('automated')} · Partial: ${count('partial')} · Display-only: ${count('display-only')} · Incorrectly automated: ${count('incorrect')}`,
+  `- Correctly automated: ${count('automated')} · Partially automated: ${count('partial')} · Display-only, engine lacks the mechanic: ${countCat('display-only (engine lacks mechanic)')} · Display-only, owner ruling needed: ${countCat('display-only (owner ruling needed)')} · Incorrectly automated: ${count('incorrect')}`,
   '',
   '## Root cause of most display-only Core traits',
   '',
@@ -68,9 +70,9 @@ const text = [
   '',
   '## Per-trait state',
   '',
-  '| Species | Trait | Mechanic | Measured state | Notes |',
-  '|---|---|---|---|---|',
-  ...rows.map(r => `| ${r.species} | ${r.trait} | ${r.kind} | ${r.measured} | ${r.note.replace(/\|/g, '/')} |`),
+  '| Species | Trait | Mechanic | State | Ruling | Notes |',
+  '|---|---|---|---|---|---|',
+  ...rows.map(r => `| ${r.species} | ${r.trait} | ${r.kind} | ${r.category} | ${r.ruling} | ${r.note.replace(/\|/g, '/')} |`),
   '',
 ].join('\n');
 if (process.argv.includes('--write')) writeFileSync('docs/audits/swse-species-mechanical-completeness.md', text); else console.log(text);

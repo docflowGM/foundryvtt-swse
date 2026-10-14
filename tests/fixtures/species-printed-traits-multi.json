@@ -46,7 +46,8 @@
       "point",
       "intelligence"
      ],
-     "note": "Force Point variant; the Threats of the Galaxy version is a different mechanic"
+     "note": "Force Point variant; the Threats of the Galaxy version is a different mechanic",
+     "ownerRuling": "SPECIES-RD-005"
     }
    ]
   },
@@ -71,7 +72,8 @@
       "20",
       "intelligence"
      ],
-     "note": "natural-20 variant; different from the Galaxy of Intrigue version"
+     "note": "natural-20 variant; different from the Galaxy of Intrigue version",
+     "ownerRuling": "SPECIES-RD-005"
     },
     {
      "name": "Heightened Awareness",
@@ -220,7 +222,8 @@
       "fortitude",
       "radiation"
      ],
-     "note": "conditional (radiation damage only)"
+     "note": "conditional (radiation damage only)",
+     "ownerRuling": "SPECIES-RD-004"
     }
    ]
   },
@@ -245,7 +248,8 @@
       "breathe"
      ],
      "note": "this publication prints 'can breathe normally in water', not 'can't drown'; equating the two would be a rules interpretation, so it is not automated (OCR renders the heading as 'Underveater')",
-     "printedAs": "Breathe Underveater"
+     "printedAs": "Breathe Underveater",
+     "ownerRuling": "SPECIES-RD-023"
     },
     {
      "name": "Radiation Resistance",
@@ -257,7 +261,8 @@
       "5",
       "fortitude",
       "radiation"
-     ]
+     ],
+     "ownerRuling": "SPECIES-RD-004"
     },
     {
      "name": "Low-Light Vision",
@@ -396,14 +401,16 @@
      "tokens": [
       "skill",
       "focus"
-     ]
+     ],
+     "ownerRuling": "SPECIES-RD-010"
     },
     {
      "name": "Carapace",
      "automation": "display-only",
      "mechanic": {
       "kind": "text"
-     }
+     },
+     "ownerRuling": "SPECIES-RD-003"
     },
     {
      "name": "Stoic",
@@ -440,7 +447,8 @@
      "automation": "display-only",
      "mechanic": {
       "kind": "text"
-     }
+     },
+     "ownerRuling": "SPECIES-RD-003"
     },
     {
      "name": "Stoic",
@@ -522,7 +530,8 @@
       "skill",
       "focus"
      ],
-     "note": "two printed conditional feats (Deception, Persuasion); the plural form is not compiled, so neither is granted"
+     "note": "two printed conditional feats (Deception, Persuasion); the plural form is not compiled, so neither is granted",
+     "ownerRuling": "SPECIES-RD-022"
     }
    ]
   },
@@ -626,6 +635,192 @@
       "simple",
       "exotic"
      ]
+    }
+   ]
+  },
+  "barabel-sv-2f-10": {
+   "species": "Barabel",
+   "book": "Scum and Villainy",
+   "line": null,
+   "textPinned": false,
+   "textNote": "Scum and Villainy p.155 (Barabel Species Traits) is not recoverable from the local OCR text; the Phase 4-B audit verified it against the PDF. Names and automation are pinned from the snapshot; printed-text key words are not checked locally.",
+   "mods": "+2 Str, -2 Dex, -2 Wis",
+   "langs": [
+    "Barabel"
+   ],
+   "traits": [
+    {
+     "name": "Natural Armor",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "defense",
+      "defense": "reflex",
+      "value": 2
+     }
+    },
+    {
+     "name": "Natural Weapons (Claws, Teeth, Tail)",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "naturalWeapons",
+      "names": [
+       "Claws",
+       "Teeth",
+       "Tail"
+      ]
+     },
+     "note": "three alternative 1d6 natural attacks (slashing, piercing, bludgeoning), each a species natural-weapon item"
+    },
+    {
+     "name": "Radiation Resistance",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     }
+    },
+    {
+     "name": "Darkvision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     }
+    },
+    {
+     "name": "Primitive",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "primitive"
+     }
+    },
+    {
+     "name": "Intimidation Skill Reroll",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "persuasion",
+      "outcome": "mustAccept"
+     },
+     "note": "application-limited (Persuasion made to intimidate); a plain Persuasion reroll would over-apply"
+    }
+   ]
+  },
+  "barabel-gaw-2i-01": {
+   "species": "Barabel",
+   "book": "Galaxy At War",
+   "line": 701,
+   "mods": "+2 Str, -2 Dex, -2 Wis",
+   "langs": [
+    "Barabel"
+   ],
+   "traits": [
+    {
+     "name": "Natural Armor",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "defense",
+      "defense": "reflex",
+      "value": 2
+     },
+     "tokens": [
+      "2",
+      "natural",
+      "armor",
+      "reflex"
+     ]
+    },
+    {
+     "name": "Natural Weapons",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "naturalWeapons",
+      "names": [
+       "Claws",
+       "Bite",
+       "Tail"
+      ]
+     },
+     "tokens": [
+      "unarmed",
+      "armed"
+     ],
+     "note": "claws/bite/tail alternatives for unarmed damage"
+    },
+    {
+     "name": "Stun Resistance",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "5",
+      "damage",
+      "threshold",
+      "stun"
+     ],
+     "note": "Galaxy at War only; Scum and Villainy does not print it"
+    },
+    {
+     "name": "Radiation Resistance",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "5",
+      "fortitude",
+      "radiation"
+     ]
+    },
+    {
+     "name": "Darkvision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ]
+    },
+    {
+     "name": "Primitive",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "primitive"
+     },
+     "tokens": [
+      "pistols",
+      "rifles",
+      "heavy"
+     ]
+    },
+    {
+     "name": "Intimidation Skill Reroll",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "persuasion",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "persuasion",
+      "intimidate"
+     ],
+     "note": "printed as the 'Skills' trait; application-limited",
+     "printedAs": "Skills"
+    },
+    {
+     "name": "Jedi Respect (contextual sidebar)",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "jedi",
+      "persuasion"
+     ],
+     "note": "printed in the species sidebar, not the traits block; a contextual GM circumstance, not an automatic bonus",
+     "outsideBlock": true
     }
    ]
   }

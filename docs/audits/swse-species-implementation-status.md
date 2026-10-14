@@ -9,10 +9,10 @@ Every hydrated row is `SOURCE_VERIFIED` against the audit, `DATA_RECONCILED` in 
 
 | Category | Profiles |
 |---|---|
-| Hydrated by the bulk tool | 92 |
+| Hydrated by the bulk tool | 93 |
 | Core Rulebook profiles reconciled earlier on their base records | 19 |
 | Multi-publication profiles handled separately (Bith, Chadra-Fan, Chagrian, Chiss, Krevaaki, Neimoidian, Yuuzhan Vong) | 15 |
-| Technical holds | 3 |
+| Technical holds | 2 |
 
 ## Owner rulings applied
 
@@ -23,11 +23,11 @@ Every hydrated row is `SOURCE_VERIFIED` against the audit, `DATA_RECONCILED` in 
 
 | Category | Features |
 |---|---|
-| Automated by a structured rule or field | 90 |
+| Automated by a structured rule or field | 91 |
 | Automated by a verified existing activated-ability entry | 8 |
 | Natural attacks granted as species natural-weapon items (counted in attacks, not features) | 18 |
 | Existing engine automation known to be inaccurate — suppressed, text only | 6 |
-| Display-only (no automation) | 194 |
+| Display-only (no automation) | 199 |
 
 Display-only includes natural-attack features whose secondary effects are not implemented; the attacks themselves are in the
 natural-attack column below.
@@ -40,7 +40,7 @@ natural-attack column below.
 - Darkvision / Low-light Vision, conditional skill bonuses and defenses, and activated abilities without a verified engine entry are display-only.
 - Small-size Stealth (+5) is a general size rule and is not applied by species data (see register RD-007).
 
-## Hydrated profiles (92)
+## Hydrated profiles (93)
 
 | Profile | Variant id | Structured (automated) | Verified activation | Natural attacks granted | Engine automation suppressed | Display-only |
 |---|---|---|---|---|---|---|
@@ -53,6 +53,7 @@ natural-attack column below.
 | UR-2B-09 Verpine | `verpine-ur-2b-09` | Natural Armor, Heightened Awareness, Conditional Bonus Feat | — | — | — | Verpine Communication (SPECIES_LIMITED_TELEPATHY) |
 | UR-2B-11 Ebruchi | `ebruchi-ur-2b-11` | Conditional Bonus Feat, Iron Will | — | — | — | Unsettling (ON_SUCCESS_ALTERNATE_INTIMIDATION_EFFECT) |
 | UR-2B-12 Killik | `killik-ur-2b-12` | Natural Armor | — | Claws 1d6 slashing | — | Joiners (CONDITIONAL_TIMED_MIND_AFFECTING_TRANSFORMATION); Low-Light Vision (VISION); Hive Mind (SPECIES_LIMITED_TELEPATHY); Multiple Limbs (MULTIPLE_ATTACK_PENALTY_MODIFIER); Natural Weapons (NATURAL_WEAPON_GRANT) |
+| UR-2B-13 Lugubraa | `lugubraa-ur-2b-13` | Bonus Feat | — | — | — | Darkvision (VISION); Natural Weapons — Barbed Tentacles (NATURAL_WEAPON_GRANT); Natural Weapons — Teeth (NATURAL_WEAPON_GRANT); Lockbite (POST_GRAPPLE_BONUS); Lugubraa Learning (AGE_DEPENDENT_ABILITY_RULE) |
 | UR-2B-14 Sorcerer of Rhand | `sorcerer-of-rhand-ur-2b-14` | Bonus Feat | — | — | — | Dark-Infused (CONSTRAINED_FIXED_FEAT_AND_SELECTION); Repulsive Appearance (OPTIONAL_REROLL_BETTER_AND_DEFENSE); Special Qualities (GM_DEFINED_CHOICE) |
 | UR-2B-15 Ssi-Ruuk | `ssi-ruuk-ur-2b-15` | Conditional Bonus Feat, Natural Armor | — | — | — | Force Blind (FORCE_USE_RESTRICTION); Keen Smell (CONDITIONAL_OPTIONAL_REROLL_BETTER) |
 | UR-2B-16 Tof | `tof-ur-2b-16` | — | — | — | — | Bonus Feat (LEVEL_ONE_FEAT_CHOICE); Conditional Bonus Feat (CONDITIONAL_FEAT_GRANT); Tof Fearlessness (ENCOUNTER_NEGATION_AND_CONDITIONAL_DEFENSE) |
@@ -137,7 +138,7 @@ natural-attack column below.
 | TOG-2K-03 Mantellian Savrip | `mantellian-savrip-tog-2k-03` | Natural Armor, Primitive | Poison, Rage | Claw 1d6 slashing | — | Natural Weapons (SPECIES_GRANTED_NATURAL_ATTACK_WITH_AOO_EXCEPTION) |
 | TOG-2K-04 Utai | `utai-tog-2k-04` | — | — | — | — | Animal Handler (SKILL_REROLL_AND_CONDITIONAL_ATTITUDE_BONUS); Cooperative (CONDITIONAL_AID_ANOTHER_AUTOSUCCESS); Low-Light Vision (VISION) |
 
-## Held and separately handled (37)
+## Held and separately handled (36)
 
 | Profile | Category | Reason |
 |---|---|---|
@@ -165,7 +166,6 @@ natural-attack column below.
 | UR-2B-02 Chadra-Fan | multi | published in several profiles (separate path) |
 | UR-2B-04 Krevaaki | multi | published in several profiles (separate path) |
 | UR-2B-10 Chiss | multi | published in several profiles (separate path) |
-| UR-2B-13 Lugubraa | technical | natural attack "Barbed tentacles": damage type not printed — rules review: SPECIES-RD-015 |
 | LEG-2C-01 Chagrian | multi | published in several profiles (separate path) |
 | LEG-2C-02 Chiss | multi | published in several profiles (separate path) |
 | LEG-2C-07 Yuuzhan Vong | multi | published in several profiles (separate path) |

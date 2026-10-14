@@ -8,7 +8,10 @@ Status: **not performed.** Everything below is `OFFLINE_TESTED` at best; none of
 - [ ] Multi-publication species (Bith, Chadra-Fan, Chagrian, Chiss, Krevaaki, Neimoidian, Yuuzhan Vong, Barabel): explicit publication selection required; no silent default.
 - [ ] Species with an ability-score choice (exclusive modifier sets): Attribute step enforces exactly the printed choice; forged/missing choice rejected.
 - [ ] Republic Clone: printed fixed array plus exactly +2 to one score; house-rule setting off by default (RD-017).
-- [ ] Held species (Lugubraa, Dashade, Shard, Replica Droid, O'reenian): confirm they do not apply an unverified snapshot.
+- [ ] Lugubraa: sole snapshot applies; the barbed-tentacle and teeth attacks are text only (no weapon item, RD-015); Improved Damage Threshold is granted.
+- [ ] Dashade: legacy record only (Dashadi, never Basic, RD-016). Shard and Replica Droid: selecting them requires the droid builder step; no organic creation path.
+- [ ] O'reenian, Near-Human and the other outside-inventory records: still selectable as before, no snapshot, no new mechanics (see `swse-species-outside-inventory.md`).
+- [ ] Multi-publication species (Bith, Chadra-Fan, Chagrian, Chiss, Krevaaki, Neimoidian, Yuuzhan Vong, Barabel): character creation forces an explicit publication choice; the chosen publication's traits and no other's appear on the sheet; reopening creation restores the same choice.
 
 ## 2. Species switching / reselection
 - [ ] Switch A→B: A's items, flags, languages, movement, natural weapons and conditional-feat manifest are removed; B's applied; no duplicates.
@@ -36,4 +39,4 @@ Status: **not performed.** Everything below is `OFFLINE_TESTED` at best; none of
 ## 7. Regression pass
 - [ ] Sheet open/edit/tab switching, level-up, store/transaction, and combat actions unaffected on a species-bearing actor.
 
-Open owner items affecting this pass: RD-015, RD-016, RD-018 (gameplay), RD-020, plus earlier RD-002…RD-014.
+Open owner items affecting this pass: RD-015, RD-016, RD-018 (gameplay), RD-020, RD-021, RD-022, RD-023, plus earlier RD-002…RD-014. Record each result as FOUNDRY_TESTED only after the corresponding row has actually been run in Foundry v13.

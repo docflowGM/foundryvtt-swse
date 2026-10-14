@@ -18,6 +18,7 @@ export async function observeSpecies(name, variantId = null) {
     activated: (f.activeSpeciesAbilities ?? []).map(a => a.id),
     immunities: (f.speciesImmunities ?? []).map(i => i.key),
     primitive: f.primitiveSpecies === true,
+    naturalWeaponNames: ctx.ledger.naturalWeapons.map(n => n.name),
     suppressedProficiencies: f.suppressedClassProficiencies ?? [],
     trainedSkillGrants: ctx.traits.filter(t => t.classification === 'grant' && (t.grants ?? []).some(g => g.grantType === 'trainedSkill')).map(t => t.id),
     featsRequired: ctx.entitlements.featsRequired,
@@ -39,6 +40,7 @@ export function isApplied(obs, m) {
     case 'activated': return obs.activated.includes(m.id);
     case 'immunity': return obs.immunities.includes(m.key);
     case 'primitive': return obs.primitive;
+    case 'naturalWeapons': return [...obs.naturalWeaponNames].sort().join('|') === [...m.names].sort().join('|') && m.names.every(n => obs.items.includes(n));
     case 'suppressedProficiencies': return obs.suppressedProficiencies.length === m.count;
     case 'trainedSkillChoice': return obs.trainedSkillGrants.length > 0;
     case 'featsRequired': return obs.featsRequired === m.value;

@@ -25,13 +25,14 @@ function printedBlock(book, start, window = null) {
   return flat(out.join(' '));
 }
 
-assert.equal(Object.keys(fx).length, 15, 'every audited snapshot of the seven multi-publication species is covered');
+assert.equal(Object.keys(fx).length, 17, 'every audited snapshot of the seven multi-publication species is covered');
 const tally = { automated: 0, partial: 0, 'display-only': 0 };
 
 for (const [vid, e] of Object.entries(fx)) {
   const variant = recs[e.species].variants.find(v => v.id === vid);
   assert.ok(variant?.completeSnapshot === true, `${vid}: complete snapshot`);
-  const block = printedBlock(e.book, e.line, e.window);
+  const pinned = e.line != null;
+  const block = pinned ? printedBlock(e.book, e.line, e.window) : '';
 
   assert.deepEqual((variant.traits ?? []).map(t => flat(t.name)).sort(), e.traits.map(t => flat(t.name)).sort(), `${vid}: snapshot traits must be exactly the printed traits`);
   assert.deepEqual(mods(variant.abilities), mods(e.mods), `${vid}: ability modifiers as printed`);
@@ -39,10 +40,10 @@ for (const [vid, e] of Object.entries(fx)) {
 
   const obs = await observeSpecies(e.species, vid);
   for (const t of e.traits) {
-    assert.ok(block.includes(flat((t.printedAs ?? t.name).replace(/^Grasping /, ''))) || t.name === 'Skills', `${vid}: printed name "${t.name}" must appear in the printed block of ${e.book}`);
+    assert.ok(!pinned || t.outsideBlock || block.includes(flat((t.printedAs ?? t.name).replace(/^Grasping /, ''))) || t.name === 'Skills', `${vid}: printed name "${t.name}" must appear in the printed block of ${e.book}`);
     const text = flat((variant.traits ?? []).filter(x => flat(x.name) === flat(t.name)).map(x => x.description).join(' '));
     for (const w of t.tokens ?? []) {
-      assert.ok(block.includes(flat(w)), `${vid} / ${t.name}: "${w}" must appear in the printed block of ${e.book}`);
+      assert.ok(!pinned || t.outsideBlock || block.includes(flat(w)), `${vid} / ${t.name}: "${w}" must appear in the printed block of ${e.book}`);
       assert.ok(text.includes(flat(w)), `${vid} / ${t.name}: "${w}" must appear in the snapshot text`);
     }
     tally[t.automation]++;

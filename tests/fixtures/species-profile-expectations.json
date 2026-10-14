@@ -1914,6 +1914,54 @@
    "iron-will": "structured-rule"
   }
  },
+ "lugubraa-ur-2b-13": {
+  "species": "Lugubraa",
+  "sourceProfileId": "UR-2B-13",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 2,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Lugubraal"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "bonus-feat",
+   "darkvision",
+   "natural-weapons-barbed-tentacles",
+   "natural-weapons-teeth",
+   "lockbite",
+   "lugubraa-learning"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Improved Damage Threshold",
+    "requires": []
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-feat": "structured-rule",
+   "darkvision": "display-only",
+   "natural-weapons-barbed-tentacles": "display-only",
+   "natural-weapons-teeth": "display-only",
+   "lockbite": "display-only",
+   "lugubraa-learning": "display-only"
+  }
+ },
  "lurmen-gaw-2i-03": {
   "species": "Lurmen",
   "sourceProfileId": "GAW-2I-03",

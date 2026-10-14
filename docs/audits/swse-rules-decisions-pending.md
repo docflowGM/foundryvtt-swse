@@ -559,3 +559,26 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | (blank until approved) |
+
+---
+
+## SPECIES-RD-015 — CLOSEOUT NOTE (appended; earlier entries preserved unchanged)
+
+| Field | |
+|---|---|
+| Source re-check | Unknown Regions Lugubraa traits (text-file area around the species entry; printed p.135) still print "barbed tentacles (1d6 points of damage) and dangerous teeth (1d4 points of damage)" with no damage type; the stat block "Melee barbed tentacle +13 (1d6+1)" prints none either. No other local book mentions Lugubraa attacks. There is no canonical answer in the text. |
+| Action | The profile `UR-2B-13` is now hydrated as the sole Lugubraa snapshot with the two natural attacks left as display text: no weapon item, no ledger natural weapon, no damage type. Ability modifiers, Lugubraal, the Improved Damage Threshold bonus feat and the other traits are unaffected. The exception is limited to this profile by an explicit allowlist in the hydrator (`DISPLAY_ONLY_UNTYPED_NATURAL_ATTACKS`) and pinned by `tests/species-held-profiles.test.mjs`. |
+| Still for the owner | Which damage type(s) the barbed tentacles and teeth deal (or whether the printed absence means the type is chosen elsewhere). Until then the attacks are not automated. |
+| Status | Profile `OFFLINE_TESTED`; the two natural attacks `DEFERRED_RULES_REVIEW` |
+
+---
+
+## SPECIES-RD-016 — CLOSEOUT NOTE: smallest decision (appended; earlier entries preserved unchanged)
+
+| Field | |
+|---|---|
+| Evidence | Galaxy at War Dashade species traits (GAW-2I-02, printed p.12) have no Automatic Languages line; the sidebar prints "Languages: Dashadi". In the same book the other species' sidebar and Automatic Languages lines are separate and the traits-block line is the creation grant. The existing species record applies `["Dashadi"]` (legacy data, no Basic) and no complete snapshot exists. |
+| Smallest decision | What should a new Dashade character receive automatically? (A) Dashadi only — exactly what the legacy record does today; (B) Basic and Dashadi; (C) none. |
+| Recommended resolution (requested by the project owner) | (A): it changes nothing for existing or new characters, matches the only printed language statement, and invents no Basic grant. |
+| Not done | No snapshot is created and no language is changed until the owner answers. Pinned by `tests/species-held-profiles.test.mjs` (never Basic). |
+| Status | `DEFERRED_RULES_REVIEW` |
