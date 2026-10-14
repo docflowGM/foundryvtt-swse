@@ -193,3 +193,5 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Tests | `tests/species-publication-selection.test.mjs` |
 | Implementing commit | recorded in the next appended line |
 | Status | `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |
+
+**SPECIES-RD-001 — implementing commit:** `1633d8c245e6a7beca188fdfa0f028e6c52a18cc` (RD-001 resolution above; recorded after the commit existed, per the append-only rule).
