@@ -3,6 +3,7 @@
 // Only computed mechanical effects are mirrored into system.derived.
 // Droid configuration stays in system.droidSystems (not derived).
 
+import { actorUsesResolvedSnapshot } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import combatActions from "/systems/foundryvtt-swse/data/combat-actions.json" with { type: "json" };
 import speciesTraits from "/systems/foundryvtt-swse/data/species-traits.json" with { type: "json" };
 import { FeatActionsMapper } from "/systems/foundryvtt-swse/scripts/utils/feat-actions-mapper.js";
@@ -100,7 +101,7 @@ export function computeCharacterDerived(actor, system) {
   mirrorForceTechniques(actor, system);
   mirrorForceSecrets(actor, system);
   mirrorStarshipManeuvers(actor, system, itemIndex);
-  mirrorRacialAbilities(system);
+  mirrorRacialAbilities(system, actor);
   if (actor.type !== 'vehicle') {
     mirrorActions(actor, system);
   }
@@ -997,12 +998,27 @@ for (const species of speciesTraits) {
   }
 }
 
-function mirrorRacialAbilities(system) {
+export function mirrorRacialAbilities(system, actor = null) {
   const rawSpecies = system.species?.name ?? system.species ?? system.race ?? '';
   const raceKey = normalizeSpeciesLookupKey(rawSpecies);
 
   if (!raceKey) {
     system.derived.racialAbilities = [];
+    return;
+  }
+
+  // Snapshot-resolved actors list the traits of their selected publication (stored at
+  // materialization), not the name-keyed base species record.
+  if (actorUsesResolvedSnapshot(actor)) {
+    const traits = actor?.flags?.swse?.speciesTraits ?? {};
+    system.derived.racialAbilities = Object.entries(traits).map(([name, meta]) => ({
+      id: meta?.id ?? `${raceKey}-${name}`,
+      name,
+      summary: '',
+      description: '',
+      source: String(rawSpecies),
+      race: String(rawSpecies),
+    }));
     return;
   }
 

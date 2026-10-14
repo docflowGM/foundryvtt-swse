@@ -33,6 +33,17 @@ export function isCompleteSnapshotVariant(variant) {
   return variant?.completeSnapshot === true;
 }
 
+/**
+ * True when the actor's species grant was resolved from a single published
+ * snapshot. Such actors must not consult name-keyed base-species data (the
+ * species-traits.json sidecar or the embedded base species item): the resolved
+ * grants already live in flags.swse.* / system.* via the grant reconciliation.
+ */
+export function actorUsesResolvedSnapshot(actor) {
+  return actor?.system?.speciesVariant?.completeSnapshot === true
+    || actor?.flags?.swse?.speciesVariant?.completeSnapshot === true;
+}
+
 function normalizeAbilityMods(mods) {
   const out = {};
   for (const key of ABILITY_KEYS) {

@@ -14,6 +14,7 @@
  *   Fortitude = STR only
  */
 
+import { actorUsesResolvedSnapshot } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getHeroicLevel, getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { getClassData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js"; // STATIC import (no dynamic)
@@ -624,6 +625,9 @@ export class DefenseCalculator {
 
     let ruleTotal = 0;
     if (!speciesItems) speciesItems = (actor?.items || []).filter(item => item?.type === 'species');
+    // The embedded species item is the base compendium document. A snapshot-resolved actor takes
+    // its species defenses only from the resolved flags below, never from base traits or prose.
+    if (actorUsesResolvedSnapshot(actor)) speciesItems = [];
     for (const item of speciesItems) {
       const traitBuckets = [
         item?.system?.structuralTraits,

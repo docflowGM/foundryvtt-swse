@@ -15,6 +15,7 @@
  */
 
 import speciesTraits from "/systems/foundryvtt-swse/data/species-traits.json" with { type: "json" };
+import { actorUsesResolvedSnapshot } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { PassiveAdapter } from "./passive-adapter.js";
 import { PASSIVE_SUBTYPES } from "./passive-types.js";
 import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
@@ -90,6 +91,9 @@ export class SpeciesTraitPassiveAdapter {
    */
   static registerFromActor(actor, ruleCollector) {
     try {
+      // Name-keyed sidecar data is not publication-aware; a snapshot-resolved actor
+      // gets its passives from the resolved grant flags instead.
+      if (actorUsesResolvedSnapshot(actor)) return;
       const raceName = actor?.system?.race ?? actor?.system?.species?.name ?? actor?.system?.species ?? "";
       if (!raceName) return;
 
