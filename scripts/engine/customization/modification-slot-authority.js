@@ -529,25 +529,25 @@ function resolveAdjustments(item, domain, base, collector, sizePaths) {
           reasons: ['INVALID_STRIP_AREA']
         });
       }
+      // D16: no host-specific feature evidence exists in Phase 1a, so a recorded strip never grants capacity.
       const distinct = [...counts.keys()].sort();
       for (const area of distinct) {
         const duplicated = counts.get(area) > 1;
         if (duplicated) collector.conflict('DUPLICATE_ADJUSTMENT', `adjustments.structural:strip:${area}`, { area, occurrences: counts.get(area) });
-        const reasons = [];
-        let verified = false;
+        const reasons = ['STRIP_HOST_EVIDENCE_UNESTABLISHED'];
         if (duplicated) reasons.push('DUPLICATE_ADJUSTMENT');
-        else if (distinct.length > 1) reasons.push('MULTIPLE_STRIPS_UNRESOLVED');
-        else verified = true;
+        if (distinct.length > 1) reasons.push('MULTIPLE_STRIPS_UNRESOLVED');
         adjustments.push({
           id: `structural:strip:${area}`,
           kind: 'strip',
-          status: verified ? 'verified' : 'unresolved',
-          slots: verified ? 1 : null,
+          status: 'unresolved',
+          slots: null,
           provenance: { path: stripPath, instanceId: null },
-          source: verified ? safeCopy(ADJUSTMENT_SOURCE) : null,
+          source: null,
           reasons
         });
       }
+      if (distinct.length > 0) collector.block('STRIP_HOST_EVIDENCE_UNESTABLISHED', 'structural.strippedAreas', { areas: distinct });
       if (distinct.length > 1) collector.block('MULTIPLE_STRIPS_UNRESOLVED', 'structural.strippedAreas', { areas: distinct });
     }
   }

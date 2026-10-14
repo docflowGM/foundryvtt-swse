@@ -437,44 +437,82 @@ check('13f comparison is skipped, never a mismatch, when preconditions fail', ()
 });
 
 // --- 15, 16. strips and the Tech Specialist device slot ---
-check('15 strips: one verified, two or more unresolved, invalid and duplicate are conflicts', () => {
+check('15 strips (D16): a recorded strip is unresolved without host evidence; invalid and duplicate are conflicts', () => {
   const ctx = ordinaryCtx();
-  const one = resolve(weapon({}, custom({ structural: { strippedAreas: ['damage'] } })), ctx);
-  assert.equal(one.adjustments.length, 1);
-  assert.equal(one.adjustments[0].status, 'verified');
-  assert.equal(one.adjustments[0].slots, 1);
-  assertCertified(one, 2);
+  const stripOf = (area, item = weapon) => resolve(item({}, custom({ structural: { strippedAreas: [area] } })), ctx);
 
+  // One recorded strip: unresolved, no capacity, whatever the area.
+  for (const area of ['damage', 'range', 'design', 'stun_setting', 'autofire']) {
+    const one = stripOf(area);
+    assert.equal(one.adjustments.length, 1);
+    assert.equal(one.adjustments[0].status, 'unresolved');
+    assert.equal(one.adjustments[0].slots, null);
+    assert.deepEqual(one.adjustments[0].reasons, ['STRIP_HOST_EVIDENCE_UNESTABLISHED']);
+    assert.ok(codes(one.unresolved).includes('STRIP_HOST_EVIDENCE_UNESTABLISHED'));
+    assert.ok(!codes(one.unresolved).includes('MULTIPLE_STRIPS_UNRESOLVED'));
+    assert.equal(one.totals.unverifiedAdjustmentCount, 1);
+    assertNoDefinitiveTotals(one);
+  }
+  // The melee-weapon/autofire counterexample and an armor strip are treated alike: eligibility is never inferred.
+  const melee = resolve(weapon({ weaponSubtype: 'melee' }, custom({ structural: { strippedAreas: ['autofire'] } })), ctx);
+  assert.equal(melee.adjustments[0].slots, null);
+  assertNoDefinitiveTotals(melee);
+  const armorStrip = resolve(armor({ armorType: 'medium' }, custom({ structural: { strippedAreas: ['joint_protection'] } })), armorCtx('medium'));
+  assert.equal(armorStrip.adjustments[0].status, 'unresolved');
+  assertNoDefinitiveTotals(armorStrip);
+
+  // Multiple distinct strips: both reasons, area list preserved.
   const two = resolve(weapon({}, custom({ structural: { strippedAreas: ['damage', 'range'] } })), ctx);
   assert.equal(two.adjustments.length, 2);
   for (const adjustment of two.adjustments) {
     assert.equal(adjustment.status, 'unresolved');
     assert.equal(adjustment.slots, null);
-    assert.deepEqual(adjustment.reasons, ['MULTIPLE_STRIPS_UNRESOLVED']);
+    assert.deepEqual(adjustment.reasons, ['STRIP_HOST_EVIDENCE_UNESTABLISHED', 'MULTIPLE_STRIPS_UNRESOLVED']);
   }
-  const block = two.unresolved.find((entry) => entry.code === 'MULTIPLE_STRIPS_UNRESOLVED');
-  assert.deepEqual(block.detail.areas, ['damage', 'range']);
+  assert.deepEqual(two.unresolved.find((entry) => entry.code === 'MULTIPLE_STRIPS_UNRESOLVED').detail.areas, ['damage', 'range']);
+  assert.deepEqual(two.unresolved.find((entry) => entry.code === 'STRIP_HOST_EVIDENCE_UNESTABLISHED').detail.areas, ['damage', 'range']);
   assert.equal(two.totals.unverifiedAdjustmentCount, 2);
   assertNoDefinitiveTotals(two);
 
+  // Invalid, duplicate and unreadable strips remain conflicts.
   const invalid = resolve(weapon({}, custom({ structural: { strippedAreas: ['defensive_material'] } })), ctx);
   assert.ok(codes(invalid.conflicts).includes('INVALID_STRIP_AREA'));
   assertNoDefinitiveTotals(invalid);
   const equipmentStrip = resolve(equipment({}, custom({ structural: { strippedAreas: ['damage'] } })), {});
   assert.ok(codes(equipmentStrip.conflicts).includes('INVALID_STRIP_AREA'));
+  assertNoDefinitiveTotals(equipmentStrip);
   const duplicate = resolve(weapon({}, custom({ structural: { strippedAreas: ['damage', 'damage'] } })), ctx);
   assert.ok(codes(duplicate.conflicts).includes('DUPLICATE_ADJUSTMENT'));
+  assert.equal(duplicate.adjustments.length, 1);
+  assert.equal(duplicate.adjustments[0].slots, null);
   assertNoDefinitiveTotals(duplicate);
   const garbage = resolve(weapon({}, custom({ structural: { strippedAreas: 'damage' } })), ctx);
   assert.ok(codes(garbage.conflicts).includes('INVALID_STRIP_AREA'));
   assertNoDefinitiveTotals(garbage);
 
+  // Canonical strip mirrored in legacy fields: still one unresolved adjustment, nothing double counted or certified.
+  const mirrored = resolve(
+    weapon({ strippedFeatures: { damage: true } }, { ...custom({ structural: { strippedAreas: ['damage'] } }), swse: { customizationStructural: { strippedAreas: ['damage'] } } }),
+    ctx
+  );
+  assert.equal(mirrored.adjustments.length, 1);
+  assert.equal(mirrored.adjustments[0].slots, null);
+  assert.ok(!codes(mirrored.unresolved).includes('LEGACY_STRUCTURAL_UNRECONCILED'));
+  assertNoDefinitiveTotals(mirrored);
+
+  // Size increase plus a strip: the size adjustment stays separately verified and visible, but no total is certified.
   const both = resolve(weapon({}, custom({ structural: { sizeIncreaseApplied: true, strippedAreas: ['range'] } })), ctx);
   assert.deepEqual(both.adjustments.map((entry) => [entry.id, entry.status, entry.slots]), [
     ['structural:size-increase', 'verified', 1],
-    ['structural:strip:range', 'verified', 1]
+    ['structural:strip:range', 'unresolved', null]
   ]);
-  assertCertified(both, 3);
+  assertNoDefinitiveTotals(both);
+
+  // No recorded strips (absent, empty, null): otherwise valid items certify.
+  assertCertified(resolve(weapon({}, custom({ structural: { strippedAreas: [] } })), ctx), 1);
+  assertCertified(resolve(weapon({}, custom({ structural: { strippedAreas: null } })), ctx), 1);
+  assertCertified(resolve(equipment(), {}), 1);
+  assertCertified(resolve(weapon({}, custom({ structural: { sizeIncreaseApplied: true } })), ctx), 2);
 });
 check('16 Tech Specialist device slot is unverified: no capacity, no certification', () => {
   const traits = [{ id: 'rec1', traitId: 'tech_device_upgrade_slot', name: 'Additional Upgrade Slot' }];
@@ -590,12 +628,15 @@ check('17c legacy structural evidence: consistent mirrors are not counted twice'
     { ...custom({ structural: { strippedAreas: ['damage'] } }), swse: { customizationStructural: { strippedAreas: ['damage'] } } }
   );
   const state = resolve(mirrored, ctx);
+  // D16: the one canonical strip is unresolved (no host evidence); the mirrors add no second adjustment.
   assert.equal(state.adjustments.length, 1);
-  assert.equal(state.adjustments[0].slots, 1);
+  assert.equal(state.adjustments[0].slots, null);
   assert.ok(!codes(state.unresolved).includes('LEGACY_STRUCTURAL_UNRECONCILED'));
-  assertCertified(state, 2);
+  assertNoDefinitiveTotals(state);
   const stun = resolve(weapon({ strippedFeatures: { stun: true } }, custom({ structural: { strippedAreas: ['stun_setting'] } })), ctx);
-  assertCertified(stun, 2);
+  assert.equal(stun.adjustments.length, 1);
+  assert.ok(!codes(stun.unresolved).includes('LEGACY_STRUCTURAL_UNRECONCILED'));
+  assertNoDefinitiveTotals(stun);
   const sized = resolve(weapon({}, { ...custom({ structural: { sizeIncreaseApplied: true } }), swse: { customizationStructural: { sizeIncreaseApplied: true } } }), ctx);
   assertCertified(sized, 2);
 });
