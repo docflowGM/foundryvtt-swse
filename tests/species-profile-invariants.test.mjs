@@ -76,7 +76,7 @@ for (const [variantId, exp] of Object.entries(fixture)) {
   // Starting-proficiency suppression (Primitive) only as printed.
   assert.deepEqual([...(f.suppressedClassProficiencies ?? [])].sort(), [...exp.suppressedProficiencies].sort(), `${exp.species} suppressed starting proficiencies`);
   // Activated abilities only where the audit identifies the printed ability.
-  assert.deepEqual(ctx.ledger.activeSpeciesAbilities.map(a => a.id).filter(id => !exp.namedActivations.some(n => n === id || (id === 'shapeshift' && n === 'shapeshift') || (id === 'energy-surge' && n === 'quick-energy'))), [],
+  assert.deepEqual(ctx.ledger.activeSpeciesAbilities.map(a => a.id).filter(id => !exp.namedActivations.some(n => n === id || (id === 'shapeshift' && n === 'shapeshift') || (id === 'energy-surge' && n === 'quick-energy') || (id === 'natural-weapon-poison' && n === 'poison'))), [],
     `${exp.species}: no activated ability the profile does not print`);
 
   // Revocation + A -> B -> A + idempotence through a Core (base-record) species and back.

@@ -9,20 +9,20 @@ Every hydrated row is `SOURCE_VERIFIED` against the audit, `DATA_RECONCILED` in 
 
 | Category | Profiles |
 |---|---|
-| Hydrated by the bulk tool | 90 |
+| Hydrated by the bulk tool | 91 |
 | Core Rulebook profiles reconciled earlier on their base records | 19 |
 | Multi-publication profiles handled separately (Bith, Chadra-Fan, Chagrian, Chiss, Krevaaki, Neimoidian, Yuuzhan Vong) | 15 |
-| Technical holds | 5 |
+| Technical holds | 4 |
 
 ## Features of the hydrated profiles
 
 | Category | Features |
 |---|---|
-| Automated by a structured rule or field | 88 |
-| Automated by a verified existing activated-ability entry | 6 |
-| Natural attacks granted as species natural-weapon items (counted in attacks, not features) | 17 |
+| Automated by a structured rule or field | 90 |
+| Automated by a verified existing activated-ability entry | 8 |
+| Natural attacks granted as species natural-weapon items (counted in attacks, not features) | 18 |
 | Existing engine automation known to be inaccurate — suppressed, text only | 5 |
-| Display-only (no automation) | 191 |
+| Display-only (no automation) | 192 |
 
 Display-only includes natural-attack features whose secondary effects are not implemented; the attacks themselves are in the
 natural-attack column below.
@@ -35,7 +35,7 @@ natural-attack column below.
 - Darkvision / Low-light Vision, conditional skill bonuses and defenses, and activated abilities without a verified engine entry are display-only.
 - Small-size Stealth (+5) is a general size rule and is not applied by species data (see register RD-007).
 
-## Hydrated profiles (90)
+## Hydrated profiles (91)
 
 | Profile | Variant id | Structured (automated) | Verified activation | Natural attacks granted | Engine automation suppressed | Display-only |
 |---|---|---|---|---|---|---|
@@ -128,9 +128,10 @@ natural-attack column below.
 | GAW-2I-09 Zygerrian | `zygerrian-gaw-2i-09` | Bonus Feat, Iron Will | — | — | — | Strength of Conviction (DEFENSE_ABILITY_SUBSTITUTION) |
 | JATM-2J-03 Vultan | `vultan-jatm-2j-03` | Bonus Trained Skill | — | — | — | Conditional Bonus Feat (CONDITIONAL_BONUS_FEAT_CHOICE) |
 | TOG-2K-02 Chistori | `chistori-tog-2k-02` | — | Rage | — | — | Cold-Blooded (EXTREME_COLD_ENVIRONMENTAL_DEFENSE_PENALTY); Armor Plating (DAMAGE_REDUCTION) |
+| TOG-2K-03 Mantellian Savrip | `mantellian-savrip-tog-2k-03` | Natural Armor, Primitive | Poison, Rage | Claw 1d6 slashing | — | Natural Weapons (SPECIES_GRANTED_NATURAL_ATTACK_WITH_AOO_EXCEPTION) |
 | TOG-2K-04 Utai | `utai-tog-2k-04` | — | — | — | — | Animal Handler (SKILL_REROLL_AND_CONDITIONAL_ATTITUDE_BONUS); Cooperative (CONDITIONAL_AID_ANOTHER_AUTOSUCCESS); Low-Light Vision (VISION) |
 
-## Held and separately handled (39)
+## Held and separately handled (38)
 
 | Profile | Category | Reason |
 |---|---|---|
@@ -172,4 +173,3 @@ natural-attack column below.
 | JATM-2J-02 Celegian | technical | land speed not printed/resolved ({"land":null,"swim":10,"fly":6}) — rules review: SPECIES-RD-018 |
 | JATM-2J-04 Krevaaki | multi | published in several profiles (separate path) |
 | TOG-2K-01 Bith | multi | published in several profiles (separate path) |
-| TOG-2K-03 Mantellian Savrip | technical | natural attack "claw" carries doesNotProvokeAOO, countsAs, threatensAdjacentSquares, damageBonusAbility which the weapon item cannot represent |

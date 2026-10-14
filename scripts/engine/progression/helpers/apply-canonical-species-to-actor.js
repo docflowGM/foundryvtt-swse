@@ -709,6 +709,13 @@ async function _materializeNaturalWeapons(actor, pendingContext) {
         },
         attackAbility: nw.attackAbility || 'str',
         properties: nw.properties || {},
+        // Printed riders, expressed in the weapon item's existing vocabulary (same fields the unarmed strike uses).
+        ...(nw.properties?.noProvokeOpportunity ? {
+          provokesOpportunityAttack: false,
+          noProvokeOpportunity: true,
+          attackOptions: { noProvokeOpportunity: true },
+        } : {}),
+        ...(nw.properties?.proficiencyGroup ? { proficiency: nw.properties.proficiencyGroup, weaponGroup: nw.properties.proficiencyGroup } : {}),
         // Mark as species-granted
         source: 'species-natural-weapon',
       },

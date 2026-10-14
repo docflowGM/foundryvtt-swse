@@ -420,3 +420,14 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Finding | The derived character speed reads `system.speed` and falls back to 6 when it is absent; `system.speciesMovement` (fly, swim) is stored but not consumed by derived movement. A species without a printed land speed therefore cannot be represented without either inventing a walking speed or changing derived movement. |
 | Decision | Celegian stays held. Needed: derived movement that consumes fly/swim/hover, and an explicit "no land speed printed" state. Language comprehension (Basic understood, not spoken) has no schema either. |
 | Status | `DEFERRED_RULES_REVIEW` plus a technical movement-schema gap |
+
+---
+
+## SPECIES-RD-018 — SECOND ENGINEERING NOTE (appended; earlier entries preserved unchanged)
+
+| Field | |
+|---|---|
+| Investigation | The only place a missing land speed could be handled is the shared derived-speed code (`scripts/actors/v2/character-actor.js` `baseSpeed`, used by every character): with no `system.speed` it yields the generic default 6; with 0 it yields an immobile walk speed. Neither is stated by the book. |
+| Question for the owner | For a species printed with fly and swim speeds but no land speed, should the derived Walk speed be shown as absent ("—"), 0, or should the character use another printed mode as its primary speed? This changes shared movement display, so it is a design decision, not a data fix. |
+| Engineering that is ready once decided | Snapshot `speed: null` with an explicit "land speed not printed" marker; apply/revoke of the printed fly/swim/hover modes; a derived-speed branch for the marker. |
+| Status | `DEFERRED_RULES_REVIEW` |

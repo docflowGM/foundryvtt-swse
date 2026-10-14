@@ -1833,6 +1833,63 @@
    "climbing-skills": "display-only"
   }
  },
+ "mantellian-savrip-tog-2k-03": {
+  "species": "Mantellian Savrip",
+  "sourceProfileId": "TOG-2K-03",
+  "abilityMods": {
+   "str": 4,
+   "dex": -2,
+   "con": 4,
+   "int": -4,
+   "wis": -4,
+   "cha": -4
+  },
+  "size": "Large",
+  "speed": 8,
+  "languages": [
+   "Savrip"
+  ],
+  "traitIds": [
+   "natural-armor",
+   "natural-weapons",
+   "poison",
+   "primitive",
+   "rage"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 2,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claw",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [
+   "poison",
+   "rage"
+  ],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "natural-weapons": "display-only",
+   "poison": "named-activation",
+   "primitive": "structured-field",
+   "rage": "named-activation"
+  }
+ },
  "massassi-kotor-2d-08": {
   "species": "Massassi",
   "sourceProfileId": "KOTOR-2D-08",

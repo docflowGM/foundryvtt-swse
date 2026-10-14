@@ -121,6 +121,31 @@ const feats = r => r.grants.filter(g => g.grantType === 'feat' && g.target).map(
   assert.deepEqual(r.grants.filter(g => g.grantType === 'trainedSkill').map(g => g.frequency), ['choice']);
   assert.deepEqual(r.grants.filter(g => g.grantType === 'feat').map(g => g.frequency), ['choice']);
 }
+// Threats of the Galaxy p.117 — Mantellian Savrip as heroes: Large, claws do not provoke and count as simple weapons, Poison, Rage
+{
+  const r = await apply('Mantellian Savrip');
+  assert.deepEqual(r.racial, { str: 4, dex: -2, con: 4, int: -4, wis: -4, cha: -4 });
+  assert.deepEqual([r.size, r.speed, r.languages], ['large', 8, ['Savrip']]);
+  assert.deepEqual(r.defense, { fortitude: 0, reflex: 2, will: 0 });
+  const claw = r.actor.items.find(i => i.flags?.swse?.isNaturalWeapon);
+  assert.deepEqual([claw.system.damage.formula, claw.system.damage.type], ['1d6', 'slashing']);
+  assert.equal(claw.system.attackAbility, 'str', 'plus Strength modifier');
+  assert.equal(claw.system.attackOptions.noProvokeOpportunity, true, 'does not provoke attacks of opportunity');
+  assert.equal(claw.system.provokesOpportunityAttack, false);
+  assert.equal(claw.system.proficiency, 'simple', 'natural weapons are simple weapons');
+  assert.equal(claw.flags.swse.alwaysArmed, true);
+  // Poison engine entry pinned to the printed rule: d20 + character level vs Fortitude, -1 step, immobilized (not unconscious) at the end.
+  const poison = r.ctx.ledger.activeSpeciesAbilities.find(a => a.id === 'natural-weapon-poison');
+  assert.ok(poison, 'Poison activates');
+  assert.deepEqual([poison.attack.formula, poison.attack.targetDefense, poison.effect.conditionSteps, poison.effect.endTrackOverride, poison.trigger],
+    ['1d20 + characterLevel', 'fortitude', 1, 'immobilized', 'after-natural-weapon-damage']);
+  assert.ok(r.abilities.includes('rage'));
+  assert.deepEqual([...(r.actor.flags.swse.suppressedClassProficiencies ?? [])].sort(), ['Weapon Proficiency (Heavy Weapons)', 'Weapon Proficiency (Pistols)', 'Weapon Proficiency (Rifles)']);
+  // A species with an ordinary natural weapon gets none of the riders.
+  const plain = (await apply('Yuzzem')).actor.items.find(i => i.flags?.swse?.isNaturalWeapon);
+  assert.notEqual(plain.system.attackOptions?.noProvokeOpportunity, true);
+  assert.notEqual(plain.system.proficiency, 'simple');
+}
 // Activated-ability exclusions: engine entries that differ from the printed rule never activate from a published profile
 for (const [species, banned] of [['Caamasi', 'pacifism'], ['Yarkora', 'confusion'], ['Clawdite', 'shapeshift'], ['Draethos', 'natural-telepath']]) {
   const r = await apply(species);

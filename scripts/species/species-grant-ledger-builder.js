@@ -1789,7 +1789,10 @@ export class SpeciesGrantLedgerBuilder {
         properties: {
           alwaysArmed: nw.alwaysArmed ?? true,
           countsAsWeapon: nw.countsAsWeapon ?? true,
-          finesse: nw.finesse ?? false
+          finesse: nw.finesse ?? false,
+          // Printed riders carried by the existing weapon-item vocabulary (attackOptions.noProvokeOpportunity, proficiency group).
+          ...(nw.noProvokeOpportunity === true ? { noProvokeOpportunity: true } : {}),
+          ...(nw.proficiencyGroup ? { proficiencyGroup: String(nw.proficiencyGroup) } : {})
         }
       });
     }

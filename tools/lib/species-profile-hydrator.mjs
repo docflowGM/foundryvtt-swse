@@ -147,10 +147,13 @@ const ACTIVATION_NAMES = {
   startle: ['ENCOUNTER_REACTION'],
   pheromones: ['INHALED_POISON_ACTIVATED_ABILITY'],
   'quick-energy': ['LIMITED_ACTIVATED_ABILITY'],
+  // Natural Weapon Poison: free action on a damaging natural-weapon hit, d20 + character level vs Fortitude, -1 condition step,
+  // immobilized (not unconscious) at the end of the track — pinned in tests/species-source-pinned.test.mjs.
+  poison: ['NATURAL_WEAPON_ON_HIT_POISON_CONDITION'],
   // Engine entries known to differ from (or go beyond) the audited text: never activated from a published profile.
   // Pacifism omits the "only if the target attacks" condition; Confusion ends at the wrong time; Force Blast is a
   // different mechanic; Shapeshift invents a duration; Natural Telepath invents an action type; the rest are unverified.
-  poison: [], 'natural-telepath': [], 'broadcast-telepath': [], bellow: [], 'sonic-bellow': [], confusion: [],
+  'natural-telepath': [], 'broadcast-telepath': [], bellow: [], 'sonic-bellow': [], confusion: [],
   shapeshifter: [], shapeshift: [], 'energy-surge': [], 'force-blast': [], pacifism: [],
 };
 
@@ -195,12 +198,17 @@ function compileNaturalWeapons(snap, speciesSlug) {
     const type = p.type ?? p.damageType ?? first?.damage?.type;
     if (!name || !/^\d+d\d+$/.test(String(damage ?? ''))) throw new HoldProfile(`natural attack without printed dice damage (${name ?? 'unnamed'})`);
     if (!type) throw new HoldProfile(`natural attack "${name}": damage type not printed`);
-    const extras = ['doesNotProvokeAOO', 'countsAs', 'threatensAdjacentSquares', 'damageBonusAbility'].filter(k => p[k] !== undefined);
+    // Riders the weapon item can carry: no attack of opportunity (attackOptions.noProvokeOpportunity), counts as a simple weapon
+    // (proficiency group), threatens adjacent squares (every armed melee weapon does), Strength damage (the standard melee rule).
+    const supported = { doesNotProvokeAOO: v => v === true, countsAs: v => v === 'simpleWeapon', threatensAdjacentSquares: v => v === true, damageBonusAbility: v => v === 'Strength' };
+    const extras = Object.keys(supported).filter(k => p[k] !== undefined && !supported[k](p[k]));
     if (extras.length) throw new HoldProfile(`natural attack "${name}" carries ${extras.join(', ')} which the weapon item cannot represent`);
     if (p.alwaysArmed === false || first?.alwaysArmed === false) throw new HoldProfile(`natural attack "${name}" is not always armed`);
     out.push({
       id: p.profileId ?? p.id ?? slug(name), name: titleWords(name), damage, type: String(type).toLowerCase(),
       alwaysArmed: true, category: 'melee', attackAbility: 'str',
+      ...(p.doesNotProvokeAOO === true ? { noProvokeOpportunity: true } : {}),
+      ...(p.countsAs === 'simpleWeapon' ? { proficiencyGroup: 'simple' } : {}),
       sourceFeatureId: p.featureId ?? p.sourceFeatureId ?? null, sourcePrintedPage: p.sourcePrintedPage ?? null,
     });
   }
