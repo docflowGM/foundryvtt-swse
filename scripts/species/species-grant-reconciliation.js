@@ -110,6 +110,16 @@ export function withStaleDeletions(current, next) {
   return out;
 }
 
+/** True only for items the species materializers themselves create (natural weapons, activated abilities). */
+export function hasMaterializerSignature(item) {
+  const swse = item?.flags?.swse;
+  if (!swse?.speciesGranted) return false;
+  const naturalWeapon = item.type === 'weapon' && swse.isNaturalWeapon === true && item.system?.source === 'species-natural-weapon';
+  const speciesAbility = item.type === 'combat-action' && swse.isSpeciesAbility === true && !!swse.speciesAbilityId
+    && item.system?.executionModel === 'species-activated-ability';
+  return naturalWeapon || speciesAbility;
+}
+
 function getPath(obj, path) {
   return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
 }
@@ -123,7 +133,7 @@ function getPath(obj, path) {
  * @param {Array}  args.items               actor items: [{id,type,name,flags:{swse:{...}}}]
  * @param {string} args.speciesName         new species name (legacy item reconciliation)
  * @param {Function} [args.readCurrent]   (dottedKey) => current actor value, used for stale-key deletion in object writes
- * @returns {{ resets: object, rewrites: object, itemsToDelete: string[], itemsToCreate: Array, manifest: object }}
+ * @returns {{ resets: object, rewrites: object, ambiguousItemIds: string[], itemsToDelete: string[], itemsToCreate: Array, manifest: object }}
  */
 export function reconcileSpeciesGrant({ grantKey, plan, manifest, actorState = {}, items = [], speciesName, readCurrent = () => undefined }) {
   const previous = manifest && typeof manifest === 'object' ? manifest : null;
@@ -176,20 +186,40 @@ export function reconcileSpeciesGrant({ grantKey, plan, manifest, actorState = {
   }
 
   // 5. Items: delete other grants' items, never duplicate this grant's.
+  //    Keyed items (created after manifests existed) are compared by grant key. Legacy items have
+  //    no key; they are only ever deleted when they carry the unmistakable signature of a species
+  //    materializer AND the new grant has no matching item. A speciesGranted flag without such a
+  //    signature is ambiguous: it is kept and reported, never auto-deleted.
+  const itemIdentity = item => `${item.type}:${item.flags?.swse?.speciesAbilityId || item.flags?.swse?.sourceTrait || item.name}`;
+  const plannedIdentities = new Set((plan.itemsToCreate || []).map(itemIdentity));
   const itemsToDelete = [];
+  const ambiguousItemIds = [];
   const keep = new Set();
   for (const item of items) {
     const swse = item?.flags?.swse;
     if (!swse?.speciesGranted) continue;
-    const itemKey = swse.speciesGrantKey || null;
-    const stale = itemKey ? itemKey !== grantKey : swse.sourceSpecies !== speciesName;
-    if (stale) itemsToDelete.push(item.id);
-    else keep.add(`${item.type}:${swse.speciesAbilityId || swse.sourceTrait || item.name}`);
+    const identity = itemIdentity(item);
+    if (swse.speciesGrantKey) {
+      if (swse.speciesGrantKey !== grantKey) itemsToDelete.push(item.id);
+      else keep.add(identity);
+      continue;
+    }
+    // Legacy (unkeyed) item.
+    if (swse.sourceSpecies && swse.sourceSpecies !== speciesName) {
+      if (hasMaterializerSignature(item)) itemsToDelete.push(item.id);
+      else ambiguousItemIds.push(item.id);
+    } else if (plannedIdentities.has(identity)) {
+      keep.add(identity);                                     // belongs to the new grant by identity
+    } else if (hasMaterializerSignature(item)) {
+      itemsToDelete.push(item.id);                            // same species, absent from the new profile
+    } else {
+      ambiguousItemIds.push(item.id);
+    }
   }
   const itemsToCreate = [];
   const seen = new Set();
   for (const item of plan.itemsToCreate || []) {
-    const id = `${item.type}:${item.flags?.swse?.speciesAbilityId || item.flags?.swse?.sourceTrait || item.name}`;
+    const id = itemIdentity(item);
     if (keep.has(id) || seen.has(id)) continue;
     seen.add(id);
     itemsToCreate.push({
@@ -215,5 +245,5 @@ export function reconcileSpeciesGrant({ grantKey, plan, manifest, actorState = {
   }
   const manifestFixed = withStaleDeletions(readCurrent(MANIFEST_FLAG), nextManifest);
 
-  return { resets, rewrites, itemsToDelete, itemsToCreate, manifest: manifestFixed };
+  return { resets, rewrites, itemsToDelete, itemsToCreate, ambiguousItemIds, manifest: manifestFixed };
 }

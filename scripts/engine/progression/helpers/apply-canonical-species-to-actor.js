@@ -161,6 +161,9 @@ export async function applyCanonicalSpeciesToActor(actor, pendingContext) {
     else delete mutations.itemsToCreate;
     if (reconciliation.itemsToDelete.length) mutations.itemsToDelete = reconciliation.itemsToDelete;
     mutations[MANIFEST_FLAG] = reconciliation.manifest;
+    if (reconciliation.ambiguousItemIds.length) {
+      SWSELogger.warn('[CanonicalSpecies] Kept species-flagged items with ambiguous provenance (not deleted):', reconciliation.ambiguousItemIds);
+    }
 
     SWSELogger.log('[CanonicalSpecies] Species materialization complete:', {
       species: pendingContext.identity.name,
