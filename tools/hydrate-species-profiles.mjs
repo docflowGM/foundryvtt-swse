@@ -115,7 +115,7 @@ if (write) {
     '## Technical gaps (engineering, not rules questions)',
     '',
     '- Printed language choices (Nikto: "Nikto and either Basic or Huttese") are not modelled; only the fixed language is granted.',
-    '- Conditional bonus feats whose condition is not "skill X is trained" (ability-score thresholds, prerequisite feats, restricted pools) stay display-only until the requirement resolver supports those condition types.',
+    '- Conditional bonus feats are automated for the requirement types the existing resolver evaluates (skill trained, ability score minimum, base attack bonus minimum, feat owned). A printed "may take" option (Tof: Mighty Swing) is not an automatic grant and stays text; restricted pools and choices stay text. Feat-owned grants are re-checked when an actor update touches skills, attributes or level (adding only a feat item does not trigger a re-check).',
     '- Pacifism (Caamasi), Confusion (Yarkora), Force Blast (Felucian), Shapeshift (Clawdite), Natural Telepath (Draethos) and the other unverified engine entries are suppressed for published profiles because the engine behaviour differs from, or goes beyond, the audited text.',
     '- Darkvision / Low-light Vision, conditional skill bonuses and defenses, and activated abilities without a verified engine entry are display-only.',
     '- Small-size Stealth (+5) is a general size rule and is not applied by species data (see register RD-007).',

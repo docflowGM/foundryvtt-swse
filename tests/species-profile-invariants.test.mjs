@@ -62,8 +62,9 @@ for (const [variantId, exp] of Object.entries(fixture)) {
   assert.deepEqual((f.speciesRerolls ?? []).map(r => `${r.target}:${r.outcome}`).sort(), exp.rerolls.map(r => `${r.skillId}:${r.outcome}`).sort(), `${exp.species} rerolls`);
   const grants = ctx.traits.flatMap(t => t.grants ?? []);
   const featGrants = grants.filter(g => g.grantType === 'feat');
-  assert.deepEqual(featGrants.filter(g => g.target).map(g => `${g.target}|${(g.requirements ?? []).map(r => r.skill).join(',')}`).sort(),
-    exp.featGrants.filter(g => g.feat).map(g => `${g.feat}|${g.requiresTrained.join(',')}`).sort(), `${exp.species} named feat grants`);
+  const reqText = q => (q.type === 'skillTrained' ? `trained:${q.skill}` : q.type === 'attributeMin' ? `${q.attribute}>=${q.min}` : q.type === 'baseAttackMin' ? `bab>=${q.min}` : `feat:${q.feat}`);
+  assert.deepEqual(featGrants.filter(g => g.target).map(g => `${g.target}|${(g.requirements ?? []).map(reqText).sort()}`).sort(),
+    exp.featGrants.filter(g => g.feat).map(g => `${g.feat}|${[...g.requires].sort()}`).sort(), `${exp.species} named feat grants`);
   assert.equal(featGrants.filter(g => !g.target).length, exp.featGrants.filter(g => g.choice).length, `${exp.species} feat choices`);
   assert.deepEqual(grants.filter(g => g.grantType === 'classSkill').map(g => g.targetDisplay).sort(), [...exp.classSkills].sort(), `${exp.species} class skills`);
   assert.equal(grants.filter(g => g.grantType === 'trainedSkill').length, exp.trainedSkillChoices, `${exp.species} trained skill choices`);

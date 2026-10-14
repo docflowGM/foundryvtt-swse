@@ -72,14 +72,31 @@ function compileGrant(f) {
   const strings = (...v) => v.find(x => typeof x === 'string' && x.trim()) ?? null;
   switch (f.classification) {
     case 'CONDITIONAL_FEAT_GRANT': {
-      const skill = skillKey(strings(m.condition?.trainedSkill, m.requires?.trainedSkill, m.requiresTrainedSkill, m.skill && m.prerequisite === 'trainedInSurvival' ? m.skill : null,
-        m.prerequisite === 'Use the Force trained' ? 'Use the Force' : null));
-      let feat = strings(m.bonusFeat, m.grantFeat, m.grantsFeat);
+      // Requirement types the existing resolvers evaluate (SpeciesConditionalGrantResolver): skillTrained, attributeMin,
+      // baseAttackMin, featOwned. A printed "may take" option (not an automatic grant) and anything else stays text.
+      if (m.printedVerb === 'can take' || m.bonusFeatOption || m.choices || m.quantity) return null;
+      const requirements = [];
+      const trained = skillKey(strings(m.condition?.trainedSkill, m.requires?.trainedSkill, m.requiresTrainedSkill,
+        m.prerequisite === 'trainedInSurvival' ? m.skill : null, m.prerequisite === 'Use the Force trained' ? 'Use the Force' : null));
+      if (trained) requirements.push({ type: 'skillTrained', skill: trained });
+      const ability = (k, v) => ({ type: 'attributeMin', attribute: k.toLowerCase().slice(0, 3), min: v });
+      const abil = m.condition?.ConstitutionScoreMin !== undefined ? [['con', m.condition.ConstitutionScoreMin]] : Object.entries({ ...(m.abilityThreshold ?? {}), ...(m.prerequisites?.DEX !== undefined ? { DEX: m.prerequisites.DEX } : {}) })
+        .map(([k, v]) => [k.toLowerCase().slice(0, 3), v]);
+      for (const [k, v] of abil) {
+        if (!['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(k) || !Number.isFinite(v)) return null;
+        requirements.push(ability(k, v));
+      }
+      if (m.prerequisites?.BAB !== undefined) { if (!Number.isFinite(m.prerequisites.BAB)) return null; requirements.push({ type: 'baseAttackMin', min: m.prerequisites.BAB }); }
+      if (typeof m.requiresFeat === 'string') requirements.push({ type: 'featOwned', feat: m.requiresFeat });
+      let feat = strings(m.bonusFeat, m.grantFeat, m.grantsFeat, m.grantsFeat, typeof m.feat === 'string' && m.feat !== 'Skill Focus' && m.feat !== 'Force Training' ? m.feat : null);
       if (!feat && m.feat === 'Skill Focus' && m.skill && !m.choices) feat = `Skill Focus (${m.skill})`;
       if (!feat && m.feat === 'Force Training') feat = 'Force Training';
-      const extra = Object.keys(m).filter(k => !['condition', 'requires', 'requiresTrainedSkill', 'bonusFeat', 'grantFeat', 'grantsFeat', 'featSource', 'feat', 'skill', 'prerequisite', 'automaticIfEligible'].includes(k));
-      if (!skill || !feat || extra.length || (m.condition && Object.keys(m.condition).some(k => k !== 'trainedSkill')) || (m.requires && Object.keys(m.requires).some(k => k !== 'trainedSkill'))) return null;
-      return [{ type: 'featGrant', featName: feat, requirements: [{ type: 'skillTrained', skill }], id: rid }];
+      const known = ['condition', 'requires', 'requiresTrainedSkill', 'bonusFeat', 'grantFeat', 'grantsFeat', 'featSource', 'feat', 'skill', 'prerequisite', 'automaticIfEligible',
+        'abilityThreshold', 'prerequisites', 'trigger', 'grantType', 'requiresFeat', 'grantsFeat'];
+      const conditionKeys = Object.keys(m.condition ?? {}).filter(k => !['trainedSkill', 'ConstitutionScoreMin'].includes(k));
+      const prereqKeys = Object.keys(m.prerequisites ?? {}).filter(k => !['DEX', 'BAB'].includes(k));
+      if (!feat || !requirements.length || Object.keys(m).some(k => !known.includes(k)) || conditionKeys.length || prereqKeys.length || Object.keys(m.requires ?? {}).some(k => k !== 'trainedSkill')) return null;
+      return [{ type: 'featGrant', featName: feat, requirements, id: rid }];
     }
     case 'FIXED_FEAT_GRANT':
     case 'AUTOMATIC_FEAT_GRANT':
@@ -291,7 +308,7 @@ export function hydrateProfile(profile, record, { provenance = [] } = {}) {
     traitIds: ids,
     defense: Object.fromEntries(rulesOf('defenseModifier').map(r => [r.defense, { value: r.value, bonusType: r.bonusType }])),
     rerolls: rulesOf('reroll').map(r => ({ skillId: r.triggeredBy.skillId, outcome: r.outcome })),
-    featGrants: rulesOf('featGrant').map(r => (r.choice ? { choice: true } : { feat: r.featName, requiresTrained: r.requirements.map(q => q.skill) })),
+    featGrants: rulesOf('featGrant').map(r => (r.choice ? { choice: true } : { feat: r.featName, requires: r.requirements.map(q => q.type === 'skillTrained' ? `trained:${q.skill}` : q.type === 'attributeMin' ? `${q.attribute}>=${q.min}` : q.type === 'baseAttackMin' ? `bab>=${q.min}` : `feat:${q.feat}`) })),
     naturalWeapons: naturalWeapons.map(w => ({ name: w.name, damage: w.damage, type: w.type })),
     classSkills: rulesOf('classSkillGrant').flatMap(r => r.skills),
     trainedSkillChoices: rulesOf('trainedSkillChoice').length,

@@ -18,11 +18,11 @@ Every hydrated row is `SOURCE_VERIFIED` against the audit, `DATA_RECONCILED` in 
 
 | Category | Features |
 |---|---|
-| Automated by a structured rule or field | 79 |
+| Automated by a structured rule or field | 83 |
 | Automated by a verified existing activated-ability entry | 6 |
 | Natural attacks granted as species natural-weapon items (counted in attacks, not features) | 16 |
 | Existing engine automation known to be inaccurate — suppressed, text only | 4 |
-| Display-only (no automation) | 186 |
+| Display-only (no automation) | 182 |
 
 Display-only includes natural-attack features whose secondary effects are not implemented; the attacks themselves are in the
 natural-attack column below.
@@ -30,7 +30,7 @@ natural-attack column below.
 ## Technical gaps (engineering, not rules questions)
 
 - Printed language choices (Nikto: "Nikto and either Basic or Huttese") are not modelled; only the fixed language is granted.
-- Conditional bonus feats whose condition is not "skill X is trained" (ability-score thresholds, prerequisite feats, restricted pools) stay display-only until the requirement resolver supports those condition types.
+- Conditional bonus feats are automated for the requirement types the existing resolver evaluates (skill trained, ability score minimum, base attack bonus minimum, feat owned). A printed "may take" option (Tof: Mighty Swing) is not an automatic grant and stays text; restricted pools and choices stay text. Feat-owned grants are re-checked when an actor update touches skills, attributes or level (adding only a feat item does not trigger a re-check).
 - Pacifism (Caamasi), Confusion (Yarkora), Force Blast (Felucian), Shapeshift (Clawdite), Natural Telepath (Draethos) and the other unverified engine entries are suppressed for published profiles because the engine behaviour differs from, or goes beyond, the audited text.
 - Darkvision / Low-light Vision, conditional skill bonuses and defenses, and activated abilities without a verified engine entry are display-only.
 - Small-size Stealth (+5) is a general size rule and is not applied by species data (see register RD-007).
@@ -46,14 +46,14 @@ natural-attack column below.
 | UR-2B-07 Sluissi | `sluissi-ur-2b-07` | Conditional Bonus Feat | — | — | — | Careful Worker (TIME_EXCHANGE_SKILL_BONUS); Serpentine (MOVEMENT_AND_GRAPPLE_EXCEPTION) |
 | UR-2B-08 Squib | `squib-ur-2b-08` | — | — | — | — | Natural Diplomat (CONDITIONAL_SKILL_BONUS_AND_CLASS_SKILL); Tech Savvy (OPTIONAL_REROLL_MUST_ACCEPT_AND_UNTRAINED_EXCEPTION); Weapon Familiarity (CONDITIONAL_WEAPON_PROFICIENCY) |
 | UR-2B-09 Verpine | `verpine-ur-2b-09` | Natural Armor, Heightened Awareness, Conditional Bonus Feat | — | — | — | Verpine Communication (SPECIES_LIMITED_TELEPATHY) |
-| UR-2B-11 Ebruchi | `ebruchi-ur-2b-11` | Iron Will | — | — | — | Conditional Bonus Feat (CONDITIONAL_FEAT_GRANT); Unsettling (ON_SUCCESS_ALTERNATE_INTIMIDATION_EFFECT) |
+| UR-2B-11 Ebruchi | `ebruchi-ur-2b-11` | Conditional Bonus Feat, Iron Will | — | — | — | Unsettling (ON_SUCCESS_ALTERNATE_INTIMIDATION_EFFECT) |
 | UR-2B-14 Sorcerer of Rhand | `sorcerer-of-rhand-ur-2b-14` | Bonus Feat | — | — | — | Dark-Infused (CONSTRAINED_FIXED_FEAT_AND_SELECTION); Repulsive Appearance (OPTIONAL_REROLL_BETTER_AND_DEFENSE); Special Qualities (GM_DEFINED_CHOICE) |
 | UR-2B-15 Ssi-Ruuk | `ssi-ruuk-ur-2b-15` | Conditional Bonus Feat, Natural Armor | — | — | — | Force Blind (FORCE_USE_RESTRICTION); Keen Smell (CONDITIONAL_OPTIONAL_REROLL_BETTER) |
 | UR-2B-16 Tof | `tof-ur-2b-16` | — | — | — | — | Bonus Feat (LEVEL_ONE_FEAT_CHOICE); Conditional Bonus Feat (CONDITIONAL_FEAT_GRANT); Tof Fearlessness (ENCOUNTER_NEGATION_AND_CONDITIONAL_DEFENSE) |
 | UR-2B-17 Vagaari | `vagaari-ur-2b-17` | Conditional Bonus Feat | — | — | — | Frightening Visage (CONDITIONAL_REROLL_BETTER_AND_TRAINED_FOR_ACTION); Bioknowledge (OPTIONAL_REROLL_MUST_ACCEPT) |
 | UR-2B-18 Altiri | `altiri-ur-2b-18` | — | — | — | — | Visually Striking (CONDITIONAL_CHARISMA_BONUS_MULTIPLIER); Bonus Trained Skill (LEVEL_ONE_CHOICE) |
 | UR-2B-19 Anarrian | `anarrian-ur-2b-19` | Bonus Feat | — | — | — | Strength Surge (ENCOUNTER_CHOICE_ABILITY_OR_DAMAGE) |
-| LEG-2C-03 Codru-Ji | `codru-ji-leg-2c-03` | — | — | — | — | Bonus Feat (CONDITIONAL_FEAT_GRANT); Extra Arms (MULTI_ARM_EQUIPMENT_CAPACITY); Skilled Grappler (CONDITIONAL_ATTACK_BONUS) |
+| LEG-2C-03 Codru-Ji | `codru-ji-leg-2c-03` | Bonus Feat | — | — | — | Extra Arms (MULTI_ARM_EQUIPMENT_CAPACITY); Skilled Grappler (CONDITIONAL_ATTACK_BONUS) |
 | LEG-2C-04 Klatooinian | `klatooinian-leg-2c-04` | Iron Will | — | — | — | — |
 | LEG-2C-05 Nagai | `nagai-leg-2c-05` | Lightning Reflexes, Soothing Voice | — | — | — | Weapon Familiarity (WEAPON_PROFICIENCY_RECLASSIFICATION) |
 | LEG-2C-06 Weequay | `weequay-leg-2c-06` | Conditional Bonus Feat, Natural Armor | — | — | — | Pheromones (NONVERBAL_COMMUNICATION) |
@@ -76,14 +76,14 @@ natural-attack column below.
 | KOTOR-2D-12 Snivvian | `snivvian-kotor-2d-12` | — | — | — | — | Observant (ENCOUNTER_SKILL_MODIFIER_SUBSTITUTION); Cold Resistance (EXTREME_COLD_CONDITIONAL_DEFENSE_BONUS) |
 | TFU-2E-01 Aleena | `aleena-tfu-2e-01` | Nimble | Quick Energy | — | — | — |
 | TFU-2E-02 Caamasi | `caamasi-tfu-2e-02` | Adept Diplomat | — | — | Pacifism | Memory Sharing (INTERPERSONAL_INFORMATION_TRANSFER) |
-| TFU-2E-04 Gran | `gran-tfu-2e-04` | — | — | — | — | Darkvision (VISION); Target Awareness (PERCEPTION_DISTANCE_EXCEPTION); Triple Vision (ENCOUNTER_ACTION_ECONOMY); Conditional Bonus Feat (Precise Shot) (CONDITIONAL_FEAT_GRANT) |
+| TFU-2E-04 Gran | `gran-tfu-2e-04` | Conditional Bonus Feat (Precise Shot) | — | — | — | Darkvision (VISION); Target Awareness (PERCEPTION_DISTANCE_EXCEPTION); Triple Vision (ENCOUNTER_ACTION_ECONOMY) |
 | TFU-2E-05 Nosaurian | `nosaurian-tfu-2e-05` | Climber’s Heritage, Survival Instinct | — | Horns 1d6 piercing | — | Natural Weapon (Horns) (NATURAL_WEAPON) |
 | TFU-2E-06 Talz | `talz-tfu-2e-06` | Conditional Bonus Feat (Skill Focus Mechanics) | — | Claws 1d6 slashing | — | Darkvision (VISION); Natural Weapon (Claws) (NATURAL_WEAPON) |
 | TFU-2E-07 Togorian | `togorian-tfu-2e-07` | Feline Reflexes | — | — | — | Low-Light Vision (VISION); Physical Intimidation (ABILITY_SUBSTITUTION) |
 | TFU-2E-08 Togruta | `togruta-tfu-2e-08` | — | — | — | — | Pack Hunter (CONDITIONAL_MELEE_DAMAGE); Sneaky (SKILL_REROLL); Spatial Awareness (PERCEPTION_SPECIAL_SENSE) |
 | TFU-2E-09 Whiphid | `whiphid-tfu-2e-09` | — | — | Claws 1d6 slashing | — | Insulating Fur (CONDITIONAL_DEFENSE_BONUS); Natural Weapon (Claws) (NATURAL_WEAPON); Scent (PERCEPTION_SPECIAL_SENSE) |
 | TFU-2E-10 Yarkora | `yarkora-tfu-2e-10` | Deceptive, Streetwise | — | — | Confusion | — |
-| TFU-2E-11 Noghri | `noghri-tfu-2e-11` | Primitive | — | — | — | Conditional Bonus Feat (Running Attack) (CONDITIONAL_FEAT_GRANT); Scent (PERCEPTION_SPECIAL_SENSE) |
+| TFU-2E-11 Noghri | `noghri-tfu-2e-11` | Primitive, Conditional Bonus Feat (Running Attack) | — | — | — | Scent (PERCEPTION_SPECIAL_SENSE) |
 | SV-2F-01 Blood Carver | `blood-carver-sv-2f-01` | Conditional Bonus Feat (Skill Focus Acrobatics) | — | — | — | Deathstrike (CONDITIONAL_MELEE_EXTRA_DAMAGE) |
 | SV-2F-02 Clawdite | `clawdite-sv-2f-02` | — | Startle | — | Shapeshift | — |
 | SV-2F-03 Falleen | `falleen-sv-2f-03` | — | Pheromones | — | — | Hold Breath (BREATH_HOLDING); Pheromone Acclimation (CONDITIONAL_DEFENSE_BONUS) |

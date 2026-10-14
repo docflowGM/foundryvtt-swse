@@ -11,7 +11,11 @@ import { ProgressionContentAuthority } from "/systems/foundryvtt-swse/scripts/en
  * Returns false for unknown requirement types (safe default: do not grant).
  * @private
  */
-function _evaluateRequirement(req, actorSystem) {
+function _evaluateRequirement(req, actorSystem, actor = null) {
+  if (req.type === 'featOwned') {
+    const wanted = String(req.feat || '').toLowerCase();
+    return !!wanted && Array.from(actor?.items || []).some((i) => i.type === 'feat' && String(i.name || '').toLowerCase() === wanted);
+  }
   if (req.type === 'skillTrained') {
     return actorSystem.skills?.[req.skill]?.trained === true;
   }
@@ -41,9 +45,9 @@ function _evaluateRequirement(req, actorSystem) {
  * Evaluate all requirements in a grant. All must be met for the grant to execute.
  * @private
  */
-function _allRequirementsMet(requirements, actorSystem) {
+function _allRequirementsMet(requirements, actorSystem, actor = null) {
   if (!Array.isArray(requirements) || requirements.length === 0) return false;
-  return requirements.every((req) => _evaluateRequirement(req, actorSystem));
+  return requirements.every((req) => _evaluateRequirement(req, actorSystem, actor));
 }
 
 export class SpeciesConditionalGrantResolver {
@@ -73,7 +77,7 @@ export class SpeciesConditionalGrantResolver {
         stillDeferred.push(grant);
         continue;
       }
-      if (_allRequirementsMet(requirements, actorSystem)) {
+      if (_allRequirementsMet(requirements, actorSystem, actor)) {
         grantable.push(grant);
       } else {
         stillDeferred.push(grant);

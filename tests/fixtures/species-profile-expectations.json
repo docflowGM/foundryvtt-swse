@@ -469,8 +469,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Acrobatics)",
-    "requiresTrained": [
-     "acrobatics"
+    "requires": [
+     "trained:acrobatics"
     ]
    }
   ],
@@ -658,20 +658,28 @@
    "Codruese"
   ],
   "traitIds": [
-   "bonus-feat-text",
+   "bonus-feat",
    "extra-arms",
    "skilled-grappler"
   ],
   "defense": {},
   "rerolls": [],
-  "featGrants": [],
+  "featGrants": [
+   {
+    "feat": "Dual Weapon Mastery",
+    "requires": [
+     "dex>=13",
+     "bab>=1"
+    ]
+   }
+  ],
   "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
   "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
-   "bonus-feat-text": "display-only",
+   "bonus-feat": "structured-rule",
    "extra-arms": "display-only",
    "skilled-grappler": "display-only"
   }
@@ -736,8 +744,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Deception)",
-    "requiresTrained": [
-     "deception"
+    "requires": [
+     "trained:deception"
     ]
    }
   ],
@@ -783,7 +791,7 @@
   "featGrants": [
    {
     "feat": "Weapon Proficiency (advanced melee weapons)",
-    "requiresTrained": []
+    "requires": []
    }
   ],
   "naturalWeapons": [],
@@ -846,7 +854,7 @@
    "Ebruchese"
   ],
   "traitIds": [
-   "conditional-bonus-feat-text",
+   "conditional-bonus-feat",
    "iron-will",
    "unsettling"
   ],
@@ -857,14 +865,21 @@
    }
   },
   "rerolls": [],
-  "featGrants": [],
+  "featGrants": [
+   {
+    "feat": "Improved Damage Threshold",
+    "requires": [
+     "con>=13"
+    ]
+   }
+  ],
   "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
   "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
-   "conditional-bonus-feat-text": "display-only",
+   "conditional-bonus-feat": "structured-rule",
    "iron-will": "structured-rule",
    "unsettling": "display-only"
   }
@@ -1199,7 +1214,14 @@
   ],
   "defense": {},
   "rerolls": [],
-  "featGrants": [],
+  "featGrants": [
+   {
+    "feat": "Precise Shot",
+    "requires": [
+     "feat:Point Blank Shot"
+    ]
+   }
+  ],
   "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
@@ -1209,7 +1231,7 @@
    "darkvision": "display-only",
    "target-awareness": "display-only",
    "triple-vision": "display-only",
-   "conditional-bonus-feat-precise-shot": "display-only"
+   "conditional-bonus-feat-precise-shot": "structured-rule"
   }
  },
  "herglic-goi-2g-06": {
@@ -1238,8 +1260,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Gather Information)",
-    "requiresTrained": [
-     "gatherInformation"
+    "requires": [
+     "trained:gatherInformation"
     ]
    }
   ],
@@ -1455,8 +1477,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Survival)",
-    "requiresTrained": [
-     "survival"
+    "requires": [
+     "trained:survival"
     ]
    }
   ],
@@ -1503,8 +1525,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Treat Injury)",
-    "requiresTrained": [
-     "treatInjury"
+    "requires": [
+     "trained:treatInjury"
     ]
    }
   ],
@@ -1732,8 +1754,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Survival)",
-    "requiresTrained": [
-     "survival"
+    "requires": [
+     "trained:survival"
     ]
    }
   ],
@@ -1780,8 +1802,8 @@
   "featGrants": [
    {
     "feat": "Force Training",
-    "requiresTrained": [
-     "useTheForce"
+    "requires": [
+     "trained:useTheForce"
     ]
    }
   ],
@@ -1822,8 +1844,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Persuasion)",
-    "requiresTrained": [
-     "persuasion"
+    "requires": [
+     "trained:persuasion"
     ]
    }
   ],
@@ -2039,7 +2061,14 @@
   ],
   "defense": {},
   "rerolls": [],
-  "featGrants": [],
+  "featGrants": [
+   {
+    "feat": "Running Attack",
+    "requires": [
+     "dex>=13"
+    ]
+   }
+  ],
   "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
@@ -2051,7 +2080,7 @@
   "namedActivations": [],
   "automation": {
    "primitive": "structured-field",
-   "conditional-bonus-feat-running-attack": "display-only",
+   "conditional-bonus-feat-running-attack": "structured-rule",
    "scent": "display-only"
   }
  },
@@ -2299,8 +2328,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Perception)",
-    "requiresTrained": [
-     "perception"
+    "requires": [
+     "trained:perception"
     ]
    }
   ],
@@ -2378,8 +2407,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Perception)",
-    "requiresTrained": [
-     "perception"
+    "requires": [
+     "trained:perception"
     ]
    }
   ],
@@ -2431,8 +2460,8 @@
   "featGrants": [
    {
     "feat": "Tech Specialist",
-    "requiresTrained": [
-     "mechanics"
+    "requires": [
+     "trained:mechanics"
     ]
    }
   ],
@@ -2507,7 +2536,7 @@
   "featGrants": [
    {
     "feat": "Force Sensitivity",
-    "requiresTrained": []
+    "requires": []
    }
   ],
   "naturalWeapons": [],
@@ -2590,8 +2619,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Persuasion)",
-    "requiresTrained": [
-     "persuasion"
+    "requires": [
+     "trained:persuasion"
     ]
    }
   ],
@@ -2633,8 +2662,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Mechanics)",
-    "requiresTrained": [
-     "mechanics"
+    "requires": [
+     "trained:mechanics"
     ]
    }
   ],
@@ -2868,8 +2897,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Deception)",
-    "requiresTrained": [
-     "deception"
+    "requires": [
+     "trained:deception"
     ]
    }
   ],
@@ -2964,8 +2993,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Perception)",
-    "requiresTrained": [
-     "perception"
+    "requires": [
+     "trained:perception"
     ]
    }
   ],
@@ -3013,8 +3042,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Gather Information)",
-    "requiresTrained": [
-     "gatherInformation"
+    "requires": [
+     "trained:gatherInformation"
     ]
    }
   ],
@@ -3091,8 +3120,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Deception)",
-    "requiresTrained": [
-     "deception"
+    "requires": [
+     "trained:deception"
     ]
    }
   ],
@@ -3139,7 +3168,7 @@
   "featGrants": [
    {
     "feat": "Force Sensitivity",
-    "requiresTrained": []
+    "requires": []
    }
   ],
   "naturalWeapons": [],
@@ -3191,8 +3220,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Mechanics)",
-    "requiresTrained": [
-     "mechanics"
+    "requires": [
+     "trained:mechanics"
     ]
    }
   ],
@@ -3316,8 +3345,8 @@
   "featGrants": [
    {
     "feat": "Skill Focus (Endurance)",
-    "requiresTrained": [
-     "endurance"
+    "requires": [
+     "trained:endurance"
     ]
    }
   ],
@@ -3618,7 +3647,7 @@
   "featGrants": [
    {
     "feat": "Martial Arts I",
-    "requiresTrained": []
+    "requires": []
    }
   ],
   "naturalWeapons": [],
