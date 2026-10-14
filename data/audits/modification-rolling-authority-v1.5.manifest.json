@@ -1,0 +1,168 @@
+{
+  "manifestVersion": 1,
+  "registryName": "SWSE Equipment Modification Rolling Canonicalization",
+  "registryVersion": "1.5",
+  "generatedDate": "2026-10-13",
+  "status": "research-snapshot-not-runtime",
+  "runtimeLoading": "prohibited",
+  "files": {
+    "registry": {
+      "path": "data/audits/modification-rolling-authority-v1.5.json",
+      "role": "authoritative-registry-snapshot",
+      "byteLength": 960022,
+      "sha256": "7be427414a95216a8bec45078e62ea2a7fb6e185f24b1f4c2ee250bac7093d00",
+      "verification": "verified-against-original-upload"
+    },
+    "companionMarkdown": {
+      "path": "docs/audits/modification-rolling-authority-v1.5.md",
+      "role": "supplementary-research-documentation",
+      "byteLength": 137237,
+      "sha256": "70e7cdff09fe612c9a68cfb6344eb553f64ee747d2ddfaed0262b6d270eab597",
+      "originalByteVerification": "waived-by-owner"
+    }
+  },
+  "expected": {
+    "counts": {
+      "definitions": 186,
+      "procedures": 57,
+      "mechanicalCertification": {
+        "EFFECTS_CERTIFIED": 128,
+        "PENDING_RULES_TEXT": 58
+      },
+      "tableCertification": {
+        "NOT_TABLE_BASED_PAGE_VERIFIED": 21,
+        "SOURCE_ENTRY_VERIFIED": 50,
+        "SOURCE_TABLE_ROW_AND_RULE_TEXT_VERIFIED": 2,
+        "TABLE_VERIFIED": 113
+      },
+      "procedureStatus": {
+        "LEAD_PENDING_CERTIFICATION": 3,
+        "RULES_OUTLINE_REVIEWED": 4,
+        "SOURCE_RULES_CERTIFIED": 29,
+        "SOURCE_RULES_CERTIFIED_RUNTIME_PENDING": 21
+      },
+      "scumAndVillainyDefinitions": 58,
+      "typedDefinitions": {
+        "total": 232,
+        "equipment": 38,
+        "weapon": 121,
+        "armor": 73
+      },
+      "eligibleUpgradeCandidates": {
+        "total": 231,
+        "equipment": 38,
+        "weapon": 120,
+        "armor": 73
+      },
+      "fullyExecutableCertified": 0
+    },
+    "eligibleCandidateRule": {
+      "excludedSourceRole": "temporary_talent_actuator_not_installed_upgrade",
+      "excludedDefinitionIds": [
+        "web-outlaw-tech-personalized-modifications"
+      ]
+    },
+    "registrySummaryAgreement": {
+      "totalSourceEntries": 186,
+      "tableCertified": 115,
+      "mechanicallyCertified": 128,
+      "excludedFromScope": 1,
+      "eligibleCandidateDomainVariants": 231,
+      "domainCandidateCounts": {
+        "equipment": 38,
+        "weapon": 120,
+        "armor": 73
+      },
+      "separateProceduresCertified": 50,
+      "fullyExecutableCertified": 0
+    },
+    "vocabularies": {
+      "domains": [
+        "armor",
+        "equipment",
+        "weapon"
+      ],
+      "slotCostTypes": [
+        "conditional",
+        "fixed",
+        "not_applicable",
+        "not_specified",
+        "not_specified_for_accessory",
+        "socket_occupancy",
+        "special_allowance"
+      ],
+      "priceTypes": [
+        "action",
+        "consumed_components",
+        "credits",
+        "feat_procedure",
+        "force_point_cost",
+        "force_points",
+        "fraction_of_base_item_price",
+        "max_fraction_or_fixed",
+        "nonpurchase_destiny_reward",
+        "not_for_general_sale",
+        "not_stated",
+        "percent_of_host_cost",
+        "physical_component",
+        "price_multiplier",
+        "procedure_ref",
+        "ritual_materials_and_force_point",
+        "separate_build_and_attunement_procedures",
+        "skill_procedure",
+        "talent_action_only",
+        "template_cost_multiplier",
+        "template_cost_percent",
+        "total_price_multiplier",
+        "unmarketable_quest_item"
+      ],
+      "consumerStatus": [
+        "NOT_MAPPED",
+        "NOT_VERIFIED",
+        "PRESENT_IN_TECH_SERVICE_OTHER_CONSUMERS_UNVERIFIED"
+      ],
+      "effectStatus": [
+        "EFFECTS_SOURCE_VERIFIED_CONSUMER_UNMAPPED",
+        "PENDING"
+      ]
+    }
+  },
+  "knownDeviations": [
+    {
+      "registryVersion": "1.5",
+      "errorCode": "REF_SOURCE_FAMILY_UNDECLARED",
+      "path": "/definitions/136/sourceFamily",
+      "observed": "armor_template",
+      "expected": "member of sourceFamilies",
+      "reason": "definition reb-stygian-triprismatic-polymer-armor uses a sourceFamily value that is absent from the registry's sourceFamilies list; immutable snapshot, not repaired",
+      "approvalReference": "Owner G1 authorization of 2026-10-14 (three approved source-family deviations; Phase 1b contract section 3.2, finding R1)"
+    },
+    {
+      "registryVersion": "1.5",
+      "errorCode": "REF_SOURCE_FAMILY_UNDECLARED",
+      "path": "/definitions/137/sourceFamily",
+      "observed": "purchase_quality_talent",
+      "expected": "member of sourceFamilies",
+      "reason": "definition reb-excellent-kit-purchased-quality uses a sourceFamily value that is absent from the registry's sourceFamilies list; immutable snapshot, not repaired",
+      "approvalReference": "Owner G1 authorization of 2026-10-14 (three approved source-family deviations; Phase 1b contract section 3.2, finding R1)"
+    },
+    {
+      "registryVersion": "1.5",
+      "errorCode": "REF_SOURCE_FAMILY_UNDECLARED",
+      "path": "/definitions/138/sourceFamily",
+      "observed": "improvised_equipment_explosive",
+      "expected": "member of sourceFamilies",
+      "reason": "definition reb-jury-rigged-power-pack-bomb uses a sourceFamily value that is absent from the registry's sourceFamilies list; immutable snapshot, not repaired",
+      "approvalReference": "Owner G1 authorization of 2026-10-14 (three approved source-family deviations; Phase 1b contract section 3.2, finding R1)"
+    }
+  ],
+  "slotCostPageAttestations": [],
+  "ownerWaivers": [
+    {
+      "id": "W1",
+      "subject": "companionMarkdown original-byte verification",
+      "ruling": "Waived by the owner on 2026-10-14: independent verification of the Markdown against its original raw bytes is no longer a release blocker. The Markdown is retained as supplementary research documentation only.",
+      "effect": "The committed identity (byte length and SHA-256 above) is recorded for change detection. The Markdown is NOT original-byte certified and must never be represented as such. The authoritative registry is the JSON snapshot, whose SHA-256 was verified against the original upload."
+    }
+  ]
+}
