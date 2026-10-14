@@ -445,3 +445,5 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Tests | `tests/species-republic-clone-allocation.test.mjs` (canonical default, every score a legal single choice, no split, stepping back, house-rule mode, existing characters untouched; mutation-checked) and `tests/species-source-pinned.test.mjs` |
 | Implementing commit | recorded in the next appended line |
 | Status | `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |
+
+**SPECIES-RD-017 — implementing commit:** `c8e6b64f4d691041c347fa1e2b98e28cd0f9b027` (ruling above; recorded after the commit existed, per the append-only rule).
