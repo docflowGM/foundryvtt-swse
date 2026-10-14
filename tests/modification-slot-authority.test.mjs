@@ -546,6 +546,80 @@ check('17 a certified definition must carry identity and provenance', () => {
   assert.equal(wrongKey.occupied[0].certified, null);
   assertNoDefinitiveTotals(wrongKey);
 });
+check('17a a source reference alone is not certification: missing or invalid certification is rejected', () => {
+  const installed = custom({ installedUpgrades: [{ instanceId: 'i1', upgradeKey: 'k', slotCost: 1 }] });
+  const withSource = (source) => () => ({ definitionId: 'd', upgradeKey: 'k', certifiedCost: 1, source });
+  for (const source of [{ ref: 'r' }, { ref: 'r', certification: '' }, { ref: 'r', certification: '   ' }, { ref: 'r', certification: 7 }, { ref: 'r', certification: true }, { ref: 'r', certification: null }, { ref: 'r', certification: {} }]) {
+    const state = resolve(equipment({}, installed), { certifiedDefinitionLookup: withSource(source) });
+    assert.equal(state.occupied[0].certified, null, JSON.stringify(source));
+    assert.equal(state.occupied[0].costStatus, 'recorded-uncertified');
+    assert.ok(codes(state.diagnostics).includes('TRUSTED_INPUT_INVALID'));
+    assertNoDefinitiveTotals(state);
+  }
+  const verified = resolve(equipment({}, installed), { certifiedDefinitionLookup: withSource({ ref: 'r', certification: 'table-verified' }) });
+  assert.equal(verified.occupied[0].costStatus, 'certified');
+  assertCertified(verified, 1, 1);
+});
+check('17b legacy structural evidence: legacy-only strips block, never count', () => {
+  const ctx = ordinaryCtx();
+  const viaFeatures = resolve(weapon({ strippedFeatures: { damage: true } }), ctx);
+  assertNoDefinitiveTotals(viaFeatures);
+  const block = viaFeatures.unresolved.find((entry) => entry.code === 'LEGACY_STRUCTURAL_UNRECONCILED');
+  assert.ok(block);
+  assert.deepEqual(block.detail.unrepresentedLegacyAreas, ['damage']);
+  assert.equal(viaFeatures.adjustments.length, 0);
+  assert.ok(viaFeatures.legacy.evidence.some((entry) => entry.field === 'system.strippedFeatures' && entry.usedInTotals === false));
+
+  const viaFlag = resolve(weapon({}, withSwse({ customizationStructural: { strippedAreas: ['range'] } })), ctx);
+  assertNoDefinitiveTotals(viaFlag);
+  assert.deepEqual(viaFlag.unresolved.find((entry) => entry.code === 'LEGACY_STRUCTURAL_UNRECONCILED').detail.unrepresentedLegacyAreas, ['range']);
+  assert.equal(viaFlag.adjustments.length, 0);
+  assert.ok(viaFlag.legacy.evidence.some((entry) => entry.field === 'flags.swse.customizationStructural' && entry.usedInTotals === false));
+
+  for (const bad of ['range', { range: true }, 3]) {
+    assertNoDefinitiveTotals(resolve(weapon({}, withSwse({ customizationStructural: { strippedAreas: bad } })), ctx));
+  }
+  assertNoDefinitiveTotals(resolve(weapon({}, withSwse({ customizationStructural: { strippedAreas: [{ a: 1 }] } })), ctx));
+  assertNoDefinitiveTotals(resolve(weapon({ strippedFeatures: { somethingElse: true } }), ctx));
+  assertNoDefinitiveTotals(resolve(equipment({ strippedFeatures: { damage: true } }), {}));
+});
+check('17c legacy structural evidence: consistent mirrors are not counted twice', () => {
+  const ctx = ordinaryCtx();
+  const mirrored = weapon(
+    { strippedFeatures: { damage: true, range: false } },
+    { ...custom({ structural: { strippedAreas: ['damage'] } }), swse: { customizationStructural: { strippedAreas: ['damage'] } } }
+  );
+  const state = resolve(mirrored, ctx);
+  assert.equal(state.adjustments.length, 1);
+  assert.equal(state.adjustments[0].slots, 1);
+  assert.ok(!codes(state.unresolved).includes('LEGACY_STRUCTURAL_UNRECONCILED'));
+  assertCertified(state, 2);
+  const stun = resolve(weapon({ strippedFeatures: { stun: true } }, custom({ structural: { strippedAreas: ['stun_setting'] } })), ctx);
+  assertCertified(stun, 2);
+  const sized = resolve(weapon({}, { ...custom({ structural: { sizeIncreaseApplied: true } }), swse: { customizationStructural: { sizeIncreaseApplied: true } } }), ctx);
+  assertCertified(sized, 2);
+});
+check('17d legacy structural evidence: conflicting legacy and canonical histories block', () => {
+  const ctx = ordinaryCtx();
+  const differing = resolve(weapon({ strippedFeatures: { range: true } }, custom({ structural: { strippedAreas: ['damage'] } })), ctx);
+  assertNoDefinitiveTotals(differing);
+  assert.deepEqual(differing.unresolved.find((entry) => entry.code === 'LEGACY_STRUCTURAL_UNRECONCILED').detail.unrepresentedLegacyAreas, ['range']);
+  assert.equal(differing.adjustments.length, 1);
+  const extra = resolve(weapon({}, { ...custom({ structural: { strippedAreas: ['damage'] } }), swse: { customizationStructural: { strippedAreas: ['damage', 'range'] } } }), ctx);
+  assertNoDefinitiveTotals(extra);
+  assert.deepEqual(extra.unresolved.find((entry) => entry.code === 'LEGACY_STRUCTURAL_UNRECONCILED').detail.unrepresentedLegacyAreas, ['range']);
+});
+check('17e a legacy-only size increase is not counted and blocks certification', () => {
+  const ctx = ordinaryCtx();
+  for (const item of [weapon({ sizeIncreaseApplied: true }), weapon({}, withSwse({ customizationStructural: { sizeIncreaseApplied: true } }))]) {
+    const state = resolve(item, ctx);
+    assertNoDefinitiveTotals(state);
+    assert.equal(state.adjustments.length, 1);
+    assert.equal(state.adjustments[0].status, 'unresolved');
+    assert.equal(state.adjustments[0].slots, null);
+    assert.ok(codes(state.unresolved).includes('LEGACY_STRUCTURAL_UNRECONCILED'));
+  }
+});
 check('18 missing, negative, NaN, string and fractional costs are unresolved, never 0 or 1', () => {
   for (const slotCost of [undefined, null, -1, NaN, Infinity, '2', 1.5, {}, []]) {
     const state = resolve(equipment({}, custom({ installedUpgrades: [{ instanceId: 'i1', upgradeKey: 'k', slotCost }] })), {});

@@ -405,6 +405,57 @@ function resolveArmor(item, ctx, collector, base, sizePaths) {
 /* Adjustments                                                                                      */
 /* ------------------------------------------------------------------------------------------------ */
 
+// Legacy strip flag -> canonical area, as recovered by SafetyEngine.#recoverFromLegacySources.
+const LEGACY_STRIP_FLAGS = {
+  damage: 'damage',
+  range: 'range',
+  design: 'design',
+  stun: 'stun_setting',
+  autofire: 'autofire',
+  defensiveMaterial: 'defensive_material',
+  jointProtection: 'joint_protection'
+};
+
+// Legacy structural strip evidence is never counted. It is only compared with the canonical record: any legacy
+// strip that canonical state does not represent blocks certification; legacy that is fully mirrored adds nothing.
+function reconcileLegacyStrips(item, canonicalRaw, validAreas, collector) {
+  const canonical = new Set(Array.isArray(canonicalRaw) ? canonicalRaw.filter((entry) => typeof entry === 'string' && validAreas.includes(entry)) : []);
+  const legacy = new Map(); // area -> paths
+  const unreadable = [];
+  const note = (area, path) => legacy.set(area, [...(legacy.get(area) ?? []), path]);
+
+  const features = read(item, 'system', 'strippedFeatures');
+  if (isObject(features)) {
+    for (const key of Object.keys(features).sort()) {
+      if (features[key] !== true) continue;
+      note(LEGACY_STRIP_FLAGS[key] ?? `unmapped:${key}`, 'system.strippedFeatures');
+    }
+  } else if (features !== undefined && features !== null) {
+    unreadable.push({ path: 'system.strippedFeatures', value: safeCopy(features) });
+  }
+
+  const flagAreas = read(item, 'flags', 'swse', 'customizationStructural', 'strippedAreas');
+  if (Array.isArray(flagAreas)) {
+    for (const entry of flagAreas) {
+      if (typeof entry === 'string') note(entry, 'flags.swse.customizationStructural.strippedAreas');
+      else unreadable.push({ path: 'flags.swse.customizationStructural.strippedAreas', value: safeCopy(entry) });
+    }
+  } else if (flagAreas !== undefined && flagAreas !== null) {
+    unreadable.push({ path: 'flags.swse.customizationStructural.strippedAreas', value: safeCopy(flagAreas) });
+  }
+
+  const unrepresented = [...legacy.keys()].filter((area) => !canonical.has(area)).sort();
+  if (unrepresented.length > 0 || unreadable.length > 0) {
+    collector.block('LEGACY_STRUCTURAL_UNRECONCILED', 'structural.strippedAreas', {
+      kind: 'strip',
+      unrepresentedLegacyAreas: unrepresented,
+      canonicalAreas: [...canonical].sort(),
+      legacyPaths: unrepresented.map((area) => ({ area, paths: [...new Set(legacy.get(area))].sort() })),
+      unreadable
+    });
+  }
+}
+
 function resolveAdjustments(item, domain, base, collector, sizePaths) {
   const adjustments = [];
 
@@ -412,7 +463,20 @@ function resolveAdjustments(item, domain, base, collector, sizePaths) {
   if (sizePaths.length > 0) {
     const armorStock = domain === 'armor' ? read(base, 'classification', 'armor', 'stockClass') : null;
     const notPermitted = armorStock && armorStock.status === 'trusted' && armorStock.value === 'heavy';
-    if (notPermitted) {
+    const canonicalSize = read(item, 'flags', 'foundryvtt-swse', 'customization', 'structural', 'sizeIncreaseApplied') === true;
+    if (!canonicalSize) {
+      // Legacy-only record: not reconciled with canonical state, so never counted and never assumed legal.
+      collector.block('LEGACY_STRUCTURAL_UNRECONCILED', 'adjustments.structural:size-increase', { kind: 'size-increase', recordedAt: sizePaths });
+      adjustments.push({
+        id: 'structural:size-increase',
+        kind: 'size-increase',
+        status: 'unresolved',
+        slots: null,
+        provenance: { path: sizePaths.join(' | '), instanceId: null },
+        source: null,
+        reasons: ['LEGACY_STRUCTURAL_UNRECONCILED']
+      });
+    } else if (notPermitted) {
       collector.conflict('SIZE_INCREASE_NOT_PERMITTED', 'adjustments.structural:size-increase', { stockClass: 'heavy', recordedAt: sizePaths });
       adjustments.push({
         id: 'structural:size-increase',
@@ -487,6 +551,8 @@ function resolveAdjustments(item, domain, base, collector, sizePaths) {
       if (distinct.length > 1) collector.block('MULTIPLE_STRIPS_UNRESOLVED', 'structural.strippedAreas', { areas: distinct });
     }
   }
+
+  reconcileLegacyStrips(item, rawStrips, validAreas, collector);
 
   // Tech Specialist device slot: source unverified, never a certified grant and never a certified zero.
   const traits = read(item, 'flags', 'swse', 'techSpecialist', 'traits');
@@ -591,7 +657,8 @@ function lookupCertifiedDefinition(ctx, upgradeKey, collector) {
     result.upgradeKey === upgradeKey &&
     isSlotInteger(result.certifiedCost) &&
     isObject(result.source) &&
-    isNonEmptyString(result.source.ref);
+    isNonEmptyString(result.source.ref) &&
+    isNonEmptyString(result.source.certification);
   if (!valid) {
     collector.diagnostic('TRUSTED_INPUT_INVALID', { input: 'certifiedDefinitionLookup', upgradeKey, reason: 'malformed-definition' });
     return null;
@@ -783,6 +850,10 @@ function legacyEvidence(item) {
   const stripped = read(item, 'system', 'strippedFeatures');
   if (isObject(stripped) && Object.values(stripped).some((value) => value === true)) {
     evidence.push({ field: 'system.strippedFeatures', value: safeCopy(stripped), classification: 'legacy-evidence', usedInTotals: false });
+  }
+  const structural = read(item, 'flags', 'swse', 'customizationStructural');
+  if (isObject(structural) && ((Array.isArray(structural.strippedAreas) && structural.strippedAreas.length > 0) || (structural.strippedAreas != null && !Array.isArray(structural.strippedAreas)) || structural.sizeIncreaseApplied === true)) {
+    evidence.push({ field: 'flags.swse.customizationStructural', value: safeCopy(structural), classification: 'legacy-evidence', usedInTotals: false });
   }
   return evidence;
 }
