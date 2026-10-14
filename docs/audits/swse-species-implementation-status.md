@@ -9,20 +9,20 @@ Every hydrated row is `SOURCE_VERIFIED` against the audit, `DATA_RECONCILED` in 
 
 | Category | Profiles |
 |---|---|
-| Hydrated by the bulk tool | 87 |
+| Hydrated by the bulk tool | 88 |
 | Core Rulebook profiles reconciled earlier on their base records | 19 |
 | Multi-publication profiles handled separately (Bith, Chadra-Fan, Chagrian, Chiss, Krevaaki, Neimoidian, Yuuzhan Vong) | 15 |
-| Technical holds | 8 |
+| Technical holds | 7 |
 
 ## Features of the hydrated profiles
 
 | Category | Features |
 |---|---|
-| Automated by a structured rule or field | 83 |
+| Automated by a structured rule or field | 85 |
 | Automated by a verified existing activated-ability entry | 6 |
 | Natural attacks granted as species natural-weapon items (counted in attacks, not features) | 16 |
-| Existing engine automation known to be inaccurate — suppressed, text only | 4 |
-| Display-only (no automation) | 182 |
+| Existing engine automation known to be inaccurate — suppressed, text only | 5 |
+| Display-only (no automation) | 186 |
 
 Display-only includes natural-attack features whose secondary effects are not implemented; the attacks themselves are in the
 natural-attack column below.
@@ -35,7 +35,7 @@ natural-attack column below.
 - Darkvision / Low-light Vision, conditional skill bonuses and defenses, and activated abilities without a verified engine entry are display-only.
 - Small-size Stealth (+5) is a general size rule and is not applied by species data (see register RD-007).
 
-## Hydrated profiles (87)
+## Hydrated profiles (88)
 
 | Profile | Variant id | Structured (automated) | Verified activation | Natural attacks granted | Engine automation suppressed | Display-only |
 |---|---|---|---|---|---|---|
@@ -76,6 +76,7 @@ natural-attack column below.
 | KOTOR-2D-12 Snivvian | `snivvian-kotor-2d-12` | — | — | — | — | Observant (ENCOUNTER_SKILL_MODIFIER_SUBSTITUTION); Cold Resistance (EXTREME_COLD_CONDITIONAL_DEFENSE_BONUS) |
 | TFU-2E-01 Aleena | `aleena-tfu-2e-01` | Nimble | Quick Energy | — | — | — |
 | TFU-2E-02 Caamasi | `caamasi-tfu-2e-02` | Adept Diplomat | — | — | Pacifism | Memory Sharing (INTERPERSONAL_INFORMATION_TRANSFER) |
+| TFU-2E-03 Felucian | `felucian-tfu-2e-03` | Bonus Feat (Force Sensitivity), Primitive | — | — | Force Blast | Breathe Underwater (ENVIRONMENTAL_IMMUNITY); Low-Light Vision (VISION); Natural Camouflage (SKILL_REROLL); Weapon Familiarity (PROFICIENCY_EXCEPTION) |
 | TFU-2E-04 Gran | `gran-tfu-2e-04` | Conditional Bonus Feat (Precise Shot) | — | — | — | Darkvision (VISION); Target Awareness (PERCEPTION_DISTANCE_EXCEPTION); Triple Vision (ENCOUNTER_ACTION_ECONOMY) |
 | TFU-2E-05 Nosaurian | `nosaurian-tfu-2e-05` | Climber’s Heritage, Survival Instinct | — | Horns 1d6 piercing | — | Natural Weapon (Horns) (NATURAL_WEAPON) |
 | TFU-2E-06 Talz | `talz-tfu-2e-06` | Conditional Bonus Feat (Skill Focus Mechanics) | — | Claws 1d6 slashing | — | Darkvision (VISION); Natural Weapon (Claws) (NATURAL_WEAPON) |
@@ -127,7 +128,7 @@ natural-attack column below.
 | TOG-2K-02 Chistori | `chistori-tog-2k-02` | — | Rage | — | — | Cold-Blooded (EXTREME_COLD_ENVIRONMENTAL_DEFENSE_PENALTY); Armor Plating (DAMAGE_REDUCTION) |
 | TOG-2K-04 Utai | `utai-tog-2k-04` | — | — | — | — | Animal Handler (SKILL_REROLL_AND_CONDITIONAL_ATTITUDE_BONUS); Cooperative (CONDITIONAL_AID_ANOTHER_AUTOSUCCESS); Low-Light Vision (VISION) |
 
-## Held and separately handled (42)
+## Held and separately handled (41)
 
 | Profile | Category | Reason |
 |---|---|---|
@@ -155,21 +156,20 @@ natural-attack column below.
 | UR-2B-02 Chadra-Fan | multi | published in several profiles (separate path) |
 | UR-2B-04 Krevaaki | multi | published in several profiles (separate path) |
 | UR-2B-10 Chiss | multi | published in several profiles (separate path) |
-| UR-2B-12 Killik | technical | size variation support |
-| UR-2B-13 Lugubraa | technical | natural attack "Barbed tentacles": damage type not printed |
+| UR-2B-12 Killik | technical | size variation support — rules review: SPECIES-RD-019 |
+| UR-2B-13 Lugubraa | technical | natural attack "Barbed tentacles": damage type not printed — rules review: SPECIES-RD-015 |
 | LEG-2C-01 Chagrian | multi | published in several profiles (separate path) |
 | LEG-2C-02 Chiss | multi | published in several profiles (separate path) |
 | LEG-2C-07 Yuuzhan Vong | multi | published in several profiles (separate path) |
 | LEG-2C-12 Chadra-Fan | multi | published in several profiles (separate path) |
-| TFU-2E-03 Felucian | technical | proficiency suppression without a feat list |
 | TFU-2E-12 Chiss | multi | published in several profiles (separate path) |
 | GOI-2G-01 Bith | multi | published in several profiles (separate path) |
 | GOI-2G-08 Neimoidian | multi | published in several profiles (separate path) |
-| CW-2H-10 Republic Clone | technical | ability score generation support (fixed array) |
+| CW-2H-10 Republic Clone | technical | ability score generation support (fixed array) — rules review: SPECIES-RD-017 |
 | CW-2H-11 Chagrian | multi | published in several profiles (separate path) |
-| GAW-2I-02 Dashade | technical | automatic languages not recorded in the audit |
+| GAW-2I-02 Dashade | technical | automatic languages not recorded in the audit — rules review: SPECIES-RD-016 |
 | JATM-2J-01 Shard | technical | droid integration deferred |
-| JATM-2J-02 Celegian | technical | land speed not printed/resolved ({"land":null,"swim":10,"fly":6}) |
+| JATM-2J-02 Celegian | technical | land speed not printed/resolved ({"land":null,"swim":10,"fly":6}) — rules review: SPECIES-RD-018 |
 | JATM-2J-04 Krevaaki | multi | published in several profiles (separate path) |
 | TOG-2K-01 Bith | multi | published in several profiles (separate path) |
 | TOG-2K-03 Mantellian Savrip | technical | natural attack "claw" carries doesNotProvokeAOO, countsAs, threatensAdjacentSquares, damageBonusAbility which the weapon item cannot represent |

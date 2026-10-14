@@ -36,6 +36,7 @@ const recs = lines.map(l => (l ? JSON.parse(l) : null));
 const byId = new Map(recs.map((r, i) => [r?._id, i]));
 
 const fixture = fs.existsSync(FIXTURE) ? JSON.parse(fs.readFileSync(FIXTURE, 'utf8')) : {};
+const REGISTER = { 'UR-2B-13': 'SPECIES-RD-015', 'GAW-2I-02': 'SPECIES-RD-016', 'CW-2H-10': 'SPECIES-RD-017', 'JATM-2J-02': 'SPECIES-RD-018', 'UR-2B-12': 'SPECIES-RD-019' };
 const done = [], held = [], heldMeta = [];
 for (const profile of bundle.sourceProfiles) {
   if (only && !only.has(profile.sourceProfileId)) continue;
@@ -47,7 +48,7 @@ for (const profile of bundle.sourceProfiles) {
   const rec = recs[idx];
   let out;
   try { out = hydrateProfile(profile, rec, { provenance: PROVENANCE }); } catch (err) {
-    if (err instanceof HoldProfile) { held.push([tag, err.reason, 'technical']); continue; }
+    if (err instanceof HoldProfile) { held.push([tag, REGISTER[profile.sourceProfileId] ? `${err.reason} — rules review: ${REGISTER[profile.sourceProfileId]}` : err.reason, 'technical']); continue; }
     throw err;
   }
   const { variant, expectation } = out;

@@ -236,7 +236,14 @@ function compileAbilityChoice(snap) {
 }
 
 const SUPPRESSION = new Set(['STARTING_PROFICIENCY_SUPPRESSION', 'STARTING_CLASS_FEAT_OVERRIDE', 'LEVEL_ONE_STARTING_PROFICIENCY_SUPPRESSION', 'FIRST_LEVEL_WEAPON_PROFICIENCY_SUPPRESSION', 'STARTING_PROFICIENCY_RESTRICTION']);
-const suppressionFeats = m => (m.suppressedStartingClassFeats || m.suppressStartingClassBonusFeats || m.denyClassStartingFeats
+// Weapon-group starting proficiencies a class can grant (class auto-grant data): everything but the simple-weapons group
+// is suppressed when a species is printed as restricted to the allowed groups only.
+const CLASS_WEAPON_GROUPS = ['Pistols', 'Rifles', 'Heavy Weapons', 'Lightsabers', 'Advanced Melee Weapons', 'Simple Weapons'];
+const restrictedGroups = m => {
+  if (m.suppressOtherStartingClassWeaponGroups !== true || !Array.isArray(m.allow) || m.allow.length !== 1 || String(m.allow[0]).toLowerCase() !== 'simple') return null;
+  return CLASS_WEAPON_GROUPS.filter(g => g !== 'Simple Weapons').map(g => `Weapon Proficiency (${g})`);
+};
+const suppressionFeats = m => (restrictedGroups(m) || m.suppressedStartingClassFeats || m.suppressStartingClassBonusFeats || m.denyClassStartingFeats
   || (Array.isArray(m.suppressStartingClassWeaponProficiencies) ? m.suppressStartingClassWeaponProficiencies.map(g => `Weapon Proficiency (${g})`) : null) || []);
 const titleCase = text => String(text).replace(/\b([a-z])/g, c => c.toUpperCase());
 

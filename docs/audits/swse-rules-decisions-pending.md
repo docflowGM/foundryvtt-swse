@@ -313,3 +313,79 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Still open | Elom and Pau'an are not in the audit inventory, so their variants cannot be verified; they are left unchanged. This is a coverage gap, not a rules question. |
 | Decision needed from the owner | None for classification. The owner may veto hiding any "no matching profile" variant from new selections. |
 | Status | `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |
+
+---
+
+## SPECIES-RD-016 — Dashade automatic languages: the traits block has no language line
+
+| Field | |
+|---|---|
+| Rules domain | Species / languages |
+| Feature | Dashade (Galaxy at War, GAW-2I-02, printed p.12) |
+| Source | Galaxy at War p.12 |
+| Evidence | The Species Traits block lists no Automatic Languages entry; nearby narrative text names Dashadi as the Dashade language. |
+| Confirmed behavior | Ability modifiers, size, speed and the three printed traits are explicit. |
+| Unresolved question | What the automatic languages are: none, Dashadi, or Basic and Dashadi. The audit records this as unresolved, not as none. |
+| Options | (a) Dashadi from the narrative text; (b) none, because the traits block lists none. Neither is stated as the species rule. |
+| Recommended ruling | None |
+| Implementation impact | The Dashade profile is held; the legacy base record is unchanged. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+---
+
+## SPECIES-RD-017 — Republic Clone: "+2 to one score" versus the repository's two +1 increases
+
+| Field | |
+|---|---|
+| Rules domain | Species / ability generation |
+| Feature | Republic Clone (The Clone Wars Campaign Guide, CW-2H-10, printed p.91) |
+| Source | The Clone Wars Campaign Guide p.91 |
+| Evidence | The printed array is Str 15, Dex 13, Con 10, Int 12, Wis 10, Cha 8, and a clone player may choose one ability score to increase by 2 at creation. The existing record instead lets the player distribute two +1 increases like the level-4 step (`allocationMode: level-4-two-abilities`, `maxPerAbility: 1`), flagged for GM approval on override; a separate attribute-step mode `allow_stacked_two` allows +2 to one score. |
+| Confirmed behavior | The fixed array and the single choice of +2 are printed. |
+| Unresolved question | Whether the repository's default of two +1 increases is an approved house ruling or should follow the printed +2 to one score. |
+| Options | (a) printed: +2 to one score; (b) existing default: two +1 increases (house rule); (c) existing `allow_stacked_two` setting. |
+| Recommended ruling | None |
+| Implementation impact | The profile is held; the existing record and attribute step are unchanged. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+---
+
+## SPECIES-RD-018 — Celegian: no land speed printed
+
+| Field | |
+|---|---|
+| Rules domain | Species / movement |
+| Feature | Celegian (Jedi Academy Training Manual, JATM-2J-02, printed p.106) |
+| Source | Jedi Academy Training Manual p.106 |
+| Evidence | The block prints fly 6 squares (hover) and swim 10 squares and no land speed. |
+| Confirmed behavior | Fly 6 and swim 10. |
+| Unresolved question | Whether a Celegian has no land speed or a default one; the audit says not to default it. |
+| Options | None supported by the printed text. |
+| Recommended ruling | None |
+| Implementation impact | The profile is held; snapshot speed requires an explicit finite number. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+---
+
+## SPECIES-RD-019 — Killik: size varies by individual and is GM-defined
+
+| Field | |
+|---|---|
+| Rules domain | Species / size |
+| Feature | Killik (The Unknown Regions, UR-2B-12, printed p.131) |
+| Source | The Unknown Regions p.131 |
+| Evidence | Typical sizes are Small, Medium, Large and Huge (extremes Fine and Colossal); the printed baseline modifiers apply to Medium Killiks, and size-specific modifiers need an instance-specific profile. |
+| Confirmed behavior | Medium baseline modifiers, speed 6, natural armor +1 Reflex, 1d6 slashing claws. |
+| Unresolved question | How size is chosen at creation and which modifiers and speed changes apply to other sizes. |
+| Options | None stated as a creation rule. |
+| Recommended ruling | None |
+| Implementation impact | The profile is held; hydrating only the Medium baseline would present a partial species. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

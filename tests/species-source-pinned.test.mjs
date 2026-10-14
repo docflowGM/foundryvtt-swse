@@ -88,6 +88,16 @@ const feats = r => r.grants.filter(g => g.grantType === 'feat' && g.target).map(
   assert.deepEqual(female.languages, ['Basic', 'Devaronese']);
   assert.equal(dev.variants.some(v => v.id === 'devaronian-female'), true, 'legacy id preserved');
 }
+// The Force Unleashed Campaign Guide p.14 — Felucian: Primitive = weapon proficiency only for the simple weapons group
+{
+  const r = await apply('Felucian');
+  assert.deepEqual(r.racial, { con: 2, int: -2 });
+  assert.deepEqual(r.languages, ['Felucianese']);
+  assert.deepEqual(r.grants.filter(g => g.grantType === 'feat').map(g => g.target), ['Force Sensitivity']);
+  assert.deepEqual([...(r.actor.flags.swse.suppressedClassProficiencies ?? [])].sort(),
+    ['Weapon Proficiency (Advanced Melee Weapons)', 'Weapon Proficiency (Heavy Weapons)', 'Weapon Proficiency (Lightsabers)', 'Weapon Proficiency (Pistols)', 'Weapon Proficiency (Rifles)'], 'every group except simple weapons');
+  assert.ok(!r.abilities.includes('force-blast'), 'Force Blast engine entry differs from the printed rule: not activated');
+}
 // Activated-ability exclusions: engine entries that differ from the printed rule never activate from a published profile
 for (const [species, banned] of [['Caamasi', 'pacifism'], ['Yarkora', 'confusion'], ['Clawdite', 'shapeshift'], ['Draethos', 'natural-telepath']]) {
   const r = await apply(species);
