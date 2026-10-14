@@ -15,8 +15,11 @@
 | Positive and negative tests (28 checks) | `tests/modification-registry-validator.test.mjs` |
 | CI step | `.github/workflows/rolling-system-validation.yml` ("Guard — modification registry snapshot (G1, read-only)") |
 | Byte-preservation attributes | `.gitattributes` (`-text` for the two source files) |
+| Authority classification (regenerated, not hand-edited) | `data/audits/phase-5c-authority-classification.json`, `docs/audits/phase-5c-authority-classification.md` |
 
 Both source files were committed by the owner and are not modified by G1.
+
+**Why the classification files changed.** The existing guard `tests/phase-5c-canonical-production-negative.test.mjs` (via `tools/lib/canonical-authority-classification.mjs`) requires every file under `data/audits/` to be listed in `data/audits/phase-5c-authority-classification.json`. The owner-staged registry JSON alone already tripped it ("classification file out of date"), and so did the new manifest. The two files were classified by running the repository's own generator, `node tools/build-phase-5c-authority-classification.mjs`, which assigns `HISTORICAL_AUDIT_EVIDENCE` (never read by runtime or generators) by its existing `data/audits/` rule. The regenerated diff is exactly two new entries, the count 237 to 239, and the matching two lines in the Markdown summary (189 to 191). No rule in the generator was changed.
 
 ## 2. Artifact identity and verification status
 
