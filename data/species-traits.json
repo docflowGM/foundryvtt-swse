@@ -7871,18 +7871,7 @@
     "name": "Neimoidian",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "cowardly",
-        "name": "Cowardly",
-        "description": "A Neimoidian takes a -2 species penalty on Will Defense."
-      },
-      {
-        "id": "mercantile-training",
-        "name": "Mercantile Training",
-        "description": "A Neimoidian gains a +5 species bonus on Persuasion checks related to business."
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
