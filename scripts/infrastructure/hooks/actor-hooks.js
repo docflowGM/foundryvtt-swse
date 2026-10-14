@@ -130,11 +130,8 @@ export function registerActorHooks() {
         }
     });
 
-    // A newly acquired feat can satisfy a deferred species conditional feat ("owns feat X"); re-evaluate after the create settles.
-    Hooks.on('createItem', (item) => {
-        if (item?.type !== 'feat' || !item.parent) return;
-        setTimeout(() => SpeciesConditionalGrantResolver.onItemCreated(item), 0);
-    });
+    // Feat acquisition / loss re-evaluates deferred species conditional feats (create / delete of feat items).
+    SpeciesConditionalGrantResolver.registerHooks(Hooks);
 
     // Handle item deletion for special feats like Skill Focus
     HooksRegistry.register('deleteItem', handleItemDelete, {

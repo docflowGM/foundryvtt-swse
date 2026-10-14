@@ -12,19 +12,31 @@ const stub = { missing: new Set() };
 ProgressionContentAuthority.initialize = async () => {};
 ProgressionContentAuthority.getFeatDocument = async ({ name }) => (stub.missing.has(name) ? null : { toObject: () => ({ name, type: 'feat', system: {}, flags: {} }) });
 
-// ActorEngine stand-in: embedded creation fires the createItem hook handler like Foundry does.
+// Host `Hooks` stand-in: handlers registered through the production registration function fire asynchronously
+// (after the creating call returns), like Foundry's post-operation hooks.
+const handlers = { createItem: [], deleteItem: [] };
+SpeciesConditionalGrantResolver.registerHooks({ on: (name, fn) => handlers[name].push(fn) });
+const fire = (name, item) => handlers[name].forEach(fn => fn(item));
+const settle = () => new Promise(r => setTimeout(r, 25));
+let resolverCreates = 0;
+
 function engineFor(actor) {
   globalThis.SWSE = { ActorEngine: {
     async createEmbeddedDocuments(a, _t, data) {
       const created = data.map(d => ({ ...structuredClone(d), id: `f${nextId++}`, parent: a }));
       a.items.push(...created);
-      for (const item of created) { hookCalls++; await SpeciesConditionalGrantResolver.onItemCreated(item); }
+      if (created.some(i => i.flags?.swse?.grantedViaReconciliation)) resolverCreates++;
+      for (const item of created) { hookCalls++; fire('createItem', item); }
     },
     async updateActor(a, fields) {
       if (failUpdateOnce) { failUpdateOnce = false; throw new Error('simulated write failure'); }
       for (const [k, v] of Object.entries(fields)) setPath(a, k, v);
     },
-    async deleteEmbeddedDocuments(a, _t, ids) { a.items = a.items.filter(i => !ids.includes(i.id)); },
+    async deleteEmbeddedDocuments(a, _t, ids) {
+      const gone = a.items.filter(i => ids.includes(i.id));
+      a.items = a.items.filter(i => !ids.includes(i.id));
+      for (const item of gone) fire('deleteItem', item);
+    },
   } };
 }
 const feats = (a, name) => a.items.filter(i => i.type === 'feat' && i.name === name);
@@ -61,24 +73,57 @@ const reconcile = a => quiet(() => SpeciesConditionalGrantResolver.reconcile(a))
   await apply(a, 'Ebruchi'); await reconcile(a);
   assert.equal(feats(a, 'Improved Damage Threshold').length, 1);
 }
-{ // independent ownership survives, and is never duplicated by the species grant
+{ // independent ownership survives and the species entitlement stays tracked
   const a = makeActor(); engineFor(a);
   a.items.push({ id: 'own', type: 'feat', name: 'Improved Damage Threshold', flags: { swse: {} }, system: {}, parent: a });
   await apply(a, 'Ebruchi'); withDerived(a, { con: 14 }); await reconcile(a);
   assert.equal(feats(a, 'Improved Damage Threshold').length, 1, 'the independent copy satisfies it; no duplicate');
+  assert.equal(a.flags.swse.deferredSpeciesBonusFeats[0].satisfiedByIndependentFeat, true, 'entitlement is still tracked');
+  await reconcile(a); await reconcile(a);
+  assert.equal(feats(a, 'Improved Damage Threshold').length, 1, 'stable');
+  // The independent copy is removed later: the species grant supplies the feat it entitles.
+  await globalThis.SWSE.ActorEngine.deleteEmbeddedDocuments(a, 'Item', ['own']);
+  await settle();
+  const supplied = feats(a, 'Improved Damage Threshold');
+  assert.equal(supplied.length, 1, 'species entitlement not silently lost');
+  assert.equal(supplied[0].flags.swse.speciesGrantKey, a.flags.swse.speciesGrantManifest.grantKey);
   assert.deepEqual(a.flags.swse.deferredSpeciesBonusFeats, []);
   await apply(a, 'Human');
-  assert.equal(feats(a, 'Improved Damage Threshold').length, 1, 'independent feat is not species-owned and survives');
-  assert.equal(a.items.find(i => i.id === 'own').flags.swse.speciesGranted, undefined);
+  assert.equal(feats(a, 'Improved Damage Threshold').length, 0);
 }
-{ // a stale deferred entry from another species grant is dropped, never granted
+{ // an independent copy that outlives the species stays independent
+  const a = makeActor(); engineFor(a);
+  a.items.push({ id: 'own', type: 'feat', name: 'Improved Damage Threshold', flags: { swse: {} }, system: {}, parent: a });
+  await apply(a, 'Ebruchi'); withDerived(a, { con: 14 }); await reconcile(a);
+  await apply(a, 'Human');
+  assert.equal(feats(a, 'Improved Damage Threshold').length, 1);
+  assert.equal(a.items.find(i => i.id === 'own').flags.swse.speciesGranted, undefined);
+  assert.deepEqual(a.flags.swse.deferredSpeciesBonusFeats ?? [], [], 'no entitlement left attached to Human');
+}
+{ // grant-key authority: stale, legacy (unkeyed) and unestablished keys never execute
   const a = makeActor(); engineFor(a);
   await apply(a, 'Ebruchi');
-  a.flags.swse.deferredSpeciesBonusFeats.push({ name: 'Precise Shot', requirements: [{ type: 'skillTrained', skill: 'climb' }], grantKey: 'Gran|base', species: 'Gran' });
   a.system.skills.climb.trained = true; withDerived(a, { con: 10 });
+  a.flags.swse.deferredSpeciesBonusFeats.push({ name: 'Precise Shot', requirements: [{ type: 'skillTrained', skill: 'climb' }], grantKey: 'Gran|base', species: 'Gran' });
   await reconcile(a);
-  assert.equal(feats(a, 'Precise Shot').length, 0);
+  assert.equal(feats(a, 'Precise Shot').length, 0, 'another species grant key: dropped');
   assert.deepEqual(a.flags.swse.deferredSpeciesBonusFeats.map(g => g.name), ['Improved Damage Threshold']);
+
+  a.flags.swse.deferredSpeciesBonusFeats.push({ name: 'Precise Shot', requirements: [{ type: 'skillTrained', skill: 'climb' }], species: 'Ebruchi' });
+  await reconcile(a);
+  assert.equal(feats(a, 'Precise Shot').length, 0, 'legacy unkeyed entry cannot be attributed: not granted');
+  assert.equal(a.flags.swse.deferredSpeciesBonusFeats.find(g => g.name === 'Precise Shot').pendingReason, 'LEGACY_UNKEYED_GRANT', 'kept with a diagnostic');
+
+  // No current species grant key (actor never reconciled): even a keyed entry waits.
+  const key = a.flags.swse.speciesGrantManifest.grantKey;
+  delete a.flags.swse.speciesGrantManifest;
+  withDerived(a, { con: 13 });
+  await reconcile(a);
+  assert.equal(feats(a, 'Improved Damage Threshold').length, 0, 'missing current key: fails closed');
+  assert.equal(a.flags.swse.deferredSpeciesBonusFeats.find(g => g.name === 'Improved Damage Threshold').pendingReason, 'SPECIES_GRANT_KEY_UNESTABLISHED');
+  a.flags.swse.speciesGrantManifest = { grantKey: key };
+  await reconcile(a);
+  assert.equal(feats(a, 'Improved Damage Threshold').length, 1, 'once the grant is established it proceeds');
 }
 
 // ---- Fail closed on an unresolved canonical feat; retry; idempotence ----
@@ -113,20 +158,31 @@ const reconcile = a => quiet(() => SpeciesConditionalGrantResolver.reconcile(a))
   assert.equal(feats(a, 'Improved Damage Threshold').length, 0, 'the keyed item is revoked with its species grant');
 }
 
-// ---- Feat acquisition (the embedded-item path) re-evaluates; no recursion; no invented revocation ----
+// ---- Registered hooks: feat acquisition re-evaluates; rapid operations; no recursion; no invented revocation ----
 {
   const a = makeActor(); engineFor(a);
   await apply(a, 'Gran'); withDerived(a, {});
   assert.equal(feats(a, 'Precise Shot').length, 0);
-  hookCalls = 0;
-  await quiet(() => globalThis.SWSE.ActorEngine.createEmbeddedDocuments(a, 'Item', [{ name: 'Point Blank Shot', type: 'feat', system: {}, flags: { swse: {} } }]));
-  assert.equal(feats(a, 'Precise Shot').length, 1, 'Point Blank Shot acquired through the embedded-item path grants Precise Shot');
-  assert.equal(hookCalls, 2, 'one independent create + the resolver\'s own create (which did not recurse)');
+  hookCalls = 0; resolverCreates = 0;
+  const E = globalThis.SWSE.ActorEngine;
+  // Rapid consecutive operations without waiting for the hooks to settle.
+  await E.createEmbeddedDocuments(a, 'Item', [{ name: 'Point Blank Shot', type: 'feat', system: {}, flags: { swse: {} } }]);
+  await E.createEmbeddedDocuments(a, 'Item', [{ name: 'Weapon Finesse', type: 'feat', system: {}, flags: { swse: {} } }]);
+  await E.createEmbeddedDocuments(a, 'Item', [{ name: 'Dodge', type: 'feat', system: {}, flags: { swse: {} } }]);
+  await settle();
+  assert.equal(feats(a, 'Precise Shot').length, 1, 'granted exactly once despite three rapid creations');
+  assert.equal(resolverCreates, 1, 'one resolver create; its own item did not recurse');
+  assert.equal(hookCalls, 4, 'three independent creations + the one resolver item');
   assert.equal(feats(a, 'Precise Shot')[0].flags.swse.speciesGrantKey, a.flags.swse.speciesGrantManifest.grantKey);
   // Losing the prerequisite: no revocation semantics are invented.
-  await globalThis.SWSE.ActorEngine.deleteEmbeddedDocuments(a, 'Item', [feats(a, 'Point Blank Shot')[0].id]);
-  await reconcile(a);
+  await E.deleteEmbeddedDocuments(a, 'Item', [feats(a, 'Point Blank Shot')[0].id]);
+  await settle();
   assert.equal(feats(a, 'Precise Shot').length, 1, 'printed text grants it; nothing says it is lost again');
+  // Rapid delete + create (re-acquire) is stable.
+  await E.createEmbeddedDocuments(a, 'Item', [{ name: 'Point Blank Shot', type: 'feat', system: {}, flags: { swse: {} } }]);
+  await E.deleteEmbeddedDocuments(a, 'Item', [feats(a, 'Point Blank Shot')[0].id]);
+  await settle();
+  assert.equal(feats(a, 'Precise Shot').length, 1);
   await apply(a, 'Human');
   assert.equal(feats(a, 'Precise Shot').length, 0, 'but it does leave with the species grant');
 }

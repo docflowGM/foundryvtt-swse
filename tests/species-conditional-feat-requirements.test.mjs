@@ -16,7 +16,7 @@ async function deferredFor(species) {
   const { ctx } = await quiet(() => selectSpecies(actor, species, null, { strict: true }));
   const grants = ctx.traits.filter(t => t.classification === 'grant' && t.source === 'bonusFeat').flatMap(t => t.grants).filter(g => g.target);
   assert.ok(grants.every(g => g.frequency === 'conditional' && g.requirements.length), `${species}: never unconditional`);
-  return grants.map(g => ({ name: g.target, requirements: g.requirements, species }));
+  return grants.map(g => ({ name: g.target, requirements: g.requirements, species, grantKey: 'T|base' }));
 }
 
 async function reconcile(deferred, { attrs = {}, bab = 0, feats = [], trained = [] }) {
@@ -24,7 +24,7 @@ async function reconcile(deferred, { attrs = {}, bab = 0, feats = [], trained = 
   globalThis.SWSE = { ActorEngine: { async createEmbeddedDocuments(_a, _t, items) { created.push(...items.map(i => i.name)); }, async updateActor() {} } };
   const actor = {
     id: 'a', name: 'T', items: feats.map(name => ({ type: 'feat', name })),
-    flags: { swse: { deferredSpeciesBonusFeats: deferred } },
+    flags: { swse: { deferredSpeciesBonusFeats: deferred, speciesGrantManifest: { grantKey: 'T|base' } } },
     system: { derived: { attributes: Object.fromEntries(Object.entries(attrs).map(([k, v]) => [k, { total: v }])), bab }, skills: Object.fromEntries(trained.map(k => [k, { trained: true }])) },
   };
   await quiet(() => SpeciesConditionalGrantResolver.reconcile(actor));

@@ -51,7 +51,10 @@ function _allRequirementsMet(requirements, actorSystem, actor = null) {
 }
 
 const FEAT_DOCUMENT_UNRESOLVED = 'FEAT_DOCUMENT_UNRESOLVED';
+const GRANT_KEY_LEGACY = 'LEGACY_UNKEYED_GRANT';
+const GRANT_KEY_UNESTABLISHED = 'SPECIES_GRANT_KEY_UNESTABLISHED';
 const _running = new Set();
+const _rerun = new Set();
 
 export class SpeciesConditionalGrantResolver {
   /**
@@ -79,14 +82,48 @@ export class SpeciesConditionalGrantResolver {
     });
   }
 
+  /**
+   * item-deleted counterpart: an independently owned copy that was satisfying an entitlement may be gone, in which
+   * case the species grant must supply it. Species-keyed deletions never re-trigger (nothing is tracked for them).
+   */
+  static onItemDeleted(item) {
+    const actor = item?.parent;
+    if (!actor || item.type !== 'feat') return null;
+    if (!(actor.flags?.swse?.deferredSpeciesBonusFeats ?? []).some((g) => g.satisfiedByIndependentFeat)) return null;
+    return this.reconcile(actor).catch((err) => {
+      SWSELogger.warn(`[SpeciesGrants] Reconciliation error for ${actor?.name}:`, err);
+    });
+  }
+
+  /**
+   * Register the feat-item hooks with the host `Hooks` (called by actor-hooks; the same function is exercised by tests
+   * with a stand-in that fires handlers asynchronously, like Foundry).
+   */
+  static registerHooks(hooks) {
+    hooks.on('createItem', (item) => {
+      if (item?.type !== 'feat' || !item.parent) return;
+      setTimeout(() => SpeciesConditionalGrantResolver.onItemCreated(item), 0);
+    });
+    hooks.on('deleteItem', (item) => {
+      if (item?.type !== 'feat' || !item.parent) return;
+      setTimeout(() => SpeciesConditionalGrantResolver.onItemDeleted(item), 0);
+    });
+  }
+
   static async reconcile(actor) {
     if (!actor?.id) return;
-    if (_running.has(actor.id)) return;   // no re-entrant evaluation (the writes below fire the same hooks)
+    // Serialize per actor: a request that arrives while a pass is running is not lost, it triggers exactly one more pass
+    // (the writes of a pass fire the same hooks, so passes must never nest).
+    if (_running.has(actor.id)) { _rerun.add(actor.id); return; }
     _running.add(actor.id);
     try {
-      await this._reconcile(actor);
+      do {
+        _rerun.delete(actor.id);
+        await this._reconcile(actor);
+      } while (_rerun.has(actor.id));
     } finally {
       _running.delete(actor.id);
+      _rerun.delete(actor.id);
     }
   }
 
@@ -98,11 +135,20 @@ export class SpeciesConditionalGrantResolver {
     const currentKey = actor.flags?.swse?.speciesGrantManifest?.grantKey ?? null;
     const grantable = [];
     const stillDeferred = [];
-    let dropped = 0;
+    let changed = false;
 
     for (const grant of deferred) {
-      // A deferred grant belongs to the species grant that recorded it; once the actor's species/variant changed it is stale.
-      if (grant.grantKey && currentKey && grant.grantKey !== currentKey) { dropped++; continue; }
+      // The grant must belong to the actor's CURRENT species grant. A different key is stale and dropped; an unkeyed
+      // (legacy) entry or a missing current key cannot be attributed, so it fails closed and waits for reconciliation
+      // (re-applying the species rewrites the list with keys).
+      if (grant.grantKey && currentKey && grant.grantKey !== currentKey) { changed = true; continue; }
+      if (!grant.grantKey || !currentKey) {
+        const reason = !grant.grantKey ? GRANT_KEY_LEGACY : GRANT_KEY_UNESTABLISHED;
+        SWSELogger.warn(`[SpeciesConditionalGrantResolver] "${grant.name}" for ${actor.name} not granted: ${reason}`);
+        stillDeferred.push(grant.pendingReason === reason ? grant : { ...grant, pendingReason: reason });
+        if (grant.pendingReason !== reason) changed = true;
+        continue;
+      }
       const requirements = Array.isArray(grant.requirements) ? grant.requirements : [];
       if (requirements.length === 0 && grant.pendingReason !== FEAT_DOCUMENT_UNRESOLVED) {
         // No structured requirements: freeform-only condition, leave indefinitely deferred.
@@ -116,19 +162,8 @@ export class SpeciesConditionalGrantResolver {
       }
     }
 
-    if (grantable.length === 0) {
-      if (dropped) {
-        await globalThis.SWSE.ActorEngine.updateActor(actor, { 'flags.swse.deferredSpeciesBonusFeats': stillDeferred }, { meta: { guardKey: 'species-conditional-reconciliation' } });
-      }
-      return;
-    }
-
-    // Deduplicate: skip feats already on the actor (an independently acquired feat of the same name stays independent).
-    const existingFeatNames = new Set(
-      Array.from(actor.items || [])
-        .filter((i) => i.type === 'feat')
-        .map((i) => String(i.name || '').toLowerCase())
-    );
+    const feats = Array.from(actor.items || []).filter((i) => i.type === 'feat');
+    const lower = (v) => String(v || '').toLowerCase();
 
     await ProgressionContentAuthority.initialize?.();
 
@@ -136,14 +171,24 @@ export class SpeciesConditionalGrantResolver {
     for (const grant of grantable) {
       const name = grant.name;
       if (!name) continue;
-      if (existingFeatNames.has(String(name).toLowerCase())) continue;   // satisfied: dropped from the deferred list
+      const copies = feats.filter((i) => lower(i.name) === lower(name));
+      // Already supplied by this species grant: satisfied, nothing left to track.
+      if (copies.some((i) => i.flags?.swse?.speciesGrantKey === currentKey)) { changed = true; continue; }
+      // An independently owned copy satisfies the feat for now (no duplicate is created), but the species
+      // entitlement stays tracked: if that copy is later removed, the species grant supplies it.
+      if (copies.length) {
+        if (!grant.satisfiedByIndependentFeat) changed = true;
+        stillDeferred.push({ ...grant, satisfiedByIndependentFeat: true });
+        continue;
+      }
 
       // Fail closed: never substitute a minimal feat item for a canonical record that cannot be resolved.
       const resolvedDoc = await ProgressionContentAuthority.getFeatDocument({ name, id: name });
       const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
       if (!resolvedData) {
         SWSELogger.warn(`[SpeciesConditionalGrantResolver] Feat "${name}" could not be resolved; grant for ${actor.name} stays pending`, { species: grant.species ?? null });
-        stillDeferred.push({ ...grant, requirements: grant.requirements || [], pendingReason: FEAT_DOCUMENT_UNRESOLVED });
+        stillDeferred.push({ ...grant, requirements: grant.requirements || [], pendingReason: FEAT_DOCUMENT_UNRESOLVED, satisfiedByIndependentFeat: false });
+        if (grant.pendingReason !== FEAT_DOCUMENT_UNRESOLVED) changed = true;
         continue;
       }
       const baseItem = resolvedData;
@@ -159,11 +204,12 @@ export class SpeciesConditionalGrantResolver {
           speciesGranted: true,
           sourceSpecies: grant.species || null,
           // Provenance for species-grant reconciliation: removed when the species/variant that granted it is replaced.
-          ...(grant.grantKey ? { speciesGrantKey: grant.grantKey } : {}),
+          speciesGrantKey: grant.grantKey,
           grantedViaReconciliation: true,
         },
       }, { inplace: false, recursive: true });
       itemsToCreate.push(baseItem);
+      changed = true;
 
       SWSELogger.log(`[SpeciesConditionalGrantResolver] Granting deferred species feat: ${name} for ${actor.name}`);
     }
@@ -171,9 +217,10 @@ export class SpeciesConditionalGrantResolver {
     if (itemsToCreate.length > 0) {
       await globalThis.SWSE.ActorEngine.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
     }
+    if (!changed) return;
 
-    // Persist updated deferred list (resolved grants removed). If this write fails after the items were created the
-    // next pass skips them by name, so nothing is granted twice.
+    // Persist the updated list. If this write fails after items were created, the next pass finds them by grant key
+    // and clears the entry, so nothing is granted twice.
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
       'flags.swse.deferredSpeciesBonusFeats': stillDeferred.length > 0 ? stillDeferred : [],
     }, { meta: { guardKey: 'species-conditional-reconciliation' } });
