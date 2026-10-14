@@ -45,6 +45,17 @@ const traits = snap.features.map(f => ({ id: slug(f.name), name: f.name, descrip
 
 const shortPublication = String(profile.publication).replace(/^Star Wars Roleplaying Game: Saga Edition\s+/i, '').replace(/\s*\(\d{4}\)\s*$/, '');
 
+// Starting-proficiency suppression (printed as "Primitive" / a Technophobic variant): carry it as the same
+// primitive + suppressedClassProficiencies rule fields the base records use.
+const SUPPRESSION = new Set(['STARTING_PROFICIENCY_SUPPRESSION', 'STARTING_CLASS_FEAT_OVERRIDE']);
+const titleCase = text => String(text).replace(/\b([a-z])/g, c => c.toUpperCase());
+const suppressionFeature = snap.features.find(f => SUPPRESSION.has(f.classification));
+const suppressed = suppressionFeature
+  ? (suppressionFeature.mechanics?.suppressedStartingClassFeats || suppressionFeature.mechanics?.suppressStartingClassBonusFeats || [])
+      .map(name => titleCase(name))
+  : [];
+if (suppressionFeature && !suppressed.length) throw new Error(`${profileId}: suppression feature without a feat list; hold for review`);
+
 const variant = {
   id: `${slug(profile.speciesDisplayName)}-${profileId.toLowerCase()}`,
   label: profile.publication,
@@ -61,6 +72,7 @@ const variant = {
   special: traits.map(t => t.name),
   languages: snap.automaticLanguages.map(l => l.name),
   naturalWeapons: [],
+  ...(suppressed.length ? { primitive: true, suppressedClassProficiencies: suppressed } : {}),
   description: `${profile.speciesDisplayName} as printed in ${profile.publication}. Complete publication snapshot; no traits are inherited from other publications.`,
   traits,
   runtimeStatus: 'NOT_RUNTIME_CERTIFIED',

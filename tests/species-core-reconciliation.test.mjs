@@ -39,6 +39,15 @@ const CORE = {
     sidecarAbsent: ['immense-bulk', 'slow'],
     textIncludes: [['supreme-stability', /tripped/i], ['supreme-stability', /prone/i], ['force-resistance', /\+5/]],
   },
+  // Yuuzhan Vong (CORE-2A-21): printed traits are Force Immunity, Technophobic (-5 with mechanical tools),
+  // Weapon Familiarity (amphistaff with simple-weapon proficiency). Not Primitive: the Legacy Era book prints a
+  // different Technophobic (starting-proficiency suppression) and lives in its own snapshot variant.
+  'Yuuzhan Vong': {
+    traits: ['force-immunity', 'technophobic', 'weapon-familiarity'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['living-technology', 'primitive', 'biotech-proficiency'],
+    textIncludes: [['technophobic', /-5/], ['weapon-familiarity', /simple weapons/i], ['force-immunity', /Will Defense/]],
+  },
   // Trandoshan (CORE-2A-14): printed traits are Darkvision, Limb Regeneration, Natural Armor, Bonus Feat.
   // Clawed hands are narrative only; there is no natural attack or flat skill bonus, and no hit-point regeneration.
   Trandoshan: {
@@ -69,6 +78,35 @@ for (const [name, want] of Object.entries(CORE)) {
   assert.deepEqual(actor.items.map(i => `${i.type}:${i.name}`).sort(), want.items, `${name} materialized items`);
   assert.deepEqual(Object.keys(actor.flags.swse.speciesPassiveBonuses ?? {}), want.passives, `${name} materialized passives`);
   assert.equal(!!actor.flags.swse.primitiveSpecies, !!want.primitive, `${name} primitive`);
+}
+
+// ---- Yuuzhan Vong: Core base and Legacy Era snapshot never mix ----
+{
+  const sys = recs['Yuuzhan Vong'];
+  assert.ok(sys.variants.some(v => v.id === 'yuuzhan-vong-alternate'), 'existing alternate variant preserved');
+  const legacy = sys.variants.find(v => v.sourceProfileId === 'LEG-2C-07');
+  assert.equal(legacy.completeSnapshot, true);
+  assert.deepEqual(legacy.special, ['Force Immunity', 'Technophobic', 'Weapon Familiarity']);
+  assert.equal(legacy.primitive, true);
+  assert.deepEqual(legacy.suppressedClassProficiencies, ['Weapon Proficiency (Heavy Weapons)', 'Weapon Proficiency (Pistols)', 'Weapon Proficiency (Rifles)']);
+
+  const actor = makeActor();
+  await selectSpecies(actor, 'Yuuzhan Vong', legacy.id);
+  assert.equal(actor.flags.swse.primitiveSpecies, true);
+  assert.deepEqual(actor.flags.swse.suppressedClassProficiencies, legacy.suppressedClassProficiencies);
+  assert.equal(actor.system.speciesVariant.sourceProfileId, 'LEG-2C-07');
+  // 'primitive' is the materializer's own marker for starting-proficiency suppression (used by prerequisites).
+  assert.deepEqual(actor.flags.swse.speciesTraitIds, ['force-immunity', 'technophobic', 'weapon-familiarity', 'primitive']);
+  assert.ok(!JSON.stringify(actor.flags.swse.speciesTraits).includes('Biotech'));
+
+  await selectSpecies(actor, 'Yuuzhan Vong');                 // Legacy -> Core: suppression must be revoked
+  assert.ok(!actor.flags.swse.primitiveSpecies);
+  assert.deepEqual(actor.flags.swse.suppressedClassProficiencies, []);
+  assert.deepEqual(actor.flags.swse.speciesTraitIds, ['force-immunity', 'technophobic', 'weapon-familiarity'], 'Legacy primitive marker revoked');
+  assert.ok(!('Primitive' in actor.flags.swse.speciesTraits), 'Legacy Primitive trait metadata revoked');
+  assert.equal(actor.system.speciesVariant ?? null, null);
+  await selectSpecies(actor, 'Yuuzhan Vong', legacy.id);      // and back
+  assert.equal(actor.flags.swse.primitiveSpecies, true);
 }
 
 console.log('PASS: core species reconciliation');

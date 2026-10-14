@@ -12774,12 +12774,7 @@
       {
         "id": "force-immunity",
         "name": "Force Immunity",
-        "description": "A Yuuzhan Vong is immune to the effects of Force powers."
-      },
-      {
-        "id": "living-technology",
-        "name": "Living Technology",
-        "description": "A Yuuzhan Vong may only use organic equipment."
+        "description": "A Yuuzhan Vong is immune to any Force effect that targets its Will Defense."
       }
     ],
     "activatedAbilities": [],
@@ -12881,24 +12876,19 @@
     },
     "canonicalTraits": [
       {
-        "id": "biotech-proficiency",
-        "name": "Biotech Proficiency",
-        "description": "Yuuzhan Vong suffer no penalties while wielding Yuuzhan Vong Biotech."
-      },
-      {
         "id": "force-immunity",
         "name": "Force Immunity",
         "description": "Yuuzhan Vong can't take the Force Sensitivity feat, can't make Use the Force checks, and never gain Force Points. In addition, they are immune to any Force effect that targets their Will Defense (including Force Powers and aspects of the Use the Force skill)."
       },
       {
-        "id": "primitive",
-        "name": "Primitive",
-        "description": "Yuuzhan Vong do not gain Weapon Proficiency (Heavy Weapons), Weapon Proficiency (Pistols), or Weapon Proficiency (Rifles), as starting Feats at 1st level, even if their Class normally grants them."
+        "id": "technophobic",
+        "name": "Technophobic",
+        "description": "Yuuzhan Vong take a -5 penalty on attack rolls and skill checks made when using mechanical weapons or tools."
       },
       {
         "id": "weapon-familiarity",
         "name": "Weapon Familiarity",
-        "description": "Yuuzhan Vong treat Amphistaffs as a Simple Weapon (Melee) instead of as an Exotic Weapons (Melee)."
+        "description": "Yuuzhan Vong with the Weapon Proficiency (simple weapons) feat are proficient with the amphistaff."
       }
     ],
     "packSource": null,
