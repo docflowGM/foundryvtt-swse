@@ -1769,29 +1769,7 @@
       }
     ],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "bothan-spy-network",
-        "name": "Bothan Spy Network",
-        "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse.",
-        "rules": [
-          {
-            "type": "reroll",
-            "triggeredBy": {
-              "type": "skillCheck",
-              "skillId": "gatherInfo"
-            },
-            "timesPerEncounter": 1,
-            "outcome": "mustAccept",
-            "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse.",
-            "when": {
-              "type": "always"
-            },
-            "id": "bothan-spy-network-rule-0"
-          }
-        ]
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -2151,49 +2129,9 @@
     "name": "Cerean",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "binary-brain",
-        "name": "Binary Brain",
-        "description": "A Cerean gains a +2 species bonus on Will Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "will",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "binary-brain-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "binary-brain-reroll",
-        "name": "Binary Brain (Reroll)",
-        "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll.",
-        "rules": [
-          {
-            "type": "reroll",
-            "triggeredBy": {
-              "type": "skillCheck",
-              "skillId": "knowledgeGalacticLore"
-            },
-            "timesPerEncounter": 1,
-            "outcome": "mustAccept",
-            "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll.",
-            "when": {
-              "type": "always"
-            },
-            "id": "binary-brain-reroll-rule-0"
-          }
-        ]
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -3813,11 +3751,6 @@
             "id": "small-size-rule-0"
           }
         ]
-      },
-      {
-        "id": "primitive-weapons",
-        "name": "Primitive Weapons",
-        "description": "An Ewok gains proficiency with primitive weapons."
       }
     ],
     "activatedAbilities": [],
@@ -5106,37 +5039,8 @@
     "name": "Gungan",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "amphibious",
-        "name": "Amphibious",
-        "description": "A Gungan can breathe both air and water.",
-        "rules": [
-          {
-            "type": "breathing",
-            "breathType": "aquatic",
-            "immune": false,
-            "description": "A Gungan can breathe both air and water.",
-            "when": {
-              "type": "always"
-            },
-            "id": "amphibious-rule-0"
-          }
-        ]
-      }
-    ],
-    "activatedAbilities": [
-      {
-        "id": "lucky",
-        "name": "Lucky",
-        "actionType": "free",
-        "usage": {
-          "perEncounter": 1,
-          "perDay": null
-        },
-        "description": "Once per encounter, a Gungan may reroll an attack roll, skill check, or ability check but must accept the new result."
-      }
-    ],
+    "structuralTraits": [],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],

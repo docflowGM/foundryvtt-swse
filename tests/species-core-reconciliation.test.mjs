@@ -48,6 +48,38 @@ const CORE = {
     sidecarAbsent: ['living-technology', 'primitive', 'biotech-proficiency'],
     textIncludes: [['technophobic', /-5/], ['weapon-familiarity', /simple weapons/i], ['force-immunity', /Will Defense/]],
   },
+  // Bothan (CORE-2A-02): unprinted flat skill bonuses and extra sidecar traits removed.
+  Bothan: {
+    traits: ['conditional-bonus-feat','iron-will'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: ['will'],
+    sidecarAbsent: ['bothan-spy-network'],
+  },
+  // Cerean (CORE-2A-03): unprinted flat skill bonuses and extra sidecar traits removed.
+  Cerean: {
+    traits: ['conditional-bonus-feat','intuitive-initiative'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['binary-brain','binary-brain-reroll'],
+  },
+  // Duros (CORE-2A-04): unprinted flat skill bonuses and extra sidecar traits removed.
+  Duros: {
+    traits: ['expert-pilot'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: [],
+  },
+  // Ewok (CORE-2A-05): unprinted flat skill bonuses and extra sidecar traits removed.
+  Ewok: {
+    traits: ['conditional-bonus-feat','primitive','scent','sneaky'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: ['stealth'],
+    sidecarAbsent: ['primitive-weapons'],
+    primitive: true,
+  },
+  // Gungan (CORE-2A-07): unprinted flat skill bonuses and extra sidecar traits removed.
+  Gungan: {
+    traits: ['expert-swimmer','hold-breath','lightning-reflexes','low-light-vision','weapon-familiarity'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['amphibious','lucky'],
+  },
+
   // Trandoshan (CORE-2A-14): printed traits are Darkvision, Limb Regeneration, Natural Armor, Bonus Feat.
   // Clawed hands are narrative only; there is no natural attack or flat skill bonus, and no hit-point regeneration.
   Trandoshan: {

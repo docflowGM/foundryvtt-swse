@@ -1616,13 +1616,7 @@
       }
     ],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "bothan-spy-network",
-        "name": "Bothan Spy Network",
-        "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse."
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -1916,21 +1910,9 @@
     "name": "Cerean",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "binary-brain",
-        "name": "Binary Brain",
-        "description": "A Cerean gains a +2 species bonus on Will Defense."
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "binary-brain-reroll",
-        "name": "Binary Brain (Reroll)",
-        "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll."
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -3391,11 +3373,6 @@
         "id": "small-size",
         "name": "Small Size",
         "description": "As a Small creature, an Ewok gains a +5 species bonus to Stealth checks and a +1 species bonus to Reflex Defense, but takes a -5 penalty on grapple checks."
-      },
-      {
-        "id": "primitive-weapons",
-        "name": "Primitive Weapons",
-        "description": "An Ewok gains proficiency with primitive weapons."
       }
     ],
     "activatedAbilities": [],
@@ -4572,25 +4549,8 @@
     "name": "Gungan",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "amphibious",
-        "name": "Amphibious",
-        "description": "A Gungan can breathe both air and water."
-      }
-    ],
-    "activatedAbilities": [
-      {
-        "id": "lucky",
-        "name": "Lucky",
-        "actionType": "free",
-        "usage": {
-          "perEncounter": 1,
-          "perDay": null
-        },
-        "description": "Once per encounter, a Gungan may reroll an attack roll, skill check, or ability check but must accept the new result."
-      }
-    ],
+    "structuralTraits": [],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
