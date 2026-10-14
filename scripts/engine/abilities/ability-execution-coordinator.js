@@ -12,6 +12,7 @@
  * - FORCE_POWER execution model registration
  */
 
+import { actorUsesResolvedSnapshot } from "/systems/foundryvtt-swse/scripts/species/species-variant-profile.js";
 import { PassiveAdapter } from "./passive/passive-adapter.js";
 import { ActiveAdapter } from "./active/active-adapter.js";
 import { AttackOptionAdapter } from "./attack-option/attack-option-adapter.js";
@@ -39,9 +40,13 @@ export class AbilityExecutionCoordinator {
       .sort()
       .join('|');
 
+    // The species passive adapter's output depends on the selected publication as well as the species
+    // name (snapshot-resolved actors skip the name-keyed sidecar), so the variant must be part of the key.
     const speciesState = JSON.stringify({
       race: actor?.system?.race ?? null,
-      species: actor?.system?.species ?? null
+      species: actor?.system?.species ?? null,
+      variant: actor?.system?.speciesVariant?.id ?? actor?.flags?.swse?.speciesVariant?.id ?? null,
+      snapshot: actorUsesResolvedSnapshot(actor)
     });
 
     return [actor?.id ?? 'no-actor-id', actor?.type ?? 'actor', speciesState, abilities].join('|');

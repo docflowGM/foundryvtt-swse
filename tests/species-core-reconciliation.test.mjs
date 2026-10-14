@@ -5,6 +5,7 @@ import { makeActor, selectSpecies } from './helpers/species-actor-sim.mjs';
 // Core Rulebook species reconciled against the audited printed Species Traits
 // (Phase 3-A source profiles CORE-2A-xx). Each row pins what the shipped data must
 // NOT grant (unprinted) and what it must still grant (printed + automated today).
+// `passives` are the ledger-flag defenses/skills; final defense totals live in species-core-defense-totals.test.mjs.
 // Source rule text is intentionally not reproduced here.
 
 const recs = Object.fromEntries(readFileSync(new URL('../packs/species.db', import.meta.url), 'utf8').split('\n').filter(Boolean)
@@ -27,7 +28,7 @@ const CORE = {
   // No Arg'garok familiarity, no Will Defense penalty and no charge damage bonus are printed.
   Gamorrean: {
     traits: ['bonus-feat', 'great-fortitude', 'primitive'],
-    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: ['fortitude'],
     sidecarAbsent: ['low-cunning', 'brutal-charge', 'weapon-familiarity-arg-garok'],
     primitive: true,
   },
@@ -76,14 +77,14 @@ const CORE = {
   // Gungan (CORE-2A-07): unprinted flat skill bonuses and extra sidecar traits removed.
   Gungan: {
     traits: ['expert-swimmer','hold-breath','lightning-reflexes','low-light-vision','weapon-familiarity'],
-    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: ['reflex'],
     sidecarAbsent: ['amphibious','lucky'],
   },
 
   // Ithorian (CORE-2A-08): unprinted flat skill bonuses and extra sidecar traits removed.
   Ithorian: {
     traits: ['bellow','conditional-bonus-feat','iron-will','survival-instinct'],
-    skillBonuses: [], naturalWeapons: [], items: ['combat-action:Bellow'], passives: [],
+    skillBonuses: [], naturalWeapons: [], items: ['combat-action:Bellow'], passives: ['will'],
     sidecarAbsent: ['nature-affinity','sonic-bellow'],
   },
   // Kel Dor (CORE-2A-09): unprinted flat skill bonuses and extra sidecar traits removed.
@@ -126,7 +127,7 @@ const CORE = {
   // Zabrak (CORE-2A-17): unprinted flat skill bonuses and extra sidecar traits removed.
   Zabrak: {
     traits: ['heightened-awareness','superior-defenses'],
-    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: ['fortitude', 'reflex', 'will'],
     sidecarAbsent: ['battle-hardened','irrepressible'],
   },
   // Aqualish (CORE-2A-18): unprinted flat skill bonuses and extra sidecar traits removed.

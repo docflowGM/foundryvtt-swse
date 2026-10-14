@@ -3366,7 +3366,7 @@
       {
         "id": "small-size",
         "name": "Small Size",
-        "description": "As a Small creature, an Ewok gains a +5 species bonus to Stealth checks and a +1 species bonus to Reflex Defense, but takes a -5 penalty on grapple checks."
+        "description": "As a Small creature, an Ewok gains a +5 species bonus to Stealth checks, but takes a -5 penalty on grapple checks."
       }
     ],
     "activatedAbilities": [],

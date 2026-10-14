@@ -79,3 +79,29 @@ export function speciesFootprint(actor) {
     variant: actor.system.speciesVariant ?? null,
   };
 }
+
+/**
+ * Final defense totals through the production pipeline: ability registration (the passive adapter path) +
+ * DerivedCalculator.computeAll (ModifierEngine adjustments + DefenseCalculator species flags).
+ * The species contribution per defense is split into its two possible paths so tests can prove
+ * exactly-once application: `flagBonus` (ledger flags) and `modifierBonus` (passive adapter).
+ */
+export async function computeDefenses(actor) {
+  const { AbilityExecutionCoordinator } = await import('/systems/foundryvtt-swse/scripts/engine/abilities/ability-execution-coordinator.js');
+  const { DerivedCalculator } = await import('/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js');
+  actor.type ??= 'character'; actor.effects ??= []; actor._stats ??= { modifiedTime: 1 };
+  actor.id = actor.id === 'actor1' ? `defense-sim-${Math.random().toString(36).slice(2)}` : actor.id;
+  actor.system.level = 1; actor.system.hp = { max: 10, value: 10 };
+  actor.system.progression = { classLevels: [] };
+  const species = actor.system.species;
+  actor.system.race = species;
+  AbilityExecutionCoordinator.registerActorAbilities(actor);
+  DerivedCalculator.clearCaches();
+  const updates = await DerivedCalculator.computeAll(actor);
+  const d = updates['system.derived.defenses'] || {};
+  const out = {};
+  for (const key of ['fortitude', 'reflex', 'will']) {
+    out[key] = { total: d[key]?.total, flagBonus: d[key]?.speciesBonus ?? 0, modifierBonus: d[key]?.adjustment ?? 0, abilityMod: d[key]?.abilityMod ?? 0 };
+  }
+  return out;
+}

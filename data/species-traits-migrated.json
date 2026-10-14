@@ -3719,7 +3719,7 @@
       {
         "id": "small-size",
         "name": "Small Size",
-        "description": "As a Small creature, an Ewok gains a +5 species bonus to Stealth checks and a +1 species bonus to Reflex Defense, but takes a -5 penalty on grapple checks.",
+        "description": "As a Small creature, an Ewok gains a +5 species bonus to Stealth checks, but takes a -5 penalty on grapple checks.",
         "rules": [
           {
             "type": "skillModifier",
@@ -4178,7 +4178,13 @@
     "name": "Gamorrean",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [],
+    "structuralTraits": [
+      {
+        "id": "great-fortitude",
+        "name": "Great Fortitude",
+        "description": "Gamorreans gain a +2 Species bonus to their Fortitude Defense, accounting for their great physical resistance."
+      }
+    ],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -5020,7 +5026,13 @@
     "name": "Gungan",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [],
+    "structuralTraits": [
+      {
+        "id": "lightning-reflexes",
+        "name": "Lightning Reflexes",
+        "description": "Gungans gain a +2 Species bonus to their Reflex Defense, accounting for their uncanny ability to avoid danger."
+      }
+    ],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -5729,7 +5741,13 @@
     "name": "Ithorian",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [],
+    "structuralTraits": [
+      {
+        "id": "iron-will",
+        "name": "Iron Will",
+        "description": "Ithorians have above-average willpower and gain a +2 Species bonus to their Will Defense."
+      }
+    ],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -14225,7 +14243,45 @@
     "name": "Zabrak",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [],
+    "structuralTraits": [
+      {
+        "id": "superior-defenses",
+        "name": "Superior Defenses",
+        "description": "Adapted to a very tough and trying environment, Zabrak gain a +1 Species bonus to all their Defenses.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 1,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "superior-defenses-rule-0"
+          },
+          {
+            "type": "defenseModifier",
+            "defense": "reflex",
+            "value": 1,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "superior-defenses-rule-1"
+          },
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 1,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "superior-defenses-rule-2"
+          }
+        ]
+      }
+    ],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
