@@ -10,11 +10,12 @@
 // and runtimeSelectable additionally requires every architecture 3.4 condition.
 
 import crypto from 'node:crypto';
+import { isTrustedSnapshot } from './modification-snapshot-producer.mjs';
 
 export const RUNTIME_SCHEMA_ID = 'swse.modification.runtime/1';
 export const LEDGER_SCHEMA_ID = 'swse.modification.status-ledger/1';
 export const SPECS_SCHEMA_ID = 'swse.modification.specification-records/1';
-export const GENERATOR_VERSION = '1.0.0';
+export const GENERATOR_VERSION = '1.1.0';
 
 export const DOMAINS = Object.freeze(['weapon', 'armor', 'equipment']);
 export const COMPONENTS = Object.freeze(['cost', 'description', 'hostPrerequisites', 'executableEffect', 'installProcedure']);
@@ -49,7 +50,14 @@ export function jsonEqual(a, b) {
 /* Register parsing (docs/audits/swse-rules-decisions-pending.md)                              */
 /* ------------------------------------------------------------------------------------------ */
 
-/** @returns {Map<string, string[]>} register id -> classification tokens from its "Review classification" row */
+/**
+ * Parses the append-only register. Each entry yields:
+ *   classifications : tokens of the "Review classification" row
+ *   scope           : the machine-readable "Ledger scope" row (component + which typed definitions the entry blocks), or null
+ *   lift            : the "Blocker lifted" row, or null. A blocker is lifted ONLY by a valid lift row
+ *                     (PENDING_SOURCE_VERIFICATION needs source= and evidence=; DEFERRED_RULES_REVIEW needs owner-ruling=).
+ * @returns {Map<string, { classifications: string[], scope: object|null, lift: object|null, liftValid: boolean }>}
+ */
 export function parseRegister(markdown) {
   const out = new Map();
   const text = String(markdown ?? '');
@@ -57,12 +65,49 @@ export function parseRegister(markdown) {
   for (const s of sections) {
     const id = /^(D-\d{3}) /.exec(s)?.[1];
     if (!id) continue;
-    const row = /^\| Review classification \(rev\. 2\) \| (.*)$/m.exec(s)?.[1] ?? '';
-    const head = row.split(' — ')[0];
-    const tokens = [...head.matchAll(/`([A-Z_]+)`/g)].map((m) => m[1]).filter((t) => CLASSIFICATIONS.includes(t));
-    out.set(id, tokens);
+    const row = (label) => new RegExp(`^\\| ${label} \\| (.*?) \\|\\s*$`, 'm').exec(s)?.[1] ?? null;
+    const clsRow = /^\| Review classification \(rev\. 2\) \| (.*)$/m.exec(s)?.[1] ?? '';
+    const classifications = [...clsRow.split(' — ')[0].matchAll(/`([A-Z_]+)`/g)].map((m) => m[1]).filter((t) => CLASSIFICATIONS.includes(t));
+    const fields = (v) => {
+      if (v === null) return null;
+      const o = {};
+      for (const part of v.split(';')) {
+        const i = part.indexOf('=');
+        if (i > 0) o[part.slice(0, i).trim()] = part.slice(i + 1).trim();
+      }
+      return o;
+    };
+    const scopeRaw = fields(row('Ledger scope'));
+    let scope = null;
+    if (scopeRaw && COMPONENTS.includes(scopeRaw.component)) {
+      if (scopeRaw.definitions === 'ALL') scope = { component: scopeRaw.component, kind: 'all' };
+      else if (scopeRaw.definitions) scope = { component: scopeRaw.component, kind: 'definitions', ids: scopeRaw.definitions.split(',').map((x) => x.trim()).filter(Boolean) };
+      else if (scopeRaw.slotPools) scope = { component: scopeRaw.component, kind: 'slotPools', pools: scopeRaw.slotPools.split(',').map((x) => x.trim()).filter(Boolean) };
+    }
+    const lift = fields(row('Blocker lifted'));
+    let liftValid = false;
+    if (lift) {
+      const need = [];
+      if (classifications.includes('PENDING_SOURCE_VERIFICATION')) need.push('source', 'evidence');
+      if (classifications.includes('DEFERRED_RULES_REVIEW')) need.push('owner-ruling');
+      liftValid = need.length > 0 && need.every((k) => typeof lift[k] === 'string' && lift[k].length > 0);
+    }
+    out.set(id, { classifications, scope, lift, liftValid });
   }
   return out;
+}
+
+/** Typed definition ids that a register scope covers (null when the scope names an unknown definition). */
+export function scopeTargets(scope, registry) {
+  const all = [];
+  for (const d of registry.definitions) for (const t of Object.values(d.typedDefinitions ?? {})) all.push({ id: t.definitionId, parent: d.id, pool: t.slotPoolId ?? null });
+  if (scope.kind === 'all') return new Set(all.map((x) => x.id));
+  if (scope.kind === 'definitions') {
+    const known = new Set(registry.definitions.map((d) => d.id));
+    if (scope.ids.some((x) => !known.has(x))) return null;
+    return new Set(all.filter((x) => scope.ids.includes(x.parent)).map((x) => x.id));
+  }
+  return new Set(all.filter((x) => x.pool !== null && scope.pools.includes(x.pool)).map((x) => x.id));
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -103,7 +148,7 @@ export function validateInputs({ registry, ledger, specs, register }) {
       const p = `/ledger/blockers/${i}`;
       if (!isObj(b)) return fail(f, 'BLOCKER_NOT_OBJECT', p);
       if (!register.has(b.register)) fail(f, 'BLOCKER_REGISTER_ID_UNKNOWN', `${p}/register`, b.register);
-      else if (!register.get(b.register).includes(b.classification)) fail(f, 'BLOCKER_CLASSIFICATION_MISMATCH', `${p}/classification`, { declared: b.classification, register: register.get(b.register) });
+      else if (!register.get(b.register).classifications.includes(b.classification)) fail(f, 'BLOCKER_CLASSIFICATION_MISMATCH', `${p}/classification`, { declared: b.classification, register: register.get(b.register).classifications });
       if (!CLASSIFICATIONS.includes(b.classification)) fail(f, 'BLOCKER_CLASSIFICATION_INVALID', `${p}/classification`, b.classification);
       if (!COMPONENTS.includes(b.component)) fail(f, 'BLOCKER_COMPONENT_INVALID', `${p}/component`, b.component);
       const all = b.appliesToAllTypedDefinitions === true;
@@ -116,6 +161,42 @@ export function validateInputs({ registry, ledger, specs, register }) {
       const targets = all ? [...typed.keys()] : Array.isArray(ids) ? ids : [];
       for (const id of targets) blockedKeys.add(`${id}|${b.component}`);
     });
+
+    // An open register entry stays authoritative: its blocker scope must be present in the ledger in full, and only a
+    // documented lift row in the (append-only) register can remove it. The ledger can never clear a blocker by omission.
+    const ledgerCover = new Map();
+    ledger.blockers.forEach((b) => {
+      if (!isObj(b) || !COMPONENTS.includes(b.component)) return;
+      const key = `${b.register}|${b.component}`;
+      if (!ledgerCover.has(key)) ledgerCover.set(key, new Set());
+      const targets = b.appliesToAllTypedDefinitions === true ? [...typed.keys()] : Array.isArray(b.typedDefinitionIds) ? b.typedDefinitionIds : [];
+      for (const t of targets) ledgerCover.get(key).add(t);
+    });
+    const scoped = new Set();
+    for (const [regId, entry] of register) {
+      if (!entry.scope) continue;
+      scoped.add(regId);
+      if (entry.lift && !entry.liftValid) fail(f, 'REGISTER_LIFT_INVALID', `/register/${regId}`, 'a "Blocker lifted" row needs source= and evidence= (pending) and/or owner-ruling= (deferred)');
+      const have = ledgerCover.get(`${regId}|${entry.scope.component}`) ?? new Set();
+      if (entry.liftValid) {
+        if (have.size) fail(f, 'BLOCKER_FOR_LIFTED_REGISTER_ENTRY', `/register/${regId}`, 'ledger still blocks a lifted entry');
+        continue;
+      }
+      const want = scopeTargets(entry.scope, registry);
+      if (want === null) {
+        fail(f, 'REGISTER_SCOPE_UNKNOWN_DEFINITION', `/register/${regId}`);
+        continue;
+      }
+      const missing = [...want].filter((t) => !have.has(t));
+      const extra = [...have].filter((t) => !want.has(t));
+      if (missing.length) fail(f, 'BLOCKER_REMOVED_WHILE_REGISTER_OPEN', `/register/${regId}`, { component: entry.scope.component, missingCount: missing.length, sample: missing.slice(0, 3) });
+      if (extra.length) fail(f, 'BLOCKER_OUTSIDE_REGISTER_SCOPE', `/register/${regId}`, { component: entry.scope.component, extraCount: extra.length, sample: extra.slice(0, 3) });
+    }
+    for (const key of ledgerCover.keys()) {
+      const regId = key.split('|')[0];
+      const entry = register.get(regId);
+      if (entry && (!entry.scope || key.split('|')[1] !== entry.scope.component)) fail(f, 'BLOCKER_WITHOUT_REGISTER_SCOPE', `/ledger/blockers`, key);
+    }
 
     const specKeys = new Map();
     const seenSpecIds = new Set();
@@ -164,6 +245,7 @@ export function validateInputs({ registry, ledger, specs, register }) {
       if (!isObj(e)) return fail(f, 'SELECTABLE_NOT_OBJECT', p);
       if (!typed.has(e.typedDefinitionId)) fail(f, 'SELECTABLE_TYPED_ID_UNKNOWN', p, e.typedDefinitionId);
       for (const k of ['approvalRef', 'reviewedBy']) if (!isStr(e[k])) fail(f, 'SELECTABLE_FIELD_MISSING', `${p}/${k}`);
+      if (!isObj(e.hostEvaluation) || !isStr(e.hostEvaluation.evaluator) || !Array.isArray(e.hostEvaluation.offlineTests) || e.hostEvaluation.offlineTests.length === 0) fail(f, 'SELECTABLE_HOST_EVALUATION_MISSING', `${p}/hostEvaluation`);
       if (!Array.isArray(e.evidence) || e.evidence.length === 0) fail(f, 'SELECTABLE_EVIDENCE_MISSING', p);
       if (selKeys.has(e.typedDefinitionId)) fail(f, 'SELECTABLE_DUPLICATE', p, e.typedDefinitionId);
       selKeys.add(e.typedDefinitionId);
@@ -243,7 +325,8 @@ export function unmetSelectableConditions(typedId, domainRecord) {
     const c = comps[name];
     if (!c.SOURCE_VERIFIED || c.pendingSource.length || c.deferred.length) unmet.push(`1:${name}`);
   }
-  if (domainRecord.applicability.hostEligibility !== 'established') unmet.push('2:hostEligibility');
+  if (!domainRecord.applicability.hostRequirementsSpecified) unmet.push('2:hostRequirementsSpecified');
+  if (!domainRecord.applicability.hostEvaluator) unmet.push('2:hostEvaluator');
   if (!comps.installProcedure.MECHANIC_SPECIFIED) unmet.push('3:installProcedure');
   const ex = comps.executableEffect;
   if (domainRecord.effects.operations.length > 0 && !(ex.MECHANIC_SPECIFIED && ex.IMPLEMENTED && ex.OFFLINE_TESTED && !ex.pendingSource.length && !ex.deferred.length)) unmet.push('4:executableEffect');
@@ -254,7 +337,11 @@ export function unmetSelectableConditions(typedId, domainRecord) {
 /**
  * @returns {{ runtime: object, failures: object[] }} runtime is null when the hand-maintained inputs are invalid.
  */
-export function deriveRuntime({ registry, registryMeta, ledger, specs, register, inputHashes = {} }) {
+export function deriveRuntime({ snapshot, ledger, specs, register, inputHashes = {} }) {
+  // Only a handle minted by the trusted offline producer confers the registry's authority.
+  if (!isTrustedSnapshot(snapshot)) return { runtime: null, failures: [{ code: 'UNTRUSTED_SNAPSHOT', path: '/snapshot', detail: 'registry data must come from produceTrustedSnapshot()' }] };
+  const registry = snapshot.registry;
+  const registryMeta = snapshot.identity;
   const failures = validateInputs({ registry, ledger, specs, register });
   if (failures.length) return { runtime: null, failures };
 
@@ -275,7 +362,10 @@ export function deriveRuntime({ registry, registryMeta, ledger, specs, register,
       if (basis === null) accountingReasons.push(`DOMAIN_BASIS_NOT_CERTIFIED:${applicabilityValue}`);
       const accountingEligible = cost.certified && basis !== null;
       const status = buildStatus({ def, typedDef, domainCost: cost, typedId, ledger, specs });
-      const hostSpec = status.components.hostPrerequisites.SOURCE_VERIFIED && status.components.hostPrerequisites.MECHANIC_SPECIFIED;
+      // Specified host REQUIREMENTS are not proof that any particular Item satisfies them. Per-Item eligibility is evaluated
+      // at plan time (G3/G4) from certified facts; no static record can establish it, so it is always 'not_established' here.
+      const hostRequirementsSpecified = status.components.hostPrerequisites.SOURCE_VERIFIED && status.components.hostPrerequisites.MECHANIC_SPECIFIED;
+      const selEntry = selectableByTyped.get(typedId);
       const record = {
         typedDefinitionId: typedId,
         domain,
@@ -285,7 +375,9 @@ export function deriveRuntime({ registry, registryMeta, ledger, specs, register,
         applicability: {
           registryValue: applicabilityValue,
           domainBasis: basis,
-          hostEligibility: hostSpec ? 'established' : 'not_established'
+          hostRequirementsSpecified,
+          hostEvaluator: selEntry?.hostEvaluation?.evaluator ?? null,
+          hostEligibility: 'not_established'
         },
         accounting: { eligible: accountingEligible, reasons: accountingReasons },
         effects: {
@@ -339,7 +431,8 @@ export function deriveRuntime({ registry, registryMeta, ledger, specs, register,
   const header = {
     schema: RUNTIME_SCHEMA_ID,
     generator: { name: 'tools/build-modification-runtime.mjs', version: GENERATOR_VERSION },
-    registry: { version: registryMeta.version, sha256: registryMeta.sha256 },
+    registry: { version: registryMeta.version, sha256: registryMeta.sha256, byteLength: registryMeta.byteLength },
+    validator: clone(snapshot.validator),
     inputs: { statusLedgerSha256: inputHashes.ledger ?? null, specificationRecordsSha256: inputHashes.specs ?? null },
     counts,
     recordsSha256: sha256(canonicalJson(records)),
@@ -356,13 +449,17 @@ export function deriveRuntime({ registry, registryMeta, ledger, specs, register,
  * Independent structural checks plus a full regeneration comparison.
  * @returns {{ ok: boolean, failures: object[] }}
  */
-export function validateRuntime({ runtime, registry, registryMeta, ledger, specs, register, inputHashes = {} }) {
+export function validateRuntime({ runtime, snapshot, ledger, specs, register, inputHashes = {} }) {
   const f = [];
+  if (!isTrustedSnapshot(snapshot)) return { ok: false, failures: [{ code: 'UNTRUSTED_SNAPSHOT', path: '/snapshot', detail: 'registry data must come from produceTrustedSnapshot()' }] };
+  const registry = snapshot.registry;
+  const registryMeta = snapshot.identity;
   try {
     if (!isObj(runtime) || !isObj(runtime.header) || !Array.isArray(runtime.records)) return { ok: false, failures: [{ code: 'RUNTIME_SHAPE_INVALID', path: '/', detail: null }] };
     const h = runtime.header;
     if (h.schema !== RUNTIME_SCHEMA_ID) fail(f, 'SCHEMA_ID_MISMATCH', '/header/schema', h.schema);
-    if (!isObj(h.registry) || h.registry.version !== registryMeta.version || h.registry.sha256 !== registryMeta.sha256) fail(f, 'REGISTRY_BINDING_MISMATCH', '/header/registry');
+    if (!isObj(h.registry) || h.registry.version !== registryMeta.version || h.registry.sha256 !== registryMeta.sha256 || h.registry.byteLength !== registryMeta.byteLength) fail(f, 'REGISTRY_BINDING_MISMATCH', '/header/registry');
+    if (!jsonEqual(h.validator, snapshot.validator)) fail(f, 'VALIDATOR_IDENTITY_MISMATCH', '/header/validator');
     if (h.recordsSha256 !== sha256(canonicalJson(runtime.records))) fail(f, 'RECORDS_HASH_MISMATCH', '/header/recordsSha256');
     if (runtime.records.length !== registry.definitions.length) fail(f, 'RECORD_COUNT_MISMATCH', '/records', { observed: runtime.records.length, expected: registry.definitions.length });
 
@@ -393,6 +490,7 @@ export function validateRuntime({ runtime, registry, registryMeta, ledger, specs
         if (typeof d.runtimeSelectable !== 'boolean') fail(f, 'DOMAIN_SELECTABLE_NOT_BOOLEAN', `${dp}/runtimeSelectable`);
         if (d.effects?.automation !== 'none') fail(f, 'AUTOMATION_NOT_NONE', `${dp}/effects/automation`);
         if (!jsonEqual(d.effects?.operations, want.effectOperations ?? [])) fail(f, 'VERBATIM_EFFECT_OPERATIONS_MISMATCH', `${dp}/effects/operations`);
+        if (d.applicability?.hostEligibility !== 'not_established') fail(f, 'HOST_ELIGIBILITY_ESTABLISHED_FORBIDDEN', `${dp}/applicability/hostEligibility`, d.applicability?.hostEligibility);
         if (d.runtimeSelectable) {
           const unmet = unmetSelectableConditions(d.typedDefinitionId, d);
           if (unmet.length) fail(f, 'SELECTABLE_CONDITIONS_UNMET', dp, unmet);
@@ -409,7 +507,7 @@ export function validateRuntime({ runtime, registry, registryMeta, ledger, specs
     });
 
     // Full regeneration: the committed bytes must equal an independent derivation from the same inputs.
-    const regen = deriveRuntime({ registry, registryMeta, ledger, specs, register, inputHashes });
+    const regen = deriveRuntime({ snapshot, ledger, specs, register, inputHashes });
     if (regen.failures.length) for (const x of regen.failures) f.push(x);
     else if (canonicalJson(regen.runtime) !== canonicalJson(runtime)) fail(f, 'REGENERATION_MISMATCH', '/', 'committed runtime differs from deterministic regeneration');
   } catch (err) {

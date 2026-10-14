@@ -12,7 +12,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateRegistry, MANIFEST_PATH, REGISTRY_PATH, MARKDOWN_PATH } from './validate-modification-registry.mjs';
+import { MANIFEST_PATH, REGISTRY_PATH, MARKDOWN_PATH } from './validate-modification-registry.mjs';
+import { produceTrustedSnapshot } from './lib/modification-snapshot-producer.mjs';
 import { deriveRuntime, validateRuntime, canonicalJson, parseRegister, sha256 } from './lib/modification-runtime.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -31,9 +32,9 @@ export function loadInputs(read = readBytes) {
   } catch (err) {
     return { ok: false, error: `MANIFEST_UNREADABLE: ${err.message}` };
   }
-  const registryBytes = read(REGISTRY_PATH);
-  const report = validateRegistry({ registryBytes, markdownBytes: read(MARKDOWN_PATH), manifest });
-  if (!report.ok) return { ok: false, error: 'G1_VALIDATION_FAILED: the registry snapshot is not trusted; nothing was generated', report };
+  // Trusted offline producer: the registry bytes must pass G1 validation; the handle binds the parsed data to those bytes.
+  const produced = produceTrustedSnapshot({ registryBytes: read(REGISTRY_PATH), markdownBytes: read(MARKDOWN_PATH), manifest });
+  if (!produced.ok) return produced;
   const ledgerBytes = read(LEDGER_PATH);
   const specsBytes = read(SPECS_PATH);
   const registerBytes = read(REGISTER_PATH);
@@ -49,8 +50,7 @@ export function loadInputs(read = readBytes) {
   return {
     ok: true,
     inputs: {
-      registry: JSON.parse(registryBytes.toString('utf8')),
-      registryMeta: { version: manifest.registryVersion, sha256: report.identity.registry.sha256 },
+      snapshot: produced.handle,
       ledger,
       specs,
       register: parseRegister(registerBytes.toString('utf8')),

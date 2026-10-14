@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { REGISTRY_PATH } from '../tools/validate-modification-registry.mjs';
 import { loadInputs, RUNTIME_PATH, LEDGER_PATH, SPECS_PATH } from '../tools/build-modification-runtime.mjs';
 import { deriveRuntime, validateRuntime, canonicalJson, parseRegister, certifySlotCost, domainBasisFor, sha256 } from '../tools/lib/modification-runtime.mjs';
+import { produceTrustedSnapshot, isTrustedSnapshot } from '../tools/lib/modification-snapshot-producer.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const readText = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
@@ -28,7 +29,8 @@ const loaded = loadInputs();
 assert.equal(loaded.ok, true, loaded.error);
 const base = loaded.inputs;
 const committed = JSON.parse(readText(RUNTIME_PATH));
-const derive = (over = {}) => deriveRuntime({ ...clone(base), register: base.register, ...over });
+const registry = base.snapshot.registry;
+const derive = (over = {}) => deriveRuntime({ ...base, ledger: clone(base.ledger), specs: clone(base.specs), ...over });
 const codes = (r) => r.failures.map((f) => f.code);
 const records = committed.records;
 const domainsOf = (id) => records.find((r) => r.definitionId === id).domains;
@@ -39,6 +41,10 @@ check('registry binding and counts', () => {
   assert.equal(committed.header.schema, 'swse.modification.runtime/1');
   assert.equal(committed.header.registry.version, '1.5');
   assert.equal(committed.header.registry.sha256, '7be427414a95216a8bec45078e62ea2a7fb6e185f24b1f4c2ee250bac7093d00');
+  assert.equal(committed.header.registry.byteLength, 960022);
+  assert.equal(committed.header.validator.name, 'tools/validate-modification-registry.mjs');
+  assert.equal(committed.header.validator.approvedRegistryVersion, '1.5');
+  assert.deepEqual(committed.header.validator.matchedKnownDeviations.map((d) => d.path), ['/definitions/136/sourceFamily', '/definitions/137/sourceFamily', '/definitions/138/sourceFamily']);
   assert.deepEqual(committed.header.counts, { records: 186, typedDefinitions: 232, eligibleCandidates: 231, accountingEligiblePairs: 49, certifiedSlotCosts: 84, runtimeSelectable: 0 });
   // 84 certified slot costs = 49 accounting-eligible + 35 Table 2-3 universal pairs whose domain applicability is CONDITIONAL_UNVERIFIED (cost certified, domain blocked).
   assert.equal(84 - 35, 49);
@@ -118,7 +124,7 @@ check('three page-verified fixed costs are uncertified (no attestation exists)',
   }
 });
 check('registry-sourced fields are verbatim', () => {
-  const reg = base.registry;
+  const reg = registry;
   committed.records.forEach((r, i) => {
     assert.deepEqual(r.provenance.source, reg.definitions[i].source);
     assert.deepEqual(r.price.registry, reg.definitions[i].originalCost);
@@ -178,33 +184,35 @@ const withSpecs = (...records) => ({ specs: { ...clone(base.specs), records } })
 const withLedger = (mut) => { const l = clone(base.ledger); mut(l); return { ledger: l }; };
 
 check('a ledger selectable entry alone cannot make a definition selectable', () => {
-  const r = derive(withLedger((l) => l.selectable.push({ typedDefinitionId: 'sv-retractable-stock::weapon', approvalRef: 'x', reviewedBy: 'x', evidence: ['x'] })));
+  const r = derive(withLedger((l) => l.selectable.push({ typedDefinitionId: 'sv-retractable-stock::weapon', approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'g3-eval', offlineTests: ['t'] } })));
   assert.equal(r.runtime, null);
   assert.ok(codes(r).includes('SELECTABLE_CONDITIONS_UNMET'));
 });
 check('accounting-eligible alone cannot become selectable', () => {
   const id = allDomains.find((d) => d.accounting.eligible).typedDefinitionId;
-  const r = derive(withLedger((l) => l.selectable.push({ typedDefinitionId: id, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'] })));
+  const r = derive(withLedger((l) => l.selectable.push({ typedDefinitionId: id, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'g3-eval', offlineTests: ['t'] } })));
   assert.equal(r.runtime, null);
   const unmet = r.failures.find((f) => f.code === 'SELECTABLE_CONDITIONS_UNMET').detail.unmet;
-  assert.ok(unmet.includes('1:installProcedure') && unmet.includes('2:hostEligibility') && unmet.includes('5:installProcedure.FOUNDRY_TESTED'));
+  assert.ok(unmet.includes('1:installProcedure') && unmet.includes('2:hostRequirementsSpecified') && unmet.includes('5:installProcedure.FOUNDRY_TESTED'));
 });
-check('selectability is domain-specific: certifying one domain leaves the sibling non-selectable', () => {
-  // Fully satisfy every 3.4 condition for ONE typed definition using synthetic inputs, then check the sibling domain.
-  const parent = base.registry.definitions.find((d) => Object.keys(d.typedDefinitions).length >= 2 && certifySlotCost(d, Object.values(d.typedDefinitions)[0]).certified);
-  assert.ok(parent, 'a multi-domain definition with a certified cost exists');
+const liftedRegister = (...ids) => {
+  const reg = new Map(base.register);
+  for (const id of ids) reg.set(id, { ...reg.get(id), lift: { source: 'fixture', evidence: 'fixture' }, liftValid: true });
+  return reg;
+};
+const scopedParents = new Set(['sv-retractable-stock', 'goi-componentization-basic', 'goi-componentization-deluxe', 'reb-excellent-kit-purchased-quality', 'legacy-biotech-host-template', 'legacy-weapon-template-antiquated', 'legacy-weapon-template-refitted']);
+check('selectability is domain-specific: certifying one domain leaves the sibling non-selectable (synthetic fixture with lifted D-001 and D-005)', () => {
+  const parent = registry.definitions.find((d) => !scopedParents.has(d.id) && Object.keys(d.typedDefinitions).length >= 2 && certifySlotCost(d, Object.values(d.typedDefinitions)[0]).certified && Object.values(d.typedDefinitions).every((t) => !(t.slotPoolId || '').startsWith('lightsaber-')));
+  assert.ok(parent, 'a multi-domain definition with a certified cost, outside every register scope, exists');
   const [dA, dB] = Object.keys(parent.typedDefinitions);
   const idA = parent.typedDefinitions[dA].definitionId;
-  const idB = parent.typedDefinitions[dB].definitionId;
   const r = derive({
+    register: liftedRegister('D-001', 'D-005'),
     ...withSpecs(...['cost', 'description', 'hostPrerequisites', 'installProcedure', 'executableEffect'].map((component, i) => spec({ specId: `S-${i}`, typedDefinitionId: idA, component }))),
     ...withLedger((l) => {
-      // Clear the install-procedure blocker for idA only by replacing the "all" D-001 blocker with an explicit list of every other id.
-      const all = base.registry.definitions.flatMap((d) => Object.values(d.typedDefinitions).map((t) => t.definitionId)).filter((i) => i !== idA);
-      l.blockers = l.blockers.filter((b) => b.register !== 'D-001').concat([{ register: 'D-001', classification: 'PENDING_SOURCE_VERIFICATION', component: 'installProcedure', typedDefinitionIds: all }]);
-      l.blockers = l.blockers.map((b) => (b.typedDefinitionIds ? { ...b, typedDefinitionIds: b.typedDefinitionIds.filter((i) => i !== idA) } : b)).filter((b) => b.appliesToAllTypedDefinitions || b.typedDefinitionIds.length);
+      l.blockers = l.blockers.filter((b) => b.register !== 'D-001' && b.register !== 'D-005');
       for (const component of ['executableEffect', 'installProcedure']) l.implementation.push({ typedDefinitionId: idA, component, flags: { IMPLEMENTED: true, OFFLINE_TESTED: true, FOUNDRY_TESTED: component === 'installProcedure' }, commit: 'deadbeef', tests: ['t'], ...(component === 'installProcedure' ? { foundryEvidence: { route: 'isolated', runId: 'r1' } } : {}) });
-      l.selectable.push({ typedDefinitionId: idA, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'] });
+      l.selectable.push({ typedDefinitionId: idA, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'g3-eval', offlineTests: ['t'] } });
     })
   });
   assert.deepEqual(codes(r), [], JSON.stringify(r.failures));
@@ -213,7 +221,108 @@ check('selectability is domain-specific: certifying one domain leaves the siblin
   assert.equal(rec.domains[dB].runtimeSelectable, false, 'sibling domain must not be authorized');
   assert.equal('runtimeSelectable' in rec, false);
   assert.equal(r.runtime.header.counts.runtimeSelectable, 1);
-  assert.ok(idB !== idA);
+  assert.equal(rec.domains[dA].applicability.hostEligibility, 'not_established', 'specified host requirements never establish individual eligibility');
+  assert.equal(rec.domains[dA].applicability.hostRequirementsSpecified, true);
+  // The same promotion against the REAL register (D-001 still open) is rejected: see the blocker-removal regression tests.
+});
+check('REGRESSION: removing the D-001 blocker from the ledger while D-001 is open cannot authorize implementation or selectability', () => {
+  const parent = registry.definitions.find((d) => !scopedParents.has(d.id) && d.sourceFamily !== 'universal_upgrade' && certifySlotCost(d, Object.values(d.typedDefinitions)[0] ?? {}).certified);
+  const idA = Object.values(parent.typedDefinitions)[0].definitionId;
+  const r = derive({
+    ...withSpecs(...['cost', 'description', 'hostPrerequisites', 'installProcedure', 'executableEffect'].map((component, i) => spec({ specId: `S-${i}`, typedDefinitionId: idA, component }))),
+    ...withLedger((l) => {
+      l.blockers = l.blockers.filter((b) => b.register !== 'D-001');
+      for (const component of ['executableEffect', 'installProcedure']) l.implementation.push({ typedDefinitionId: idA, component, flags: { IMPLEMENTED: true, OFFLINE_TESTED: true, FOUNDRY_TESTED: component === 'installProcedure' }, commit: 'deadbeef', tests: ['t'], ...(component === 'installProcedure' ? { foundryEvidence: { route: 'isolated', runId: 'r1' } } : {}) });
+      l.selectable.push({ typedDefinitionId: idA, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'g3-eval', offlineTests: ['t'] } });
+    })
+  });
+  assert.equal(r.runtime, null, 'nothing is generated');
+  assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), codes(r).join());
+});
+check('REGRESSION: every scoped open register entry must keep its full ledger scope', () => {
+  for (const [id, drop] of [['D-001', null], ['D-004', null], ['D-005', null], ['D-006', null], ['D-010', null], ['D-011', null]]) {
+    const whole = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== id); }));
+    assert.ok(codes(whole).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} whole removal`);
+    void drop;
+  }
+  // partial removal: drop one typed id from each explicit list
+  for (const id of ['D-004', 'D-005', 'D-006', 'D-010', 'D-011']) {
+    const r = derive(withLedger((l) => { const b = l.blockers.find((x) => x.register === id); b.typedDefinitionIds = b.typedDefinitionIds.slice(1); if (!b.typedDefinitionIds.length) l.blockers = l.blockers.filter((x) => x !== b); }));
+    assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} partial removal`);
+  }
+  // downgrading the classification or moving the blocker to another component does not substitute
+  assert.ok(codes(derive(withLedger((l) => { l.blockers.find((b) => b.register === 'D-001').component = 'cost'; }))).length > 0);
+});
+check('ledger blockers must stay inside the register scope and be bound to a scoped entry', () => {
+  assert.ok(codes(derive(withLedger((l) => { l.blockers.push({ register: 'D-004', classification: 'PENDING_SOURCE_VERIFICATION', component: 'cost', typedDefinitionIds: ['sv-cheater::equipment'] }); }))).includes('BLOCKER_OUTSIDE_REGISTER_SCOPE'));
+  assert.ok(codes(derive(withLedger((l) => { l.blockers.push({ register: 'D-002', classification: 'PENDING_SOURCE_VERIFICATION', component: 'cost', typedDefinitionIds: ['sv-cheater::equipment'] }); }))).includes('BLOCKER_WITHOUT_REGISTER_SCOPE'));
+});
+check('a blocker is lifted only by a valid register lift row; the ledger must then drop it', () => {
+  const text = readText('docs/audits/swse-rules-decisions-pending.md');
+  const lift = (id, row) => text.replace(new RegExp(`(## ${id} — [\\s\\S]*?\\| Ledger scope \\|[^\\n]*\\n)`), `$1${row}\n`);
+  const bad = parseRegister(lift('D-001', '| Blocker lifted | source=Scum and Villainy p. 39 |'));
+  assert.equal(bad.get('D-001').liftValid, false, 'pending lift needs evidence as well as source');
+  const good = parseRegister(lift('D-001', '| Blocker lifted | source=Scum and Villainy p. 39; evidence=fixture |'));
+  assert.equal(good.get('D-001').liftValid, true);
+  const ownerless = parseRegister(lift('D-006', '| Blocker lifted | source=x; evidence=y |'));
+  assert.equal(ownerless.get('D-006').liftValid, false, 'a deferred entry needs an owner ruling');
+  assert.equal(parseRegister(lift('D-006', '| Blocker lifted | owner-ruling=fixture |')).get('D-006').liftValid, true);
+  assert.ok(codes(derive({ register: bad })).includes('REGISTER_LIFT_INVALID'));
+  assert.ok(codes(derive({ register: good })).includes('BLOCKER_FOR_LIFTED_REGISTER_ENTRY'), 'ledger still blocking a lifted entry');
+  assert.deepEqual(codes(derive({ register: good, ...withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== 'D-001'); }) })), []);
+});
+check('a hostPrerequisites specification states requirements only; it never establishes individual host eligibility', () => {
+  const id = 'sv-retractable-stock::weapon';
+  const r = derive(withSpecs(spec({ typedDefinitionId: id, component: 'description' })));
+  assert.equal(r.runtime.records.find((x) => x.definitionId === 'sv-retractable-stock').domains.weapon.applicability.hostEligibility, 'not_established');
+  const parent = registry.definitions.find((d) => !scopedParents.has(d.id) && d.sourceFamily !== 'universal_upgrade' && Object.keys(d.typedDefinitions).length);
+  const tid = Object.values(parent.typedDefinitions)[0].definitionId;
+  const dom = Object.keys(parent.typedDefinitions)[0];
+  const r2 = derive({ register: liftedRegister('D-001'), ...withSpecs(spec({ typedDefinitionId: tid, component: 'hostPrerequisites' })), ...withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== 'D-001'); }) });
+  assert.deepEqual(codes(r2), []);
+  const a = r2.runtime.records.find((x) => x.definitionId === parent.id).domains[dom].applicability;
+  assert.equal(a.hostRequirementsSpecified, true);
+  assert.equal(a.hostEligibility, 'not_established');
+  assert.equal(a.hostEvaluator, null);
+});
+check('V10\' rejects a record that claims established host eligibility', () => {
+  const rt = clone(committed);
+  Object.values(rt.records[0].domains)[0].applicability.hostEligibility = 'established';
+  rt.header.recordsSha256 = sha256(canonicalJson(rt.records));
+  assert.ok(codes(validateRuntime({ ...base, runtime: rt })).includes('HOST_ELIGIBILITY_ESTABLISHED_FORBIDDEN'));
+});
+check('selectable ledger entries require a named host evaluator and offline tests', () => {
+  const r = derive(withLedger((l) => { l.selectable.push({ typedDefinitionId: 'sv-retractable-stock::weapon', approvalRef: 'x', reviewedBy: 'x', evidence: ['x'] }); }));
+  assert.ok(codes(r).includes('SELECTABLE_HOST_EVALUATION_MISSING'));
+});
+check('trusted snapshot boundary: only the producer can mint a handle', () => {
+  assert.equal(isTrustedSnapshot(base.snapshot), true);
+  assert.equal(Object.isFrozen(base.snapshot) && Object.isFrozen(base.snapshot.registry) && Object.isFrozen(base.snapshot.registry.definitions[0]), true);
+  const forged = { kind: base.snapshot.kind, registry: clone(registry), identity: clone(base.snapshot.identity), validator: clone(base.snapshot.validator) };
+  for (const bad of [forged, clone(base.snapshot), { ...base.snapshot }, structuredClone(base.snapshot), Object.create(base.snapshot), null, undefined, 'x', { ok: true, validated: true }]) {
+    assert.equal(isTrustedSnapshot(bad), false);
+    const r = derive({ snapshot: bad });
+    assert.equal(r.runtime, null);
+    assert.deepEqual(codes(r), ['UNTRUSTED_SNAPSHOT']);
+    assert.deepEqual(codes(validateRuntime({ ...base, snapshot: bad, runtime: committed })), ['UNTRUSTED_SNAPSHOT']);
+  }
+  assert.throws(() => { base.snapshot.identity.sha256 = '0'; }, TypeError, 'handle is immutable');
+});
+check('trusted snapshot producer binds data to the exact validated bytes', () => {
+  const manifest = JSON.parse(readText('data/audits/modification-rolling-authority-v1.5.manifest.json'));
+  const regBytes = fs.readFileSync(path.join(ROOT, REGISTRY_PATH));
+  const mdBytes = fs.readFileSync(path.join(ROOT, 'docs/audits/modification-rolling-authority-v1.5.md'));
+  const ok = produceTrustedSnapshot({ registryBytes: regBytes, markdownBytes: mdBytes, manifest });
+  assert.equal(ok.ok, true);
+  assert.equal(ok.handle.identity.sha256, '7be427414a95216a8bec45078e62ea2a7fb6e185f24b1f4c2ee250bac7093d00');
+  assert.equal(ok.handle.identity.byteLength, 960022);
+  assert.notEqual(ok.handle, base.snapshot, 'each production mints a distinct handle');
+  // one changed byte, a lying manifest, or a missing markdown all fail closed; no handle is produced
+  assert.equal(produceTrustedSnapshot({ registryBytes: Buffer.concat([regBytes, Buffer.from(' ')]), markdownBytes: mdBytes, manifest }).ok, false);
+  const lying = clone(manifest); lying.files.registry.sha256 = '0'.repeat(64);
+  assert.equal(produceTrustedSnapshot({ registryBytes: regBytes, markdownBytes: mdBytes, manifest: lying }).ok, false);
+  assert.equal(produceTrustedSnapshot({ registryBytes: regBytes, markdownBytes: null, manifest }).ok, false);
+  assert.equal(produceTrustedSnapshot({}).ok, false);
 });
 check('unknown register id in a blocker is rejected', () => {
   assert.ok(codes(derive(withLedger((l) => l.blockers.push({ register: 'D-999', classification: 'PENDING_SOURCE_VERIFICATION', component: 'cost', typedDefinitionIds: ['sv-retractable-stock::weapon'] })))).includes('BLOCKER_REGISTER_ID_UNKNOWN'));
@@ -285,7 +394,9 @@ check('generator input is read-only: no source file other than the runtime outpu
 check('register parsing: D-001..D-012 classified, only D-006 deferred', () => {
   const reg = parseRegister(readText('docs/audits/swse-rules-decisions-pending.md'));
   assert.equal(reg.size, 12);
-  for (const [id, t] of reg) assert.deepEqual(t, [id === 'D-006' ? 'DEFERRED_RULES_REVIEW' : 'PENDING_SOURCE_VERIFICATION'], id);
+  for (const [id, t] of reg) assert.deepEqual(t.classifications, [id === 'D-006' ? 'DEFERRED_RULES_REVIEW' : 'PENDING_SOURCE_VERIFICATION'], id);
+  for (const [id, t] of reg) { assert.equal(t.lift, null, `${id} has no lift row`); assert.equal(t.liftValid, false); }
+  assert.deepEqual([...reg].filter(([, t]) => t.scope).map(([id]) => id), ['D-001', 'D-004', 'D-005', 'D-006', 'D-010', 'D-011']);
 });
 check('no runtime (scripts/) file references the generated data or generator yet', () => {
   const hits = [];

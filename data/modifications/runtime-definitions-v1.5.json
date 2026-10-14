@@ -3,11 +3,30 @@
   "schema": "swse.modification.runtime/1",
   "generator": {
    "name": "tools/build-modification-runtime.mjs",
-   "version": "1.0.0"
+   "version": "1.1.0"
   },
   "registry": {
    "version": "1.5",
-   "sha256": "7be427414a95216a8bec45078e62ea2a7fb6e185f24b1f4c2ee250bac7093d00"
+   "sha256": "7be427414a95216a8bec45078e62ea2a7fb6e185f24b1f4c2ee250bac7093d00",
+   "byteLength": 960022
+  },
+  "validator": {
+   "name": "tools/validate-modification-registry.mjs",
+   "approvedRegistryVersion": "1.5",
+   "matchedKnownDeviations": [
+    {
+     "errorCode": "REF_SOURCE_FAMILY_UNDECLARED",
+     "path": "/definitions/136/sourceFamily"
+    },
+    {
+     "errorCode": "REF_SOURCE_FAMILY_UNDECLARED",
+     "path": "/definitions/137/sourceFamily"
+    },
+    {
+     "errorCode": "REF_SOURCE_FAMILY_UNDECLARED",
+     "path": "/definitions/138/sourceFamily"
+    }
+   ]
   },
   "inputs": {
    "statusLedgerSha256": "10e88511b61cf7659162bcb62330e935d39448f972bbc3c63466bd548b737178",
@@ -21,7 +40,7 @@
    "certifiedSlotCosts": 84,
    "runtimeSelectable": 0
   },
-  "recordsSha256": "c28ed5c8d59364b18be0548e6fca10533a035de82b819038940e3c85bb21702d",
+  "recordsSha256": "1a3f44882832425a01bd53974fc738cad24ffa080d8d4db7c2368601115e4395",
   "notice": "Generated. Do not edit. Research-only unless a typed domain definition is runtimeSelectable. Integrity is anchored outside this file (G8)."
  },
  "records": [
@@ -103,6 +122,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -257,6 +278,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -349,6 +372,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -441,6 +466,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -656,6 +683,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -810,6 +839,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -902,6 +933,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -1056,6 +1089,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -1148,6 +1183,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -1240,6 +1277,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -1394,6 +1433,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -1486,6 +1527,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -1578,6 +1621,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -1732,6 +1777,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -1886,6 +1933,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -2040,6 +2089,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -2132,6 +2183,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -2224,6 +2277,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -2378,6 +2433,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -2470,6 +2527,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -2562,6 +2621,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -2716,6 +2777,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -2808,6 +2871,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -2900,6 +2965,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -3054,6 +3121,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -3146,6 +3215,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -3238,6 +3309,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -3392,6 +3465,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -3484,6 +3559,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -3576,6 +3653,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -3730,6 +3809,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -3822,6 +3903,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -3976,6 +4059,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -4068,6 +4153,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -4160,6 +4247,8 @@
      "applicability": {
       "registryValue": "CONDITIONAL_UNVERIFIED",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -4314,6 +4403,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -4464,6 +4555,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -4614,6 +4707,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -4764,6 +4859,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -4914,6 +5011,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -5064,6 +5163,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -5214,6 +5315,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -5364,6 +5467,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -5514,6 +5619,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -5664,6 +5771,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -5824,6 +5933,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -5978,6 +6089,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -6128,6 +6241,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -6278,6 +6393,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -6428,6 +6545,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -6578,6 +6697,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -6728,6 +6849,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -6878,6 +7001,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -7028,6 +7153,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -7178,6 +7305,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -7328,6 +7457,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -7478,6 +7609,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -7628,6 +7761,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -7778,6 +7913,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -7928,6 +8065,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -8078,6 +8217,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -8228,6 +8369,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -8378,6 +8521,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -8528,6 +8673,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -8678,6 +8825,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -8828,6 +8977,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -8978,6 +9129,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -9128,6 +9281,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -9278,6 +9433,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -9428,6 +9585,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -9578,6 +9737,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -9728,6 +9889,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -9878,6 +10041,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -10028,6 +10193,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -10178,6 +10345,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -10328,6 +10497,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -10478,6 +10649,8 @@
      "applicability": {
       "registryValue": "TABLE_CATEGORY",
       "domainBasis": "table-category",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -10649,6 +10822,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED_LIGHTSABER_ONLY",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -10874,6 +11049,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -11081,6 +11258,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -11294,6 +11473,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -11512,6 +11693,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -11719,6 +11902,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -11927,6 +12112,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -12135,6 +12322,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -12343,6 +12532,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -12563,6 +12754,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -12750,6 +12943,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -12869,6 +13064,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -13058,6 +13255,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -13167,6 +13366,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -13356,6 +13557,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -13462,6 +13665,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -13644,6 +13849,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -13759,6 +13966,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -13958,6 +14167,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -14082,6 +14293,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -14271,6 +14484,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -14389,6 +14604,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -14582,6 +14799,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -14700,6 +14919,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -14893,6 +15114,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -15007,6 +15230,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -15196,6 +15421,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -15319,6 +15546,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -15515,6 +15744,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -15632,6 +15863,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -15821,6 +16054,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -15941,6 +16176,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -16133,6 +16370,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -16325,6 +16564,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -16513,6 +16754,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -16711,6 +16954,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -16901,6 +17146,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -17084,6 +17331,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -17284,6 +17533,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -17491,6 +17742,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -17682,6 +17935,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -17886,6 +18141,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -18075,6 +18332,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -18265,6 +18524,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -18449,6 +18710,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -18623,6 +18886,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -18799,6 +19064,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -18981,6 +19248,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -19156,6 +19425,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -19331,6 +19602,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -19511,6 +19784,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -19683,6 +19958,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -19864,6 +20141,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -20047,6 +20326,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -20230,6 +20511,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -20413,6 +20696,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -20598,6 +20883,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -20785,6 +21072,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -20972,6 +21261,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -21159,6 +21450,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -21346,6 +21639,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -21533,6 +21828,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -21718,6 +22015,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -21903,6 +22202,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -22088,6 +22389,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -22273,6 +22576,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -22462,6 +22767,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -22666,6 +22973,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -22884,6 +23193,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED_FOR_EXPLOSIVES_MODELLED_AS_EQUIPMENT",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -22999,6 +23310,8 @@
      "applicability": {
       "registryValue": "SOURCE_PERMITS_EXPLOSIVES_MODELLED_AS_WEAPONS_CONSUMER_PENDING",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -23196,6 +23509,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -23311,6 +23626,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -23508,6 +23825,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -23703,6 +24022,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -23891,6 +24212,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -24079,6 +24402,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -24267,6 +24592,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -24455,6 +24782,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -24647,6 +24976,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -24835,6 +25166,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -25023,6 +25356,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -25212,6 +25547,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -25400,6 +25737,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -25537,6 +25876,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -25660,6 +26001,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -25862,6 +26205,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -26054,6 +26399,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -26242,6 +26589,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -26438,6 +26787,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -26641,6 +26992,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -26752,6 +27105,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -26863,6 +27218,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -27057,6 +27414,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -27167,6 +27526,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -27277,6 +27638,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -27470,6 +27833,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -27584,6 +27949,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -27698,6 +28065,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -27895,6 +28264,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -28009,6 +28380,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -28123,6 +28496,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -28311,6 +28686,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -28507,6 +28884,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -28635,6 +29014,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -28763,6 +29144,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -28981,6 +29364,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -29197,6 +29582,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -29388,6 +29775,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -29575,6 +29964,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -29762,6 +30153,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -29949,6 +30342,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -30137,6 +30532,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -30324,6 +30721,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -30511,6 +30910,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -30698,6 +31099,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -30885,6 +31288,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -31071,6 +31476,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -31261,6 +31668,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -31448,6 +31857,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -31635,6 +32046,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -31822,6 +32235,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -32009,6 +32424,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -32196,6 +32613,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -32382,6 +32801,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -32572,6 +32993,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -32758,6 +33181,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -32944,6 +33369,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -33131,6 +33558,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -33318,6 +33747,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -33504,6 +33935,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -33691,6 +34124,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -33879,6 +34314,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -34067,6 +34504,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -34256,6 +34695,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -34442,6 +34883,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -34631,6 +35074,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -34818,6 +35263,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -35003,6 +35450,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -35188,6 +35637,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -35373,6 +35824,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -35558,6 +36011,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -35743,6 +36198,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -35931,6 +36388,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -36115,6 +36574,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -36310,6 +36771,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -36513,6 +36976,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -36718,6 +37183,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -36914,6 +37381,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -37102,6 +37571,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -37215,6 +37686,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -37406,6 +37879,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -37519,6 +37994,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -37711,6 +38188,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -37903,6 +38382,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED",
       "domainBasis": "rules-certified",
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
@@ -38112,6 +38593,8 @@
      "applicability": {
       "registryValue": "RULES_CERTIFIED_POWERED_PERSONAL_WEAPON_ONLY",
       "domainBasis": null,
+      "hostRequirementsSpecified": false,
+      "hostEvaluator": null,
       "hostEligibility": "not_established"
      },
      "accounting": {
