@@ -1,0 +1,3827 @@
+{
+  "phase": "0-B",
+  "schemaVersion": "swse.vehicle.phase0b.draft-0.4",
+  "status": "draft-not-certified",
+  "fixtures": {
+    "at-at": {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.4",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "core-p175-at-at",
+        "vehicleFamilyKey": null,
+        "variantKey": "core-p175-at-at",
+        "name": "AT-AT",
+        "manufacturer": null,
+        "model": null,
+        "className": null,
+        "variantLabel": null,
+        "variantKind": "printed-configuration",
+        "baseVehicleKey": null,
+        "aliases": [],
+        "uniqueNamedVessel": null
+      },
+      "publication": {
+        "book": "Core Rulebook",
+        "page": 175,
+        "statblockOrdinalOnPage": null,
+        "printedTitle": "AT-AT",
+        "printedTypeLine": null,
+        "edition": null,
+        "entryNotes": "Phase 0-B PDF/TXT transcription fixture; NOT a certified canonical record",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "ground-vehicle",
+        "chassisType": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "combatScale": [
+          "character"
+        ],
+        "role": [],
+        "constructionType": null,
+        "printedSize": "Colossal",
+        "size": "Colossal",
+        "colossalSubtype": null,
+        "sizeModifierPrinted": null,
+        "secondaryCategories": [],
+        "entityNature": null
+      },
+      "challenge": {
+        "cl": 14,
+        "raw": null,
+        "notes": null
+      },
+      "geometry": {
+        "lengthMeters": null,
+        "widthMeters": null,
+        "heightMeters": null,
+        "characterScaleWidthSquares": 6,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": null,
+        "starshipScaleLengthSquares": null,
+        "reachSquares": null,
+        "coverCrew": "total",
+        "coverPassengers": "total",
+        "enclosure": "enclosed",
+        "exposedStations": [],
+        "notes": null,
+        "occupantCoverModifiers": []
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "walk",
+            "scale": "character",
+            "squaresPerMove": 4,
+            "maxVelocityKmh": 60,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": "Speed 4 squares (max velocity 60 km/h)"
+          }
+        ],
+        "maxVelocityKmh": 60,
+        "sublightDrive": null,
+        "atmosphericCapability": null,
+        "spaceflightCapability": null,
+        "maximumAltitudeMeters": null,
+        "turningOrManeuverability": null,
+        "minimumSpeed": null,
+        "hoverCapability": null,
+        "specialMovement": [],
+        "raw": null
+      },
+      "hyperspace": {
+        "capability": null,
+        "primaryMultiplier": null,
+        "backupMultiplier": null,
+        "navComputer": null,
+        "jumpMemoryCount": null,
+        "astromechRequirement": null,
+        "routeConstraints": null,
+        "raw": null
+      },
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 16,
+        "fortitude": 29,
+        "will": null,
+        "armorBonus": 16,
+        "otherDefenseBonuses": [],
+        "vehicularCombatIncluded": null,
+        "damageReduction": 20,
+        "shieldRating": null,
+        "shieldType": null,
+        "shieldRecharge": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "shieldArcs": [],
+        "immunities": [],
+        "resistances": [],
+        "vulnerabilities": [],
+        "otherDefenses": []
+      },
+      "durability": {
+        "hitPoints": 300,
+        "damageThreshold": 79,
+        "hardness": null,
+        "conditionTrackRules": [],
+        "criticalDamageRules": [],
+        "repairRules": [],
+        "failureModes": []
+      },
+      "abilities": {
+        "str": 48,
+        "dex": 10,
+        "con": null,
+        "int": 14,
+        "wis": null,
+        "cha": null,
+        "initiativePrinted": -2,
+        "perceptionPrinted": 8,
+        "senses": [],
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          }
+        ],
+        "languages": []
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 42,
+        "rangedAttackLine": "Heavy laser cannons +7 and blaster cannons +7",
+        "meleeAttackLine": null,
+        "attackOptions": [
+          "autofire (medium blaster cannons)"
+        ],
+        "specialActions": [],
+        "feats": [],
+        "talents": [],
+        "tacticalFire": [],
+        "otherCombatRules": []
+      },
+      "armament": {
+        "weaponMounts": [
+          {
+            "mountKey": "heavy-laser",
+            "weaponDefinitionKey": null,
+            "printedName": "Heavy laser cannons",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "gunner",
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 7,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "6d10x2",
+            "damageMultiplierPrinted": 2,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "single",
+              "2-square splash"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": null,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "blaster",
+            "weaponDefinitionKey": null,
+            "printedName": "Blaster cannons",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "gunner",
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 7,
+            "attackBonusAutofirePrinted": 2,
+            "damagePrinted": "3d10x2",
+            "damageMultiplierPrinted": 2,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "autofire"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": null,
+            "targetSizeRuleKey": null
+          }
+        ],
+        "firingGroups": [],
+        "carriedPayloads": [],
+        "weaponOptions": [],
+        "unresolvedWeaponNames": [],
+        "notes": null,
+        "attackPatterns": [
+          {
+            "patternKey": "ranged",
+            "attackType": "ranged",
+            "mountKeys": [
+              "heavy-laser",
+              "blaster"
+            ],
+            "combine": "AND",
+            "alternativesGroup": null,
+            "raw": "Both groups listed with AND",
+            "limitations": []
+          }
+        ]
+      },
+      "crew": {
+        "crewCount": 5,
+        "minimumOperatingCrew": null,
+        "crewQuality": "expert",
+        "crewDescriptor": null,
+        "crewIsOptional": null,
+        "autonomy": null,
+        "stations": [],
+        "stockCrewSpecialRules": [],
+        "raw": "5 (expert)"
+      },
+      "capacity": {
+        "passengerCount": 40,
+        "passengerGroups": [],
+        "cargo": {
+          "value": 1,
+          "unit": "ton",
+          "raw": "1 ton",
+          "qualifier": null
+        },
+        "cargoMetricTons": null,
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week",
+          "qualifier": null
+        },
+        "carriedCraft": [],
+        "escapePods": null,
+        "dockingCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "towCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "lifeSupport": null,
+        "storageNotes": null,
+        "carriedCraftConfigurations": [
+          {
+            "optionKey": "bikes",
+            "exclusiveGroup": "at-at-carry",
+            "craft": [
+              {
+                "name": "speeder bikes",
+                "count": 5,
+                "category": null,
+                "raw": "5 speeder bikes"
+              }
+            ],
+            "raw": "5 speeder bikes"
+          },
+          {
+            "optionKey": "walkers",
+            "exclusiveGroup": "at-at-carry",
+            "craft": [
+              {
+                "name": "AT-STs",
+                "count": 2,
+                "category": null,
+                "raw": "2 AT-STs"
+              }
+            ],
+            "raw": "or 2 AT-STs"
+          }
+        ]
+      },
+      "systems": {
+        "installed": [],
+        "sensors": [],
+        "communications": [],
+        "tractorBeams": [],
+        "propulsion": [],
+        "power": [],
+        "environment": [],
+        "security": [],
+        "interfaces": [],
+        "miscellaneous": [],
+        "capabilityModeGroups": []
+      },
+      "modifications": {
+        "emplacementPointsTotal": null,
+        "emplacementPointsUsed": null,
+        "emplacementPointsRemaining": null,
+        "modificationSlotsTotal": null,
+        "modificationSlotsUsed": null,
+        "modificationSlotsRemaining": null,
+        "installed": [],
+        "templates": [],
+        "constraints": [],
+        "notes": null
+      },
+      "economics": {
+        "priceNew": {
+          "amountCredits": null,
+          "status": "not-for-sale",
+          "raw": "not available for sale",
+          "qualifier": null
+        },
+        "priceUsed": {
+          "amountCredits": null,
+          "status": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "availability": "Military",
+        "availabilityNotes": null,
+        "serviceOrMaintenanceCosts": [],
+        "acquisitionRestrictions": [],
+        "notes": null
+      },
+      "text": {
+        "summary": "Imperial armored assault walker and troop carrier.",
+        "mechanicalNotes": null,
+        "sourceNotes": null,
+        "displayName": null,
+        "tags": [
+          "phase0b",
+          "stress-test",
+          "sourcebook-fixture",
+          "not-certified"
+        ]
+      },
+      "exceptions": {
+        "specialRules": [],
+        "unmappedFacts": [],
+        "ambiguities": [],
+        "transcriptionWarnings": [],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/identity/vehicleFamilyKey": "not-stated",
+        "/identity/manufacturer": "not-stated",
+        "/identity/model": "not-stated",
+        "/identity/className": "not-stated",
+        "/identity/variantLabel": "not-stated",
+        "/identity/baseVehicleKey": "not-stated",
+        "/identity/uniqueNamedVessel": "not-stated",
+        "/publication/statblockOrdinalOnPage": "not-stated",
+        "/publication/printedTypeLine": "not-stated",
+        "/publication/edition": "not-stated",
+        "/classification/constructionType": "not-stated",
+        "/classification/colossalSubtype": "not-stated",
+        "/classification/sizeModifierPrinted": "not-stated",
+        "/classification/entityNature": "not-stated",
+        "/challenge/raw": "not-stated",
+        "/challenge/notes": "not-stated",
+        "/geometry/lengthMeters": "not-stated",
+        "/geometry/widthMeters": "not-stated",
+        "/geometry/heightMeters": "not-stated",
+        "/geometry/starshipScaleWidthSquares": "not-stated",
+        "/geometry/starshipScaleLengthSquares": "not-stated",
+        "/geometry/reachSquares": "not-stated",
+        "/geometry/notes": "not-stated",
+        "/movement/sublightDrive": "not-stated",
+        "/movement/atmosphericCapability": "not-stated",
+        "/movement/spaceflightCapability": "not-stated",
+        "/movement/maximumAltitudeMeters": "not-stated",
+        "/movement/turningOrManeuverability": "not-stated",
+        "/movement/minimumSpeed": "not-stated",
+        "/movement/hoverCapability": "not-stated",
+        "/movement/raw": "not-stated",
+        "/hyperspace/capability": "not-applicable",
+        "/hyperspace/primaryMultiplier": "not-applicable",
+        "/hyperspace/backupMultiplier": "not-applicable",
+        "/hyperspace/navComputer": "not-stated",
+        "/hyperspace/jumpMemoryCount": "not-stated",
+        "/hyperspace/astromechRequirement": "not-stated",
+        "/hyperspace/routeConstraints": "not-stated",
+        "/hyperspace/raw": "not-stated",
+        "/defenses/will": "not-stated",
+        "/defenses/vehicularCombatIncluded": "not-stated",
+        "/defenses/shieldRating": "not-stated",
+        "/defenses/shieldType": "not-stated",
+        "/defenses/shieldRecharge/value": "not-stated",
+        "/defenses/shieldRecharge/unit": "not-stated",
+        "/defenses/shieldRecharge/raw": "not-stated",
+        "/defenses/shieldRecharge/qualifier": "not-stated",
+        "/durability/hardness": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/abilities/wis": "not-stated",
+        "/abilities/cha": "not-stated",
+        "/combat/meleeAttackLine": "not-stated",
+        "/armament/notes": "not-stated",
+        "/crew/minimumOperatingCrew": "not-stated",
+        "/crew/crewDescriptor": "not-stated",
+        "/crew/crewIsOptional": "not-stated",
+        "/crew/autonomy": "not-stated",
+        "/capacity/cargo/qualifier": "not-stated",
+        "/capacity/cargoMetricTons": "not-stated",
+        "/capacity/consumables/qualifier": "not-stated",
+        "/capacity/escapePods": "not-stated",
+        "/capacity/dockingCapacity/value": "not-stated",
+        "/capacity/dockingCapacity/unit": "not-stated",
+        "/capacity/dockingCapacity/raw": "not-stated",
+        "/capacity/dockingCapacity/qualifier": "not-stated",
+        "/capacity/towCapacity/value": "not-stated",
+        "/capacity/towCapacity/unit": "not-stated",
+        "/capacity/towCapacity/raw": "not-stated",
+        "/capacity/towCapacity/qualifier": "not-stated",
+        "/capacity/lifeSupport": "not-stated",
+        "/capacity/storageNotes": "not-stated",
+        "/modifications/emplacementPointsTotal": "not-stated",
+        "/modifications/emplacementPointsUsed": "not-stated",
+        "/modifications/emplacementPointsRemaining": "not-stated",
+        "/modifications/modificationSlotsTotal": "not-stated",
+        "/modifications/modificationSlotsUsed": "not-stated",
+        "/modifications/modificationSlotsRemaining": "not-stated",
+        "/modifications/notes": "not-stated",
+        "/economics/priceNew/amountCredits": "not-stated",
+        "/economics/priceNew/qualifier": "not-stated",
+        "/economics/priceUsed/amountCredits": "not-stated",
+        "/economics/priceUsed/status": "not-stated",
+        "/economics/priceUsed/raw": "not-stated",
+        "/economics/priceUsed/qualifier": "not-stated",
+        "/economics/availabilityNotes": "not-stated",
+        "/economics/notes": "not-stated",
+        "/text/mechanicalNotes": "not-stated",
+        "/text/sourceNotes": "not-stated",
+        "/text/displayName": "not-stated",
+        "/armament/weaponMounts/0/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/1/targetSizeRuleKey": "not-yet-reviewed"
+      },
+      "rules": {
+        "conditionalMechanics": [],
+        "globalRuleReferences": [],
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    "x-wing": {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.4",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "core-p178-t65b-x-wing",
+        "vehicleFamilyKey": null,
+        "variantKey": "core-p178-t65b-x-wing",
+        "name": "Incom T-65B X-wing Starfighter",
+        "manufacturer": null,
+        "model": null,
+        "className": null,
+        "variantLabel": null,
+        "variantKind": "printed-configuration",
+        "baseVehicleKey": null,
+        "aliases": [],
+        "uniqueNamedVessel": null
+      },
+      "publication": {
+        "book": "Core Rulebook",
+        "page": 178,
+        "statblockOrdinalOnPage": null,
+        "printedTitle": "Incom T-65B X-wing Starfighter",
+        "printedTypeLine": null,
+        "edition": null,
+        "entryNotes": "Phase 0-B PDF/TXT transcription fixture; NOT a certified canonical record",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "chassisType": null,
+        "mobilityDomains": [
+          "atmosphere",
+          "space"
+        ],
+        "combatScale": [
+          "character",
+          "starship"
+        ],
+        "role": [],
+        "constructionType": null,
+        "printedSize": "Gargantuan",
+        "size": "Gargantuan",
+        "colossalSubtype": null,
+        "sizeModifierPrinted": null,
+        "secondaryCategories": [],
+        "entityNature": null
+      },
+      "challenge": {
+        "cl": 10,
+        "raw": null,
+        "notes": null
+      },
+      "geometry": {
+        "lengthMeters": null,
+        "widthMeters": null,
+        "heightMeters": null,
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "reachSquares": null,
+        "coverCrew": "total",
+        "coverPassengers": null,
+        "enclosure": "enclosed",
+        "exposedStations": [],
+        "notes": null,
+        "occupantCoverModifiers": [
+          {
+            "occupantRole": "astromech droid",
+            "coverKind": "cover",
+            "bonusPrinted": 5,
+            "condition": "astromech droid present",
+            "raw": "+5 (astromech droid)"
+          }
+        ]
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "fly",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 1050,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": null
+          },
+          {
+            "mode": "fly",
+            "scale": "starship",
+            "squaresPerMove": 4,
+            "maxVelocityKmh": null,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": "4 squares (starship scale)"
+          }
+        ],
+        "maxVelocityKmh": 1050,
+        "sublightDrive": null,
+        "atmosphericCapability": null,
+        "spaceflightCapability": null,
+        "maximumAltitudeMeters": null,
+        "turningOrManeuverability": null,
+        "minimumSpeed": null,
+        "hoverCapability": null,
+        "specialMovement": [],
+        "raw": null
+      },
+      "hyperspace": {
+        "capability": "equipped",
+        "primaryMultiplier": 1,
+        "backupMultiplier": null,
+        "navComputer": "astromech",
+        "jumpMemoryCount": 10,
+        "astromechRequirement": "astromech droid",
+        "routeConstraints": null,
+        "raw": "Hyperdrive x1, 10-jump memory (astromech droid)"
+      },
+      "defenses": {
+        "reflex": 18,
+        "reflexFlatFooted": 12,
+        "fortitude": 26,
+        "will": null,
+        "armorBonus": 7,
+        "otherDefenseBonuses": [],
+        "vehicularCombatIncluded": null,
+        "damageReduction": 10,
+        "shieldRating": 15,
+        "shieldType": null,
+        "shieldRecharge": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "shieldArcs": [],
+        "immunities": [],
+        "resistances": [],
+        "vulnerabilities": [],
+        "otherDefenses": []
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 46,
+        "hardness": null,
+        "conditionTrackRules": [],
+        "criticalDamageRules": [],
+        "repairRules": [],
+        "failureModes": []
+      },
+      "abilities": {
+        "str": 42,
+        "dex": 22,
+        "con": null,
+        "int": 16,
+        "wis": null,
+        "cha": null,
+        "initiativePrinted": 7,
+        "perceptionPrinted": 6,
+        "senses": [],
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 7,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": "without astromech",
+            "raw": null
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 13,
+            "governingAbility": null,
+            "attribution": "astromech",
+            "conditions": "astromech present",
+            "raw": null
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 7,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": "without astromech",
+            "raw": null
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 13,
+            "governingAbility": null,
+            "attribution": "astromech",
+            "conditions": "astromech present",
+            "raw": null
+          }
+        ],
+        "languages": []
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 33,
+        "rangedAttackLine": "Laser cannons +5 OR proton torpedoes +5",
+        "meleeAttackLine": null,
+        "attackOptions": [
+          "autofire (laser cannons)"
+        ],
+        "specialActions": [],
+        "feats": [],
+        "talents": [],
+        "tacticalFire": [],
+        "otherCombatRules": []
+      },
+      "armament": {
+        "weaponMounts": [
+          {
+            "mountKey": "laser",
+            "weaponDefinitionKey": null,
+            "printedName": "Laser cannons",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "pilot",
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 5,
+            "attackBonusAutofirePrinted": 0,
+            "damagePrinted": "6d10x2",
+            "damageMultiplierPrinted": 2,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "single",
+              "autofire"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": null,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "proton",
+            "weaponDefinitionKey": null,
+            "printedName": "Proton torpedoes",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "pilot",
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 5,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "9d10x2",
+            "damageMultiplierPrinted": 2,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "4-square splash"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": null,
+            "targetSizeRuleKey": null
+          }
+        ],
+        "firingGroups": [],
+        "carriedPayloads": [
+          {
+            "value": 6,
+            "unit": "proton torpedoes",
+            "raw": "Payload 6 proton torpedoes",
+            "qualifier": null
+          }
+        ],
+        "weaponOptions": [],
+        "unresolvedWeaponNames": [],
+        "notes": null,
+        "attackPatterns": [
+          {
+            "patternKey": "laser-attack",
+            "attackType": "ranged",
+            "mountKeys": [
+              "laser"
+            ],
+            "combine": "AND",
+            "alternativesGroup": "x-wing-choice",
+            "raw": null,
+            "limitations": []
+          },
+          {
+            "patternKey": "torpedo-attack",
+            "attackType": "ranged",
+            "mountKeys": [
+              "proton"
+            ],
+            "combine": "AND",
+            "alternativesGroup": "x-wing-choice",
+            "raw": null,
+            "limitations": []
+          }
+        ]
+      },
+      "crew": {
+        "crewCount": 1,
+        "minimumOperatingCrew": null,
+        "crewQuality": "skilled",
+        "crewDescriptor": "1 plus astromech droid",
+        "crewIsOptional": null,
+        "autonomy": null,
+        "stations": [],
+        "stockCrewSpecialRules": [],
+        "raw": "1 plus astromech droid (skilled)"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "passengerGroups": [],
+        "cargo": {
+          "value": 110,
+          "unit": "kg",
+          "raw": "110 kg",
+          "qualifier": null
+        },
+        "cargoMetricTons": null,
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week",
+          "qualifier": null
+        },
+        "carriedCraft": [],
+        "escapePods": null,
+        "dockingCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "towCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "lifeSupport": null,
+        "storageNotes": null,
+        "carriedCraftConfigurations": []
+      },
+      "systems": {
+        "installed": [],
+        "sensors": [],
+        "communications": [],
+        "tractorBeams": [],
+        "propulsion": [],
+        "power": [],
+        "environment": [],
+        "security": [],
+        "interfaces": [],
+        "miscellaneous": [],
+        "capabilityModeGroups": []
+      },
+      "modifications": {
+        "emplacementPointsTotal": null,
+        "emplacementPointsUsed": null,
+        "emplacementPointsRemaining": null,
+        "modificationSlotsTotal": null,
+        "modificationSlotsUsed": null,
+        "modificationSlotsRemaining": null,
+        "installed": [],
+        "templates": [],
+        "constraints": [],
+        "notes": null
+      },
+      "economics": {
+        "priceNew": {
+          "amountCredits": 150000,
+          "status": "priced",
+          "raw": "150,000",
+          "qualifier": null
+        },
+        "priceUsed": {
+          "amountCredits": 65000,
+          "status": "priced",
+          "raw": "65,000 used",
+          "qualifier": null
+        },
+        "availability": "Military",
+        "availabilityNotes": null,
+        "serviceOrMaintenanceCosts": [],
+        "acquisitionRestrictions": [],
+        "notes": null
+      },
+      "text": {
+        "summary": "Hyperspace-capable Rebel starfighter with astromech-assisted operations.",
+        "mechanicalNotes": null,
+        "sourceNotes": null,
+        "displayName": null,
+        "tags": [
+          "phase0b",
+          "stress-test",
+          "sourcebook-fixture",
+          "not-certified"
+        ]
+      },
+      "exceptions": {
+        "specialRules": [],
+        "unmappedFacts": [],
+        "ambiguities": [],
+        "transcriptionWarnings": [],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/capacity/passengerCount": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/identity/vehicleFamilyKey": "not-stated",
+        "/identity/manufacturer": "not-stated",
+        "/identity/model": "not-stated",
+        "/identity/className": "not-stated",
+        "/identity/variantLabel": "not-stated",
+        "/identity/baseVehicleKey": "not-stated",
+        "/identity/uniqueNamedVessel": "not-stated",
+        "/publication/statblockOrdinalOnPage": "not-stated",
+        "/publication/printedTypeLine": "not-stated",
+        "/publication/edition": "not-stated",
+        "/classification/chassisType": "not-stated",
+        "/classification/constructionType": "not-stated",
+        "/classification/colossalSubtype": "not-stated",
+        "/classification/sizeModifierPrinted": "not-stated",
+        "/classification/entityNature": "not-stated",
+        "/challenge/raw": "not-stated",
+        "/challenge/notes": "not-stated",
+        "/geometry/lengthMeters": "not-stated",
+        "/geometry/widthMeters": "not-stated",
+        "/geometry/heightMeters": "not-stated",
+        "/geometry/reachSquares": "not-stated",
+        "/geometry/coverPassengers": "not-stated",
+        "/geometry/notes": "not-stated",
+        "/movement/sublightDrive": "not-stated",
+        "/movement/atmosphericCapability": "not-stated",
+        "/movement/spaceflightCapability": "not-stated",
+        "/movement/maximumAltitudeMeters": "not-stated",
+        "/movement/turningOrManeuverability": "not-stated",
+        "/movement/minimumSpeed": "not-stated",
+        "/movement/hoverCapability": "not-stated",
+        "/movement/raw": "not-stated",
+        "/hyperspace/backupMultiplier": "not-stated",
+        "/hyperspace/routeConstraints": "not-stated",
+        "/defenses/will": "not-stated",
+        "/defenses/vehicularCombatIncluded": "not-stated",
+        "/defenses/shieldType": "not-stated",
+        "/defenses/shieldRecharge/value": "not-stated",
+        "/defenses/shieldRecharge/unit": "not-stated",
+        "/defenses/shieldRecharge/raw": "not-stated",
+        "/defenses/shieldRecharge/qualifier": "not-stated",
+        "/durability/hardness": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/abilities/wis": "not-stated",
+        "/abilities/cha": "not-stated",
+        "/combat/meleeAttackLine": "not-stated",
+        "/armament/notes": "not-stated",
+        "/crew/minimumOperatingCrew": "not-stated",
+        "/crew/crewIsOptional": "not-stated",
+        "/crew/autonomy": "not-stated",
+        "/capacity/cargo/qualifier": "not-stated",
+        "/capacity/cargoMetricTons": "not-stated",
+        "/capacity/consumables/qualifier": "not-stated",
+        "/capacity/escapePods": "not-stated",
+        "/capacity/dockingCapacity/value": "not-stated",
+        "/capacity/dockingCapacity/unit": "not-stated",
+        "/capacity/dockingCapacity/raw": "not-stated",
+        "/capacity/dockingCapacity/qualifier": "not-stated",
+        "/capacity/towCapacity/value": "not-stated",
+        "/capacity/towCapacity/unit": "not-stated",
+        "/capacity/towCapacity/raw": "not-stated",
+        "/capacity/towCapacity/qualifier": "not-stated",
+        "/capacity/lifeSupport": "not-stated",
+        "/capacity/storageNotes": "not-stated",
+        "/modifications/emplacementPointsTotal": "not-stated",
+        "/modifications/emplacementPointsUsed": "not-stated",
+        "/modifications/emplacementPointsRemaining": "not-stated",
+        "/modifications/modificationSlotsTotal": "not-stated",
+        "/modifications/modificationSlotsUsed": "not-stated",
+        "/modifications/modificationSlotsRemaining": "not-stated",
+        "/modifications/notes": "not-stated",
+        "/economics/priceNew/qualifier": "not-stated",
+        "/economics/priceUsed/qualifier": "not-stated",
+        "/economics/availabilityNotes": "not-stated",
+        "/economics/notes": "not-stated",
+        "/text/mechanicalNotes": "not-stated",
+        "/text/sourceNotes": "not-stated",
+        "/text/displayName": "not-stated",
+        "/armament/weaponMounts/0/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/1/targetSizeRuleKey": "not-yet-reviewed"
+      },
+      "rules": {
+        "conditionalMechanics": [],
+        "globalRuleReferences": [],
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    "acclamator": {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.4",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sotg-p56-acclamator",
+        "vehicleFamilyKey": null,
+        "variantKey": "sotg-p56-acclamator",
+        "name": "Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship",
+        "manufacturer": null,
+        "model": null,
+        "className": null,
+        "variantLabel": null,
+        "variantKind": "printed-configuration",
+        "baseVehicleKey": null,
+        "aliases": [],
+        "uniqueNamedVessel": null
+      },
+      "publication": {
+        "book": "Starships of the Galaxy",
+        "page": 56,
+        "statblockOrdinalOnPage": null,
+        "printedTitle": "Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship",
+        "printedTypeLine": null,
+        "edition": null,
+        "entryNotes": "Phase 0-B PDF/TXT transcription fixture; NOT a certified canonical record",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "chassisType": null,
+        "mobilityDomains": [
+          "atmosphere",
+          "space"
+        ],
+        "combatScale": [
+          "character",
+          "starship"
+        ],
+        "role": [],
+        "constructionType": null,
+        "printedSize": "Colossal",
+        "size": "Colossal",
+        "colossalSubtype": "cruiser",
+        "sizeModifierPrinted": null,
+        "secondaryCategories": [],
+        "entityNature": null
+      },
+      "challenge": {
+        "cl": 18,
+        "raw": null,
+        "notes": null
+      },
+      "geometry": {
+        "lengthMeters": null,
+        "widthMeters": null,
+        "heightMeters": null,
+        "characterScaleWidthSquares": null,
+        "characterScaleLengthSquares": null,
+        "starshipScaleWidthSquares": 2,
+        "starshipScaleLengthSquares": 2,
+        "reachSquares": null,
+        "coverCrew": "total",
+        "coverPassengers": null,
+        "enclosure": "enclosed",
+        "exposedStations": [],
+        "notes": null,
+        "occupantCoverModifiers": []
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "fly",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 1200,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": null
+          },
+          {
+            "mode": "fly",
+            "scale": "starship",
+            "squaresPerMove": 4,
+            "maxVelocityKmh": null,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": null
+          }
+        ],
+        "maxVelocityKmh": 1200,
+        "sublightDrive": null,
+        "atmosphericCapability": null,
+        "spaceflightCapability": null,
+        "maximumAltitudeMeters": null,
+        "turningOrManeuverability": null,
+        "minimumSpeed": null,
+        "hoverCapability": null,
+        "specialMovement": [],
+        "raw": null
+      },
+      "hyperspace": {
+        "capability": "equipped",
+        "primaryMultiplier": 0.75,
+        "backupMultiplier": null,
+        "navComputer": "advanced",
+        "jumpMemoryCount": null,
+        "astromechRequirement": null,
+        "routeConstraints": null,
+        "raw": "Hyperdrive x.75, advanced navicomputer"
+      },
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 12,
+        "fortitude": 48,
+        "will": null,
+        "armorBonus": 12,
+        "otherDefenseBonuses": [],
+        "vehicularCombatIncluded": true,
+        "damageReduction": 20,
+        "shieldRating": 120,
+        "shieldType": null,
+        "shieldRecharge": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "shieldArcs": [],
+        "immunities": [],
+        "resistances": [],
+        "vulnerabilities": [],
+        "otherDefenses": []
+      },
+      "durability": {
+        "hitPoints": 960,
+        "damageThreshold": 248,
+        "hardness": null,
+        "conditionTrackRules": [],
+        "criticalDamageRules": [],
+        "repairRules": [],
+        "failureModes": []
+      },
+      "abilities": {
+        "str": 86,
+        "dex": 14,
+        "con": null,
+        "int": 16,
+        "wis": null,
+        "cha": null,
+        "initiativePrinted": -2,
+        "perceptionPrinted": 6,
+        "senses": [],
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          }
+        ],
+        "languages": []
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 60,
+        "rangedAttackLine": "2 quad turbolaser batteries AND 4 point-defense light laser cannon batteries AND 4 proton torpedoes",
+        "meleeAttackLine": null,
+        "attackOptions": [
+          "autofire (point-defense light laser cannons)"
+        ],
+        "specialActions": [],
+        "feats": [],
+        "talents": [],
+        "tacticalFire": [],
+        "otherCombatRules": []
+      },
+      "armament": {
+        "weaponMounts": [
+          {
+            "mountKey": "turbo",
+            "weaponDefinitionKey": null,
+            "printedName": "Quad turbolaser battery",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": "quad battery",
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "gunner",
+            "batteryCountPrinted": 2,
+            "gunnerCount": 6,
+            "firingScale": null,
+            "attackBonusPrinted": 15,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "6d10x5",
+            "damageMultiplierPrinted": 5,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [
+              {
+                "stat": "attackBonus",
+                "amount": -20,
+                "unit": "bonus",
+                "when": "target smaller than Colossal",
+                "scope": "weapon attack",
+                "raw": "Apply -20 penalty; printed weapon attack becomes -5"
+              }
+            ],
+            "firingCountPrinted": 2,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "pdlc",
+            "weaponDefinitionKey": null,
+            "printedName": "Point-defense light laser cannon battery",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": "battery",
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "gunner",
+            "batteryCountPrinted": 4,
+            "gunnerCount": 6,
+            "firingScale": null,
+            "attackBonusPrinted": 15,
+            "attackBonusAutofirePrinted": 10,
+            "damagePrinted": "2d10x2",
+            "damageMultiplierPrinted": 2,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "autofire"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": 4,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "torps",
+            "weaponDefinitionKey": null,
+            "printedName": "Proton torpedoes",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "gunner",
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 5,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "9d10x2",
+            "damageMultiplierPrinted": 2,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "4-square splash"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": 4,
+            "targetSizeRuleKey": null
+          }
+        ],
+        "firingGroups": [],
+        "carriedPayloads": [
+          {
+            "value": 100,
+            "unit": "proton torpedoes",
+            "raw": "Payload 100 proton torpedoes",
+            "qualifier": null
+          }
+        ],
+        "weaponOptions": [],
+        "unresolvedWeaponNames": [],
+        "notes": null,
+        "attackPatterns": [
+          {
+            "patternKey": "all",
+            "attackType": "ranged",
+            "mountKeys": [
+              "turbo",
+              "pdlc",
+              "torps"
+            ],
+            "combine": "AND",
+            "alternativesGroup": null,
+            "raw": "All three listed in AND attack line",
+            "limitations": []
+          }
+        ]
+      },
+      "crew": {
+        "crewCount": 20141,
+        "minimumOperatingCrew": null,
+        "crewQuality": "skilled",
+        "crewDescriptor": null,
+        "crewIsOptional": null,
+        "autonomy": null,
+        "stations": [],
+        "stockCrewSpecialRules": [],
+        "raw": "20,141 (skilled)"
+      },
+      "capacity": {
+        "passengerCount": 16000,
+        "passengerGroups": [
+          {
+            "group": "clone troopers",
+            "count": 16000,
+            "conditions": null,
+            "raw": "16,000 (clone troopers)"
+          }
+        ],
+        "cargo": {
+          "value": 11250,
+          "unit": "tons",
+          "raw": "11250 tons",
+          "qualifier": null
+        },
+        "cargoMetricTons": null,
+        "consumables": {
+          "value": 2,
+          "unit": "years",
+          "raw": "2 years",
+          "qualifier": null
+        },
+        "carriedCraft": [
+          {
+            "name": "speeder bikes",
+            "count": 320,
+            "category": null,
+            "raw": "320 speeder bikes"
+          },
+          {
+            "name": "AT-TE walkers",
+            "count": 48,
+            "category": null,
+            "raw": "48 AT-TE walkers"
+          },
+          {
+            "name": "LAAT gunships",
+            "count": 80,
+            "category": null,
+            "raw": "80 LAAT gunships"
+          },
+          {
+            "name": "self-propelled heavy artillery units",
+            "count": 36,
+            "category": null,
+            "raw": "36 self-propelled heavy artillery units"
+          }
+        ],
+        "escapePods": null,
+        "dockingCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "towCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "lifeSupport": null,
+        "storageNotes": null,
+        "carriedCraftConfigurations": []
+      },
+      "systems": {
+        "installed": [],
+        "sensors": [],
+        "communications": [],
+        "tractorBeams": [],
+        "propulsion": [],
+        "power": [],
+        "environment": [],
+        "security": [],
+        "interfaces": [],
+        "miscellaneous": [],
+        "capabilityModeGroups": []
+      },
+      "modifications": {
+        "emplacementPointsTotal": null,
+        "emplacementPointsUsed": null,
+        "emplacementPointsRemaining": null,
+        "modificationSlotsTotal": null,
+        "modificationSlotsUsed": null,
+        "modificationSlotsRemaining": null,
+        "installed": [],
+        "templates": [],
+        "constraints": [],
+        "notes": null
+      },
+      "economics": {
+        "priceNew": {
+          "amountCredits": null,
+          "status": "not-for-sale",
+          "raw": "not available for sale",
+          "qualifier": null
+        },
+        "priceUsed": {
+          "amountCredits": null,
+          "status": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "availability": "Military",
+        "availabilityNotes": null,
+        "serviceOrMaintenanceCosts": [],
+        "acquisitionRestrictions": [],
+        "notes": null
+      },
+      "text": {
+        "summary": "Large military troop-transport cruiser with batteries and massive vehicle capacity.",
+        "mechanicalNotes": null,
+        "sourceNotes": null,
+        "displayName": null,
+        "tags": [
+          "phase0b",
+          "stress-test",
+          "sourcebook-fixture",
+          "not-certified"
+        ]
+      },
+      "exceptions": {
+        "specialRules": [],
+        "unmappedFacts": [],
+        "ambiguities": [],
+        "transcriptionWarnings": [],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/identity/vehicleFamilyKey": "not-stated",
+        "/identity/manufacturer": "not-stated",
+        "/identity/model": "not-stated",
+        "/identity/className": "not-stated",
+        "/identity/variantLabel": "not-stated",
+        "/identity/baseVehicleKey": "not-stated",
+        "/identity/uniqueNamedVessel": "not-stated",
+        "/publication/statblockOrdinalOnPage": "not-stated",
+        "/publication/printedTypeLine": "not-stated",
+        "/publication/edition": "not-stated",
+        "/classification/chassisType": "not-stated",
+        "/classification/constructionType": "not-stated",
+        "/classification/sizeModifierPrinted": "not-stated",
+        "/classification/entityNature": "not-stated",
+        "/challenge/raw": "not-stated",
+        "/challenge/notes": "not-stated",
+        "/geometry/lengthMeters": "not-stated",
+        "/geometry/widthMeters": "not-stated",
+        "/geometry/heightMeters": "not-stated",
+        "/geometry/characterScaleWidthSquares": "not-stated",
+        "/geometry/characterScaleLengthSquares": "not-stated",
+        "/geometry/reachSquares": "not-stated",
+        "/geometry/coverPassengers": "not-stated",
+        "/geometry/notes": "not-stated",
+        "/movement/sublightDrive": "not-stated",
+        "/movement/atmosphericCapability": "not-stated",
+        "/movement/spaceflightCapability": "not-stated",
+        "/movement/maximumAltitudeMeters": "not-stated",
+        "/movement/turningOrManeuverability": "not-stated",
+        "/movement/minimumSpeed": "not-stated",
+        "/movement/hoverCapability": "not-stated",
+        "/movement/raw": "not-stated",
+        "/hyperspace/backupMultiplier": "not-stated",
+        "/hyperspace/jumpMemoryCount": "not-stated",
+        "/hyperspace/astromechRequirement": "not-stated",
+        "/hyperspace/routeConstraints": "not-stated",
+        "/defenses/will": "not-stated",
+        "/defenses/shieldType": "not-stated",
+        "/defenses/shieldRecharge/value": "not-stated",
+        "/defenses/shieldRecharge/unit": "not-stated",
+        "/defenses/shieldRecharge/raw": "not-stated",
+        "/defenses/shieldRecharge/qualifier": "not-stated",
+        "/durability/hardness": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/abilities/wis": "not-stated",
+        "/abilities/cha": "not-stated",
+        "/combat/meleeAttackLine": "not-stated",
+        "/armament/notes": "not-stated",
+        "/crew/minimumOperatingCrew": "not-stated",
+        "/crew/crewDescriptor": "not-stated",
+        "/crew/crewIsOptional": "not-stated",
+        "/crew/autonomy": "not-stated",
+        "/capacity/cargo/qualifier": "not-stated",
+        "/capacity/cargoMetricTons": "not-stated",
+        "/capacity/consumables/qualifier": "not-stated",
+        "/capacity/escapePods": "not-stated",
+        "/capacity/dockingCapacity/value": "not-stated",
+        "/capacity/dockingCapacity/unit": "not-stated",
+        "/capacity/dockingCapacity/raw": "not-stated",
+        "/capacity/dockingCapacity/qualifier": "not-stated",
+        "/capacity/towCapacity/value": "not-stated",
+        "/capacity/towCapacity/unit": "not-stated",
+        "/capacity/towCapacity/raw": "not-stated",
+        "/capacity/towCapacity/qualifier": "not-stated",
+        "/capacity/lifeSupport": "not-stated",
+        "/capacity/storageNotes": "not-stated",
+        "/modifications/emplacementPointsTotal": "not-stated",
+        "/modifications/emplacementPointsUsed": "not-stated",
+        "/modifications/emplacementPointsRemaining": "not-stated",
+        "/modifications/modificationSlotsTotal": "not-stated",
+        "/modifications/modificationSlotsUsed": "not-stated",
+        "/modifications/modificationSlotsRemaining": "not-stated",
+        "/modifications/notes": "not-stated",
+        "/economics/priceNew/amountCredits": "not-stated",
+        "/economics/priceNew/qualifier": "not-stated",
+        "/economics/priceUsed/amountCredits": "not-stated",
+        "/economics/priceUsed/status": "not-stated",
+        "/economics/priceUsed/raw": "not-stated",
+        "/economics/priceUsed/qualifier": "not-stated",
+        "/economics/availabilityNotes": "not-stated",
+        "/economics/notes": "not-stated",
+        "/text/mechanicalNotes": "not-stated",
+        "/text/sourceNotes": "not-stated",
+        "/text/displayName": "not-stated",
+        "/armament/weaponMounts/0/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/1/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/2/targetSizeRuleKey": "not-yet-reviewed"
+      },
+      "rules": {
+        "conditionalMechanics": [],
+        "globalRuleReferences": [],
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    "golan-viii": {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.4",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "legacy-p152-golan-viii",
+        "vehicleFamilyKey": null,
+        "variantKey": "legacy-p152-golan-viii",
+        "name": "Golan VIII Space Defense Platform",
+        "manufacturer": null,
+        "model": null,
+        "className": null,
+        "variantLabel": null,
+        "variantKind": "printed-configuration",
+        "baseVehicleKey": null,
+        "aliases": [],
+        "uniqueNamedVessel": null
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "page": 152,
+        "statblockOrdinalOnPage": null,
+        "printedTitle": "Golan VIII Space Defense Platform",
+        "printedTypeLine": null,
+        "edition": null,
+        "entryNotes": "Phase 0-B PDF/TXT transcription fixture; NOT a certified canonical record",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-station",
+        "chassisType": "orbital defense platform",
+        "mobilityDomains": [
+          "space"
+        ],
+        "combatScale": [
+          "starship"
+        ],
+        "role": [],
+        "constructionType": null,
+        "printedSize": "Colossal",
+        "size": "Colossal",
+        "colossalSubtype": "station",
+        "sizeModifierPrinted": null,
+        "secondaryCategories": [],
+        "entityNature": null
+      },
+      "challenge": {
+        "cl": 25,
+        "raw": null,
+        "notes": null
+      },
+      "geometry": {
+        "lengthMeters": null,
+        "widthMeters": null,
+        "heightMeters": null,
+        "characterScaleWidthSquares": null,
+        "characterScaleLengthSquares": null,
+        "starshipScaleWidthSquares": 2,
+        "starshipScaleLengthSquares": 2,
+        "reachSquares": null,
+        "coverCrew": "total",
+        "coverPassengers": null,
+        "enclosure": null,
+        "exposedStations": [],
+        "notes": null,
+        "occupantCoverModifiers": []
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "fly",
+            "scale": "starship",
+            "squaresPerMove": 1,
+            "maxVelocityKmh": null,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": "1* square (starship scale)"
+          }
+        ],
+        "maxVelocityKmh": null,
+        "sublightDrive": null,
+        "atmosphericCapability": null,
+        "spaceflightCapability": null,
+        "maximumAltitudeMeters": null,
+        "turningOrManeuverability": null,
+        "minimumSpeed": null,
+        "hoverCapability": null,
+        "specialMovement": [
+          {
+            "key": "golan-move-cost",
+            "label": "Move power diversion",
+            "category": "movement",
+            "summary": "Movement drops all SR and prevents attacks that turn.",
+            "activation": "On any turn station moves",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "shield-loss",
+                "operation": "set",
+                "target": "vehicle",
+                "path": "defenses.shieldRating",
+                "value": 0,
+                "unit": "SR",
+                "condition": "turn in which platform moves",
+                "duration": "turn",
+                "notes": null
+              },
+              {
+                "effectKey": "no-attack",
+                "operation": "prohibit",
+                "target": "vehicle",
+                "path": "combat.attack",
+                "value": null,
+                "unit": null,
+                "condition": "turn in which platform moves",
+                "duration": "turn",
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": null,
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "raw": null
+      },
+      "hyperspace": {
+        "capability": "equipped",
+        "primaryMultiplier": 4,
+        "backupMultiplier": 12,
+        "navComputer": "installed",
+        "jumpMemoryCount": null,
+        "astromechRequirement": null,
+        "routeConstraints": null,
+        "raw": "Hyperdrive x4 (backup x12), navicomputer"
+      },
+      "defenses": {
+        "reflex": 10,
+        "reflexFlatFooted": 10,
+        "fortitude": 70,
+        "will": null,
+        "armorBonus": 14,
+        "otherDefenseBonuses": [],
+        "vehicularCombatIncluded": null,
+        "damageReduction": 20,
+        "shieldRating": 300,
+        "shieldType": null,
+        "shieldRecharge": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "shieldArcs": [],
+        "immunities": [],
+        "resistances": [],
+        "vulnerabilities": [],
+        "otherDefenses": []
+      },
+      "durability": {
+        "hitPoints": 2500,
+        "damageThreshold": 570,
+        "hardness": null,
+        "conditionTrackRules": [],
+        "criticalDamageRules": [],
+        "repairRules": [],
+        "failureModes": []
+      },
+      "abilities": {
+        "str": 130,
+        "dex": 2,
+        "con": null,
+        "int": 18,
+        "wis": null,
+        "cha": null,
+        "initiativePrinted": -8,
+        "perceptionPrinted": 6,
+        "senses": [],
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -8,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -8,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          }
+        ],
+        "languages": []
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 82,
+        "rangedAttackLine": "10 turbolaser batteries AND 4 point-defense laser cannon batteries AND 4 proton torpedo batteries AND 4 tractor beam batteries",
+        "meleeAttackLine": null,
+        "attackOptions": [
+          "autofire (point-defense laser cannon batteries)"
+        ],
+        "specialActions": [],
+        "feats": [],
+        "talents": [],
+        "tacticalFire": [
+          {
+            "key": "golan-tactical-fire",
+            "label": "Tactical Fire",
+            "category": "attack-action",
+            "summary": "Forgo attacks to stop movement of space transports and capital ships entering 3-square area.",
+            "activation": "standard action",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "stop-on-enter",
+                "operation": "set",
+                "target": "target",
+                "path": "movement.remaining",
+                "value": 0,
+                "unit": "squares",
+                "condition": "space transport or capital ship enters 3-square area",
+                "duration": "immediate",
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": null,
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "otherCombatRules": []
+      },
+      "armament": {
+        "weaponMounts": [
+          {
+            "mountKey": "turbo",
+            "weaponDefinitionKey": null,
+            "printedName": "Turbolaser battery",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": "battery",
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "gunner",
+            "batteryCountPrinted": 10,
+            "gunnerCount": 5,
+            "firingScale": null,
+            "attackBonusPrinted": 14,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "8d10x5",
+            "damageMultiplierPrinted": 5,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [
+              {
+                "stat": "attackBonus",
+                "amount": -20,
+                "unit": "bonus",
+                "when": "target smaller than Colossal",
+                "scope": "weapon attack",
+                "raw": "Atk +14 (-6 against smaller targets)"
+              }
+            ],
+            "firingCountPrinted": 10,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "laser",
+            "weaponDefinitionKey": null,
+            "printedName": "Point-defense laser cannon battery",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": "battery",
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "gunner",
+            "batteryCountPrinted": 4,
+            "gunnerCount": 4,
+            "firingScale": null,
+            "attackBonusPrinted": 12,
+            "attackBonusAutofirePrinted": 7,
+            "damagePrinted": "2d10x2",
+            "damageMultiplierPrinted": 2,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "autofire"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": 4,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "torp",
+            "weaponDefinitionKey": null,
+            "printedName": "Proton torpedo battery",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": "battery",
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "gunner",
+            "batteryCountPrinted": 4,
+            "gunnerCount": 4,
+            "firingScale": null,
+            "attackBonusPrinted": 12,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "10d10x5",
+            "damageMultiplierPrinted": 5,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "4-square splash"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [
+              {
+                "stat": "attackBonus",
+                "amount": -20,
+                "unit": "bonus",
+                "when": "target smaller than Colossal",
+                "scope": "weapon attack",
+                "raw": "Atk +12 (-8 against smaller targets)"
+              }
+            ],
+            "firingCountPrinted": 4,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "tractor",
+            "weaponDefinitionKey": null,
+            "printedName": "Tractor beam battery",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": "battery",
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "gunner",
+            "batteryCountPrinted": 4,
+            "gunnerCount": 5,
+            "firingScale": null,
+            "attackBonusPrinted": 12,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "— (grapple +82)",
+            "damageMultiplierPrinted": null,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "grapple"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [
+              {
+                "stat": "attackBonus",
+                "amount": -20,
+                "unit": "bonus",
+                "when": "target smaller than Colossal",
+                "scope": "weapon attack",
+                "raw": "Atk +12 (-8 against smaller targets)"
+              }
+            ],
+            "firingCountPrinted": 4,
+            "targetSizeRuleKey": null
+          }
+        ],
+        "firingGroups": [],
+        "carriedPayloads": [
+          {
+            "value": 240,
+            "unit": "proton torpedoes",
+            "raw": "Payload 240 proton torpedoes",
+            "qualifier": null
+          }
+        ],
+        "weaponOptions": [],
+        "unresolvedWeaponNames": [],
+        "notes": null,
+        "attackPatterns": [
+          {
+            "patternKey": "all",
+            "attackType": "ranged",
+            "mountKeys": [
+              "turbo",
+              "laser",
+              "torp",
+              "tractor"
+            ],
+            "combine": "AND",
+            "alternativesGroup": null,
+            "raw": null,
+            "limitations": []
+          }
+        ]
+      },
+      "crew": {
+        "crewCount": 1100,
+        "minimumOperatingCrew": null,
+        "crewQuality": "skilled",
+        "crewDescriptor": null,
+        "crewIsOptional": null,
+        "autonomy": null,
+        "stations": [],
+        "stockCrewSpecialRules": [],
+        "raw": "1,100 (skilled)"
+      },
+      "capacity": {
+        "passengerCount": 100,
+        "passengerGroups": [
+          {
+            "group": "troops",
+            "count": 100,
+            "conditions": null,
+            "raw": "100 (troops)"
+          }
+        ],
+        "cargo": {
+          "value": 15000,
+          "unit": "tons",
+          "raw": "15000 tons",
+          "qualifier": null
+        },
+        "cargoMetricTons": null,
+        "consumables": {
+          "value": 6,
+          "unit": "months",
+          "raw": "6 months",
+          "qualifier": null
+        },
+        "carriedCraft": [
+          {
+            "name": "shuttles",
+            "count": 20,
+            "category": null,
+            "raw": "20 shuttles"
+          },
+          {
+            "name": "starfighters",
+            "count": 24,
+            "category": null,
+            "raw": "24 starfighters"
+          },
+          {
+            "name": "work pods",
+            "count": 150,
+            "category": null,
+            "raw": "150 work pods"
+          }
+        ],
+        "escapePods": null,
+        "dockingCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "towCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "lifeSupport": null,
+        "storageNotes": null,
+        "carriedCraftConfigurations": []
+      },
+      "systems": {
+        "installed": [],
+        "sensors": [],
+        "communications": [],
+        "tractorBeams": [],
+        "propulsion": [],
+        "power": [],
+        "environment": [],
+        "security": [],
+        "interfaces": [],
+        "miscellaneous": [],
+        "capabilityModeGroups": []
+      },
+      "modifications": {
+        "emplacementPointsTotal": null,
+        "emplacementPointsUsed": null,
+        "emplacementPointsRemaining": null,
+        "modificationSlotsTotal": null,
+        "modificationSlotsUsed": null,
+        "modificationSlotsRemaining": null,
+        "installed": [],
+        "templates": [],
+        "constraints": [],
+        "notes": null
+      },
+      "economics": {
+        "priceNew": {
+          "amountCredits": 45000000,
+          "status": "priced",
+          "raw": "45,000,000",
+          "qualifier": null
+        },
+        "priceUsed": {
+          "amountCredits": 20000000,
+          "status": "priced",
+          "raw": "20,000,000 used",
+          "qualifier": null
+        },
+        "availability": "Licensed",
+        "availabilityNotes": null,
+        "serviceOrMaintenanceCosts": [],
+        "acquisitionRestrictions": [],
+        "notes": null
+      },
+      "text": {
+        "summary": "Heavily armed defense platform with emergency repositioning drive and tactical interdiction.",
+        "mechanicalNotes": null,
+        "sourceNotes": null,
+        "displayName": null,
+        "tags": [
+          "phase0b",
+          "stress-test",
+          "sourcebook-fixture",
+          "not-certified"
+        ]
+      },
+      "exceptions": {
+        "specialRules": [],
+        "unmappedFacts": [],
+        "ambiguities": [],
+        "transcriptionWarnings": [],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/identity/vehicleFamilyKey": "not-stated",
+        "/identity/manufacturer": "not-stated",
+        "/identity/model": "not-stated",
+        "/identity/className": "not-stated",
+        "/identity/variantLabel": "not-stated",
+        "/identity/baseVehicleKey": "not-stated",
+        "/identity/uniqueNamedVessel": "not-stated",
+        "/publication/statblockOrdinalOnPage": "not-stated",
+        "/publication/printedTypeLine": "not-stated",
+        "/publication/edition": "not-stated",
+        "/classification/constructionType": "not-stated",
+        "/classification/sizeModifierPrinted": "not-stated",
+        "/classification/entityNature": "not-stated",
+        "/challenge/raw": "not-stated",
+        "/challenge/notes": "not-stated",
+        "/geometry/lengthMeters": "not-stated",
+        "/geometry/widthMeters": "not-stated",
+        "/geometry/heightMeters": "not-stated",
+        "/geometry/characterScaleWidthSquares": "not-stated",
+        "/geometry/characterScaleLengthSquares": "not-stated",
+        "/geometry/reachSquares": "not-stated",
+        "/geometry/coverPassengers": "not-stated",
+        "/geometry/enclosure": "not-stated",
+        "/geometry/notes": "not-stated",
+        "/movement/maxVelocityKmh": "not-stated",
+        "/movement/sublightDrive": "not-stated",
+        "/movement/atmosphericCapability": "not-stated",
+        "/movement/spaceflightCapability": "not-stated",
+        "/movement/maximumAltitudeMeters": "not-stated",
+        "/movement/turningOrManeuverability": "not-stated",
+        "/movement/minimumSpeed": "not-stated",
+        "/movement/hoverCapability": "not-stated",
+        "/movement/raw": "not-stated",
+        "/hyperspace/jumpMemoryCount": "not-stated",
+        "/hyperspace/astromechRequirement": "not-stated",
+        "/hyperspace/routeConstraints": "not-stated",
+        "/defenses/will": "not-stated",
+        "/defenses/vehicularCombatIncluded": "not-stated",
+        "/defenses/shieldType": "not-stated",
+        "/defenses/shieldRecharge/value": "not-stated",
+        "/defenses/shieldRecharge/unit": "not-stated",
+        "/defenses/shieldRecharge/raw": "not-stated",
+        "/defenses/shieldRecharge/qualifier": "not-stated",
+        "/durability/hardness": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/abilities/wis": "not-stated",
+        "/abilities/cha": "not-stated",
+        "/combat/meleeAttackLine": "not-stated",
+        "/armament/notes": "not-stated",
+        "/crew/minimumOperatingCrew": "not-stated",
+        "/crew/crewDescriptor": "not-stated",
+        "/crew/crewIsOptional": "not-stated",
+        "/crew/autonomy": "not-stated",
+        "/capacity/cargo/qualifier": "not-stated",
+        "/capacity/cargoMetricTons": "not-stated",
+        "/capacity/consumables/qualifier": "not-stated",
+        "/capacity/escapePods": "not-stated",
+        "/capacity/dockingCapacity/value": "not-stated",
+        "/capacity/dockingCapacity/unit": "not-stated",
+        "/capacity/dockingCapacity/raw": "not-stated",
+        "/capacity/dockingCapacity/qualifier": "not-stated",
+        "/capacity/towCapacity/value": "not-stated",
+        "/capacity/towCapacity/unit": "not-stated",
+        "/capacity/towCapacity/raw": "not-stated",
+        "/capacity/towCapacity/qualifier": "not-stated",
+        "/capacity/lifeSupport": "not-stated",
+        "/capacity/storageNotes": "not-stated",
+        "/modifications/emplacementPointsTotal": "not-stated",
+        "/modifications/emplacementPointsUsed": "not-stated",
+        "/modifications/emplacementPointsRemaining": "not-stated",
+        "/modifications/modificationSlotsTotal": "not-stated",
+        "/modifications/modificationSlotsUsed": "not-stated",
+        "/modifications/modificationSlotsRemaining": "not-stated",
+        "/modifications/notes": "not-stated",
+        "/economics/priceNew/qualifier": "not-stated",
+        "/economics/priceUsed/qualifier": "not-stated",
+        "/economics/availabilityNotes": "not-stated",
+        "/economics/notes": "not-stated",
+        "/text/mechanicalNotes": "not-stated",
+        "/text/sourceNotes": "not-stated",
+        "/text/displayName": "not-stated",
+        "/armament/weaponMounts/0/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/1/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/2/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/3/targetSizeRuleKey": "not-yet-reviewed"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleKey": "golan-movement-tradeoff",
+            "family": "movement",
+            "trigger": "when-moving",
+            "condition": {
+              "node": "atom",
+              "subject": "vehicle",
+              "attribute": "movesThisTurn",
+              "operator": "true",
+              "value": true,
+              "scale": null,
+              "status": "structured"
+            },
+            "effects": [
+              {
+                "effectKey": "shields-drop",
+                "kind": "alter-shield",
+                "targetPath": "vehicle.defenses.shieldRating.current",
+                "operation": "set",
+                "value": 0,
+                "unit": "SR",
+                "timing": "immediate",
+                "status": "needs-ontology",
+                "sourceSummary": "Moving disables shields"
+              },
+              {
+                "effectKey": "cannot-attack",
+                "kind": "deny-action",
+                "targetPath": "vehicle.attack",
+                "operation": "prohibit",
+                "value": true,
+                "unit": null,
+                "timing": "immediate",
+                "status": "needs-ontology",
+                "sourceSummary": "Moving prevents weapon attack"
+              }
+            ],
+            "printedRuleSummary": "Movement can disable defensive and offensive systems, pending certification against exact printed wording.",
+            "authorityState": "source-sample",
+            "consumerStatus": "schema-only"
+          }
+        ],
+        "globalRuleReferences": [],
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    "coralskipper": {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.4",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sotg-p73-coralskipper",
+        "vehicleFamilyKey": null,
+        "variantKey": "sotg-p73-coralskipper",
+        "name": "Coralskipper",
+        "manufacturer": null,
+        "model": null,
+        "className": null,
+        "variantLabel": null,
+        "variantKind": "printed-configuration",
+        "baseVehicleKey": null,
+        "aliases": [],
+        "uniqueNamedVessel": null
+      },
+      "publication": {
+        "book": "Starships of the Galaxy",
+        "page": 73,
+        "statblockOrdinalOnPage": null,
+        "printedTitle": "Coralskipper",
+        "printedTypeLine": null,
+        "edition": null,
+        "entryNotes": "Phase 0-B PDF/TXT transcription fixture; NOT a certified canonical record",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "chassisType": null,
+        "mobilityDomains": [
+          "atmosphere",
+          "space"
+        ],
+        "combatScale": [
+          "character",
+          "starship"
+        ],
+        "role": [
+          "living starfighter"
+        ],
+        "constructionType": "biological",
+        "printedSize": "Gargantuan",
+        "size": "Gargantuan",
+        "colossalSubtype": null,
+        "sizeModifierPrinted": null,
+        "secondaryCategories": [],
+        "entityNature": "living-vessel"
+      },
+      "challenge": {
+        "cl": 12,
+        "raw": null,
+        "notes": null
+      },
+      "geometry": {
+        "lengthMeters": null,
+        "widthMeters": null,
+        "heightMeters": null,
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "reachSquares": null,
+        "coverCrew": "total",
+        "coverPassengers": null,
+        "enclosure": null,
+        "exposedStations": [],
+        "notes": null,
+        "occupantCoverModifiers": []
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "fly",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 400,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": null
+          },
+          {
+            "mode": "fly",
+            "scale": "starship",
+            "squaresPerMove": 4,
+            "maxVelocityKmh": null,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": null
+          }
+        ],
+        "maxVelocityKmh": 400,
+        "sublightDrive": null,
+        "atmosphericCapability": null,
+        "spaceflightCapability": null,
+        "maximumAltitudeMeters": null,
+        "turningOrManeuverability": null,
+        "minimumSpeed": null,
+        "hoverCapability": null,
+        "specialMovement": [],
+        "raw": null
+      },
+      "hyperspace": {
+        "capability": "unavailable",
+        "primaryMultiplier": null,
+        "backupMultiplier": null,
+        "navComputer": null,
+        "jumpMemoryCount": null,
+        "astromechRequirement": null,
+        "routeConstraints": null,
+        "raw": null
+      },
+      "defenses": {
+        "reflex": 18,
+        "reflexFlatFooted": 12,
+        "fortitude": 24,
+        "will": null,
+        "armorBonus": 7,
+        "otherDefenseBonuses": [],
+        "vehicularCombatIncluded": true,
+        "damageReduction": 10,
+        "shieldRating": 25,
+        "shieldType": "dovin basal organic gravity shield",
+        "shieldRecharge": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "shieldArcs": [],
+        "immunities": [],
+        "resistances": [],
+        "vulnerabilities": [],
+        "otherDefenses": [
+          {
+            "key": "dovin-shield",
+            "label": "Dovin Basal Organic Shielding",
+            "category": "defense",
+            "summary": "Ordinary single shots do not reduce SR; successful autofire splinter attacks can reduce it.",
+            "activation": "passive",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "no-single-loss",
+                "operation": "prohibit",
+                "target": "incomingDamage",
+                "path": "shields.singleShotSRReduction",
+                "value": null,
+                "unit": null,
+                "condition": "single shot against coralskipper",
+                "duration": null,
+                "notes": null
+              },
+              {
+                "effectKey": "autofire-vulnerable",
+                "operation": "grant-option",
+                "target": "attacker",
+                "path": "attack.autofireSRReduction",
+                "value": null,
+                "unit": null,
+                "condition": "successful autofire attack",
+                "duration": null,
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": null,
+            "typedPredicateStatus": "pending"
+          }
+        ]
+      },
+      "durability": {
+        "hitPoints": 100,
+        "damageThreshold": 44,
+        "hardness": null,
+        "conditionTrackRules": [],
+        "criticalDamageRules": [],
+        "repairRules": [],
+        "failureModes": []
+      },
+      "abilities": {
+        "str": 39,
+        "dex": 22,
+        "con": 39,
+        "int": 18,
+        "wis": null,
+        "cha": null,
+        "initiativePrinted": 9,
+        "perceptionPrinted": 8,
+        "senses": [],
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 9,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 9,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 8,
+            "governingAbility": null,
+            "attribution": "crew",
+            "conditions": null,
+            "raw": null
+          }
+        ],
+        "languages": []
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 36,
+        "rangedAttackLine": "Volcano cannons +11 OR dovin basal +11",
+        "meleeAttackLine": null,
+        "attackOptions": [],
+        "specialActions": [],
+        "feats": [],
+        "talents": [],
+        "tacticalFire": [],
+        "otherCombatRules": []
+      },
+      "armament": {
+        "weaponMounts": [
+          {
+            "mountKey": "volcano",
+            "weaponDefinitionKey": null,
+            "printedName": "Volcano cannons",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "pilot",
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 11,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "6d10x2",
+            "damageMultiplierPrinted": 2,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": null,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "dovin",
+            "weaponDefinitionKey": null,
+            "printedName": "Dovin basal",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": "pilot",
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 11,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "7d10x2",
+            "damageMultiplierPrinted": 2,
+            "damageTypePrinted": "dovin basal",
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "attack shields",
+              "tractor beam"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": null,
+            "targetSizeRuleKey": null
+          }
+        ],
+        "firingGroups": [],
+        "carriedPayloads": [],
+        "weaponOptions": [],
+        "unresolvedWeaponNames": [],
+        "notes": null,
+        "attackPatterns": [
+          {
+            "patternKey": "volcano",
+            "attackType": "ranged",
+            "mountKeys": [
+              "volcano"
+            ],
+            "combine": "AND",
+            "alternativesGroup": "coral-choice",
+            "raw": null,
+            "limitations": []
+          },
+          {
+            "patternKey": "dovin",
+            "attackType": "ranged",
+            "mountKeys": [
+              "dovin"
+            ],
+            "combine": "AND",
+            "alternativesGroup": "coral-choice",
+            "raw": null,
+            "limitations": []
+          }
+        ]
+      },
+      "crew": {
+        "crewCount": 1,
+        "minimumOperatingCrew": null,
+        "crewQuality": "expert",
+        "crewDescriptor": null,
+        "crewIsOptional": null,
+        "autonomy": null,
+        "stations": [],
+        "stockCrewSpecialRules": [],
+        "raw": "1 (expert)"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "passengerGroups": [],
+        "cargo": {
+          "value": 1.3,
+          "unit": "tons",
+          "raw": "1.3 tons",
+          "qualifier": null
+        },
+        "cargoMetricTons": null,
+        "consumables": {
+          "value": 1,
+          "unit": "day",
+          "raw": "1 day",
+          "qualifier": null
+        },
+        "carriedCraft": [],
+        "escapePods": null,
+        "dockingCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "towCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "lifeSupport": null,
+        "storageNotes": null,
+        "carriedCraftConfigurations": []
+      },
+      "systems": {
+        "installed": [],
+        "sensors": [],
+        "communications": [],
+        "tractorBeams": [],
+        "propulsion": [],
+        "power": [],
+        "environment": [],
+        "security": [],
+        "interfaces": [],
+        "miscellaneous": [],
+        "capabilityModeGroups": [
+          {
+            "groupKey": "dovin-basal-focus",
+            "label": "Dovin basal function",
+            "exclusive": true,
+            "activation": "swift action (pilot)",
+            "modes": [
+              {
+                "modeKey": "speed",
+                "label": "Propulsion",
+                "effects": [
+                  {
+                    "effectKey": "speed-boost",
+                    "operation": "add",
+                    "target": "vehicle",
+                    "path": "movement.starshipSquares",
+                    "value": 2,
+                    "unit": "squares",
+                    "condition": null,
+                    "duration": "mode active",
+                    "notes": null
+                  }
+                ],
+                "conditions": [],
+                "notes": null
+              },
+              {
+                "modeKey": "shields",
+                "label": "Protection",
+                "effects": [
+                  {
+                    "effectKey": "sr-boost",
+                    "operation": "add",
+                    "target": "vehicle",
+                    "path": "defenses.shieldRating",
+                    "value": 5,
+                    "unit": "SR",
+                    "condition": null,
+                    "duration": "mode active",
+                    "notes": null
+                  }
+                ],
+                "conditions": [],
+                "notes": null
+              },
+              {
+                "modeKey": "attack",
+                "label": "Offensive focus",
+                "effects": [
+                  {
+                    "effectKey": "damage-boost",
+                    "operation": "add",
+                    "target": "vehicle",
+                    "path": "armament.dovinBasalDice",
+                    "value": 1,
+                    "unit": "die",
+                    "condition": null,
+                    "duration": "mode active",
+                    "notes": null
+                  }
+                ],
+                "conditions": [],
+                "notes": null
+              }
+            ],
+            "notes": "Only one dovin basal enhancement at a time; source mode duration pending predicate certification."
+          }
+        ]
+      },
+      "modifications": {
+        "emplacementPointsTotal": null,
+        "emplacementPointsUsed": null,
+        "emplacementPointsRemaining": null,
+        "modificationSlotsTotal": null,
+        "modificationSlotsUsed": null,
+        "modificationSlotsRemaining": null,
+        "installed": [],
+        "templates": [],
+        "constraints": [],
+        "notes": null
+      },
+      "economics": {
+        "priceNew": {
+          "amountCredits": null,
+          "status": "not-for-sale",
+          "raw": "not available for sale",
+          "qualifier": null
+        },
+        "priceUsed": {
+          "amountCredits": null,
+          "status": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "availability": "Military",
+        "availabilityNotes": null,
+        "serviceOrMaintenanceCosts": [],
+        "acquisitionRestrictions": [],
+        "notes": null
+      },
+      "text": {
+        "summary": "Yuuzhan Vong organic fighter with variable gravity-based attack, propulsion and shielding.",
+        "mechanicalNotes": null,
+        "sourceNotes": null,
+        "displayName": null,
+        "tags": [
+          "phase0b",
+          "stress-test",
+          "sourcebook-fixture",
+          "not-certified"
+        ]
+      },
+      "exceptions": {
+        "specialRules": [
+          {
+            "key": "coral-targeting",
+            "label": "Unrecognized Organic Vessel",
+            "category": "targeting",
+            "summary": "Targeting computers unfamiliar with the vessel cannot grant ship INT bonus until recalibrated.",
+            "activation": "passive",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "block-computer",
+                "operation": "prohibit",
+                "target": "attacker",
+                "path": "attack.shipIntBonus",
+                "value": null,
+                "unit": null,
+                "condition": "computer does not recognize coralskipper",
+                "duration": null,
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": null,
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "dovin-shield-stripping",
+            "label": "Dovin Basal Offensive Shield Drain",
+            "category": "attack",
+            "summary": "Hits apply damage to shields rather than HP; on exceeding SR reduce SR by 10 instead of 5.",
+            "activation": "attack",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "damage-shield",
+                "operation": "redirect",
+                "target": "target",
+                "path": "defenses.shieldRating",
+                "value": null,
+                "unit": null,
+                "condition": "dovin basal shield-drain attack",
+                "duration": null,
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": null,
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "unmappedFacts": [],
+        "ambiguities": [],
+        "transcriptionWarnings": [],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/capacity/passengerCount": "explicitly-none",
+        "/identity/vehicleFamilyKey": "not-stated",
+        "/identity/manufacturer": "not-stated",
+        "/identity/model": "not-stated",
+        "/identity/className": "not-stated",
+        "/identity/variantLabel": "not-stated",
+        "/identity/baseVehicleKey": "not-stated",
+        "/identity/uniqueNamedVessel": "not-stated",
+        "/publication/statblockOrdinalOnPage": "not-stated",
+        "/publication/printedTypeLine": "not-stated",
+        "/publication/edition": "not-stated",
+        "/classification/chassisType": "not-stated",
+        "/classification/colossalSubtype": "not-stated",
+        "/classification/sizeModifierPrinted": "not-stated",
+        "/challenge/raw": "not-stated",
+        "/challenge/notes": "not-stated",
+        "/geometry/lengthMeters": "not-stated",
+        "/geometry/widthMeters": "not-stated",
+        "/geometry/heightMeters": "not-stated",
+        "/geometry/reachSquares": "not-stated",
+        "/geometry/coverPassengers": "not-stated",
+        "/geometry/enclosure": "not-stated",
+        "/geometry/notes": "not-stated",
+        "/movement/sublightDrive": "not-stated",
+        "/movement/atmosphericCapability": "not-stated",
+        "/movement/spaceflightCapability": "not-stated",
+        "/movement/maximumAltitudeMeters": "not-stated",
+        "/movement/turningOrManeuverability": "not-stated",
+        "/movement/minimumSpeed": "not-stated",
+        "/movement/hoverCapability": "not-stated",
+        "/movement/raw": "not-stated",
+        "/hyperspace/primaryMultiplier": "not-stated",
+        "/hyperspace/backupMultiplier": "not-stated",
+        "/hyperspace/navComputer": "not-stated",
+        "/hyperspace/jumpMemoryCount": "not-stated",
+        "/hyperspace/astromechRequirement": "not-stated",
+        "/hyperspace/routeConstraints": "not-stated",
+        "/hyperspace/raw": "not-stated",
+        "/defenses/will": "not-stated",
+        "/defenses/shieldRecharge/value": "not-stated",
+        "/defenses/shieldRecharge/unit": "not-stated",
+        "/defenses/shieldRecharge/raw": "not-stated",
+        "/defenses/shieldRecharge/qualifier": "not-stated",
+        "/durability/hardness": "not-stated",
+        "/abilities/wis": "not-stated",
+        "/abilities/cha": "not-stated",
+        "/combat/meleeAttackLine": "not-stated",
+        "/armament/notes": "not-stated",
+        "/crew/minimumOperatingCrew": "not-stated",
+        "/crew/crewDescriptor": "not-stated",
+        "/crew/crewIsOptional": "not-stated",
+        "/crew/autonomy": "not-stated",
+        "/capacity/cargo/qualifier": "not-stated",
+        "/capacity/cargoMetricTons": "not-stated",
+        "/capacity/consumables/qualifier": "not-stated",
+        "/capacity/escapePods": "not-stated",
+        "/capacity/dockingCapacity/value": "not-stated",
+        "/capacity/dockingCapacity/unit": "not-stated",
+        "/capacity/dockingCapacity/raw": "not-stated",
+        "/capacity/dockingCapacity/qualifier": "not-stated",
+        "/capacity/towCapacity/value": "not-stated",
+        "/capacity/towCapacity/unit": "not-stated",
+        "/capacity/towCapacity/raw": "not-stated",
+        "/capacity/towCapacity/qualifier": "not-stated",
+        "/capacity/lifeSupport": "not-stated",
+        "/capacity/storageNotes": "not-stated",
+        "/modifications/emplacementPointsTotal": "not-stated",
+        "/modifications/emplacementPointsUsed": "not-stated",
+        "/modifications/emplacementPointsRemaining": "not-stated",
+        "/modifications/modificationSlotsTotal": "not-stated",
+        "/modifications/modificationSlotsUsed": "not-stated",
+        "/modifications/modificationSlotsRemaining": "not-stated",
+        "/modifications/notes": "not-stated",
+        "/economics/priceNew/amountCredits": "not-stated",
+        "/economics/priceNew/qualifier": "not-stated",
+        "/economics/priceUsed/amountCredits": "not-stated",
+        "/economics/priceUsed/status": "not-stated",
+        "/economics/priceUsed/raw": "not-stated",
+        "/economics/priceUsed/qualifier": "not-stated",
+        "/economics/availabilityNotes": "not-stated",
+        "/economics/notes": "not-stated",
+        "/text/mechanicalNotes": "not-stated",
+        "/text/sourceNotes": "not-stated",
+        "/text/displayName": "not-stated",
+        "/armament/weaponMounts/0/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/1/targetSizeRuleKey": "not-yet-reviewed"
+      },
+      "rules": {
+        "conditionalMechanics": [],
+        "globalRuleReferences": [],
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    "dp2": {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.4",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "droids-p82-dp2-probe",
+        "vehicleFamilyKey": null,
+        "variantKey": "droids-p82-dp2-probe",
+        "name": "DP-2 Probe Droid",
+        "manufacturer": null,
+        "model": null,
+        "className": null,
+        "variantLabel": null,
+        "variantKind": "printed-configuration",
+        "baseVehicleKey": null,
+        "aliases": [],
+        "uniqueNamedVessel": null
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "page": 82,
+        "statblockOrdinalOnPage": null,
+        "printedTitle": "DP-2 Probe Droid",
+        "printedTypeLine": "Large starfighter/ground vehicle (speeder)",
+        "edition": null,
+        "entryNotes": "Phase 0-B PDF/TXT transcription fixture; NOT a certified canonical record",
+        "sourceRepresentations": [
+          "vehicle",
+          "droid"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "chassisType": "speeder",
+        "mobilityDomains": [
+          "ground",
+          "atmosphere",
+          "space"
+        ],
+        "combatScale": [
+          "character",
+          "starship"
+        ],
+        "role": [],
+        "constructionType": "droid",
+        "printedSize": "Large",
+        "size": "Large",
+        "colossalSubtype": null,
+        "sizeModifierPrinted": null,
+        "secondaryCategories": [
+          "ground-vehicle"
+        ],
+        "entityNature": "droid"
+      },
+      "challenge": {
+        "cl": 6,
+        "raw": null,
+        "notes": null
+      },
+      "geometry": {
+        "lengthMeters": null,
+        "widthMeters": null,
+        "heightMeters": null,
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "reachSquares": null,
+        "coverCrew": "none",
+        "coverPassengers": null,
+        "enclosure": "uncrewed",
+        "exposedStations": [],
+        "notes": null,
+        "occupantCoverModifiers": []
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "fly",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 575,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": null
+          },
+          {
+            "mode": "fly",
+            "scale": "starship",
+            "squaresPerMove": 3,
+            "maxVelocityKmh": null,
+            "altitudeMeters": null,
+            "terrainRestrictions": null,
+            "raw": null
+          }
+        ],
+        "maxVelocityKmh": 575,
+        "sublightDrive": null,
+        "atmosphericCapability": null,
+        "spaceflightCapability": null,
+        "maximumAltitudeMeters": null,
+        "turningOrManeuverability": null,
+        "minimumSpeed": null,
+        "hoverCapability": null,
+        "specialMovement": [],
+        "raw": null
+      },
+      "hyperspace": {
+        "capability": null,
+        "primaryMultiplier": null,
+        "backupMultiplier": null,
+        "navComputer": null,
+        "jumpMemoryCount": null,
+        "astromechRequirement": null,
+        "routeConstraints": null,
+        "raw": null
+      },
+      "defenses": {
+        "reflex": 12,
+        "reflexFlatFooted": 10,
+        "fortitude": 14,
+        "will": null,
+        "armorBonus": 1,
+        "otherDefenseBonuses": [],
+        "vehicularCombatIncluded": null,
+        "damageReduction": 5,
+        "shieldRating": null,
+        "shieldType": null,
+        "shieldRecharge": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "shieldArcs": [],
+        "immunities": [
+          "droid traits"
+        ],
+        "resistances": [],
+        "vulnerabilities": [],
+        "otherDefenses": []
+      },
+      "durability": {
+        "hitPoints": 40,
+        "damageThreshold": 19,
+        "hardness": null,
+        "conditionTrackRules": [],
+        "criticalDamageRules": [],
+        "repairRules": [],
+        "failureModes": []
+      },
+      "abilities": {
+        "str": 18,
+        "dex": 14,
+        "con": null,
+        "int": 14,
+        "wis": null,
+        "cha": null,
+        "initiativePrinted": 6,
+        "perceptionPrinted": 7,
+        "senses": [],
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "autonomous-droid",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 7,
+            "governingAbility": null,
+            "attribution": "autonomous-droid",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 7,
+            "governingAbility": null,
+            "attribution": "autonomous-droid",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 6,
+            "governingAbility": null,
+            "attribution": "autonomous-droid",
+            "conditions": null,
+            "raw": null
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 7,
+            "governingAbility": null,
+            "attribution": "autonomous-droid",
+            "conditions": null,
+            "raw": null
+          }
+        ],
+        "languages": []
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 9,
+        "rangedAttackLine": "Blaster cannon +2 AND space beacon launcher +2",
+        "meleeAttackLine": "Claw +4",
+        "attackOptions": [],
+        "specialActions": [
+          {
+            "key": "move",
+            "label": "Move",
+            "category": "autonomous-droid-action",
+            "summary": "Moves 12 flying squares per swift action.",
+            "activation": "swift action",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "move",
+                "operation": "grant-option",
+                "target": "vehicle",
+                "path": "movement.flyCharacterSquares",
+                "value": 12,
+                "unit": "squares",
+                "condition": null,
+                "duration": "immediate",
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": 2,
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "sensor-range",
+            "label": "Extended Sensor Range",
+            "category": "autonomous-droid-action",
+            "summary": "Master can reroll Perception using vehicle sensors.",
+            "activation": "swift action",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "reroll",
+                "operation": "reroll",
+                "target": "master",
+                "path": "skills.Perception",
+                "value": null,
+                "unit": null,
+                "condition": "using vehicle sensors",
+                "duration": null,
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": 1,
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "weapon-range",
+            "label": "Extended Weapon Range",
+            "category": "autonomous-droid-action",
+            "summary": "Master reduces range penalty up to two categories when both have line of effect.",
+            "activation": "swift action",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "range",
+                "operation": "reduce",
+                "target": "master",
+                "path": "attack.rangePenaltyCategories",
+                "value": 2,
+                "unit": "categories",
+                "condition": "both have line of effect",
+                "duration": null,
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": 1,
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "patch",
+            "label": "Patch Job",
+            "category": "autonomous-droid-action",
+            "summary": "Temporarily repairs disabled device by Mechanics check result.",
+            "activation": "swift action",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "repair",
+                "operation": "add",
+                "target": "target",
+                "path": "durability.hitPoints",
+                "value": null,
+                "unit": "Mechanics result",
+                "condition": "disabled mechanical/electronic device",
+                "duration": "temporary",
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": 1,
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "recon",
+            "label": "Reconnoiter",
+            "category": "autonomous-droid-action",
+            "summary": "Master gains +2 circumstance Perception when using vehicle sensors.",
+            "activation": "swift action",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "recon",
+                "operation": "add",
+                "target": "master",
+                "path": "skills.Perception",
+                "value": 2,
+                "unit": "circumstance bonus",
+                "condition": "using vehicle sensors",
+                "duration": null,
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": 1,
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "telemetry",
+            "label": "Telemetry",
+            "category": "autonomous-droid-action",
+            "summary": "Transmits live observations to master.",
+            "activation": "swift action",
+            "resource": null,
+            "effect": null,
+            "limits": null,
+            "reference": null,
+            "implementationStatus": "requires-consumer",
+            "effects": [
+              {
+                "effectKey": "stream",
+                "operation": "grant-option",
+                "target": "master",
+                "path": "sensor.telemetry",
+                "value": null,
+                "unit": null,
+                "condition": "droid transmits to display/vehicle",
+                "duration": null,
+                "notes": null
+              }
+            ],
+            "actionLimitPerTurn": 1,
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "feats": [],
+        "talents": [],
+        "tacticalFire": [],
+        "otherCombatRules": []
+      },
+      "armament": {
+        "weaponMounts": [
+          {
+            "mountKey": "claw",
+            "weaponDefinitionKey": null,
+            "printedName": "Claw",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": null,
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 4,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "1d6+4",
+            "damageMultiplierPrinted": null,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": null,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "blaster",
+            "weaponDefinitionKey": null,
+            "printedName": "Blaster cannon",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": null,
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 2,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "3d12",
+            "damageMultiplierPrinted": null,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": null,
+            "targetSizeRuleKey": null
+          },
+          {
+            "mountKey": "beacon",
+            "weaponDefinitionKey": null,
+            "printedName": "Space beacon launcher",
+            "weaponCount": null,
+            "mountCount": null,
+            "configuration": null,
+            "location": null,
+            "firingArc": null,
+            "mountType": null,
+            "fireLinked": null,
+            "batteryGroupKey": null,
+            "gunnerStationKey": null,
+            "operatorRolePrinted": null,
+            "batteryCountPrinted": null,
+            "gunnerCount": null,
+            "firingScale": null,
+            "attackBonusPrinted": 2,
+            "attackBonusAutofirePrinted": null,
+            "damagePrinted": "—",
+            "damageMultiplierPrinted": null,
+            "damageTypePrinted": null,
+            "rangePrinted": null,
+            "criticalPrinted": null,
+            "attackModes": [
+              "deploy beacon"
+            ],
+            "ammo": [],
+            "payloadNames": [],
+            "alternateFireGroupKey": null,
+            "specialRules": [],
+            "raw": null,
+            "resolutionStatus": "printed-only",
+            "conditionalAttackModifiers": [],
+            "firingCountPrinted": null,
+            "targetSizeRuleKey": null
+          }
+        ],
+        "firingGroups": [],
+        "carriedPayloads": [
+          {
+            "value": 16,
+            "unit": "space beacons",
+            "raw": "Payload 16 space beacons",
+            "qualifier": null
+          }
+        ],
+        "weaponOptions": [],
+        "unresolvedWeaponNames": [],
+        "notes": null,
+        "attackPatterns": [
+          {
+            "patternKey": "claw",
+            "attackType": "melee",
+            "mountKeys": [
+              "claw"
+            ],
+            "combine": "AND",
+            "alternativesGroup": null,
+            "raw": null,
+            "limitations": []
+          },
+          {
+            "patternKey": "ranged",
+            "attackType": "ranged",
+            "mountKeys": [
+              "blaster",
+              "beacon"
+            ],
+            "combine": "AND",
+            "alternativesGroup": null,
+            "raw": null,
+            "limitations": []
+          }
+        ]
+      },
+      "crew": {
+        "crewCount": 0,
+        "minimumOperatingCrew": null,
+        "crewQuality": "normal",
+        "crewDescriptor": "0 (normal)",
+        "crewIsOptional": null,
+        "autonomy": "autonomous",
+        "stations": [],
+        "stockCrewSpecialRules": [],
+        "raw": "0 (normal)"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "passengerGroups": [],
+        "cargo": {
+          "value": 15,
+          "unit": "kg",
+          "raw": "15 kg",
+          "qualifier": null
+        },
+        "cargoMetricTons": null,
+        "consumables": {
+          "value": 2,
+          "unit": "days",
+          "raw": "2 days",
+          "qualifier": null
+        },
+        "carriedCraft": [],
+        "escapePods": null,
+        "dockingCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "towCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "lifeSupport": null,
+        "storageNotes": null,
+        "carriedCraftConfigurations": []
+      },
+      "systems": {
+        "installed": [],
+        "sensors": [],
+        "communications": [],
+        "tractorBeams": [],
+        "propulsion": [],
+        "power": [],
+        "environment": [],
+        "security": [],
+        "interfaces": [],
+        "miscellaneous": [],
+        "capabilityModeGroups": []
+      },
+      "modifications": {
+        "emplacementPointsTotal": null,
+        "emplacementPointsUsed": null,
+        "emplacementPointsRemaining": null,
+        "modificationSlotsTotal": null,
+        "modificationSlotsUsed": null,
+        "modificationSlotsRemaining": null,
+        "installed": [],
+        "templates": [],
+        "constraints": [],
+        "notes": null
+      },
+      "economics": {
+        "priceNew": {
+          "amountCredits": 36500,
+          "status": "priced",
+          "raw": "36,500 credits",
+          "qualifier": null
+        },
+        "priceUsed": {
+          "amountCredits": null,
+          "status": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "availability": "Licensed",
+        "availabilityNotes": null,
+        "serviceOrMaintenanceCosts": [],
+        "acquisitionRestrictions": [],
+        "notes": null
+      },
+      "text": {
+        "summary": "Autonomous droid probe capable of independent flight and tactical support.",
+        "mechanicalNotes": null,
+        "sourceNotes": null,
+        "displayName": null,
+        "tags": [
+          "phase0b",
+          "stress-test",
+          "sourcebook-fixture",
+          "not-certified"
+        ]
+      },
+      "exceptions": {
+        "specialRules": [],
+        "unmappedFacts": [],
+        "ambiguities": [],
+        "transcriptionWarnings": [],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/capacity/passengerCount": "explicitly-none",
+        "/identity/vehicleFamilyKey": "not-stated",
+        "/identity/manufacturer": "not-stated",
+        "/identity/model": "not-stated",
+        "/identity/className": "not-stated",
+        "/identity/variantLabel": "not-stated",
+        "/identity/baseVehicleKey": "not-stated",
+        "/identity/uniqueNamedVessel": "not-stated",
+        "/publication/statblockOrdinalOnPage": "not-stated",
+        "/publication/edition": "not-stated",
+        "/classification/colossalSubtype": "not-stated",
+        "/classification/sizeModifierPrinted": "not-stated",
+        "/challenge/raw": "not-stated",
+        "/challenge/notes": "not-stated",
+        "/geometry/lengthMeters": "not-stated",
+        "/geometry/widthMeters": "not-stated",
+        "/geometry/heightMeters": "not-stated",
+        "/geometry/reachSquares": "not-stated",
+        "/geometry/coverPassengers": "not-stated",
+        "/geometry/notes": "not-stated",
+        "/movement/sublightDrive": "not-stated",
+        "/movement/atmosphericCapability": "not-stated",
+        "/movement/spaceflightCapability": "not-stated",
+        "/movement/maximumAltitudeMeters": "not-stated",
+        "/movement/turningOrManeuverability": "not-stated",
+        "/movement/minimumSpeed": "not-stated",
+        "/movement/hoverCapability": "not-stated",
+        "/movement/raw": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/hyperspace/primaryMultiplier": "not-stated",
+        "/hyperspace/backupMultiplier": "not-stated",
+        "/hyperspace/navComputer": "not-stated",
+        "/hyperspace/jumpMemoryCount": "not-stated",
+        "/hyperspace/astromechRequirement": "not-stated",
+        "/hyperspace/routeConstraints": "not-stated",
+        "/hyperspace/raw": "not-stated",
+        "/defenses/will": "not-stated",
+        "/defenses/vehicularCombatIncluded": "not-stated",
+        "/defenses/shieldRating": "not-stated",
+        "/defenses/shieldType": "not-stated",
+        "/defenses/shieldRecharge/value": "not-stated",
+        "/defenses/shieldRecharge/unit": "not-stated",
+        "/defenses/shieldRecharge/raw": "not-stated",
+        "/defenses/shieldRecharge/qualifier": "not-stated",
+        "/durability/hardness": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/abilities/wis": "not-stated",
+        "/abilities/cha": "not-stated",
+        "/armament/notes": "not-stated",
+        "/crew/minimumOperatingCrew": "not-stated",
+        "/crew/crewIsOptional": "not-stated",
+        "/capacity/cargo/qualifier": "not-stated",
+        "/capacity/cargoMetricTons": "not-stated",
+        "/capacity/consumables/qualifier": "not-stated",
+        "/capacity/escapePods": "not-stated",
+        "/capacity/dockingCapacity/value": "not-stated",
+        "/capacity/dockingCapacity/unit": "not-stated",
+        "/capacity/dockingCapacity/raw": "not-stated",
+        "/capacity/dockingCapacity/qualifier": "not-stated",
+        "/capacity/towCapacity/value": "not-stated",
+        "/capacity/towCapacity/unit": "not-stated",
+        "/capacity/towCapacity/raw": "not-stated",
+        "/capacity/towCapacity/qualifier": "not-stated",
+        "/capacity/lifeSupport": "not-stated",
+        "/capacity/storageNotes": "not-stated",
+        "/modifications/emplacementPointsTotal": "not-stated",
+        "/modifications/emplacementPointsUsed": "not-stated",
+        "/modifications/emplacementPointsRemaining": "not-stated",
+        "/modifications/modificationSlotsTotal": "not-stated",
+        "/modifications/modificationSlotsUsed": "not-stated",
+        "/modifications/modificationSlotsRemaining": "not-stated",
+        "/modifications/notes": "not-stated",
+        "/economics/priceNew/qualifier": "not-stated",
+        "/economics/priceUsed/amountCredits": "not-stated",
+        "/economics/priceUsed/status": "not-stated",
+        "/economics/priceUsed/raw": "not-stated",
+        "/economics/priceUsed/qualifier": "not-stated",
+        "/economics/availabilityNotes": "not-stated",
+        "/economics/notes": "not-stated",
+        "/text/mechanicalNotes": "not-stated",
+        "/text/sourceNotes": "not-stated",
+        "/text/displayName": "not-stated",
+        "/armament/weaponMounts/0/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/1/targetSizeRuleKey": "not-yet-reviewed",
+        "/armament/weaponMounts/2/targetSizeRuleKey": "not-yet-reviewed"
+      },
+      "rules": {
+        "conditionalMechanics": [],
+        "globalRuleReferences": [],
+        "reviewStatus": "partial-source-probe"
+      }
+    }
+  }
+}

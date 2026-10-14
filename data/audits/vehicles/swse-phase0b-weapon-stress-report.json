@@ -1,0 +1,197 @@
+{
+  "phase": "0-B",
+  "schema": "swse.vehicle-weapon.phase0b.draft-0.3",
+  "vehicleSchema": "swse.vehicle.phase0b.draft-0.3",
+  "status": "PASS_SHAPE_AND_SEMANTIC_FIXTURES_NOT_CERTIFIED",
+  "weaponFixtureCount": 11,
+  "additionalVehicleFixtureCount": 4,
+  "installationCompositionCount": 2,
+  "assertionCount": 40,
+  "passedAssertions": 40,
+  "assertions": [
+    {
+      "name": "vehicle-schema-model-67-shrieker",
+      "pass": true
+    },
+    {
+      "name": "vehicle-schema-at-rt",
+      "pass": true
+    },
+    {
+      "name": "vehicle-schema-at-rt-civilian-option",
+      "pass": true
+    },
+    {
+      "name": "vehicle-schema-c-wing-ugly",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-laser-cannon-light",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-ion-cannon-light",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-concussion-missile-medium",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-concussion-missile-medium-ap",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-concussion-launcher-medium",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-tractor-beam",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-gravity-well-projector",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-space-mine-standard",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-turbolaser-heavy",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-shieldbuster-torpedo",
+      "pass": true
+    },
+    {
+      "name": "weapon-schema-ion-cannon-hapan-triple",
+      "pass": true
+    },
+    {
+      "name": "armor-piercing-is-acknowledged-composition-not-new-publication",
+      "pass": true
+    },
+    {
+      "name": "weapon-price-and-emplacement-separated",
+      "pass": true
+    },
+    {
+      "name": "shieldbuster-conditional-effects",
+      "pass": true
+    },
+    {
+      "name": "hapan-no-starship-area",
+      "pass": true
+    },
+    {
+      "name": "unarmed-unlisted-not-conflated-with-explicit-none",
+      "pass": true
+    },
+    {
+      "name": "exposed-crew-cover",
+      "pass": true
+    },
+    {
+      "name": "ugly-ranged-alternatives",
+      "pass": true
+    },
+    {
+      "name": "civilian-variant-not-fabricated-as-statblock",
+      "pass": true
+    },
+    {
+      "name": "ugly-torpedo-structured-carried-payload",
+      "pass": true
+    },
+    {
+      "name": "ugly-torpedo-count-not-launcher-count",
+      "pass": true
+    },
+    {
+      "name": "fire-linked-not-battery",
+      "pass": true
+    },
+    {
+      "name": "launcher-payload-damage-owner",
+      "pass": true
+    },
+    {
+      "name": "missile-splash-and-penetration-typed",
+      "pass": true
+    },
+    {
+      "name": "gravity-well-no-damage-fixed-dc",
+      "pass": true
+    },
+    {
+      "name": "tractor-attack-then-grapple",
+      "pass": true
+    },
+    {
+      "name": "mine-owned-trigger-damage",
+      "pass": true
+    },
+    {
+      "name": "starship-weapon-no-gunner-bonus",
+      "pass": true
+    },
+    {
+      "name": "all-weapon-source-claims-are-still-provisional",
+      "pass": true
+    },
+    {
+      "name": "old-six-vehicles-still-validate",
+      "pass": true
+    },
+    {
+      "name": "both-ywing-fixtures-still-validate",
+      "pass": true
+    },
+    {
+      "name": "negative-missing-required-field-is-rejected",
+      "pass": true
+    },
+    {
+      "name": "negative-unknown-effect-is-rejected",
+      "pass": true
+    },
+    {
+      "name": "negative-unmapped-field-is-rejected",
+      "pass": true
+    },
+    {
+      "name": "mount-reference-is-source-local-not-forced-to-intrinsic",
+      "pass": true
+    },
+    {
+      "name": "no-unresolved-special-raw-mechanics-cast-as-executable",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "sourceCorpus": [
+    "Starships of the Galaxy (weapons rules and modification table)",
+    "Core Rulebook (tractor beam)",
+    "Legacy Era Campaign Guide (Model 67 Shrieker)",
+    "Clone Wars Campaign Guide (AT-RT)",
+    "Scum and Villainy p66 (C-wing PDF)"
+  ],
+  "designDecisions": [
+    "Intrinsic weapon != printed installed mount != battery firing group != loaded payload",
+    "Typed effect records with explicit unresolved runtime predicate vocabulary",
+    "Unknown capacity and physical mount quantity remain null; no guessing",
+    "Shield-penetrating concussion missile composition is a sample configuration, not a certified published distinct identity",
+    "Fire-linking per installation configuration; do not create fire-linked weapon as battery",
+    "No-damage utility weapons are supported as first-class control profiles",
+    "Every vehicle retains common universal schema"
+  ],
+  "blockersBeforeFreeze": [
+    "Not a line-by-line canon source verification",
+    "Typed predicate and effect consumer grammar requires V2 design certification",
+    "Global SWSE damage scale and battery firing/range compatibility require rules authority mapping",
+    "Per-field nested epistemic status auditing is not certified",
+    "More edge cases should be tested, including mines, transport fuel, subsystem damage and allied NPC crew mechanics"
+  ]
+}

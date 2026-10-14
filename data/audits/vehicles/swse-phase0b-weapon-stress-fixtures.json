@@ -1,0 +1,1402 @@
+{
+  "phase": "0-B",
+  "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+  "sourceStatus": "illustrative-source-anchored-not-certified",
+  "weapons": {
+    "laser-cannon-light": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "laser-cannon-light",
+      "name": "Laser cannon, light",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Laser cannon, light"
+        }
+      ],
+      "weaponClass": "laser-cannon",
+      "proficiency": null,
+      "targetScale": [
+        "character",
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "intrinsic-weapon",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "normal",
+          "label": "Single shot",
+          "typed": {
+            "profileKind": "damage-attack",
+            "resolution": {
+              "kind": "attack-vs-defense",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": null,
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "dice",
+              "dice": "3d10",
+              "multiplier": 2,
+              "types": [
+                "energy"
+              ],
+              "sourceOwner": "weapon",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "none",
+              "widthSquares": null,
+              "heightSquares": null,
+              "radiusSquares": null,
+              "scale": null,
+              "onMiss": null,
+              "status": "not-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": 1,
+        "costCredits": 1500,
+        "availability": "Licensed",
+        "minimumVehicleSize": null,
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "source-stated"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": []
+    },
+    "ion-cannon-light": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "ion-cannon-light",
+      "name": "Ion cannon, light",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Ion cannon, light"
+        }
+      ],
+      "weaponClass": "ion-cannon",
+      "proficiency": null,
+      "targetScale": [
+        "character",
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "intrinsic-weapon",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "ion",
+          "label": "Ion strike",
+          "typed": {
+            "profileKind": "damage-attack",
+            "resolution": {
+              "kind": "attack-vs-defense",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": null,
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "dice",
+              "dice": "3d10",
+              "multiplier": 2,
+              "types": [
+                "ion"
+              ],
+              "sourceOwner": "weapon",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "none",
+              "widthSquares": null,
+              "heightSquares": null,
+              "radiusSquares": null,
+              "scale": null,
+              "onMiss": null,
+              "status": "not-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [
+        {
+          "mechanicKey": "ion-application",
+          "family": "ion",
+          "value": null,
+          "unit": null,
+          "targetCondition": null,
+          "scope": "damage packet",
+          "executionStatus": "source-structured",
+          "sourceSummary": "Ion type stays separate from normal energy damage"
+        }
+      ],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": 1,
+        "costCredits": 2000,
+        "availability": "Licensed",
+        "minimumVehicleSize": null,
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "source-stated"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": []
+    },
+    "concussion-missile-medium": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "concussion-missile-medium",
+      "name": "Concussion missile, medium",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Concussion missile, medium"
+        }
+      ],
+      "weaponClass": "concussion-missile",
+      "proficiency": null,
+      "targetScale": [
+        "character",
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "payload",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "standard",
+          "label": "Medium concussion missile",
+          "typed": {
+            "profileKind": "damage-attack",
+            "resolution": {
+              "kind": "attack-vs-defense",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": null,
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "dice",
+              "dice": "9d10",
+              "multiplier": 2,
+              "types": [],
+              "sourceOwner": "payload",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "splash",
+              "widthSquares": null,
+              "heightSquares": null,
+              "radiusSquares": 4,
+              "scale": null,
+              "onMiss": null,
+              "status": "source-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [
+        {
+          "mechanicKey": "concussion-splash",
+          "family": "splash",
+          "value": 4,
+          "unit": "starship squares",
+          "targetCondition": null,
+          "scope": "target area",
+          "executionStatus": "source-structured",
+          "sourceSummary": "Concussion missiles have four-square splash radius"
+        }
+      ],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved",
+        "/profilesTyped/0/typed/damage/types": "not-stated",
+        "/profilesTyped/0/typed/area/scale": "unresolved"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": 0,
+        "costCredits": 750,
+        "availability": "Military",
+        "minimumVehicleSize": null,
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "source-stated"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": []
+    },
+    "concussion-missile-medium-ap": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "concussion-missile-medium-ap",
+      "name": "Armor-piercing medium concussion missile",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Armor-Piercing Concussion Missiles"
+        }
+      ],
+      "weaponClass": "concussion-missile",
+      "proficiency": null,
+      "targetScale": [
+        "character",
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "payload",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "armor-piercing",
+          "label": "Armor-piercing payload",
+          "typed": {
+            "profileKind": "damage-attack",
+            "resolution": {
+              "kind": "attack-vs-defense",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": null,
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "dice",
+              "dice": "9d10",
+              "multiplier": 2,
+              "types": [],
+              "sourceOwner": "payload",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "splash",
+              "widthSquares": null,
+              "heightSquares": null,
+              "radiusSquares": 4,
+              "scale": null,
+              "onMiss": null,
+              "status": "source-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [
+              {
+                "effectKey": "penetration",
+                "kind": "penetrate-dr-sr",
+                "target": "target",
+                "value": 10,
+                "unit": "DR/SR",
+                "predicate": null,
+                "resolutionStatus": "needs-consumer",
+                "note": "Ignores first 10 of DR or SR",
+                "conditionAst": null
+              },
+              {
+                "effectKey": "precision-penalty",
+                "kind": "modify-roll",
+                "target": "attacker",
+                "value": -5,
+                "unit": "attack bonus",
+                "predicate": null,
+                "resolutionStatus": "needs-consumer",
+                "note": "Armor-piercing variant attack penalty",
+                "conditionAst": null
+              }
+            ],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [
+        {
+          "mechanicKey": "armor-piercing-pen",
+          "family": "penetration",
+          "value": 10,
+          "unit": "DR/SR",
+          "targetCondition": null,
+          "scope": "attack effect",
+          "executionStatus": "source-structured",
+          "sourceSummary": "Armor-piercing medium concussion missile option"
+        },
+        {
+          "mechanicKey": "armor-piercing-penalty",
+          "family": "other",
+          "value": -5,
+          "unit": "attack bonus",
+          "targetCondition": null,
+          "scope": "attack roll",
+          "executionStatus": "source-structured",
+          "sourceSummary": "The option pays a hit penalty"
+        }
+      ],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved",
+        "/profilesTyped/0/typed/damage/types": "not-stated",
+        "/profilesTyped/0/typed/area/scale": "unresolved"
+      },
+      "baseWeaponKey": "concussion-missile-medium",
+      "installationConstraints": {
+        "emplacementPoints": null,
+        "costCredits": null,
+        "availability": null,
+        "minimumVehicleSize": null,
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "unresolved"
+      },
+      "identityStatus": "composed-sample",
+      "conditionalMechanics": []
+    },
+    "concussion-launcher-medium": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "concussion-launcher-medium",
+      "name": "Concussion missile launcher, medium",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Concussion missile launcher, medium"
+        }
+      ],
+      "weaponClass": "missile-launcher",
+      "proficiency": null,
+      "targetScale": [
+        "character",
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "delivery-platform",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "fire-loaded",
+          "label": "Fire loaded concussion missile",
+          "typed": {
+            "profileKind": "delivery",
+            "resolution": {
+              "kind": "attack-vs-defense",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": null,
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "payload-derived",
+              "dice": null,
+              "multiplier": null,
+              "types": [],
+              "sourceOwner": "payload",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "none",
+              "widthSquares": null,
+              "heightSquares": null,
+              "radiusSquares": null,
+              "scale": null,
+              "onMiss": null,
+              "status": "not-stated"
+            },
+            "resource": {
+              "resourceFamily": "concussion-missile",
+              "capacity": 16,
+              "capacityUnit": "missiles",
+              "consumesPerUse": 1,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "source-stated",
+              "stockOwner": "launcher",
+              "expenditureBasis": "per-fired-payload"
+            },
+            "effects": [],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [],
+      "compatiblePayloadKeys": [
+        "concussion-missile-medium",
+        "concussion-missile-medium-ap"
+      ],
+      "deliveryMechanism": "launcher",
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": 5,
+        "costCredits": 3000,
+        "availability": "Military",
+        "minimumVehicleSize": null,
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "source-stated"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": []
+    },
+    "tractor-beam": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "tractor-beam",
+      "name": "Tractor beam",
+      "sourceEntries": [
+        {
+          "book": "Core Rulebook",
+          "page": null,
+          "printedName": "Tractor beam"
+        }
+      ],
+      "weaponClass": "tractor-beam",
+      "proficiency": null,
+      "targetScale": [
+        "character",
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "special-emitter",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "grapple",
+          "label": "Tractor beam capture",
+          "typed": {
+            "profileKind": "control-attack",
+            "resolution": {
+              "kind": "attack-then-opposed",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": "opposed grapple check",
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "none",
+              "dice": null,
+              "multiplier": null,
+              "types": [],
+              "sourceOwner": "none",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "none",
+              "widthSquares": null,
+              "heightSquares": null,
+              "radiusSquares": null,
+              "scale": null,
+              "onMiss": null,
+              "status": "not-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [
+              {
+                "effectKey": "capture",
+                "kind": "grapple",
+                "target": "target",
+                "value": null,
+                "unit": null,
+                "predicate": null,
+                "resolutionStatus": "needs-consumer",
+                "note": "On opposed grapple success, grabbed",
+                "conditionAst": null
+              },
+              {
+                "effectKey": "reposition",
+                "kind": "pull",
+                "target": "target",
+                "value": 10,
+                "unit": "character-scale squares",
+                "predicate": {
+                  "subject": "target",
+                  "attribute": "grabbed",
+                  "operator": "equals",
+                  "value": true,
+                  "unit": null,
+                  "status": "structured"
+                },
+                "resolutionStatus": "needs-consumer",
+                "note": "Or 1 starship-scale square per sustained check",
+                "conditionAst": null
+              }
+            ],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [
+        {
+          "mechanicKey": "tractor-sequence",
+          "family": "tractor",
+          "value": null,
+          "unit": null,
+          "targetCondition": null,
+          "scope": "attack resolution",
+          "executionStatus": "source-structured",
+          "sourceSummary": "Reflex hit, then opposed grapple; subsequent opposed checks maintain or move"
+        }
+      ],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": null,
+        "costCredits": null,
+        "availability": null,
+        "minimumVehicleSize": null,
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "unresolved"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": []
+    },
+    "gravity-well-projector": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "gravity-well-projector",
+      "name": "Gravity well projector",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Gravity well projector"
+        }
+      ],
+      "weaponClass": "gravity-well",
+      "proficiency": null,
+      "targetScale": [
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "special-emitter",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "gravity-field",
+          "label": "Project interdiction field",
+          "typed": {
+            "profileKind": "area-control",
+            "resolution": {
+              "kind": "attack-vs-fixed",
+              "defense": "reflex",
+              "targetNumber": 10,
+              "followup": null,
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "none",
+              "dice": null,
+              "multiplier": null,
+              "types": [],
+              "sourceOwner": "none",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "square",
+              "widthSquares": 4,
+              "heightSquares": 4,
+              "radiusSquares": null,
+              "scale": "starship",
+              "onMiss": null,
+              "status": "source-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [
+              {
+                "effectKey": "interdiction",
+                "kind": "suppress-hyperdrive",
+                "target": "starship",
+                "value": null,
+                "unit": null,
+                "predicate": {
+                  "subject": "target",
+                  "attribute": "position",
+                  "operator": "begins-turn-in-area",
+                  "value": "gravity-field",
+                  "unit": null,
+                  "status": "structured"
+                },
+                "resolutionStatus": "needs-consumer",
+                "note": "Starships starting their turn in field cannot activate hyperdrive that turn",
+                "conditionAst": null
+              }
+            ],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": {
+              "node": "atom",
+              "subject": "action",
+              "attribute": "mode",
+              "operator": "eq",
+              "value": "project-field",
+              "scale": "starship",
+              "status": "structured"
+            }
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [
+        {
+          "mechanicKey": "field-gravity",
+          "family": "interdiction",
+          "value": null,
+          "unit": null,
+          "targetCondition": null,
+          "scope": "4x4 starship-scale area",
+          "executionStatus": "source-structured",
+          "sourceSummary": "No hit point damage; attack vs fixed Reflex 10"
+        }
+      ],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": 5,
+        "costCredits": 50000,
+        "availability": "Military",
+        "minimumVehicleSize": "Colossal",
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "source-stated"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": []
+    },
+    "space-mine-standard": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "space-mine-standard",
+      "name": "Space mine, standard",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Space mine, standard"
+        }
+      ],
+      "weaponClass": "space-mine",
+      "proficiency": null,
+      "targetScale": [
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "deployable",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "detonate",
+          "label": "Mine detonation",
+          "typed": {
+            "profileKind": "mine-trigger",
+            "resolution": {
+              "kind": "automated-attack",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": null,
+              "attackBonusIntrinsic": 5,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "dice",
+              "dice": "7d10",
+              "multiplier": 2,
+              "types": [],
+              "sourceOwner": "payload",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "single-square",
+              "widthSquares": 1,
+              "heightSquares": 1,
+              "radiusSquares": null,
+              "scale": "starship",
+              "onMiss": "half damage",
+              "status": "source-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [
+              {
+                "effectKey": "proximity",
+                "kind": "damage-on-enter",
+                "target": "vehicles in square",
+                "value": null,
+                "unit": null,
+                "predicate": {
+                  "subject": "target",
+                  "attribute": "position",
+                  "operator": "in-area",
+                  "value": "deployed mine square",
+                  "unit": null,
+                  "status": "structured"
+                },
+                "resolutionStatus": "needs-consumer",
+                "note": "Half damage on miss",
+                "conditionAst": null
+              }
+            ],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [
+        {
+          "mechanicKey": "mine-drop",
+          "family": "mine",
+          "value": null,
+          "unit": null,
+          "targetCondition": null,
+          "scope": "deploy",
+          "executionStatus": "source-structured",
+          "sourceSummary": "Mine can be placed during movement as a swift action; triggers when ship enters square"
+        }
+      ],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved",
+        "/profilesTyped/0/typed/damage/types": "not-stated"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": 0,
+        "costCredits": 1000,
+        "availability": "Military",
+        "minimumVehicleSize": null,
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "source-stated"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": []
+    },
+    "turbolaser-heavy": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "turbolaser-heavy",
+      "name": "Turbolaser, heavy",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Turbolaser, heavy"
+        }
+      ],
+      "weaponClass": "turbolaser",
+      "proficiency": null,
+      "targetScale": [
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "intrinsic-weapon",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "normal",
+          "label": "Heavy turbolaser fire",
+          "typed": {
+            "profileKind": "damage-attack",
+            "resolution": {
+              "kind": "attack-vs-defense",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": null,
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "dice",
+              "dice": "7d10",
+              "multiplier": 5,
+              "types": [
+                "energy"
+              ],
+              "sourceOwner": "weapon",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "none",
+              "widthSquares": null,
+              "heightSquares": null,
+              "radiusSquares": null,
+              "scale": null,
+              "onMiss": null,
+              "status": "not-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [
+        {
+          "mechanicKey": "capital-target-size",
+          "family": "target-size",
+          "value": -20,
+          "unit": "attack bonus",
+          "targetCondition": {
+            "subject": "target",
+            "attribute": "size",
+            "operator": "less-than",
+            "value": "Colossal",
+            "unit": null,
+            "status": "requires-ontology"
+          },
+          "scope": "attack roll",
+          "executionStatus": "source-structured",
+          "sourceSummary": "Capital weapon smaller-than-Colossal penalty requires shared size authority"
+        }
+      ],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": 10,
+        "costCredits": 20000,
+        "availability": "Military",
+        "minimumVehicleSize": "Colossal",
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "source-stated"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": []
+    },
+    "shieldbuster-torpedo": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "shieldbuster-torpedo",
+      "name": "Shieldbuster torpedo",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Shieldbuster torpedo"
+        }
+      ],
+      "weaponClass": "shieldbuster-torpedo",
+      "proficiency": null,
+      "targetScale": [
+        "character",
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "payload",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "shieldbuster",
+          "label": "Shield-disrupting torpedo",
+          "typed": {
+            "profileKind": "damage-attack",
+            "resolution": {
+              "kind": "attack-vs-defense",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": null,
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "dice",
+              "dice": "10d10",
+              "multiplier": 2,
+              "types": [],
+              "sourceOwner": "payload",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "none",
+              "widthSquares": null,
+              "heightSquares": null,
+              "radiusSquares": null,
+              "scale": null,
+              "onMiss": null,
+              "status": "not-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [
+              {
+                "effectKey": "reduce-shields",
+                "kind": "shield-change",
+                "target": "target.shields",
+                "value": -10,
+                "unit": "SR",
+                "predicate": {
+                  "subject": "attack",
+                  "attribute": "damage-vs-sr",
+                  "operator": "greater-than",
+                  "value": "target.shield-rating",
+                  "unit": null,
+                  "status": "requires-ontology"
+                },
+                "resolutionStatus": "needs-consumer",
+                "note": "Shieldbuster reduces SR by 10 instead of 5 when the attack exceeds SR",
+                "conditionAst": null
+              },
+              {
+                "effectKey": "nonshield-half",
+                "kind": "damage-adjustment",
+                "target": "damage-to-nonshield",
+                "value": 0.5,
+                "unit": "damage multiplier",
+                "predicate": {
+                  "subject": "damage",
+                  "attribute": "recipient",
+                  "operator": "not-equals",
+                  "value": "shield",
+                  "unit": null,
+                  "status": "requires-ontology"
+                },
+                "resolutionStatus": "needs-consumer",
+                "note": "Half damage against anything other than shields",
+                "conditionAst": null
+              }
+            ],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved",
+        "/profilesTyped/0/typed/damage/types": "not-stated"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": null,
+        "costCredits": null,
+        "availability": null,
+        "minimumVehicleSize": null,
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "unresolved"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": [
+        {
+          "ruleKey": "shieldbuster-target-shields",
+          "family": "shield",
+          "trigger": "on-hit",
+          "condition": {
+            "node": "atom",
+            "subject": "target",
+            "attribute": "currentShieldRating",
+            "operator": "gt",
+            "value": 0,
+            "scale": null,
+            "status": "structured"
+          },
+          "effects": [
+            {
+              "effectKey": "shieldbuster-special",
+              "kind": "alter-shield",
+              "targetPath": "target.defenses.shieldRating",
+              "operation": "other",
+              "value": null,
+              "unit": "SR",
+              "timing": "on-hit",
+              "status": "needs-ontology",
+              "sourceSummary": "Special SR interaction requires exact effect verification"
+            }
+          ],
+          "printedRuleSummary": "Shieldbuster has effects based on the target shielding; specifics pending source certification.",
+          "authorityState": "source-sample",
+          "consumerStatus": "schema-only"
+        }
+      ]
+    },
+    "ion-cannon-hapan-triple": {
+      "schemaVersion": "swse.vehicle-weapon.phase0b.draft-0.4",
+      "weaponKey": "ion-cannon-hapan-triple",
+      "name": "Hapan triple ion cannon",
+      "sourceEntries": [
+        {
+          "book": "Starships of the Galaxy",
+          "page": null,
+          "printedName": "Hapan triple ion cannon"
+        }
+      ],
+      "weaponClass": "ion-cannon",
+      "proficiency": null,
+      "targetScale": [
+        "character",
+        "starship"
+      ],
+      "attackProfiles": [],
+      "payloadProfiles": [],
+      "operation": [],
+      "ammunition": [],
+      "notes": null,
+      "definitionKind": "intrinsic-weapon",
+      "authorityStatus": "source-sample",
+      "profilesTyped": [
+        {
+          "profileKey": "ion-point-defense",
+          "label": "Hapan triple ion attack",
+          "typed": {
+            "profileKind": "damage-attack",
+            "resolution": {
+              "kind": "attack-vs-defense",
+              "defense": "reflex",
+              "targetNumber": null,
+              "followup": null,
+              "attackBonusIntrinsic": null,
+              "status": "source-stated"
+            },
+            "damage": {
+              "kind": "dice",
+              "dice": "5d10",
+              "multiplier": 5,
+              "types": [
+                "ion"
+              ],
+              "sourceOwner": "weapon",
+              "status": "source-stated"
+            },
+            "area": {
+              "shape": "none",
+              "widthSquares": null,
+              "heightSquares": null,
+              "radiusSquares": null,
+              "scale": null,
+              "onMiss": null,
+              "status": "not-stated"
+            },
+            "resource": {
+              "resourceFamily": "none",
+              "capacity": null,
+              "capacityUnit": null,
+              "consumesPerUse": null,
+              "consumptionRule": null,
+              "reloadAction": null,
+              "status": "not-applicable",
+              "stockOwner": "not-applicable",
+              "expenditureBasis": "none"
+            },
+            "effects": [
+              {
+                "effectKey": "area-prohibition",
+                "kind": "attack-restriction",
+                "target": "attacker",
+                "value": null,
+                "unit": null,
+                "predicate": {
+                  "subject": "attack",
+                  "attribute": "shape",
+                  "operator": "equals",
+                  "value": "starship-scale-area",
+                  "unit": null,
+                  "status": "requires-ontology"
+                },
+                "resolutionStatus": "needs-consumer",
+                "note": "Cannot make starship-scale area attacks even though autofire capable",
+                "conditionAst": null
+              }
+            ],
+            "specialConditions": [],
+            "executionStatus": "source-structured",
+            "conditionAst": null
+          }
+        }
+      ],
+      "configurationStates": [],
+      "intrinsicRules": [
+        {
+          "mechanicKey": "hapan-autofire",
+          "family": "autofire",
+          "value": null,
+          "unit": null,
+          "targetCondition": null,
+          "scope": "attack mode",
+          "executionStatus": "source-structured",
+          "sourceSummary": "Autofire mode exists but starship-scale area attack is not permitted"
+        },
+        {
+          "mechanicKey": "hapan-point-defense",
+          "family": "target-size",
+          "value": 0,
+          "unit": "attack size penalty",
+          "targetCondition": null,
+          "scope": "attack roll",
+          "executionStatus": "source-structured",
+          "sourceSummary": "No smaller-than-Colossal size penalty, point-defense ranges"
+        }
+      ],
+      "compatiblePayloadKeys": [],
+      "deliveryMechanism": null,
+      "fieldStates": {
+        "/sourceEntries/0/page": "unresolved"
+      },
+      "baseWeaponKey": null,
+      "installationConstraints": {
+        "emplacementPoints": null,
+        "costCredits": null,
+        "availability": null,
+        "minimumVehicleSize": null,
+        "installationScale": null,
+        "restrictionNotes": null,
+        "status": "unresolved"
+      },
+      "identityStatus": "unreconciled",
+      "conditionalMechanics": []
+    }
+  },
+  "installationCompositions": [
+    {
+      "fixtureKey": "linked-double-laser",
+      "weaponDefinitionKey": "laser-cannon-light",
+      "installedCount": 2,
+      "installationKind": "fire-linked",
+      "batteryCount": null,
+      "mountCount": null,
+      "states": [
+        {
+          "stateKey": "linked",
+          "label": "Linked",
+          "kind": "fire-link",
+          "linkedCount": 2,
+          "damageBonusDice": "+1d10",
+          "capacityMultiplier": null,
+          "consumptionRule": "two launchers spend two missiles only if launcher payloads are linked",
+          "switchAction": "swift (optional link only)",
+          "enabledProfiles": [
+            "normal"
+          ],
+          "installationOnly": true,
+          "sourceStatus": "sample-composition"
+        },
+        {
+          "stateKey": "unlinked",
+          "label": "Unlinked",
+          "kind": "fire-link",
+          "linkedCount": 1,
+          "damageBonusDice": null,
+          "capacityMultiplier": null,
+          "consumptionRule": "one shot per launcher",
+          "switchAction": "swift (optional link only)",
+          "enabledProfiles": [
+            "normal"
+          ],
+          "installationOnly": true,
+          "sourceStatus": "sample-composition"
+        }
+      ],
+      "mechanics": [
+        "Fire-linked pair increases dice; it is NOT a weapon battery; published option permits toggle only where installed as optional fire link."
+      ]
+    },
+    {
+      "fixtureKey": "capital-weapon-battery",
+      "weaponDefinitionKey": "turbolaser-heavy",
+      "installedCount": null,
+      "installationKind": "weapon-battery",
+      "batteryCount": 2,
+      "mountCount": null,
+      "states": [],
+      "mechanics": [
+        "Battery salvo/proximity spread belong to fire group and action rules; counts do not prove physical gun mounts."
+      ]
+    }
+  ]
+}

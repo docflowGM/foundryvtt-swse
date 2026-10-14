@@ -1,0 +1,129 @@
+{
+  "phase": "0-B",
+  "schemaVersion": "swse.vehicle.global-rules.phase0b.draft-0.4",
+  "certification": "design-probes-not-certified",
+  "rules": [
+    {
+      "ruleKey": "core-two-combat-scales",
+      "book": "Core Rulebook",
+      "page": 166,
+      "section": "Vehicle Combat / Scale",
+      "family": "scale",
+      "summary": "Character squares are fixed; starship squares are abstract with no universal meter conversion.",
+      "data": {
+        "characterSquareMeters": 1.5,
+        "starshipSquareMeters": null,
+        "autoConvert": false
+      },
+      "status": "source-checked-text"
+    },
+    {
+      "ruleKey": "core-capital-weapon-small-target",
+      "book": "Core Rulebook",
+      "page": 170,
+      "section": "Capital ship weapon attacks",
+      "family": "target-size",
+      "summary": "Eligible capital-ship weapons take an attack penalty versus targets smaller than Colossal; point defense is exempt.",
+      "data": {
+        "penalty": -20,
+        "targetSizeBelow": "Colossal",
+        "attackerMinimumSize": "Colossal (frigate)",
+        "pointDefenseException": true
+      },
+      "status": "pdf-verified-rule-text"
+    },
+    {
+      "ruleKey": "core-weapon-battery-narrow-salvo",
+      "book": "Core Rulebook",
+      "page": 170,
+      "section": "Weapon Batteries",
+      "family": "battery-salvo",
+      "summary": "Up to six identical weapons per battery; +2 attack per aiding gunner, no assisting attack roll; one extra die per 3 points hit margin up to remaining weapons; extra dice precede multiplier; printed attack bonuses include battery assistance.",
+      "data": {
+        "weaponsPerBatteryMax": 6,
+        "sameWeaponTypeRequired": true,
+        "bonusPerAidingGunner": 2,
+        "aidingRollRequired": false,
+        "extraDiePerMargin": 3,
+        "extraDicePerAdditionalHit": 1,
+        "additionalHitsCap": "weaponsPerBattery - 1",
+        "extraDiceBeforeMultiplier": true,
+        "printedBonusIncludesBattery": true
+      },
+      "status": "pdf-verified-rule-text"
+    },
+    {
+      "ruleKey": "core-battery-aids-other-battery",
+      "book": "Core Rulebook",
+      "page": 170,
+      "section": "Weapon Batteries",
+      "family": "battery-aid",
+      "summary": "One gunner makes attack vs Reflex 10 for assisting battery; success grants +2 per weapon in aiding battery to target battery attack, but no extra damage dice.",
+      "data": {
+        "aidAttackVsReflex": 10,
+        "bonusPerWeaponInAidingBattery": 2,
+        "extraDamageDice": 0
+      },
+      "status": "pdf-verified-rule-text"
+    },
+    {
+      "ruleKey": "sotg-battery-proximity-spread",
+      "book": "Starships of the Galaxy",
+      "page": null,
+      "section": "Handling Large Battles",
+      "family": "battery-proximity",
+      "summary": "Optional area attack in one starship-scale square with attack penalty.",
+      "data": {
+        "attackPenalty": -5,
+        "areaWidthSquares": 1,
+        "areaHeightSquares": 1,
+        "areaScale": "starship"
+      },
+      "status": "source-checked-text"
+    },
+    {
+      "ruleKey": "sotg-fire-link-projectile-expenditure",
+      "book": "Starships of the Galaxy",
+      "page": null,
+      "section": "Fire-Linked Weapons",
+      "family": "fire-link",
+      "summary": "Linked missiles and torpedoes consume ammunition equal to number of linked launchers used.",
+      "data": {
+        "resourceOwner": "launcher",
+        "expenditureBasis": "per-linked-launcher",
+        "perLauncher": 1
+      },
+      "status": "source-checked-text"
+    },
+    {
+      "ruleKey": "core-starship-scale-area-restriction",
+      "book": "Core Rulebook",
+      "page": null,
+      "section": "Area Attacks",
+      "family": "scale",
+      "summary": "Normal area attacks treat only one target at starship scale, unless expressly stated as starship-scale area attacks.",
+      "data": {
+        "defaultAreaTargeting": "single-target",
+        "explicitStarshipAreaException": true
+      },
+      "status": "source-checked-text-needs-pdf"
+    },
+    {
+      "ruleKey": "core-vehicle-damage-multiplier",
+      "book": "Core Rulebook",
+      "page": null,
+      "section": "Vehicle Damage",
+      "family": "damage",
+      "summary": "Vehicle weapon damage multiplier applies after the base damage roll.",
+      "data": {
+        "formulaOrder": [
+          "base-roll",
+          "add-modifiers-before-multiplier-if-supported",
+          "multiply"
+        ],
+        "unverifiedModifierPriority": true
+      },
+      "status": "partial-source-checked-text"
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "phase": "0-B",
+  "status": "DRAFT_VALIDATED_NOT_CANON_CERTIFIED",
+  "schemaVersion": "swse.vehicle.phase0b.draft-0.3",
+  "sampleSize": 6,
+  "jsonSchemaValid": true,
+  "schemaErrors": [],
+  "semanticAssertions": {
+    "six fixtures": true,
+    "identical fixed field paths": true,
+    "AT-AT craft capacity OR, not AND": true,
+    "Coralskipper living CON not discarded": true,
+    "Coralskipper organic shield typed": true,
+    "Coralskipper 3 mutually exclusive modes": true,
+    "Golan mobile and hyperdrive": true,
+    "Golan SR-loss structured": true,
+    "X-wing alternate conditional skills": true,
+    "DP-2 zero crew preserved": true,
+    "DP-2 droid plus starfighter/ground vehicle": true,
+    "X-wing astromech has role-specific +5 cover": true,
+    "All weapon group station links unresolved until stations certified": true,
+    "DP-2 autonomous swift action limits": true,
+    "Capital weapon battery gunner counts": true,
+    "Capital printed quantity not mistaken as mount count": true,
+    "Capital battery count independent of physical mount count": true,
+    "Golan battery counts preserved": true,
+    "All fixtures draft and not certified": true,
+    "No legacy runtime IDs assigned": true
+  },
+  "topLevelPropertyCount": 22,
+  "fieldStructureUniform": true,
+  "sourceCoverage": [
+    {
+      "fixture": "at-at",
+      "name": "AT-AT",
+      "book": "Core Rulebook",
+      "printedPage": 175,
+      "weaponGroups": 2,
+      "printedActions": 0,
+      "typedModes": 0,
+      "missingFieldStates": 89
+    },
+    {
+      "fixture": "x-wing",
+      "name": "Incom T-65B X-wing Starfighter",
+      "book": "Core Rulebook",
+      "printedPage": 178,
+      "weaponGroups": 2,
+      "printedActions": 0,
+      "typedModes": 0,
+      "missingFieldStates": 79
+    },
+    {
+      "fixture": "acclamator",
+      "name": "Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship",
+      "book": "Starships of the Galaxy",
+      "printedPage": 56,
+      "weaponGroups": 3,
+      "printedActions": 0,
+      "typedModes": 0,
+      "missingFieldStates": 84
+    },
+    {
+      "fixture": "golan-viii",
+      "name": "Golan VIII Space Defense Platform",
+      "book": "Legacy Era Campaign Guide",
+      "printedPage": 152,
+      "weaponGroups": 4,
+      "printedActions": 1,
+      "typedModes": 0,
+      "missingFieldStates": 81
+    },
+    {
+      "fixture": "coralskipper",
+      "name": "Coralskipper",
+      "book": "Starships of the Galaxy",
+      "printedPage": 73,
+      "weaponGroups": 2,
+      "printedActions": 0,
+      "typedModes": 3,
+      "missingFieldStates": 84
+    },
+    {
+      "fixture": "dp2",
+      "name": "DP-2 Probe Droid",
+      "book": "Scavenger's Guide to Droids",
+      "printedPage": 82,
+      "weaponGroups": 3,
+      "printedActions": 6,
+      "typedModes": 0,
+      "missingFieldStates": 82
+    }
+  ],
+  "schemaChanges": [
+    "Added armament.attackPatterns to preserve AND/OR printed attack alternatives.",
+    "Added capacity.carriedCraftConfigurations for mutually exclusive vehicle-carriage alternatives.",
+    "Added systems.capabilityModeGroups for variable organic and other subsystems.",
+    "Added conditionalAttackModifiers and firingCountPrinted on weaponMount without inferring physical weapon count.",
+    "Added rule.effects typed mechanical operation declarations and per-turn action limits.",
+    "Separated printed batteries/attack groups from inferred physical weapon mount counts.",
+    "Separated printed gunner/pilot roles from unverified crew station keys.",
+    "Added role-specific cover modifiers for X-wing astromech +5.",
+    "Added explicit dual-category droid-vehicle classification and source representation labels.",
+    "Removed category-based inference of inapplicable hyperdrive; source-specific field states only.",
+    "Kept every common field across all fixtures; categories do not filter schemas."
+  ],
+  "unresolvedDesignIssues": [
+    "Typed predicate grammar for conditions is not yet frozen: string conditions are auditable but not executable.",
+    "Canonical vehicle weapon definition keys require Phase 1 identity reconciliation, not arbitrary name matching.",
+    "Published weapon attack modifiers are crew-statblock values, not reusable intrinsic weapon bonuses.",
+    "Source labels and a selected numeric page are validated, but all six records are explicitly non-certified.",
+    "The draft schema does not guarantee field-state completeness or logical cross-field consistency without supplemental checks.",
+    "Advanced vehicle mechanics require a formal operation vocabulary and runtime consumer mapping before implementation."
+  ],
+  "variantFixtureChecks": {
+    "count": 2,
+    "schemaValid": true,
+    "distinctSourceEntries": true,
+    "differentPublishedShieldRatingsPreserved": true
+  },
+  "weaponAuthoritySchemaStructuralValidation": true,
+  "weaponAuthorityFixtureCoverage": "not-performed: independent intrinsic weapon claims require separate identity reconciliation",
+  "fixtureReferentialChecks": {
+    "uniqueVehicleSourceKeys": true,
+    "uniqueLocalArmamentGroupKeys": true,
+    "attackPatternsReferenceExistingGroups": true,
+    "noInventedCanonicalWeaponLink": true,
+    "noInventedPhysicalMountCounts": true,
+    "fixedFieldNullsHaveStatuses": true
+  },
+  "certificationGatesNotMet": [
+    "Full primary-source line-by-line transcription review for each record (Phase 2+).",
+    "Typed operational predicate grammar and special-rule semantics, including Coralskipper, Golan and DP-2.",
+    "Separate intrinsic weapon authority and canonical weapon identity verification.",
+    "Publication/variant identity reconciliation and cross-book conflicts.",
+    "Full corpus stress testing beyond these six deliberately challenging samples.",
+    "Certification-grade field-status audit of nulls within variable-length nested arrays."
+  ],
+  "sourceCheckedAgainst": {
+    "at-at": "Core Rulebook p175",
+    "x-wing": "Core Rulebook p178",
+    "acclamator": "Starships of the Galaxy p56",
+    "golan-viii": "Legacy Era Campaign Guide p152-153",
+    "coralskipper": "Starships of the Galaxy p73",
+    "dp2": "Scavenger's Guide to Droids p82 (vehicle and droid entries)"
+  }
+}

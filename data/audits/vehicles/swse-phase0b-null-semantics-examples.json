@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+  "disclaimer": "Synthetic schema examples; NOT printed SWSE vehicle claims",
+  "examples": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "example-confirmed-unarmed",
+        "name": "ILLUSTRATIVE confirmed unarmed vehicle"
+      },
+      "publication": {
+        "book": "Illustrative example (not published)",
+        "page": null
+      },
+      "classification": {},
+      "challenge": {},
+      "geometry": {},
+      "movement": {},
+      "hyperspace": null,
+      "defenses": {
+        "shieldRating": null,
+        "reflex": 0
+      },
+      "durability": {},
+      "abilities": {},
+      "combat": {},
+      "armament": null,
+      "crew": {},
+      "capacity": {},
+      "systems": {},
+      "modifications": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {
+        "/hyperspace": "not-applicable",
+        "/armament": "explicitly-none",
+        "/defenses/shieldRating": "explicitly-none"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "example-not-yet-transcribed",
+        "name": "ILLUSTRATIVE pending review"
+      },
+      "publication": {
+        "book": "Illustrative example (not published)",
+        "page": null
+      },
+      "classification": {},
+      "challenge": {},
+      "geometry": {},
+      "movement": {},
+      "hyperspace": {},
+      "defenses": {},
+      "durability": {},
+      "abilities": {},
+      "combat": {},
+      "armament": {},
+      "crew": {},
+      "capacity": {},
+      "systems": {},
+      "modifications": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {
+        "/armament": "not-yet-reviewed",
+        "/hyperspace": "not-yet-reviewed",
+        "/defenses/shieldRating": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "not-yet-reviewed"
+      }
+    }
+  ]
+}

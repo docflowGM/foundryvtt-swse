@@ -1,0 +1,1892 @@
+{
+  "phase": "0-B",
+  "version": "draft-0.4",
+  "status": "structural-regression-pass; authority and nested-field status gates incomplete",
+  "vehicleCount": 12,
+  "weaponCount": 11,
+  "totalTestCount": 31,
+  "passedTestCount": 31,
+  "checks": [
+    {
+      "name": "vehicle-schema swse-phase0b-dryrun-fixtures.json at-at",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-dryrun-fixtures.json x-wing",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-dryrun-fixtures.json acclamator",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-dryrun-fixtures.json golan-viii",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-dryrun-fixtures.json coralskipper",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-dryrun-fixtures.json dp2",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-additional-vehicle-fixtures.json model-67-shrieker",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-additional-vehicle-fixtures.json at-rt",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-additional-vehicle-fixtures.json at-rt-civilian-option",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-additional-vehicle-fixtures.json c-wing-ugly",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-variant-fixtures.json 0",
+      "passed": true
+    },
+    {
+      "name": "vehicle-schema swse-phase0b-variant-fixtures.json 1",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema laser-cannon-light",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema ion-cannon-light",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema concussion-missile-medium",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema concussion-missile-medium-ap",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema concussion-launcher-medium",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema tractor-beam",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema gravity-well-projector",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema space-mine-standard",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema turbolaser-heavy",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema shieldbuster-torpedo",
+      "passed": true
+    },
+    {
+      "name": "weapon-schema ion-cannon-hapan-triple",
+      "passed": true
+    },
+    {
+      "name": "blank-template",
+      "passed": true
+    },
+    {
+      "name": "reject-unknown-condition-attribute",
+      "passed": true
+    },
+    {
+      "name": "reject-uncontrolled-ammo-owner",
+      "passed": true
+    },
+    {
+      "name": "reject-missing-common-rules-group",
+      "passed": true
+    },
+    {
+      "name": "reject-unmodeled-effect-property",
+      "passed": true
+    },
+    {
+      "name": "global-rules-unique",
+      "passed": true
+    },
+    {
+      "name": "global-rules-all-not-certified",
+      "passed": true
+    },
+    {
+      "name": "variant-SR-25-vs-10",
+      "passed": true
+    }
+  ],
+  "globalRules": 8,
+  "fieldStatusDeepAudit": {
+    "totalUnclassifiedNullOrEmpty": 2124,
+    "totalStaleStatePaths": 3,
+    "existingStatusCounts": {
+      "not-stated": 490,
+      "not-applicable": 3,
+      "explicitly-none": 9,
+      "not-yet-reviewed": 28
+    },
+    "byVehicle": {
+      "swse-phase0b-dryrun-fixtures.json/at-at": {
+        "nullCount": 147,
+        "emptyArrayCount": 62,
+        "missingStatusCount": 118,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/exposedStations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/occupantCoverModifiers",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/movement/speedModes/0/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenseBonuses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/shieldArcs",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/immunities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/resistances",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/vulnerabilities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/conditionTrackRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/criticalDamageRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/repairRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/failureModes",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/abilities/senses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/abilities/skills/0/governingAbility",
+            "valueKind": "null"
+          },
+          {
+            "path": "/abilities/skills/0/conditions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/abilities/skills/0/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/abilities/skills/1/governingAbility",
+            "valueKind": "null"
+          },
+          {
+            "path": "/abilities/skills/1/conditions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/abilities/skills/1/raw",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 0,
+        "staleStatusExamples": []
+      },
+      "swse-phase0b-dryrun-fixtures.json/x-wing": {
+        "nullCount": 144,
+        "emptyArrayCount": 62,
+        "missingStatusCount": 126,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/exposedStations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/movement/speedModes/0/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/maxVelocityKmh",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenseBonuses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/shieldArcs",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/immunities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/resistances",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/vulnerabilities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/conditionTrackRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/criticalDamageRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/repairRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/failureModes",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/abilities/senses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/abilities/skills/0/governingAbility",
+            "valueKind": "null"
+          },
+          {
+            "path": "/abilities/skills/0/conditions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/abilities/skills/0/raw",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 1,
+        "staleStatusExamples": [
+          "/capacity/passengerCount"
+        ]
+      },
+      "swse-phase0b-dryrun-fixtures.json/acclamator": {
+        "nullCount": 166,
+        "emptyArrayCount": 64,
+        "missingStatusCount": 143,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/exposedStations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/occupantCoverModifiers",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/movement/speedModes/0/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/maxVelocityKmh",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenseBonuses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/shieldArcs",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/immunities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/resistances",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/vulnerabilities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/conditionTrackRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/criticalDamageRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/repairRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/failureModes",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/abilities/senses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/abilities/skills/0/governingAbility",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 0,
+        "staleStatusExamples": []
+      },
+      "swse-phase0b-dryrun-fixtures.json/golan-viii": {
+        "nullCount": 191,
+        "emptyArrayCount": 63,
+        "missingStatusCount": 169,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/exposedStations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/occupantCoverModifiers",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/movement/speedModes/0/maxVelocityKmh",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement/0/resource",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement/0/effect",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement/0/limits",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement/0/reference",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement/0/effects/0/notes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement/0/effects/1/value",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement/0/effects/1/unit",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement/0/effects/1/notes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement/0/actionLimitPerTurn",
+            "valueKind": "null"
+          },
+          {
+            "path": "/defenses/otherDefenseBonuses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/shieldArcs",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/immunities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/resistances",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/vulnerabilities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/conditionTrackRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/criticalDamageRules",
+            "valueKind": "empty-array"
+          }
+        ],
+        "staleStatusCount": 0,
+        "staleStatusExamples": []
+      },
+      "swse-phase0b-dryrun-fixtures.json/coralskipper": {
+        "nullCount": 188,
+        "emptyArrayCount": 65,
+        "missingStatusCount": 168,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/exposedStations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/occupantCoverModifiers",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/movement/speedModes/0/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/maxVelocityKmh",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenseBonuses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/shieldArcs",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/immunities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/resistances",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/vulnerabilities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenses/0/resource",
+            "valueKind": "null"
+          },
+          {
+            "path": "/defenses/otherDefenses/0/effect",
+            "valueKind": "null"
+          },
+          {
+            "path": "/defenses/otherDefenses/0/limits",
+            "valueKind": "null"
+          },
+          {
+            "path": "/defenses/otherDefenses/0/reference",
+            "valueKind": "null"
+          },
+          {
+            "path": "/defenses/otherDefenses/0/effects/0/value",
+            "valueKind": "null"
+          },
+          {
+            "path": "/defenses/otherDefenses/0/effects/0/unit",
+            "valueKind": "null"
+          },
+          {
+            "path": "/defenses/otherDefenses/0/effects/0/duration",
+            "valueKind": "null"
+          },
+          {
+            "path": "/defenses/otherDefenses/0/effects/0/notes",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 1,
+        "staleStatusExamples": [
+          "/capacity/passengerCount"
+        ]
+      },
+      "swse-phase0b-dryrun-fixtures.json/dp2": {
+        "nullCount": 217,
+        "emptyArrayCount": 67,
+        "missingStatusCount": 200,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/exposedStations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/geometry/occupantCoverModifiers",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/movement/speedModes/0/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/0/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/maxVelocityKmh",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/altitudeMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/terrainRestrictions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/speedModes/1/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/movement/specialMovement",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenseBonuses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/shieldArcs",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/resistances",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/vulnerabilities",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/defenses/otherDefenses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/conditionTrackRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/criticalDamageRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/repairRules",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/durability/failureModes",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/abilities/senses",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/abilities/skills/0/governingAbility",
+            "valueKind": "null"
+          },
+          {
+            "path": "/abilities/skills/0/conditions",
+            "valueKind": "null"
+          },
+          {
+            "path": "/abilities/skills/0/raw",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 1,
+        "staleStatusExamples": [
+          "/capacity/passengerCount"
+        ]
+      },
+      "swse-phase0b-additional-vehicle-fixtures.json/model-67-shrieker": {
+        "nullCount": 110,
+        "emptyArrayCount": 61,
+        "missingStatusCount": 169,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/vehicleFamilyKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/manufacturer",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/model",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/className",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantLabel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantKind",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/baseVehicleKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/identity/uniqueNamedVessel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/statblockOrdinalOnPage",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/printedTypeLine",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/edition",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/entryNotes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/sourceRepresentations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/combatScale",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/constructionType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/colossalSubtype",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/sizeModifierPrinted",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/entityNature",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/notes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/geometry/lengthMeters",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 0,
+        "staleStatusExamples": []
+      },
+      "swse-phase0b-additional-vehicle-fixtures.json/at-rt": {
+        "nullCount": 136,
+        "emptyArrayCount": 65,
+        "missingStatusCount": 199,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/vehicleFamilyKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/manufacturer",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/model",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/className",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantLabel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantKind",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/baseVehicleKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/identity/uniqueNamedVessel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/statblockOrdinalOnPage",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/printedTypeLine",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/edition",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/entryNotes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/sourceRepresentations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/combatScale",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/constructionType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/colossalSubtype",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/sizeModifierPrinted",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/entityNature",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/notes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/geometry/lengthMeters",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 0,
+        "staleStatusExamples": []
+      },
+      "swse-phase0b-additional-vehicle-fixtures.json/at-rt-civilian-option": {
+        "nullCount": 144,
+        "emptyArrayCount": 64,
+        "missingStatusCount": 205,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/vehicleFamilyKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/manufacturer",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/model",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/className",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/identity/uniqueNamedVessel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/statblockOrdinalOnPage",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/printedTypeLine",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/edition",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/entryNotes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/sourceRepresentations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/chassisType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/mobilityDomains",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/combatScale",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/constructionType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/colossalSubtype",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/sizeModifierPrinted",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/entityNature",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/notes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/geometry/lengthMeters",
+            "valueKind": "null"
+          },
+          {
+            "path": "/geometry/widthMeters",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 0,
+        "staleStatusExamples": []
+      },
+      "swse-phase0b-additional-vehicle-fixtures.json/c-wing-ugly": {
+        "nullCount": 179,
+        "emptyArrayCount": 75,
+        "missingStatusCount": 250,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/vehicleFamilyKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/manufacturer",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/model",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/className",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantLabel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantKind",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/baseVehicleKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/identity/uniqueNamedVessel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/statblockOrdinalOnPage",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/printedTypeLine",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/edition",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/entryNotes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/sourceRepresentations",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/chassisType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/combatScale",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/constructionType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/colossalSubtype",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/sizeModifierPrinted",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/entityNature",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/notes",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 0,
+        "staleStatusExamples": []
+      },
+      "swse-phase0b-variant-fixtures.json/0": {
+        "nullCount": 129,
+        "emptyArrayCount": 62,
+        "missingStatusCount": 189,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/manufacturer",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/model",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/className",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantLabel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantKind",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/baseVehicleKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/identity/uniqueNamedVessel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/statblockOrdinalOnPage",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/printedTypeLine",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/edition",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/entryNotes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/chassisType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/mobilityDomains",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/combatScale",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/constructionType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/printedSize",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/colossalSubtype",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/sizeModifierPrinted",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/entityNature",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/cl",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/notes",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 0,
+        "staleStatusExamples": []
+      },
+      "swse-phase0b-variant-fixtures.json/1": {
+        "nullCount": 128,
+        "emptyArrayCount": 62,
+        "missingStatusCount": 188,
+        "missingStatusExamples": [
+          {
+            "path": "/identity/manufacturer",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/model",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/className",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantLabel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/variantKind",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/baseVehicleKey",
+            "valueKind": "null"
+          },
+          {
+            "path": "/identity/aliases",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/identity/uniqueNamedVessel",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/statblockOrdinalOnPage",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/printedTypeLine",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/edition",
+            "valueKind": "null"
+          },
+          {
+            "path": "/publication/entryNotes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/chassisType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/mobilityDomains",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/combatScale",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/role",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/constructionType",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/printedSize",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/colossalSubtype",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/sizeModifierPrinted",
+            "valueKind": "null"
+          },
+          {
+            "path": "/classification/secondaryCategories",
+            "valueKind": "empty-array"
+          },
+          {
+            "path": "/classification/entityNature",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/raw",
+            "valueKind": "null"
+          },
+          {
+            "path": "/challenge/notes",
+            "valueKind": "null"
+          },
+          {
+            "path": "/geometry/lengthMeters",
+            "valueKind": "null"
+          }
+        ],
+        "staleStatusCount": 0,
+        "staleStatusExamples": []
+      }
+    },
+    "missingExamples": [
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/identity/aliases",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/classification/role",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/classification/secondaryCategories",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/geometry/exposedStations",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/geometry/occupantCoverModifiers",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/movement/speedModes/0/altitudeMeters",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/movement/speedModes/0/terrainRestrictions",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/movement/specialMovement",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/defenses/otherDefenseBonuses",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/defenses/shieldArcs",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/defenses/immunities",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/defenses/resistances",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/defenses/vulnerabilities",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/defenses/otherDefenses",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/durability/conditionTrackRules",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/durability/criticalDamageRules",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/durability/repairRules",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/durability/failureModes",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/senses",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/0/governingAbility",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/0/conditions",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/0/raw",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/1/governingAbility",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/1/conditions",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/1/raw",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/2/governingAbility",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/2/conditions",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/2/raw",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/3/governingAbility",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/3/conditions",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/skills/3/raw",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/abilities/languages",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/combat/specialActions",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/combat/feats",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/combat/talents",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/combat/tacticalFire",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/combat/otherCombatRules",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/weaponDefinitionKey",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/weaponCount",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/mountCount",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/configuration",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/location",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/firingArc",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/mountType",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/fireLinked",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/batteryGroupKey",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/gunnerStationKey",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/batteryCountPrinted",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/gunnerCount",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/firingScale",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/attackBonusAutofirePrinted",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/damageTypePrinted",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/rangePrinted",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/criticalPrinted",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/ammo",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/payloadNames",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/alternateFireGroupKey",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/specialRules",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/raw",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/conditionalAttackModifiers",
+        "kind": "empty-array"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/0/firingCountPrinted",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/1/weaponDefinitionKey",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/1/weaponCount",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/1/mountCount",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/1/configuration",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/1/location",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/1/firingArc",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/1/mountType",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/1/fireLinked",
+        "kind": "null"
+      },
+      {
+        "file": "swse-phase0b-dryrun-fixtures.json",
+        "fixture": "at-at",
+        "path": "/armament/weaponMounts/1/batteryGroupKey",
+        "kind": "null"
+      }
+    ]
+  },
+  "blockingGates": [
+    "Source-line verification of every condition, battery bonus and damage cap",
+    "Global rule catalog complete and rule references reconciled",
+    "Certification-grade deep fieldStates closure across all nested arrays",
+    "Schema predicates validated with real evaluator and full vocabulary",
+    "Distinct weapon identity and payload provenance",
+    "Full 14-book enumeration of unique and uncommon mechanics"
+  ]
+}
