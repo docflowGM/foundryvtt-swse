@@ -29,6 +29,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Implementation impact | Any V2 install/remove flow that rolls, charges time or cost, or applies failure outcomes; the rules content of the install service. |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Scum and Villainy* p. 39 (and the cross-referenced table text) and record the DC, time, scratch-built cost basis, install-failure and removal consequences with page evidence. The registry only records that these values "depend on source table"; it records no ambiguity. Becomes `DEFERRED_RULES_REVIEW` only if the examined text is itself ambiguous or conflicts with another authority. |
+| Ledger scope | component=installProcedure; definitions=ALL |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -83,6 +84,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Implementation impact | Slot accounting for this upgrade (never certified; remains unresolved). |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Scum and Villainy* p. 42 and Table 2-4 for the condition selecting a slot cost of 0 or 1. The registry says only that specific source-text examination is required. |
+| Ledger scope | component=cost; definitions=sv-retractable-stock |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -101,6 +103,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Implementation impact | Accounting and installation of these 16 upgrades in any domain (per the Phase 1b contract they stay blocked). |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine each Table 2-3 upgrade's printed text for permitted hosts and detail rules. No ambiguity is recorded; applicability is simply not yet certified. |
+| Ledger scope | component=hostPrerequisites; definitions=sv-cheater,sv-cloaked,sv-dual-gear,sv-electrograpple-handle,sv-environmental-sealing,sv-extra-power-source,sv-memory-upgrade,sv-memory-upgrade-advanced,sv-miniaturized,sv-recognition-system,sv-remote-activation,sv-secret-compartment,sv-silverplate,sv-spring-loaded,sv-storage-capacity |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -119,6 +122,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Implementation impact | The purchase and install flow for these modifications. |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — The source has been examined by the registry: the price is not printed, so it is unknown (owner ruling: never zero). The remaining question — how the V2 system handles acquiring or installing a modification whose price is not printed — is a policy decision, not a research gap. A fresh check that the cited pages indeed print no price may be recorded under Resolution but is not a prerequisite. |
+| Ledger scope | component=cost; definitions=goi-componentization-basic,goi-componentization-deluxe,reb-excellent-kit-purchased-quality |
 | Decision authority | Project owner |
 | Resolution | Partial, prior: price is unknown, never `0` (owner ruling). The handling flow remains open. |
 
@@ -191,6 +195,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Implementation impact | Applying these templates alongside any other template or upgrade. |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Legacy Era Campaign Guide* pp. 66, 100, 101 and record the specific composition constraints. The registry flags that further source tests are needed but does not record a specific ambiguity. |
+| Ledger scope | component=hostPrerequisites; definitions=legacy-biotech-host-template,legacy-weapon-template-antiquated,legacy-weapon-template-refitted |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -209,6 +214,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Implementation impact | Any lightsaber pool accounting (Phase 1a never certifies a lightsaber) and the V2 lightsaber consumer. |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Jedi Academy Training Manual* pp. 54 and 60 for the accessory allowance count, crystal pools and the Tech Specialist relation. May become `DEFERRED_RULES_REVIEW` if the printed text is ambiguous about stacking. |
+| Ledger scope | component=cost; slotPools=lightsaber-primary-crystal,lightsaber-accessory |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -235,3 +241,5 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 ## Revision log
 
 - **Revision 2 (2026-10-14):** introduced `PENDING_SOURCE_VERIFICATION` versus `DEFERRED_RULES_REVIEW`; added a *Review classification* row to D-001–D-012. Of the twelve entries, eleven are research gaps awaiting source examination; only D-006 (policy for unpriced modifications) is a decision for the owner today. No decision ID, original field, owner ruling or interim position was changed. No recommended ruling is made for any entry. Source examination is the next step for D-001 first, because it blocks the install procedure.
+- **Revision 3 (2026-10-14, G2):** the status ledger (`data/modifications/status-ledger-v1.json`) now links typed domain definitions to register entries (D-001 install procedure for every typed definition; D-004, D-005, D-006, D-010, D-011 for their specific definitions). The generator checks that each linked register id exists and that the declared classification equals this register's classification row. D-002, D-003, D-007, D-008, D-009 and D-012 are not bound to registry definitions and have no ledger link. No ID, field, ruling or classification was changed; no recommended ruling was added. Source examination of D-001 (*Scum and Villainy* p. 39) has not been performed in this change.
+- **Revision 4 (2026-10-14, G2 review corrections):** added a machine-readable **Ledger scope** row to D-001, D-004, D-005, D-006, D-010 and D-011 (which component and which typed definitions each open entry blocks). The generator now requires the ledger to carry the full scope of every open entry and rejects any omission. An entry's blocker is lifted only by an appended **Blocker lifted** row (`source=` and `evidence=` for `PENDING_SOURCE_VERIFICATION`; `owner-ruling=` for `DEFERRED_RULES_REVIEW`); no such row exists for any entry, so every scoped blocker is open. Entries without a Ledger scope row (D-002, D-003, D-007, D-008, D-009, D-012) block no registry definition directly. No ID, original field, ruling or classification changed.

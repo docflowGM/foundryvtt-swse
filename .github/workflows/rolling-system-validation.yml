@@ -112,6 +112,16 @@ jobs:
       - name: Guard — modification registry snapshot (G1, read-only)
         run: node tools/validate-modification-registry.mjs
 
+      # G2: the generated V2 runtime definitions must equal a deterministic
+      # regeneration from the validated snapshot, the status ledger and the
+      # specification records, and pass the V10' validator. Offline; nothing
+      # in scripts/ loads this data (the loader is gate G8).
+      - name: Guard — modification runtime definitions (G2, --check and V10')
+        run: |
+          set -e
+          node tools/build-modification-runtime.mjs --check
+          node tools/build-modification-runtime.mjs --validate
+
       - name: Guard — generated packs are current
         run: |
           set -e

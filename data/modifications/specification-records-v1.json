@@ -1,0 +1,6 @@
+{
+ "schema": "swse.modification.specification-records/1",
+ "registryVersion": "1.5",
+ "notes": "Hand-maintained. A record specifies one mechanic component of one typed domain definition from an explicit, verified, unambiguous published rule (basis PUBLISHED_UNAMBIGUOUS) or from an owner ruling (OWNER_RULING). Empty: no mechanic has been specified.",
+ "records": []
+}
