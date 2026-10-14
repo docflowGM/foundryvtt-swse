@@ -13,7 +13,9 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { buildPendingSpeciesContext } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js";
 import { applyCanonicalSpeciesToActor } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-species-to-actor.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
-import { requiresPublicationSelection, checkPublicationSelection, buildVersionChoices } from "/systems/foundryvtt-swse/scripts/species/species-publication-selection.js";
+import { getAbilityChoiceOptions } from "/systems/foundryvtt-swse/scripts/species/species-ability-choice.js";
+import { applySpeciesVariantProfile } from "/systems/foundryvtt-swse/scripts/species/species-variant-profile.js";
+import { getSoleSnapshotVersion, requiresPublicationSelection, checkPublicationSelection, buildVersionChoices } from "/systems/foundryvtt-swse/scripts/species/species-publication-selection.js";
 import { buildSpeciesReplacementPlan, applySpeciesPlanWithRollback } from "/systems/foundryvtt-swse/scripts/species/species-plan-transaction.js";
 import { cloneDroppedItemData } from "/systems/foundryvtt-swse/scripts/engine/interactions/dropped-item-clone.js";
 
@@ -261,7 +263,10 @@ export class DropHandler {
       });
     } catch (err) {
       console.warn(`[DropHandler] Species ${species.name} rejected before any change:`, err);
-      ui.notifications.error(`Could not apply ${species.name}: it has no valid canonical profile. ${actor.name} was not changed.`);
+      const needsChoice = registryEntry && getAbilityChoiceOptions(getSoleSnapshotVersion(registryEntry) ? applySpeciesVariantProfile(registryEntry, getSoleSnapshotVersion(registryEntry)) : registryEntry).length > 0;
+      ui.notifications.error(needsChoice
+        ? `${species.name} requires a published ability choice (for example male or female), which dropping cannot supply. Choose it in the species step. ${actor.name} was not changed.`
+        : `Could not apply ${species.name}: it has no valid canonical profile. ${actor.name} was not changed.`);
       return false;
     }
 

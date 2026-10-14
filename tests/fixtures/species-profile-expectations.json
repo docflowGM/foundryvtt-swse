@@ -518,12 +518,10 @@
   "classSkills": [],
   "trainedSkillChoices": 0,
   "suppressedProficiencies": [],
-  "namedActivations": [
-   "pacifism"
-  ],
+  "namedActivations": [],
   "automation": {
    "adept-diplomat": "structured-rule",
-   "pacifism": "named-activation",
+   "pacifism": "engine-suppressed",
    "memory-sharing": "display-only"
   }
  },
@@ -635,11 +633,10 @@
   "trainedSkillChoices": 0,
   "suppressedProficiencies": [],
   "namedActivations": [
-   "shapeshift",
    "startle"
   ],
   "automation": {
-   "shapeshift": "named-activation",
+   "shapeshift": "engine-suppressed",
    "startle": "named-activation"
   }
  },
@@ -793,12 +790,10 @@
   "classSkills": [],
   "trainedSkillChoices": 0,
   "suppressedProficiencies": [],
-  "namedActivations": [
-   "natural-telepath"
-  ],
+  "namedActivations": [],
   "automation": {
    "natural-armor": "structured-rule",
-   "natural-telepath": "named-activation",
+   "natural-telepath": "engine-suppressed",
    "bonus-feat": "structured-rule",
    "low-light-vision": "display-only"
   }
@@ -3458,11 +3453,9 @@
   ],
   "trainedSkillChoices": 0,
   "suppressedProficiencies": [],
-  "namedActivations": [
-   "confusion"
-  ],
+  "namedActivations": [],
   "automation": {
-   "confusion": "named-activation",
+   "confusion": "engine-suppressed",
    "deceptive": "structured-rule",
    "streetwise": "structured-rule"
   }

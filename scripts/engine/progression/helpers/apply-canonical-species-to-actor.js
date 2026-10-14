@@ -215,6 +215,11 @@ function _materializeSpeciesIdentity(actor, pendingContext) {
     mutations['system.speciesVariant'] = selectedVariant;
   }
 
+  // Record which published within-profile option was chosen (restoration / reopening); the racial scores hold its modifiers.
+  if (pendingContext.identity?.abilityChoice?.id) {
+    mutations['flags.swse.speciesAbilityChoice'] = { id: pendingContext.identity.abilityChoice.id, label: pendingContext.identity.abilityChoice.label ?? null };
+  }
+
   // Store UUID if available (for later re-resolution)
   if (pendingContext.identity.doc?.uuid) {
     mutations['flags.swse.speciesUuid'] = pendingContext.identity.doc.uuid;

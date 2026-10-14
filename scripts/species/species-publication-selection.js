@@ -128,7 +128,13 @@ const normalizeVariantId = id => (id == null || id === '' || id === 'default' ? 
 export function isRecordedConfigurationRestore(actor, entry, variantId) {
   if (!actor || !entry?.name) return false;
   if (recordedSpeciesName(actor) !== String(entry.name).trim().toLowerCase()) return false;
-  return normalizeVariantId(recordedVariantId(actor)) === normalizeVariantId(variantId);
+  const recorded = normalizeVariantId(recordedVariantId(actor));
+  const requested = normalizeVariantId(variantId);
+  if (recorded === requested) return true;
+  // A once-published species applies its sole profile implicitly: "no version requested" restores that profile, and an
+  // actor recorded before the profile existed (no version) restoring onto it is the same configuration.
+  const sole = getSoleSnapshotVersion(entry)?.id ?? null;
+  return !!sole && ((requested === null && recorded === sole) || (requested === sole && recorded === null));
 }
 
 const signedMods = mods => ABILITY_KEYS

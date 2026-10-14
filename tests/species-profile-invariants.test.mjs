@@ -5,6 +5,7 @@ import { makeActor, selectSpecies, speciesFootprint, computeDefenses, SpeciesReg
 // Every once-published species hydrated from the audited source profiles (tools/hydrate-species-profiles.mjs) applies
 // its sole canonical profile and ONLY what that profile establishes. tests/fixtures/species-profile-expectations.json
 // holds derived numbers/ids/skill names (no rules text), generated from the audit by the same tool.
+const { getAbilityChoiceOptions } = await import('/systems/foundryvtt-swse/scripts/species/species-ability-choice.js');
 const { getSoleSnapshotVersion, isSupersededLegacyVariant } = await import('/systems/foundryvtt-swse/scripts/species/species-publication-selection.js');
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/species-profile-expectations.json', import.meta.url), 'utf8'));
 const log = console.log, warn = console.warn;
@@ -20,6 +21,9 @@ for (const [variantId, exp] of Object.entries(fixture)) {
   assert.ok(variant?.completeSnapshot && variant.sourceProfileId === exp.sourceProfileId, `${exp.species}: snapshot ${variantId} present with provenance`);
   // Once-published species apply their sole profile implicitly; a multi-publication species (Barabel) needs the explicit version (RD-001).
   const pick = entry.variants.length > 1 ? variantId : null;
+  // A within-profile ability choice (Devaronian, Arkanian Offshoot) must be made; take the first published option.
+  const option = getAbilityChoiceOptions(variant)[0] ?? null;
+  const choice = option ? { id: option.id } : null;
   if (!pick) {
     assert.equal(getSoleSnapshotVersion(entry)?.id, variantId, `${exp.species}: the audited profile is the sole canonical profile`);
     // Legacy variants beside it keep resolving for existing actors, but are documented and hidden from new selections.
@@ -31,13 +35,13 @@ for (const [variantId, exp] of Object.entries(fixture)) {
 
   // A NEW selection needs no version choice (published once) and still applies the snapshot; no variant id is passed.
   const actor = makeActor();
-  const { ctx } = await quiet(() => selectSpecies(actor, exp.species, pick, { strict: true }));
+  const { ctx } = await quiet(() => selectSpecies(actor, exp.species, pick, { strict: true, abilityChoice: choice }));
   assert.equal(ctx.identity.variant?.id, variantId, `${exp.species}: sole profile applied implicitly`);
   assert.equal(actor.system.speciesVariant.id, variantId);
   assert.equal(actor.system.speciesVariant.sourceProfileId, exp.sourceProfileId);
 
   // Core numbers and languages equal the audited profile.
-  for (const k of ABILITIES) assert.equal(actor.system.attributes[k].racial || 0, exp.abilityMods[k], `${exp.species} ${k}`);
+  for (const k of ABILITIES) assert.equal(actor.system.attributes[k].racial || 0, exp.abilityMods[k] + (option?.mods?.[k] ?? 0), `${exp.species} ${k}`);
   assert.equal(String(actor.system.size).toLowerCase(), exp.size.toLowerCase(), `${exp.species} size`);
   assert.equal(actor.system.speed, exp.speed, `${exp.species} speed`);
   assert.deepEqual([...ctx.ledger.languages.automatic].sort(), [...exp.languages].sort(), `${exp.species} languages`);
@@ -76,12 +80,12 @@ for (const [variantId, exp] of Object.entries(fixture)) {
 
   // Revocation + A -> B -> A + idempotence through a Core (base-record) species and back.
   const first = structuredClone(speciesFootprint(actor));
-  await quiet(() => selectSpecies(actor, exp.species, pick, { strict: true }));
+  await quiet(() => selectSpecies(actor, exp.species, pick, { strict: true, abilityChoice: choice }));
   assert.deepEqual(speciesFootprint(actor), first, `${exp.species}: reapplying is idempotent`);
   await quiet(() => selectSpecies(actor, 'Human'));
   assert.equal(actor.system.speciesVariant ?? null, null, `${exp.species}: variant record cleared on replacement`);
   assert.deepEqual(actor.flags.swse.speciesTraitIds?.filter(id => exp.traitIds.includes(id) && !['bonus-feat', 'bonus-trained-skill'].includes(id)) ?? [], [], `${exp.species}: traits revoked`);
-  await quiet(() => selectSpecies(actor, exp.species, pick, { strict: true }));
+  await quiet(() => selectSpecies(actor, exp.species, pick, { strict: true, abilityChoice: choice }));
   assert.deepEqual(speciesFootprint(actor), first, `${exp.species}: A -> B -> A restores exactly`);
   checked++;
 }

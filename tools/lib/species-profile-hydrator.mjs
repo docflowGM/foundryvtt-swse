@@ -124,23 +124,19 @@ function compileGrant(f) {
 // _populateActivatedSpeciesAbilities). A trait carrying such a name only activates it when the audit identifies the
 // feature as that ability; otherwise it is explicitly display-only (a same-named, different rule).
 const ACTIVATION_NAMES = {
+  // Engine entries whose details were pinned against the audited text (tests/species-activation-exclusions.test.mjs).
   rage: ['DAILY_SWIFT_ACTIVATED_RAGE_WITH_RECOVERY', 'ACTIVATED_RAGE_WITH_CONDITION_PENALTY', 'ACTIVATED_CONDITION_AND_BONUS'],
   roller: ['ACTIVATED_ALTERNATE_MOVEMENT_FORM'],
-  poison: ['NATURAL_WEAPON_ON_HIT_POISON_CONDITION'],
-  'natural-telepath': ['SKILL_BONUS_WITH_UNTRAINED_FORCE_APPLICATION'],
-  'broadcast-telepath': [],
-  bellow: ['ACTIVATED_SPECIAL_AREA_ATTACK'],
-  'sonic-bellow': [],
-  confusion: ['MIND_AFFECTING_ACTIVATED_ABILITY'],
-  shapeshifter: [],
-  shapeshift: ['APPEARANCE_CHANGE'],
-  'energy-surge': [],
-  'quick-energy': ['LIMITED_ACTIVATED_ABILITY'],
-  'force-blast': ['ALTERNATE_FORCE_POWER_ACCESS'],
-  pacifism: ['MIND_AFFECTING_ACTIVATED_ABILITY'],
-  pheromones: ['INHALED_POISON_ACTIVATED_ABILITY'],
   startle: ['ENCOUNTER_REACTION'],
+  pheromones: ['INHALED_POISON_ACTIVATED_ABILITY'],
+  'quick-energy': ['LIMITED_ACTIVATED_ABILITY'],
+  // Engine entries known to differ from (or go beyond) the audited text: never activated from a published profile.
+  // Pacifism omits the "only if the target attacks" condition; Confusion ends at the wrong time; Force Blast is a
+  // different mechanic; Shapeshift invents a duration; Natural Telepath invents an action type; the rest are unverified.
+  poison: [], 'natural-telepath': [], 'broadcast-telepath': [], bellow: [], 'sonic-bellow': [], confusion: [],
+  shapeshifter: [], shapeshift: [], 'energy-surge': [], 'force-blast': [], pacifism: [],
 };
+
 
 export function compileFeature(f) {
   let rules = null;
@@ -155,7 +151,7 @@ export function compileFeature(f) {
   const displayOnlyGuard = activation && !activation.includes(f.classification);
   return {
     trait: { id, name: f.name, description: f.publishedRule, sourceFeatureId: f.featureId, ...(rules ? { rules } : {}), ...(displayOnlyGuard ? { displayOnly: true } : {}) },
-    automation: rules ? 'structured-rule' : (activation && !displayOnlyGuard ? 'named-activation' : 'display-only'),
+    automation: rules ? 'structured-rule' : (activation && !displayOnlyGuard ? 'named-activation' : (displayOnlyGuard && activation.length === 0 ? 'engine-suppressed' : 'display-only')),
   };
 }
 

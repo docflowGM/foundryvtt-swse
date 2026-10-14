@@ -15,6 +15,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SpeciesGrantLedgerBuilder } from '/systems/foundryvtt-swse/scripts/species/species-grant-ledger-builder.js';
+import { resolveAbilityChoice } from '/systems/foundryvtt-swse/scripts/species/species-ability-choice.js';
 import { checkPublicationSelection, isRecordedConfigurationRestore, getSoleSnapshotVersion } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
 import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
@@ -118,9 +119,21 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
     const variantAppliedSpeciesEntry = selectedVariant
       ? applySpeciesVariantProfile(speciesEntry, selectedVariant)
       : speciesEntry;
-    const selectedAbilityChoice = typeof speciesIdentity === 'object'
+    const suppliedAbilityChoice = typeof speciesIdentity === 'object'
       ? (speciesIdentity.selectedAbilityChoice || speciesIdentity.abilityChoiceSelection || null)
       : null;
+    // A within-profile ability choice is validated here for EVERY assignment path. The published option (not the
+    // caller's payload) supplies the modifiers; nothing is defaulted. An existing actor that merely restores its
+    // recorded configuration may omit the choice (its racial scores already hold it).
+    const recordedChoice = actor?.flags?.swse?.speciesAbilityChoice ?? null;
+    const restoring = isRecordedConfigurationRestore(actor, speciesEntry, selectedVariantId);
+    const choiceCheck = resolveAbilityChoice(variantAppliedSpeciesEntry, suppliedAbilityChoice ?? (restoring && recordedChoice?.id ? { id: recordedChoice.id } : null));
+    if (!choiceCheck.ok && !(choiceCheck.code === 'MISSING_CHOICE' && restoring)) {
+      SWSELogger.warn(`[PendingSpeciesContext] ${speciesEntry.name} requires a valid published ability choice (${choiceCheck.code}); no context built`, { requested: suppliedAbilityChoice?.id ?? null, source });
+      return null;
+    }
+    // Species that publish no selectable-modifier choice keep the previous pass-through (e.g. Human's template payload).
+    const selectedAbilityChoice = choiceCheck.required ? choiceCheck.choice : suppliedAbilityChoice;
     if (selectedVariant && variantAppliedSpeciesEntry.variantFallbackFields?.length) {
       SWSELogger.warn(`[PendingSpeciesContext] Legacy overlay variant "${selectedVariant.id}" inherits base fields: ${variantAppliedSpeciesEntry.variantFallbackFields.join(', ')}`);
     }
