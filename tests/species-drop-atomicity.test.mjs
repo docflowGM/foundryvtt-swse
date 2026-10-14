@@ -106,4 +106,57 @@ for (const [failAt, failAfter] of [['delete', false], ['create', false], ['updat
     e => e instanceof SpeciesPlanApplyError && e.rollbackComplete === false && e.rollbackErrors[0].step === 'restore-fields');
 }
 
+// ---- Partial creation: some items are created, then the operation throws before returning ids ----
+{
+  const actor = await seededWookiee();
+  const before = state(actor);
+  const { mutations } = await plan(actor, 'Barabel');          // creates species item + Bite + Claws
+  assert.ok((mutations.itemsToCreate || []).length >= 2, 'precondition: several items to create');
+  const engine = makeEngine(actor);
+  const realCreate = engine.createEmbeddedDocuments;
+  engine.createEmbeddedDocuments = async (a, n, data, opts) => {
+    if (String(opts?.source).endsWith('-rollback')) return realCreate(a, n, data, opts);
+    await realCreate(a, n, data.slice(0, 2), opts);              // two items really created...
+    throw new Error('create died after partial success');         // ...and no ids returned
+  };
+  await assert.rejects(
+    applySpeciesPlanWithRollback({ actor, engine, mutations, newSpeciesItemData: dropData('Barabel'), replaceItemIds: ['sp-old'] }),
+    e => e instanceof SpeciesPlanApplyError && e.rollbackComplete === true);
+  assert.deepEqual(state(actor), before, 'partially created items are removed and the deleted ones restored');
+}
+
+// ---- Partial deletion: some items are deleted, then the operation throws ----
+{
+  const actor = await seededWookiee();
+  const before = state(actor);
+  const { mutations } = await plan(actor, 'Human');
+  const engine = makeEngine(actor);
+  const realDelete = engine.deleteEmbeddedDocuments;
+  engine.deleteEmbeddedDocuments = async (a, n, ids, opts) => {
+    if (String(opts?.source).endsWith('-rollback')) return realDelete(a, n, ids, opts);
+    await realDelete(a, n, ids.slice(0, 1), opts);
+    throw new Error('delete died after partial success');
+  };
+  await assert.rejects(
+    applySpeciesPlanWithRollback({ actor, engine, mutations, newSpeciesItemData: dropData('Human'), replaceItemIds: ['sp-old'] }),
+    e => e instanceof SpeciesPlanApplyError && e.rollbackComplete === true);
+  assert.deepEqual(state(actor), before);
+}
+
+// ---- A rollback that cannot restore items is reported as incomplete, never silent ----
+{
+  const actor = await seededWookiee();
+  const { mutations } = await plan(actor, 'Barabel');
+  const engine = makeEngine(actor);
+  const realCreate = engine.createEmbeddedDocuments;
+  engine.createEmbeddedDocuments = async (a, n, data, opts) => {
+    if (String(opts?.source).endsWith('-rollback')) throw new Error('cannot recreate');
+    await realCreate(a, n, data.slice(0, 1), opts);
+    throw new Error('create died after partial success');
+  };
+  await assert.rejects(
+    applySpeciesPlanWithRollback({ actor, engine, mutations, newSpeciesItemData: dropData('Barabel'), replaceItemIds: ['sp-old'] }),
+    e => e instanceof SpeciesPlanApplyError && e.rollbackComplete === false && e.rollbackErrors.some(x => x.step === 'recreate-deleted' || x.step === 'verify'));
+}
+
 console.log('PASS: species drop atomicity');

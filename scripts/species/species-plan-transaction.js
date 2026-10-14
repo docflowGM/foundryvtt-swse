@@ -87,16 +87,17 @@ export async function applySpeciesPlanWithRollback({ actor, engine, mutations, n
     deletedData.push(clone(typeof item.toObject === 'function' ? item.toObject() : { ...item, _id: item.id }));
   }
   const existingDeleteIds = deletedData.map(d => d._id ?? d.id);
+  const itemList = () => Array.from(actor.items || []);
+  const preIds = new Set(itemList().map(i => i.id));
+  const createSignatures = new Set(createData.map(d => `${d.type}:${d.name}`));
 
-  const journal = { deleted: false, createdIds: [], updateAttempted: false };
+  const journal = { updateAttempted: false };
   try {
     if (existingDeleteIds.length) {
       await engine.deleteEmbeddedDocuments(actor, 'Item', existingDeleteIds, { source });
-      journal.deleted = true;
     }
     if (createData.length) {
-      const created = await engine.createEmbeddedDocuments(actor, 'Item', createData, { source });
-      journal.createdIds = (created || []).map(doc => doc.id);
+      await engine.createEmbeddedDocuments(actor, 'Item', createData, { source });
     }
     if (Object.keys(fields).length) {
       journal.updateAttempted = true;
@@ -114,13 +115,28 @@ export async function applySpeciesPlanWithRollback({ actor, engine, mutations, n
       }
       await attempt('restore-fields', () => engine.updateActor(actor, restore, { source: `${source}-rollback` }));
     }
-    // Items created by this operation are identified by the ids the engine returned; a create that
-    // threw midway may still have produced items, so also sweep by journal-less ids is not attempted.
-    if (journal.createdIds.length) {
-      await attempt('delete-created', () => engine.deleteEmbeddedDocuments(actor, 'Item', journal.createdIds, { source: `${source}-rollback` }));
+    // Item rollback is STATE-based, not journal-based: a create or delete that throws midway may have
+    // changed some items without returning their ids. Compare what the actor really holds now with
+    // what it held before the operation.
+    //  - items that did not exist before and match something we tried to create -> delete
+    //  - items we removed that are no longer present -> recreate with their original ids
+    const strayIds = itemList()
+      .filter(i => !preIds.has(i.id) && createSignatures.has(`${i.type}:${i.name}`))
+      .map(i => i.id);
+    if (strayIds.length) {
+      await attempt('delete-created', () => engine.deleteEmbeddedDocuments(actor, 'Item', strayIds, { source: `${source}-rollback` }));
     }
-    if (journal.deleted) {
-      await attempt('recreate-deleted', () => engine.createEmbeddedDocuments(actor, 'Item', deletedData, { source: `${source}-rollback`, keepId: true }));
+    const presentNow = new Set(itemList().map(i => i.id));
+    const missing = deletedData.filter(d => !presentNow.has(d._id ?? d.id));
+    if (missing.length) {
+      await attempt('recreate-deleted', () => engine.createEmbeddedDocuments(actor, 'Item', missing, { source: `${source}-rollback`, keepId: true }));
+    }
+    // Verify rather than assume: anything still different is an incomplete rollback.
+    const after = new Set(itemList().map(i => i.id));
+    const unrestored = [...preIds].filter(id => !after.has(id));
+    const leftovers = itemList().filter(i => !preIds.has(i.id) && createSignatures.has(`${i.type}:${i.name}`));
+    if (unrestored.length || leftovers.length) {
+      rollbackErrors.push({ step: 'verify', error: new Error(`items not restored: ${JSON.stringify({ unrestored, leftovers: leftovers.map(i => i.id) })}`) });
     }
     throw new SpeciesPlanApplyError(`Species replacement failed: ${cause?.message || cause}`, {
       cause,
