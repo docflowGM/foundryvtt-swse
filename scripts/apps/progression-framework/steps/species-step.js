@@ -9,6 +9,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
+import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { normalizeSpecies } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithPicker, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
 // Patch builder lives in the shared progression-framework module — NOT the legacy chargen path.
@@ -1239,26 +1240,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
     if (variantId) {
       const variant = (species.variants || []).find(option => String(option?.id) === String(variantId));
       if (variant) {
-        effective = {
-          ...effective,
-          source: variant.source || effective.source,
-          size: variant.size || effective.size,
-          speed: Number.isFinite(Number(variant.speed)) ? Number(variant.speed) : effective.speed,
-          movement: variant.movement && typeof variant.movement === 'object' ? variant.movement : effective.movement,
-          abilityScores: variant.abilityMods && typeof variant.abilityMods === 'object'
-            ? this._normalizeAbilityMap(variant.abilityMods)
-            : effective.abilityScores,
-          abilityChoice: variant.abilityChoice || effective.abilityChoice || null,
-          abilities: Array.isArray(variant.special) && variant.special.length ? [...variant.special] : effective.abilities,
-          canonicalTraits: Array.isArray(variant.traits) && variant.traits.length ? variant.traits : effective.canonicalTraits,
-          languages: Array.isArray(variant.languages) && variant.languages.length ? [...variant.languages] : effective.languages,
-          description: variant.description || effective.description,
-          selectedVariant: {
-            id: variant.id,
-            label: variant.label || 'Variant',
-            source: variant.source || null,
-          },
-        };
+        try {
+          effective = applySpeciesVariantProfile(effective, variant);
+        } catch (err) {
+          // Malformed complete snapshot: show the base unchanged rather than a partial mix.
+          swseLogger.error('[SpeciesStep] Variant profile rejected', err);
+        }
       }
     }
     return this._applyAbilityChoiceToProfile(effective);

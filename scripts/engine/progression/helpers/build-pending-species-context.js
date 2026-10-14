@@ -15,6 +15,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SpeciesGrantLedgerBuilder } from '/systems/foundryvtt-swse/scripts/species/species-grant-ledger-builder.js';
+import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { computeStartingFeatsRequired } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
 
@@ -93,12 +94,17 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
     const selectedVariant = selectedVariantId
       ? (speciesEntry.variants || []).find(variant => String(variant?.id) === String(selectedVariantId))
       : null;
+    // Complete-snapshot variants never inherit base traits/natural weapons/languages
+    // (species-variant-profile.js); a malformed snapshot throws and fails closed below.
     const variantAppliedSpeciesEntry = selectedVariant
-      ? _applyVariantProfile(speciesEntry, selectedVariant)
+      ? applySpeciesVariantProfile(speciesEntry, selectedVariant)
       : speciesEntry;
     const selectedAbilityChoice = typeof speciesIdentity === 'object'
       ? (speciesIdentity.selectedAbilityChoice || speciesIdentity.abilityChoiceSelection || null)
       : null;
+    if (selectedVariant && variantAppliedSpeciesEntry.variantFallbackFields?.length) {
+      SWSELogger.warn(`[PendingSpeciesContext] Legacy overlay variant "${selectedVariant.id}" inherits base fields: ${variantAppliedSpeciesEntry.variantFallbackFields.join(', ')}`);
+    }
     const effectiveSpeciesEntry = _applyAbilityChoiceProfile(variantAppliedSpeciesEntry, selectedAbilityChoice);
 
     const ledger = await SpeciesGrantLedgerBuilder.build(effectiveSpeciesEntry, effectiveSpeciesEntry.supplementaryTraits || null);
@@ -120,11 +126,7 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
         source: effectiveSpeciesEntry.source || speciesEntry.source || 'Unknown',
         doc: effectiveSpeciesEntry, // Keep effective profile for reference
         baseDoc: speciesEntry,
-        variant: selectedVariant ? {
-          id: selectedVariant.id,
-          label: selectedVariant.label || 'Variant',
-          source: selectedVariant.source || null,
-        } : null,
+        variant: effectiveSpeciesEntry.selectedVariant || null,
         abilityChoice: selectedAbilityChoice ? { ...selectedAbilityChoice } : null,
       },
 
@@ -152,11 +154,7 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
         createdAt: Date.now(),
         source,
         actorType,
-        selectedVariant: selectedVariant ? {
-          id: selectedVariant.id,
-          label: selectedVariant.label || 'Variant',
-          source: selectedVariant.source || null,
-        } : null,
+        selectedVariant: effectiveSpeciesEntry.selectedVariant || null,
         abilityChoice: selectedAbilityChoice ? { ...selectedAbilityChoice } : null,
         attributeGenerationOverride: _buildAttributeGenerationOverride(effectiveSpeciesEntry, selectedAbilityChoice),
         droidBuilder: ledger.rules?.droidBuilder || null,
@@ -181,40 +179,6 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
 }
 
 
-/**
- * Overlay an alternate species profile onto the base registry entry. This keeps
- * one visible species row while allowing the selected variant to drive ability
- * modifiers, movement, languages, and trait grants during materialization.
- * @private
- */
-function _applyVariantProfile(speciesEntry, variant) {
-  if (!speciesEntry || !variant) return speciesEntry;
-  const abilityScores = variant.abilityMods && typeof variant.abilityMods === 'object'
-    ? { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0, ...variant.abilityMods }
-    : speciesEntry.abilityScores;
-  return {
-    ...speciesEntry,
-    id: speciesEntry.id,
-    name: speciesEntry.name,
-    source: variant.source || speciesEntry.source,
-    size: variant.size || speciesEntry.size,
-    speed: Number.isFinite(Number(variant.speed)) ? Number(variant.speed) : speciesEntry.speed,
-    movement: variant.movement && typeof variant.movement === 'object' ? variant.movement : speciesEntry.movement,
-    rawAbilities: variant.abilities || speciesEntry.rawAbilities,
-    abilityScores,
-    abilityChoice: variant.abilityChoice || speciesEntry.abilityChoice || null,
-    skillBonuses: Array.isArray(variant.skillBonuses) && variant.skillBonuses.length ? variant.skillBonuses : speciesEntry.skillBonuses,
-    abilities: Array.isArray(variant.special) && variant.special.length ? [...variant.special] : speciesEntry.abilities,
-    canonicalTraits: Array.isArray(variant.traits) && variant.traits.length ? variant.traits : speciesEntry.canonicalTraits,
-    languages: Array.isArray(variant.languages) && variant.languages.length ? variant.languages : speciesEntry.languages,
-    selectedVariantId: variant.id,
-    selectedVariant: {
-      id: variant.id,
-      label: variant.label || 'Variant',
-      source: variant.source || null,
-    },
-  };
-}
 
 
 /**

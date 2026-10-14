@@ -303,6 +303,16 @@ export class SpeciesRegistry {
           languages: Array.isArray(variant.languages) ? variant.languages : [],
           description: String(variant.description ?? '').trim(),
           traits,
+          // Complete-snapshot (single published profile) fields. See species-variant-profile.js.
+          ...(variant.completeSnapshot === true ? {
+            completeSnapshot: true,
+            sourceProfileId: variant.sourceProfileId ?? null,
+            naturalWeapons: Array.isArray(variant.naturalWeapons) ? variant.naturalWeapons : null,
+            primitive: !!variant.primitive,
+            suppressedClassProficiencies: Array.isArray(variant.suppressedClassProficiencies) ? variant.suppressedClassProficiencies : [],
+            noConstitution: !!variant.noConstitution,
+            retainsConstitution: !!variant.retainsConstitution,
+          } : {}),
         };
       });
   }
