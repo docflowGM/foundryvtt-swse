@@ -150,7 +150,7 @@ No custom-base field and no stock-exception table in 1a (D3). Exception evidence
 | Lookup result | Outcome |
 |---|---|
 | `canonical` with `weaponClass` `ordinary` or `lightsaber` | Class from the lookup, `evidence: "canonical-lookup"`. If `trustedClassification.weaponClass` is also present and **differs**, the result is conflict `WEAPON_CLASS_CONTRADICTION` (blocking); neither value is chosen (see OPEN D15). A matching trusted value changes nothing. |
-| `canonical` with `weaponClass` `unknown` (unknown or contradictory structured fields) | Class `unverified`, `WEAPON_CLASS_UNKNOWN_CANONICAL`. **`trustedClassification.weaponClass` is ignored for classification** and `diagnostics` records that it was present. |
+| `canonical` with `weaponClass` `unknown` (unknown or contradictory structured fields) | Class `unverified`, `WEAPON_CLASS_UNKNOWN_CANONICAL`. **`trustedClassification.weaponClass` is ignored for classification** and diagnostic `TRUSTED_WEAPON_CLASS_IGNORED` records that it was present. |
 | `unresolved` (declared identity cannot be resolved, registry not loaded, identity contradictory) | Class `unverified`, `CANONICAL_IDENTITY_UNRESOLVED`. **`trustedClassification.weaponClass` does not override it.** |
 | `legacy` (the lookup reports a genuinely legacy/custom weapon with no canonical identity) | `trustedClassification.weaponClass` ∈ {`ordinary`, `lightsaber`} → class with `evidence: "trusted-input"`; otherwise class `unverified`, `WEAPON_CLASS_UNVERIFIED`. |
 | no `canonicalWeaponLookup` injected | Class `unverified`, `CANONICAL_LOOKUP_ABSENT`. Without a lookup the module cannot know whether a canonical identity is declared, so trusted input is not applied. |
@@ -194,7 +194,7 @@ Why a recorded size increase makes the stock class unrecoverable: `StructuralCha
 
 No new armor transitions are defined.
 
-*Consequence to note (D12, LOCKED as acceptable for read-only 1a only):* none of the 133 shipped armor records sets `isPoweredArmor`, and newly created armor carries a schema-defaulted `false`. Under the rules above **every armor Item resolves with an unresolved base in Phase 1a unless a trusted classification supplies `powered: false`**. This is not approval to leave armor unresolved permanently: source-backed classification and migration must exist before any live consumer integration.
+*Consequence to note (D12, LOCKED as acceptable for read-only 1a only):* none of the 133 shipped armor records sets `isPoweredArmor`, and newly created armor carries a schema-defaulted `false`. Under the rules above **every armor Item resolves with an unresolved base in Phase 1a unless a trusted classification supplies `powered: false` and, for any armor whose declared class is `light` (a possible schema default) or that has a recorded size increase, also a trusted stock class**. This is not approval to leave armor unresolved permanently: source-backed classification and migration must exist before any live consumer integration.
 
 ### 5.4 Equipment
 
