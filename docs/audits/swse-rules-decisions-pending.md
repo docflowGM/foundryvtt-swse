@@ -30,6 +30,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Status | `DEFERRED_RULES_REVIEW` |
 | Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Scum and Villainy* p. 39 (and the cross-referenced table text) and record the DC, time, scratch-built cost basis, install-failure and removal consequences with page evidence. The registry only records that these values "depend on source table"; it records no ambiguity. Becomes `DEFERRED_RULES_REVIEW` only if the examined text is itself ambiguous or conflicts with another authority. |
 | Ledger scope | component=installProcedure; definitions=ALL |
+| Source examination log | 2026-10-14: OCR layer of the cited pages examined; shape of the procedure confirmed, numeric values illegible, PDF page image needed. Still open; blocker not lifted. See `docs/audits/d-001-install-remove-source-examination.md`. |
 | Decision authority | Project owner |
 | Resolution | |
 
