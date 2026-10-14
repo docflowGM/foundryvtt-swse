@@ -5582,30 +5582,7 @@
     "name": "Hutt",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "immense-bulk",
-        "name": "Immense Bulk",
-        "description": "A Hutt gains a +5 species bonus to Fortitude Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "fortitude",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "immense-bulk-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "slow",
-        "name": "Slow",
-        "description": "A Hutt's base speed is reduced by 2 squares."
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -5657,7 +5634,7 @@
       {
         "id": "supreme-stability",
         "name": "Supreme Stability",
-        "description": "A Hutt's sluglike body structure and lack of any kind of legs, allows a Hutt to become completely immune to being knocked Prone."
+        "description": "A Hutt's sluglike body structure and lack of any kind of legs, allows a Hutt to become completely immune to being tripped or knocked Prone."
       },
       {
         "id": "silver-tongued",

@@ -31,6 +31,14 @@ const CORE = {
     sidecarAbsent: ['low-cunning', 'brutal-charge', 'weapon-familiarity-arg-garok'],
     primitive: true,
   },
+  // Hutt (CORE-2A-19): printed traits are Force Resistance, Supreme Stability (no trips / not knocked prone), Skills
+  // (reroll Persuasion, keep better). Speed 2 lives in movement data; there is no Fortitude bonus.
+  Hutt: {
+    traits: ['force-resistance', 'supreme-stability', 'silver-tongued'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['immense-bulk', 'slow'],
+    textIncludes: [['supreme-stability', /tripped/i], ['supreme-stability', /prone/i], ['force-resistance', /\+5/]],
+  },
   // Trandoshan (CORE-2A-14): printed traits are Darkvision, Limb Regeneration, Natural Armor, Bonus Feat.
   // Clawed hands are narrative only; there is no natural attack or flat skill bonus, and no hit-point regeneration.
   Trandoshan: {
