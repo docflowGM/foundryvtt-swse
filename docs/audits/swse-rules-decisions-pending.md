@@ -2,7 +2,12 @@
 
 **Append-only.** Entries are never deleted or overwritten. When the project owner rules, the original question is preserved and the ruling, date and implementing commit are added under **Resolution**.
 **Authority:** the project owner decides every entry. **Recommended ruling is "None" unless the owner explicitly asks for one.** An entry is a deferral, not a decision, and nothing in it authorizes any implementation.
-**Status of every open entry:** `DEFERRED_RULES_REVIEW`.
+**Status of every open entry:** an open entry carries one or both of two review statuses (revision 2, 2026-10-14; entry IDs and original text are unchanged):
+
+- `PENDING_SOURCE_VERIFICATION` — the published rules text for the question has not yet been fully examined and certified. This is a research gap, not a rules ambiguity. Incomplete registry coverage never implies that the published rules are ambiguous. The work is source examination (reading the cited pages and recording exact publication identity, printed page and evidence). It does not need an owner ruling.
+- `DEFERRED_RULES_REVIEW` — the source *has* been examined and a genuine ambiguity, contradiction between authorities, or a policy decision remains. Only this status needs the project owner. It may be reached for an entry only after that entry's source examination is complete, and the examination result is recorded here.
+
+An entry may carry both statuses (for example, part of the question is a research gap while another part is already a policy question). Moving an entry from `PENDING_SOURCE_VERIFICATION` to `DEFERRED_RULES_REVIEW`, to resolved, or to closed is done by appending to **Resolution**, never by rewriting history. The classification row added to each entry below is an addition; the original `Status` rows are retained as written (they predate the distinction and are superseded by the classification row).
 **Evidence rule:** each entry records only what the merged v1.5 registry (`data/audits/modification-rolling-authority-v1.5.json`, SHA-256 `7be42741…3d00`), the merged Phase 0/1a/1b documents, or the owner's rulings establish. Page numbers are the registry's printed pages. Where a fact is the registry's claim and not independently re-verified here, the entry says so.
 
 Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V2 replacement design package).
@@ -23,6 +28,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | Any V2 install/remove flow that rolls, charges time or cost, or applies failure outcomes; the rules content of the install service. |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Scum and Villainy* p. 39 (and the cross-referenced table text) and record the DC, time, scratch-built cost basis, install-failure and removal consequences with page evidence. The registry only records that these values "depend on source table"; it records no ambiguity. Becomes `DEFERRED_RULES_REVIEW` only if the examined text is itself ambiguous or conflicts with another authority. |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -40,6 +46,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | Any strip grant. Phase 1a already fails closed (a recorded strip is `unresolved`, never `+1`); the V2 structural service and any host-evidence input are blocked. |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Scum and Villainy* pp. 37–38 for which features qualify, the stated drawbacks, and the repeat-method restriction already noted from the Phase 1a contract. No ambiguity is recorded in the registry. Phase 1a D16 (fail closed) stays in force until certification. |
 | Decision authority | Project owner |
 | Resolution | Interim: Phase 1a D16 (fail closed). Not a final ruling. |
 
@@ -57,6 +64,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | The V2 structural service and the armor stock-class derivation. Phase 1a counts a canonical size increase once (verified `+1`) and leaves armor stock class unrecoverable without trusted input. |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Scum and Villainy* pp. 38–39 for what a size increase changes on weapons and on armor and for the published restrictions. The disagreement between the repository's two writers is an engineering inconsistency (resolved by the replacement, not by a rules ruling) unless the printed text itself is ambiguous. |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -74,6 +82,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | Slot accounting for this upgrade (never certified; remains unresolved). |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Scum and Villainy* p. 42 and Table 2-4 for the condition selecting a slot cost of 0 or 1. The registry says only that specific source-text examination is required. |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -91,6 +100,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | Accounting and installation of these 16 upgrades in any domain (per the Phase 1b contract they stay blocked). |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine each Table 2-3 upgrade's printed text for permitted hosts and detail rules. No ambiguity is recorded; applicability is simply not yet certified. |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -108,6 +118,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | The purchase and install flow for these modifications. |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — The source has been examined by the registry: the price is not printed, so it is unknown (owner ruling: never zero). The remaining question — how the V2 system handles acquiring or installing a modification whose price is not printed — is a policy decision, not a research gap. A fresh check that the cited pages indeed print no price may be recorded under Resolution but is not a prerequisite. |
 | Decision authority | Project owner |
 | Resolution | Partial, prior: price is unknown, never `0` (owner ruling). The handling flow remains open. |
 
@@ -125,6 +136,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | These two catalog entries. Owner ruling: neither is added nor deleted until the source is verified. |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — A source has not been located for Night Vision Device and the *Rebellion Era Campaign Guide* entry for Computerized Interface Scope is OCR-only. Locate and verify the printed entries. Existing owner ruling (keep as is until verified) stands. |
 | Decision authority | Project owner |
 | Resolution | Interim: keep as is until verified (owner ruling). |
 
@@ -142,6 +154,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | The trait's slot effect (Phase 1a treats it as `unverified`, never capacity). |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine the *Starships of the Galaxy* p. 21 Tech Specialist table and surrounding text to establish whether the trait is published and what it grants. |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -159,6 +172,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | These traits in the V2 Tech Specialist consumer (preserved as is, not expanded, not newly automated). |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Locate and certify the Superior Tech source text for each of the 14 traits. Existing owner ruling (preserve, do not expand) stands. |
 | Decision authority | Project owner |
 | Resolution | Interim: preserve, do not expand (owner ruling). |
 
@@ -176,6 +190,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | Applying these templates alongside any other template or upgrade. |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Legacy Era Campaign Guide* pp. 66, 100, 101 and record the specific composition constraints. The registry flags that further source tests are needed but does not record a specific ambiguity. |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -193,6 +208,7 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | Any lightsaber pool accounting (Phase 1a never certifies a lightsaber) and the V2 lightsaber consumer. |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Jedi Academy Training Manual* pp. 54 and 60 for the accessory allowance count, crystal pools and the Tech Specialist relation. May become `DEFERRED_RULES_REVIEW` if the printed text is ambiguous about stacking. |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -210,5 +226,12 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Recommended ruling | None |
 | Implementation impact | Capacity of powered armor (Phase 1a leaves it unresolved). |
 | Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Re-examine *Scum and Villainy* p. 37 for what the printed text says about powered armor. The registry outline text omits heavy armor and differs from the printed baseline, which indicates an incomplete outline rather than an established ambiguity. Becomes `DEFERRED_RULES_REVIEW` only if the page gives no precedence rule between powered status and weight class. |
 | Decision authority | Project owner |
 | Resolution | |
+
+---
+
+## Revision log
+
+- **Revision 2 (2026-10-14):** introduced `PENDING_SOURCE_VERIFICATION` versus `DEFERRED_RULES_REVIEW`; added a *Review classification* row to D-001–D-012. Of the twelve entries, eleven are research gaps awaiting source examination; only D-006 (policy for unpriced modifications) is a decision for the owner today. No decision ID, original field, owner ruling or interim position was changed. No recommended ruling is made for any entry. Source examination is the next step for D-001 first, because it blocks the install procedure.
