@@ -98,6 +98,29 @@ const feats = r => r.grants.filter(g => g.grantType === 'feat' && g.target).map(
     ['Weapon Proficiency (Advanced Melee Weapons)', 'Weapon Proficiency (Heavy Weapons)', 'Weapon Proficiency (Lightsabers)', 'Weapon Proficiency (Pistols)', 'Weapon Proficiency (Rifles)'], 'every group except simple weapons');
   assert.ok(!r.abilities.includes('force-blast'), 'Force Blast engine entry differs from the printed rule: not activated');
 }
+// The Unknown Regions p.131 — Killiks of Medium size (the printed Medium profile; other sizes are GM-defined, not automated)
+{
+  const r = await apply('Killik');
+  assert.deepEqual(r.racial, { con: 2, int: -2 });
+  assert.deepEqual([r.size, r.speed, r.languages], ['medium', 6, ['Killik', 'Sy Bisti']]);
+  assert.deepEqual(r.defense, { fortitude: 0, reflex: 1, will: 0 });
+  assert.deepEqual(r.naturals, ['1d6 slashing']);
+}
+// The Clone Wars Campaign Guide p.91 — Republic Clone: fixed array Str 15 Dex 13 Con 10 Int 12 Wis 10 Cha 8, plus one score +2
+{
+  const r = await apply('Republic Clone');
+  assert.deepEqual(r.racial, {}, 'no ordinary racial modifiers');
+  const override = r.ctx.metadata.attributeGenerationOverride;
+  assert.deepEqual(override.fixedScores, { str: 15, dex: 13, con: 10, int: 12, wis: 10, cha: 8 });
+  assert.equal(override.bonusChoices.length, 6);
+  const v = r.actor.system.speciesVariant;
+  assert.equal(v.sourceProfileId, 'CW-2H-10');
+  const snap = (await import('/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js')).SpeciesRegistry.getByName('Republic Clone').variants.find(x => x.completeSnapshot);
+  assert.equal(snap.abilityChoice.bonusValue, 2, 'the printed +2 is recorded');
+  assert.equal(snap.abilityChoice.allocationPoints, 2, 'the repository\'s existing allocation behaviour is carried over unchanged (register RD-017)');
+  assert.deepEqual(r.grants.filter(g => g.grantType === 'trainedSkill').map(g => g.frequency), ['choice']);
+  assert.deepEqual(r.grants.filter(g => g.grantType === 'feat').map(g => g.frequency), ['choice']);
+}
 // Activated-ability exclusions: engine entries that differ from the printed rule never activate from a published profile
 for (const [species, banned] of [['Caamasi', 'pacifism'], ['Yarkora', 'confusion'], ['Clawdite', 'shapeshift'], ['Draethos', 'natural-telepath']]) {
   const r = await apply(species);

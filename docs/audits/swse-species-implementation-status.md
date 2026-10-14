@@ -9,20 +9,20 @@ Every hydrated row is `SOURCE_VERIFIED` against the audit, `DATA_RECONCILED` in 
 
 | Category | Profiles |
 |---|---|
-| Hydrated by the bulk tool | 88 |
+| Hydrated by the bulk tool | 90 |
 | Core Rulebook profiles reconciled earlier on their base records | 19 |
 | Multi-publication profiles handled separately (Bith, Chadra-Fan, Chagrian, Chiss, Krevaaki, Neimoidian, Yuuzhan Vong) | 15 |
-| Technical holds | 7 |
+| Technical holds | 5 |
 
 ## Features of the hydrated profiles
 
 | Category | Features |
 |---|---|
-| Automated by a structured rule or field | 85 |
+| Automated by a structured rule or field | 88 |
 | Automated by a verified existing activated-ability entry | 6 |
-| Natural attacks granted as species natural-weapon items (counted in attacks, not features) | 16 |
+| Natural attacks granted as species natural-weapon items (counted in attacks, not features) | 17 |
 | Existing engine automation known to be inaccurate — suppressed, text only | 5 |
-| Display-only (no automation) | 186 |
+| Display-only (no automation) | 191 |
 
 Display-only includes natural-attack features whose secondary effects are not implemented; the attacks themselves are in the
 natural-attack column below.
@@ -35,7 +35,7 @@ natural-attack column below.
 - Darkvision / Low-light Vision, conditional skill bonuses and defenses, and activated abilities without a verified engine entry are display-only.
 - Small-size Stealth (+5) is a general size rule and is not applied by species data (see register RD-007).
 
-## Hydrated profiles (88)
+## Hydrated profiles (90)
 
 | Profile | Variant id | Structured (automated) | Verified activation | Natural attacks granted | Engine automation suppressed | Display-only |
 |---|---|---|---|---|---|---|
@@ -47,6 +47,7 @@ natural-attack column below.
 | UR-2B-08 Squib | `squib-ur-2b-08` | — | — | — | — | Natural Diplomat (CONDITIONAL_SKILL_BONUS_AND_CLASS_SKILL); Tech Savvy (OPTIONAL_REROLL_MUST_ACCEPT_AND_UNTRAINED_EXCEPTION); Weapon Familiarity (CONDITIONAL_WEAPON_PROFICIENCY) |
 | UR-2B-09 Verpine | `verpine-ur-2b-09` | Natural Armor, Heightened Awareness, Conditional Bonus Feat | — | — | — | Verpine Communication (SPECIES_LIMITED_TELEPATHY) |
 | UR-2B-11 Ebruchi | `ebruchi-ur-2b-11` | Conditional Bonus Feat, Iron Will | — | — | — | Unsettling (ON_SUCCESS_ALTERNATE_INTIMIDATION_EFFECT) |
+| UR-2B-12 Killik | `killik-ur-2b-12` | Natural Armor | — | Claws 1d6 slashing | — | Joiners (CONDITIONAL_TIMED_MIND_AFFECTING_TRANSFORMATION); Low-Light Vision (VISION); Hive Mind (SPECIES_LIMITED_TELEPATHY); Multiple Limbs (MULTIPLE_ATTACK_PENALTY_MODIFIER); Natural Weapons (NATURAL_WEAPON_GRANT) |
 | UR-2B-14 Sorcerer of Rhand | `sorcerer-of-rhand-ur-2b-14` | Bonus Feat | — | — | — | Dark-Infused (CONSTRAINED_FIXED_FEAT_AND_SELECTION); Repulsive Appearance (OPTIONAL_REROLL_BETTER_AND_DEFENSE); Special Qualities (GM_DEFINED_CHOICE) |
 | UR-2B-15 Ssi-Ruuk | `ssi-ruuk-ur-2b-15` | Conditional Bonus Feat, Natural Armor | — | — | — | Force Blind (FORCE_USE_RESTRICTION); Keen Smell (CONDITIONAL_OPTIONAL_REROLL_BETTER) |
 | UR-2B-16 Tof | `tof-ur-2b-16` | — | — | — | — | Bonus Feat (LEVEL_ONE_FEAT_CHOICE); Conditional Bonus Feat (CONDITIONAL_FEAT_GRANT); Tof Fearlessness (ENCOUNTER_NEGATION_AND_CONDITIONAL_DEFENSE) |
@@ -116,6 +117,7 @@ natural-attack column below.
 | CW-2H-07 Nautolan | `nautolan-cw-2h-07` | — | — | — | — | Breathe Underwater (AQUATIC_RESPIRATION); Expert Swimmer (SKILL_REROLL_AND_TAKE10_EXCEPTION); Low-Light Vision (VISION); Natural Damage Reduction (DAMAGE_REDUCTION); Pheromonal Sensor (CONDITIONAL_SKILL_REROLL) |
 | CW-2H-08 Nelvaanian | `nelvaanian-cw-2h-08` | Primitive | — | — | — | Low-Light Vision (VISION); Scent (ENHANCED_PERCEPTION_TRACKING); Shadow Swiftness (CONDITIONAL_MOVEMENT_AOO_EXCEPTION) |
 | CW-2H-09 Vurk | `vurk-cw-2h-09` | Nomads | — | — | — | Breathe Underwater (AQUATIC_RESPIRATION); Expert Swimmer (SKILL_REROLL_AND_TAKE10_EXCEPTION); Placid (ONCE_PER_ENCOUNTER_FREE_ACTION_CONDITION_REMOVAL) |
+| CW-2H-10 Republic Clone | `republic-clone-cw-2h-10` | Bonus Trained Skill, Bonus Feat | — | — | — | — |
 | GAW-2I-01 Barabel | `barabel-gaw-2i-01` | Natural Armor, Primitive | — | Claws 1d6 slashing, Bite 1d6 piercing, Tail 1d6 bludgeoning | — | Natural Weapons (SPECIES_GRANTED_NATURAL_ATTACK_CHOICE); Stun Resistance (CONDITIONAL_DAMAGE_THRESHOLD_BONUS); Radiation Resistance (ENVIRONMENTAL_RESISTANCE_WITH_CONDITION_EXCEPTION); Darkvision (VISION); Intimidation Skill Reroll (SKILL_REROLL); Jedi Respect (contextual sidebar) (OPTIONAL_CONTEXTUAL_ATTITUDE_RULE) |
 | GAW-2I-03 Lurmen | `lurmen-gaw-2i-03` | Primitive | Roller | — | — | Mender (CONDITIONAL_SKILL_DC_REDUCTION); Climbing Skills (SKILL_TAKE10_EXCEPTION) |
 | GAW-2I-04 Taung | `taung-gaw-2i-04` | — | — | — | — | Armor Training (ARMOR_MAX_DEX_BONUS_MODIFIER); Superior Defenses (PASSIVE_ALL_DEFENSES_BONUS); Warrior Culture (SKILL_REROLL) |
@@ -128,7 +130,7 @@ natural-attack column below.
 | TOG-2K-02 Chistori | `chistori-tog-2k-02` | — | Rage | — | — | Cold-Blooded (EXTREME_COLD_ENVIRONMENTAL_DEFENSE_PENALTY); Armor Plating (DAMAGE_REDUCTION) |
 | TOG-2K-04 Utai | `utai-tog-2k-04` | — | — | — | — | Animal Handler (SKILL_REROLL_AND_CONDITIONAL_ATTITUDE_BONUS); Cooperative (CONDITIONAL_AID_ANOTHER_AUTOSUCCESS); Low-Light Vision (VISION) |
 
-## Held and separately handled (41)
+## Held and separately handled (39)
 
 | Profile | Category | Reason |
 |---|---|---|
@@ -156,7 +158,6 @@ natural-attack column below.
 | UR-2B-02 Chadra-Fan | multi | published in several profiles (separate path) |
 | UR-2B-04 Krevaaki | multi | published in several profiles (separate path) |
 | UR-2B-10 Chiss | multi | published in several profiles (separate path) |
-| UR-2B-12 Killik | technical | size variation support — rules review: SPECIES-RD-019 |
 | UR-2B-13 Lugubraa | technical | natural attack "Barbed tentacles": damage type not printed — rules review: SPECIES-RD-015 |
 | LEG-2C-01 Chagrian | multi | published in several profiles (separate path) |
 | LEG-2C-02 Chiss | multi | published in several profiles (separate path) |
@@ -165,7 +166,6 @@ natural-attack column below.
 | TFU-2E-12 Chiss | multi | published in several profiles (separate path) |
 | GOI-2G-01 Bith | multi | published in several profiles (separate path) |
 | GOI-2G-08 Neimoidian | multi | published in several profiles (separate path) |
-| CW-2H-10 Republic Clone | technical | ability score generation support (fixed array) — rules review: SPECIES-RD-017 |
 | CW-2H-11 Chagrian | multi | published in several profiles (separate path) |
 | GAW-2I-02 Dashade | technical | automatic languages not recorded in the audit — rules review: SPECIES-RD-016 |
 | JATM-2J-01 Shard | technical | droid integration deferred |

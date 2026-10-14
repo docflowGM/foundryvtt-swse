@@ -1664,6 +1664,59 @@
    "hullepi": "display-only"
   }
  },
+ "killik-ur-2b-12": {
+  "species": "Killik",
+  "sourceProfileId": "UR-2B-12",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": -2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Killik",
+   "Sy Bisti"
+  ],
+  "traitIds": [
+   "joiners",
+   "low-light-vision",
+   "hive-mind",
+   "multiple-limbs",
+   "natural-armor",
+   "natural-weapons"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "joiners": "display-only",
+   "low-light-vision": "display-only",
+   "hive-mind": "display-only",
+   "multiple-limbs": "display-only",
+   "natural-armor": "structured-rule",
+   "natural-weapons": "display-only"
+  }
+ },
  "kissai-kotor-2d-07": {
   "species": "Kissai",
   "sourceProfileId": "KOTOR-2D-07",
@@ -2310,6 +2363,43 @@
    "force-blind": "display-only",
    "primitive": "structured-field",
    "rage": "named-activation"
+  }
+ },
+ "republic-clone-cw-2h-10": {
+  "species": "Republic Clone",
+  "sourceProfileId": "CW-2H-10",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic"
+  ],
+  "traitIds": [
+   "bonus-trained-skill",
+   "bonus-feat"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "choice": true
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 1,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-trained-skill": "structured-rule",
+   "bonus-feat": "structured-rule"
   }
  },
  "ryn-sv-2f-06": {

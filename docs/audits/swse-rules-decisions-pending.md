@@ -389,3 +389,34 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+---
+
+## SPECIES-RD-017 — PROGRESS NOTE (appended; the original entry above is preserved unchanged)
+
+| Field | |
+|---|---|
+| Result | Republic Clone is now a verified profile (`republic-clone-cw-2h-10`) carrying the printed fixed array (Str 15, Dex 13, Con 10, Int 12, Wis 10, Cha 8) and the printed single +2 (`bonusValue: 2`). |
+| Behavior kept | How the attribute step lets the player spend the bonus is the repository's existing, documented behavior (`docs/species-phase4-special-attribute-rules.md`: two +1 increases, one per ability by default, with the `allow_stacked_two` mode available). Its allocation fields are carried over from the existing record unchanged. No ruling record approving it as a house rule was found, so the default is not changed here. |
+| Still needed from the owner | Whether the attribute step's default for new Republic Clone characters should follow the printed "+2 to one score". |
+| Status | `DEFERRED_RULES_REVIEW` (default allocation only); profile `OFFLINE_TESTED` |
+
+---
+
+## SPECIES-RD-019 — RESOLUTION NOTE (appended; the original entry above is preserved unchanged)
+
+| Field | |
+|---|---|
+| Result | The Unknown Regions prints a separate "Killiks of Medium size" block (p.131). It is hydrated as `killik-ur-2b-12`; its description states that other sizes are GM-defined and not automated. |
+| Still open | Size-specific modifiers and speed for other sizes (the book directs the GM to Table 16-2 and the Creature Generator) are not implemented and need a design decision, not a rules invention. |
+| Status | Medium profile `OFFLINE_TESTED`; other sizes `DEFERRED_RULES_REVIEW` |
+
+---
+
+## SPECIES-RD-018 — ENGINEERING NOTE (appended; the original entry above is preserved unchanged)
+
+| Field | |
+|---|---|
+| Finding | The derived character speed reads `system.speed` and falls back to 6 when it is absent; `system.speciesMovement` (fly, swim) is stored but not consumed by derived movement. A species without a printed land speed therefore cannot be represented without either inventing a walking speed or changing derived movement. |
+| Decision | Celegian stays held. Needed: derived movement that consumes fly/swim/hover, and an explicit "no land speed printed" state. Language comprehension (Basic understood, not spoken) has no schema either. |
+| Status | `DEFERRED_RULES_REVIEW` plus a technical movement-schema gap |

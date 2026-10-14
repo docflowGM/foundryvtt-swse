@@ -212,7 +212,34 @@ function compileNaturalWeapons(snap, speciesSlug) {
  * Offshoot Strength or Dexterity) become the existing `abilityChoice` (type "choice"): the modifiers every option
  * shares are fixed, each option carries its own remaining modifiers, and the player chooses exactly one.
  */
-function compileAbilityChoice(snap) {
+function compileFixedArray(snap, record) {
+  const gen = snap.abilityScoreGeneration;
+  if (gen.type !== 'FIXED_STARTING_ARRAY_PLUS_SINGLE_CHOICE' || !gen.doNotApplyOrdinaryRacialModifierPipeline) throw new HoldProfile(`ability score generation ${gen.type} not supported`);
+  const lower = o => Object.fromEntries(ABILITIES.map(k => [k.toLowerCase(), o[k]]));
+  if (ABILITIES.some(k => !Number.isFinite(gen.fixedStartingScores?.[k])) || !Number.isFinite(gen.chooseOneScoreToIncreaseBy)) throw new HoldProfile('fixed array incomplete');
+  // The printed array and the printed single +N choice. How the attribute step lets the player spend that bonus is the
+  // repository's existing, documented allocation behaviour (docs/species-phase4-special-attribute-rules.md): its
+  // allocation fields are carried over from the existing record verbatim and are NOT a statement of the printed rule.
+  const existing = record?.system?.abilityChoice?.type === 'fixedArray' ? record.system.abilityChoice : null;
+  const keep = existing ? Object.fromEntries(['allocationPoints', 'maxPerAbility', 'allocationMode', 'requiresGmApprovalOnOverride', 'helpText'].filter(k => existing[k] !== undefined).map(k => [k, existing[k]])) : {};
+  const common = Object.fromEntries(ABILITIES.map(k => [k, Number.isFinite(snap.abilityModifiers?.[k]) ? snap.abilityModifiers[k] : null]));
+  if (Object.values(common).some(v => v === null)) throw new HoldProfile('fixed array profile without explicit zero modifiers');
+  return {
+    common,
+    abilityChoice: {
+      type: 'fixedArray',
+      label: existing?.label ?? 'Fixed ability score array',
+      fixedScores: lower(gen.fixedStartingScores),
+      bonusChoices: gen.eligibleScores.map(k => k.toLowerCase()),
+      bonusValue: gen.chooseOneScoreToIncreaseBy,
+      printedRule: 'Fixed starting array plus one chosen ability score increased by the printed bonus.',
+      ...keep,
+    },
+  };
+}
+
+function compileAbilityChoice(snap, record = null) {
+  if (snap.abilityScoreGeneration) return compileFixedArray(snap, record);
   const variants = snap.abilityModifierVariants ?? [];
   if (!variants.length) return null;
   if (variants.length < 2 || variants.some(v => !v.selector || ABILITIES.some(k => !Number.isFinite(v.abilityModifiers?.[k])))) throw new HoldProfile('ability choice options incomplete');
@@ -251,9 +278,11 @@ const titleCase = text => String(text).replace(/\b([a-z])/g, c => c.toUpperCase(
 export function hydrateProfile(profile, record, { provenance = [] } = {}) {
   if (profile.disposition === 'DEFERRED_DROID_INTEGRATION') throw new HoldProfile('droid integration deferred');
   const snap = profile.sourceRuleSnapshot;
-  if (snap.abilityScoreGeneration) throw new HoldProfile('ability score generation support (fixed array)');
-  const choice = compileAbilityChoice(snap);
-  if (snap.sizeVariation) throw new HoldProfile('size variation support');
+  const choice = compileAbilityChoice(snap, record);
+  // A species printed with a separate, explicit block for one size (Killiks of Medium size) hydrates that printed block;
+  // the other sizes are GM-defined, stay unautomated and are noted on the variant.
+  const sizeVariation = snap.sizeVariation;
+  if (sizeVariation && !(sizeVariation.mode === 'GM_DEFINED_VARIANT' && sizeVariation.baseline === snap.size)) throw new HoldProfile('size variation support');
   const naturalWeapons = compileNaturalWeapons(snap, slug(profile.speciesDisplayName));
   if (!snap.features) throw new HoldProfile('no audited features');
   if (!Array.isArray(snap.automaticLanguages) || !snap.automaticLanguages.length) throw new HoldProfile('automatic languages not recorded in the audit');
@@ -301,7 +330,7 @@ export function hydrateProfile(profile, record, { provenance = [] } = {}) {
     languages: snap.automaticLanguages.map(l => l.name),
     naturalWeapons,
     ...(suppressed.length ? { primitive: true, suppressedClassProficiencies: suppressed } : {}),
-    description: `${profile.speciesDisplayName} as printed in ${profile.publication}. Complete publication snapshot; no traits are inherited from other publications.`,
+    description: `${profile.speciesDisplayName} as printed in ${profile.publication}. Complete publication snapshot; no traits are inherited from other publications.${sizeVariation ? ` This is the printed ${sizeVariation.baseline}-size profile; other sizes are GM-defined and are not automated.` : ''}`,
     traits,
     runtimeStatus: 'NOT_RUNTIME_CERTIFIED',
   };
