@@ -760,33 +760,51 @@ export class SpeciesGrantLedgerBuilder {
       }
     }
 
-    // From special abilities
-    const specialAbilities = Array.isArray(system.special)
-      ? system.special
-      : (Array.isArray(doc.abilities) ? doc.abilities : []);
-    if (specialAbilities.length) {
-      for (const special of specialAbilities) {
-        const trait = this._classifySpecial(special);
+    const addSpecials = (skipCovered) => {
+      // From special abilities
+      const specialAbilities = Array.isArray(system.special)
+        ? system.special
+        : (Array.isArray(doc.abilities) ? doc.abilities : []);
+      if (specialAbilities.length) {
+        for (const special of specialAbilities) {
+          const trait = this._classifySpecial(special);
+          if (!trait) continue;
+          if (skipCovered && ledger.traits.some(t => t.id === trait.id || t.name?.toLowerCase() === trait.name?.toLowerCase())) continue;
+          ledger.traits.push(trait);
+        }
+      }
+    };
+
+    const addCanonical = () => {
+      // From canonical trait blocks, when available from the sanitized species pack/registry.
+      // Route through _classifyTrait (not _classifySpecial) so text-based fallback detection
+      // for skill bonuses, natural armor, and rerolls applies to structured canonicalTrait objects.
+      // Guard: skip entries already present from structuralTraits/conditionalTraits to prevent
+      // double-counting for species (e.g. Barabel, Verpine, Bothan) where both arrays are identical.
+      const canonicalTraits = Array.isArray(system.canonicalTraits)
+        ? system.canonicalTraits
+        : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
+      const existingTraitIds = new Set(ledger.traits.map(t => t.id));
+      const existingTraitNames = new Set(ledger.traits.map(t => t.name?.toLowerCase()).filter(Boolean));
+      for (const canonicalTrait of canonicalTraits) {
+        if (!canonicalTrait?.name) continue;
+        const candidateId = canonicalTrait.id || this._slugify(canonicalTrait.name);
+        if (existingTraitIds.has(candidateId) || existingTraitNames.has(canonicalTrait.name.toLowerCase())) continue;
+        const trait = this._classifyTrait(canonicalTrait, 'json');
         if (trait) ledger.traits.push(trait);
       }
-    }
+    };
 
-    // From canonical trait blocks, when available from the sanitized species pack/registry.
-    // Route through _classifyTrait (not _classifySpecial) so text-based fallback detection
-    // for skill bonuses, natural armor, and rerolls applies to structured canonicalTrait objects.
-    // Guard: skip entries already present from structuralTraits/conditionalTraits to prevent
-    // double-counting for species (e.g. Barabel, Verpine, Bothan) where both arrays are identical.
-    const canonicalTraits = Array.isArray(system.canonicalTraits)
-      ? system.canonicalTraits
-      : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
-    const existingTraitIds = new Set(ledger.traits.map(t => t.id));
-    const existingTraitNames = new Set(ledger.traits.map(t => t.name?.toLowerCase()).filter(Boolean));
-    for (const canonicalTrait of canonicalTraits) {
-      if (!canonicalTrait?.name) continue;
-      const candidateId = canonicalTrait.id || this._slugify(canonicalTrait.name);
-      if (existingTraitIds.has(candidateId) || existingTraitNames.has(canonicalTrait.name.toLowerCase())) continue;
-      const trait = this._classifyTrait(canonicalTrait, 'json');
-      if (trait) ledger.traits.push(trait);
+    // A complete-snapshot publication has no sidecar JSON: its structured trait objects (published
+    // text, classifiable bonuses) are the authority. Process them BEFORE the bare-name stubs from
+    // `special`, which would otherwise shadow them as description-less identity traits. All other
+    // species keep the historical order (stubs first) so their behaviour is unchanged.
+    if (doc?.selectedVariant?.completeSnapshot === true) {
+      addCanonical();
+      addSpecials(true);
+    } else {
+      addSpecials(false);
+      addCanonical();
     }
 
     // Final deduplication: some species JSON files list the same trait in multiple

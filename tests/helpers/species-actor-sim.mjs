@@ -16,6 +16,8 @@ SpeciesRegistry._entries = entries;
 SpeciesRegistry._byId = new Map(entries.map(e => [e.id, e]));
 SpeciesRegistry._byName = new Map(entries.map(e => [e.name.toLowerCase(), e]));
 
+export { SpeciesRegistry };
+
 export function makeActor() {
   const skills = Object.fromEntries(['acrobatics', 'climb', 'deception', 'perception', 'stealth', 'survival', 'useTheForce'].map(k => [k, { trained: false, classSkill: false }]));
   const attrs = Object.fromEntries(['str', 'dex', 'con', 'int', 'wis', 'cha'].map(k => [k, { base: 10, racial: 0 }]));

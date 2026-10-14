@@ -1511,6 +1511,17 @@ renderDetailsPanel(focusedItem) {
       || shell?.progressionSession?.pendingState?.species
       || null;
 
+    // A complete-snapshot publication is authoritative on its own: use only its effective
+    // profile and resolved ledger, never the base registry entry, baseDoc, supplementary
+    // sidecar traits, or an embedded base species item (which would add another book's skills).
+    const resolvedVariant = pendingSpeciesContext?.identity?.variant || pendingSpeciesContext?.identity?.doc?.selectedVariant;
+    if (resolvedVariant?.completeSnapshot === true) {
+      for (const resolved of [pendingSpeciesContext.identity?.doc, pendingSpeciesContext.ledger]) {
+        this._collectSpeciesClassSkillRefsFromSpeciesLike(resolved, refs);
+      }
+      return Array.from(refs).filter(Boolean);
+    }
+
     const speciesCandidates = [
       selectedSpecies,
       pendingSpeciesContext,
