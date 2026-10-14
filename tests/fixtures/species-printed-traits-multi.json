@@ -1,0 +1,633 @@
+{
+ "_note": "Hand-curated printed trait names and key words for every audited publication of the seven multi-publication species (names only). Same ratchet as species-printed-traits-core.json; each variant id is verified independently against ITS OWN book.",
+ "variants": {
+  "bith-goi-2g-01": {
+   "species": "Bith",
+   "book": "Galaxy of Intrigue",
+   "line": 571,
+   "mods": "-2 Con, +2 Int, +2 Cha",
+   "langs": [
+    "Basic",
+    "Bith"
+   ],
+   "traits": [
+    {
+     "name": "Meditative Trance",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "four",
+      "eight"
+     ]
+    },
+    {
+     "name": "Scent",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "10",
+      "squares",
+      "concealment",
+      "cover"
+     ]
+    },
+    {
+     "name": "Evolved Intellect",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "force",
+      "point",
+      "intelligence"
+     ],
+     "note": "Force Point variant; the Threats of the Galaxy version is a different mechanic"
+    }
+   ]
+  },
+  "bith-tog-2k-01": {
+   "species": "Bith",
+   "book": "Threats of the Galaxy",
+   "line": 2570,
+   "mods": "+2 Int, -2 Con",
+   "langs": [
+    "Bith"
+   ],
+   "traits": [
+    {
+     "name": "Evolved Intellect",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "once",
+      "encounter",
+      "20",
+      "intelligence"
+     ],
+     "note": "natural-20 variant; different from the Galaxy of Intrigue version"
+    },
+    {
+     "name": "Heightened Awareness",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "perception",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "perception"
+     ]
+    },
+    {
+     "name": "Meditative Trance",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "eight"
+     ]
+    }
+   ]
+  },
+  "chadra-fan-ur-2b-02": {
+   "species": "Chadra-Fan",
+   "book": "Unknown Regions",
+   "line": 763,
+   "mods": "+2 Dex, -2 Wis",
+   "langs": [
+    "Basic",
+    "Chadra-Fan"
+   ],
+   "traits": [
+    {
+     "name": "Heightened Awareness",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "perception",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "perception"
+     ]
+    },
+    {
+     "name": "Tinkerer",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "mechanics",
+      "droid",
+      "device"
+     ]
+    },
+    {
+     "name": "Darkvision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ]
+    }
+   ]
+  },
+  "chadra-fan-leg-2c-12": {
+   "species": "Chadra-Fan",
+   "book": "Legacy Era Campaign Guide",
+   "line": 20317,
+   "mods": "-2 Wis, +2 Cha",
+   "langs": [
+    "Basic",
+    "Chadra-Fan"
+   ],
+   "traits": [
+    {
+     "name": "Darkvision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     }
+    },
+    {
+     "name": "Tinkerer",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "mechanics"
+     ]
+    }
+   ],
+   "note": "no Heightened Awareness is printed in this publication"
+  },
+  "chagrian-leg-2c-01": {
+   "species": "Chagrian",
+   "book": "Legacy Era Campaign Guide",
+   "line": 725,
+   "mods": "+2 Str, -2 Dex",
+   "langs": [
+    "Basic",
+    "Chagri"
+   ],
+   "traits": [
+    {
+     "name": "Breathe Underwater",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "immunity",
+      "key": "drowning"
+     },
+     "tokens": [
+      "drown",
+      "water"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ]
+    },
+    {
+     "name": "Radiation Resistance",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "5",
+      "fortitude",
+      "radiation"
+     ],
+     "note": "conditional (radiation damage only)"
+    }
+   ]
+  },
+  "chagrian-cw-2h-11": {
+   "species": "Chagrian",
+   "book": "Clone Wars Campaign Guide",
+   "line": 15149,
+   "mods": "+2 Str, -2 Dex",
+   "langs": [
+    "Basic",
+    "Chagri"
+   ],
+   "traits": [
+    {
+     "name": "Breathe Underwater",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "immunity",
+      "key": "drowning"
+     },
+     "tokens": [
+      "breathe"
+     ],
+     "note": "this publication prints 'can breathe normally in water', not 'can't drown'; equating the two would be a rules interpretation, so it is not automated (OCR renders the heading as 'Underveater')",
+     "printedAs": "Breathe Underveater"
+    },
+    {
+     "name": "Radiation Resistance",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "5",
+      "fortitude",
+      "radiation"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ]
+    }
+   ]
+  },
+  "chiss-ur-2b-10": {
+   "species": "Chiss",
+   "book": "Unknown Regions",
+   "line": 13260,
+   "mods": "+2 Int",
+   "langs": [
+    "Cheunh"
+   ],
+   "traits": [
+    {
+     "name": "Bonus Trained Skill",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "trainedSkillChoice"
+     },
+     "tokens": [
+      "trained",
+      "skill",
+      "class"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ],
+     "note": "vision/concealment is not modeled by species data"
+    }
+   ]
+  },
+  "chiss-leg-2c-02": {
+   "species": "Chiss",
+   "book": "Legacy Era Campaign Guide",
+   "line": 853,
+   "mods": "+2 Int",
+   "langs": [
+    "Cheunh"
+   ],
+   "traits": [
+    {
+     "name": "Bonus Trained Skill",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "trainedSkillChoice"
+     },
+     "tokens": [
+      "trained",
+      "skill",
+      "class"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ],
+     "note": "vision/concealment is not modeled by species data"
+    }
+   ]
+  },
+  "chiss-tfu-2e-12": {
+   "species": "Chiss",
+   "book": "Force Unleashed Campaign Guide",
+   "line": 19316,
+   "mods": "+2 Int",
+   "langs": [
+    "Cheunh"
+   ],
+   "traits": [
+    {
+     "name": "Bonus Trained Skill",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "trainedSkillChoice"
+     },
+     "tokens": [
+      "trained",
+      "skill",
+      "class"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ],
+     "note": "vision/concealment is not modeled by species data"
+    }
+   ]
+  },
+  "krevaaki-ur-2b-04": {
+   "species": "Krevaaki",
+   "book": "Unknown Regions",
+   "line": 971,
+   "mods": "+2 Wis, -2 Cha",
+   "langs": [
+    "Basic",
+    "Dromnyr"
+   ],
+   "traits": [
+    {
+     "name": "Conditional Bonus Feat",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "skill",
+      "focus"
+     ]
+    },
+    {
+     "name": "Carapace",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     }
+    },
+    {
+     "name": "Stoic",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     }
+    },
+    {
+     "name": "Tentacles",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "tentacles"
+     ]
+    }
+   ],
+   "note": "Carapace and Tentacles rules questions are deferred in the register"
+  },
+  "krevaaki-jatm-2j-04": {
+   "species": "Krevaaki",
+   "book": "Jedi Academy Training Manual",
+   "line": 10379,
+   "mods": "+2 Wis, -2 Cha",
+   "langs": [
+    "Basic",
+    "Dromnyr"
+   ],
+   "traits": [
+    {
+     "name": "Carapace",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     }
+    },
+    {
+     "name": "Stoic",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     }
+    },
+    {
+     "name": "Grasping Tentacles",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     }
+    }
+   ]
+  },
+  "neimoidian-core-2a-20": {
+   "species": "Neimoidian",
+   "book": "Core Rulebook",
+   "line": 27833,
+   "mods": "-2 Str, +2 Int, +2 Wis",
+   "langs": [
+    "Basic",
+    "Neimoidian",
+    "Pak Pak"
+   ],
+   "traits": [
+    {
+     "name": "Conditional Bonus Feat",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "conditionalFeat",
+      "feat": "Skill Focus (Deception)"
+     },
+     "tokens": [
+      "deception",
+      "skill",
+      "focus"
+     ]
+    },
+    {
+     "name": "Skills",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "deception",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "deception",
+      "second"
+     ],
+     "note": "printed 'may reroll a Deception check, but must keep the second result' = reroll that must be accepted; structured rule added to the snapshot trait (same closed rule type the hydrator emits)"
+    }
+   ]
+  },
+  "neimoidian-goi-2g-08": {
+   "species": "Neimoidian",
+   "book": "Galaxy of Intrigue",
+   "line": 1402,
+   "mods": "-2 Str, +2 Cha",
+   "langs": [
+    "Basic",
+    "Neimoidian"
+   ],
+   "traits": [
+    {
+     "name": "Conditional Bonus Feats",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "conditionalFeat",
+      "feat": "Skill Focus (Deception)"
+     },
+     "tokens": [
+      "deception",
+      "persuasion",
+      "skill",
+      "focus"
+     ],
+     "note": "two printed conditional feats (Deception, Persuasion); the plural form is not compiled, so neither is granted"
+    }
+   ]
+  },
+  "yuuzhan-vong-core-2a-21": {
+   "species": "Yuuzhan Vong",
+   "book": "Core Rulebook",
+   "line": 27797,
+   "mods": "+2 Str, -2 Wis",
+   "langs": [
+    "Yuuzhan Vong"
+   ],
+   "traits": [
+    {
+     "name": "Force Immunity",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "immunity",
+      "key": "force"
+     },
+     "tokens": [
+      "force",
+      "sensitivity",
+      "will",
+      "defense"
+     ]
+    },
+    {
+     "name": "Technophobic",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "5",
+      "penalty"
+     ],
+     "note": "Core prints a -5 penalty with mechanical tools"
+    },
+    {
+     "name": "Weapon Familiarity",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "amphistaff",
+      "simple"
+     ]
+    }
+   ],
+   "window": 30,
+   "windowNote": "two-column OCR interleaves the Hutt and Yuuzhan Vong blocks; fixed 30-line window instead of stopping at the first Languages line"
+  },
+  "yuuzhan-vong-leg-2c-07": {
+   "species": "Yuuzhan Vong",
+   "book": "Legacy Era Campaign Guide",
+   "line": 1318,
+   "mods": "+2 Str, -2 Wis",
+   "langs": [
+    "Yuuzhan Vong"
+   ],
+   "traits": [
+    {
+     "name": "Force Immunity",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "immunity",
+      "key": "force"
+     },
+     "tokens": [
+      "force",
+      "sensitivity",
+      "will",
+      "defense"
+     ]
+    },
+    {
+     "name": "Technophobic",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "suppressedProficiencies",
+      "count": 3
+     },
+     "tokens": [
+      "weapon",
+      "proficiency",
+      "heavy",
+      "pistols",
+      "rifles"
+     ],
+     "note": "Legacy Era prints starting-proficiency suppression, not the Core -5 penalty"
+    },
+    {
+     "name": "Weapon Familiarity",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "amphistaffs",
+      "simple",
+      "exotic"
+     ]
+    }
+   ]
+  }
+ }
+}

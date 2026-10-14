@@ -38,7 +38,7 @@ const EXPECT = {
   },
   Neimoidian: {
     base: { racial: { str: -2, cha: 2 }, langs: ['Basic', 'Neimoidian'], rerolls: [] },
-    'neimoidian-core-2a-20': { src: 'CORE-2A-20', racial: { str: -2, int: 2, wis: 2 }, langs: ['Basic', 'Neimoidian', 'Pak Pak'], traits: ['conditional-bonus-feat', 'skills'], rerolls: [], grants: ['conditional-bonus-feat'] },
+    'neimoidian-core-2a-20': { src: 'CORE-2A-20', racial: { str: -2, int: 2, wis: 2 }, langs: ['Basic', 'Neimoidian', 'Pak Pak'], traits: ['conditional-bonus-feat', 'skills'], rerolls: ['deception'], grants: ['conditional-bonus-feat'] },
     'neimoidian-goi-2g-08': { src: 'GOI-2G-08', racial: { str: -2, cha: 2 }, langs: ['Basic', 'Neimoidian'], traits: ['conditional-bonus-feats'], rerolls: [] },
     'neimoidian-alternate': { legacy: true, racial: { str: -2, int: 2, cha: 2 }, rerolls: [] },
   },

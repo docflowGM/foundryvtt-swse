@@ -5,9 +5,9 @@ import { makeActor, selectSpecies, computeDefenses } from './species-actor-sim.m
 // measured, not inferred from populated fields.
 const quiet = async fn => { const l = console.log, w = console.warn; console.log = () => {}; console.warn = () => {}; try { return await fn(); } finally { console.log = l; console.warn = w; } };
 
-export async function observeSpecies(name) {
+export async function observeSpecies(name, variantId = null) {
   const actor = makeActor();
-  const { ctx } = await quiet(() => selectSpecies(actor, name, null, { strict: true }));
+  const { ctx } = await quiet(() => selectSpecies(actor, name, variantId, { strict: true }));
   const d = await quiet(() => computeDefenses(actor));
   const f = actor.flags.swse;
   return {
@@ -18,6 +18,8 @@ export async function observeSpecies(name) {
     activated: (f.activeSpeciesAbilities ?? []).map(a => a.id),
     immunities: (f.speciesImmunities ?? []).map(i => i.key),
     primitive: f.primitiveSpecies === true,
+    suppressedProficiencies: f.suppressedClassProficiencies ?? [],
+    trainedSkillGrants: ctx.traits.filter(t => t.classification === 'grant' && (t.grants ?? []).some(g => g.grantType === 'trainedSkill')).map(t => t.id),
     featsRequired: ctx.entitlements.featsRequired,
     fixedFeatGrants: ctx.traits.filter(t => t.classification === 'grant' && t.source === 'bonusFeat').flatMap(t => t.grants ?? []).filter(g => g.grantType === 'feat' && g.frequency !== 'conditional').map(g => g.target),
     items: actor.items.map(i => i.name),
@@ -37,6 +39,8 @@ export function isApplied(obs, m) {
     case 'activated': return obs.activated.includes(m.id);
     case 'immunity': return obs.immunities.includes(m.key);
     case 'primitive': return obs.primitive;
+    case 'suppressedProficiencies': return obs.suppressedProficiencies.length === m.count;
+    case 'trainedSkillChoice': return obs.trainedSkillGrants.length > 0;
     case 'featsRequired': return obs.featsRequired === m.value;
     case 'fixedFeat': return obs.fixedFeatGrants.includes(m.feat) || obs.items.includes(m.feat);
     case 'humanSkill': return /humanBonus/.test(SKILLS_STEP);
@@ -47,6 +51,7 @@ export function isApplied(obs, m) {
 /** Any footprint of the same mechanic regardless of outcome — used to prove a display-only trait has no partial effect. */
 export function hasAnyEffect(obs, m) {
   if (m.kind === 'reroll') return isApplied(obs, { kind: 'rerollAny', skill: m.skill });
+  if (m.kind === 'suppressedProficiencies') return obs.suppressedProficiencies.length > 0;
   if (m.kind === 'defense') return m.defense === 'all' ? Object.values(obs.defense).some(v => v) : !!obs.defense[m.defense];
   return isApplied(obs, m);
 }

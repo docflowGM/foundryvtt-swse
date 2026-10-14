@@ -521,3 +521,41 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | (blank until approved) |
+
+---
+
+## SPECIES-RD-022 — Neimoidian (Galaxy of Intrigue) Deception conditional feat: "trained feat" wording
+
+| Field | |
+|---|---|
+| Decision ID | SPECIES-RD-022 |
+| Rules domain | Species conditional bonus feats |
+| Feature | Neimoidian, Galaxy of Intrigue Species Traits, "Conditional Bonus Feats" (text-file line 1402; printed page needs PDF confirmation) |
+| Evidence | The text reads that a Neimoidian "with Deception as a trained feat" gains Skill Focus (Deception), and that a Neimoidian trained in Persuasion gains Skill Focus (Persuasion). The Phase 4-B audit records the Deception wording as probably a typographical error and says not to rewrite it as settled errata. The Core Rulebook profile of the same species (separate publication) prints Deception only. |
+| Confirmed behavior | The Persuasion grant is worded as a trained-skill condition. |
+| Unresolved question | Whether "trained feat" for Deception should be applied as "trained skill" (an unauthorized reading of a printed wording). |
+| Options (source-supported) | Apply the Deception grant as printed-but-read-as-trained-skill; apply only the Persuasion grant; apply neither until errata is confirmed. |
+| Recommended ruling | none |
+| Implementation impact | The GOI snapshot keeps both grants as display-only text; the Core snapshot's Deception grant is unaffected. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## SPECIES-RD-023 — Chagrian (Clone Wars): "breathe normally in water" versus "can't drown"
+
+| Field | |
+|---|---|
+| Decision ID | SPECIES-RD-023 |
+| Rules domain | Species environmental traits |
+| Feature | Chagrian Breathe Underwater, Clone Wars Campaign Guide (text-file line 15149) versus Legacy Era Campaign Guide (text-file line 725) |
+| Evidence | The Legacy Era text prints "As amphibious creatures, Chagrians can't drown in water" (the same wording Core uses for other amphibious species, which the engine maps to the drowning immunity). The Clone Wars text prints "Chagrians can breathe normally in water". |
+| Confirmed behavior | Both publications print a Breathe Underwater trait. |
+| Unresolved question | Whether the Clone Wars wording carries the same drowning immunity as the "can't drown" wording. |
+| Options (source-supported) | Treat the two wordings as equivalent; or keep the Clone Wars trait as text only. |
+| Recommended ruling | none |
+| Implementation impact | The Legacy Era snapshot applies the drowning immunity; the Clone Wars snapshot does not (display-only), so the publications stay independent. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
