@@ -287,6 +287,8 @@ export class SpeciesRegistry {
                 description: String(trait.description ?? '').trim(),
                 // Structured ledger rules (only present on audited snapshot traits that compile strictly).
                 ...(Array.isArray(trait.rules) && trait.rules.length ? { rules: trait.rules } : {}),
+                ...(trait.displayOnly === true ? { displayOnly: true } : {}),
+                ...(trait.sourceFeatureId ? { sourceFeatureId: String(trait.sourceFeatureId) } : {}),
               }))
           : [];
 

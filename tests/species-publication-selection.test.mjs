@@ -14,7 +14,7 @@ const f = (globalThis.foundry ??= {});
 f.applications ??= {}; f.applications.api ??= { ApplicationV2: class {}, HandlebarsApplicationMixin: B => B, DialogV2: class {} };
 
 const {
-  getPublicationVersions, getKnownPublications, getPublicationStatus, PUBLICATION_STATUS, isRecordedConfigurationRestore, compareTraitMechanics, requiresPublicationSelection, checkPublicationSelection, buildPublicationComparison, buildVersionChoices,
+  getPublicationVersions, getSoleSnapshotVersion, getKnownPublications, getPublicationStatus, PUBLICATION_STATUS, isRecordedConfigurationRestore, compareTraitMechanics, requiresPublicationSelection, checkPublicationSelection, buildPublicationComparison, buildVersionChoices,
 } = await import('/systems/foundryvtt-swse/scripts/species/species-publication-selection.js');
 const { buildPendingSpeciesContext } = await import('/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js');
 const { SpeciesStep } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/species-step.js');
@@ -132,6 +132,17 @@ assert.equal(getPublicationStatus(entry('Chiss')), PUBLICATION_STATUS.MULTIPLE_V
   assert.equal(compareTraitMechanics(T('a', [{ type: 'reroll', n: 1 }]), T('a', [{ type: 'reroll', n: 2 }])), 'rules');
   assert.equal(compareTraitMechanics(T('same', [{ type: 'reroll' }]), T('same')), 'rules', 'structured vs unstructured is not equal');
   assert.equal(compareTraitMechanics(T('a', [{ type: 'x', id: '1' }]), T('b', [{ type: 'x', id: '2' }])), 'wording', 'equal rules, different prose');
+}
+
+// ---- A species published exactly once applies its sole profile; it is not an alternative to pick ----
+{
+  assert.equal(getSoleSnapshotVersion(entry('Nikto'))?.sourceProfileId, 'UR-2B-05');
+  for (const name of ['Chiss', 'Barabel', 'Devaronian', 'Human', 'Wookiee']) assert.equal(getSoleSnapshotVersion(entry(name)), null, `${name}: not a sole-snapshot species`);
+  assert.equal(requiresPublicationSelection(entry('Nikto')), false, 'nothing to choose');
+  const step = Object.create(SpeciesStep.prototype);
+  step._selectedVariantBySpeciesId = new Map(); step._selectedAbilityChoiceBySpeciesId = new Map();
+  assert.deepEqual(step._formatSpeciesVariants(entry('Nikto')), [], 'the sole profile is not offered as a variant');
+  assert.equal(step._getEffectiveSpeciesProfileForDetails(entry('Nikto')).selectedVariantId, 'nikto-ur-2b-05', 'details show the sole profile, never the legacy base');
 }
 
 // ---- Malformed verified snapshot: unavailable, blocked, and never shown as base mechanics ----

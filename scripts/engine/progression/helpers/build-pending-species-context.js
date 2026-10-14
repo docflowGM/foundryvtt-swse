@@ -15,7 +15,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SpeciesGrantLedgerBuilder } from '/systems/foundryvtt-swse/scripts/species/species-grant-ledger-builder.js';
-import { checkPublicationSelection, isRecordedConfigurationRestore } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
+import { checkPublicationSelection, isRecordedConfigurationRestore, getSoleSnapshotVersion } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
 import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { computeStartingFeatsRequired } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
@@ -107,8 +107,11 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
         return null;
       }
     }
-    const selectedVariant = selectedVariantId
-      ? (speciesEntry.variants || []).find(variant => String(variant?.id) === String(selectedVariantId))
+    // A species published exactly once applies its sole verified profile (no choice exists, nothing is inherited
+    // from the legacy base record). An explicit selection always wins.
+    const effectiveVariantId = selectedVariantId || getSoleSnapshotVersion(speciesEntry)?.id || null;
+    const selectedVariant = effectiveVariantId
+      ? (speciesEntry.variants || []).find(variant => String(variant?.id) === String(effectiveVariantId))
       : null;
     // Complete-snapshot variants never inherit base traits/natural weapons/languages
     // (species-variant-profile.js); a malformed snapshot throws and fails closed below.

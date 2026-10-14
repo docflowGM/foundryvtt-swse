@@ -39,6 +39,9 @@ bothan.supplementaryTraits = {
     { id: 'stealth', name: 'Stealth', description: 'A Bothan gains a +2 species bonus on Stealth checks.' }],
 };
 
+// A once-published species applies its sole snapshot implicitly; a second synthetic profile keeps Bothan a
+// multi-profile species here so the base record can still be selected (existing-actor restoration).
+addSnapshot('Bothan', { id: 'syn-padding', languages: ['Basic'], traits: [] });
 // ---- Defenses and passives from the snapshot are applied; the base's other passives are not ----
 addSnapshot('Bothan', { id: 'syn-iron-will-only', abilityMods: { dex: 2, con: -2 }, languages: ['Basic', 'Bothese'], traits: [trait('Iron Will')] });
 {

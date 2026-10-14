@@ -233,3 +233,41 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `DEFERRED_RULES_REVIEW` (technical hold) |
 | Decision authority | Project owner |
 | Resolution | |
+
+---
+
+## SPECIES-RD-013 — Skill reroll whose printed text does not say which result to use
+
+| Field | |
+|---|---|
+| Rules domain | Species / skill reroll |
+| Feature | Pa'lowick — Swim reroll (Galaxy of Intrigue, profile GOI-2G-10); Ishi Tib — Swim reroll (The Unknown Regions, UR-2B-03, held for natural weapons) |
+| Source | Page references in the local-only audit bundle (GOI-2G-10 / UR-2B-03) |
+| Evidence | The audited trait lets the character reroll Swim checks (with a take-10 exception) and the audit records that the block does not state whether the original or the rerolled result must be used. |
+| Confirmed behavior | A reroll of Swim checks exists; take 10 on Swim is permitted while distracted or threatened. |
+| Unresolved question | Which result is kept. The previous repository data automated "keep the better result"; no audited source supports that. |
+| Options | (a) must accept the reroll; (b) keep the better result; (c) player's choice — none is supported by the printed text. |
+| Recommended ruling | None |
+| Implementation impact | Pa'lowick's Swim reroll is display-only in the snapshot (the earlier unsupported automation is removed). Ishi Tib remains held. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+---
+
+## SPECIES-RD-014 — Basic omitted from the printed language line (additional species)
+
+| Field | |
+|---|---|
+| Rules domain | Species / languages |
+| Feature | Draethos (Knights of the Old Republic, KOTOR-2D-04) and Pa'lowick (Galaxy of Intrigue, GOI-2G-10) automatic languages |
+| Source | Page references in the local-only audit bundle |
+| Evidence | The audited language lines list only the species' own language. Earlier repository data also granted Basic. This is the same question as SPECIES-RD-008 (Chiss, Bith). |
+| Confirmed behavior | The species language is automatic. |
+| Unresolved question | Whether Basic is implicitly known when the line omits it (see RD-008). |
+| Options | See RD-008. |
+| Recommended ruling | None |
+| Implementation impact | Snapshots grant only the printed language; Basic is not added. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

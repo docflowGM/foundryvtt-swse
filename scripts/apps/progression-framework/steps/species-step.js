@@ -9,7 +9,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
-import { buildPublicationComparison, checkPublicationSelection, PUBLICATION_SELECTION_ERRORS } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
+import { buildPublicationComparison, checkPublicationSelection, getSoleSnapshotVersion, PUBLICATION_SELECTION_ERRORS } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
 import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { normalizeSpecies } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithPicker, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
@@ -1304,7 +1304,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
   _getEffectiveSpeciesProfileForDetails(species) {
     if (!species) return species;
-    const variantId = this._selectedVariantBySpeciesId.get(species.id) || null;
+    const variantId = this._selectedVariantBySpeciesId.get(species.id) || getSoleSnapshotVersion(species)?.id || null;
     let effective = { ...species };
     // RD-001: before a version is chosen, the legacy base record must not be shown as this species' rules.
     if (!checkPublicationSelection(species, variantId).ok) {
@@ -1873,7 +1873,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
         special: version.traits.map(name => ({ name })),
       }));
     }
-    const variants = Array.isArray(species?.variants) ? species.variants : [];
+    // The sole verified profile of a once-published species is its canonical profile, not an alternative to pick.
+    const sole = getSoleSnapshotVersion(species);
+    const variants = (Array.isArray(species?.variants) ? species.variants : []).filter(variant => variant !== sole);
     if (!variants.length) {
       return [];
     }

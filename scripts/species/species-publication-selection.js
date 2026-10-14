@@ -66,6 +66,19 @@ export function getPublicationStatus(entry) {
   return usable.length === known ? PUBLICATION_STATUS.MULTIPLE_VERIFIED : PUBLICATION_STATUS.MULTIPLE_PARTIALLY_IMPLEMENTED;
 }
 
+/**
+ * The one verified profile of a species that is published exactly once (no other known publication, no legacy
+ * variants offered next to it). It is that species' canonical profile, so it applies without a selection: there is
+ * nothing to choose between, and nothing from the legacy base record is inherited. Returns null otherwise.
+ */
+export function getSoleSnapshotVersion(entry) {
+  if (getPublicationStatus(entry) !== PUBLICATION_STATUS.SINGLE_PROFILE) return null;
+  const variants = Array.isArray(entry?.variants) ? entry.variants : [];
+  const verified = getPublicationVersions(entry);
+  if (verified.length !== 1 || variants.length !== 1) return null;
+  return verified[0];
+}
+
 /** A species requires an explicit publication choice whenever several publications are known. */
 export function requiresPublicationSelection(entry) {
   return getPublicationStatus(entry) !== PUBLICATION_STATUS.SINGLE_PROFILE;

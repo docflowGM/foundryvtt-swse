@@ -911,10 +911,44 @@ export class SpeciesGrantLedgerBuilder {
           // by _compileSpeciesBonusFeatItems (progression-finalizer).
           classified.classification = 'grant';
           classified.source = 'bonusFeat';
-          if (rule.featId && rule.featId !== 'bonus-feat') {
+          if (rule.choice === true) {
+            // Player picks the feat at the level the species grants it (same shape as the generic "bonus feat" trait).
+            classified.grants.push({ grantType: 'feat', target: null, frequency: 'choice', condition: null, requirements: [] });
+          } else if (rule.featName) {
+            // Structured named grant (publication snapshots): the requirement, if any, is data, not parsed prose.
+            // Only skillTrained requirements are resolvable (SpeciesConditionalGrantResolver); a rule with any other
+            // requirement type must not be emitted as a rule at all (see the species profile hydrator).
+            const requirements = Array.isArray(rule.requirements) ? rule.requirements.map(r => ({ ...r })) : [];
+            classified.grants.push({
+              grantType: 'feat',
+              target: rule.featName,
+              frequency: requirements.length ? 'conditional' : 'always',
+              condition: null,
+              requirements,
+            });
+          } else if (rule.featId && rule.featId !== 'bonus-feat') {
             classified.grants.push({
               grantType: 'feat',
               target: rule.featId,
+              frequency: 'always',
+              condition: null,
+              requirements: [],
+            });
+          }
+        } else if (rule.type === 'trainedSkillChoice') {
+          // One additional trained skill chosen from the character's class skills.
+          classified.classification = 'grant';
+          classified.source = 'bonusTrainedSkill';
+          classified.grants.push({ grantType: 'trainedSkill', target: null, frequency: 'choice', condition: null, requirements: [] });
+        } else if (rule.type === 'classSkillGrant') {
+          // Structured class-skill grant: the named skills are class skills for every class.
+          classified.classification = 'grant';
+          classified.source = 'bonusClassSkill';
+          for (const skillName of (Array.isArray(rule.skills) ? rule.skills : [])) {
+            classified.grants.push({
+              grantType: 'classSkill',
+              target: this._normalizeSkillKey(String(skillName).toLowerCase()),
+              targetDisplay: skillName,
               frequency: 'always',
               condition: null,
               requirements: [],
@@ -1407,7 +1441,9 @@ export class SpeciesGrantLedgerBuilder {
       ? system.canonicalTraits
       : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
     for (const trait of canonicalTraits) {
-      if (trait?.name) {
+      // A trait the publication audit does not identify as the activated ability this name usually implies
+      // (same printed name, different rule) is display-only: its name must not activate another species' ability.
+      if (trait?.name && trait.displayOnly !== true) {
         const slug = this._slugify(trait.name);
         if (!traitMap.has(slug)) {
           traitMap.set(slug, trait);
@@ -1577,8 +1613,8 @@ export class SpeciesGrantLedgerBuilder {
       });
     }
 
-    if (traitMap.has('shapeshifter')) {
-      const trait = traitMap.get('shapeshifter');
+    if (traitMap.has('shapeshifter') || traitMap.has('shapeshift')) {
+      const trait = traitMap.get('shapeshifter') ?? traitMap.get('shapeshift');
       addAbility({
         id: 'shapeshift',
         name: 'Shapeshift',
@@ -1600,8 +1636,8 @@ export class SpeciesGrantLedgerBuilder {
       });
     }
 
-    if (traitMap.has('energy-surge')) {
-      const trait = traitMap.get('energy-surge');
+    if (traitMap.has('energy-surge') || traitMap.has('quick-energy')) {
+      const trait = traitMap.get('energy-surge') ?? traitMap.get('quick-energy');
       addAbility({
         id: 'energy-surge',
         name: 'Energy Surge',
