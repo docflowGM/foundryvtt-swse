@@ -995,3 +995,24 @@
   padding-top: 3px;
   padding-bottom: 3px;
 }
+
+/* RD-001: published-version selector. Fields that differ between versions are marked so players can compare. */
+.progression-shell .prog-species-variant__differs {
+  border-bottom: 1px dotted currentColor;
+  font-weight: 600;
+}
+
+.progression-shell .prog-species-variant__list em {
+  font-style: normal;
+  opacity: 0.75;
+  font-size: 0.85em;
+}
+
+.progression-shell .prog-species-details__hint {
+  margin: 0 0 0.5rem;
+  opacity: 0.85;
+}
+
+.progression-shell .prog-chip--warning {
+  border-color: var(--swse-warning, #d9a441);
+}

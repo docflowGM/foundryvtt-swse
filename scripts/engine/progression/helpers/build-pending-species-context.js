@@ -15,6 +15,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SpeciesGrantLedgerBuilder } from '/systems/foundryvtt-swse/scripts/species/species-grant-ledger-builder.js';
+import { checkPublicationSelection } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
 import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { computeStartingFeatsRequired } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
@@ -91,6 +92,20 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
     const selectedVariantId = typeof speciesIdentity === 'object'
       ? (speciesIdentity.variantId || speciesIdentity.selectedVariantId || speciesIdentity.selectedVariant?.id || null)
       : null;
+    // Project owner ruling RD-001: a species published in more than one verified profile needs an explicit
+    // version; nothing silently defaults to a sourcebook. This is the single choke point for every assignment
+    // path (chargen step, drag-and-drop, templates, followers). Existing actors are never re-evaluated here:
+    // callers that merely re-materialize an actor's current configuration pass `existingActorCompatibility`.
+    if (options.existingActorCompatibility !== true) {
+      const publication = checkPublicationSelection(speciesEntry, selectedVariantId);
+      if (!publication.ok) {
+        SWSELogger.warn(`[PendingSpeciesContext] ${speciesEntry.name} requires an explicit published version (${publication.code}); no context built`, {
+          requestedVariantId: selectedVariantId ?? null,
+          source,
+        });
+        return null;
+      }
+    }
     const selectedVariant = selectedVariantId
       ? (speciesEntry.variants || []).find(variant => String(variant?.id) === String(selectedVariantId))
       : null;

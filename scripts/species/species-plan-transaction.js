@@ -45,8 +45,10 @@ export function splitSpeciesPlan(mutations) {
  * @returns {Promise<{mutations: object, pendingContext: object}>}
  * @throws {Error} when the species cannot be resolved or materialized canonically
  */
-export async function buildSpeciesReplacementPlan(actor, speciesName, { buildContext, applyCanonical, source = 'drag-drop' }) {
-  const pendingContext = await buildContext(actor, speciesName, { source });
+export async function buildSpeciesReplacementPlan(actor, speciesName, { buildContext, applyCanonical, source = 'drag-drop', identity = null }) {
+  // `identity` carries an explicitly chosen published version (RD-001); without one the context builder fails closed
+  // for species that require it.
+  const pendingContext = await buildContext(actor, identity ?? speciesName, { source });
   if (!pendingContext) throw new Error(`Species "${speciesName}" could not be resolved to a canonical profile`);
   const materialization = await applyCanonical(actor, pendingContext);
   if (!materialization?.success) throw new Error(materialization?.error || `Species "${speciesName}" could not be materialized`);

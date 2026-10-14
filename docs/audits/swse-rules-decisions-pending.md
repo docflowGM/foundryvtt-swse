@@ -179,3 +179,17 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `DEFERRED_RULES_REVIEW` (technical; no rules question) |
 | Decision authority | Project owner |
 | Resolution | |
+
+---
+
+## SPECIES-RD-001 — RESOLUTION (appended; the original question above is preserved unchanged)
+
+| Field | |
+|---|---|
+| Decision | **Approved by the project owner, 2026-10-14:** when a player selects a species that has multiple published species profiles, the V2 character-creation UI presents the verified versions and the player chooses one explicitly. The system never silently selects a sourcebook. |
+| Rules as ruled | (1) Each verified version is displayed with its publication/variant name. (2) Differences in racial abilities, traits, languages, movement and other relevant mechanics are shown so the choice is informed. (3) When multiple published profiles exist, an explicit selection is required before creation proceeds; no silent default. (4) A selected version loads that publication's complete profile and inherits nothing from other versions. (5) A species with a single valid profile needs no extra selection. (6) The selected version's stable id is preserved on the actor so leveling, reopening creation and later calculations use the same rules. (7) Existing actors and their configurations are preserved; nothing is migrated or auto-changed. (8) Existing variant ids are preserved. (9) Publication variants are distinct from choices within a profile (e.g. selectable ability modifiers); both are supported and within-profile choices appear after the version. (10) Unverified legacy variants are not presented as authoritative published versions but remain for existing-actor compatibility until their provenance is resolved. (11) The requirement is respected by every species assignment path, including drag-and-drop and character creation. |
+| Scope note | RD-002 (the earlier unauthorized Yuuzhan Vong base-record change) remains a separate open compatibility/reconciliation item. This resolution makes no default-publication decision and forces no existing-actor migration. |
+| Implementation | Single policy module `scripts/species/species-publication-selection.js`; enforced centrally in `buildPendingSpeciesContext` (every assignment path), surfaced in the existing V2 species step (selector, comparison, confirm gate, restore on reopen), the drag-and-drop handler (version prompt before any plan is built) and the template adapter (a template without a version leaves the species for the player). Followers fail closed (no silent sourcebook). Verified versions exist for: Bith, Chadra-Fan, Chagrian, Chiss, Krevaaki, Neimoidian (Core, Galaxy of Intrigue) and Yuuzhan Vong (Core, Legacy Era). Barabel's two publications are held (natural attacks) so it still has no verified version. |
+| Tests | `tests/species-publication-selection.test.mjs` |
+| Implementing commit | recorded in the next appended line |
+| Status | `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |

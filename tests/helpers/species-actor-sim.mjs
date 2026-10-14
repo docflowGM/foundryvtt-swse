@@ -51,11 +51,16 @@ export function applyPlan(actor, mutations) {
   for (const item of mutations.itemsToCreate || []) actor.items.push({ ...structuredClone(item), id: `item${actor._next++}` });
 }
 
-export async function selectSpecies(actor, name, variantId = null) {
+/**
+ * By default this simulates re-materializing an EXISTING actor's configuration (base or legacy variants), which the
+ * project owner's ruling RD-001 requires to keep working. `strict: true` exercises a NEW selection, where a species
+ * with several verified publications needs an explicit, valid version.
+ */
+export async function selectSpecies(actor, name, variantId = null, { strict = false } = {}) {
   const entry = SpeciesRegistry.getByName(name);
   if (!entry) throw new Error(`no species ${name}`);
   const identity = variantId ? { ...entry, selectedVariantId: variantId, variantId } : entry.id; // mirrors species-step.js
-  const ctx = await buildPendingSpeciesContext(actor, identity, { source: 'test' });
+  const ctx = await buildPendingSpeciesContext(actor, identity, { source: 'test', existingActorCompatibility: !strict });
   if (!ctx) throw new Error(`no context for ${name}/${variantId}`);
   const res = await applyCanonicalSpeciesToActor(actor, ctx);
   if (!res.success) throw new Error(res.error);

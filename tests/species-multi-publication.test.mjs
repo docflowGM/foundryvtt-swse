@@ -36,6 +36,18 @@ const EXPECT = {
     'chagrian-leg-2c-01': { src: 'LEG-2C-01', racial: { str: 2, dex: -2 }, langs: ['Basic', 'Chagri'], traits: ['breathe-underwater', 'low-light-vision', 'radiation-resistance'], rerolls: [] },
     'chagrian-cw-2h-11': { src: 'CW-2H-11', racial: { str: 2, dex: -2 }, langs: ['Basic', 'Chagri'], traits: ['breathe-underwater', 'radiation-resistance', 'low-light-vision'], rerolls: [] },
   },
+  Neimoidian: {
+    base: { racial: { str: -2, cha: 2 }, langs: ['Basic', 'Neimoidian'], rerolls: [] },
+    'neimoidian-core-2a-20': { src: 'CORE-2A-20', racial: { str: -2, int: 2, wis: 2 }, langs: ['Basic', 'Neimoidian', 'Pak Pak'], traits: ['conditional-bonus-feat', 'skills'], rerolls: [], grants: ['conditional-bonus-feat'] },
+    'neimoidian-goi-2g-08': { src: 'GOI-2G-08', racial: { str: -2, cha: 2 }, langs: ['Basic', 'Neimoidian'], traits: ['conditional-bonus-feats'], rerolls: [] },
+    'neimoidian-alternate': { legacy: true, racial: { str: -2, int: 2, cha: 2 }, rerolls: [] },
+  },
+  'Yuuzhan Vong': {
+    base: { racial: { str: 2, wis: -2 }, langs: ['Yuuzhan Vong'], rerolls: [] },
+    'yuuzhan-vong-core-2a-21': { src: 'CORE-2A-21', racial: { str: 2, wis: -2 }, langs: ['Yuuzhan Vong'], traits: ['force-immunity', 'technophobic', 'weapon-familiarity'], rerolls: [] },
+    'yuuzhan-vong-leg-2c-07': { src: 'LEG-2C-07', racial: { str: 2, wis: -2 }, langs: ['Yuuzhan Vong'], traits: ['force-immunity', 'technophobic', 'weapon-familiarity', 'primitive'], rerolls: [] },
+    'yuuzhan-vong-alternate': { legacy: true, racial: { str: 2, wis: -2 }, rerolls: [] },
+  },
   Krevaaki: {
     base: { racial: { wis: 2, cha: -2 }, langs: ['Basic', 'Kreva'], rerolls: [], legacyPassives: ['climb', 'grab-and-grapple'], def: [0, 1, 0] },
     'krevaaki-ur-2b-04': { src: 'UR-2B-04', racial: { wis: 2, cha: -2 }, langs: ['Basic', 'Dromnyr'], traits: ['conditional-bonus-feat', 'carapace', 'stoic', 'tentacles'], rerolls: [] },

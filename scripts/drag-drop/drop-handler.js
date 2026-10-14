@@ -12,6 +12,8 @@ import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/pro
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { buildPendingSpeciesContext } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js";
 import { applyCanonicalSpeciesToActor } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-species-to-actor.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { requiresPublicationSelection, checkPublicationSelection, buildVersionChoices } from "/systems/foundryvtt-swse/scripts/species/species-publication-selection.js";
 import { buildSpeciesReplacementPlan, applySpeciesPlanWithRollback } from "/systems/foundryvtt-swse/scripts/species/species-plan-transaction.js";
 import { cloneDroppedItemData } from "/systems/foundryvtt-swse/scripts/engine/interactions/dropped-item-clone.js";
 
@@ -232,12 +234,26 @@ export class DropHandler {
     //  3. apply delete -> create -> update through ActorEngine with a rollback journal.
     // A species that cannot be resolved canonically is rejected; there is no legacy
     // attribute fallback, so a failure never leaves a partially hydrated character.
+    // RD-001: a species published in several verified profiles needs an explicit version here too; the drop never
+    // silently picks a sourcebook. Cancelling leaves the actor untouched.
+    let identity = null;
+    const registryEntry = SpeciesRegistry.getByName(species.name);
+    if (registryEntry && requiresPublicationSelection(registryEntry)) {
+      const versionId = await this._promptSpeciesVersion(registryEntry, actor);
+      if (!versionId || !checkPublicationSelection(registryEntry, versionId).ok) {
+        ui.notifications.warn(`Choose a ${species.name} species version to apply it. ${actor.name} was not changed.`);
+        return false;
+      }
+      identity = { ...registryEntry, selectedVariantId: versionId, variantId: versionId };
+    }
+
     let plan;
     try {
       plan = await buildSpeciesReplacementPlan(actor, species.name, {
         buildContext: buildPendingSpeciesContext,
         applyCanonical: applyCanonicalSpeciesToActor,
         source: 'drag-drop',
+        identity,
       });
     } catch (err) {
       console.warn(`[DropHandler] Species ${species.name} rejected before any change:`, err);
@@ -279,6 +295,23 @@ export class DropHandler {
 
     ui.notifications.info(game.i18n.format('SWSE.Notifications.Items.SpeciesApplied', { species: species.name, actor: actor.name }));
     return true;
+  }
+
+  /**
+   * Ask which published version of a multi-publication species to apply (RD-001).
+   * Resolves to a verified version id, or null if the dialog is dismissed.
+   */
+  static async _promptSpeciesVersion(entry, actor) {
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const choices = buildVersionChoices(entry);
+    const rows = choices.map(c => `<li><strong>${esc(c.label)}</strong><br>${esc(c.summary)}${c.languages ? `<br>Languages: ${esc(c.languages)}` : ''}${c.traits ? `<br>Traits: ${esc(c.traits)}` : ''}</li>`).join('');
+    const buttons = Object.fromEntries(choices.map((c, i) => [`v${i}`, { label: c.label, callback: () => c.id }]));
+    const result = await SWSEDialogV2.wait({
+      title: `Choose ${entry.name} species version`,
+      content: `<p>Multiple published ${esc(entry.name)} profiles are available for ${esc(actor?.name)}. Select a sourcebook version to continue.</p><ul>${rows}</ul>`,
+      buttons,
+    });
+    return typeof result === 'string' && choices.some(c => c.id === result) ? result : null;
   }
 
   /**
