@@ -80,6 +80,37 @@ const CORE = {
     sidecarAbsent: ['amphibious','lucky'],
   },
 
+  // Ithorian (CORE-2A-08): unprinted flat skill bonuses and extra sidecar traits removed.
+  Ithorian: {
+    traits: ['bellow','conditional-bonus-feat','iron-will','survival-instinct'],
+    skillBonuses: [], naturalWeapons: [], items: ['combat-action:Bellow'], passives: [],
+    sidecarAbsent: ['nature-affinity','sonic-bellow'],
+  },
+  // Kel Dor (CORE-2A-09): unprinted flat skill bonuses and extra sidecar traits removed.
+  'Kel Dor': {
+    traits: ['keen-force-sense','low-light-vision','special-equipment'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['force-awareness'],
+  },
+  // Mon Calamari (CORE-2A-10): unprinted flat skill bonuses and extra sidecar traits removed.
+  'Mon Calamari': {
+    traits: ['breathe-underwater','conditional-bonus-feat','expert-swimmer','low-light-vision'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['tech-savvy'],
+  },
+  // Quarren (CORE-2A-11): unprinted flat skill bonuses and extra sidecar traits removed.
+  Quarren: {
+    traits: ['breathe-underwater','conditional-bonus-feat','expert-swimmer','low-light-vision'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['forceful-presence'],
+  },
+  // Rodian (CORE-2A-12): unprinted flat skill bonuses and extra sidecar traits removed.
+  Rodian: {
+    traits: ['conditional-bonus-feat','heightened-awareness','low-light-vision'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['keen-senses'],
+  },
+
   // Trandoshan (CORE-2A-14): printed traits are Darkvision, Limb Regeneration, Natural Armor, Bonus Feat.
   // Clawed hands are narrative only; there is no natural attack or flat skill bonus, and no hit-point regeneration.
   Trandoshan: {

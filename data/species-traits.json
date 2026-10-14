@@ -5210,25 +5210,8 @@
     "name": "Ithorian",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "nature-affinity",
-        "name": "Nature Affinity",
-        "description": "An Ithorian gains a +5 species bonus on Knowledge (life sciences) checks."
-      }
-    ],
-    "activatedAbilities": [
-      {
-        "id": "sonic-bellow",
-        "name": "Sonic Bellow",
-        "actionType": "standard",
-        "usage": {
-          "perEncounter": null,
-          "perDay": null
-        },
-        "description": "As a standard action, an Ithorian may emit a sonic bellow that deals 1d6 sonic damage to adjacent enemies."
-      }
-    ],
+    "structuralTraits": [],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
@@ -5760,13 +5743,7 @@
     "name": "Kel Dor",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "force-awareness",
-        "name": "Force Awareness",
-        "description": "A Kel Dor gains a +2 species bonus on Use the Force checks."
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -7203,11 +7180,6 @@
         "id": "amphibious",
         "name": "Amphibious",
         "description": "A Mon Calamari can breathe both air and water."
-      },
-      {
-        "id": "tech-savvy",
-        "name": "Tech Savvy",
-        "description": "A Mon Calamari gains a +2 species bonus on Mechanics checks."
       }
     ],
     "activatedAbilities": [],
@@ -8915,11 +8887,6 @@
         "id": "amphibious",
         "name": "Amphibious",
         "description": "A Quarren can breathe both air and water."
-      },
-      {
-        "id": "forceful-presence",
-        "name": "Forceful Presence",
-        "description": "A Quarren gains a +2 species bonus on Intimidate checks."
       }
     ],
     "activatedAbilities": [],
@@ -9374,13 +9341,7 @@
     "name": "Rodian",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "keen-senses",
-        "name": "Keen Senses",
-        "description": "A Rodian gains a +2 species bonus on Perception checks."
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],

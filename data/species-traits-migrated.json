@@ -5748,37 +5748,8 @@
     "name": "Ithorian",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "nature-affinity",
-        "name": "Nature Affinity",
-        "description": "An Ithorian gains a +5 species bonus on Knowledge (life sciences) checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "knowledgeLifeSciences",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "nature-affinity-rule-0"
-          }
-        ]
-      }
-    ],
-    "activatedAbilities": [
-      {
-        "id": "sonic-bellow",
-        "name": "Sonic Bellow",
-        "actionType": "standard",
-        "usage": {
-          "perEncounter": null,
-          "perDay": null
-        },
-        "description": "As a standard action, an Ithorian may emit a sonic bellow that deals 1d6 sonic damage to adjacent enemies."
-      }
-    ],
+    "structuralTraits": [],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
@@ -6358,25 +6329,7 @@
     "name": "Kel Dor",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "force-awareness",
-        "name": "Force Awareness",
-        "description": "A Kel Dor gains a +2 species bonus on Use the Force checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "useTheForce",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "force-awareness-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -8031,23 +7984,6 @@
               "type": "always"
             },
             "id": "amphibious-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "tech-savvy",
-        "name": "Tech Savvy",
-        "description": "A Mon Calamari gains a +2 species bonus on Mechanics checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "mechanics",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "tech-savvy-rule-0"
           }
         ]
       }
@@ -9909,23 +9845,6 @@
             "id": "amphibious-rule-0"
           }
         ]
-      },
-      {
-        "id": "forceful-presence",
-        "name": "Forceful Presence",
-        "description": "A Quarren gains a +2 species bonus on Intimidate checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "persuasion",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "forceful-presence-rule-0"
-          }
-        ]
       }
     ],
     "activatedAbilities": [],
@@ -10408,25 +10327,7 @@
     "name": "Rodian",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "keen-senses",
-        "name": "Keen Senses",
-        "description": "A Rodian gains a +2 species bonus on Perception checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "perception",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "keen-senses-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],

@@ -1494,8 +1494,9 @@ export class SpeciesGrantLedgerBuilder {
       });
     }
 
-    if (traitMap.has('sonic-bellow')) {
-      const trait = traitMap.get('sonic-bellow');
+    // 'bellow' is the printed Core trait name; 'sonic-bellow' is the legacy sidecar name.
+    if (traitMap.has('bellow') || traitMap.has('sonic-bellow')) {
+      const trait = traitMap.get('bellow') ?? traitMap.get('sonic-bellow');
       addAbility({
         id: 'bellow',
         name: 'Bellow',

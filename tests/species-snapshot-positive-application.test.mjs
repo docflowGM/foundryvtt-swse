@@ -27,6 +27,13 @@ function addSnapshot(speciesName, over) {
 }
 const bothan = SpeciesRegistry.getByName('Bothan');
 const trait = name => ({ id: name.toLowerCase().replace(/\s+/g, '-'), ...bothan.canonicalTraits.find(t => t.name === name) });
+// The shipped base Bothan prints only Iron Will, so give the BASE an extra in-memory sidecar passive. That lets the test
+// prove a snapshot does not inherit passives its own publication lacks (and that they return when switching back).
+bothan.supplementaryTraits = {
+  ...(bothan.supplementaryTraits || {}),
+  structuralTraits: [...(bothan.supplementaryTraits?.structuralTraits || []),
+    { id: 'stealth', name: 'Stealth', description: 'A Bothan gains a +2 species bonus on Stealth checks.' }],
+};
 
 // ---- Defenses and passives from the snapshot are applied; the base's other passives are not ----
 addSnapshot('Bothan', { id: 'syn-iron-will-only', abilityMods: { dex: 2, con: -2 }, languages: ['Basic', 'Bothese'], traits: [trait('Iron Will')] });
@@ -34,7 +41,7 @@ addSnapshot('Bothan', { id: 'syn-iron-will-only', abilityMods: { dex: 2, con: -2
   const actor = makeActor();
   const base = makeActor();
   await selectSpecies(base, 'Bothan');
-  assert.ok(base.flags.swse.speciesPassiveBonuses.stealth, 'precondition: base Bothan has Stealth/Perception passives');
+  assert.ok(base.flags.swse.speciesPassiveBonuses.stealth, 'precondition: (injected) base Bothan has an extra Stealth passive');
 
   await selectSpecies(actor, 'Bothan', 'syn-iron-will-only');
   const passives = actor.flags.swse.speciesPassiveBonuses;
