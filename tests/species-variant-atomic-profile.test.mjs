@@ -25,7 +25,7 @@ const base = {
 };
 const snapshot = (over = {}) => ({
   id: 'x-b', label: 'Book B', source: 'Book B', completeSnapshot: true, sourceProfileId: 'B-1',
-  size: 'Medium', speed: 6, movement: { walk: 6 }, abilities: '+2 Dex', abilityMods: { dex: 2 }, abilityChoice: null,
+  size: 'Medium', speed: 6, movement: { walk: 6 }, abilities: '+2 Dex', abilityMods: { str: 0, dex: 2, con: 0, int: 0, wis: 0, cha: 0 }, abilityChoice: null,
   skillBonuses: [], special: [], languages: ['Basic'], naturalWeapons: [], traits: [], description: 'b', ...over,
 });
 
@@ -63,6 +63,17 @@ for (const field of ['size', 'movement', 'abilityMods', 'languages', 'traits', '
   assert.ok(listMissingSnapshotFields(v).includes(field), field);
   assert.throws(() => applySpeciesVariantProfile(base, v), e => e instanceof SpeciesVariantSnapshotError && e.code === 'INCOMPLETE_SNAPSHOT_VARIANT');
 }
+
+// Unprinted/invalid values are rejected, never defaulted to zero.
+const full = { str: 0, dex: 2, con: 0, int: 0, wis: 0, cha: 0 };
+for (const bad of [{ dex: 2 }, { ...full, cha: null }, { ...full, wis: NaN }, { ...full, int: '2' }, null]) {
+  assert.ok(listMissingSnapshotFields(snapshot({ abilityMods: bad })).includes('abilityMods'), JSON.stringify(bad));
+  assert.throws(() => applySpeciesVariantProfile(base, snapshot({ abilityMods: bad })), SpeciesVariantSnapshotError);
+}
+for (const badSpeed of [null, undefined, '', NaN, '6']) {
+  assert.ok(listMissingSnapshotFields(snapshot({ speed: badSpeed })).includes('speed'), String(badSpeed));
+}
+assert.deepEqual(listMissingSnapshotFields(snapshot({ abilityMods: full, speed: 0 })), [], 'explicit 0 is valid');
 
 // Legacy overlay keeps historical fallback but reports it.
 {

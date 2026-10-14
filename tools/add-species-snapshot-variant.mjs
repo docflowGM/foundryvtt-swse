@@ -37,6 +37,9 @@ const abilityMods = Object.fromEntries(A.map(k => [k.toLowerCase(), snap.ability
 const abilityText = A.filter(k => snap.abilityModifiers[k]).sort((a, b) => snap.abilityModifiers[b] - snap.abilityModifiers[a])
   .map(k => `${snap.abilityModifiers[k] > 0 ? '+' : ''}${snap.abilityModifiers[k]} ${k[0] + k.slice(1).toLowerCase()}`).join(', ');
 const m = snap.movementSquares;
+// An unprinted/unresolved speed is held for review, never defaulted to 0.
+if (!Number.isFinite(m?.land)) throw new Error(`${profileId}: land speed is not printed/resolved (${JSON.stringify(m)}); hold for review`);
+if (A.some(k => !Number.isFinite(snap.abilityModifiers?.[k]))) throw new Error(`${profileId}: incomplete ability modifiers; hold for review`);
 const movement = { walk: m.land ?? null, swim: m.swim ?? null, fly: m.fly ?? null, climb: null, hover: null, glide: null, burrow: null, bySize: {} };
 const traits = snap.features.map(f => ({ id: slug(f.name), name: f.name, description: f.publishedRule }));
 
@@ -49,7 +52,7 @@ const variant = {
   completeSnapshot: true,
   sourceProfileId: profileId,
   size: snap.size,
-  speed: m.land ?? 0,
+  speed: m.land,
   movement,
   abilities: abilityText,
   abilityMods,

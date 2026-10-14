@@ -42,9 +42,18 @@ function normalizeAbilityMods(mods) {
   return out;
 }
 
+const isFiniteNumber = value => typeof value === 'number' && Number.isFinite(value);
+
+/** True only when all six modifiers are explicitly present finite numbers (0 must be printed, not defaulted). */
+function hasCompleteAbilityMods(mods) {
+  return !!mods && typeof mods === 'object' && ABILITY_KEYS.every(key => isFiniteNumber(mods[key]));
+}
+
 /**
  * Names of required fields a complete snapshot variant fails to declare.
- * Empty arrays are valid; missing (undefined/null) is not.
+ * Empty arrays are valid; missing (undefined/null) is not. Ability modifiers must
+ * be all six explicit finite numbers and speed an explicit finite number: an
+ * unprinted value is never defaulted to zero.
  */
 export function listMissingSnapshotFields(variant) {
   const missing = [];
@@ -52,9 +61,9 @@ export function listMissingSnapshotFields(variant) {
   if (!variant.id) missing.push('id');
   if (!variant.sourceProfileId) missing.push('sourceProfileId');
   if (!variant.size) missing.push('size');
-  if (!Number.isFinite(Number(variant.speed))) missing.push('speed');
+  if (!isFiniteNumber(variant.speed)) missing.push('speed');
   if (!variant.movement || typeof variant.movement !== 'object') missing.push('movement');
-  if (!variant.abilityMods || typeof variant.abilityMods !== 'object') missing.push('abilityMods');
+  if (!hasCompleteAbilityMods(variant.abilityMods)) missing.push('abilityMods');
   for (const field of ['languages', 'special', 'traits', 'skillBonuses', 'naturalWeapons']) {
     if (!Array.isArray(variant[field])) missing.push(field);
   }
@@ -94,7 +103,7 @@ function applyCompleteSnapshot(base, variant) {
     source: variant.source || null,
     description: variant.description || '',
     size: variant.size,
-    speed: Number(variant.speed),
+    speed: variant.speed,
     movement: variant.movement,
     rawAbilities: variant.abilities ?? null,
     abilityScores,
