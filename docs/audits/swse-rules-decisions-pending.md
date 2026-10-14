@@ -460,3 +460,24 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Still for the owner | How gameplay should treat a character with no walk speed beyond the displayed modes (for example, whether a "move" action uses the primary printed mode, and what the sheet/token speed shows). Nothing here decides that: the sheet shows the printed modes and no walk speed. No new owner ruling is recorded. |
 | Related finding | `flags.swse.speciesLanguages` was never populated (the pending context copies `ledger.languages` only when it is an array; it is an object). Not changed here because the language step reads the ledger directly. |
 | Status | Infrastructure and profile `OFFLINE_TESTED`; gameplay semantics `DEFERRED_RULES_REVIEW` |
+
+---
+
+## SPECIES-RD-015 — SOURCE SEARCH NOTE (appended; earlier entries preserved unchanged)
+
+| Field | |
+|---|---|
+| Evidence searched | The Unknown Regions Lugubraa species traits (printed p.135): "barbed tentacles (1d6 points of damage) and dangerous teeth (1d4 points of damage)"; the Lugubraa stat block lists "Melee barbed tentacle +13 (1d6+1)". Every other sourcebook text searched has no Lugubraa entry. No damage type is printed anywhere in the supplied text. |
+| Result | The hold stands. No default type is assigned. |
+| Status | `DEFERRED_RULES_REVIEW` |
+
+---
+
+## SPECIES-RD-016 — SOURCE REVIEW NOTE (appended; earlier entries preserved unchanged)
+
+| Field | |
+|---|---|
+| Evidence | Galaxy at War's Dashade sidebar line reads "Languages: Dashadi"; the species traits block has no Automatic Languages line. In the same book, the sidebar "Languages" line and the traits-block "Automatic Languages" line are different things: Lurmen's sidebar names only Lurmen while its automatic languages are Basic and Lurmese; Taung and Zygerrian have both lines. Dashade is the only profile in the book with the sidebar line and no traits-block line. |
+| Distinction | A sidebar language is what the species speaks (narrative); an automatic language is a creation-time grant. The book gives no rule connecting the two. |
+| Result | The hold stands. Neither Dashadi nor Basic is granted automatically without an owner ruling. |
+| Status | `DEFERRED_RULES_REVIEW` |
