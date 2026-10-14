@@ -47,7 +47,7 @@ Components: `cost`, `description`, `hostPrerequisites`, `executableEffect`, `ins
 
 ## 5. Specification records
 
-A record names a typed definition and one component, with `basis` `PUBLISHED_UNAMBIGUOUS` (explicit, verified, unambiguous published rule) or `OWNER_RULING` (needs `ownerRulingRef`), plus `publication{bookId,title,printedPage,tableOrSection}`, `evidence`, `verification: SOURCE_VERIFIED`, `behavior`, `authoredBy`. A record is rejected while a blocker (pending or deferred) is open for that component. Records follow normal independent review; they do not require individual owner approval. **None exist yet.**
+A record names a typed definition and one component, with `basis` `PUBLISHED_UNAMBIGUOUS` (explicit, verified, unambiguous published rule) or `OWNER_RULING` (needs `ownerRulingRef`), plus `publication{bookId,title,printedPage,tableOrSection}`, `evidence`, `verification: SOURCE_VERIFIED`, `behavior`, `authoredBy`. A record is rejected while a blocker (pending or deferred) is open for that component. Records follow normal independent review; they do not require individual owner approval. **76 exist** (D-001 resolution: `installProcedure` for the Scum and Villainy Tables 2-3/2-4/2-5 upgrade options with a fixed printed upgrade-point value, from printed page 39; see `d-001-install-remove-pdf-verification.md`). They verify one component only; nothing is selectable.
 
 ## 6. `runtimeSelectable` (architecture 3.4)
 
@@ -80,16 +80,16 @@ V10′ re-derives these facts from the registry, so a hand-edited runtime file t
 
 ## 7. Blockers cannot be removed by omission
 
-Each open register entry that blocks registry definitions carries a machine-readable **Ledger scope** row (component plus `definitions=ALL`, a list of parent definition ids, or `slotPools=`). The generator requires the ledger to carry **exactly** that scope for every open entry:
+Each open register entry that blocks registry definitions carries a machine-readable **Ledger scope** row (component plus `definitions=ALL` optionally narrowed by `except=` parent ids, a list of parent definition ids, or `slotPools=`; with `except=`, every definition not named, including any added later, stays blocked). The generator requires the ledger to carry **exactly** that scope for every open entry:
 
 - missing coverage → `BLOCKER_REMOVED_WHILE_REGISTER_OPEN`; extra coverage → `BLOCKER_OUTSIDE_REGISTER_SCOPE`; a blocker bound to an entry without a scope row → `BLOCKER_WITHOUT_REGISTER_SCOPE`;
 - the **only** way to lift a blocker is an appended **Blocker lifted** row in the (append-only) register: `source=` and `evidence=` for `PENDING_SOURCE_VERIFICATION`, `owner-ruling=` for `DEFERRED_RULES_REVIEW` (both if the entry carries both). An incomplete row → `REGISTER_LIFT_INVALID`; a lifted entry still present in the ledger → `BLOCKER_FOR_LIFTED_REGISTER_ENTRY`.
 
-This is a mechanical check that the ledger cannot contradict the register; whether a lift row's evidence is adequate remains a matter for independent review. No lift row exists for any entry today. Regression tests prove that removing D-001 (or any other scoped blocker, wholly or partially) cannot authorize specification, implementation or selectability; the only passing promotion fixtures are synthetic registers that mark entries lifted.
+This is a mechanical check that the ledger cannot contradict the register; whether a lift row's evidence is adequate remains a matter for independent review. Today D-001 is the only lifted entry (printed page 39 verified); D-013 now blocks `installProcedure` for the 156 typed definitions it does not govern. Regression tests prove that removing D-001 (or any other scoped blocker, wholly or partially) cannot authorize specification, implementation or selectability; the only passing promotion fixtures are synthetic registers that mark entries lifted.
 
 ## 8. Measured output (v1.5)
 
-186 records; 232 typed domain definitions; 231 upgrade candidates (the temporary talent actuator is excluded); 84 certified slot costs, of which **49 are accounting-eligible** (41 Scum weapon/armor `table-category`, 8 KOTOR `rules-certified`) — the other 35 are Table 2-3 universal pairs whose domain applicability is `CONDITIONAL_UNVERIFIED`; 0 specified, implemented, tested or selectable.
+186 records; 232 typed domain definitions; 231 upgrade candidates (the temporary talent actuator is excluded); 84 certified slot costs, of which **49 are accounting-eligible** (41 Scum weapon/armor `table-category`, 8 KOTOR `rules-certified`) — the other 35 are Table 2-3 universal pairs whose domain applicability is `CONDITIONAL_UNVERIFIED`; 76 `installProcedure` components specified (D-001), none implemented, tested or selectable.
 
 ## 9. V10′ (generated-data validator)
 

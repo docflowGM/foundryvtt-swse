@@ -159,6 +159,7 @@ const planFor = (id, extra = {}) => planModification({ catalog, operation: 'inst
 
 check('planner: with the real catalog no definition can be planned as executable', () => {
   let n = 0;
+  let governed = 0;
   for (const id of catalog.listTyped()) {
     const p = planFor(id);
     n += 1;
@@ -167,10 +168,15 @@ check('planner: with the real catalog no definition can be planned as executable
     assert.ok(codesOf(p).includes('EXECUTOR_NOT_CERTIFIED'));
     assert.ok(codesOf(p).includes('NOT_SELECTABLE'), id);
     assert.ok(codesOf(p).includes('HOST_NOT_ESTABLISHED'), id);
-    assert.ok(codesOf(p).includes('OPEN_REGISTER_ENTRY'), `${id}: D-001 is open for every definition`);
-    assert.ok(p.deferrals.some((d) => d.register === 'D-001' && d.component === 'installProcedure'));
+    const d13 = p.deferrals.some((d) => d.register === 'D-013' && d.component === 'installProcedure');
+    const specified = catalog.getTyped(id).typed.status.components.installProcedure.MECHANIC_SPECIFIED;
+    assert.equal(d13, !specified, `${id}: D-013 blocks exactly the definitions the page-39 procedure does not govern`);
+    assert.equal(codesOf(p).includes('COMPONENT_UNVERIFIED') && p.blockers.some((b) => b.code === 'COMPONENT_UNVERIFIED' && b.detail === 'installProcedure'), !specified);
+    assert.ok(p.blockers.some((b) => b.code === 'COMPONENT_UNVERIFIED' && b.detail === 'hostPrerequisites'), 'host prerequisites remain unverified for every definition');
+    if (specified) { governed += 1; assert.ok(!codesOf(p).includes('INSTALL_PROCEDURE_NOT_SPECIFIED')); }
   }
   assert.equal(n, 232);
+  assert.equal(governed, 76);
 });
 check('planner: stable reason codes for specific definitions', () => {
   const rs = planFor('sv-retractable-stock::weapon');

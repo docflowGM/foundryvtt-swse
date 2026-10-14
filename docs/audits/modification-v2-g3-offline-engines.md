@@ -22,7 +22,7 @@ Removal identity (review correction): an installed identity is exactly `{ instan
 
 ## Interim policy encoded
 
-Plans are descriptions, diagnostics, cost information and read-only planning (architecture 9.2). `EXECUTOR_NOT_CERTIFIED` is always present until gate G6 supplies an executor with a proven all-or-nothing mutation strategy (the `TransactionEngine` snapshot-failure limitation, architecture 5.5), so `executable` is **always false** in G3. Removal is as blocked as installation: the removal procedure is part of the uncertified D-001. With the real v1.5 catalog every one of the 232 typed definitions is `NOT_SELECTABLE`, `HOST_NOT_ESTABLISHED` and carries the open D-001 entry.
+Plans are descriptions, diagnostics, cost information and read-only planning (architecture 9.2). `EXECUTOR_NOT_CERTIFIED` is always present until gate G6 supplies an executor with a proven all-or-nothing mutation strategy (the `TransactionEngine` snapshot-failure limitation, architecture 5.5), so `executable` is **always false** in G3. Removal is as blocked as installation: the removal procedure is part of the uncertified D-001. With the real catalog every one of the 232 typed definitions is `NOT_SELECTABLE` and `HOST_NOT_ESTABLISHED`. After the D-001 resolution, 76 have a verified `installProcedure` and 156 still carry the open D-013 entry.
 
 ## What the tests prove (`tests/modification-v2-offline.test.mjs`)
 

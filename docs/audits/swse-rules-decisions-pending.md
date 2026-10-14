@@ -31,6 +31,9 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine *Scum and Villainy* p. 39 (and the cross-referenced table text) and record the DC, time, scratch-built cost basis, install-failure and removal consequences with page evidence. The registry only records that these values "depend on source table"; it records no ambiguity. Becomes `DEFERRED_RULES_REVIEW` only if the examined text is itself ambiguous or conflicts with another authority. |
 | Ledger scope | component=installProcedure; definitions=ALL |
 | Source examination log | 2026-10-14: OCR layer of the cited pages examined; shape of the procedure confirmed, numeric values illegible, PDF page image needed. Still open; blocker not lifted. See `docs/audits/d-001-install-remove-source-examination.md`. |
+| Source examination log (PDF) | 2026-10-14: printed page 39 image supplied by the independent reviewer (SHA-256 `fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1`) inspected directly; Table 2-2 and the Installing Upgrades / removal text transcribed and reconciled in `docs/audits/d-001-install-remove-pdf-verification.md`. The earlier OCR note is preserved unchanged. |
+| Blocker lifted | source=Scum and Villainy printed page 39 (Table 2-2: Upgrade Installation and the Installing Upgrades text), verified against the page image; evidence=docs/audits/d-001-install-remove-pdf-verification.md sections 3-6 and the 76 installProcedure specification records in data/modifications/specification-records-v1.json |
+| Resolution (source) | The installation DC and time table, the scratch-built cost rule, the failure and retry rule, ordinary and expedited removal, and slot recovery are verified from the printed page. The page governs Scum and Villainy Tables 2-3/2-4/2-5 upgrade options with a fixed printed upgrade-point value (76 typed definitions). The installation procedure of every other typed definition is tracked by D-013; the points the page leaves undefined are tracked by D-014. This is a source resolution, not an owner ruling. |
 | Decision authority | Project owner |
 | Resolution | |
 
@@ -237,6 +240,43 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Decision authority | Project owner |
 | Resolution | |
 
+## D-013 — Installation procedure of definitions not governed by Scum and Villainy page 39
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification procedure (weapon, armor, equipment) |
+| Feature | Installation and removal of the 156 typed definitions that the verified page-39 procedure does not (yet) demonstrably govern |
+| Source | Varies by definition. For the eight Knights of the Old Republic Table 5-6 accessories: *Knights of the Old Republic Campaign Guide* pp. 75-76 (OCR layer: "upgrade slot cost … for use with the gear enhancement system in Scum and Villainy"). Others: their own publications |
+| Evidence | `docs/audits/d-001-install-remove-pdf-verification.md` section 6: Table 2-2 is keyed on upgrade points, the Upgrade Points column of Scum and Villainy Tables 2-3/2-4/2-5. Nothing on page 39 extends it to other publications' items. The registry ties the eight KOTOR accessories to the Scum procedure through `procedureRefs`, which is the registry's claim and is not independent verification. `sv-retractable-stock` is a Scum upgrade whose upgrade points are conditional (0 or 1), so its Table 2-2 row cannot be selected until D-004 is resolved |
+| Confirmed behavior | None for these definitions beyond what each publication's own procedure (where the registry certifies one) states |
+| Unresolved question | Which installation and removal procedure, if any, governs each of these definitions, and with which values |
+| Options | None supported by certified evidence |
+| Recommended ruling | None |
+| Implementation impact | `installProcedure` stays unverified for these 156 typed definitions; they cannot become runtime-selectable |
+| Status | `PENDING_SOURCE_VERIFICATION` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Examine each publication's own installation rules (for the KOTOR accessories, pp. 75-76 in the PDF) and record, per definition, whether the Scum page-39 procedure applies. Becomes `DEFERRED_RULES_REVIEW` only if the examined text is ambiguous or conflicting |
+| Ledger scope | component=installProcedure; definitions=ALL; except=sv-cheater,sv-cloaked,sv-dual-gear,sv-electrograpple-handle,sv-environmental-sealing,sv-extra-power-source,sv-memory-upgrade,sv-memory-upgrade-advanced,sv-miniaturized,sv-recognition-system,sv-remote-activation,sv-secret-compartment,sv-silverplate,sv-spring-loaded,sv-storage-capacity,sv-bayonet-ring,sv-bipod,sv-double-trigger,sv-ion-charger,sv-missile-load,sv-neutronium-reinforcement,sv-overload-switch,sv-pulse-charger,sv-rangefinder,sv-rapid-recycler,sv-slinker,sv-sniper-switch,sv-targeting-scope-standard,sv-targeting-scope-low-light,sv-aquatic-adaptation,sv-armorplast,sv-climbing-claws,sv-diagnostics-system,sv-environmental-systems,sv-gyro,sv-helmet-package,sv-holoshroud,sv-integrated-equipment-1-slot,sv-integrated-equipment-2-slots,sv-integrated-equipment-5-slots,sv-integrated-equipment-10-slots,sv-internal-generator,sv-jump-servos,sv-powered-exoskeleton,sv-radiation-shielding,sv-armor-rangefinder,sv-ready-harness,sv-repulsorlift,sv-shadowskin,sv-shadowskin-reflec,sv-shield-generator-sr5,sv-shield-generator-sr10,sv-shockweb,sv-vacuum-seals,sv-vacuum-seals-improved,sv-weapon-mount |
+| Decision authority | Project owner |
+| Resolution | |
+
+## D-014 — Points the printed installation and removal rules leave undefined
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification procedure (weapon, armor, equipment) |
+| Feature | Gaps in the Scum and Villainy printed-page-39 installation and removal procedure (D-001) |
+| Source | *Scum and Villainy* printed page 39, "Installing Upgrades" and Table 2-2 (examined: see `docs/audits/d-001-install-remove-pdf-verification.md` section 5) |
+| Evidence | The page was examined directly. It states each rule below only as quoted; it does not define the listed points |
+| Confirmed behavior | The explicit rules of section 5 of the verification document |
+| Unresolved question | (1) What monetary cost an installation attempt has, so that a retry "costs half as much as the original attempt" has a basis. (2) Expedited removal when the table time is already the shortest increment (10 minutes), and the 1 week example the page does not print. (3) What "deactivated" means mechanically and whether a deactivated or failed-installation upgrade occupies a slot. (4) The state after a failed installation beyond "doesn't work properly". (5) Whether any skill-training, tool or workshop requirement applies (not on this page) |
+| Options | None supported by the page. Further source examination (for example the Saga Edition core rulebook Mechanics skill text) may settle (5) and parts of (1)-(4); that is research, not an owner decision |
+| Recommended ruling | None |
+| Implementation impact | A V2 executor must not implement retry pricing, expedited removal at the shortest increment, deactivation effects, or failed-installation state until these are resolved. The specification records for `installProcedure` exclude them explicitly. This entry has no ledger scope because it limits specific sub-flows of an otherwise specified component, not a whole definition; the executor gate (G6) must refuse these sub-flows |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — The source has been examined and is silent on these points. Items (1)-(4) are genuine gaps in the printed rule; item (5) may be a research gap in other sources |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -244,3 +284,4 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 - **Revision 2 (2026-10-14):** introduced `PENDING_SOURCE_VERIFICATION` versus `DEFERRED_RULES_REVIEW`; added a *Review classification* row to D-001–D-012. Of the twelve entries, eleven are research gaps awaiting source examination; only D-006 (policy for unpriced modifications) is a decision for the owner today. No decision ID, original field, owner ruling or interim position was changed. No recommended ruling is made for any entry. Source examination is the next step for D-001 first, because it blocks the install procedure.
 - **Revision 3 (2026-10-14, G2):** the status ledger (`data/modifications/status-ledger-v1.json`) now links typed domain definitions to register entries (D-001 install procedure for every typed definition; D-004, D-005, D-006, D-010, D-011 for their specific definitions). The generator checks that each linked register id exists and that the declared classification equals this register's classification row. D-002, D-003, D-007, D-008, D-009 and D-012 are not bound to registry definitions and have no ledger link. No ID, field, ruling or classification was changed; no recommended ruling was added. Source examination of D-001 (*Scum and Villainy* p. 39) has not been performed in this change.
 - **Revision 4 (2026-10-14, G2 review corrections):** added a machine-readable **Ledger scope** row to D-001, D-004, D-005, D-006, D-010 and D-011 (which component and which typed definitions each open entry blocks). The generator now requires the ledger to carry the full scope of every open entry and rejects any omission. An entry's blocker is lifted only by an appended **Blocker lifted** row (`source=` and `evidence=` for `PENDING_SOURCE_VERIFICATION`; `owner-ruling=` for `DEFERRED_RULES_REVIEW`); no such row exists for any entry, so every scoped blocker is open. Entries without a Ledger scope row (D-002, D-003, D-007, D-008, D-009, D-012) block no registry definition directly. No ID, original field, ruling or classification changed.
+- **Revision 5 (2026-10-14, D-001 PDF verification):** D-001 resolved from the printed page 39 image (appended source-examination, **Blocker lifted** and source-resolution rows; no existing row changed). New entries D-013 (installation procedure of the 156 typed definitions the page does not demonstrably govern; `PENDING_SOURCE_VERIFICATION`, ledger scope `ALL` except the 56 governed Scum definitions) and D-014 (points the printed procedure leaves undefined; `DEFERRED_RULES_REVIEW`, no ledger scope). No recommended ruling on any entry. D-003 (equipment size) is untouched.

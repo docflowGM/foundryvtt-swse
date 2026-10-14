@@ -80,7 +80,11 @@ export function parseRegister(markdown) {
     const scopeRaw = fields(row('Ledger scope'));
     let scope = null;
     if (scopeRaw && COMPONENTS.includes(scopeRaw.component)) {
-      if (scopeRaw.definitions === 'ALL') scope = { component: scopeRaw.component, kind: 'all' };
+      if (scopeRaw.definitions === 'ALL') {
+        // `except=` narrows ALL by parent definition ids; every definition NOT named stays in scope (new definitions default to blocked).
+        const except = scopeRaw.except ? scopeRaw.except.split(',').map((x) => x.trim()).filter(Boolean) : [];
+        scope = { component: scopeRaw.component, kind: 'all', except };
+      }
       else if (scopeRaw.definitions) scope = { component: scopeRaw.component, kind: 'definitions', ids: scopeRaw.definitions.split(',').map((x) => x.trim()).filter(Boolean) };
       else if (scopeRaw.slotPools) scope = { component: scopeRaw.component, kind: 'slotPools', pools: scopeRaw.slotPools.split(',').map((x) => x.trim()).filter(Boolean) };
     }
@@ -101,7 +105,12 @@ export function parseRegister(markdown) {
 export function scopeTargets(scope, registry) {
   const all = [];
   for (const d of registry.definitions) for (const t of Object.values(d.typedDefinitions ?? {})) all.push({ id: t.definitionId, parent: d.id, pool: t.slotPoolId ?? null });
-  if (scope.kind === 'all') return new Set(all.map((x) => x.id));
+  if (scope.kind === 'all') {
+    const known = new Set(registry.definitions.map((d) => d.id));
+    const except = scope.except ?? [];
+    if (except.some((x) => !known.has(x))) return null;
+    return new Set(all.filter((x) => !except.includes(x.parent)).map((x) => x.id));
+  }
   if (scope.kind === 'definitions') {
     const known = new Set(registry.definitions.map((d) => d.id));
     if (scope.ids.some((x) => !known.has(x))) return null;
