@@ -273,6 +273,11 @@ export class DropHandler {
             await ActorEngine.updateActor(actor, fieldMutations, { source: 'species-drop' });
           }
 
+          // Remove items granted by a previous species/variant before creating the new grant.
+          if (mutations.itemsToDelete?.length > 0) {
+            await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', mutations.itemsToDelete, { source: 'species-drop' });
+          }
+
           // Create natural weapons and activated ability items.
           if (mutations.itemsToCreate?.length > 0) {
             await ActorEngine.createEmbeddedDocuments(actor, 'Item', mutations.itemsToCreate, { source: 'species-drop' });

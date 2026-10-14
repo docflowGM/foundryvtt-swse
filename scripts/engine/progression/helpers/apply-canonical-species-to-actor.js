@@ -51,11 +51,11 @@
  *   ├─ _materializeTraitFlags()
  *   ├─ _materializeRerolls()
  *   ├─ _materializeImmunities()
- *   ├─ _reconcileOldSpeciesItems()
- *   └─ _ensureIdempotence()
+ *   └─ reconcileSpeciesGrant()   (species-grant-reconciliation.js)
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { MANIFEST_FLAG, computeSpeciesGrantKey, reconcileSpeciesGrant } from '/systems/foundryvtt-swse/scripts/species/species-grant-reconciliation.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 /**
@@ -144,9 +144,22 @@ export async function applyCanonicalSpeciesToActor(actor, pendingContext) {
       Object.assign(mutations, abilityItemMutations.flags);
     }
 
-    // PHASE 11: Idempotence check
-    const idempotenceResults = _ensureIdempotence(actor, pendingContext, mutations);
-    Object.assign(mutations, idempotenceResults.mutations);
+    // PHASE 11: Source-aware reconciliation (revoke the previous species/variant grant,
+    // never duplicate this one). See species-grant-reconciliation.js.
+    const grantKey = computeSpeciesGrantKey(pendingContext.identity);
+    const reconciliation = reconcileSpeciesGrant({
+      grantKey,
+      plan: mutations,
+      manifest: actor.flags?.swse?.speciesGrantManifest ?? null,
+      actorState: { skills: actor.system?.skills, conBase: actor.system?.attributes?.con?.base },
+      items: Array.from(actor.items || []),
+      speciesName: pendingContext.identity.name,
+    });
+    Object.assign(mutations, reconciliation.resets);
+    if (reconciliation.itemsToCreate.length) mutations.itemsToCreate = reconciliation.itemsToCreate;
+    else delete mutations.itemsToCreate;
+    if (reconciliation.itemsToDelete.length) mutations.itemsToDelete = reconciliation.itemsToDelete;
+    mutations[MANIFEST_FLAG] = reconciliation.manifest;
 
     SWSELogger.log('[CanonicalSpecies] Species materialization complete:', {
       species: pendingContext.identity.name,
@@ -798,76 +811,6 @@ function _actionCostForSpeciesAbility(actionType) {
 
 function _slugifySpeciesAbility(value) {
   return String(value || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
-
-/**
- * Reconcile old species items when species changes during chargen.
- * Identifies and marks items from previous species for cleanup.
- * @private
- */
-function _reconcileOldSpeciesItems(actor, pendingContext) {
-  const results = {
-    itemsToDelete: [],
-    itemsToUpdate: [],
-  };
-
-  const currentSpecies = pendingContext.identity.name;
-  const speciesItems = (actor.items || []).filter(item =>
-    item.flags?.swse?.speciesGranted && item.flags?.swse?.sourceSpecies
-  );
-
-  for (const item of speciesItems) {
-    const sourceSpecies = item.flags.swse.sourceSpecies;
-    if (sourceSpecies !== currentSpecies) {
-      // Old species item - mark for deletion
-      results.itemsToDelete.push(item.id);
-    }
-  }
-
-  return results;
-}
-
-/**
- * Ensure idempotence: prevent duplicate weapons, stacked bonuses on reapply.
- * @private
- */
-function _ensureIdempotence(actor, pendingContext, proposedMutations) {
-  const results = { mutations: {} };
-
-  // Check for existing species-granted natural weapons from SAME species
-  const existingNaturalWeapons = (actor.items || []).filter(item =>
-    item.type === 'weapon' &&
-    item.flags?.swse?.isNaturalWeapon &&
-    item.flags?.swse?.sourceSpecies === pendingContext.identity.name
-  );
-
-  // Reconcile old species items
-  const reconciliation = _reconcileOldSpeciesItems(actor, pendingContext);
-  if (reconciliation.itemsToDelete.length > 0) {
-    results.mutations.itemsToDelete = reconciliation.itemsToDelete;
-  }
-
-  // If we have existing species-granted items from THIS species, do not recreate duplicates.
-  if (proposedMutations.itemsToCreate?.length > 0) {
-    const existingSpeciesItems = new Set((actor.items || [])
-      .filter(item => item.flags?.swse?.speciesGranted && item.flags?.swse?.sourceSpecies === pendingContext.identity.name)
-      .map(item => `${item.type}:${item.flags?.swse?.speciesAbilityId || item.flags?.swse?.sourceTrait || item.name}`));
-
-    proposedMutations.itemsToCreate = proposedMutations.itemsToCreate.filter(item => {
-      const key = `${item.type}:${item.flags?.swse?.speciesAbilityId || item.flags?.swse?.sourceTrait || item.name}`;
-      return !existingSpeciesItems.has(key);
-    });
-
-    if (proposedMutations.itemsToCreate.length === 0) {
-      SWSELogger.log('[CanonicalSpecies] Skipping species item creation (already exists)', {
-        species: pendingContext.identity.name,
-        existingNaturalWeapons: existingNaturalWeapons.length,
-      });
-      delete proposedMutations.itemsToCreate;
-    }
-  }
-
-  return results;
 }
 
 /**
