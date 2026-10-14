@@ -58,6 +58,37 @@ const kindOf = value => (Array.isArray(value) ? 'array' : typeof value === 'bool
   : value && typeof value === 'object' ? 'object' : 'null');
 const RESET_BY_KIND = Object.freeze({ array: [], boolean: false, number: 0, object: {}, null: null });
 
+/** Read a dotted path from an update payload that may use dotted keys, nested objects, or both. */
+function readPayloadPath(payload, path) {
+  if (payload && Object.prototype.hasOwnProperty.call(payload, path)) return payload[path];
+  return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), payload);
+}
+
+/**
+ * Independent acquisition. A species manifest owns a skill's training/class-skill
+ * flag only while nothing else has claimed it. Any LATER write through the actor
+ * mutation authority that sets the same flag true (class choice, feat, progression,
+ * sheet edit) makes the skill independently owned, so a species switch must not
+ * revoke it. Species payloads (they carry a manifest) never count as independent.
+ *
+ * @returns {object|null} extra dotted-key updates to merge into the payload, or null
+ */
+export function claimIndependentSkills(manifest, updateData) {
+  if (!manifest || typeof manifest !== 'object' || !updateData) return null;
+  if (readPayloadPath(updateData, MANIFEST_FLAG) !== undefined) return null; // the species grant itself
+  const claim = (list, field) => {
+    const owned = Array.isArray(list) ? list : [];
+    return owned.filter(skill => readPayloadPath(updateData, `system.skills.${skill}.${field}`) === true);
+  };
+  const trained = claim(manifest.trainedSkills, 'trained');
+  const classSkills = claim(manifest.classSkills, 'classSkill');
+  if (!trained.length && !classSkills.length) return null;
+  const extra = {};
+  if (trained.length) extra[`${MANIFEST_FLAG}.trainedSkills`] = manifest.trainedSkills.filter(skill => !trained.includes(skill));
+  if (classSkills.length) extra[`${MANIFEST_FLAG}.classSkills`] = manifest.classSkills.filter(skill => !classSkills.includes(skill));
+  return extra;
+}
+
 export function computeSpeciesGrantKey(identity) {
   const species = identity?.id || identity?.name;
   if (!species) return null;

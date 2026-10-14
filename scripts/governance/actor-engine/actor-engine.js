@@ -1,4 +1,5 @@
 // scripts/actor-engine.js
+import { claimIndependentSkills } from '/systems/foundryvtt-swse/scripts/species/species-grant-reconciliation.js';
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/actor-utils.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
@@ -532,6 +533,11 @@ export const ActorEngine = {
       if (!updateData || typeof updateData !== 'object') {
         throw new Error(`Invalid updateData passed to updateActor for ${actor.name}`);
       }
+
+      // Species grant ownership: a later write that independently trains a skill (or grants
+      // class-skill access) the species also granted must not be revoked on a species switch.
+      const independentSkillClaim = claimIndependentSkills(actor?.flags?.swse?.speciesGrantManifest, updateData);
+      if (independentSkillClaim) {updateData = { ...updateData, ...independentSkillClaim };}
 
       // [MUTATION TRACE] ENGINE — ingress boundary
       traceLog('ENGINE', `updateActor entry (traceId=${_traceId})`, {
