@@ -16,7 +16,9 @@
 
 `operation`, `typedDefinitionId`, `definitionId`, `domain`, `executable`, sorted `blockers` (`{code, detail}`), `deferrals` (open register entries with classification and component), `price`, `slotImpact` (`total/used/free/cost/freeAfter`, all null unless Phase 1a certified), `host`.
 
-Blocker codes: `OPERATION_INVALID`, `CATALOG_MISSING`, `DEFINITION_UNKNOWN`, `ITEM_INVALID`, `ITEM_DOMAIN_UNKNOWN`, `DOMAIN_MISMATCH`, `NOT_SELECTABLE`, `EXCLUDED_SCOPE`, `NOT_INSTALLABLE_CANDIDATE`, `NON_GENERAL_POOL`, `COMPONENT_UNVERIFIED`, `INSTALL_PROCEDURE_NOT_SPECIFIED`, `OPEN_REGISTER_ENTRY`, `HOST_NOT_ESTABLISHED`, `HOST_ILLEGAL`, `PRICE_UNKNOWN`, `PRICE_NOT_COMPUTABLE`, `SLOT_COST_UNCERTIFIED`, `SLOT_STATE_UNRESOLVED`, `SLOT_OVERFLOW`, `REMOVE_INSTANCE_NOT_FOUND`, `REMOVE_INSTANCE_MISMATCH`, `EXECUTOR_NOT_CERTIFIED`.
+Blocker codes: `OPERATION_INVALID`, `CATALOG_MISSING`, `DEFINITION_UNKNOWN`, `ITEM_INVALID`, `ITEM_DOMAIN_UNKNOWN`, `DOMAIN_MISMATCH`, `NOT_SELECTABLE`, `EXCLUDED_SCOPE`, `NOT_INSTALLABLE_CANDIDATE`, `NON_GENERAL_POOL`, `COMPONENT_UNVERIFIED`, `INSTALL_PROCEDURE_NOT_SPECIFIED`, `OPEN_REGISTER_ENTRY`, `HOST_NOT_ESTABLISHED`, `HOST_ILLEGAL`, `PRICE_UNKNOWN`, `PRICE_NOT_COMPUTABLE`, `SLOT_COST_UNCERTIFIED`, `SLOT_STATE_UNRESOLVED`, `SLOT_OVERFLOW`, `REMOVE_INSTANCE_ID_INVALID`, `REMOVE_INSTANCES_NOT_ARRAY`, `REMOVE_INSTANCE_RECORD_MALFORMED`, `REMOVE_INSTANCE_ID_DUPLICATE`, `REMOVE_INSTANCE_NOT_FOUND`, `REMOVE_INSTANCE_MISMATCH`, `REMOVE_INSTANCE_DOMAIN_MISMATCH`, `EXECUTOR_NOT_CERTIFIED`.
+
+Removal identity (review correction): an installed identity is exactly `{ instanceId, typedDefinitionId, domain }`, each a non-empty string with a known domain consistent with the typed id's `::domain` suffix. Removal is refused when the requested `instanceId` is empty or not a string, the container is not an array, any record on the host is malformed, any instance id is duplicated, there is not exactly one matching record, or the matching record's `typedDefinitionId` or `domain` disagrees with the request or the host Item.
 
 ## Interim policy encoded
 

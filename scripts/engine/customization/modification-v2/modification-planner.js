@@ -19,11 +19,33 @@ const DOMAINS = Object.freeze(['weapon', 'armor', 'equipment']);
 const REQUIRED_COMPONENTS = Object.freeze(['cost', 'description', 'hostPrerequisites', 'installProcedure']);
 
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+const isText = (v) => typeof v === 'string' && v.trim().length > 0;
 
 /** Installed V2 instance records (identity only) read from the canonical flag path. */
 export function readInstances(item) {
   const list = item?.flags?.['foundryvtt-swse']?.customization?.installedUpgrades;
   return Array.isArray(list) ? list : [];
+}
+
+/**
+ * Inspects the recorded V2 instance identities on a host Item. An identity is exactly { instanceId, typedDefinitionId, domain },
+ * each a non-empty string with a known domain. Anything else is malformed; instance ids must be unique on the host.
+ * @returns {{ notArray: boolean, records: object[], malformed: number[], duplicateIds: string[] }}
+ */
+export function inspectInstances(item) {
+  const raw = item?.flags?.['foundryvtt-swse']?.customization?.installedUpgrades;
+  if (raw === undefined || raw === null) return { notArray: false, records: [], malformed: [], duplicateIds: [] };
+  if (!Array.isArray(raw)) return { notArray: true, records: [], malformed: [], duplicateIds: [] };
+  const records = [];
+  const malformed = [];
+  const seen = new Map();
+  raw.forEach((r, index) => {
+    const ok = isObject(r) && isText(r.instanceId) && isText(r.typedDefinitionId) && DOMAINS.includes(r.domain) && r.typedDefinitionId.endsWith(`::${r.domain}`);
+    if (!ok) return malformed.push(index);
+    records.push(r);
+    seen.set(r.instanceId, (seen.get(r.instanceId) ?? 0) + 1);
+  });
+  return { notArray: false, records, malformed, duplicateIds: [...seen].filter(([, n]) => n > 1).map(([id]) => id).sort() };
 }
 
 /**
@@ -149,9 +171,21 @@ export function planModification({ catalog, operation, typedDefinitionId, item, 
       }
     }
   } else if (plan.operation === 'remove') {
-    const instance = readInstances(item).find((i) => isObject(i) && i.instanceId === instanceId);
-    if (typeof instanceId !== 'string' || !instance) block('REMOVE_INSTANCE_NOT_FOUND', instanceId ?? null);
-    else if (instance.typedDefinitionId !== plan.typedDefinitionId) block('REMOVE_INSTANCE_MISMATCH', instance.typedDefinitionId ?? null);
+    // Removal needs one unambiguous recorded identity: { instanceId, typedDefinitionId, domain } must all agree with the request and the host.
+    const inst = inspectInstances(item);
+    if (!isText(instanceId)) block('REMOVE_INSTANCE_ID_INVALID', instanceId ?? null);
+    if (inst.notArray) block('REMOVE_INSTANCES_NOT_ARRAY');
+    if (inst.malformed.length) block('REMOVE_INSTANCE_RECORD_MALFORMED', inst.malformed);
+    if (inst.duplicateIds.length) block('REMOVE_INSTANCE_ID_DUPLICATE', inst.duplicateIds);
+    if (isText(instanceId) && !inst.notArray) {
+      const matches = inst.records.filter((r) => r.instanceId === instanceId);
+      if (matches.length === 0) block('REMOVE_INSTANCE_NOT_FOUND', instanceId);
+      else if (matches.length === 1) {
+        const [m] = matches;
+        if (m.typedDefinitionId !== plan.typedDefinitionId) block('REMOVE_INSTANCE_MISMATCH', m.typedDefinitionId);
+        if (m.domain !== domain || (isObject(item) && m.domain !== item.type)) block('REMOVE_INSTANCE_DOMAIN_MISMATCH', { recorded: m.domain, definition: domain, host: isObject(item) ? item.type ?? null : null });
+      }
+    }
   }
   return finish();
 }

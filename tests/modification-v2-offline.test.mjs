@@ -200,11 +200,51 @@ check('planner: removal plans require the exact recorded instance', () => {
   const item = armorItem([{ instanceId: 'i-1', typedDefinitionId: id, domain: 'armor' }]);
   const base = { catalog, operation: 'remove', typedDefinitionId: id, item };
   assert.ok(codesOf(planModification({ ...base, instanceId: 'missing' })).includes('REMOVE_INSTANCE_NOT_FOUND'));
-  assert.ok(codesOf(planModification(base)).includes('REMOVE_INSTANCE_NOT_FOUND'));
+  assert.ok(codesOf(planModification(base)).includes('REMOVE_INSTANCE_ID_INVALID'));
+  for (const bad of ['', '  ', 5, {}, [], false]) assert.ok(codesOf(planModification({ ...base, instanceId: bad })).includes('REMOVE_INSTANCE_ID_INVALID'), `instanceId ${JSON.stringify(bad)}`);
   assert.ok(codesOf(planModification({ ...base, typedDefinitionId: eligibleArmor[1], instanceId: 'i-1' })).includes('REMOVE_INSTANCE_MISMATCH'));
   const ok = planModification({ ...base, instanceId: 'i-1' });
   assert.ok(!codesOf(ok).includes('REMOVE_INSTANCE_NOT_FOUND') && !codesOf(ok).includes('REMOVE_INSTANCE_MISMATCH'));
   assert.equal(ok.executable, false, 'removal procedure is as uncertified as installation (D-001)');
+});
+check('planner removal identity: domain, duplicates and malformed records are refused (G3 review correction)', () => {
+  const id = eligibleArmor[0];
+  const rec = (over = {}) => ({ instanceId: 'i-1', typedDefinitionId: id, domain: 'armor', ...over });
+  const plan = (instances, extra = {}) => planModification({ catalog, operation: 'remove', typedDefinitionId: id, item: armorItem(instances), instanceId: 'i-1', ...extra });
+  const identityCodes = ['REMOVE_INSTANCE_ID_INVALID', 'REMOVE_INSTANCES_NOT_ARRAY', 'REMOVE_INSTANCE_RECORD_MALFORMED', 'REMOVE_INSTANCE_ID_DUPLICATE', 'REMOVE_INSTANCE_NOT_FOUND', 'REMOVE_INSTANCE_MISMATCH', 'REMOVE_INSTANCE_DOMAIN_MISMATCH'];
+  const identityBlockers = (p) => codesOf(p).filter((c) => identityCodes.includes(c));
+  // exactly one well-formed matching record: no identity blocker (the plan is still non-executable for other reasons)
+  assert.deepEqual(identityBlockers(plan([rec()])), []);
+  // recorded domain disagrees with the definition and host
+  assert.deepEqual(identityBlockers(plan([rec({ domain: 'weapon', typedDefinitionId: id })])), ['REMOVE_INSTANCE_NOT_FOUND', 'REMOVE_INSTANCE_RECORD_MALFORMED'], 'domain must also agree with the typed id suffix');
+  const wrongDomainButConsistent = catalog.listTyped({ domain: 'weapon' })[0];
+  const crossDomain = planModification({ catalog, operation: 'remove', typedDefinitionId: wrongDomainButConsistent, item: armorItem([{ instanceId: 'i-1', typedDefinitionId: wrongDomainButConsistent, domain: 'weapon' }]), instanceId: 'i-1' });
+  assert.ok(codesOf(crossDomain).includes('REMOVE_INSTANCE_DOMAIN_MISMATCH') && codesOf(crossDomain).includes('DOMAIN_MISMATCH'), 'a weapon instance recorded on an armor host');
+  const hostDomain = planModification({ catalog, operation: 'remove', typedDefinitionId: id, item: armorItem([rec()], { type: 'equipment' }), instanceId: 'i-1' });
+  assert.ok(codesOf(hostDomain).includes('REMOVE_INSTANCE_DOMAIN_MISMATCH'));
+  // duplicates: identical, or the same id with different content
+  assert.deepEqual(identityBlockers(plan([rec(), rec()])), ['REMOVE_INSTANCE_ID_DUPLICATE']);
+  assert.ok(codesOf(plan([rec(), rec({ typedDefinitionId: eligibleArmor[1] })])).includes('REMOVE_INSTANCE_ID_DUPLICATE'));
+  assert.deepEqual(plan([rec(), rec()]).blockers.find((b) => b.code === 'REMOVE_INSTANCE_ID_DUPLICATE').detail, ['i-1']);
+  // a duplicate of some OTHER id still makes the host's identity state ambiguous
+  assert.ok(codesOf(plan([rec(), rec({ instanceId: 'i-2' }), rec({ instanceId: 'i-2' })])).includes('REMOVE_INSTANCE_ID_DUPLICATE'));
+  // malformed records anywhere in the list
+  for (const bad of [null, 'str', 7, [], {}, rec({ instanceId: '' }), rec({ instanceId: 3 }), rec({ typedDefinitionId: '' }), rec({ typedDefinitionId: 5 }), rec({ domain: 'vehicle' }), rec({ domain: undefined }), rec({ typedDefinitionId: 'no-separator' })]) {
+    const p = plan([rec(), bad]);
+    assert.ok(codesOf(p).includes('REMOVE_INSTANCE_RECORD_MALFORMED'), JSON.stringify(bad));
+    assert.deepEqual(p.blockers.find((b) => b.code === 'REMOVE_INSTANCE_RECORD_MALFORMED').detail, [1]);
+    assert.equal(p.executable, false);
+  }
+  // the instances container itself malformed
+  const notArray = planModification({ catalog, operation: 'remove', typedDefinitionId: id, item: armorItem({ not: 'an array' }), instanceId: 'i-1' });
+  assert.ok(codesOf(notArray).includes('REMOVE_INSTANCES_NOT_ARRAY'));
+  assert.ok(!codesOf(notArray).includes('REMOVE_INSTANCE_NOT_FOUND'));
+  // never throws for hostile hosts
+  for (const item of [null, undefined, 5, { type: 'armor' }, { type: 'armor', flags: null }, { type: 'armor', flags: { 'foundryvtt-swse': { customization: null } } }]) {
+    assert.doesNotThrow(() => planModification({ catalog, operation: 'remove', typedDefinitionId: id, item, instanceId: 'i-1' }));
+  }
+  // install plans do not depend on removal identity checks
+  assert.ok(!identityBlockers(planFor(id)).length);
 });
 check('planner: deterministic and does not mutate its inputs', () => {
   const id = eligibleArmor[0];
