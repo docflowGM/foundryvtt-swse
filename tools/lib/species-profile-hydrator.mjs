@@ -225,11 +225,10 @@ function compileFixedArray(snap, record) {
   if (gen.type !== 'FIXED_STARTING_ARRAY_PLUS_SINGLE_CHOICE' || !gen.doNotApplyOrdinaryRacialModifierPipeline) throw new HoldProfile(`ability score generation ${gen.type} not supported`);
   const lower = o => Object.fromEntries(ABILITIES.map(k => [k.toLowerCase(), o[k]]));
   if (ABILITIES.some(k => !Number.isFinite(gen.fixedStartingScores?.[k])) || !Number.isFinite(gen.chooseOneScoreToIncreaseBy)) throw new HoldProfile('fixed array incomplete');
-  // The printed array and the printed single +N choice. How the attribute step lets the player spend that bonus is the
-  // repository's existing, documented allocation behaviour (docs/species-phase4-special-attribute-rules.md): its
-  // allocation fields are carried over from the existing record verbatim and are NOT a statement of the printed rule.
+  // The printed array and the printed single +N choice, with the project owner's ruling SPECIES-RD-017 (Option A): the
+  // printed rule is canonical — exactly +N to ONE chosen score. The earlier two-separate-+1 allocation stays only as an
+  // explicitly labelled optional house rule (world setting republicCloneAbilityAllocation).
   const existing = record?.system?.abilityChoice?.type === 'fixedArray' ? record.system.abilityChoice : null;
-  const keep = existing ? Object.fromEntries(['allocationPoints', 'maxPerAbility', 'allocationMode', 'requiresGmApprovalOnOverride', 'helpText'].filter(k => existing[k] !== undefined).map(k => [k, existing[k]])) : {};
   const common = Object.fromEntries(ABILITIES.map(k => [k, Number.isFinite(snap.abilityModifiers?.[k]) ? snap.abilityModifiers[k] : null]));
   if (Object.values(common).some(v => v === null)) throw new HoldProfile('fixed array profile without explicit zero modifiers');
   return {
@@ -241,7 +240,21 @@ function compileFixedArray(snap, record) {
       bonusChoices: gen.eligibleScores.map(k => k.toLowerCase()),
       bonusValue: gen.chooseOneScoreToIncreaseBy,
       printedRule: 'Fixed starting array plus one chosen ability score increased by the printed bonus.',
-      ...keep,
+      // Canonical (printed) allocation; read by the existing Attribute step.
+      allocationPoints: gen.chooseOneScoreToIncreaseBy,
+      maxPerAbility: gen.chooseOneScoreToIncreaseBy,
+      singleScore: true,
+      requiresGmApprovalOnOverride: existing?.requiresGmApprovalOnOverride ?? true,
+      helpText: `Start from the printed array, then choose exactly one ability score to increase by ${gen.chooseOneScoreToIncreaseBy}.`,
+      houseRuleAllocation: {
+        setting: 'republicCloneAbilityAllocation',
+        value: 'two_different_plus_one',
+        label: 'House rule: two separate +1 increases to different abilities',
+        allocationPoints: gen.chooseOneScoreToIncreaseBy,
+        maxPerAbility: 1,
+        singleScore: false,
+        helpText: `House rule: start from the printed array, then distribute ${gen.chooseOneScoreToIncreaseBy} separate +1 increases to different abilities.`,
+      },
     },
   };
 }

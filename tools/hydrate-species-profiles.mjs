@@ -61,6 +61,7 @@ for (const profile of bundle.sourceProfiles) {
       abilityMods: variant.abilityMods, abilities: variant.abilities, size: variant.size, speed: variant.speed,
       movement: variant.movement, languages: variant.languages, special: variant.special,
       canonicalTraits: variant.traits.map(t => ({ ...t })), naturalWeapons: variant.naturalWeapons.map(w => ({ ...w })),
+      abilityChoice: variant.abilityChoice ?? null,
     });
   }
   fixture[variant.id] = expectation;

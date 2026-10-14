@@ -291,6 +291,31 @@ export class AttributeStep extends ProgressionStepPlugin {
     return override?.fixedScores && typeof override.fixedScores === 'object' ? override.fixedScores : null;
   }
 
+  /**
+   * Allocation rule for a species fixed array. The printed rule (exactly +N to one score) is canonical; a species may
+   * name an optional, explicitly labelled house rule (world setting) that replaces it.
+   */
+  _resolveSpeciesAllocation(override) {
+    const printed = {
+      total: Number(override.allocationPoints ?? override.bonusValue ?? 2) || 2,
+      maxPerAbility: Number(override.maxPerAbility ?? 1) || 1,
+      singleScore: override.singleScore === true,
+      helpText: override.helpText,
+      houseRule: false,
+    };
+    const house = override.houseRuleAllocation;
+    if (house?.setting && HouseRuleService.getString(house.setting, '') === house.value) {
+      return {
+        total: Number(house.allocationPoints ?? printed.total) || printed.total,
+        maxPerAbility: Number(house.maxPerAbility ?? 1) || 1,
+        singleScore: house.singleScore === true,
+        helpText: house.helpText || house.label,
+        houseRule: true,
+      };
+    }
+    return printed;
+  }
+
   _getSpeciesFixedAllocationStatus(shell) {
     const override = this._getSpeciesAttributeOverride(shell);
     const fixedScores = this._getSpeciesFixedScores(shell);
@@ -301,8 +326,7 @@ export class AttributeStep extends ProgressionStepPlugin {
     const allowed = Array.isArray(override.bonusChoices) && override.bonusChoices.length
       ? override.bonusChoices.map(key => String(key).toLowerCase())
       : this._getAssignableAbilityKeys(shell);
-    const total = Number(override.allocationPoints ?? override.bonusValue ?? 2) || 2;
-    const maxPerAbility = Number(override.maxPerAbility ?? 1) || 1;
+    const { total, maxPerAbility, singleScore } = this._resolveSpeciesAllocation(override);
     const allocations = {};
     let spent = 0;
     for (const key of allowed) {
@@ -312,7 +336,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       if (amount > 0) allocations[key] = amount;
       spent += amount;
     }
-    return { total, spent, remaining: Math.max(0, total - spent), maxPerAbility, allocations, complete: spent === total };
+    return { total, spent, remaining: Math.max(0, total - spent), maxPerAbility, singleScore, allocations, complete: spent === total && (!singleScore || Object.keys(allocations).length === 1) };
   }
 
   _canAdjustSpeciesFixed(shell, key, delta) {
@@ -332,6 +356,8 @@ export class AttributeStep extends ProgressionStepPlugin {
     const currentAllocation = Math.max(0, current - base);
     const nextAllocation = currentAllocation + Number(delta || 0);
     if (nextAllocation < 0 || nextAllocation > status.maxPerAbility) return false;
+    // Printed rule: the whole bonus goes to ONE score — once another score holds part of it, this one is closed.
+    if (status.singleScore && nextAllocation > 0 && Object.keys(status.allocations).some(other => other !== ability)) return false;
     const nextSpent = status.spent - currentAllocation + nextAllocation;
     return nextSpent <= status.total;
   }
@@ -1743,7 +1769,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       remainingPoolAssignments,
       currentMethodDescription:
         this._isSpeciesFixedMode()
-          ? (attributeOverride?.helpText || `${attributeOverride?.label || 'Species fixed array'} is pre-filled. Distribute the remaining attribute increase points, then lock attributes to continue.`)
+          ? (this._resolveSpeciesAllocation(attributeOverride).helpText || attributeOverride?.helpText || `${attributeOverride?.label || 'Species fixed array'} is pre-filled. Distribute the remaining attribute increase points, then lock attributes to continue.`)
           : this._method === 'point-buy'
           ? 'Adjust scores with +/- as needed. Auto Assign uses the suggestion engine, and Ask Mentor can apply a full build while still leaving everything editable.'
           : this._method === 'array'

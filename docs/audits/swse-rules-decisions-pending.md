@@ -431,3 +431,17 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Question for the owner | For a species printed with fly and swim speeds but no land speed, should the derived Walk speed be shown as absent ("—"), 0, or should the character use another printed mode as its primary speed? This changes shared movement display, so it is a design decision, not a data fix. |
 | Engineering that is ready once decided | Snapshot `speed: null` with an explicit "land speed not printed" marker; apply/revoke of the printed fly/swim/hover modes; a derived-speed branch for the marker. |
 | Status | `DEFERRED_RULES_REVIEW` |
+
+---
+
+## SPECIES-RD-017 — PROJECT OWNER RULING (appended; the original question and progress note above are preserved unchanged)
+
+| Field | |
+|---|---|
+| Decision | **Option A, approved by the project owner:** Republic Clone characters follow the published Clone Wars Campaign Guide rule — the fixed array Str 15, Dex 13, Con 10, Int 12, Wis 10, Cha 8 plus exactly +2 to ONE chosen ability score. Splitting that bonus into two +1 increases is not permitted under the canonical rule. |
+| Scope | Default for new Republic Clone characters. Existing characters keep their stored ability scores (nothing is recomputed). The earlier two-separate-+1 allocation remains available only as the explicitly labelled optional house rule `republicCloneAbilityAllocation = two_different_plus_one` (GM house-rule setting). |
+| Verification of `allow_stacked_two` | `allow_stacked_two` is the global level-up setting `abilityIncreaseAllocationMode`; it permits either +2 to one ability or +1 to two, so it cannot express the canonical rule. Raising `maxPerAbility` to 2 alone would still accept a split. The canonical mode therefore adds `singleScore: true`. |
+| Implementation | Snapshot `republic-clone-cw-2h-10` abilityChoice: `allocationPoints 2`, `maxPerAbility 2`, `singleScore true`, with `houseRuleAllocation` naming the optional setting. The existing Attribute step enforces it (`_resolveSpeciesAllocation`, `_canAdjustSpeciesFixed`, completion requires one score); no new UI. The house rule is registered in `houserule-settings.js`, `houserules-manifest.js` and `settings-defaults.js`. |
+| Tests | `tests/species-republic-clone-allocation.test.mjs` (canonical default, every score a legal single choice, no split, stepping back, house-rule mode, existing characters untouched; mutation-checked) and `tests/species-source-pinned.test.mjs` |
+| Implementing commit | recorded in the next appended line |
+| Status | `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |

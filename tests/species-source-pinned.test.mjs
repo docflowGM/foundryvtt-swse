@@ -117,7 +117,8 @@ const feats = r => r.grants.filter(g => g.grantType === 'feat' && g.target).map(
   assert.equal(v.sourceProfileId, 'CW-2H-10');
   const snap = (await import('/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js')).SpeciesRegistry.getByName('Republic Clone').variants.find(x => x.completeSnapshot);
   assert.equal(snap.abilityChoice.bonusValue, 2, 'the printed +2 is recorded');
-  assert.equal(snap.abilityChoice.allocationPoints, 2, 'the repository\'s existing allocation behaviour is carried over unchanged (register RD-017)');
+  assert.deepEqual([snap.abilityChoice.allocationPoints, snap.abilityChoice.maxPerAbility, snap.abilityChoice.singleScore], [2, 2, true], 'RD-017 (Option A): exactly +2 to one score is the default');
+  assert.equal(snap.abilityChoice.houseRuleAllocation.maxPerAbility, 1, 'two separate +1 increases survive only as the labelled house rule');
   assert.deepEqual(r.grants.filter(g => g.grantType === 'trainedSkill').map(g => g.frequency), ['choice']);
   assert.deepEqual(r.grants.filter(g => g.grantType === 'feat').map(g => g.frequency), ['choice']);
 }

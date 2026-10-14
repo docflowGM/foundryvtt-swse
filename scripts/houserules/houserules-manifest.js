@@ -993,6 +993,23 @@ export const HOUSERULE_MANIFEST = [
     config: true
   },
 
+  {
+    key: 'republicCloneAbilityAllocation',
+    name: 'Republic Clone Ability Bonus',
+    category: 'advancement',
+    description: 'Printed rule: a Republic clone adds +2 to exactly one chosen ability score at creation. The house rule instead allows two separate +1 increases to different abilities.',
+    type: 'string',
+    choices: {
+      printed_plus_two_one_score: 'Printed: +2 to exactly one ability score',
+      two_different_plus_one: 'House Rule: two separate +1 increases (different abilities)'
+    },
+    default: 'printed_plus_two_one_score',
+    status: 'wired',
+    tags: ['RAW', 'house-rule', 'species'],
+    presetVisible: true,
+    config: true
+  },
+
   // ─── ACTION ECONOMY ─────────────────────────────────────────────────────────
 
   {
