@@ -1,11 +1,13 @@
-# ModificationSlotAuthority — Phase 1a Contract (revision 2)
+# ModificationSlotAuthority — Phase 1a Contract (revision 3)
 
 **Status:** contract only, for owner and independent-reviewer approval. **No resolver code, test code, catalog, pack or consumer change accompanies this document.** Nothing here is authorized for implementation until approved.
 **Baseline:** `cc5f8fbcc98396e189c93e7ac07f97345e1d170c` (`origin/main`, Phase 0 audit merged via PR #1031).
-**Binding inputs:** the merged Phase 0 audit (`docs/audits/weapon-modification-convergence-phase-0-audit.md`), handoff v2 sections 0A and 2, and the independent review of this contract (decisions D1-D9 and mandatory corrections 1-7, recorded in section 13). Where this document and those differ, they win.
+**Binding inputs:** the merged Phase 0 audit (`docs/audits/weapon-modification-convergence-phase-0-audit.md`), handoff v2 sections 0A and 2, and the independent review of this contract (decisions D1-D13, mandatory corrections 1-7 and provenance corrections A-B, recorded in section 13). Where this document and those differ, they win.
 **Labels:** **LOCKED** = decided by the review. **PROPOSAL** = my drafting, needs approval. **OPEN** = a question only the owner/reviewer may settle (section 14); the contract states the facts and does not choose.
 
-**Revision 2** replaces revision 1 (`854f2f1`). Changes: Phase 1a is `resolveSlotState` only (D1); no partial totals (D2); no custom-base or exception table (D3); legacy-mismatch comparison only where meaningful (D4); `system.armorType` is declared evidence and stock class is kept distinct from current class (D5, correction 3); unknown powered status is unresolved (D6); at most one strip is certifiable (D7); injected certified definitions carry identity and provenance, and recorded costs are evidence (D8, correction 1); upgrade identity is not an upgrade key (correction 2); weapon classification needs trusted evidence (correction 4); `previewChange` and its tests are removed (correction 6).
+**Revision 3** (this revision) adds, from the second review of this contract: D10-D13 locked (strict identity; canonical-registry weapon classification; shipped armor may stay unresolved in read-only 1a; armor-class consistency conflict) and two provenance corrections: **A** a schema-generated `system.upgradeSlots` is not evidence of an authored or calculated capacity, and **B** a schema-generated `isPoweredArmor: false` is not evidence that armor is non-powered. Revision 3 changes sections 2, 3, 4, 5.2, 5.3, 8, 10, 11, 12-14 and adds a reason-code registry (section 13A). It also records one new fact for the reviewer (D14).
+
+**Revision 2** replaced revision 1 (`854f2f1`). Changes: Phase 1a is `resolveSlotState` only (D1); no partial totals (D2); no custom-base or exception table (D3); legacy-mismatch comparison only where meaningful (D4); `system.armorType` is declared evidence and stock class is kept distinct from current class (D5, correction 3); unknown powered status is unresolved (D6); at most one strip is certifiable (D7); injected certified definitions carry identity and provenance, and recorded costs are evidence (D8, correction 1); upgrade identity is not an upgrade key (correction 2); weapon classification needs trusted evidence (correction 4); `previewChange` and its tests are removed (correction 6).
 
 ## 1. Scope
 
@@ -25,6 +27,7 @@ Out of scope, now and in 1a: any change to the Workbench, `UpgradeSlotEngine`, `
 8. **No source invention.** Every certified number cites a source reference.
 9. **Separate typed domain policies** (weapon, armor, equipment) over one arithmetic core. No shared untyped modification schema. No droid or vehicle rules.
 10. **Capacity only.** The module decides nothing about eligibility, cost, DC, feats, stacking or effects.
+11. **A schema default is not evidence** (LOCKED, corrections A and B). `item-defaults.js` injects `system.upgradeSlots: 1` for weapons, armor and equipment (lines 182, 241, 300) and `system.isPoweredArmor: false` for armor (line 240). A stored value whose origin as an authored, calculated or published fact is not established is **declared-unproven evidence**: preserved, reported with a diagnostic, never used to certify a classification or to raise a blocking conflict, and never used in totals.
 
 ## 3. API (LOCKED scope: D1; PROPOSAL: signature)
 
@@ -38,8 +41,8 @@ Synchronous, side-effect free, never throws for malformed item data (returns `un
 
 | Field | Shape | Purpose |
 |---|---|---|
-| `canonicalWeaponLookup(item)` | `{ state: "canonical", identityKey, weaponClass: "ordinary" \| "lightsaber" \| "unknown", source } \| { state: "legacy" } \| { state: "unresolved", reason }` | Trusted weapon identity. `weaponClass` is supplied by the lookup from structured record data. How the later adapter derives it from the registry is OPEN (D11). Absent lookup is treated as `unresolved`, never as `legacy`. |
-| `trustedClassification` | `{ weaponClass?, armorStockClass?, powered?, evidenceRef }` | Caller-supplied trusted evidence (for example from a future canonical-armor record or a reviewed GM classification). **Never read from the item.** It is the explicit input that reconciles tests which need a resolved class (section 11). |
+| `canonicalWeaponLookup(item)` | `{ state: "canonical", identityKey, weaponClass: "ordinary" \| "lightsaber" \| "unknown", source } \| { state: "legacy" } \| { state: "unresolved", reason }` | Trusted weapon identity. `weaponClass` is supplied by the lookup from structured record data. The eventual adapter must derive it from structured canonical fields (D11, section 5.2). Absent lookup is treated as `unresolved`, never as `legacy`. |
+| `trustedClassification` | `{ weaponClass?, armorStockClass?, powered?, legacySlotValueOrigin?, evidenceRef }` | Caller-supplied trusted evidence with verified provenance (for example from a future canonical-armor record, a reviewed GM classification, or a producer-specific migration record). **Never read from the item.** `powered` is `true`/`false`. `legacySlotValueOrigin` is `"authored-stock"` or `"calculated-total"` and establishes the origin of the stored `system.upgradeSlots` for the section 8 comparison. It is the explicit input that reconciles tests which need a resolved class (section 11). |
 | `certifiedDefinitionLookup(upgradeKey)` | `{ definitionId, upgradeKey, certifiedCost: int ≥ 0, source: { ref, certification } } \| null` | Certified slot-cost definitions with identity and provenance (D8, correction 1). The module holds no cost catalog of its own. |
 | `baselineTable` | section 5 table | Defaults to the module's table; injectable for tests. |
 
@@ -62,7 +65,8 @@ Synchronous, side-effect free, never throws for malformed item data (returns `un
       "armor": {
         "stockClass":   { "value": "light|medium|heavy" | null, "status": "trusted" | "declared-unmodified" | "unrecoverable" | "unclassified", "evidence": "…" },
         "currentClass": { "value": "<system.armorType|null>", "status": "declared-evidence" },
-        "powered":      { "value": true | false | null, "status": "trusted" | "declared" | "unknown" }
+        "powered":      { "value": true | false | null, "status": "trusted" | "declared-unproven" | "unknown" },
+        "consistency":  { "performed": false, "reason": "NO_RECORDED_SIZE_INCREASE", "expectedCurrentClasses": null }
       }
     },
     "reasons": []
@@ -109,7 +113,8 @@ Synchronous, side-effect free, never throws for malformed item data (returns `un
   "legacy": {
     "evidence": [ { "field": "system.upgradeSlots", "value": 3, "classification": "unknown", "usedInTotals": false },
                   { "field": "flags.foundryvtt-swse.customization.overrides.stockSlotOverride", "value": null, "classification": "legacy-evidence", "usedInTotals": false } ],
-    "comparison": { "performed": false, "reason": "BASELINE_NOT_CERTIFIED", "explainedBy": null }
+    "valueOrigin": "established-authored" | "established-calculated" | "unknown",
+    "comparison": { "performed": false, "reason": "LEGACY_VALUE_ORIGIN_UNKNOWN", "explainedBy": null }
   },
 
   "conflicts":  [ { "code": "…", "subject": "…", "detail": {} } ],
@@ -142,25 +147,35 @@ No custom-base field and no stock-exception table in 1a (D3). Exception evidence
 2. `context.trustedClassification.weaponClass` → `evidence: "trusted-input"`.
 3. Otherwise `class: "unverified"`, `base` unresolved, reason `WEAPON_CLASS_UNVERIFIED`.
 
-A lookup that is absent, returns `legacy`, or returns `unresolved` yields case 3 (a declared-but-unresolvable canonical identity additionally reports `CANONICAL_IDENTITY_UNRESOLVED`). `system.subtype`, name and `system.category` are never used to certify a class. A class of `lightsaber` leaves the general base unresolved (`LIGHTSABER_GENERAL_CAPACITY_UNCERTIFIED`) and activates the separate lightsaber pools (section 9). A class of `unknown` is treated as unverified.
+A lookup that is absent, returns `legacy`, or returns `unresolved` yields case 3 (a declared-but-unresolvable canonical identity additionally reports `CANONICAL_IDENTITY_UNRESOLVED`). `system.subtype`, name and `system.category` are never used to certify a class. **Eventual adapter (D11, LOCKED; not part of 1a).** Phase 1a imports no registry; `canonicalWeaponLookup` is injected. The later adapter must classify from structured canonical fields only: `record.weaponGroup` (exposed by `WeaponRuntimeResolver` as `resolved.weaponGroup`; existing tooling treats `weaponGroup === 'Lightsaber'` as the lightsaber group), with `record.schemaFamily.proficiency` (the proficiency token that `attack-shape.js` maps to `lightsabers`) as a consistency check. It must never use an Item name or a mutable legacy category field. If the structured fields contradict each other, the adapter returns `weaponClass: "unknown"` (so the module reports the class unverified) and does not guess. The exact mapping of non-lightsaber `weaponGroup` values to `ordinary` belongs to that adapter's own contract.
+
+A class of `lightsaber` leaves the general base unresolved (`LIGHTSABER_GENERAL_CAPACITY_UNCERTIFIED`) and activates the separate lightsaber pools (section 9). A class of `unknown` is treated as unverified.
 
 *Consequence to note:* a self-built or homebrew weapon with no canonical identity and no trusted input is unresolved in 1a. That is the intended fail-closed behavior.
 
-### 5.3 Armor classification (D5, D6, correction 3)
+### 5.3 Armor classification (D5, D6, D12, D13, correction 3, correction B)
 
 Two fields are kept distinct: `stockClass` (the published class the base is derived from) and `currentClass` (`system.armorType`, declared evidence only).
 
 `stockClass` is determined as follows, first match wins:
 
 1. `trustedClassification.armorStockClass` ∈ {light, medium, heavy} → `status: "trusted"`.
-2. Otherwise, if **no size increase is recorded in any representation** (`flags.foundryvtt-swse.customization.structural.sizeIncreaseApplied`, `flags.swse.customizationStructural.sizeIncreaseApplied`, `system.sizeIncreaseApplied`) and `system.armorType` ∈ {light, medium, heavy} → `value = armorType`, `status: "declared-unmodified"` (declared evidence, accepted only because no recorded operation could have changed it).
+2. Otherwise, if **no size increase is recorded in any representation** (`flags.foundryvtt-swse.customization.structural.sizeIncreaseApplied`, `flags.swse.customizationStructural.sizeIncreaseApplied`, `system.sizeIncreaseApplied`) and `system.armorType` ∈ {light, medium, heavy} → `value = armorType`, `status: "declared-unmodified"` (declared evidence, accepted because no recorded operation could have changed it; see OPEN D14 on schema defaults).
 3. Otherwise → `value: null`, `status: "unrecoverable"` (a size increase is recorded and no trusted stock class is supplied) or `"unclassified"` (class absent, `shield`, or not light/medium/heavy). Base unresolved: `ARMOR_STOCK_CLASS_UNRECOVERABLE` / `ARMOR_CLASS_UNCERTIFIED`.
 
-Why a recorded size increase makes the stock class unrecoverable: `StructuralChangeEngine.applySizeIncrease` writes the next weight class into `system.armorType` (`structural-change-engine.js:85`), while the Workbench records `sizeIncreaseApplied` without changing `armorType`. The two paths are indistinguishable from the data, so the current class cannot be trusted as stock. The module therefore never combines `currentClass` with a size-increase adjustment to compute the base; a medium armor enlarged to heavy cannot receive heavy stock capacity plus another `+1`.
+Why a recorded size increase makes the stock class unrecoverable: `StructuralChangeEngine.applySizeIncrease` writes the next weight class into `system.armorType` (`structural-change-engine.js:85`), while the Workbench records `sizeIncreaseApplied` without changing `armorType`. The two paths are indistinguishable from the data. The module never combines `currentClass` with a size-increase adjustment to compute the base: a medium armor enlarged to heavy cannot receive heavy stock capacity plus another `+1`.
 
-`powered` (D6): `system.isPoweredArmor` is `true`/`false` only when it is a boolean (`status: "declared"`), or taken from `trustedClassification.powered` (`"trusted"`). Absent or non-boolean is `unknown`, **not** `false`, and is never inferred from the name. Base is resolved only when `powered` is known `false`. Known `true` → `POWERED_ARMOR_PRECEDENCE_UNRESOLVED`. `unknown` → `POWERED_STATUS_UNKNOWN`.
+**Powered status (D6, correction B).** `item-defaults.js` initializes `isPoweredArmor: false` for every new armor Item, so a raw `false` cannot be told apart from an authored one.
 
-*Consequence to note:* none of the 133 shipped armor records sets `isPoweredArmor`, so every shipped armor Item resolves with an unresolved base in Phase 1a unless a trusted classification is supplied. Newly created armor from `item-defaults.js` carries `isPoweredArmor: false` and can resolve. This follows from D6 and is not worked around.
+- `trustedClassification.powered` (`true` or `false`, with `evidenceRef`) → `status: "trusted"`. **Only a trusted `false` can establish non-powered armor.**
+- A raw boolean `system.isPoweredArmor` is retained as `status: "declared-unproven"` evidence. Unless trusted input supplies the same fact, a raw `false` yields `POWERED_STATUS_UNPROVEN` and a raw `true` yields `POWERED_ARMOR_PRECEDENCE_UNRESOLVED`; either leaves the base unresolved.
+- Absent or non-boolean is `unknown` (`POWERED_STATUS_UNKNOWN`), unresolved, and is never inferred from the name.
+- A trusted `true` → `POWERED_ARMOR_PRECEDENCE_UNRESOLVED` (precedence is uncertified); the base stays unresolved.
+- A raw boolean that **disagrees** with a trusted value is not a conflict that selects either; the trusted value governs the classification and the disagreement is a diagnostic (`POWERED_RAW_DISAGREES_WITH_TRUSTED`) so a masked classification is visible.
+
+**Armor-class consistency (D13).** The check runs only when all hold: a trusted `armorStockClass`; a size increase recorded in any representation; and a `currentClass` declared as light, medium or heavy. The expected current classes are the stock class and the valid next class under the existing structural transition (`StructuralChangeEngine`: light → medium, medium → heavy; heavy has no next class, and a recorded size increase on a trusted heavy armor already raises `SIZE_INCREASE_NOT_PERMITTED`). If `currentClass` is neither, raise conflict `ARMOR_CLASS_INCONSISTENT` with both classes and the expected set in `detail`. If the required evidence is absent (no trusted stock class, no recorded size increase, or `currentClass` absent/`shield`/unrecognized), `consistency.performed` is `false` with the reason, and when a trusted stock class and a recorded size increase exist but `currentClass` cannot be read, an `unresolved[]` entry `ARMOR_CLASS_CONSISTENCY_UNRESOLVED` is added (it blocks certification, like every `unresolved[]` entry). No new armor transitions are defined.
+
+*Consequence to note (D12, LOCKED as acceptable for read-only 1a only):* none of the 133 shipped armor records sets `isPoweredArmor`, and newly created armor carries a schema-defaulted `false`. Under the rules above **every armor Item resolves with an unresolved base in Phase 1a unless a trusted classification supplies `powered: false`**. This is not approval to leave armor unresolved permanently: source-backed classification and migration must exist before any live consumer integration.
 
 ### 5.4 Equipment
 
@@ -208,7 +223,7 @@ An `upgradeKey` is not an installation identity. Rules:
 - Duplicate instance id within or across entries with differing keys → `DUPLICATE_INSTANCE_ID`.
 - Missing id on a canonical entry → a derived stable key plus diagnostic `INSTANCE_ID_MISSING`; it is treated as key-only for proof purposes.
 
-*Consequence to note (OPEN, D10):* the repo's own writers reject duplicate keys per item (`SafetyEngine` duplicate-install guard; the Workbench `duplicate_upgrade` validation), and the Workbench writes the canonical flag and the `flags.swse.*` key array together. Under the rule above, a Workbench-modified item is therefore `AMBIGUOUS_IDENTITY` until D10 is decided. The contract does not treat writer-side uniqueness as proof.
+*Consequence to note (D10, LOCKED):* the repo's own writers reject duplicate keys per item (`SafetyEngine` duplicate-install guard; the Workbench `duplicate_upgrade` validation), and the Workbench writes the canonical flag and the `flags.swse.*` key array together. Writer-side uniqueness is **not** proof of identity, so a Workbench-modified item is `AMBIGUOUS_IDENTITY` in Phase 1a. A later producer-specific migration adapter may establish proof that the records describe the same installation; that adapter is outside Phase 1a and must prove identity, not merely match names or keys.
 
 ### 7.3 Cost (correction 1)
 
@@ -237,12 +252,14 @@ When certified: `total = base.value + Σ verified adjustment slots`; `used = Σ 
 
 Top-level `status`: `unsupported` for an unsupported domain; `resolved` when certified; `conflicted` when conflicted; `partial` when the base is certified but totals are not; `unresolved` when the base is unresolved.
 
-**Legacy mismatch comparison (D4).** `legacy.comparison.performed` is `true` only when **all** hold: `base.status === "certified"`; every adjustment is `verified`; no conflicts; the weapon is not a lightsaber (the unresolved lightsaber pool is never compared against a default); and `system.upgradeSlots` is a finite integer ≥ 0. Then:
+**Legacy `system.upgradeSlots` comparison (D4, correction A).** The stored value is never used to compute anything. Because `item-defaults.js` writes `upgradeSlots: 1` into new weapons, armor and equipment, a stored value of unknown origin may be a schema default, not an authored stock capacity and not a calculated total. `legacy.valueOrigin` is `established-authored` or `established-calculated` **only** when `trustedClassification.legacySlotValueOrigin` says so; otherwise `unknown`. The blocking comparison runs only when **all** hold: `valueOrigin` is established; `base.status === "certified"`; every adjustment is `verified`; no conflicts; the weapon is not a lightsaber; and `system.upgradeSlots` is a finite integer ≥ 0. Then:
 
 - `legacy value === base + Σ verified adjustments` → `explainedBy: "base-plus-recorded-grants"`.
-- otherwise → conflict `LEGACY_VALUE_MISMATCH` (with the stored value and the computed figure in `detail`); `totals.status: conflicted`.
+- otherwise → conflict `LEGACY_VALUE_MISMATCH` (stored value and computed figure in `detail`); `totals.status: conflicted`.
 
-When any precondition fails, `performed: false` with the first failing reason (`BASELINE_NOT_CERTIFIED`, `ADJUSTMENT_HISTORY_INCOMPLETE`, `LIGHTSABER_POOL_UNRESOLVED`, `LEGACY_VALUE_ABSENT`). The stored value is never used to compute anything.
+When the origin is `unknown`, **no conflict is raised** and `comparison.performed` is `false` with `LEGACY_VALUE_ORIGIN_UNKNOWN`. If a certified total exists, a diagnostic `LEGACY_VALUE_PROVENANCE_UNKNOWN` reports the stored value, the computed figure and whether they differ, as information only. When any other precondition fails, `performed: false` carries the first failing reason (`BASELINE_NOT_CERTIFIED`, `ADJUSTMENT_HISTORY_INCOMPLETE`, `LIGHTSABER_POOL_UNRESOLVED`, `LEGACY_VALUE_ABSENT`). In every case the stored value stays in `legacy.evidence` and never changes a calculated capacity.
+
+*Consequence to note:* with no trusted origin supplied (the situation for all current Items), the blocking mismatch check never fires in Phase 1a. That is the intended conservative outcome until origin metadata exists; it is not a claim that stored values are correct.
 
 ## 9. Lightsaber pools (LOCKED: separate and unresolved)
 
@@ -261,15 +278,17 @@ For a weapon whose trusted class is `lightsaber`, `pools.lightsaber` reports sep
 | I7 | A non-`verified` adjustment has `slots: null` and prevents certification. |
 | I8 | A recorded cost is never used as a certified cost; a recorded/certified disagreement is a conflict. |
 | I9 | Occupants merge only on equal non-empty instance id; key equality alone never merges or counts. |
-| I10 | `system.upgradeSlots` and `stockSlotOverride` never feed a total or a base; both appear in `legacy.evidence` when present. |
+| I10 | `system.upgradeSlots` and `stockSlotOverride` never feed a total or a base; both appear in `legacy.evidence` when present. A stored `system.upgradeSlots` of unknown origin never raises a blocking conflict. |
 | I11 | The domain comes from `item.type` alone. Renaming an item, or editing `system.category`/`system.subtype`, never changes domain, class, base or status. |
-| I12 | Powered status is never derived from a name; unknown powered status never certifies. |
+| I12 | Powered status is never derived from a name. Only a trusted `powered: false` establishes non-powered armor; a raw boolean (including a schema-defaulted `false`) and an unknown status never certify. |
 | I13 | Armor stock class and current class are separate fields; the base never uses `currentClass` when a size increase is recorded unless a trusted stock class is supplied. |
 | I14 | At most one strip is ever certified; two or more distinct strips certify none. |
 | I15 | Lightsaber pools are never summed into the general count and a lightsaber never certifies. |
 | I16 | Overflow is reported, never clamped. |
 | I17 | The module imports no consumer, no `ActorEngine`, and calls no mutation API. |
 | I18 | Weapon, armor and equipment policies are separate; no armor rule applies to a weapon or equipment and vice versa. |
+| I19 | A value that may have been injected by `item-defaults.js` is declared-unproven evidence and is never used to certify, to compute, or to raise a blocking conflict. |
+| I20 | Armor-class consistency is evaluated only from a trusted stock class, a recorded size increase and a declared current class; no armor transition beyond the existing structural rules is defined. |
 
 ## 11. Testing contract (for the eventual 1a implementation; `resolveSlotState` only)
 
@@ -280,14 +299,19 @@ Deterministic unit tests on plain-object fixtures; no Foundry runtime. Tests nee
 3. Weapon with `trustedClassification.weaponClass: "ordinary"` and no lookup: base 1 certified, `evidence: "trusted-input"`.
 4. Weapon with **no lookup and no trusted input**, and the same with lookup returning `legacy`/`unresolved`: `class: "unverified"`, base unresolved, `WEAPON_CLASS_UNVERIFIED` (plus `CANONICAL_IDENTITY_UNRESOLVED` when unresolved); `item.type === "weapon"` alone never certifies. A forged `system.subtype: "ordinary"` changes nothing.
 5. Weapon classed `lightsaber` (lookup or trusted): general base unresolved; pools separate and `LIGHTSABER_POOL_UNCERTIFIED`; never certified; chassis `upgradeSlots` and crystal/accessory `1` appear only as evidence.
-6. Armor light/medium/heavy with `isPoweredArmor: false`, no size increase, `armorType` declared: bases 1/2/3, `stockClass.status: "declared-unmodified"`, certified.
-7. Armor with `isPoweredArmor` absent or non-boolean: `powered: unknown`, `POWERED_STATUS_UNKNOWN`, base unresolved, `free === null`. With `trustedClassification.powered: false` and a trusted/declared class: certified.
-8. Armor with `isPoweredArmor: true`, any class: `POWERED_ARMOR_PRECEDENCE_UNRESOLVED`.
-9. **Modified armor:** `armorType: "heavy"` plus a recorded size increase and no trusted stock class: `stockClass.status: "unrecoverable"`, base unresolved, `ARMOR_STOCK_CLASS_UNRECOVERABLE`; it never reports base 3 plus the `+1`. With `trustedClassification.armorStockClass: "medium"`: base 2 plus one verified `+1`, total 3, `currentClass` reported separately as evidence only. A trusted `heavy` plus a recorded size increase: `SIZE_INCREASE_NOT_PERMITTED`.
+6. Armor light/medium/heavy with `trustedClassification.powered: false`, no recorded size increase, `armorType` declared: bases 1/2/3, `stockClass.status: "declared-unmodified"`, certified.
+7. Armor with `isPoweredArmor` absent or non-boolean and no trusted input: `powered: unknown`, `POWERED_STATUS_UNKNOWN`, base unresolved, `free === null`.
+8. **Powered provenance (correction B):** (a) a raw `isPoweredArmor: false` with no trusted input → `declared-unproven`, `POWERED_STATUS_UNPROVEN`, base unresolved, not certified, even for an otherwise complete item; (b) a **powered armor Item whose missing published classification is masked by a schema-defaulted `false`** (raw `false`, no trusted input) is never certified as non-powered; (c) the same Item with `trustedClassification.powered: true` → `POWERED_ARMOR_PRECEDENCE_UNRESOLVED`; (d) a raw `false` against a trusted `true` → the trusted value governs and `POWERED_RAW_DISAGREES_WITH_TRUSTED` is emitted; (e) a raw `true` with no trusted input → `POWERED_ARMOR_PRECEDENCE_UNRESOLVED`, any weight class.
+9. **Modified armor:** `armorType: "heavy"` plus a recorded size increase and no trusted stock class: `stockClass.status: "unrecoverable"`, base unresolved, `ARMOR_STOCK_CLASS_UNRECOVERABLE`; never base 3 plus `+1`. With `trustedClassification.armorStockClass: "medium"` and `powered: false`: base 2 plus one verified `+1`, total 3, `currentClass` reported separately as evidence. A trusted `heavy` plus a recorded size increase: `SIZE_INCREASE_NOT_PERMITTED`.
+9a. **Class consistency (D13):** trusted stock `light` with a recorded size increase and `currentClass` `light` or `medium` → no conflict (`performed: true`); `heavy` → `ARMOR_CLASS_INCONSISTENT`. Trusted stock `medium`: `medium`/`heavy` consistent; `light` → conflict. Trusted stock `heavy`: `SIZE_INCREASE_NOT_PERMITTED` (no new transition defined). No recorded size increase, or no trusted stock class: `performed: false`, no conflict. Trusted stock plus a recorded size increase but `currentClass` absent/`shield`/garbage: `ARMOR_CLASS_CONSISTENCY_UNRESOLVED`, not certified.
 10. Armor `armorType: "shield"`, unknown or absent: `ARMOR_CLASS_UNCERTIFIED`.
 11. A renamed item ("Power Armor", "Heavy Plate") and a forged `system.category` do not change domain, class or status.
 12. `system.upgradeSlots` (1, 3, 0, garbage, absent) appears in `legacy.evidence` with `usedInTotals: false`; totals identical with and without it. `stockSlotOverride` present: evidence only, base unchanged.
-13. **Legacy comparison (D4):** with a certified base and verified adjustments, a stored value equal to base + grants gives `explainedBy`; a different value gives `LEGACY_VALUE_MISMATCH`. With an unresolved base, an unverified/unresolved adjustment, a conflict, or a lightsaber, `performed: false` and no mismatch is raised.
+13. **Legacy comparison (D4, correction A):**
+    - (a) trusted `legacySlotValueOrigin: "authored-stock"` or `"calculated-total"`, certified base, verified adjustments: a stored value equal to base + grants gives `explainedBy`; a different value gives `LEGACY_VALUE_MISMATCH` and `conflicted`.
+    - (b) **origin unknown (the default):** no conflict is raised for any stored value; `performed: false`, `LEGACY_VALUE_ORIGIN_UNKNOWN`; with a certified total, a `LEGACY_VALUE_PROVENANCE_UNKNOWN` diagnostic reports the figures; totals are identical to the same item without the field.
+    - (c) **regression: default-injected `upgradeSlots: 1` on a medium armor (certified base 2) and on a heavy armor (certified base 3)**, each with trusted `powered: false` and a trusted/declared class, certified otherwise: the result is `certified` with `total` 2 and 3 respectively, **no** `LEGACY_VALUE_MISMATCH`, and the diagnostic is present. Likewise for an ordinary weapon and equipment carrying the default `1` (no conflict).
+    - (d) an unresolved base, an unverified/unresolved adjustment, a conflict, or a lightsaber: `performed: false` with the specific reason, never a mismatch.
 14. Size increase recorded once: exactly one verified `+1`; a repeated flag does not double-count.
 15. **One strip:** one valid area → one verified `+1`. **Two or more distinct valid strips:** every area `unresolved`, `slots: null`, `MULTIPLE_STRIPS_UNRESOLVED` with the area list, totals not certified. An invalid or duplicate area → conflict. Size increase plus one strip → both verified.
 16. **Corrected Tech Specialist test:** a `tech_device_upgrade_slot` trait record yields `status: "unverified"`, `slots: null`, no verified contribution, `totals.status !== "certified"`, `free === null`, `TECH_SPECIALIST_DEVICE_SLOT_UNVERIFIED` in `unresolved[]`. It is never a certified `+0`; the same item without the trait certifies.
@@ -321,6 +345,12 @@ There are **no `previewChange` tests** in Phase 1a.
 | D7 | One valid recorded strip may contribute `+1`; multiple distinct strips stay unresolved and are reported. | 6 |
 | D8 | Injected certified slot-cost definitions only, no duplicate catalog; definitions carry identity and provenance. | 3, 7.3 |
 | D9 | Source `scripts/engine/customization/modification-slot-authority.js`; tests `tests/modification-slot-authority.test.mjs`. | n/a |
+| D10 | Keep strict legacy identity. Writer-side duplicate-key prevention is not proof of a shared installation. Deduplicate only proven mirrors; preserve and report `AMBIGUOUS_IDENTITY`. A future producer-specific migration adapter may establish proof; not part of 1a. | 7.2 |
+| D11 | Weapon class from the canonical registry: `record.weaponGroup` (lightsaber group), `schemaFamily.proficiency` as a consistency check. Module stays injected and imports no registry. Never names or mutable legacy category fields. Contradictory canonical classifications stay unresolved. | 3, 5.2 |
+| D12 | Shipped armor lacking trusted powered classification may stay unresolved in read-only 1a. Not approval to leave all armor unresolved permanently; source-backed classification and migration are required before live consumer integration. | 5.3 |
+| D13 | Report a conflict when trusted stock class, a recorded size increase and a declared current class match neither stock nor the valid next class, using the existing structural transition rules. Report unresolved when evidence is absent. No new transitions. | 5.3, I20 |
+| A | A schema-defaulted `system.upgradeSlots` is not evidence of authored or calculated capacity. No blocking `LEGACY_VALUE_MISMATCH` unless origin is established; otherwise preserve as evidence, emit a diagnostic, never change capacity. Regression tests for default-injected `1` on medium and heavy armor. | 2 #11, 8, 11 #13 |
+| B | A schema-defaulted `isPoweredArmor: false` is not evidence of non-powered armor. Only trusted classification with verified provenance certifies; a raw boolean is declared evidence; unproven origin stays unresolved. Regression test for a powered armor masked by a default `false`. | 2 #11, 5.3, 11 #8 |
 | C1 | Recorded cost is evidence, not certified; disagreement is a conflict. | §2 #3, 7.3, I8 |
 | C2 | Do not merge upgrades by key; dedupe only proven mirrors; ambiguous identity blocks certification. | 7.2, I9 |
 | C3 | Stock vs current armor class distinct; unrecoverable stock fails closed. | 5.3, I13 |
@@ -329,15 +359,24 @@ There are **no `previewChange` tests** in Phase 1a.
 | C6 | Remove or defer `previewChange` tests. | 11, 12 |
 | C7 | Keep the three domain policies separate; no droid or vehicle rules. | §2 #9, I18 |
 
+## 13A. Reason-code registry
+
+Blocking conflicts: `AMBIGUOUS_IDENTITY` · `DUPLICATE_INSTANCE_ID` · `COST_DISAGREES_WITH_CERTIFIED` · `LEGACY_VALUE_MISMATCH` (only with established origin) · `ARMOR_CLASS_INCONSISTENT` · `INVALID_STRIP_AREA` · `DUPLICATE_ADJUSTMENT` · `SIZE_INCREASE_NOT_PERMITTED`.
+
+Blocking unresolved: `WEAPON_CLASS_UNVERIFIED` · `CANONICAL_IDENTITY_UNRESOLVED` · `LIGHTSABER_GENERAL_CAPACITY_UNCERTIFIED` · `LIGHTSABER_POOL_UNCERTIFIED` · `ARMOR_STOCK_CLASS_UNRECOVERABLE` · `ARMOR_CLASS_UNCERTIFIED` · `ARMOR_CLASS_CONSISTENCY_UNRESOLVED` · `POWERED_STATUS_UNKNOWN` · `POWERED_STATUS_UNPROVEN` · `POWERED_ARMOR_PRECEDENCE_UNRESOLVED` · `MULTIPLE_STRIPS_UNRESOLVED` · `TECH_SPECIALIST_DEVICE_SLOT_UNVERIFIED` · `COST_UNCERTIFIED` · `SLOT_COST_UNRESOLVED`.
+
+Non-blocking diagnostics: `LEGACY_VALUE_PROVENANCE_UNKNOWN` · `POWERED_RAW_DISAGREES_WITH_TRUSTED` · `INSTANCE_ID_MISSING` · `UNSUPPORTED_DOMAIN` (as `status: unsupported`).
+
+Comparison-skipped reasons: `LEGACY_VALUE_ORIGIN_UNKNOWN` · `BASELINE_NOT_CERTIFIED` · `ADJUSTMENT_HISTORY_INCOMPLETE` · `LIGHTSABER_POOL_UNRESOLVED` · `LEGACY_VALUE_ABSENT` · consistency-skipped: `NO_RECORDED_SIZE_INCREASE` · `NO_TRUSTED_STOCK_CLASS` · `CURRENT_CLASS_UNREADABLE`.
+
 ## 14. Open questions (not resolved here; the contract states facts only)
+
+D10-D13 are now locked (section 13). One new fact is recorded for the reviewer:
 
 | ID | Question | Facts |
 |---|---|---|
-| D10 | May writer-side uniqueness (the repo's own `SafetyEngine` duplicate-install guard and Workbench `duplicate_upgrade` validation, which reject duplicate keys per item) count as proof that a key-only legacy mirror describes the same installation as an id-bearing entry? | Without it, every Workbench-modified item (it writes the canonical flag and `flags.swse.*` key array together) is `AMBIGUOUS_IDENTITY` and not certifiable in 1a. With it, the key-only mirror could be linked only when exactly one id-bearing entry has that key. This contract applies the stricter rule. |
-| D11 | How does the later registry adapter derive `weaponClass` (`ordinary` / `lightsaber`) from a canonical record without using names? | `canonicalWeaponStateOf` returns `blaster` and `rangedEnergy` but no lightsaber flag; the registry has structured weapon-group data. That adapter is outside 1a; the module only consumes the lookup's `weaponClass`. |
-| D12 | Is it acceptable that, per D6, every shipped armor record (none sets `isPoweredArmor`) resolves with an unresolved base in 1a until trusted classification is supplied? | Stated as a consequence in 5.3; not worked around. |
-| D13 | Where a size increase is recorded on armor and a trusted stock class is supplied, is a `currentClass` that is neither the stock class nor the next class up a conflict? | The contract currently reports `currentClass` as evidence only and performs no consistency check, to avoid inventing a rule. |
+| D14 | Section 5.3 accepts `system.armorType` as `declared-unmodified` stock class (D5, LOCKED) when no size increase is recorded. `item-defaults.js` also initializes `armorType: 'light'` for new armor (line 226), and its normalization resets any value outside {light, medium, heavy, shield} to `'light'` (line 591). Should a declared `light` be treated as possibly schema-defaulted, as `system.upgradeSlots` and `isPoweredArmor` now are? | Shipped armor packs author `armorType` on all 133 records (light 27, medium 22, heavy 14, shield 7), so those are authored. For custom or newly created armor, a `light` may be a default. This revision keeps D5 as locked and applies **no** new rule; it only records the fact. Note that under correction B every armor Item already needs a trusted classification input to certify, so the practical effect in 1a is limited. |
 
 ## 15. What this contract deliberately does not do
 
-It does not fix the Phase 0 contradictions C1-C11, change any consumer, correct the Improved Energy Cell catalog value, define the Workbench catalog mapping, choose powered-armor precedence, resolve repeated stripping, encode any lightsaber or Tech Specialist rule, define installation decisions, migrate data, or touch droids and vehicles. Those remain separately gated.
+It does not fix the Phase 0 contradictions C1-C11, change any consumer, correct the Improved Energy Cell catalog value, define the Workbench catalog mapping, choose powered-armor precedence, establish the registry adapter or any migration adapter, resolve repeated stripping, encode any lightsaber or Tech Specialist rule, define installation decisions, migrate data, or touch droids and vehicles. Those remain separately gated.
