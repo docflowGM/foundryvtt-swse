@@ -14,7 +14,7 @@ const f = (globalThis.foundry ??= {});
 f.applications ??= {}; f.applications.api ??= { ApplicationV2: class {}, HandlebarsApplicationMixin: B => B, DialogV2: class {} };
 
 const {
-  getPublicationVersions, requiresPublicationSelection, checkPublicationSelection, buildPublicationComparison, buildVersionChoices,
+  getPublicationVersions, getKnownPublications, getPublicationStatus, PUBLICATION_STATUS, isRecordedConfigurationRestore, compareTraitMechanics, requiresPublicationSelection, checkPublicationSelection, buildPublicationComparison, buildVersionChoices,
 } = await import('/systems/foundryvtt-swse/scripts/species/species-publication-selection.js');
 const { buildPendingSpeciesContext } = await import('/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js');
 const { SpeciesStep } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/species-step.js');
@@ -27,12 +27,27 @@ for (const [name, count] of Object.entries(MULTI)) {
   assert.equal(getPublicationVersions(entry(name)).length, count, `${name} versions`);
   assert.equal(requiresPublicationSelection(entry(name)), true, name);
 }
-for (const name of ['Human', 'Wookiee', 'Devaronian', 'Gand', 'Barabel']) {
+for (const name of ['Human', 'Wookiee', 'Devaronian', 'Gand']) {
   assert.equal(requiresPublicationSelection(entry(name)), false, `${name} needs no extra selection`);
   assert.equal(checkPublicationSelection(entry(name), null).ok, true);
 }
 assert.ok(entry('Devaronian').variants.length > 0, 'precondition: Devaronian keeps its legacy (non-publication) variant');
+// Barabel: two audited publications, none hydrated -> NOT a single canonical profile; selection is blocked, not defaulted.
 assert.equal(getPublicationVersions(entry('Barabel')).length, 0, 'Barabel publications are held (natural weapons)');
+assert.equal(getKnownPublications(entry('Barabel')).length, 2);
+assert.equal(getPublicationStatus(entry('Barabel')), PUBLICATION_STATUS.MULTIPLE_NOT_IMPLEMENTED);
+assert.equal(requiresPublicationSelection(entry('Barabel')), true);
+for (const id of [null, 'default', 'SV-2F-10', 'GAW-2I-01']) {
+  assert.equal(checkPublicationSelection(entry('Barabel'), id).code, 'NO_IMPLEMENTED_VERSION', `Barabel/${id} blocked`);
+}
+assert.equal(getPublicationStatus(entry('Human')), PUBLICATION_STATUS.SINGLE_PROFILE);
+assert.equal(getPublicationStatus(entry('Chiss')), PUBLICATION_STATUS.MULTIPLE_VERIFIED);
+{ // partially implemented: three known, two usable
+  const partial = { name: 'X', variants: entry('Chadra-Fan').variants, knownPublications: [{}, {}, {}] };
+  assert.equal(getPublicationStatus(partial), PUBLICATION_STATUS.MULTIPLE_PARTIALLY_IMPLEMENTED);
+  assert.equal(checkPublicationSelection(partial, 'chadra-fan-ur-2b-02').ok, true, 'a usable version remains selectable');
+  assert.equal(checkPublicationSelection(partial, null).code, 'NO_VERSION_SELECTED', 'and still no silent default');
+}
 
 // ---- Validation: explicit and valid, never a default, never a legacy variant, never another species' id ----
 {
@@ -76,8 +91,72 @@ assert.equal(getPublicationVersions(entry('Barabel')).length, 0, 'Barabel public
   assert.equal(ok.identity.variant.id, 'chiss-leg-2c-02');
   assert.equal(ok.identity.variant.sourceProfileId, 'LEG-2C-02');
   assert.ok(await buildPendingSpeciesContext(actor, entry('Human').id, { source: 'progression' }), 'single-profile species: no extra selection');
-  assert.ok(await buildPendingSpeciesContext(actor, entry('Chiss').id, { source: 'progression', existingActorCompatibility: true }), 'existing actors keep working (no forced migration)');
-  assert.ok(await buildPendingSpeciesContext(actor, { ...entry('Chadra-Fan'), selectedVariantId: 'chadra-fan-alternate' }, { source: 'progression', existingActorCompatibility: true }), 'legacy variant id still resolves for existing actors');
+  assert.equal(await buildPendingSpeciesContext(actor, entry('Barabel').id, { source: 'progression' }), null, 'Barabel: no context without an implemented publication');
+  assert.equal(await buildPendingSpeciesContext(actor, { ...entry('Barabel'), selectedVariantId: 'SV-2F-10' }, { source: 'progression' }), null);
+}
+
+// ---- Existing-actor compatibility is derived from the ACTOR's recorded configuration, never from a caller flag ----
+{
+  const recorded = (name, variantId) => { const a = makeActor(); a.system.species = { name }; a.system.speciesVariant = variantId ? { id: variantId } : null; return a; };
+  // legitimate legacy restoration: actor already records Chiss with no version / Chadra-Fan with the legacy variant
+  assert.ok(await buildPendingSpeciesContext(recorded('Chiss'), entry('Chiss').id, { source: 'progression' }), 'actor already recording base Chiss keeps working');
+  assert.ok(await buildPendingSpeciesContext(recorded('Chadra-Fan', 'chadra-fan-alternate'), { ...entry('Chadra-Fan'), selectedVariantId: 'chadra-fan-alternate' }, { source: 'progression' }), 'recorded legacy variant restores');
+  assert.ok(await buildPendingSpeciesContext(recorded('Chiss', 'chiss-leg-2c-02'), { ...entry('Chiss'), selectedVariantId: 'chiss-leg-2c-02' }, { source: 'progression' }));
+  // a caller-supplied boolean no longer bypasses anything
+  assert.equal(await buildPendingSpeciesContext(makeActor(), entry('Chiss').id, { source: 'progression', existingActorCompatibility: true }), null, 'forged flag has no effect');
+  // reassignment: the actor records a DIFFERENT species or version, so the request is a new selection
+  assert.equal(await buildPendingSpeciesContext(recorded('Bith'), entry('Chiss').id, { source: 'drag-drop' }), null, 'other species recorded -> not a restore');
+  assert.equal(await buildPendingSpeciesContext(recorded('Chiss', 'chiss-leg-2c-02'), entry('Chiss').id, { source: 'drag-drop' }), null, 'switching to unversioned base is a new selection');
+  assert.equal(await buildPendingSpeciesContext(recorded('Chadra-Fan', 'chadra-fan-ur-2b-02'), { ...entry('Chadra-Fan'), selectedVariantId: 'chadra-fan-alternate' }, { source: 'drag-drop' }), null, 'switching to a legacy variant is a new selection');
+  assert.equal(await buildPendingSpeciesContext(recorded('Barabel'), entry('Barabel').id, { source: 'progression' }) !== null, true, 'existing Barabel actor keeps working');
+  assert.equal(await buildPendingSpeciesContext(makeActor(), entry('Barabel').id, { source: 'progression' }), null, 'new actor cannot select Barabel');
+  assert.equal(isRecordedConfigurationRestore(null, entry('Chiss'), null), false);
+}
+
+// ---- Trait comparison is mechanics-aware: same-named traits are not assumed identical ----
+{
+  const bith = buildPublicationComparison(entry('Bith'));
+  const ei = v => v.traitRows.find(t => t.name === 'Evolved Intellect');
+  assert.equal(ei(bith.versions[0]).unique, false);
+  assert.equal(ei(bith.versions[0]).differsBy, 'wording', 'Evolved Intellect prints differently in GOI and TOG');
+  assert.equal(ei(bith.versions[1]).differsBy, 'wording');
+  assert.ok(ei(bith.versions[0]).description.includes('Force Point'), 'source-specific text is carried for the tooltip');
+  const mt = bith.versions[0].traitRows.find(t => t.name === 'Meditative Trance');
+  assert.ok(mt, 'precondition');
+  // structured rules decide when present; prose alone never proves rules differ; identical text is not a difference
+  const T = (description, rules = null) => ({ description, rules });
+  assert.equal(compareTraitMechanics(T('a'), T('a')), null);
+  assert.equal(compareTraitMechanics(T('a b'), T('a  b ')), null, 'whitespace-only is not a difference');
+  assert.equal(compareTraitMechanics(T('a'), T('b')), 'wording');
+  assert.equal(compareTraitMechanics(T('a', [{ type: 'reroll' }]), T('a', [{ type: 'reroll' }])), null);
+  assert.equal(compareTraitMechanics(T('a', [{ type: 'reroll', n: 1 }]), T('a', [{ type: 'reroll', n: 2 }])), 'rules');
+  assert.equal(compareTraitMechanics(T('same', [{ type: 'reroll' }]), T('same')), 'rules', 'structured vs unstructured is not equal');
+  assert.equal(compareTraitMechanics(T('a', [{ type: 'x', id: '1' }]), T('b', [{ type: 'x', id: '2' }])), 'wording', 'equal rules, different prose');
+}
+
+// ---- Malformed verified snapshot: unavailable, blocked, and never shown as base mechanics ----
+{
+  const target = entry('Chadra-Fan');
+  const good = target.variants.find(v => v.id === 'chadra-fan-ur-2b-02');
+  const broken = { ...good, abilityMods: { str: 0, dex: 2 } };       // not all six modifiers printed
+  target.variants = target.variants.map(v => (v === good ? broken : v));
+  try {
+    assert.equal(checkPublicationSelection(target, broken.id).code, 'UNAVAILABLE_VERSION');
+    assert.equal(buildPublicationComparison(target).versions.find(v => v.id === broken.id).unavailable, true);
+    assert.equal(await buildPendingSpeciesContext(makeActor(), { ...target, selectedVariantId: broken.id }, { source: 'progression' }), null, 'no context built');
+    const step = Object.create(SpeciesStep.prototype);
+    step._selectedVariantBySpeciesId = new Map([[target.id, broken.id]]);
+    step._selectedAbilityChoiceBySpeciesId = new Map();
+    const shown = step._getEffectiveSpeciesProfileForDetails(target);
+    assert.deepEqual([shown.speed, shown.size, shown.languages, shown.canonicalTraits, shown.abilities], [null, null, [], [], []], 'base mechanics are not shown as the selected publication');
+    assert.equal(step._isPublicationUnavailable(target), true);
+    // single-profile snapshot error inside the details path also fails closed
+    const lone = { ...entry('Wookiee'), variants: [{ ...broken, id: 'lone' }] };
+    step._selectedVariantBySpeciesId = new Map([[lone.id, 'lone']]);
+    assert.equal(step._getEffectiveSpeciesProfileForDetails(lone).publicationUnavailable, true);
+  } finally {
+    target.variants = target.variants.map(v => (v === broken ? good : v));
+  }
 }
 
 // ---- Persistence + grant isolation: the stable id is on the actor and each version brings only its own rules ----

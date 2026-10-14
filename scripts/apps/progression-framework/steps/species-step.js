@@ -9,7 +9,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
-import { buildPublicationComparison, checkPublicationSelection } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
+import { buildPublicationComparison, checkPublicationSelection, PUBLICATION_SELECTION_ERRORS } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
 import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { normalizeSpecies } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithPicker, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
@@ -600,6 +600,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
         publicationRequired: buildPublicationComparison(species).required,
         publicationDifferingText: buildPublicationComparison(species).differingFields.join(', '),
         publicationUnselected: !checkPublicationSelection(species, this._selectedVariantBySpeciesId.get(species.id) || null).ok,
+        publicationUnavailable: this._isPublicationUnavailable(species),
         abilityChoices: this._formatSpeciesAbilityChoices(this._variantAppliedEntry(species)),
         requiresAbilityChoice: this._requiresAbilityChoice(this._variantAppliedEntry(species)),
         abilityChoiceSelected: !!this._selectedAbilityChoiceBySpeciesId.get(species.id),
@@ -1286,18 +1287,28 @@ export class SpeciesStep extends ProgressionStepPlugin {
     }
   }
 
+  /** A verified version is malformed, or publications are known but none is implementable: shown unavailable, never as base rules. */
+  _isPublicationUnavailable(species) {
+    const check = checkPublicationSelection(species, this._selectedVariantBySpeciesId.get(species.id) || null);
+    return check.code === PUBLICATION_SELECTION_ERRORS.UNAVAILABLE_VERSION || check.code === PUBLICATION_SELECTION_ERRORS.NO_IMPLEMENTED_VERSION;
+  }
+
+  _withheldProfile(species, extra = {}) {
+    return {
+      ...species,
+      abilityScores: {}, abilityMods: {}, abilities: [], canonicalTraits: [], languages: [], skillBonuses: [],
+      movement: null, speed: null, size: null, rawAbilities: null, abilityChoice: null,
+      source: null, naturalWeapons: [], ...extra,
+    };
+  }
+
   _getEffectiveSpeciesProfileForDetails(species) {
     if (!species) return species;
     const variantId = this._selectedVariantBySpeciesId.get(species.id) || null;
     let effective = { ...species };
     // RD-001: before a version is chosen, the legacy base record must not be shown as this species' rules.
     if (!checkPublicationSelection(species, variantId).ok) {
-      return {
-        ...effective,
-        abilityScores: {}, abilityMods: {}, abilities: [], canonicalTraits: [], languages: [], skillBonuses: [],
-        movement: null, speed: null, size: null, rawAbilities: null, abilityChoice: null,
-        source: null, naturalWeapons: [], publicationUnselected: true,
-      };
+      return this._withheldProfile(effective, { publicationUnselected: true });
     }
     if (variantId) {
       const variant = (species.variants || []).find(option => String(option?.id) === String(variantId));
@@ -1305,8 +1316,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
         try {
           effective = applySpeciesVariantProfile(effective, variant);
         } catch (err) {
-          // Malformed complete snapshot: show the base unchanged rather than a partial mix.
+          // Malformed complete snapshot: fail closed. Base mechanics are never shown as the selected publication's.
           swseLogger.error('[SpeciesStep] Variant profile rejected', err);
+          return this._withheldProfile(species, { publicationUnavailable: true });
         }
       }
     }

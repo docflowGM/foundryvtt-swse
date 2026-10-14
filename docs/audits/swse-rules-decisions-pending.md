@@ -195,3 +195,41 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |
 
 **SPECIES-RD-001 — implementing commit:** `1633d8c245e6a7beca188fdfa0f028e6c52a18cc` (RD-001 resolution above; recorded after the commit existed, per the append-only rule).
+
+---
+
+## SPECIES-RD-011 — Legacy overlay variants: publication difference or choice within one profile?
+
+| Field | |
+|---|---|
+| Rules domain | Species / variant classification |
+| Feature | 16 legacy (non-snapshot) variants on 15 species — see `docs/audits/swse-species-variant-audit.md` (e.g. Devaronian Female, Gand Force-Sensitive/Non-Force-Sensitive, Nautolan, Quarren, Pau'an, Jawa/Kaminoan/Noghri/Umbaran alternates) |
+| Source | Not mapped to a source profile in the repository data (several carry only a label such as "Canonical alternate species traits"); page references unverified |
+| Evidence | The variants override some base fields and inherit the rest from the base record. The repository does not record whether each one is a separate publication or a choice printed inside one profile. |
+| Confirmed behavior | Existing actors that recorded these variant ids keep resolving them (legacy overlay). They are never offered as authoritative publication versions (RD-001). |
+| Unresolved question | For each variant: is it (a) a within-profile choice that should stay selectable in the existing variant UI, (b) a distinct publication that should be hydrated as a verified snapshot, or (c) unsupported? Not classified here, and nothing is auto-certified. |
+| Options | Per-variant classification (a)/(b)/(c) against the audited source profiles, once the owner supplies or confirms the mapping. |
+| Recommended ruling | None |
+| Implementation impact | Species with 0 verified snapshots keep the existing variant selector and legacy overlay behavior unchanged (Devaronian preserved). Species that also have verified snapshots (Bith, Chadra-Fan, Krevaaki, Neimoidian, Yuuzhan Vong) hide the legacy variant from new selections. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+---
+
+## SPECIES-RD-012 — Barabel: two audited publications, none implementable
+
+| Field | |
+|---|---|
+| Rules domain | Species / publication coverage |
+| Feature | Barabel |
+| Source | Scum and Villainy (profile SV-2F-10) and Galaxy at War (profile GAW-2I-01); page evidence in the local-only audit bundle |
+| Evidence | Both audited publications present Barabel as a standard playable profile. Neither is hydrated because each carries natural-weapon features the hydration tool does not yet compile. |
+| Confirmed behavior | Two publications exist. The existing base record is neither of them verified. |
+| Unresolved question | None about the rules; this is a technical hold. Recorded because RD-001 forbids assigning an unverified default to a new character. |
+| Options | Hydrate both once natural-weapon support exists; until then selection is blocked. |
+| Recommended ruling | None |
+| Implementation impact | `knownPublications` on the Barabel record marks it `MULTIPLE_NOT_IMPLEMENTED`: new selection (step, drag-drop, template, follower) is blocked with a message; existing Barabel actors keep working. |
+| Status | `DEFERRED_RULES_REVIEW` (technical hold) |
+| Decision authority | Project owner |
+| Resolution | |

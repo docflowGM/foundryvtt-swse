@@ -553,6 +553,7 @@ export class SpeciesRegistry {
       retainsConstitution: !!system.retainsConstitution,
       languages: languages,
       variants: this._normalizeVariants(system.variants),
+      knownPublications: Array.isArray(system.knownPublications) ? system.knownPublications.map(p => ({ ...p })) : [],
       canonicalName: system.canonicalName || doc.name,
       description: system.description?.value || system.description || system.shortDescription || '',
       source: system.source || null,

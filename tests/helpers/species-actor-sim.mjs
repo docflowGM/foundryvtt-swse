@@ -60,7 +60,19 @@ export async function selectSpecies(actor, name, variantId = null, { strict = fa
   const entry = SpeciesRegistry.getByName(name);
   if (!entry) throw new Error(`no species ${name}`);
   const identity = variantId ? { ...entry, selectedVariantId: variantId, variantId } : entry.id; // mirrors species-step.js
-  const ctx = await buildPendingSpeciesContext(actor, identity, { source: 'test', existingActorCompatibility: !strict });
+  // Non-strict = an existing actor that already records this species/variant; the builder derives that from the actor.
+  const saved = { species: actor.system.species, variant: actor.system.speciesVariant, flagVariant: actor.flags?.swse?.speciesVariant };
+  if (!strict) {
+    actor.system.species = { name: entry.name };
+    actor.system.speciesVariant = variantId ? { id: variantId } : null;
+    if (actor.flags?.swse) actor.flags.swse.speciesVariant = variantId ? { id: variantId } : null;
+  }
+  let ctx;
+  try {
+    ctx = await buildPendingSpeciesContext(actor, identity, { source: 'test' });
+  } finally {
+    if (!strict) { actor.system.species = saved.species; actor.system.speciesVariant = saved.variant; if (actor.flags?.swse) actor.flags.swse.speciesVariant = saved.flagVariant; }
+  }
   if (!ctx) throw new Error(`no context for ${name}/${variantId}`);
   const res = await applyCanonicalSpeciesToActor(actor, ctx);
   if (!res.success) throw new Error(res.error);

@@ -239,6 +239,10 @@ export class DropHandler {
     let identity = null;
     const registryEntry = SpeciesRegistry.getByName(species.name);
     if (registryEntry && requiresPublicationSelection(registryEntry)) {
+      if (checkPublicationSelection(registryEntry, null).code === 'NO_IMPLEMENTED_VERSION') {
+        ui.notifications.warn(`${species.name} has several published versions, none of which is implemented yet. ${actor.name} was not changed.`);
+        return false;
+      }
       const versionId = await this._promptSpeciesVersion(registryEntry, actor);
       if (!versionId || !checkPublicationSelection(registryEntry, versionId).ok) {
         ui.notifications.warn(`Choose a ${species.name} species version to apply it. ${actor.name} was not changed.`);

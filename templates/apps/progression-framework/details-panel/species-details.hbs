@@ -7,7 +7,7 @@
         {{!-- RD-001: several verified published versions. No default; the player must choose explicitly. --}}
         <h4>{{localize "SWSE.Progression.Core.Species.ChooseVersion"}}</h4>
         <p class="prog-species-details__hint">{{localize "SWSE.Progression.Core.Species.MultipleVersions"}}</p>
-        {{#if publicationUnselected}}<p><span class="prog-chip prog-chip--warning">{{localize "SWSE.Progression.Core.Species.NoVersionSelected"}}</span></p>{{/if}}
+        {{#if publicationUnavailable}}<p><span class="prog-chip prog-chip--warning">{{localize "SWSE.Progression.Core.Species.VersionUnavailable"}}</span></p>{{else if publicationUnselected}}<p><span class="prog-chip prog-chip--warning">{{localize "SWSE.Progression.Core.Species.NoVersionSelected"}}</span></p>{{/if}}
         {{#if publicationDifferingText}}
           <p class="prog-species-details__hint">{{localize "SWSE.Progression.Core.Species.DiffersIn" fields=publicationDifferingText}}</p>
         {{/if}}
@@ -31,7 +31,7 @@
               </div>
               {{#if this.traitRows.length}}
                 <div class="prog-species-variant__list">
-                  {{#each this.traitRows}}<span class="{{#if this.unique}}prog-species-variant__differs{{/if}}">• {{this.name}}{{#if this.unique}} <em>({{localize "SWSE.Progression.Core.Species.UniqueTrait"}})</em>{{/if}}</span>{{/each}}
+                  {{#each this.traitRows}}<span class="{{#if this.unique}}prog-species-variant__differs{{else if this.differsBy}}prog-species-variant__differs{{/if}}" title="{{this.description}}">• {{this.name}}{{#if this.unique}} <em>({{localize "SWSE.Progression.Core.Species.UniqueTrait"}})</em>{{else if this.differsBy}} <em>({{localize "SWSE.Progression.Core.Species.TraitTextDiffers"}})</em>{{/if}}</span>{{/each}}
                 </div>
               {{/if}}
             </button>

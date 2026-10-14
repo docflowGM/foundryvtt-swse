@@ -110,8 +110,8 @@ for (const [failAt, failAfter] of [['delete', false], ['create', false], ['updat
 {
   const actor = await seededWookiee();
   const before = state(actor);
-  const { mutations } = await plan(actor, 'Barabel');          // creates species item + Bite + Claws
-  assert.ok((mutations.itemsToCreate || []).length >= 2, 'precondition: several items to create');
+  const { mutations } = await plan(actor, 'Cathar');          // creates species item + natural weapon(s)
+  assert.ok((mutations.itemsToCreate || []).length >= 1, 'precondition: plan creates items besides the species item');
   const engine = makeEngine(actor);
   const realCreate = engine.createEmbeddedDocuments;
   engine.createEmbeddedDocuments = async (a, n, data, opts) => {
@@ -120,7 +120,7 @@ for (const [failAt, failAfter] of [['delete', false], ['create', false], ['updat
     throw new Error('create died after partial success');         // ...and no ids returned
   };
   await assert.rejects(
-    applySpeciesPlanWithRollback({ actor, engine, mutations, newSpeciesItemData: dropData('Barabel'), replaceItemIds: ['sp-old'] }),
+    applySpeciesPlanWithRollback({ actor, engine, mutations, newSpeciesItemData: dropData('Cathar'), replaceItemIds: ['sp-old'] }),
     e => e instanceof SpeciesPlanApplyError && e.rollbackComplete === true);
   assert.deepEqual(state(actor), before, 'partially created items are removed and the deleted ones restored');
 }
@@ -146,7 +146,7 @@ for (const [failAt, failAfter] of [['delete', false], ['create', false], ['updat
 // ---- A rollback that cannot restore items is reported as incomplete, never silent ----
 {
   const actor = await seededWookiee();
-  const { mutations } = await plan(actor, 'Barabel');
+  const { mutations } = await plan(actor, 'Cathar');
   const engine = makeEngine(actor);
   const realCreate = engine.createEmbeddedDocuments;
   engine.createEmbeddedDocuments = async (a, n, data, opts) => {
@@ -155,7 +155,7 @@ for (const [failAt, failAfter] of [['delete', false], ['create', false], ['updat
     throw new Error('create died after partial success');
   };
   await assert.rejects(
-    applySpeciesPlanWithRollback({ actor, engine, mutations, newSpeciesItemData: dropData('Barabel'), replaceItemIds: ['sp-old'] }),
+    applySpeciesPlanWithRollback({ actor, engine, mutations, newSpeciesItemData: dropData('Cathar'), replaceItemIds: ['sp-old'] }),
     e => e instanceof SpeciesPlanApplyError && e.rollbackComplete === false && e.rollbackErrors.some(x => x.step === 'recreate-deleted' || x.step === 'verify'));
 }
 

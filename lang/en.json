@@ -1220,6 +1220,8 @@
           "NoVersionSelected": "No version selected",
           "DiffersIn": "Versions differ in: {fields}",
           "DiffersMarker": "Differs between versions",
+          "TraitTextDiffers": "differs by publication",
+          "VersionUnavailable": "This species version is not available yet.",
           "UniqueTrait": "Only in this version",
           "TraitsInline": "Traits",
           "SizeInline": "Size: {size}",
