@@ -1201,7 +1201,7 @@ export class SpeciesGrantLedgerBuilder {
             scope: 'skill',
             target: this._normalizeSkillKey(rerollMatch[1].trim()),
             frequency: 'atWill',
-            outcome: /must accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
+            outcome: /must\s+(?:be\s+)?accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
           });
         }
       }
@@ -1217,7 +1217,7 @@ export class SpeciesGrantLedgerBuilder {
           scope: 'skill',
           target: this._normalizeSkillKey(rerollMatch[1].trim()),
           frequency: 'atWill',
-          outcome: /must accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
+          outcome: /must\s+(?:be\s+)?accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
         });
       }
     }

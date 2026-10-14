@@ -501,3 +501,23 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | (blank until approved) |
+
+---
+
+## SPECIES-RD-021 — "speak only" language restriction (Ewok)
+
+| Field | |
+|---|---|
+| Decision ID | SPECIES-RD-021 |
+| Rules domain | Species languages |
+| Feature | Ewok Automatic Languages |
+| Source | Core Rulebook, Ewok Species Traits (text-file line 2017; "Automatic Languages: Ewokese (speak only)"); printed page needs PDF confirmation |
+| Evidence | The line grants Ewokese with the parenthetical "speak only". Wookiee prints "Basic (cannot speak)" and Celegian prints "Basic (understand only)", both of which have first-class restriction data. |
+| Confirmed behavior | Ewoks have Ewokese as their only printed automatic language. |
+| Unresolved question | Which abilities "speak only" withholds: reading and writing only, understanding (it is not the same as "cannot read"), or something else. The Core text excerpt does not define the term. |
+| Options (source-supported) | None can be chosen from the text: no rule in the local text defines "speak only". |
+| Recommended ruling | none |
+| Implementation impact | Ewok keeps Ewokese as a plain language with no restriction data; the printed qualifier is not represented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |

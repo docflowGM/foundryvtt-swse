@@ -1,0 +1,913 @@
+{
+ "_note": "Hand-curated names of the printed species traits (excluding Ability Modifiers, Size, Speed, Languages) from reference/sourcebooks/Core Rulebook_djvu.txt. Names only; rules text is not copied. 'line' is the block's first text line, used by the test to confirm each name still appears in the block. OCR is the search layer; the PDF is the final authority. Each trait records the mechanic the printed text describes and the CURRENT automation state ('automated', 'partial', 'display-only'); tests/species-core-trait-verification.test.mjs asserts the state against the live engine, so implementing a display-only trait requires updating this file (a ratchet, not a certification).",
+ "book": "Core Rulebook",
+ "species": {
+  "Human": {
+   "line": 1669,
+   "traits": [
+    {
+     "name": "Bonus Trained Skill",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "humanSkill"
+     },
+     "tokens": [
+      "trained",
+      "skill"
+     ],
+     "note": "applied by the skills step (scripts/apps/progression-framework/steps/skills-step.js humanBonus); no runtime test here"
+    },
+    {
+     "name": "Bonus Feat",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "featsRequired",
+      "value": 2
+     },
+     "tokens": [
+      "bonus",
+      "feat"
+     ]
+    }
+   ]
+  },
+  "Bothan": {
+   "line": 1798,
+   "traits": [
+    {
+     "name": "Iron Will",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "defense",
+      "defense": "will",
+      "value": 2
+     },
+     "tokens": [
+      "2",
+      "will",
+      "defense"
+     ]
+    },
+    {
+     "name": "Conditional Bonus Feat",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "conditionalFeat",
+      "feat": "Skill Focus (Gather Information)"
+     },
+     "tokens": [
+      "gather",
+      "information",
+      "skill",
+      "focus"
+     ]
+    }
+   ]
+  },
+  "Cerean": {
+   "line": 1864,
+   "traits": [
+    {
+     "name": "Intuitive Initiative",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "initiative",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "initiative",
+      "accepted"
+     ]
+    },
+    {
+     "name": "Conditional Bonus Feat",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "conditionalFeat",
+      "feat": "Skill Focus (Initiative)"
+     },
+     "tokens": [
+      "initiative",
+      "skill",
+      "focus"
+     ]
+    }
+   ]
+  },
+  "Duros": {
+   "line": 1947,
+   "traits": [
+    {
+     "name": "Expert Pilot",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "pilot",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "pilot",
+      "accepted"
+     ],
+     "note": "was recorded as keep-better before the must-be-accepted parser fix"
+    }
+   ]
+  },
+  "Ewok": {
+   "line": 2017,
+   "traits": [
+    {
+     "name": "Primitive",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "primitive"
+     },
+     "tokens": [
+      "pistols",
+      "rifles",
+      "heavy"
+     ]
+    },
+    {
+     "name": "Scent",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "10",
+      "squares",
+      "concealment",
+      "cover"
+     ]
+    },
+    {
+     "name": "Sneaky",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "stealth",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "stealth",
+      "accepted"
+     ]
+    },
+    {
+     "name": "Conditional Bonus Feat",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "conditionalFeat",
+      "feat": "Skill Focus (Survival)"
+     },
+     "tokens": [
+      "survival",
+      "skill",
+      "focus"
+     ]
+    }
+   ],
+   "languageNote": "Automatic Languages: Ewokese (speak only)"
+  },
+  "Gamorrean": {
+   "line": 2095,
+   "traits": [
+    {
+     "name": "Primitive",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "primitive"
+     },
+     "tokens": [
+      "pistols",
+      "rifles",
+      "heavy"
+     ]
+    },
+    {
+     "name": "Great Fortitude",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "defense",
+      "defense": "fortitude",
+      "value": 2
+     },
+     "tokens": [
+      "2",
+      "fortitude",
+      "defense"
+     ]
+    },
+    {
+     "name": "Bonus Feat",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "fixedFeat",
+      "feat": "Improved Damage Threshold"
+     },
+     "tokens": [
+      "bonus",
+      "feat"
+     ]
+    }
+   ]
+  },
+  "Gungan": {
+   "line": 2160,
+   "traits": [
+    {
+     "name": "Expert Swimmer",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "swim",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "swim",
+      "accepted",
+      "take",
+      "10"
+     ]
+    },
+    {
+     "name": "Hold Breath",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "25",
+      "constitution",
+      "endurance"
+     ]
+    },
+    {
+     "name": "Lightning Reflexes",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "defense",
+      "defense": "reflex",
+      "value": 2
+     },
+     "tokens": [
+      "2",
+      "reflex",
+      "defense"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ],
+     "note": "vision/concealment is not modeled by species data"
+    },
+    {
+     "name": "Weapon Familiarity",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "weapon",
+      "proficiency",
+      "cesta"
+     ],
+     "note": "OCR renders 'atlatl' as 'atlati'; the pack text is pinned separately in the test"
+    }
+   ]
+  },
+  "Ithorian": {
+   "line": 2248,
+   "traits": [
+    {
+     "name": "Iron Will",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "defense",
+      "defense": "will",
+      "value": 2
+     },
+     "tokens": [
+      "2",
+      "will",
+      "defense"
+     ]
+    },
+    {
+     "name": "Bellow",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "activated",
+      "id": "bellow"
+     },
+     "tokens": [
+      "fortitude",
+      "cone",
+      "sonic",
+      "condition",
+      "track"
+     ]
+    },
+    {
+     "name": "Survival Instinct",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "survival",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "survival",
+      "accepted"
+     ]
+    },
+    {
+     "name": "Conditional Bonus Feat",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "conditionalFeat",
+      "feat": "Skill Focus (Knowledge (Life Sciences))"
+     },
+     "tokens": [
+      "life",
+      "sciences",
+      "skill",
+      "focus"
+     ]
+    }
+   ]
+  },
+  "Kel Dor": {
+   "line": 2353,
+   "traits": [
+    {
+     "name": "Keen Force Sense",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "useTheForce",
+      "outcome": "keepBetter"
+     },
+     "tokens": [
+      "reroll",
+      "use",
+      "force",
+      "better"
+     ],
+     "note": "printed application-limited (Search Your Feelings / Sense Force); a plain skill reroll would over-apply"
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ],
+     "note": "vision/concealment is not modeled by species data"
+    },
+    {
+     "name": "Special Equipment",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "goggles",
+      "breath",
+      "mask",
+      "2",
+      "000",
+      "credits"
+     ]
+    }
+   ]
+  },
+  "Mon Calamari": {
+   "line": 2431,
+   "traits": [
+    {
+     "name": "Breathe Underwater",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "immunity",
+      "key": "drowning"
+     },
+     "tokens": [
+      "drown",
+      "water"
+     ]
+    },
+    {
+     "name": "Expert Swimmer",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "swim",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "swim",
+      "accepted",
+      "take",
+      "10"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ],
+     "note": "vision/concealment is not modeled by species data"
+    },
+    {
+     "name": "Conditional Bonus Feat",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "conditionalFeat",
+      "feat": "Skill Focus (Perception)"
+     },
+     "tokens": [
+      "perception",
+      "skill",
+      "focus"
+     ]
+    }
+   ]
+  },
+  "Quarren": {
+   "line": 2498,
+   "traits": [
+    {
+     "name": "Breathe Underwater",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "immunity",
+      "key": "drowning"
+     },
+     "tokens": [
+      "drown",
+      "water"
+     ]
+    },
+    {
+     "name": "Expert Swimmer",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "swim",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "swim",
+      "accepted",
+      "take",
+      "10"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ],
+     "note": "vision/concealment is not modeled by species data"
+    },
+    {
+     "name": "Conditional Bonus Feat",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "conditionalFeat",
+      "feat": "Skill Focus (Persuasion)"
+     },
+     "tokens": [
+      "persuasion",
+      "skill",
+      "focus"
+     ]
+    }
+   ]
+  },
+  "Rodian": {
+   "line": 2564,
+   "traits": [
+    {
+     "name": "Heightened Awareness",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "perception",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "perception",
+      "accepted"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ],
+     "note": "vision/concealment is not modeled by species data"
+    },
+    {
+     "name": "Conditional Bonus Feat",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "conditionalFeat",
+      "feat": "Skill Focus (Survival)"
+     },
+     "tokens": [
+      "survival",
+      "skill",
+      "focus"
+     ]
+    }
+   ]
+  },
+  "Sullustan": {
+   "line": 2635,
+   "traits": [
+    {
+     "name": "Darkvision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness",
+      "colors"
+     ]
+    },
+    {
+     "name": "Expert Climber",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "take",
+      "10",
+      "climb"
+     ]
+    },
+    {
+     "name": "Heightened Awareness",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "perception",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "perception",
+      "accepted"
+     ]
+    }
+   ]
+  },
+  "Trandoshan": {
+   "line": 2709,
+   "traits": [
+    {
+     "name": "Darkvision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness",
+      "colors"
+     ]
+    },
+    {
+     "name": "Limb Regeneration",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "limb",
+      "days"
+     ]
+    },
+    {
+     "name": "Natural Armor",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "defense",
+      "defense": "reflex",
+      "value": 1
+     },
+     "tokens": [
+      "1",
+      "natural",
+      "armor",
+      "reflex"
+     ]
+    },
+    {
+     "name": "Bonus Feat",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "fixedFeat",
+      "feat": "Toughness"
+     },
+     "tokens": [
+      "toughness",
+      "bonus",
+      "feat"
+     ]
+    }
+   ]
+  },
+  "Twi'lek": {
+   "line": 2809,
+   "traits": [
+    {
+     "name": "Deceptive",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "deception",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "deception",
+      "accepted"
+     ]
+    },
+    {
+     "name": "Great Fortitude",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "defense",
+      "defense": "fortitude",
+      "value": 2
+     },
+     "tokens": [
+      "2",
+      "fortitude",
+      "defense"
+     ]
+    },
+    {
+     "name": "Low-Light Vision",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "concealment",
+      "darkness"
+     ],
+     "note": "vision/concealment is not modeled by species data"
+    }
+   ]
+  },
+  "Wookiee": {
+   "line": 2863,
+   "traits": [
+    {
+     "name": "Extraordinary Recuperation",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "hit",
+      "points",
+      "double"
+     ]
+    },
+    {
+     "name": "Rage",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "activated",
+      "id": "rage"
+     },
+     "tokens": [
+      "rage",
+      "swift",
+      "action",
+      "5",
+      "constitution"
+     ],
+     "note": "RageEngine entry; engine behavior beyond the entry data is not re-verified here"
+    },
+    {
+     "name": "Weapon Familiarity",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "weapon",
+      "proficiency",
+      "rifles",
+      "bowcaster"
+     ]
+    },
+    {
+     "name": "Skills",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "persuasion",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "climb",
+      "take",
+      "10",
+      "persuasion",
+      "intimidate"
+     ],
+     "packTraits": [
+      "Expert Climber",
+      "Intimidating Presence"
+     ],
+     "note": "printed as one 'Skills' trait: take 10 on Climb, and a Persuasion-to-intimidate reroll (application-limited)"
+    }
+   ],
+   "aliases": {
+    "Skills": [
+     "Expert Climber",
+     "Intimidating Presence"
+    ]
+   }
+  },
+  "Zabrak": {
+   "line": 2969,
+   "traits": [
+    {
+     "name": "Heightened Awareness",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "perception",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "perception",
+      "accepted"
+     ]
+    },
+    {
+     "name": "Superior Defenses",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "defense",
+      "defense": "all",
+      "value": 1
+     },
+     "tokens": [
+      "1",
+      "defenses"
+     ]
+    }
+   ]
+  },
+  "Aqualish": {
+   "line": 27759,
+   "traits": [
+    {
+     "name": "Breathe Underwater",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "immunity",
+      "key": "drowning"
+     },
+     "tokens": [
+      "drown",
+      "water"
+     ]
+    },
+    {
+     "name": "Expert Swimmer",
+     "automation": "partial",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "swim",
+      "outcome": "mustAccept"
+     },
+     "tokens": [
+      "reroll",
+      "swim",
+      "accepted",
+      "take",
+      "10"
+     ],
+     "note": "reroll automated; Take 10 part is text"
+    },
+    {
+     "name": "Bonus Feat",
+     "automation": "automated",
+     "mechanic": {
+      "kind": "fixedFeat",
+      "feat": "Toughness"
+     },
+     "tokens": [
+      "toughness",
+      "bonus",
+      "feat"
+     ],
+     "note": "ledger grant applied by the progression finalizer (source bonusFeat)"
+    }
+   ]
+  },
+  "Hutt": {
+   "line": 27789,
+   "traits": [
+    {
+     "name": "Force Resistance",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "5",
+      "will",
+      "defense",
+      "use",
+      "force"
+     ],
+     "note": "conditional (+5 Will Defense against Use the Force checks only); must not be applied unconditionally"
+    },
+    {
+     "name": "Supreme Stability",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "text"
+     },
+     "tokens": [
+      "tripped",
+      "prone"
+     ]
+    },
+    {
+     "name": "Skills",
+     "automation": "display-only",
+     "mechanic": {
+      "kind": "reroll",
+      "skill": "persuasion",
+      "outcome": "keepBetter"
+     },
+     "tokens": [
+      "reroll",
+      "persuasion",
+      "better"
+     ],
+     "packTraits": [
+      "Silver Tongued"
+     ]
+    }
+   ],
+   "aliases": {
+    "Skills": [
+     "Silver Tongued"
+    ]
+   }
+  }
+ }
+}
