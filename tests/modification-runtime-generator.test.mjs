@@ -14,7 +14,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { REGISTRY_PATH } from '../tools/validate-modification-registry.mjs';
 import { loadInputs, RUNTIME_PATH, LEDGER_PATH, SPECS_PATH } from '../tools/build-modification-runtime.mjs';
-import { deriveRuntime, validateRuntime, canonicalJson, parseRegister, certifySlotCost, domainBasisFor, sha256 } from '../tools/lib/modification-runtime.mjs';
+import { deriveRuntime, validateRuntime, canonicalJson, parseRegister, certifySlotCost, domainBasisFor, selectabilityFacts, unmetSelectableConditions, sha256 } from '../tools/lib/modification-runtime.mjs';
 import { produceTrustedSnapshot, isTrustedSnapshot } from '../tools/lib/modification-snapshot-producer.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -201,14 +201,25 @@ const liftedRegister = (...ids) => {
   return reg;
 };
 const scopedParents = new Set(['sv-retractable-stock', 'goi-componentization-basic', 'goi-componentization-deluxe', 'reb-excellent-kit-purchased-quality', 'legacy-biotech-host-template', 'legacy-weapon-template-antiquated', 'legacy-weapon-template-refitted']);
-check('selectability is domain-specific: certifying one domain leaves the sibling non-selectable (synthetic fixture with lifted D-001 and D-005)', () => {
-  const parent = registry.definitions.find((d) => !scopedParents.has(d.id) && Object.keys(d.typedDefinitions).length >= 2 && certifySlotCost(d, Object.values(d.typedDefinitions)[0]).certified && Object.values(d.typedDefinitions).every((t) => !(t.slotPoolId || '').startsWith('lightsaber-')));
-  assert.ok(parent, 'a multi-domain definition with a certified cost, outside every register scope, exists');
-  const [dA, dB] = Object.keys(parent.typedDefinitions);
-  const idA = parent.typedDefinitions[dA].definitionId;
+check('selectability is per typed domain: the same complete record passes for one domain and fails for another (unit)', () => {
+  const rec = {
+    candidate: true,
+    effects: { operations: [] },
+    applicability: { hostRequirementsSpecified: true, hostEvaluator: 'g3-eval' },
+    status: { components: Object.fromEntries(['cost', 'description', 'hostPrerequisites', 'executableEffect', 'installProcedure'].map((c) => [c, { SOURCE_VERIFIED: true, MECHANIC_SPECIFIED: true, IMPLEMENTED: true, OFFLINE_TESTED: true, FOUNDRY_TESTED: true, pendingSource: [], deferred: [] }])) }
+  };
+  const good = { parentExcluded: false, nonInstalledRole: false, domainBasis: 'table-category', slotCostCertified: true, priceUnknown: false };
+  assert.deepEqual(unmetSelectableConditions('p::armor', rec, good), []);
+  assert.deepEqual(unmetSelectableConditions('p::weapon', rec, { ...good, domainBasis: null }), ['G3:domainNotSourceCertified'], 'weapon is not certified even though armor is');
+});
+check('end to end: a fully certified single typed definition can be selected only with the complete chain (synthetic lifted registry)', () => {
+  const parent = registry.definitions.find((d) => !scopedParents.has(d.id) && Object.keys(d.typedDefinitions).length >= 1 && (() => { const dom = Object.keys(d.typedDefinitions)[0]; const f = selectabilityFacts(d, d.typedDefinitions[dom], dom); return !f.parentExcluded && !f.nonInstalledRole && f.domainBasis !== null && f.slotCostCertified && !f.priceUnknown; })());
+  assert.ok(parent, 'a definition that passes every canonical fact exists');
+  const dom = Object.keys(parent.typedDefinitions)[0];
+  const idA = parent.typedDefinitions[dom].definitionId;
   const r = derive({
     register: liftedRegister('D-001', 'D-005'),
-    ...withSpecs(...['cost', 'description', 'hostPrerequisites', 'installProcedure', 'executableEffect'].map((component, i) => spec({ specId: `S-${i}`, typedDefinitionId: idA, component }))),
+    ...withSpecs(...['description', 'hostPrerequisites', 'installProcedure', 'executableEffect'].map((component, i) => spec({ specId: `S-${i}`, typedDefinitionId: idA, component }))),
     ...withLedger((l) => {
       l.blockers = l.blockers.filter((b) => b.register !== 'D-001' && b.register !== 'D-005');
       for (const component of ['executableEffect', 'installProcedure']) l.implementation.push({ typedDefinitionId: idA, component, flags: { IMPLEMENTED: true, OFFLINE_TESTED: true, FOUNDRY_TESTED: component === 'installProcedure' }, commit: 'deadbeef', tests: ['t'], ...(component === 'installProcedure' ? { foundryEvidence: { route: 'isolated', runId: 'r1' } } : {}) });
@@ -217,13 +228,12 @@ check('selectability is domain-specific: certifying one domain leaves the siblin
   });
   assert.deepEqual(codes(r), [], JSON.stringify(r.failures));
   const rec = r.runtime.records.find((x) => x.definitionId === parent.id);
-  assert.equal(rec.domains[dA].runtimeSelectable, true);
-  assert.equal(rec.domains[dB].runtimeSelectable, false, 'sibling domain must not be authorized');
+  assert.equal(rec.domains[dom].runtimeSelectable, true);
   assert.equal('runtimeSelectable' in rec, false);
   assert.equal(r.runtime.header.counts.runtimeSelectable, 1);
-  assert.equal(rec.domains[dA].applicability.hostEligibility, 'not_established', 'specified host requirements never establish individual eligibility');
-  assert.equal(rec.domains[dA].applicability.hostRequirementsSpecified, true);
-  // The same promotion against the REAL register (D-001 still open) is rejected: see the blocker-removal regression tests.
+  assert.equal(rec.domains[dom].applicability.hostEligibility, 'not_established', 'specified host requirements never establish individual eligibility');
+  assert.equal(rec.domains[dom].applicability.hostRequirementsSpecified, true);
+  for (const other of Object.keys(rec.domains)) if (other !== dom) assert.equal(rec.domains[other].runtimeSelectable, false);
 });
 check('REGRESSION: removing the D-001 blocker from the ledger while D-001 is open cannot authorize implementation or selectability', () => {
   const parent = registry.definitions.find((d) => !scopedParents.has(d.id) && d.sourceFamily !== 'universal_upgrade' && certifySlotCost(d, Object.values(d.typedDefinitions)[0] ?? {}).certified);
@@ -403,6 +413,104 @@ check('no runtime (scripts/) file references the generated data or generator yet
   const walk = (d) => { for (const e of fs.readdirSync(path.join(ROOT, d), { withFileTypes: true })) { const rel = `${d}/${e.name}`; if (e.isDirectory()) walk(rel); else if (/\.(js|mjs|hbs)$/.test(e.name) && /modifications\/(runtime-definitions|status-ledger|specification-records)|build-modification-runtime|modification-runtime\.mjs/.test(fs.readFileSync(path.join(ROOT, rel), 'utf8'))) hits.push(rel); } };
   walk('scripts');
   assert.deepEqual(hits, [], 'G8 loader is not authorized');
+});
+
+
+// ---- canonical non-installability guard (G2 final review) ----------------------------------------
+const allLifted = () => liftedRegister('D-001', 'D-004', 'D-005', 'D-006', 'D-010', 'D-011');
+/** Otherwise-complete promotion: every component specified, implemented, tested, evaluator named, every blocker lifted. */
+function completePromotion(typedId, { skipCostSpec = false } = {}) {
+  const comps = ['cost', 'description', 'hostPrerequisites', 'installProcedure', 'executableEffect'].filter((c) => !(skipCostSpec && c === 'cost'));
+  return {
+    register: allLifted(),
+    ...withSpecs(...comps.map((component, i) => spec({ specId: `P-${i}`, typedDefinitionId: typedId, component }))),
+    ...withLedger((l) => {
+      l.blockers = [];
+      for (const component of ['executableEffect', 'installProcedure']) l.implementation.push({ typedDefinitionId: typedId, component, flags: { IMPLEMENTED: true, OFFLINE_TESTED: true, FOUNDRY_TESTED: component === 'installProcedure' }, commit: 'deadbeef', tests: ['t'], ...(component === 'installProcedure' ? { foundryEvidence: { route: 'isolated', runId: 'r1' } } : {}) });
+      l.selectable.push({ typedDefinitionId: typedId, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'g3-eval', offlineTests: ['t'] } });
+    })
+  };
+}
+const unmetFor = (r) => r.failures.find((x) => x.code === 'SELECTABLE_CONDITIONS_UNMET')?.detail.unmet ?? [];
+check('predicate: canonical facts are computed from the registry, not from a runtime record', () => {
+  const def = registry.definitions.find((d) => d.id === 'sv-retractable-stock');
+  const f = selectabilityFacts(def, def.typedDefinitions.weapon, 'weapon');
+  assert.equal(f.slotCostCertified, false);
+  const talent = registry.definitions.find((d) => d.id === 'web-outlaw-tech-personalized-modifications');
+  assert.equal(selectabilityFacts(talent, talent.typedDefinitions.weapon, 'weapon').nonInstalledRole, true);
+  assert.deepEqual(unmetSelectableConditions('x', { candidate: true, status: { components: {} }, applicability: {}, effects: { operations: [] } }), ['G0:canonical-facts-missing']);
+});
+check('PROMOTION GUARD: an otherwise-complete ledger and specification set cannot select the non-installable temporary talent actuator', () => {
+  const r = derive(completePromotion('web-outlaw-tech-personalized-modifications::weapon', { skipCostSpec: true }));
+  assert.equal(r.runtime, null);
+  const unmet = unmetFor(r);
+  assert.ok(unmet.includes('G2:notInstallableCandidate'), unmet.join());
+});
+check('PROMOTION GUARD: a domain-uncertified definition (Table 2-3 universal, CONDITIONAL_UNVERIFIED) cannot be selected by specifications', () => {
+  const r = derive(completePromotion('sv-cheater::equipment', { skipCostSpec: true }));
+  assert.equal(r.runtime, null);
+  assert.ok(unmetFor(r).includes('G3:domainNotSourceCertified'), unmetFor(r).join());
+});
+check('PROMOTION GUARD: a uncertified or conditional slot cost cannot be bypassed through a cost specification', () => {
+  // The cost specification itself is rejected...
+  const withCostSpec = derive(completePromotion('sv-retractable-stock::weapon'));
+  assert.equal(withCostSpec.runtime, null);
+  assert.ok(codes(withCostSpec).includes('SPEC_CANNOT_OVERRIDE_COST_CERTIFICATION'), codes(withCostSpec).join());
+  // ...and without it, the predicate still refuses.
+  const noCostSpec = derive(completePromotion('sv-retractable-stock::weapon', { skipCostSpec: true }));
+  assert.equal(noCostSpec.runtime, null);
+  assert.ok(unmetFor(noCostSpec).includes('G4:slotCostNotCertified') && unmetFor(noCostSpec).includes('1:cost'), unmetFor(noCostSpec).join());
+  // a special-pool (lightsaber) definition is refused the same way
+  const lightsaber = allDomains.find((d) => d.slotPool === 'lightsaber-primary-crystal').typedDefinitionId;
+  const ls = derive(completePromotion(lightsaber, { skipCostSpec: true }));
+  assert.equal(ls.runtime, null);
+  assert.ok(unmetFor(ls).includes('G4:slotCostNotCertified'));
+});
+check('PROMOTION GUARD: an unknown price never authorizes selection, even with D-006 lifted by an owner-ruling fixture', () => {
+  for (const id of ['goi-componentization-basic', 'goi-componentization-deluxe', 'reb-excellent-kit-purchased-quality']) {
+    const typedId = Object.values(registry.definitions.find((d) => d.id === id).typedDefinitions)[0].definitionId;
+    const r = derive(completePromotion(typedId, { skipCostSpec: true }));
+    assert.equal(r.runtime, null, id);
+    assert.ok(unmetFor(r).includes('G5:priceUnknown'), `${id}: ${unmetFor(r).join()}`);
+  }
+});
+check('PROMOTION GUARD: accounting eligibility with a stated price and certified domain is still not selectable without the install chain', () => {
+  const typedId = allDomains.find((d) => d.accounting.eligible && d.candidate).typedDefinitionId;
+  const parentId = typedId.split('::')[0];
+  const price = records.find((x) => x.definitionId === parentId).price.kind;
+  assert.notEqual(price, 'unknown');
+  const r = derive(withLedger((l) => { l.selectable.push({ typedDefinitionId: typedId, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'e', offlineTests: ['t'] } }); }));
+  assert.equal(r.runtime, null);
+  const u = unmetFor(r);
+  assert.ok(!u.some((x) => x.startsWith('G')), `canonical facts pass for an accounting-eligible definition: ${u.join()}`);
+  assert.ok(u.includes('1:installProcedure') && u.includes('2:hostRequirementsSpecified'));
+});
+check('V10\' rejects a runtime that marks an excluded / uncertified / unknown-price definition selectable', () => {
+  const pick = (pred) => { for (const r of committed.records) for (const d of Object.values(r.domains)) if (pred(r, d)) return d; };
+  const cases = [
+    [(r) => r.definitionId === 'web-outlaw-tech-personalized-modifications', 'G2:notInstallableCandidate'],
+    [(r, d) => r.definitionId === 'sv-cheater' && d.domain === 'equipment', 'G3:domainNotSourceCertified'],
+    [(r) => r.definitionId === 'sv-retractable-stock', 'G4:slotCostNotCertified'],
+    [(r) => r.definitionId === 'goi-componentization-basic', 'G5:priceUnknown']
+  ];
+  for (const [pred, expected] of cases) {
+    const rt = clone(committed);
+    const target = pick.call(null, (r, d) => pred(r, d));
+    const rec = rt.records.find((r) => Object.values(r.domains).some((d) => d.typedDefinitionId === target.typedDefinitionId));
+    const dom = rec.domains[target.domain];
+    dom.runtimeSelectable = true;
+    // even if every status flag were forged to look complete, the registry-derived facts still refuse it
+    for (const c of Object.values(dom.status.components)) Object.assign(c, { SOURCE_VERIFIED: true, MECHANIC_SPECIFIED: true, IMPLEMENTED: true, OFFLINE_TESTED: true, FOUNDRY_TESTED: true, pendingSource: [], deferred: [] });
+    dom.applicability.hostRequirementsSpecified = true;
+    dom.applicability.hostEvaluator = 'forged';
+    rt.header.recordsSha256 = sha256(canonicalJson(rt.records));
+    const v = validateRuntime({ ...base, runtime: rt });
+    const unmet = v.failures.filter((x) => x.code === 'SELECTABLE_CONDITIONS_UNMET').flatMap((x) => x.detail);
+    assert.ok(unmet.includes(expected), `${expected}: ${unmet.join()}`);
+  }
+});
+check('baseline preserved after the guard: counts unchanged, nothing selectable', () => {
+  assert.deepEqual(committed.header.counts, { records: 186, typedDefinitions: 232, eligibleCandidates: 231, accountingEligiblePairs: 49, certifiedSlotCosts: 84, runtimeSelectable: 0 });
 });
 
 console.log(`modification-runtime-generator: ${checks} checks OK`);

@@ -14,7 +14,7 @@
 | `data/modifications/runtime-definitions-v1.5.json` | **Generated** runtime definitions (186 records, 232 typed domain definitions) | generator |
 | `data/modifications/status-ledger-v1.json` | Hand-maintained: register blockers, implementation evidence, selectability approvals | people |
 | `data/modifications/specification-records-v1.json` | Hand-maintained: mechanic specifications | people / reviewed PRs |
-| `tests/modification-runtime-generator.test.mjs` | 44 checks with independent literals plus fail-closed mutation tests | G2 |
+| `tests/modification-runtime-generator.test.mjs` | 53 checks with independent literals plus fail-closed mutation tests | G2 |
 
 CI (`rolling-system-validation.yml`) runs `--check` and `--validate`; `tests/*.test.mjs` is discovered by the rolling runner.
 
@@ -38,7 +38,7 @@ Components: `cost`, `description`, `hostPrerequisites`, `executableEffect`, `ins
 
 | Component | `SOURCE_VERIFIED` derived from | Otherwise |
 |---|---|---|
-| `cost` | Phase 1b 6.2 slot-cost certification for that typed definition | false |
+| `cost` | Phase 1b 6.2 slot-cost certification for that typed definition **only** (a specification can never set it) | false |
 | `description` | registry `mechanicalCertification === EFFECTS_CERTIFIED` | false |
 | `executableEffect` | typed `effectStatus` begins `EFFECTS_SOURCE_VERIFIED` (source-verified text; not implemented) | false |
 | `hostPrerequisites`, `installProcedure` | **nothing in the registry**; only a valid specification record | false |
@@ -52,6 +52,20 @@ A record names a typed definition and one component, with `basis` `PUBLISHED_UNA
 ## 6. `runtimeSelectable` (architecture 3.4)
 
 True only if the ledger has a `selectable` entry **and** that typed definition independently meets: cost, description, hostPrerequisites and installProcedure source-verified with no open blockers; host **requirements specified** (a hostPrerequisites specification) **and** a named, offline-tested host evaluator recorded on the selectable entry; an installProcedure specification; any claimed effect specified, implemented and offline-tested; and installProcedure `FOUNDRY_TESTED`. A ledger entry whose conditions are unmet **fails generation** (`SELECTABLE_CONDITIONS_UNMET`) rather than being ignored. Today nothing meets them, so `runtimeSelectable` is false for all 232.
+
+### 6.0 Canonical non-installability guard (final review correction)
+
+A ledger and specification set, however complete, can never override what the canonical registry establishes. `unmetSelectableConditions()` receives facts computed **from the registry definition only** (`selectabilityFacts()`), never from a runtime record, and refuses selection unless all hold:
+
+| Guard | Refused when |
+|---|---|
+| G1 | the parent is `EXCLUDED_SCOPE` |
+| G2 | the typed definition is not an installable-upgrade candidate; the `temporary_talent_actuator_not_installed_upgrade` role can never be installed |
+| G3 | the intended domain is not source-certified (`domainBasis` is null): a specification cannot certify a domain |
+| G4 | the printed slot cost is not certified by the Phase 1b predicate (fixed, general pool, table-verified). A `cost` specification is rejected outright for an uncertified cost (`SPEC_CANNOT_OVERRIDE_COST_CERTIFICATION`) and never sets `cost.SOURCE_VERIFIED`; conditional or special-pool handling needs its own explicitly approved model, not this predicate |
+| G5 | the price is unknown (`not_stated`). Handling an unpriced modification is register D-006, an owner decision; G2 does not let any lift row or specification authorize it |
+
+V10′ re-derives these facts from the registry, so a hand-edited runtime file that forges status flags, evaluators or `runtimeSelectable` is still rejected. Consequence measured on v1.5: no multi-domain definition passes every guard in any domain, so the first selectable definitions will be single-domain accounting-eligible ones, and only after the full install chain exists.
 
 ### 6.1 Four separate things (review correction)
 

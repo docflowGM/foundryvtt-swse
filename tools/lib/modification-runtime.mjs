@@ -15,7 +15,7 @@ import { isTrustedSnapshot } from './modification-snapshot-producer.mjs';
 export const RUNTIME_SCHEMA_ID = 'swse.modification.runtime/1';
 export const LEDGER_SCHEMA_ID = 'swse.modification.status-ledger/1';
 export const SPECS_SCHEMA_ID = 'swse.modification.specification-records/1';
-export const GENERATOR_VERSION = '1.1.0';
+export const GENERATOR_VERSION = '1.2.0';
 
 export const DOMAINS = Object.freeze(['weapon', 'armor', 'equipment']);
 export const COMPONENTS = Object.freeze(['cost', 'description', 'hostPrerequisites', 'executableEffect', 'installProcedure']);
@@ -215,6 +215,11 @@ export function validateInputs({ registry, ledger, specs, register }) {
       if (s.basis === 'OWNER_RULING' && !isStr(s.ownerRulingRef)) fail(f, 'SPEC_OWNER_RULING_REF_MISSING', `${p}/ownerRulingRef`);
       const key = `${s.typedDefinitionId}|${s.component}`;
       if (blockedKeys.has(key)) fail(f, 'SPEC_WHILE_BLOCKER_OPEN', p, key);
+      if (s.component === 'cost' && typed.has(s.typedDefinitionId)) {
+        const t = typed.get(s.typedDefinitionId);
+        const def = registry.definitions.find((d) => d.id === t.parentId);
+        if (!certifySlotCost(def, def.typedDefinitions[t.domain]).certified) fail(f, 'SPEC_CANNOT_OVERRIDE_COST_CERTIFICATION', p, s.typedDefinitionId);
+      }
       if (specKeys.has(key)) fail(f, 'SPEC_DUPLICATE_COMPONENT', p, key);
       specKeys.set(key, s);
     });
@@ -295,7 +300,8 @@ function buildStatus({ def, typedDef, domainCost, typedId, ledger, specs }) {
   // hostPrerequisites and installProcedure have no registry-derived certification; only a specification record can verify them.
   for (const s of specs.records) {
     if (s.typedDefinitionId !== typedId) continue;
-    components[s.component].SOURCE_VERIFIED = true;
+    // Slot-cost certification comes only from the Phase 1b predicate; a specification can never set it (see SPEC_CANNOT_OVERRIDE_COST_CERTIFICATION).
+    if (s.component !== 'cost') components[s.component].SOURCE_VERIFIED = true;
     components[s.component].MECHANIC_SPECIFIED = true;
   }
   for (const e of ledger.implementation) {
@@ -317,9 +323,38 @@ function buildStatus({ def, typedDef, domainCost, typedId, ledger, specs }) {
   return { components };
 }
 
-/** Architecture 3.4 conditions 1-5 (6 is the ledger entry itself). Returns the list of unmet conditions. */
-export function unmetSelectableConditions(typedId, domainRecord) {
+/**
+ * Canonical facts that no ledger or specification may override. Computed from the registry definition ONLY
+ * (never from a runtime record), so a tampered or hand-written record cannot launder them.
+ */
+export function selectabilityFacts(def, typedDef, domain) {
+  const cost = certifySlotCost(def, typedDef);
+  return {
+    parentExcluded: def.currentStatus === 'EXCLUDED_SCOPE',
+    nonInstalledRole: def.sourceRole === EXCLUDED_ROLE,
+    domainBasis: domainBasisFor(def.domainApplicability?.[domain] ?? null, domain),
+    slotCostCertified: cost.certified,
+    priceUnknown: !isObj(def.originalCost) || def.originalCost.type === 'not_stated'
+  };
+}
+
+/**
+ * Architecture 3.4 conditions plus the canonical-non-installability guard (G2 review). Returns the unmet list.
+ *   G1 the parent is not EXCLUDED_SCOPE
+ *   G2 the definition is an installable-upgrade candidate (the temporary talent actuator role can never be installed)
+ *   G3 the intended domain is source-certified (domainBasis non-null); a specification cannot certify a domain
+ *   G4 the printed slot cost is certified by the Phase 1b predicate (fixed, general pool, table-verified); a specification cannot
+ *      set cost verification, and conditional / special-pool handling needs its own approved model, not this predicate
+ *   G5 the price is stated; an unknown price (register D-006, an owner decision) never silently authorizes a purchase
+ */
+export function unmetSelectableConditions(typedId, domainRecord, facts) {
   const unmet = [];
+  if (!isObj(facts)) return ['G0:canonical-facts-missing'];
+  if (facts.parentExcluded) unmet.push('G1:parentExcluded');
+  if (facts.nonInstalledRole || domainRecord.candidate !== true) unmet.push('G2:notInstallableCandidate');
+  if (facts.domainBasis === null) unmet.push('G3:domainNotSourceCertified');
+  if (!facts.slotCostCertified) unmet.push('G4:slotCostNotCertified');
+  if (facts.priceUnknown) unmet.push('G5:priceUnknown');
   const comps = domainRecord.status.components;
   for (const name of ['cost', 'description', 'hostPrerequisites', 'installProcedure']) {
     const c = comps[name];
@@ -391,7 +426,7 @@ export function deriveRuntime({ snapshot, ledger, specs, register, inputHashes =
       };
       const sel = selectableByTyped.get(typedId);
       if (sel) {
-        const unmet = unmetSelectableConditions(typedId, record);
+        const unmet = unmetSelectableConditions(typedId, record, selectabilityFacts(def, typedDef, domain));
         if (unmet.length) failures.push({ code: 'SELECTABLE_CONDITIONS_UNMET', path: `/records/${index}/domains/${domain}`, detail: { typedDefinitionId: typedId, unmet } });
         else record.runtimeSelectable = true;
       }
@@ -492,7 +527,7 @@ export function validateRuntime({ runtime, snapshot, ledger, specs, register, in
         if (!jsonEqual(d.effects?.operations, want.effectOperations ?? [])) fail(f, 'VERBATIM_EFFECT_OPERATIONS_MISMATCH', `${dp}/effects/operations`);
         if (d.applicability?.hostEligibility !== 'not_established') fail(f, 'HOST_ELIGIBILITY_ESTABLISHED_FORBIDDEN', `${dp}/applicability/hostEligibility`, d.applicability?.hostEligibility);
         if (d.runtimeSelectable) {
-          const unmet = unmetSelectableConditions(d.typedDefinitionId, d);
+          const unmet = unmetSelectableConditions(d.typedDefinitionId, d, selectabilityFacts(def, want, domain));
           if (unmet.length) fail(f, 'SELECTABLE_CONDITIONS_UNMET', dp, unmet);
         }
         for (const [name, c] of Object.entries(d.status?.components ?? {})) {

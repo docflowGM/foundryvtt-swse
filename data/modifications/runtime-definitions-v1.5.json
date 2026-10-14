@@ -3,7 +3,7 @@
   "schema": "swse.modification.runtime/1",
   "generator": {
    "name": "tools/build-modification-runtime.mjs",
-   "version": "1.1.0"
+   "version": "1.2.0"
   },
   "registry": {
    "version": "1.5",
