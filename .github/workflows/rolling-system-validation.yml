@@ -106,6 +106,12 @@ jobs:
       - name: Guard — system manifest and declared packs
         run: node tools/check-system-manifest.mjs
 
+      # Read-only research-data guard (G1): the immutable v1.5 modification
+      # registry snapshot, its manifest, exact counts and exact known
+      # deviations. Never writes, repairs or loads anything at runtime.
+      - name: Guard — modification registry snapshot (G1, read-only)
+        run: node tools/validate-modification-registry.mjs
+
       - name: Guard — generated packs are current
         run: |
           set -e
