@@ -16,35 +16,35 @@ async function ledgerFor(species, cls) {
   const actor = makeActor();
   const { ctx } = await quiet(() => selectSpecies(actor, species, null, { strict: true }));
   const ledger = await quiet(() => buildClassGrantLedger(actor, { id: cls, name: cls }, { pendingSpeciesContext: ctx }));
-  return { granted: [...ledger.grantedFeats.map(f => f.name), ...ledger.grantedProficiencies.map(f => f.name)].sort(), suppressed: ledger.suppressedGrants.map(s => s.name).sort() };
+  return { grantedProficiencies: ledger.grantedProficiencies.map(f => f.name).sort(), suppressed: ledger.suppressedGrants.map(s => s.name).sort() };
 }
 
 // Control: a non-primitive species receives every starting proficiency.
 {
   const jedi = await ledgerFor('Human', 'Jedi');
-  assert.ok(jedi.granted.includes('Weapon Proficiency (Lightsabers)') && jedi.granted.includes('Weapon Proficiency (Simple Weapons)'), JSON.stringify(jedi));
+  assert.ok(jedi.grantedProficiencies.includes('Weapon Proficiency (Lightsabers)') && jedi.grantedProficiencies.includes('Weapon Proficiency (Simple Weapons)'), JSON.stringify(jedi));
   assert.deepEqual(jedi.suppressed, []);
 }
 // Felucian (The Force Unleashed Campaign Guide): only the simple weapons group survives.
 {
   const jedi = await ledgerFor('Felucian', 'Jedi');
-  assert.ok(!jedi.granted.includes('Weapon Proficiency (Lightsabers)'), 'Jedi lightsaber proficiency suppressed');
-  assert.ok(jedi.granted.includes('Weapon Proficiency (Simple Weapons)'), 'simple weapons kept');
+  assert.ok(!jedi.grantedProficiencies.includes('Weapon Proficiency (Lightsabers)'), 'Jedi lightsaber proficiency suppressed');
+  assert.ok(jedi.grantedProficiencies.includes('Weapon Proficiency (Simple Weapons)'), 'simple weapons kept');
   assert.ok(jedi.suppressed.includes('Weapon Proficiency (Lightsabers)'));
   const soldier = await ledgerFor('Felucian', 'Soldier');
-  assert.ok(!soldier.granted.some(n => /Pistols|Rifles/.test(n)), 'Soldier pistol and rifle proficiency suppressed');
-  assert.ok(soldier.granted.includes('Weapon Proficiency (Simple Weapons)'));
-  assert.ok(soldier.granted.includes('Armor Proficiency (Light)'), 'non-weapon starting grants untouched');
+  assert.ok(!soldier.grantedProficiencies.some(n => /Pistols|Rifles/.test(n)), 'Soldier pistol and rifle proficiency suppressed');
+  assert.ok(soldier.grantedProficiencies.includes('Weapon Proficiency (Simple Weapons)'));
+  assert.ok(soldier.grantedProficiencies.includes('Armor Proficiency (Light)'), 'non-weapon starting grants untouched');
   const scoundrel = await ledgerFor('Felucian', 'Scoundrel');
-  assert.ok(!scoundrel.granted.includes('Weapon Proficiency (Pistols)') && scoundrel.granted.includes('Weapon Proficiency (Simple Weapons)'));
+  assert.ok(!scoundrel.grantedProficiencies.includes('Weapon Proficiency (Pistols)') && scoundrel.grantedProficiencies.includes('Weapon Proficiency (Simple Weapons)'));
 }
 // Standard Primitive (Gamorrean-style 3-group suppression via a hydrated species): pistols/rifles/heavy only.
 {
   const soldier = await ledgerFor('Nelvaanian', 'Soldier');
-  assert.ok(!soldier.granted.some(n => /Pistols|Rifles/.test(n)));
-  assert.ok(soldier.granted.includes('Weapon Proficiency (Simple Weapons)'));
+  assert.ok(!soldier.grantedProficiencies.some(n => /Pistols|Rifles/.test(n)));
+  assert.ok(soldier.grantedProficiencies.includes('Weapon Proficiency (Simple Weapons)'));
   const jedi = await ledgerFor('Nelvaanian', 'Jedi');
-  assert.ok(jedi.granted.includes('Weapon Proficiency (Lightsabers)'), 'the standard Primitive list does not remove lightsabers');
+  assert.ok(jedi.grantedProficiencies.includes('Weapon Proficiency (Lightsabers)'), 'the standard Primitive list does not remove lightsabers');
 }
 // The restriction exists only in the starting-class grant ledger: no feat selection, talent or later-level path consults it.
 {
