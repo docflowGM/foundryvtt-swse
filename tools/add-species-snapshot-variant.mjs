@@ -41,7 +41,26 @@ const m = snap.movementSquares;
 if (!Number.isFinite(m?.land)) throw new Error(`${profileId}: land speed is not printed/resolved (${JSON.stringify(m)}); hold for review`);
 if (A.some(k => !Number.isFinite(snap.abilityModifiers?.[k]))) throw new Error(`${profileId}: incomplete ability modifiers; hold for review`);
 const movement = { walk: m.land ?? null, swim: m.swim ?? null, fly: m.fly ?? null, climb: null, hover: null, glide: null, burrow: null, bySize: {} };
-const traits = snap.features.map(f => ({ id: slug(f.name), name: f.name, description: f.publishedRule }));
+// Strict, closed compiler: ONLY unconditional single-skill "reroll, keep the second result" features whose
+// mechanics have exactly the keys below become structured ledger rules. Every other feature stays text-only
+// (displayed, never automated); nothing is inferred from prose or from a feature that merely looks similar.
+const REROLL_CLASSES = new Set(['OPTIONAL_REROLL_MUST_ACCEPT', 'SKILL_REROLL']);
+function compileRules(f) {
+  const m = f.mechanics ?? {};
+  const keys = Object.keys(m).sort().join(',');
+  const skill = m.check ?? m.skill;
+  const isReroll = REROLL_CLASSES.has(f.classification)
+    && ((keys === 'check,keep,reroll' && m.reroll === 'optional' && m.keep === 'second')
+      || (keys === 'reroll,skill,take' && m.reroll === true && m.take === 'second'));
+  if (isReroll && /^[A-Z][a-z]+$/.test(skill ?? '')) {
+    return [{ type: 'reroll', triggeredBy: { type: 'skillCheck', skillId: skill.toLowerCase() }, outcome: 'mustAccept', when: { type: 'always' }, id: `${slug(f.name)}-rule-0` }];
+  }
+  return null;
+}
+const traits = snap.features.map(f => {
+  const rules = compileRules(f);
+  return { id: slug(f.name), name: f.name, description: f.publishedRule, ...(rules ? { rules } : {}) };
+});
 
 const shortPublication = String(profile.publication).replace(/^Star Wars Roleplaying Game: Saga Edition\s+/i, '').replace(/\s*\(\d{4}\)\s*$/, '');
 

@@ -141,7 +141,8 @@ function applyLegacyOverlay(base, variant) {
   const fallbackFields = [];
   const pickArray = (field, mine, theirs) => {
     if (Array.isArray(mine) && mine.length) return mine;
-    fallbackFields.push(field);
+    // Only a non-empty base value is actually inherited; an empty one changes nothing and is not reported.
+    if (Array.isArray(theirs) && theirs.length) fallbackFields.push(field);
     return theirs;
   };
   const abilityScores = variant.abilityMods && typeof variant.abilityMods === 'object'

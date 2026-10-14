@@ -26,7 +26,11 @@ function addSnapshot(speciesName, over) {
   });
 }
 const bothan = SpeciesRegistry.getByName('Bothan');
-const trait = name => ({ id: name.toLowerCase().replace(/\s+/g, '-'), ...bothan.canonicalTraits.find(t => t.name === name) });
+// Audited snapshots automate ONLY from explicit structured rules (never from prose), so the synthetic traits carry them.
+const RULES = {
+  'Iron Will': [{ type: 'defenseModifier', defense: 'will', value: 2, bonusType: 'species', when: { type: 'always' }, id: 'iron-will-rule-0' }],
+};
+const trait = name => ({ id: name.toLowerCase().replace(/\s+/g, '-'), ...bothan.canonicalTraits.find(t => t.name === name), ...(RULES[name] ? { rules: RULES[name] } : {}) });
 // The shipped base Bothan prints only Iron Will, so give the BASE an extra in-memory sidecar passive. That lets the test
 // prove a snapshot does not inherit passives its own publication lacks (and that they return when switching back).
 bothan.supplementaryTraits = {
@@ -62,12 +66,29 @@ addSnapshot('Bothan', { id: 'syn-iron-will-only', abilityMods: { dex: 2, con: -2
 }
 
 // ---- A snapshot's skill passive is applied too ----
-addSnapshot('Bothan', { id: 'syn-stealth-only', traits: [trait('Iron Will')].map(t => ({ ...t, name: 'Stealth', id: 'stealth', description: 'A Bothan gains a +2 species bonus on Stealth checks.' })) });
+addSnapshot('Bothan', { id: 'syn-stealth-only', traits: [{ id: 'stealth', name: 'Stealth', description: 'A Bothan gains a +2 species bonus on Stealth checks.', rules: [{ type: 'skillModifier', skillId: 'stealth', value: 2, bonusType: 'species', when: { type: 'always' }, id: 'stealth-rule-0' }] }] });
 {
   const actor = makeActor();
   await selectSpecies(actor, 'Bothan', 'syn-stealth-only');
   assert.deepEqual(Object.keys(actor.flags.swse.speciesPassiveBonuses), ['stealth']);
   assert.equal(DefenseCalculator._collectSpeciesDefenseBonus(actor, 'will'), 0, 'base Iron Will does not leak into this publication');
+}
+
+// ---- Prose alone never automates a snapshot trait (fail closed) ----
+addSnapshot('Bothan', { id: 'syn-prose-only', traits: [{ id: 'iron-will', name: 'Iron Will', description: 'Bothans gain a +2 Species bonus to their Will Defense.' }] });
+{
+  const actor = makeActor();
+  await selectSpecies(actor, 'Bothan', 'syn-prose-only');
+  assert.deepEqual(Object.keys(actor.flags.swse.speciesPassiveBonuses ?? {}), [], 'a snapshot trait without structured rules is displayed, not automated');
+  assert.deepEqual(Object.keys(actor.flags.swse.speciesTraits), ['Iron Will'], 'but it is still listed');
+}
+
+// ---- A conditional printed bonus stays conditional: prose like "versus radiation damage" never becomes unconditional ----
+addSnapshot('Bothan', { id: 'syn-conditional', traits: [{ id: 'radiation-resistance', name: 'Radiation Resistance', description: 'Gain +5 species bonus to Fortitude Defense versus radiation damage.' }] });
+{
+  const actor = makeActor();
+  await selectSpecies(actor, 'Bothan', 'syn-conditional');
+  assert.deepEqual(Object.keys(actor.flags.swse.speciesPassiveBonuses ?? {}), []);
 }
 
 // ---- Natural weapons come only from the snapshot, and follow switches ----

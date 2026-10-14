@@ -77,7 +77,8 @@ for (const name of CORE) {
     abilities: '', abilityMods: { ...zero }, abilityChoice: null, skillBonuses: [], special: traits.map(t => t.name), languages: ['Basic'],
     naturalWeapons: [], description: '', traits,
   });
-  snap('syn-with-gf', [{ id: 'great-fortitude', name: 'Great Fortitude', description: "Twi'leks gain a +2 Species bonus to their Fortitude Defense." }]);
+  snap('syn-with-gf', [{ id: 'great-fortitude', name: 'Great Fortitude', description: "Twi'leks gain a +2 Species bonus to their Fortitude Defense.",
+    rules: [{ type: 'defenseModifier', defense: 'fortitude', value: 2, bonusType: 'species', when: { type: 'always' }, id: 'great-fortitude-rule-0' }] }]);
   snap('syn-without-gf', [{ id: 'low-light-vision', name: 'Low-Light Vision', description: 'Twileks ignore concealment (but not total concealment) from darkness.' }]);
 
   const base = await defensesFor("Twi'lek");

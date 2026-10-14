@@ -790,7 +790,7 @@ export class SpeciesGrantLedgerBuilder {
         if (!canonicalTrait?.name) continue;
         const candidateId = canonicalTrait.id || this._slugify(canonicalTrait.name);
         if (existingTraitIds.has(candidateId) || existingTraitNames.has(canonicalTrait.name.toLowerCase())) continue;
-        const trait = this._classifyTrait(canonicalTrait, 'json');
+        const trait = this._classifyTrait(canonicalTrait, 'json', { structuredOnly: doc?.selectedVariant?.completeSnapshot === true });
         if (trait) ledger.traits.push(trait);
       }
     };
@@ -858,7 +858,9 @@ export class SpeciesGrantLedgerBuilder {
    * Classify and normalize a trait object
    * @private
    */
-  static _classifyTrait(trait, source = 'json') {
+  static _classifyTrait(trait, source = 'json', options = {}) {
+    // Audited snapshots are structured-only: bonuses/rerolls come from explicit `rules`, never from parsing prose.
+    const structuredOnly = options.structuredOnly === true;
     const classified = {
       id: trait.id || this._slugify(trait.name),
       name: trait.name || 'Unknown Trait',
@@ -1093,7 +1095,7 @@ export class SpeciesGrantLedgerBuilder {
     // Only fires for traits that remain 'unresolved' after rule/id checks above.
     // Runs ALL pattern extractors (not early-exit) so one trait can yield multiple passive[].
     // Example: Aleena Small Size grants both a Stealth skill bonus AND a Reflex defense bonus.
-    if (classified.classification === 'unresolved' && trait.description) {
+    if (classified.classification === 'unresolved' && trait.description && !structuredOnly) {
       const desc = trait.description;
       let foundAny = false;
 

@@ -1487,42 +1487,7 @@
     "name": "Bith",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "musical-savant",
-        "name": "Musical Savant",
-        "description": "A Bith gains a +5 species bonus on Perform checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "perform",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "musical-savant-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "fragile",
-        "name": "Fragile",
-        "description": "A Bith takes a -2 species penalty to Fortitude Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "fortitude",
-            "value": -2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "fragile-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -2380,11 +2345,6 @@
         "id": "radiation-resistance",
         "name": "Radiation Resistance",
         "description": "Chagrians receive a +5 Species bonus to their Fortitude Defense against Radiation."
-      },
-      {
-        "id": "all-codru-ji-possess-six-limbs",
-        "name": "All Codru-Ji possess six limbs",
-        "description": "four arms and two legs. In addition, juvenile Codru-Ji hardly resemble their parents as much as they resemble small, furred, hexapedal canines. Referred to as Wyrwulves, Codru-Ji children continue to grow and develop in their six-legged form until puberty, when they pupate in cocoons and emerge as bipedal adults."
       }
     ],
     "variants": [],
@@ -2446,42 +2406,7 @@
     "name": "Chiss",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "darkvision",
-        "name": "Darkvision",
-        "description": "A Chiss ignores concealment caused by darkness.",
-        "rules": [
-          {
-            "type": "sense",
-            "senseType": "darkvision",
-            "range": null,
-            "description": "A Chiss ignores concealment caused by darkness.",
-            "when": {
-              "type": "always"
-            },
-            "id": "darkvision-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "tactical-training",
-        "name": "Tactical Training",
-        "description": "A Chiss gains a +2 species bonus on Initiative checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "initiative",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "tactical-training-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
