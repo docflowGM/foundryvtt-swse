@@ -23,6 +23,14 @@ const CORE = {
     textExcludes: [['weapon-familiarity', /ryyk/i]],
     textIncludes: [['weapon-familiarity', /bowcaster/i], ['weapon-familiarity', /rifles?/i]],
   },
+  // Gamorrean (CORE-2A-06): printed traits are Primitive, Great Fortitude, Bonus Feat (Improved Damage Threshold).
+  // No Arg'garok familiarity, no Will Defense penalty and no charge damage bonus are printed.
+  Gamorrean: {
+    traits: ['bonus-feat', 'great-fortitude', 'primitive'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['low-cunning', 'brutal-charge', 'weapon-familiarity-arg-garok'],
+    primitive: true,
+  },
   // Trandoshan (CORE-2A-14): printed traits are Darkvision, Limb Regeneration, Natural Armor, Bonus Feat.
   // Clawed hands are narrative only; there is no natural attack or flat skill bonus, and no hit-point regeneration.
   Trandoshan: {
@@ -45,12 +53,14 @@ for (const [name, want] of Object.entries(CORE)) {
     const entry = sc[name];
     const present = [...ids(entry.structuralTraits), ...ids(entry.conditionalTraits), ...ids(entry.activatedAbilities)];
     for (const absent of want.sidecarAbsent) assert.ok(!present.includes(absent), `${name} sidecar must not carry ${absent}`);
+    assert.deepEqual(ids(entry.canonicalTraits), want.traits, `${name} sidecar canonicalTraits mirror the pack`);
   }
 
   const actor = makeActor();
   await selectSpecies(actor, name);
   assert.deepEqual(actor.items.map(i => `${i.type}:${i.name}`).sort(), want.items, `${name} materialized items`);
   assert.deepEqual(Object.keys(actor.flags.swse.speciesPassiveBonuses ?? {}), want.passives, `${name} materialized passives`);
+  assert.equal(!!actor.flags.swse.primitiveSpecies, !!want.primitive, `${name} primitive`);
 }
 
 console.log('PASS: core species reconciliation');

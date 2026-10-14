@@ -3807,21 +3807,9 @@
     "name": "Gamorrean",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "low-cunning",
-        "name": "Low Cunning",
-        "description": "A Gamorrean takes a -2 species penalty on Will Defense."
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "brutal-charge",
-        "name": "Brutal Charge",
-        "description": "A Gamorrean gains a +2 species bonus on melee damage rolls when charging."
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -3876,11 +3864,6 @@
         "id": "primitive",
         "name": "Primitive",
         "description": "Gamorreans do not gain Weapon Proficiency (Heavy Weapons), Weapon Proficiency (Pistols), or Weapon Proficiency (Rifles) as starting Feats at first level, even if their Class normally grants them."
-      },
-      {
-        "id": "weapon-familiarity-arg-garok",
-        "name": "Weapon Familiarity (Arg'garok)",
-        "description": "Gamorreans treat the Arg'garok as an Advanced Melee Weapon, instead of an Exotic Weapons (Melee)."
       }
     ],
     "variants": [],
