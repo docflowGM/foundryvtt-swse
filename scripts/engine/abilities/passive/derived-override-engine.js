@@ -84,6 +84,9 @@ export class DerivedOverrideEngine {
           continue;
         }
 
+        // A species with no printed land speed has no walk speed to adjust (adjusting null would invent one).
+        if (actor?.system?.speciesLandSpeedUnspecified === true && ['speed.base', 'speed', 'speed.total'].includes(override.target)) continue;
+
         // Compute the value to add
         const computedValue = this._computeValue(actor, override.value);
 

@@ -12,10 +12,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Advb",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "heightened-awareness",
    "low-light-vision",
@@ -58,10 +60,12 @@
   },
   "size": "Small",
   "speed": 4,
+  "landSpeedUnspecified": false,
   "languages": [
    "Aleena",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "nimble",
    "quick-energy"
@@ -99,10 +103,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Altirish",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "visually-striking",
    "bonus-trained-skill-text"
@@ -133,10 +139,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Anarrese",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "strength-surge",
    "bonus-feat"
@@ -171,10 +179,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Anzat",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "presence-sense",
    "mesmerize",
@@ -214,10 +224,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Arkanian",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "darkvision",
    "intellectual-reputation",
@@ -250,10 +262,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Arkanian",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat-text",
    "determination"
@@ -284,10 +298,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Balosar"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "antennapalps",
    "poison-resistance",
@@ -320,9 +336,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Barabel"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-armor",
    "natural-weapons",
@@ -390,9 +408,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Barabel"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-armor",
    "natural-weapons-claws-teeth-tail",
@@ -456,10 +476,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Balatorese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat-skill-focus-acrobatics",
    "deathstrike"
@@ -497,10 +519,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Caamasi"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "adept-diplomat",
    "pacifism",
@@ -538,10 +562,12 @@
   },
   "size": "Medium",
   "speed": 8,
+  "landSpeedUnspecified": false,
   "languages": [
    "Catharese",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-weapons",
    "reactive-claw",
@@ -567,6 +593,45 @@
    "cathar-instincts": "display-only"
   }
  },
+ "celegian-jatm-2j-02": {
+  "species": "Celegian",
+  "sourceProfileId": "JATM-2J-02",
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": null,
+  "landSpeedUnspecified": true,
+  "languages": [
+   "Basic"
+  ],
+  "languageRestrictions": {
+   "Basic": "understand-only"
+  },
+  "traitIds": [
+   "cyanogen-breather",
+   "expert-swimmer",
+   "broadcast-telepath"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "cyanogen-breather": "display-only",
+   "expert-swimmer": "display-only",
+   "broadcast-telepath": "engine-suppressed"
+  }
+ },
  "chistori-tog-2k-02": {
   "species": "Chistori",
   "sourceProfileId": "TOG-2K-02",
@@ -580,9 +645,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Chistori"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "cold-blooded",
    "armor-plating",
@@ -617,10 +684,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Clawdite"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "shapeshift",
    "startle"
@@ -653,10 +722,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Codruese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "bonus-feat",
    "extra-arms",
@@ -697,10 +768,12 @@
   },
   "size": "Small",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Defel"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "partial-invisibility",
    "special-equipment-ultraviolet-visor"
@@ -731,10 +804,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Devaronese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat",
    "natural-curiosity"
@@ -772,9 +847,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Draethos"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-armor",
    "natural-telepath",
@@ -819,9 +896,11 @@
   },
   "size": "Small",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Dug"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "athletic"
   ],
@@ -850,9 +929,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Ebruchese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat",
    "iron-will",
@@ -897,10 +978,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Elomin"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "impose-order",
    "logical-mind"
@@ -931,10 +1014,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Falleen"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "hold-breath",
    "pheromones",
@@ -969,10 +1054,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Feeorin",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "brutal",
    "great-fortitude",
@@ -1014,9 +1101,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Felucianese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "breathe-underwater",
    "low-light-vision",
@@ -1068,10 +1157,12 @@
   },
   "size": "Small",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Fosh"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "deceptive",
    "healing-glands"
@@ -1107,9 +1198,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Gand"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "darkvision",
    "hardy",
@@ -1144,10 +1237,12 @@
   },
   "size": "Large",
   "speed": 8,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Gen'Dai"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "gen-dai-surge",
    "hibernation",
@@ -1184,10 +1279,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Givin"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "exoskeleton",
    "deductive-reasoning",
@@ -1220,10 +1317,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Gotal"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "energy-reading",
    "low-light-vision",
@@ -1256,10 +1355,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Gran"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "darkvision",
    "target-awareness",
@@ -1301,10 +1402,12 @@
   },
   "size": "Large",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Herglic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "sturdy",
    "conditional-bonus-feat-skill-focus-gather-information"
@@ -1342,10 +1445,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Houk"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-armor",
    "physically-intimidating"
@@ -1381,10 +1486,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Iktotchese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-armor",
    "limited-precognition",
@@ -1427,10 +1534,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Tibranese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "breath-underwater",
    "ecological-awareness",
@@ -1473,10 +1582,12 @@
   },
   "size": "Small",
   "speed": 4,
+  "landSpeedUnspecified": false,
   "languages": [
    "Jawa",
    "Jawa Trade Language"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "darkvision",
    "desert-dweller",
@@ -1511,10 +1622,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Kaleesh"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat-skill-focus-survival",
    "darkvision",
@@ -1561,10 +1674,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Kaminoan"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat-skill-focus-treat-injury",
    "resistant"
@@ -1607,10 +1722,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Kerkoidese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "predator-s-heritage",
    "social-cunning"
@@ -1641,10 +1758,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Khilese",
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "dependable-worker",
    "cooperative-spirit",
@@ -1677,10 +1796,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Killik",
    "Sy Bisti"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "joiners",
    "low-light-vision",
@@ -1730,10 +1851,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Sith"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "inspired",
    "warrior-s-awareness",
@@ -1766,9 +1889,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Huttese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "iron-will"
   ],
@@ -1802,10 +1927,12 @@
   },
   "size": "Small",
   "speed": 4,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Lurmese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "mender",
    "primitive",
@@ -1846,9 +1973,11 @@
   },
   "size": "Large",
   "speed": 8,
+  "landSpeedUnspecified": false,
   "languages": [
    "Savrip"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-armor",
    "natural-weapons",
@@ -1903,9 +2032,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Sith"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat",
    "duty-bound",
@@ -1953,10 +2084,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Miralukese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "force-sight",
    "conditional-bonus-feat"
@@ -1994,10 +2127,12 @@
   },
   "size": "Small",
   "speed": 4,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Mrlsstese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "skills-mechanics",
    "scholarly-inclination",
@@ -2039,10 +2174,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Nagaian"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "lightning-reflexes",
    "soothing-voice",
@@ -2085,10 +2222,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Nautila"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "breathe-underwater",
    "expert-swimmer",
@@ -2125,9 +2264,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Nelvaanese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "low-light-vision",
    "primitive",
@@ -2166,9 +2307,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Nikto"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "great-fortitude",
    "natural-armor",
@@ -2215,9 +2358,11 @@
   },
   "size": "Small",
   "speed": 4,
+  "landSpeedUnspecified": false,
   "languages": [
    "Honoghran"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "primitive",
    "conditional-bonus-feat-running-attack",
@@ -2261,10 +2406,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Nosaurian"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "climber-s-heritage",
    "natural-weapon-horns",
@@ -2310,9 +2457,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Nyriaanan"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "bonus-class-skill-survival",
    "bonus-feat",
@@ -2351,9 +2500,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Lowickese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "expert-swimmer",
    "hold-breath",
@@ -2390,9 +2541,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Rakata"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "ancient-knowledge",
    "conditional-bonus-feat-text",
@@ -2435,9 +2588,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "bonus-trained-skill",
    "bonus-feat"
@@ -2472,10 +2627,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Ryn"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "musical-beak",
    "prehensile-tail",
@@ -2510,10 +2667,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Sakiyan"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "darkvision",
    "conditional-bonus-feat",
@@ -2558,9 +2717,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Selkath"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "breathe-underwater",
    "expert-swimmer",
@@ -2593,9 +2754,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Shistavanen"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-weapons",
    "quick-reflexes",
@@ -2647,10 +2810,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Sluissese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "careful-worker",
    "conditional-bonus-feat",
@@ -2690,9 +2855,11 @@
   },
   "size": "Small",
   "speed": 4,
+  "landSpeedUnspecified": false,
   "languages": [
    "Snivvian"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "observant",
    "cold-resistance"
@@ -2723,9 +2890,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "bonus-feat",
    "dark-infused",
@@ -2765,10 +2934,12 @@
   },
   "size": "Small",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Squibbian"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-diplomat",
    "tech-savvy",
@@ -2801,9 +2972,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Ssi-ruuvi"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat",
    "force-blind",
@@ -2850,9 +3023,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Talz"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "darkvision",
    "natural-weapon-claws",
@@ -2898,10 +3073,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Mando'a"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "armor-training",
    "superior-defenses",
@@ -2934,9 +3111,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Thakwaashi"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "multiple-personalities",
    "natural-armor"
@@ -2972,9 +3151,11 @@
   },
   "size": "Large",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Tof"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "bonus-feat-text",
    "conditional-bonus-feat-text",
@@ -3007,10 +3188,12 @@
   },
   "size": "Large",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Togorian"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "feline-reflexes",
    "low-light-vision",
@@ -3048,10 +3231,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Togruti"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "pack-hunter",
    "sneaky",
@@ -3084,10 +3269,12 @@
   },
   "size": "Small",
   "speed": 4,
+  "landSpeedUnspecified": false,
   "languages": [
    "Huttese",
    "Toydarian"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "flight-hover-restrictions",
    "conditional-bonus-feat-skill-focus-deception",
@@ -3127,9 +3314,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Trianii"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "acrobatic-prowess",
    "natural-weapons",
@@ -3173,11 +3362,13 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Ubeninal",
    "Ubese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "aggressive",
    "survival-instinct",
@@ -3224,10 +3415,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Umbarese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "darkvision",
    "stealthy",
@@ -3272,9 +3465,11 @@
   },
   "size": "Small",
   "speed": 4,
+  "landSpeedUnspecified": false,
   "languages": [
    "Utapese"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "animal-handler",
    "cooperative",
@@ -3307,10 +3502,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Vagaari",
    "Sy Bisti"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat",
    "frightening-visage",
@@ -3350,10 +3547,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Vahla"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "dark-side-stigma",
    "force-sensitivity",
@@ -3396,10 +3595,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Verpine"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-armor",
    "heightened-awareness",
@@ -3451,10 +3652,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Dromnyr"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "bonus-trained-skill",
    "conditional-bonus-feat-text"
@@ -3485,10 +3688,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Semblan"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "breathe-underwater",
    "expert-swimmer",
@@ -3528,9 +3733,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Sriluurian"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "conditional-bonus-feat",
    "natural-armor",
@@ -3575,9 +3782,11 @@
   },
   "size": "Large",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Whiphid"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "insulating-fur",
    "natural-weapon-claws",
@@ -3616,10 +3825,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Wroonian"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "free-spirit",
    "persuasion-skill-reroll"
@@ -3660,10 +3871,12 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic",
    "Yarkora"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "confusion",
    "deceptive",
@@ -3703,9 +3916,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Yevethan"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "mechanical-aptitude",
    "natural-weapons",
@@ -3744,9 +3959,11 @@
   },
   "size": "Large",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Yuzz"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "natural-weapons",
    "physically-intimidating",
@@ -3797,9 +4014,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "empathy",
    "pheromones"
@@ -3830,9 +4049,11 @@
   },
   "size": "Medium",
   "speed": 6,
+  "landSpeedUnspecified": false,
   "languages": [
    "Basic"
   ],
+  "languageRestrictions": {},
   "traitIds": [
    "bonus-feat",
    "iron-will",

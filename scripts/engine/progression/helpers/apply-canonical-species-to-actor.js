@@ -55,6 +55,7 @@
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { planSpeciesMovement } from '/systems/foundryvtt-swse/scripts/species/species-movement.js';
 import { MANIFEST_FLAG, computeSpeciesGrantKey, reconcileSpeciesGrant } from '/systems/foundryvtt-swse/scripts/species/species-grant-reconciliation.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
@@ -301,9 +302,15 @@ function _materializePhysical(actor, pendingContext) {
     mutations['system.size'] = physical.size.toLowerCase();
   }
 
-  // Base speed (walk speed in squares)
-  if (physical.movements?.walk) {
-    mutations['system.speed'] = physical.movements.walk;
+  // Base speed (walk speed in squares). A species with printed alternate modes but NO printed land speed records that state
+  // explicitly (speed null + speciesLandSpeedUnspecified), never 0 and never a default.
+  const movementPlan = planSpeciesMovement(physical.movements);
+  if (movementPlan.walk) {
+    mutations['system.speed'] = movementPlan.walk;
+    mutations['system.speciesLandSpeedUnspecified'] = false;
+  } else if (movementPlan.landSpeedUnspecified) {
+    mutations['system.speed'] = null;
+    mutations['system.speciesLandSpeedUnspecified'] = true;
   }
 
   return mutations;
@@ -347,6 +354,10 @@ function _materializeLanguages(actor, pendingContext) {
     // Store in flags for now - sheet integration handles system.languages
     // This marks them as species-granted for later differentiation
     mutations['flags.swse.speciesLanguages'] = languages;
+  }
+  const understandOnly = pendingContext.ledger?.languages?.understands || [];
+  if (understandOnly.length > 0) {
+    mutations['flags.swse.speciesLanguageRestrictions'] = Object.fromEntries(understandOnly.map(name => [name, 'understand-only']));
   }
 
   return mutations;

@@ -147,6 +147,16 @@ const feats = r => r.grants.filter(g => g.grantType === 'feat' && g.target).map(
   assert.notEqual(plain.system.attackOptions?.noProvokeOpportunity, true);
   assert.notEqual(plain.system.proficiency, 'simple');
 }
+// Jedi Academy Training Manual p.106 — Celegian: "Speed: Fly 6 squares (hover), swim 10 squares" (no land speed); "Basic (understand only)"
+{
+  const r = await apply('Celegian');
+  assert.deepEqual(r.racial, { dex: -2, int: 2 });
+  assert.equal(r.actor.system.speed, null, 'no land speed: neither 0 nor the default 6');
+  assert.equal(r.actor.system.speciesLandSpeedUnspecified, true);
+  assert.deepEqual([r.actor.system.speciesMovement.fly, r.actor.system.speciesMovement.swim, r.actor.system.speciesMovement.hover], [6, 10, 6]);
+  assert.deepEqual(r.languages, ['Basic']);
+  assert.deepEqual(r.actor.flags.swse.speciesLanguageRestrictions, { Basic: 'understand-only' });
+}
 // Activated-ability exclusions: engine entries that differ from the printed rule never activate from a published profile
 for (const [species, banned] of [['Caamasi', 'pacifism'], ['Yarkora', 'confusion'], ['Clawdite', 'shapeshift'], ['Draethos', 'natural-telepath']]) {
   const r = await apply(species);

@@ -72,7 +72,11 @@ export function listMissingSnapshotFields(variant) {
   if (!variant.id) missing.push('id');
   if (!variant.sourceProfileId) missing.push('sourceProfileId');
   if (!variant.size) missing.push('size');
-  if (!isFiniteNumber(variant.speed)) missing.push('speed');
+  // Land speed: an explicit number, or an explicit "not printed" marker (never defaulted to 0 or 6) with at least one printed alternate mode.
+  if (variant.landSpeedUnspecified === true) {
+    const hasAlt = ['fly', 'swim', 'hover', 'glide', 'climb', 'burrow'].some(m => isFiniteNumber(variant.movement?.[m]));
+    if (variant.speed !== null || !hasAlt) missing.push('speed');
+  } else if (!isFiniteNumber(variant.speed)) missing.push('speed');
   if (!variant.movement || typeof variant.movement !== 'object') missing.push('movement');
   if (!hasCompleteAbilityMods(variant.abilityMods)) missing.push('abilityMods');
   for (const field of ['languages', 'special', 'traits', 'skillBonuses', 'naturalWeapons']) {
@@ -115,6 +119,8 @@ function applyCompleteSnapshot(base, variant) {
     description: variant.description || '',
     size: variant.size,
     speed: variant.speed,
+    landSpeedUnspecified: variant.landSpeedUnspecified === true,
+    languageRestrictions: variant.languageRestrictions && typeof variant.languageRestrictions === 'object' ? { ...variant.languageRestrictions } : {},
     movement: variant.movement,
     rawAbilities: variant.abilities ?? null,
     abilityScores,

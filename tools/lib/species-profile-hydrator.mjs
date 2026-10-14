@@ -8,6 +8,8 @@
  * integration) is HELD and reported, never approximated.
  */
 
+import { languageRestrictionsFromAudit } from '../../scripts/species/species-languages.js';
+
 export class HoldProfile extends Error {
   constructor(reason) { super(reason); this.name = 'HoldProfile'; this.reason = reason; }
 }
@@ -308,7 +310,10 @@ export function hydrateProfile(profile, record, { provenance = [] } = {}) {
   if (!snap.features) throw new HoldProfile('no audited features');
   if (!Array.isArray(snap.automaticLanguages) || !snap.automaticLanguages.length) throw new HoldProfile('automatic languages not recorded in the audit');
   const m = snap.movementSquares;
-  if (!Number.isFinite(m?.land)) throw new HoldProfile(`land speed not printed/resolved (${JSON.stringify(m)})`);
+  // A land speed the book does not print is recorded as such (never defaulted), provided other modes are printed (species-movement.js).
+  const altPrinted = Number.isFinite(m?.swim) || Number.isFinite(m?.fly);
+  const landUnspecified = !Number.isFinite(m?.land) && altPrinted && /LAND_UNSPECIFIED|LAND_SPEED_NOT_PRINTED/.test(`${snap.movementCertification ?? ''} ${(profile.openRequirements ?? []).join(' ')}`);
+  if (!Number.isFinite(m?.land) && !landUnspecified) throw new HoldProfile(`land speed not printed/resolved (${JSON.stringify(m)})`);
   const baseMods = choice ? choice.common : snap.abilityModifiers;
   if (ABILITIES.some(k => !Number.isFinite(baseMods?.[k]))) throw new HoldProfile('ability modifiers not all printed');
   const newId = `${slug(profile.speciesDisplayName)}-${profile.sourceProfileId.toLowerCase()}`;
@@ -319,7 +324,9 @@ export function hydrateProfile(profile, record, { provenance = [] } = {}) {
   const abilityMods = Object.fromEntries(ABILITIES.map(k => [k.toLowerCase(), baseMods[k]]));
   const abilityText = ABILITIES.filter(k => baseMods[k]).sort((a, b) => baseMods[b] - baseMods[a])
     .map(k => `${baseMods[k] > 0 ? '+' : ''}${baseMods[k]} ${k[0] + k.slice(1).toLowerCase()}`).join(', ');
-  const movement = { walk: m.land, swim: m.swim ?? null, fly: m.fly ?? null, climb: null, hover: null, glide: null, burrow: null, bySize: {} };
+  // "Fly 6 squares (hover)": the hover flight type is recorded with the same speed, as the existing species records do.
+  const hoverPrinted = /\(hover\)/i.test((profile.sourceNotes ?? []).join(' '));
+  const movement = { walk: landUnspecified ? null : m.land, swim: m.swim ?? null, fly: m.fly ?? null, climb: null, hover: hoverPrinted ? (m.fly ?? null) : null, glide: null, burrow: null, bySize: {} };
 
   const compiled = snap.features.map(compileFeature);
   for (const c of compiled) if (SUPPRESSION.has(snap.features.find(f => f.featureId === c.trait.sourceFeatureId)?.classification)) c.automation = 'structured-field';
@@ -341,7 +348,8 @@ export function hydrateProfile(profile, record, { provenance = [] } = {}) {
     completeSnapshot: true,
     sourceProfileId: profile.sourceProfileId,
     size: snap.size,
-    speed: m.land,
+    speed: landUnspecified ? null : m.land,
+    ...(landUnspecified ? { landSpeedUnspecified: true } : {}),
     movement,
     abilities: abilityText,
     abilityMods,
@@ -349,6 +357,7 @@ export function hydrateProfile(profile, record, { provenance = [] } = {}) {
     skillBonuses: [],
     special: traits.map(t => t.name),
     languages: snap.automaticLanguages.map(l => l.name),
+    ...(Object.keys(languageRestrictionsFromAudit(snap.automaticLanguages)).length ? { languageRestrictions: languageRestrictionsFromAudit(snap.automaticLanguages) } : {}),
     naturalWeapons,
     ...(suppressed.length ? { primitive: true, suppressedClassProficiencies: suppressed } : {}),
     description: `${profile.speciesDisplayName} as printed in ${profile.publication}. Complete publication snapshot; no traits are inherited from other publications.${sizeVariation ? ` This is the printed ${sizeVariation.baseline}-size profile; other sizes are GM-defined and are not automated.` : ''}`,
@@ -361,7 +370,7 @@ export function hydrateProfile(profile, record, { provenance = [] } = {}) {
   const expectation = {
     species: profile.speciesDisplayName,
     sourceProfileId: profile.sourceProfileId,
-    abilityMods, size: snap.size, speed: m.land, languages: variant.languages,
+    abilityMods, size: snap.size, speed: variant.speed, landSpeedUnspecified: landUnspecified, languages: variant.languages, languageRestrictions: variant.languageRestrictions ?? {},
     traitIds: ids,
     defense: Object.fromEntries(rulesOf('defenseModifier').map(r => [r.defense, { value: r.value, bonusType: r.bonusType }])),
     rerolls: rulesOf('reroll').map(r => ({ skillId: r.triggeredBy.skillId, outcome: r.outcome })),

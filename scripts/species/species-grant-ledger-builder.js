@@ -374,6 +374,8 @@ export class SpeciesGrantLedgerBuilder {
     const burrow = maybeNumber(explicitMovement.burrow ?? structuredMovementRules.burrow ?? jsonCanonicalMovement.burrow);
 
     if (walk !== null) ledger.physical.movements.walk = walk;
+    // An explicit "land speed not printed" overrides the ledger's generic initial 6 (never defaulted, never 0).
+    if (doc.landSpeedUnspecified === true || system.landSpeedUnspecified === true) ledger.physical.movements.walk = null;
     if (swim !== null) ledger.physical.movements.swim = swim;
     if (fly !== null) ledger.physical.movements.fly = fly;
     if (climb !== null) ledger.physical.movements.climb = climb;
@@ -683,6 +685,9 @@ export class SpeciesGrantLedgerBuilder {
     if (rawLanguages.length) {
       ledger.languages.automatic = [...rawLanguages];
     }
+    // Published restriction: understood but not spoken (species-languages.js).
+    const restrictions = system.languageRestrictions ?? doc.languageRestrictions ?? {};
+    ledger.languages.understands = Object.keys(restrictions).filter(name => restrictions[name] === 'understand-only');
 
     // Check for Bonus Languages flag
     if (system.tags && Array.isArray(system.tags)) {

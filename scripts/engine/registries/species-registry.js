@@ -314,6 +314,8 @@ export class SpeciesRegistry {
           ...(variant.completeSnapshot === true ? {
             completeSnapshot: true,
             sourceProfileId: variant.sourceProfileId ?? null,
+            landSpeedUnspecified: variant.landSpeedUnspecified === true,
+            languageRestrictions: variant.languageRestrictions && typeof variant.languageRestrictions === 'object' ? variant.languageRestrictions : {},
             naturalWeapons: Array.isArray(variant.naturalWeapons) ? variant.naturalWeapons : null,
             primitive: !!variant.primitive,
             suppressedClassProficiencies: Array.isArray(variant.suppressedClassProficiencies) ? variant.suppressedClassProficiencies : [],
@@ -558,6 +560,7 @@ export class SpeciesRegistry {
       retainsConstitution: !!system.retainsConstitution,
       languages: languages,
       variants: this._normalizeVariants(system.variants),
+      languageRestrictions: system.languageRestrictions && typeof system.languageRestrictions === 'object' ? system.languageRestrictions : {},
       knownPublications: Array.isArray(system.knownPublications) ? system.knownPublications.map(p => ({ ...p })) : [],
       canonicalName: system.canonicalName || doc.name,
       description: system.description?.value || system.description || system.shortDescription || '',

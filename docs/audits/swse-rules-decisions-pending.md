@@ -447,3 +447,16 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |
 
 **SPECIES-RD-017 — implementing commit:** `c8e6b64f4d691041c347fa1e2b98e28cd0f9b027` (ruling above; recorded after the commit existed, per the append-only rule).
+
+---
+
+## SPECIES-RD-018 — PROGRESS NOTE: movement and language infrastructure (appended; earlier entries preserved unchanged)
+
+| Field | |
+|---|---|
+| Result | The shared movement authority (`scripts/species/species-movement.js`) now represents "land speed not printed" as its own state: `system.speed = null` with `system.speciesLandSpeedUnspecified = true`, printed fly/swim/hover modes in `system.speciesMovement`, derived `speed.walk/base/total = null` (never 0, never 6) with the printed modes exposed, and the speed-modifier engine no longer adjusts a walk speed that does not exist. The ledger's generic initial walk speed of 6 is overridden by the explicit marker. Ordinary walking species are unchanged. Replacement, A-B-A and idempotent re-application are tested. |
+| Languages | `languageRestrictions` (`understand-only`) is now first-class data on snapshots and Core base records (Celegian, Wookiee and Gamorrean Basic), stored in `flags.swse.speciesLanguageRestrictions`, revoked with the species, queryable through `scripts/species/species-languages.js`. Other audited restrictions (speak only, sign language only) are not modelled and remain display text. |
+| Profile | Celegian is hydrated as `celegian-jatm-2j-02` (Jedi Academy Training Manual p.106: "Speed: Fly 6 squares (hover), swim 10 squares"; "Basic (understand only)"). |
+| Still for the owner | How gameplay should treat a character with no walk speed beyond the displayed modes (for example, whether a "move" action uses the primary printed mode, and what the sheet/token speed shows). Nothing here decides that: the sheet shows the printed modes and no walk speed. No new owner ruling is recorded. |
+| Related finding | `flags.swse.speciesLanguages` was never populated (the pending context copies `ledger.languages` only when it is an array; it is an object). Not changed here because the language step reads the ledger directly. |
+| Status | Infrastructure and profile `OFFLINE_TESTED`; gameplay semantics `DEFERRED_RULES_REVIEW` |

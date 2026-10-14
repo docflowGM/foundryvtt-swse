@@ -28,6 +28,8 @@ const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 export const SPECIES_EXCLUSIVE_RESETS = Object.freeze({
   ...Object.fromEntries(ABILITY_KEYS.map(k => [`system.attributes.${k}.racial`, 0])),
   'system.speciesMovement': {},
+  'system.speciesLandSpeedUnspecified': false,
+  'flags.swse.speciesLanguageRestrictions': {},
   'system.speciesVariant': null,
   'system.speciesCustomName': null,
   'flags.swse.speciesVariant': null,
