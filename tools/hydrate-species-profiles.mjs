@@ -3,7 +3,7 @@
  * Hydrate every source-verified, once-published species from the reviewed Phase 4-B bundle as its sole canonical
  * complete-snapshot profile, and sync that species' base display fields from it.
  *
- *   node tools/hydrate-species-profiles.mjs <bundle.json> [--write] [--only ID,ID] [--report out.md]
+ *   node tools/hydrate-species-profiles.mjs <bundle.json> [--write] [--only ID,ID] [--also ID,ID]
  *
  * Skips Core Rulebook species (reconciled directly on their base records), species published in several profiles
  * (hydrated one profile at a time with add-species-snapshot-variant.mjs), and anything HoldProfile reports.
@@ -21,6 +21,8 @@ const FIXTURE = path.join(ROOT, 'tests/fixtures/species-profile-expectations.jso
 const args = process.argv.slice(2);
 const bundlePath = args.find(a => !a.startsWith('--'));
 const write = args.includes('--write');
+// Profiles of multi-publication species hydrated by this tool (each appended as one more verified version).
+const also = new Set(args.includes('--also') ? args[args.indexOf('--also') + 1].split(',') : []);
 const only = args.includes('--only') ? new Set(args[args.indexOf('--only') + 1].split(',')) : null;
 if (!bundlePath) { console.error('usage: hydrate-species-profiles.mjs <bundle.json> [--write] [--only ID,ID]'); process.exit(2); }
 
@@ -37,7 +39,7 @@ const done = [], held = [], heldMeta = [];
 for (const profile of bundle.sourceProfiles) {
   if (only && !only.has(profile.sourceProfileId)) continue;
   const tag = `${profile.sourceProfileId} ${profile.speciesDisplayName}`;
-  if (perIdentity.get(profile.speciesAuditIdentityKey) > 1) { held.push([tag, 'published in several profiles (separate path)']); continue; }
+  if (perIdentity.get(profile.speciesAuditIdentityKey) > 1 && !also.has(profile.sourceProfileId)) { held.push([tag, 'published in several profiles (separate path)']); continue; }
   if (/^CORE-/.test(profile.sourceProfileId)) { held.push([tag, 'Core Rulebook species: reconciled on the base record']); continue; }
   const idx = byId.get(`species-${slug(profile.speciesDisplayName)}`);
   if (idx === undefined) { held.push([tag, 'no species record']); continue; }
@@ -48,13 +50,16 @@ for (const profile of bundle.sourceProfiles) {
     throw err;
   }
   const { variant, expectation } = out;
-  rec.system.variants = [variant];
-  // Base display fields mirror the sole canonical profile (so lists/cards never show unprinted legacy data).
-  Object.assign(rec.system, {
-    abilityMods: variant.abilityMods, abilities: variant.abilities, size: variant.size, speed: variant.speed,
-    movement: variant.movement, languages: variant.languages, special: variant.special,
-    canonicalTraits: variant.traits.map(t => ({ ...t })),
-  });
+  const multi = perIdentity.get(profile.speciesAuditIdentityKey) > 1;
+  rec.system.variants = multi ? [...(rec.system.variants ?? []).filter(v => v.id !== variant.id), variant] : [variant];
+  if (!multi) {
+    // Base display fields mirror the sole canonical profile (so lists/cards never show unprinted legacy data).
+    Object.assign(rec.system, {
+      abilityMods: variant.abilityMods, abilities: variant.abilities, size: variant.size, speed: variant.speed,
+      movement: variant.movement, languages: variant.languages, special: variant.special,
+      canonicalTraits: variant.traits.map(t => ({ ...t })), naturalWeapons: variant.naturalWeapons.map(w => ({ ...w })),
+    });
+  }
   fixture[variant.id] = expectation;
   done.push([tag, variant.id, out.automation]);
 }

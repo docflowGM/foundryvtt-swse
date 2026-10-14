@@ -32,13 +32,17 @@ for (const name of ['Human', 'Wookiee', 'Devaronian', 'Gand']) {
   assert.equal(checkPublicationSelection(entry(name), null).ok, true);
 }
 assert.ok(entry('Devaronian').variants.length > 0, 'precondition: Devaronian keeps its legacy (non-publication) variant');
-// Barabel: two audited publications, none hydrated -> NOT a single canonical profile; selection is blocked, not defaulted.
-assert.equal(getPublicationVersions(entry('Barabel')).length, 0, 'Barabel publications are held (natural weapons)');
-assert.equal(getKnownPublications(entry('Barabel')).length, 2);
-assert.equal(getPublicationStatus(entry('Barabel')), PUBLICATION_STATUS.MULTIPLE_NOT_IMPLEMENTED);
+// Barabel: two audited publications, both hydrated (natural attacks through the existing item path) -> explicit version choice.
+assert.equal(getPublicationVersions(entry('Barabel')).length, 2);
+assert.equal(getPublicationStatus(entry('Barabel')), PUBLICATION_STATUS.MULTIPLE_VERIFIED);
 assert.equal(requiresPublicationSelection(entry('Barabel')), true);
-for (const id of [null, 'default', 'SV-2F-10', 'GAW-2I-01']) {
-  assert.equal(checkPublicationSelection(entry('Barabel'), id).code, 'NO_IMPLEMENTED_VERSION', `Barabel/${id} blocked`);
+assert.equal(checkPublicationSelection(entry('Barabel'), null).code, 'NO_VERSION_SELECTED');
+assert.equal(checkPublicationSelection(entry('Barabel'), 'barabel-sv-2f-10').ok, true);
+assert.equal(checkPublicationSelection(entry('Barabel'), 'barabel-gaw-2i-01').ok, true);
+{ // Known publications with no implementable version stay blocked (never a silent default).
+  const held = { name: 'Held', variants: [], knownPublications: [{ sourceProfileId: 'A' }, { sourceProfileId: 'B' }] };
+  assert.equal(getPublicationStatus(held), PUBLICATION_STATUS.MULTIPLE_NOT_IMPLEMENTED);
+  for (const id of [null, 'default', 'A']) assert.equal(checkPublicationSelection(held, id).code, 'NO_IMPLEMENTED_VERSION', `held/${id} blocked`);
 }
 assert.equal(getPublicationStatus(entry('Human')), PUBLICATION_STATUS.SINGLE_PROFILE);
 assert.equal(getPublicationStatus(entry('Chiss')), PUBLICATION_STATUS.MULTIPLE_VERIFIED);
@@ -91,8 +95,9 @@ assert.equal(getPublicationStatus(entry('Chiss')), PUBLICATION_STATUS.MULTIPLE_V
   assert.equal(ok.identity.variant.id, 'chiss-leg-2c-02');
   assert.equal(ok.identity.variant.sourceProfileId, 'LEG-2C-02');
   assert.ok(await buildPendingSpeciesContext(actor, entry('Human').id, { source: 'progression' }), 'single-profile species: no extra selection');
-  assert.equal(await buildPendingSpeciesContext(actor, entry('Barabel').id, { source: 'progression' }), null, 'Barabel: no context without an implemented publication');
-  assert.equal(await buildPendingSpeciesContext(actor, { ...entry('Barabel'), selectedVariantId: 'SV-2F-10' }, { source: 'progression' }), null);
+  assert.equal(await buildPendingSpeciesContext(actor, entry('Barabel').id, { source: 'progression' }), null, 'Barabel: no context without an explicit version');
+  assert.equal(await buildPendingSpeciesContext(actor, { ...entry('Barabel'), selectedVariantId: 'SV-2F-10' }, { source: 'progression' }), null, 'a source-profile id is not a version id');
+  assert.ok(await buildPendingSpeciesContext(actor, { ...entry('Barabel'), selectedVariantId: 'barabel-gaw-2i-01' }, { source: 'progression' }), 'a verified Barabel version builds');
 }
 
 // ---- Existing-actor compatibility is derived from the ACTOR's recorded configuration, never from a caller flag ----
@@ -109,7 +114,7 @@ assert.equal(getPublicationStatus(entry('Chiss')), PUBLICATION_STATUS.MULTIPLE_V
   assert.equal(await buildPendingSpeciesContext(recorded('Chiss', 'chiss-leg-2c-02'), entry('Chiss').id, { source: 'drag-drop' }), null, 'switching to unversioned base is a new selection');
   assert.equal(await buildPendingSpeciesContext(recorded('Chadra-Fan', 'chadra-fan-ur-2b-02'), { ...entry('Chadra-Fan'), selectedVariantId: 'chadra-fan-alternate' }, { source: 'drag-drop' }), null, 'switching to a legacy variant is a new selection');
   assert.equal(await buildPendingSpeciesContext(recorded('Barabel'), entry('Barabel').id, { source: 'progression' }) !== null, true, 'existing Barabel actor keeps working');
-  assert.equal(await buildPendingSpeciesContext(makeActor(), entry('Barabel').id, { source: 'progression' }), null, 'new actor cannot select Barabel');
+  assert.equal(await buildPendingSpeciesContext(makeActor(), entry('Barabel').id, { source: 'progression' }), null, 'new actor cannot select Barabel without a version');
   assert.equal(isRecordedConfigurationRestore(null, entry('Chiss'), null), false);
 }
 

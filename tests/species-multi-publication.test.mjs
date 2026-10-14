@@ -146,7 +146,7 @@ assert.ok(!sc('Bith').includes('musical-savant') && !sc('Bith').includes('fragil
 assert.ok(!recs.Chagrian.canonicalTraits.some(t => /Codru-Ji/i.test(t.name)), 'foreign-species sentence removed from Chagrian');
 assert.ok(!recs.Chagrian.special.some(s => /Codru-Ji/i.test(s)));
 
-// ---- Barabel is HELD: both publications print natural attacks, which the hydration tool refuses; no snapshot is added ----
-assert.ok(!recs.Barabel.variants.some(v => v.completeSnapshot), 'Barabel snapshots are held until natural-weapon support exists');
+// ---- Barabel: both publications are verified snapshots with natural attacks (see species-profile-invariants) ----
+assert.equal(recs.Barabel.variants.filter(v => v.completeSnapshot).length, 2, 'Barabel has both audited publications');
 
 console.log('PASS: species multi-publication');

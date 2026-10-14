@@ -17,11 +17,13 @@ for (const [variantId, exp] of Object.entries(fixture)) {
   assert.ok(entry, `${exp.species}: registry entry`);
   const variant = entry.variants.find(v => v.id === variantId);
   assert.ok(variant?.completeSnapshot && variant.sourceProfileId === exp.sourceProfileId, `${exp.species}: snapshot ${variantId} present with provenance`);
-  assert.equal(entry.variants.length, 1, `${exp.species}: sole canonical profile, no legacy variants beside it`);
+  // Once-published species apply their sole profile implicitly; a multi-publication species (Barabel) needs the explicit version (RD-001).
+  const pick = entry.variants.length > 1 ? variantId : null;
+  if (!pick) assert.equal(entry.variants.length, 1, `${exp.species}: sole canonical profile, no legacy variants beside it`);
 
   // A NEW selection needs no version choice (published once) and still applies the snapshot; no variant id is passed.
   const actor = makeActor();
-  const { ctx } = await quiet(() => selectSpecies(actor, exp.species, null, { strict: true }));
+  const { ctx } = await quiet(() => selectSpecies(actor, exp.species, pick, { strict: true }));
   assert.equal(ctx.identity.variant?.id, variantId, `${exp.species}: sole profile applied implicitly`);
   assert.equal(actor.system.speciesVariant.id, variantId);
   assert.equal(actor.system.speciesVariant.sourceProfileId, exp.sourceProfileId);
@@ -53,20 +55,27 @@ for (const [variantId, exp] of Object.entries(fixture)) {
   assert.equal(featGrants.filter(g => !g.target).length, exp.featGrants.filter(g => g.choice).length, `${exp.species} feat choices`);
   assert.deepEqual(grants.filter(g => g.grantType === 'classSkill').map(g => g.targetDisplay).sort(), [...exp.classSkills].sort(), `${exp.species} class skills`);
   assert.equal(grants.filter(g => g.grantType === 'trainedSkill').length, exp.trainedSkillChoices, `${exp.species} trained skill choices`);
+  // Natural weapons: exactly the printed attacks, through the existing species natural-weapon item path.
+  const naturals = actor.items.filter(i => i.type === 'weapon' && i.flags?.swse?.isNaturalWeapon);
+  assert.deepEqual(naturals.map(i => `${i.name}|${i.system.damage.formula}|${i.system.damage.type}`).sort(),
+    exp.naturalWeapons.map(w => `${w.name}|${w.damage}|${w.type}`).sort(), `${exp.species} natural weapons`);
+  assert.ok(naturals.every(i => i.system.source === 'species-natural-weapon' && i.flags.swse.speciesGranted === true && i.flags.swse.alwaysArmed === true), `${exp.species}: natural weapons use the species natural-weapon item contract`);
+  // Starting-proficiency suppression (Primitive) only as printed.
+  assert.deepEqual([...(f.suppressedClassProficiencies ?? [])].sort(), [...exp.suppressedProficiencies].sort(), `${exp.species} suppressed starting proficiencies`);
   // Activated abilities only where the audit identifies the printed ability.
   assert.deepEqual(ctx.ledger.activeSpeciesAbilities.map(a => a.id).filter(id => !exp.namedActivations.some(n => n === id || (id === 'shapeshift' && n === 'shapeshift') || (id === 'energy-surge' && n === 'quick-energy'))), [],
     `${exp.species}: no activated ability the profile does not print`);
 
   // Revocation + A -> B -> A + idempotence through a Core (base-record) species and back.
   const first = structuredClone(speciesFootprint(actor));
-  await quiet(() => selectSpecies(actor, exp.species, null, { strict: true }));
+  await quiet(() => selectSpecies(actor, exp.species, pick, { strict: true }));
   assert.deepEqual(speciesFootprint(actor), first, `${exp.species}: reapplying is idempotent`);
   await quiet(() => selectSpecies(actor, 'Human'));
   assert.equal(actor.system.speciesVariant ?? null, null, `${exp.species}: variant record cleared on replacement`);
   assert.deepEqual(actor.flags.swse.speciesTraitIds?.filter(id => exp.traitIds.includes(id) && !['bonus-feat', 'bonus-trained-skill'].includes(id)) ?? [], [], `${exp.species}: traits revoked`);
-  await quiet(() => selectSpecies(actor, exp.species, null, { strict: true }));
+  await quiet(() => selectSpecies(actor, exp.species, pick, { strict: true }));
   assert.deepEqual(speciesFootprint(actor), first, `${exp.species}: A -> B -> A restores exactly`);
   checked++;
 }
-assert.ok(checked >= 60, `fixture covers the hydrated profiles (${checked})`);
+assert.ok(checked >= 70, `fixture covers the hydrated profiles (${checked})`);
 console.log(`PASS: species profile invariants (${checked} profiles)`);

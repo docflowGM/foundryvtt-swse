@@ -34,8 +34,10 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "heightened-awareness": "structured-rule",
@@ -72,8 +74,10 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [
    "quick-energy"
   ],
@@ -106,8 +110,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "visually-striking": "display-only",
@@ -142,8 +148,10 @@
     "choice": true
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "strength-surge": "display-only",
@@ -177,11 +185,13 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [
    "Stealth",
    "Survival"
   ],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "presence-sense": "display-only",
@@ -216,8 +226,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "darkvision": "display-only",
@@ -250,13 +262,151 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "antennapalps": "display-only",
    "poison-resistance": "display-only",
    "moral-ambiguity": "display-only"
+  }
+ },
+ "barabel-gaw-2i-01": {
+  "species": "Barabel",
+  "sourceProfileId": "GAW-2I-01",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Barabel"
+  ],
+  "traitIds": [
+   "natural-armor",
+   "natural-weapons",
+   "stun-resistance",
+   "radiation-resistance",
+   "darkvision",
+   "primitive",
+   "intimidation-skill-reroll",
+   "jedi-respect-contextual-sidebar"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 2,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   },
+   {
+    "name": "Bite",
+    "damage": "1d6",
+    "type": "piercing"
+   },
+   {
+    "name": "Tail",
+    "damage": "1d6",
+    "type": "bludgeoning"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "natural-weapons": "display-only",
+   "stun-resistance": "display-only",
+   "radiation-resistance": "display-only",
+   "darkvision": "display-only",
+   "primitive": "structured-field",
+   "intimidation-skill-reroll": "display-only",
+   "jedi-respect-contextual-sidebar": "display-only"
+  }
+ },
+ "barabel-sv-2f-10": {
+  "species": "Barabel",
+  "sourceProfileId": "SV-2F-10",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Barabel"
+  ],
+  "traitIds": [
+   "natural-armor",
+   "natural-weapons-claws-teeth-tail",
+   "radiation-resistance",
+   "darkvision",
+   "primitive",
+   "intimidation-skill-reroll"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 2,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   },
+   {
+    "name": "Teeth",
+    "damage": "1d6",
+    "type": "piercing"
+   },
+   {
+    "name": "Tail",
+    "damage": "1d6",
+    "type": "bludgeoning"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "natural-weapons-claws-teeth-tail": "display-only",
+   "radiation-resistance": "display-only",
+   "darkvision": "display-only",
+   "primitive": "structured-field",
+   "intimidation-skill-reroll": "display-only"
   }
  },
  "blood-carver-sv-2f-01": {
@@ -290,8 +440,10 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "conditional-bonus-feat-skill-focus-acrobatics": "structured-rule",
@@ -328,8 +480,10 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [
    "pacifism"
   ],
@@ -337,6 +491,48 @@
    "adept-diplomat": "structured-rule",
    "pacifism": "named-activation",
    "memory-sharing": "display-only"
+  }
+ },
+ "cathar-kotor-2d-03": {
+  "species": "Cathar",
+  "sourceProfileId": "KOTOR-2D-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": -2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 8,
+  "languages": [
+   "Catharese",
+   "Basic"
+  ],
+  "traitIds": [
+   "natural-weapons",
+   "reactive-claw",
+   "cathar-instincts"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Cathar Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-weapons": "display-only",
+   "reactive-claw": "display-only",
+   "cathar-instincts": "display-only"
   }
  },
  "chistori-tog-2k-02": {
@@ -363,8 +559,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [
    "rage"
   ],
@@ -398,8 +596,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [
    "shapeshift",
    "startle"
@@ -434,8 +634,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "bonus-feat-text": "display-only",
@@ -467,8 +669,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "partial-invisibility": "display-only",
@@ -510,8 +714,10 @@
     "requiresTrained": []
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [
    "natural-telepath"
   ],
@@ -544,8 +750,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "athletic": "display-only"
@@ -580,8 +788,10 @@
   },
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "conditional-bonus-feat-text": "display-only",
@@ -613,8 +823,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "impose-order": "display-only",
@@ -646,8 +858,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [
    "pheromones"
   ],
@@ -689,8 +903,10 @@
   },
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "brutal": "display-only",
@@ -698,54 +914,6 @@
    "inborn-resilience": "display-only",
    "low-light-vision": "display-only",
    "stronger-by-age": "display-only"
-  }
- },
- "felucian-tfu-2e-03": {
-  "species": "Felucian",
-  "sourceProfileId": "TFU-2E-03",
-  "abilityMods": {
-   "str": 0,
-   "dex": 0,
-   "con": 2,
-   "int": -2,
-   "wis": 0,
-   "cha": 0
-  },
-  "size": "Medium",
-  "speed": 6,
-  "languages": [
-   "Felucianese"
-  ],
-  "traitIds": [
-   "breathe-underwater",
-   "low-light-vision",
-   "natural-camouflage",
-   "bonus-feat-force-sensitivity",
-   "force-blast",
-   "primitive",
-   "weapon-familiarity"
-  ],
-  "defense": {},
-  "rerolls": [],
-  "featGrants": [
-   {
-    "feat": "Force Sensitivity",
-    "requiresTrained": []
-   }
-  ],
-  "classSkills": [],
-  "trainedSkillChoices": 0,
-  "namedActivations": [
-   "force-blast"
-  ],
-  "automation": {
-   "breathe-underwater": "display-only",
-   "low-light-vision": "display-only",
-   "natural-camouflage": "display-only",
-   "bonus-feat-force-sensitivity": "structured-rule",
-   "force-blast": "named-activation",
-   "primitive": "display-only",
-   "weapon-familiarity": "display-only"
   }
  },
  "fosh-goi-2g-03": {
@@ -777,8 +945,10 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "deceptive": "structured-rule",
@@ -812,8 +982,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "gen-dai-surge": "display-only",
@@ -848,8 +1020,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "exoskeleton": "display-only",
@@ -882,8 +1056,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "energy-reading": "display-only",
@@ -917,8 +1093,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "darkvision": "display-only",
@@ -958,8 +1136,10 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "sturdy": "display-only",
@@ -995,8 +1175,10 @@
   },
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "natural-armor": "structured-rule",
@@ -1038,13 +1220,61 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "natural-armor": "structured-rule",
    "limited-precognition": "display-only",
    "expert-pilot": "structured-rule"
+  }
+ },
+ "ishi-tib-ur-2b-03": {
+  "species": "Ishi Tib",
+  "sourceProfileId": "UR-2B-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Tibranese"
+  ],
+  "traitIds": [
+   "breath-underwater",
+   "ecological-awareness",
+   "expert-swimmer",
+   "natural-weapons",
+   "low-light-vision"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Beak",
+    "damage": "1d6",
+    "type": "piercing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "breath-underwater": "display-only",
+   "ecological-awareness": "display-only",
+   "expert-swimmer": "display-only",
+   "natural-weapons": "display-only",
+   "low-light-vision": "display-only"
   }
  },
  "kaleesh-cw-2h-04": {
@@ -1085,8 +1315,10 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "conditional-bonus-feat-skill-focus-survival": "structured-rule",
@@ -1119,8 +1351,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "predator-s-heritage": "display-only",
@@ -1152,8 +1386,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "dependable-worker": "display-only",
@@ -1186,8 +1422,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "inspired": "display-only",
@@ -1222,8 +1460,10 @@
   },
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "iron-will": "structured-rule"
@@ -1255,14 +1495,20 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
   "namedActivations": [
    "roller"
   ],
   "automation": {
    "mender": "display-only",
-   "primitive": "display-only",
+   "primitive": "structured-field",
    "roller": "named-activation",
    "climbing-skills": "display-only"
   }
@@ -1300,13 +1546,19 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
   "namedActivations": [],
   "automation": {
    "conditional-bonus-feat": "structured-rule",
    "duty-bound": "display-only",
-   "primitive": "display-only",
+   "primitive": "structured-field",
    "warrior-s-awareness": "display-only",
    "weapon-familiarity": "display-only"
   }
@@ -1342,8 +1594,10 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "force-sight": "display-only",
@@ -1382,10 +1636,12 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [
    "Mechanics"
   ],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "skills-mechanics": "structured-rule",
@@ -1428,8 +1684,10 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "lightning-reflexes": "structured-rule",
@@ -1462,12 +1720,18 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
   "namedActivations": [],
   "automation": {
    "low-light-vision": "display-only",
-   "primitive": "display-only",
+   "primitive": "structured-field",
    "scent": "display-only",
    "shadow-swiftness": "display-only"
   }
@@ -1510,13 +1774,64 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "great-fortitude": "structured-rule",
    "natural-armor": "structured-rule",
    "survival-instincts": "structured-rule"
+  }
+ },
+ "nosaurian-tfu-2e-05": {
+  "species": "Nosaurian",
+  "sourceProfileId": "TFU-2E-05",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Nosaurian"
+  ],
+  "traitIds": [
+   "climber-s-heritage",
+   "natural-weapon-horns",
+   "survival-instinct"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "survival",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Horns",
+    "damage": "1d6",
+    "type": "piercing"
+   }
+  ],
+  "classSkills": [
+   "Climb"
+  ],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "climber-s-heritage": "structured-rule",
+   "natural-weapon-horns": "display-only",
+   "survival-instinct": "structured-rule"
   }
  },
  "nyriaanan-goi-2g-12": {
@@ -1547,10 +1862,12 @@
     "choice": true
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [
    "Survival"
   ],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "bonus-class-skill-survival": "structured-rule",
@@ -1582,13 +1899,19 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
   "namedActivations": [],
   "automation": {
    "expert-swimmer": "display-only",
    "hold-breath": "display-only",
-   "primitive": "display-only"
+   "primitive": "structured-field"
   }
  },
  "rakata-kotor-2d-10": {
@@ -1617,8 +1940,14 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
   "namedActivations": [
    "rage"
   ],
@@ -1626,7 +1955,7 @@
    "ancient-knowledge": "display-only",
    "conditional-bonus-feat-text": "display-only",
    "force-blind": "display-only",
-   "primitive": "display-only",
+   "primitive": "structured-field",
    "rage": "named-activation"
   }
  },
@@ -1656,8 +1985,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "musical-beak": "display-only",
@@ -1703,8 +2034,10 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "darkvision": "display-only",
@@ -1736,13 +2069,69 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "breathe-underwater": "display-only",
    "expert-swimmer": "display-only",
    "able-healer": "display-only"
+  }
+ },
+ "shistavanen-ur-2b-06": {
+  "species": "Shistavanen",
+  "sourceProfileId": "UR-2B-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": -2,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Shistavanen"
+  ],
+  "traitIds": [
+   "natural-weapons",
+   "quick-reflexes",
+   "conditional-bonus-feat",
+   "uncanny-tracker",
+   "low-light-vision"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Perception)",
+    "requiresTrained": [
+     "perception"
+    ]
+   }
+  ],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [
+   "Survival"
+  ],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-weapons": "display-only",
+   "quick-reflexes": "display-only",
+   "conditional-bonus-feat": "structured-rule",
+   "uncanny-tracker": "structured-rule",
+   "low-light-vision": "display-only"
   }
  },
  "sluissi-ur-2b-07": {
@@ -1777,8 +2166,10 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "careful-worker": "display-only",
@@ -1809,8 +2200,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "observant": "display-only",
@@ -1847,8 +2240,10 @@
     "requiresTrained": []
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "bonus-feat": "structured-rule",
@@ -1882,8 +2277,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "natural-diplomat": "display-only",
@@ -1928,14 +2325,64 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "conditional-bonus-feat": "structured-rule",
    "force-blind": "display-only",
    "keen-smell": "display-only",
    "natural-armor": "structured-rule"
+  }
+ },
+ "talz-tfu-2e-06": {
+  "species": "Talz",
+  "sourceProfileId": "TFU-2E-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": -2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Talz"
+  ],
+  "traitIds": [
+   "darkvision",
+   "natural-weapon-claws",
+   "conditional-bonus-feat-skill-focus-mechanics"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Mechanics)",
+    "requiresTrained": [
+     "mechanics"
+    ]
+   }
+  ],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "natural-weapon-claws": "display-only",
+   "conditional-bonus-feat-skill-focus-mechanics": "structured-rule"
   }
  },
  "taung-gaw-2i-04": {
@@ -1963,8 +2410,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "armor-training": "display-only",
@@ -2000,8 +2449,10 @@
   },
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "multiple-personalities": "display-only",
@@ -2032,8 +2483,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "bonus-feat-text": "display-only",
@@ -2071,8 +2524,10 @@
   },
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "feline-reflexes": "structured-rule",
@@ -2105,8 +2560,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "pack-hunter": "display-only",
@@ -2146,13 +2603,61 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "flight-hover-restrictions": "display-only",
    "conditional-bonus-feat-skill-focus-deception": "structured-rule",
    "force-resistance": "display-only"
+  }
+ },
+ "trianii-gaw-2i-06": {
+  "species": "Trianii",
+  "sourceProfileId": "GAW-2I-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Trianii"
+  ],
+  "traitIds": [
+   "acrobatic-prowess",
+   "natural-weapons",
+   "prehensile-tail"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "acrobatics",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "acrobatic-prowess": "structured-rule",
+   "natural-weapons": "display-only",
+   "prehensile-tail": "display-only"
   }
  },
  "ubese-sv-2f-08": {
@@ -2194,8 +2699,10 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "aggressive": "display-only",
@@ -2228,8 +2735,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "animal-handler": "display-only",
@@ -2269,8 +2778,10 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "conditional-bonus-feat": "structured-rule",
@@ -2313,8 +2824,10 @@
     "requiresTrained": []
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "dark-side-stigma": "display-only",
@@ -2365,8 +2878,10 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "natural-armor": "structured-rule",
@@ -2399,8 +2914,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 1,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "bonus-trained-skill": "structured-rule",
@@ -2438,8 +2955,10 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "breathe-underwater": "display-only",
@@ -2484,13 +3003,56 @@
     ]
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "conditional-bonus-feat": "structured-rule",
    "natural-armor": "structured-rule",
    "pheromones": "display-only"
+  }
+ },
+ "whiphid-tfu-2e-09": {
+  "species": "Whiphid",
+  "sourceProfileId": "TFU-2E-09",
+  "abilityMods": {
+   "str": 4,
+   "dex": 0,
+   "con": 0,
+   "int": -2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Large",
+  "speed": 6,
+  "languages": [
+   "Whiphid"
+  ],
+  "traitIds": [
+   "insulating-fur",
+   "natural-weapon-claws",
+   "scent"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "insulating-fur": "display-only",
+   "natural-weapon-claws": "display-only",
+   "scent": "display-only"
   }
  },
  "wroonian-sv-2f-12": {
@@ -2527,8 +3089,10 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "free-spirit": "structured-rule",
@@ -2565,10 +3129,12 @@
    }
   ],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [
    "Gather Information"
   ],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [
    "confusion"
   ],
@@ -2576,6 +3142,100 @@
    "confusion": "named-activation",
    "deceptive": "structured-rule",
    "streetwise": "structured-rule"
+  }
+ },
+ "yevetha-gaw-2i-07": {
+  "species": "Yevetha",
+  "sourceProfileId": "GAW-2I-07",
+  "abilityMods": {
+   "str": 2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Yevethan"
+  ],
+  "traitIds": [
+   "mechanical-aptitude",
+   "natural-weapons",
+   "xenophobia"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Retractable Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "mechanical-aptitude": "display-only",
+   "natural-weapons": "display-only",
+   "xenophobia": "display-only"
+  }
+ },
+ "yuzzem-gaw-2i-08": {
+  "species": "Yuzzem",
+  "sourceProfileId": "GAW-2I-08",
+  "abilityMods": {
+   "str": 4,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Large",
+  "speed": 6,
+  "languages": [
+   "Yuzz"
+  ],
+  "traitIds": [
+   "natural-weapons",
+   "physically-intimidating",
+   "scent",
+   "climb-skill-reroll"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "climb",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Bite",
+    "damage": "1d8",
+    "type": "piercing"
+   },
+   {
+    "name": "Claws",
+    "damage": "1d8",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-weapons": "display-only",
+   "physically-intimidating": "display-only",
+   "scent": "display-only",
+   "climb-skill-reroll": "structured-rule"
   }
  },
  "zeltron-leg-2c-08": {
@@ -2601,8 +3261,10 @@
   "defense": {},
   "rerolls": [],
   "featGrants": [],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "empathy": "display-only",
@@ -2643,8 +3305,10 @@
     "requiresTrained": []
    }
   ],
+  "naturalWeapons": [],
   "classSkills": [],
   "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
   "namedActivations": [],
   "automation": {
    "bonus-feat": "structured-rule",

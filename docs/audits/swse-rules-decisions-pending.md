@@ -271,3 +271,33 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+---
+
+## SPECIES-RD-012 — RESOLUTION NOTE (appended; the original entry above is preserved unchanged)
+
+| Field | |
+|---|---|
+| Nature | The Barabel hold was a technical blocker, not a rules question. |
+| Resolution | Both audited publications are now verified snapshots (`barabel-sv-2f-10`, `barabel-gaw-2i-01`). Their printed natural attacks are granted through the existing species natural-weapon item path (ledger → `species-natural-weapon` weapon items); the selection policy now requires an explicit version through the existing selector. |
+| Tests | `tests/species-natural-weapons.test.mjs`, `tests/species-profile-invariants.test.mjs` |
+| Status | `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |
+
+---
+
+## SPECIES-RD-015 — Lugubraa natural attacks: damage types are not printed
+
+| Field | |
+|---|---|
+| Rules domain | Species / natural weapons |
+| Feature | Lugubraa — barbed tentacles (1d6) and teeth (1d4) (The Unknown Regions, UR-2B-13, printed p.135) |
+| Source | The Unknown Regions p.135 (page evidence in the local-only audit bundle) |
+| Evidence | The audit records die size for both attacks and records the damage type as not printed. |
+| Confirmed behavior | Two natural attacks with the stated dice exist. |
+| Unresolved question | The damage type of each attack. The natural-weapon item path would otherwise default a type. |
+| Options | None supported by the printed text. |
+| Recommended ruling | None |
+| Implementation impact | The Lugubraa profile is held (not hydrated); the legacy base record is unchanged. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

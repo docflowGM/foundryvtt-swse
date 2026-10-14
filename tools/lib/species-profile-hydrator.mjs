@@ -159,7 +159,44 @@ export function compileFeature(f) {
   };
 }
 
-const SUPPRESSION = new Set(['STARTING_PROFICIENCY_SUPPRESSION', 'STARTING_CLASS_FEAT_OVERRIDE']);
+const titleWords = text => String(text).replace(/-/g, ' ').replace(/\b([a-z])/g, c => c.toUpperCase());
+
+/**
+ * Natural attacks go through the existing species natural-weapon path (ledger -> species-natural-weapon item), so only
+ * the properties that path carries are accepted: a name, a dice damage, a printed damage type, always armed. A profile
+ * carrying anything else (unprinted damage type, no-AoO / counts-as properties, ...) is held, never approximated.
+ */
+function compileNaturalWeapons(snap, speciesSlug) {
+  const profiles = (snap.naturalAttackProfiles ?? []).length ? snap.naturalAttackProfiles : (snap.naturalWeapons ?? []);
+  const out = [];
+  for (const p of profiles) {
+    const first = p.attackProfiles?.[0];
+    const featureName = (snap.features ?? []).find(f => f.featureId === p.featureId && /\(([^)]+)\)/.test(f.name))?.name.match(/\(([^),]+)\)/)?.[1];
+    // profileId such as "sv-barabel-claws" / "gaw-3i-07-retractable-claws": drop the publication code, number and species tokens.
+    const speciesTokens = new Set(String(speciesSlug).split('-'));
+    const idName = typeof p.profileId === 'string'
+      ? p.profileId.split('-').filter((t, i, all) => !(all.slice(0, i).every(x => /^(sv|gaw|tfu|tog|kotor|ur|goi|cw|leg|jatm|core)$|^\d+[a-z]?$/.test(x) || speciesTokens.has(x)) && (/^(sv|gaw|tfu|tog|kotor|ur|goi|cw|leg|jatm|core)$|^\d+[a-z]?$/.test(t) || speciesTokens.has(t)))).join('-') || null
+      : null;
+    const name = p.weaponName ?? p.attackName ?? p.name ?? featureName ?? idName;
+    const damage = typeof p.damage === 'string' ? p.damage : first?.damage?.formula;
+    const type = p.type ?? p.damageType ?? first?.damage?.type;
+    if (!name || !/^\d+d\d+$/.test(String(damage ?? ''))) throw new HoldProfile(`natural attack without printed dice damage (${name ?? 'unnamed'})`);
+    if (!type) throw new HoldProfile(`natural attack "${name}": damage type not printed`);
+    const extras = ['doesNotProvokeAOO', 'countsAs', 'threatensAdjacentSquares', 'damageBonusAbility'].filter(k => p[k] !== undefined);
+    if (extras.length) throw new HoldProfile(`natural attack "${name}" carries ${extras.join(', ')} which the weapon item cannot represent`);
+    if (p.alwaysArmed === false || first?.alwaysArmed === false) throw new HoldProfile(`natural attack "${name}" is not always armed`);
+    out.push({
+      id: p.profileId ?? p.id ?? slug(name), name: titleWords(name), damage, type: String(type).toLowerCase(),
+      alwaysArmed: true, category: 'melee', attackAbility: 'str',
+      sourceFeatureId: p.featureId ?? p.sourceFeatureId ?? null, sourcePrintedPage: p.sourcePrintedPage ?? null,
+    });
+  }
+  return out;
+}
+
+const SUPPRESSION = new Set(['STARTING_PROFICIENCY_SUPPRESSION', 'STARTING_CLASS_FEAT_OVERRIDE', 'LEVEL_ONE_STARTING_PROFICIENCY_SUPPRESSION', 'FIRST_LEVEL_WEAPON_PROFICIENCY_SUPPRESSION', 'STARTING_PROFICIENCY_RESTRICTION']);
+const suppressionFeats = m => (m.suppressedStartingClassFeats || m.suppressStartingClassBonusFeats || m.denyClassStartingFeats
+  || (Array.isArray(m.suppressStartingClassWeaponProficiencies) ? m.suppressStartingClassWeaponProficiencies.map(g => `Weapon Proficiency (${g})`) : null) || []);
 const titleCase = text => String(text).replace(/\b([a-z])/g, c => c.toUpperCase());
 
 /** @returns {{variant: object, expectation: object, automation: Array<{feature:string, automation:string}>}} */
@@ -168,7 +205,7 @@ export function hydrateProfile(profile, record) {
   const snap = profile.sourceRuleSnapshot;
   if (snap.abilityModifierVariants?.length || snap.abilityScoreGeneration) throw new HoldProfile('ability-choice / ability generation support');
   if (snap.sizeVariation) throw new HoldProfile('size variation support');
-  if ((snap.naturalAttackProfiles ?? []).length || (snap.naturalWeapons ?? []).length) throw new HoldProfile('natural-weapon support');
+  const naturalWeapons = compileNaturalWeapons(snap, slug(profile.speciesDisplayName));
   if (!snap.features) throw new HoldProfile('no audited features');
   if (!Array.isArray(snap.automaticLanguages) || !snap.automaticLanguages.length) throw new HoldProfile('automatic languages not recorded in the audit');
   const m = snap.movementSquares;
@@ -183,13 +220,14 @@ export function hydrateProfile(profile, record) {
   const movement = { walk: m.land, swim: m.swim ?? null, fly: m.fly ?? null, climb: null, hover: null, glide: null, burrow: null, bySize: {} };
 
   const compiled = snap.features.map(compileFeature);
+  for (const c of compiled) if (SUPPRESSION.has(snap.features.find(f => f.featureId === c.trait.sourceFeatureId)?.classification)) c.automation = 'structured-field';
   const ids = compiled.map(c => c.trait.id);
   if (new Set(ids).size !== ids.length) throw new HoldProfile(`duplicate trait ids (${ids.join(', ')})`);
   const traits = compiled.map(c => c.trait);
 
   const suppressionFeature = snap.features.find(f => SUPPRESSION.has(f.classification));
   const suppressed = suppressionFeature
-    ? (suppressionFeature.mechanics?.suppressedStartingClassFeats || suppressionFeature.mechanics?.suppressStartingClassBonusFeats || []).map(titleCase)
+    ? suppressionFeats(suppressionFeature.mechanics ?? {}).map(titleCase)
     : [];
   if (suppressionFeature && !suppressed.length) throw new HoldProfile('proficiency suppression without a feat list');
 
@@ -209,7 +247,7 @@ export function hydrateProfile(profile, record) {
     skillBonuses: [],
     special: traits.map(t => t.name),
     languages: snap.automaticLanguages.map(l => l.name),
-    naturalWeapons: [],
+    naturalWeapons,
     ...(suppressed.length ? { primitive: true, suppressedClassProficiencies: suppressed } : {}),
     description: `${profile.speciesDisplayName} as printed in ${profile.publication}. Complete publication snapshot; no traits are inherited from other publications.`,
     traits,
@@ -226,8 +264,10 @@ export function hydrateProfile(profile, record) {
     defense: Object.fromEntries(rulesOf('defenseModifier').map(r => [r.defense, { value: r.value, bonusType: r.bonusType }])),
     rerolls: rulesOf('reroll').map(r => ({ skillId: r.triggeredBy.skillId, outcome: r.outcome })),
     featGrants: rulesOf('featGrant').map(r => (r.choice ? { choice: true } : { feat: r.featName, requiresTrained: r.requirements.map(q => q.skill) })),
+    naturalWeapons: naturalWeapons.map(w => ({ name: w.name, damage: w.damage, type: w.type })),
     classSkills: rulesOf('classSkillGrant').flatMap(r => r.skills),
     trainedSkillChoices: rulesOf('trainedSkillChoice').length,
+    suppressedProficiencies: suppressed,
     namedActivations: compiled.filter(c => c.automation === 'named-activation').map(c => c.trait.id),
     automation: Object.fromEntries(compiled.map(c => [c.trait.id, c.automation])),
   };
