@@ -1,6 +1,6 @@
-# SWSE V2 Modification System — Replacement Architecture and Gate-Plan Amendment (proposal, revision 2)
+# SWSE V2 Modification System — Replacement Architecture and Gate-Plan Amendment (proposal, revision 3)
 
-**Revision 2 (2026-10-14)** applies the independent review's seven corrections: source-verification vs owner-decision statuses (3.2, 3.4, register), specification authority (4.3), `definitionId` vs `typedDefinitionId` (3, 3.3, 5.3), per-component certification and complete selectability conditions (3.4), generated-data distribution and integrity (4.5), transaction atomicity limitation (5.5), and the interim installation policy (9.2). Documentation only.
+**Revision 3 (2026-10-14)** applies three final corrections: an isolated Foundry integration-test route that resolves the `FOUNDRY_TESTED` bootstrap circularity (3.5), domain-specific `runtimeSelectable` with matching G2/G3/G7 requirements (3, 3.4, 7.1, 8), and consistent specification-authority wording (4.1, 4.3, 7.1, 9.3). **Revision 2 (2026-10-14)** applies the independent review's seven corrections: source-verification vs owner-decision statuses (3.2, 3.4, register), specification authority (4.3), `definitionId` vs `typedDefinitionId` (3, 3.3, 5.3), per-component certification and complete selectability conditions (3.4), generated-data distribution and integrity (4.5), transaction atomicity limitation (5.5), and the interim installation policy (9.2). Documentation only.
 **Status:** design package for independent architectural review and owner approval. **Documentation only. No code, data, catalog, pack, engine, template, style or gameplay change accompanies this document.** Nothing here is authorized for implementation until approved.
 **Baseline:** `origin/main` `23f6ca4148a6829f8cfdd727987a015c4977408a` (G1 merged: PR #1038).
 **Companion documents:** `docs/audits/modification-v2-legacy-inventory.md` (legacy inventory) and `docs/audits/swse-rules-decisions-pending.md` (append-only rules decision register, seeded here).
@@ -97,7 +97,9 @@ RuntimeModification  (schema id: swse.modification.runtime/1)
                           slotPool,                            registry slotPoolId (null when none)
                           applicability{ registryValue, domainBasis, hostEligibility:"not_established" },
                           accounting{ eligible:boolean, reasons[] },
-                          effects{ operations[] verbatim, registryEffectStatus, automation:"none"|... } }
+                          effects{ operations[] verbatim, registryEffectStatus, automation:"none"|... },
+                          runtimeSelectable }                  boolean, PER TYPED DOMAIN DEFINITION; false until every
+                                                               condition in 3.4 holds for THIS typedDefinitionId
   procedures            ids of registry procedures that govern install/removal/specialist work
   status                per RULES COMPONENT (see 3.4), not per record:
                         { components: { cost, description, hostPrerequisites, executableEffect, installProcedure },
@@ -105,7 +107,6 @@ RuntimeModification  (schema id: swse.modification.runtime/1)
                                  OFFLINE_TESTED, FOUNDRY_TESTED : boolean, set independently,
                                  pendingSource[] : register ids (PENDING_SOURCE_VERIFICATION),
                                  deferred[]      : register ids (DEFERRED_RULES_REVIEW) } }
-  runtimeSelectable     boolean (false for every record until every condition in 3.4 holds)
 ```
 
 ### 3.1 Field semantics and certification rules
@@ -118,7 +119,7 @@ RuntimeModification  (schema id: swse.modification.runtime/1)
   - `applicability.hostEligibility` is always `"not_established"`; `effects.automation` is always `"none"` in generated output.
 - **Unknowns are values, not defaults.** A missing or unstated fact is `null`/`unknown` with a reason code. Nothing is coerced to `0`, `1`, `false` or an empty permission.
 - **Slot pools stay separate.** A record keeps its registry pool (`general-upgrades`, `lightsaber-primary-crystal`, `lightsaber-accessory`, or none). Only `general-upgrades` is counted by the general slot authority; lightsaber pools remain uncertified (register D-011).
-- **Research-only records are visible but inert.** All 186 records are generated, including the 58 pending-rules-text definitions, so players and GMs can read verified descriptions. A record with `runtimeSelectable: false` cannot be installed or applied.
+- **Research-only records are visible but inert.** All 186 records are generated, including the 58 pending-rules-text definitions, so players and GMs can read verified descriptions. A typed domain definition with `runtimeSelectable: false` cannot be installed or applied. There is no parent-level selectable flag; certification for one domain never authorizes another (for example armor certified, weapon not).
 
 ### 3.2 The status vocabulary (kept independent)
 
@@ -143,16 +144,25 @@ An installed modification is a small instance record on the host Item: `{ instan
 
 Source verification is tracked **independently per rules component**: `cost`, `description`, `hostPrerequisites`, `executableEffect`, `installProcedure`. A verified cost does not certify an incomplete description, a host prerequisite, an executable effect or an installation procedure. The generator may derive component flags only from the registry evidence that covers that component (for example a table-verified slot cost certifies `cost` only).
 
-A ledger entry alone never makes a modification selectable. `runtimeSelectable` may be true only when **all** of these hold for the typed definition:
+A ledger entry alone never makes a modification selectable. `domains.<d>.runtimeSelectable` may be true only when **all** of these hold for that **typed domain definition** (its own `typedDefinitionId`; evidence for a sibling domain, or for the parent, does not count):
 
 1. `cost`, `description`, `hostPrerequisites` and `installProcedure` are `SOURCE_VERIFIED` and have empty `pendingSource[]` and `deferred[]`;
 2. host eligibility is established by certified host facts (the Phase 1b `not_established` result has been replaced by an approved, evidence-backed rule for that definition and domain);
 3. the installation procedure (DC, time, cost basis, failure and removal consequences, register D-001) is certified and specified;
 4. every claimed effect is `MECHANIC_SPECIFIED`, `IMPLEMENTED` and `OFFLINE_TESTED` (effects not claimed remain description-only);
-5. `FOUNDRY_TESTED` for the install/remove flow of that domain;
+5. `FOUNDRY_TESTED` for the install/remove flow of that typed definition and domain, obtained through the isolated integration-test route of 3.5 (never through production selectability);
 6. a validated ledger entry referencing the commit and tests that justify 1–5.
 
-Accounting eligibility (`accounting.eligible`) is a different, narrower fact: a certified cost for counting an already-recorded installation. It never satisfies any of the above.
+Any lookup that answers "may this be installed" is keyed by `typedDefinitionId` (equivalently, parent id + domain); a parent id alone is never accepted. Accounting eligibility (`accounting.eligible`) is a different, narrower fact: a certified cost for counting an already-recorded installation. It never satisfies any of the above.
+
+### 3.5 Isolated Foundry integration-test route (PROPOSAL)
+
+Condition 5 of 3.4 would be circular if the only way to run the install flow were through production selectability. The bootstrap is resolved by a strictly isolated test route:
+
+- **Candidates:** a typed domain definition may be exercised only if it already satisfies 3.4 conditions 1–4 (source-verified components, established host eligibility, certified procedure, specified/implemented/offline-tested effects). Anything less is refused by the route.
+- **Isolation:** the route is a separate, explicitly named entry point that takes the candidate's `typedDefinitionId` as an explicit argument, runs the same planner/executor, and never changes `runtimeSelectable`, the catalog, the ledger or any packaged data. It is unavailable in ordinary gameplay: not registered in normal startup, requiring GM permission and an explicit test-mode setting that defaults off, operating only on designated test actors/items, and absent from player-facing UI. Its gating is itself offline-tested (refuses when test mode is off, for non-GM users and for non-candidates; cannot write the ledger).
+- **Evidence, not promotion:** a successful run produces a recorded test result (commit, definition, domain, script version). A subsequent, reviewed ledger change cites that evidence to set `FOUNDRY_TESTED` and, if every other condition holds, enables production selectability for exactly that typed definition. The route never promotes anything itself.
+- **G7:** first-time certification runs through this route; the production flow (with `runtimeSelectable: true`) is used for regression of already-certified definitions.
 
 ## 4. Deterministic registry-to-runtime transformation (PROPOSAL)
 
@@ -166,7 +176,7 @@ immutable v1.5 JSON ──(G1 validator, trusted producer)──▶ validated sn
   data/audits/ (research, never loaded)        data/modifications/runtime-definitions-v1.5.json (generated, derived)
 ```
 
-- **Input:** only a validated snapshot handle produced by the G1 validator's trusted producer (offline), plus two small hand-maintained inputs: the status ledger and the owner-approved specification records (4.3). Nothing else.
+- **Input:** only a validated snapshot handle produced by the G1 validator's trusted producer (offline), plus two small hand-maintained inputs: the status ledger and the specification records (4.3), which follow normal independent review. Nothing else.
 - **Output:** one generated file, with a header recording the registry version and SHA-256, the generator version, and the SHA-256 of the output body. No timestamps, no randomness, stable key and record order (registry order), canonical JSON serialization.
 - **Location (ENGINEERING, needs approval):** `data/modifications/runtime-definitions-v1.5.json`. It is deliberately outside `data/audits/` (research, classified as historical evidence). It needs its own reviewed authority classification, as the G1 review requires for the runtime-ready representation.
 - **Check mode:** `node tools/build-modification-runtime.mjs --check` regenerates in memory and fails if the committed file differs, like the repository's other generators (`build-*-production.mjs --check`). It is a CI step.
@@ -175,7 +185,7 @@ immutable v1.5 JSON ──(G1 validator, trusted producer)──▶ validated sn
 
 The generator may *derive* the fields in 3.1 and *copy* everything else. It may not:
 - set `MECHANIC_SPECIFIED`, `IMPLEMENTED`, `OFFLINE_TESTED` or `FOUNDRY_TESTED`;
-- set `runtimeSelectable` to true unless a validated ledger entry says so;
+- set any domain's `runtimeSelectable` to true unless a validated ledger entry says so **and** that typed definition independently satisfies every 3.4 condition (the ledger is necessary, never sufficient);
 - convert `conditional`, `not_specified`, unstated or non-credit values into numbers;
 - merge records, rename ids, infer a domain from names, or read `existingCatalogKeys`;
 - drop a record or a pending/excluded flag (all 186 appear; Droidification is flagged excluded);
@@ -274,13 +284,13 @@ G8 keeps its name and its independent approval. It is placed where it logically 
 |---|---|---|---|---|
 | **G1** | — | Snapshot, manifest, validator | Done (merged) | — |
 | **A0** | — | This amendment | Independent review and owner approval | G1 |
-| **G2** | old G2 (adapter + crosswalk) | Runtime schema, deterministic generator with `--check` CI, generated definitions, trusted offline producer integration, status-ledger and specification-record validators, V10′, authority classification, register maintenance. **No loader, no consumer.** | Independent review | A0 |
-| **G3** | old G3 (shadow comparison) | Pure offline parts: catalog read model (data passed in), planner, price resolution (tagged), the slot closure feeding Phase 1a, legality framework that fails closed. Offline tests. A throwaway, test-only comparison of legacy results against V2 results is allowed as a research aid (section 2.3). | Independent review | G2 |
+| **G2** | old G2 (adapter + crosswalk) | Runtime schema, deterministic generator with `--check` CI, generated definitions, trusted offline producer integration, status-ledger and specification-record validators (including that `runtimeSelectable` exists only on typed domain definitions, that a parent-level flag is rejected, and that no ledger entry can set it unless the typed definition meets 3.4), V10′, authority classification, register maintenance. **No loader, no consumer.** | Independent review | A0 |
+| **G3** | old G3 (shadow comparison) | Pure offline parts: catalog read model (data passed in), planner, price resolution (tagged), the slot closure feeding Phase 1a, legality framework that fails closed. Plans are keyed by typed definition + domain: a plan for one domain is refused if only another domain is certified (tests cover armor-certified/weapon-not and the reverse). Offline tests. A throwaway, test-only comparison of legacy results against V2 results is allowed as a research aid (section 2.3). | Independent review | G2 |
 | **G4** | old G4 + G5 (content corrections, eligibility) | Certified host-fact inputs (for example canonical weapon identity), strictly for rules that are specified. Upstream content corrections (Holo Converter, Halo Lamp, Manual Trigger, KOTOR accessory text, …) as separate producer-side PRs, each with its source. | Per PR; rules items to the register | G2 |
-| **G5** | old G6 (effects) | Effect projection family by family, **only** for `MECHANIC_SPECIFIED` effects; everything else stays description-only. | Per family, with owner specifications | G3, owner specifications |
+| **G5** | old G6 (effects) | Effect projection family by family, **only** for `MECHANIC_SPECIFIED` effects; everything else stays description-only. | Per family; specifications from verified published rules follow normal independent review, owner adjudication only for genuine ambiguity, conflict or policy | G3, specifications |
 | **G8** | G8 | Runtime loader: production code loading the generated runtime definitions through the trusted boundary; the narrow packaging allowlist and external integrity pin (4.5); proof that unvalidated or uncertified data cannot reach production; its own classification. | **Separate owner and independent approval (preserved)** | G2, G3 |
 | **G6** | new | The V2 Workbench, the `CommandBus` command, executor wiring to `TransactionEngine`/`ActorEngine`, specialist consumers re-pointed. Foundry-wired. | Independent review | G8, G3, G5 as needed |
-| **G7** | old G7 (test part) | Foundry v13 integration tests and a written manual smoke script; the acceptance gates of section 8. The install/remove test uses a separately certified runtime-selectable modification, never merely an accounting-eligible one. | Owner | G6 |
+| **G7** | old G7 (test part) | Foundry v13 integration tests and a written manual smoke script; the acceptance gates of section 8. The install/remove test uses a separately certified modification, never merely an accounting-eligible one: first-time certification runs through the isolated route of 3.5, and a test asserts that certifying one domain leaves the other domains non-selectable. | Owner | G6 |
 | **G9** | old G7 (retirement part) | Cutover: delete legacy implementations, templates, styles, preloads, settings and hooks; optional prerelease character reset. | **Explicit owner authorization, separately for deletion and for any reset** | G7 |
 
 ### 7.2 Dependency order for replacing legacy parts
@@ -299,7 +309,7 @@ Nothing is deleted before G9, and G9 itself needs explicit owner authorization.
 All must be demonstrated (offline unless stated):
 
 1. **Source integrity:** G1 validator green; generated file `--check` green; the external integrity pin matches (4.5); counts exact (186 / 232 / 231 / 49).
-2. **Non-promotion:** property tests show the generator cannot raise any status flag, make a record selectable without a ledger entry, or turn an unknown into a number.
+2. **Non-promotion:** property tests show the generator cannot raise any status flag, make any typed domain definition selectable without a ledger entry and 3.4 evidence, or set a parent-level flag, or turn an unknown into a number.
 3. **Fail-closed behavior (including that a ledger entry alone cannot make a record selectable and that accounting eligibility never implies installability):** each blocker (not selectable, unknown price, host not established, deferred mechanic, overflow, wrong domain, non-general pool, excluded record, stale snapshot) produces a refused plan with a stable reason code.
 4. **Slot accounting:** the Phase 1a suite passes unchanged with the catalog closure injected; baselines stay 1/1/1/2/3; strips and lightsabers still never certify.
 5. **Pricing:** every registry price type round-trips as its tagged form; unstated and `talent_action_only` prices are never numeric.
@@ -308,7 +318,7 @@ All must be demonstrated (offline unless stated):
 8. **Domain separation:** no weapon definition affects armor or equipment and vice versa.
 9. **No runtime leakage:** static tests show no runtime file references `data/audits/`, the generator, or unvalidated data; the loader is the only importer of generated data.
 10. **Register integrity:** every `deferred[]` id exists; no feature with an open blocking entry is marked implemented.
-11. **Foundry v13 (manual, written script):** open the Workbench on a weapon, armor and equipment Item; read a research-only modification (inert, badged); install and remove a **separately certified, runtime-selectable** modification (all 3.4 conditions hold; accounting eligibility alone is insufficient and an accounting-only record must show as non-installable); confirm slot display, price handling, blockers and re-render behavior; confirm no actor update for UI-only state; confirm combat reads only computed projections.
+11. **Foundry v13 (manual, written script):** open the Workbench on a weapon, armor and equipment Item; read a research-only modification (inert, badged); install and remove a **separately certified** modification (all 3.4 conditions hold; first run through the 3.5 isolated route, confirmed unavailable in normal play, then production-selectable for that typed domain only; accounting eligibility alone is insufficient and an accounting-only record must show as non-installable); confirm slot display, price handling, blockers and re-render behavior; confirm no actor update for UI-only state; confirm combat reads only computed projections.
 12. **Rollback:** every gate is a revertible PR; cutover keeps a tagged pre-cutover commit.
 
 ## 9. Risks, ENGINEERING choices and RULES questions
@@ -344,7 +354,7 @@ Full evidence and impact are in `docs/audits/swse-rules-decisions-pending.md`.
 - Deleting `effect-resolver` removes several combat-visible effects before projection exists: mitigated by the ordering in 7.2.
 - Droid/vehicle code shares files with in-scope code: mitigated by splitting first.
 - Zero-importer findings are static only: mitigated by the dynamic-use check before any deletion.
-- A large owner-approved "specification record" backlog could stall effects: mitigated by implementing only specified effects and showing the rest as description.
+- A large specification backlog could stall effects: mitigated by specifying directly from verified, unambiguous published rules under normal independent review (owner adjudication only for genuine ambiguity, conflict or policy), implementing only specified effects and showing the rest as description.
 - Prerelease character reset is destructive: it needs its own explicit authorization and a recovery tag.
 
 ## 10. Decisions requested from the owner and the independent reviewer
