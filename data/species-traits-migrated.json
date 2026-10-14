@@ -761,26 +761,7 @@
       }
     ],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "ferocity",
-        "name": "Ferocity",
-        "description": "When reduced to half hit points or fewer, an Aqualish gains a +2 species bonus on melee attack rolls and damage rolls until the end of the encounter.",
-        "rules": [
-          {
-            "type": "damageModifier",
-            "attackType": "melee",
-            "target": "damageRoll",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "ferocity-rule-0"
-          }
-        ]
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -11572,25 +11553,7 @@
     "name": "Sullustan",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "spatial-awareness",
-        "name": "Spatial Awareness",
-        "description": "A Sullustan gains a +5 species bonus on Pilot checks and Initiative checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "pilot",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "spatial-awareness-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -12588,42 +12551,7 @@
     "name": "Twi'lek",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "graceful",
-        "name": "Graceful",
-        "description": "A Twi'lek gains a +2 species bonus to Reflex Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "reflex",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "graceful-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "persuasion-training",
-        "name": "Persuasion Training",
-        "description": "A Twi'lek gains a +5 species bonus on Persuasion checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "persuasion",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "persuasion-training-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -14297,37 +14225,8 @@
     "name": "Zabrak",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "battle-hardened",
-        "name": "Battle Hardened",
-        "description": "A Zabrak gains a +2 species bonus to Fortitude Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "fortitude",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "battle-hardened-rule-0"
-          }
-        ]
-      }
-    ],
-    "activatedAbilities": [
-      {
-        "id": "irrepressible",
-        "name": "Irrepressible",
-        "actionType": "free",
-        "usage": {
-          "perEncounter": 1,
-          "perDay": null
-        },
-        "description": "Once per encounter, a Zabrak may ignore the effects of being stunned or dazed for one turn."
-      }
-    ],
+    "structuralTraits": [],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],

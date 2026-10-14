@@ -111,6 +111,31 @@ const CORE = {
     sidecarAbsent: ['keen-senses'],
   },
 
+  // Sullustan (CORE-2A-13): unprinted flat skill bonuses and extra sidecar traits removed.
+  Sullustan: {
+    traits: ['darkvision','expert-climber','heightened-awareness'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['spatial-awareness'],
+  },
+  // Twi'lek (CORE-2A-15): unprinted flat skill bonuses and extra sidecar traits removed.
+  'Twi\'lek': {
+    traits: ['deceptive','great-fortitude','low-light-vision'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['graceful','persuasion-training'],
+  },
+  // Zabrak (CORE-2A-17): unprinted flat skill bonuses and extra sidecar traits removed.
+  Zabrak: {
+    traits: ['heightened-awareness','superior-defenses'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['battle-hardened','irrepressible'],
+  },
+  // Aqualish (CORE-2A-18): unprinted flat skill bonuses and extra sidecar traits removed.
+  Aqualish: {
+    traits: ['bonus-feat','breathe-underwater','expert-swimmer'],
+    skillBonuses: [], naturalWeapons: [], items: [], passives: [],
+    sidecarAbsent: ['ferocity'],
+  },
+
   // Trandoshan (CORE-2A-14): printed traits are Darkvision, Limb Regeneration, Natural Armor, Bonus Feat.
   // Clawed hands are narrative only; there is no natural attack or flat skill bonus, and no hit-point regeneration.
   Trandoshan: {
