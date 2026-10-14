@@ -1,0 +1,641 @@
+{
+ "CORE-2A-01": {
+  "species": "Human",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-02": {
+  "species": "Bothan",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Bothese"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-03": {
+  "species": "Cerean",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 0,
+   "int": 2,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Cerean"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-04": {
+  "species": "Duros",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Durese"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-05": {
+  "species": "Ewok",
+  "variantId": null,
+  "abilityMods": {
+   "str": -2,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Small",
+  "speed": 4,
+  "languages": [
+   "Ewokese"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-06": {
+  "species": "Gamorrean",
+  "variantId": null,
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": -2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Gamorrean"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-07": {
+  "species": "Gungan",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": -2,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Gunganese"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-08": {
+  "species": "Ithorian",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Ithorese"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-09": {
+  "species": "Kel Dor",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Kel Dor"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-10": {
+  "species": "Mon Calamari",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": -2,
+   "int": 2,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Mon Calamarian"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-11": {
+  "species": "Quarren",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Quarrenese"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-12": {
+  "species": "Rodian",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Rodese"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-13": {
+  "species": "Sullustan",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Sullustese"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-14": {
+  "species": "Trandoshan",
+  "variantId": null,
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Dosh"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-15": {
+  "species": "Twi'lek",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Ryl"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-16": {
+  "species": "Wookiee",
+  "variantId": null,
+  "abilityMods": {
+   "str": 4,
+   "dex": -2,
+   "con": 2,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Shyriiwook"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-17": {
+  "species": "Zabrak",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Zabrak"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-18": {
+  "species": "Aqualish",
+  "variantId": null,
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Aqualish",
+   "Basic"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-19": {
+  "species": "Hutt",
+  "variantId": null,
+  "abilityMods": {
+   "str": 2,
+   "dex": -6,
+   "con": 2,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Large",
+  "speed": 2,
+  "languages": [
+   "Basic",
+   "Huttese"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-20": {
+  "species": "Neimoidian",
+  "variantId": "neimoidian-core-2a-20",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Neimoidian",
+   "Pak Pak"
+  ],
+  "naturalAttacks": 0
+ },
+ "CORE-2A-21": {
+  "species": "Yuuzhan Vong",
+  "variantId": "yuuzhan-vong-core-2a-21",
+  "abilityMods": {
+   "str": 2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Yuuzhan Vong"
+  ],
+  "naturalAttacks": 0
+ },
+ "UR-2B-02": {
+  "species": "Chadra-Fan",
+  "variantId": "chadra-fan-ur-2b-02",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Small",
+  "speed": 4,
+  "languages": [
+   "Basic",
+   "Chadra-Fan"
+  ],
+  "naturalAttacks": 0
+ },
+ "UR-2B-04": {
+  "species": "Krevaaki",
+  "variantId": "krevaaki-ur-2b-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Dromnyr"
+  ],
+  "naturalAttacks": 0
+ },
+ "UR-2B-10": {
+  "species": "Chiss",
+  "variantId": "chiss-ur-2b-10",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Cheunh"
+  ],
+  "naturalAttacks": 0
+ },
+ "LEG-2C-01": {
+  "species": "Chagrian",
+  "variantId": "chagrian-leg-2c-01",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Chagri"
+  ],
+  "naturalAttacks": 0
+ },
+ "LEG-2C-02": {
+  "species": "Chiss",
+  "variantId": "chiss-leg-2c-02",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Cheunh"
+  ],
+  "naturalAttacks": 0
+ },
+ "LEG-2C-07": {
+  "species": "Yuuzhan Vong",
+  "variantId": "yuuzhan-vong-leg-2c-07",
+  "abilityMods": {
+   "str": 2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Yuuzhan Vong"
+  ],
+  "naturalAttacks": 0
+ },
+ "LEG-2C-12": {
+  "species": "Chadra-Fan",
+  "variantId": "chadra-fan-leg-2c-12",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 2
+  },
+  "size": "Small",
+  "speed": 4,
+  "languages": [
+   "Basic",
+   "Chadra-Fan"
+  ],
+  "naturalAttacks": 0
+ },
+ "TFU-2E-12": {
+  "species": "Chiss",
+  "variantId": "chiss-tfu-2e-12",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Cheunh"
+  ],
+  "naturalAttacks": 0
+ },
+ "GOI-2G-01": {
+  "species": "Bith",
+  "variantId": "bith-goi-2g-01",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": -2,
+   "int": 2,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Bith"
+  ],
+  "naturalAttacks": 0
+ },
+ "GOI-2G-08": {
+  "species": "Neimoidian",
+  "variantId": "neimoidian-goi-2g-08",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Neimoidian"
+  ],
+  "naturalAttacks": 0
+ },
+ "CW-2H-11": {
+  "species": "Chagrian",
+  "variantId": "chagrian-cw-2h-11",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Chagri"
+  ],
+  "naturalAttacks": 0
+ },
+ "JATM-2J-04": {
+  "species": "Krevaaki",
+  "variantId": "krevaaki-jatm-2j-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Basic",
+   "Dromnyr"
+  ],
+  "naturalAttacks": 0
+ },
+ "TOG-2K-01": {
+  "species": "Bith",
+  "variantId": "bith-tog-2k-01",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": -2,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "languages": [
+   "Bith"
+  ],
+  "naturalAttacks": 0
+ }
+}

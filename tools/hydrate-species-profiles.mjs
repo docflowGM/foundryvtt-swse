@@ -148,6 +148,27 @@ for (const entry of PROVENANCE) {
 }
 if (write) fs.writeFileSync(PACK, recs.map((r, i) => (r ? JSON.stringify(r) : lines[i])).join('\n'));
 console.log(`legacy variants annotated: ${annotated}`);
+// Audit numbers for the profiles this tool does NOT hydrate (Core base records and the separately handled
+// multi-publication snapshots) so they meet the same invariant standard (tests/species-audit-numbers.test.mjs).
+if (write) {
+  const NUMBERS = path.join(ROOT, 'tests/fixtures/species-audit-numbers.json');
+  const out = {};
+  for (const profile of bundle.sourceProfiles) {
+    const kind = held.find(h => h[0].startsWith(profile.sourceProfileId + ' '))?.[2];
+    if (kind !== 'core' && kind !== 'multi') continue;
+    const snap = profile.sourceRuleSnapshot;
+    const A = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+    out[profile.sourceProfileId] = {
+      species: profile.speciesDisplayName,
+      variantId: kind === 'multi' || ['CORE-2A-20', 'CORE-2A-21'].includes(profile.sourceProfileId) ? `${slug(profile.speciesDisplayName)}-${profile.sourceProfileId.toLowerCase()}` : null,
+      abilityMods: Object.fromEntries(A.map(k => [k.toLowerCase(), snap.abilityModifiers?.[k] ?? 0])),
+      size: snap.size, speed: snap.movementSquares?.land ?? null,
+      languages: (snap.automaticLanguages ?? []).map(l => l.name),
+      naturalAttacks: (snap.naturalAttackProfiles ?? []).length,
+    };
+  }
+  fs.writeFileSync(NUMBERS, JSON.stringify(out, null, 1) + '\n');
+}
 const counts = {};
 for (const [, , auto] of done) for (const a of auto) counts[a.automation] = (counts[a.automation] ?? 0) + 1;
 console.log(`${write ? 'WROTE' : 'dry run:'} ${done.length} hydrated, ${held.length} held; feature automation`, counts);
