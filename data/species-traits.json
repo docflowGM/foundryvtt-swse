@@ -11269,25 +11269,8 @@
     "name": "Trandoshan",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "claws",
-        "name": "Claws",
-        "description": "A Trandoshan has natural claw attacks that deal 1d6 points of slashing damage."
-      }
-    ],
-    "activatedAbilities": [
-      {
-        "id": "regeneration",
-        "name": "Regeneration",
-        "actionType": "free",
-        "usage": {
-          "perEncounter": 1,
-          "perDay": null
-        },
-        "description": "A Trandoshan regains hit points equal to its level once per encounter when reduced below half hit points."
-      }
-    ],
+    "structuralTraits": [],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
@@ -12525,26 +12508,9 @@
     "name": "Wookiee",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "mighty",
-        "name": "Mighty",
-        "description": "A Wookiee gains a +4 species bonus to Strength."
-      },
-      {
-        "id": "endurance",
-        "name": "Endurance",
-        "description": "A Wookiee gains a +2 species bonus to Fortitude Defense."
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "rage",
-        "name": "Rage",
-        "description": "When reduced to half hit points or fewer, a Wookiee gains a +2 bonus on melee attack rolls and damage rolls until the end of the encounter."
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -12605,9 +12571,9 @@
         "description": "Once per day, a Wookiee can fly into a Rage as a Swift Action. While Raging, the Wookiee temporarily gains a +2 Rage bonus on melee attack rolls and melee damage rolls, but cannot use Skills that require patience and concentration, such as Mechanics, Stealth, or Use the Force. A fit of Rage lasts for a number of rounds equal to 5 + the Wookiee's Constitution modifier. At the end of its Rage, the Wookiee moves -1 Persistent step along the Condition Track. The penalties imposed by this Persistent Condition persist until the Wookiee takes at least 10 minutes to recuperate, during which time the Wookiee can't engage in any strenuous activity."
       },
       {
-        "id": "weapon-familiarity-bowcaster-and-ryyk-blade",
-        "name": "Weapon Familiarity (Bowcaster and Ryyk Blade)",
-        "description": "Wookiees treat the Bowcaster as a Rifle instead of an Exotic Weapon (Ranged). They additionally treat the Ryyk Blade as an Advanced Melee Weapon instead of an Exotic Weapon (Melee)."
+        "id": "weapon-familiarity",
+        "name": "Weapon Familiarity",
+        "description": "Wookiees with the Weapon Proficiency (rifles) feat are proficient with the bowcaster."
       }
     ],
     "variants": [],
