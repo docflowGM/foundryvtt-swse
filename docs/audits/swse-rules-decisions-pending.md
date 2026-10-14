@@ -481,3 +481,23 @@ Source research referenced here is the local-only Phase 4-B species audit (sourc
 | Distinction | A sidebar language is what the species speaks (narrative); an automatic language is a creation-time grant. The book gives no rule connecting the two. |
 | Result | The hold stands. Neither Dashadi nor Basic is granted automatically without an owner ruling. |
 | Status | `DEFERRED_RULES_REVIEW` |
+
+---
+
+## SPECIES-RD-020 — Near-Human trait mechanism (O'reenian, generic Near-Human)
+
+| Field | |
+|---|---|
+| Decision ID | SPECIES-RD-020 |
+| Rules domain | Species creation — near-Human generation system |
+| Feature | O'reenian (and the generic "Near-Human" pack record) |
+| Source | Unknown Regions, "Creating Near-Humans" with Table 1-4 (Near-Human Traits) and Table 1-5 (Near-Human Variants) in Chapter 1, and the O'reenian entry in the Unknown Regions gazetteer (text-file lines 1452-1700 and 18910; printed page numbers are not recoverable from the text export and need PDF confirmation) |
+| Evidence | The system starts from the Human species and says to select one trait from Table 1-4, "replacing either the bonus trained skill or the bonus feat that Humans normally receive", then one to three cosmetic variants from Table 1-5. The O'reenian entry says O'reenians "have the following traits and variations: Heightened Awareness, Persistent, Eye Variation (black irises), and Skin Color (orange)" and that their native tongue is based on a very old dialect of Bocce. |
+| Confirmed behavior | Table 1-4 describes Heightened Awareness as "Can reroll a Perception check" and Persistent as "Can reroll an Endurance check". |
+| Unresolved question | (1) Two traits are listed for O'reenians although the generation text replaces one Human feature per selected trait choice; the book does not say whether both Human features (bonus trained skill and bonus feat) are replaced. (2) No Automatic Languages line is printed for O'reenians and none is given for the near-Human system, so whether Basic is granted is not printed. (3) Whether a generic near-Human selector (choose trait and variants) should exist as a playable species is a product decision. |
+| Options (source-supported) | For (1): replace both Human features, or replace one and keep the other. For (2): the Human species' printed Basic, or no automatic language line. |
+| Recommended ruling | none |
+| Implementation impact | O'reenian stays as an unhydrated pack record (no complete snapshot). No near-Human mechanism is implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |

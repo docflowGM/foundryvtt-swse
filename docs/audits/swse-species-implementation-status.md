@@ -14,6 +14,11 @@ Every hydrated row is `SOURCE_VERIFIED` against the audit, `DATA_RECONCILED` in 
 | Multi-publication profiles handled separately (Bith, Chadra-Fan, Chagrian, Chiss, Krevaaki, Neimoidian, Yuuzhan Vong) | 15 |
 | Technical holds | 3 |
 
+## Owner rulings applied
+
+- SPECIES-RD-017 (Republic Clone ability scores): `OWNER_APPROVED`, `OFFLINE_TESTED` (implementing commit c8e6b64); not `FOUNDRY_TESTED`. The original question is preserved in the register.
+- SPECIES-RD-015, RD-016, RD-018 (gameplay semantics) and the earlier open items remain `DEFERRED_RULES_REVIEW`.
+
 ## Features of the hydrated profiles
 
 | Category | Features |
@@ -30,7 +35,7 @@ natural-attack column below.
 ## Technical gaps (engineering, not rules questions)
 
 - Printed language choices (Nikto: "Nikto and either Basic or Huttese") are not modelled; only the fixed language is granted.
-- Conditional bonus feats are automated for the requirement types the existing resolver evaluates (skill trained, ability score minimum, base attack bonus minimum, feat owned). A printed "may take" option (Tof: Mighty Swing) is not an automatic grant and stays text; restricted pools and choices stay text. Feat-owned grants are re-checked when an actor update touches skills, attributes or level (adding only a feat item does not trigger a re-check).
+- Conditional bonus feats are automated for the requirement types the existing resolver evaluates (skill trained, ability score minimum, base attack bonus minimum, feat owned). A printed "may take" option (Tof: Mighty Swing) is not an automatic grant and stays text; restricted pools and choices stay text. Re-evaluation runs on actor updates that touch skills, attributes or level and, through registered createItem/deleteItem hooks, when a feat item is added or removed (a deletion re-evaluates only actors whose deferred entries were marked as satisfied by an independent feat; there is no revocation of an already-granted species feat).
 - Pacifism (Caamasi), Confusion (Yarkora), Force Blast (Felucian), Shapeshift (Clawdite), Natural Telepath (Draethos) and the other unverified engine entries are suppressed for published profiles because the engine behaviour differs from, or goes beyond, the audited text.
 - Darkvision / Low-light Vision, conditional skill bonuses and defenses, and activated abilities without a verified engine entry are display-only.
 - Small-size Stealth (+5) is a general size rule and is not applied by species data (see register RD-007).

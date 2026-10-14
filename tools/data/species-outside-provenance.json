@@ -1,0 +1,207 @@
+{
+ "Anomid": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Arcona": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Bardottan": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Chevin": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Drall": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Dressellian": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Hiss'sssi": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Jenet": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Kal-Dexar": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Kessurian": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Mirialan": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Nazren": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Ortolan": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Phindian": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Vaathkree": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally.",
+  "note": "Pack record originates from data/species-canonical-stats.json or the legacy pack; its recorded source book cannot be confirmed from the local text. Needs the PDF or a book not in the local set."
+ },
+ "Amani": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Only 'Amanin' (an unrelated Galaxy at War faction, line 5994) and substring noise appear; no 'Amani' species in any local text.",
+  "note": "Pack record has canonicalStats sourceLine 2490 from an external compilation, not one of the 14 local books."
+ },
+ "Anx": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Clone Wars Campaign Guide line 18150: 'an Anx scientist named Pollux Poi' (in-world mention only); no species traits block.",
+  "note": ""
+ },
+ "Besalisk": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Scavenger's Guide to Droids line 374: an NPC described as a Besalisk arms dealer; no species traits block.",
+  "note": ""
+ },
+ "Kubaz": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Scavenger's Guide to Droids line 14881: single in-world mention; no species traits block.",
+  "note": ""
+ },
+ "Elom": {
+  "classification": "MISIDENTIFIED_RECORD",
+  "evidence": "Galaxy of Intrigue lines 11646-12334 name the planet Elom and the species Elomin; no species named 'Elom'. The pack already has a separate audited 'Elomin' species.",
+  "note": "Candidate for owner-approved merge/redirect; nothing is merged or deleted here. Legacy variant 'elomite-variant' is unaffected."
+ },
+ "Geonosian": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Mentioned in Clone Wars Campaign Guide (planet entry 'Sapient Species: 100% Geonosian', line 9570), Core Rulebook (battle droid design, lines 18823-18949), Galaxy at War, Unknown Regions, Threats; no species traits block.",
+  "note": "Pack record has canonicalStats sourceLine 1228 from an external compilation, not a local book."
+ },
+ "Gree": {
+  "classification": "NOT_FOUND_IN_LOCAL_TEXT",
+  "evidence": "Whole-word 'Gree' hits are fragments only; no Gree species in any local text.",
+  "note": "Name does not appear in any of the 14 local sourcebook texts (whole-word search, plus edit-distance-2 OCR variants); pack stats cannot be verified locally."
+ },
+ "Gundark": {
+  "classification": "CREATURE_ONLY",
+  "evidence": "Threats of the Galaxy line 10742 has a GUNDARK creature entry (and Legacy Era 'Shaped Gundark' at line 21291); a creature statistics block, not a playable species block.",
+  "note": "Pack species record is not backed by a printed species traits block."
+ },
+ "Hapan": {
+  "classification": "NEAR_HUMAN_DESCRIPTION_ONLY",
+  "evidence": "Galaxy of Intrigue line 9843 'THE HAPANS': 'a species of attractive near-Humans'; the only mechanical remark is 'weak night vision' flavor. No species traits block, ability modifiers or languages are printed in the local text.",
+  "note": "Whether Hapan has a published playable profile in a book outside the local set is unknown."
+ },
+ "Kiffar": {
+  "classification": "NEAR_HUMAN_NPC_ONLY",
+  "evidence": "Clone Wars Campaign Guide line 12725: an NPC stat block 'Medium Kiffar (Near-Human) Jedi'; no species traits block.",
+  "note": "Appears as a near-Human NPC only."
+ },
+ "Koorivar": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Clone Wars Campaign Guide lines 16766-16970: in-world description of the species and the Koorivar Fusiliers; no species traits block.",
+  "note": ""
+ },
+ "Mustafarian": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Clone Wars Campaign Guide lines 9968-10009: planet entry (Mustafar) describing Mustafarians; no species traits block.",
+  "note": ""
+ },
+ "Muun": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Clone Wars Campaign Guide (Muunilinst planet entry, line 10051; language lines), Force Unleashed, KOTOR language lists; no species traits block.",
+  "note": ""
+ },
+ "Near-Human": {
+  "classification": "GENERIC_RULE_RECORD",
+  "evidence": "Unknown Regions line 1452 'NEAR-HUMANS' and 'CREATING NEAR-HUMANS' (Table 1-4: Near-Human Traits; Table 1-5: Near-Human Variants): a creation system layered on the Human species, not a single species.",
+  "note": "Pack record 'Near-Human' (special: Genetic Drift) is not the printed system. A generic near-Human mechanism is NOT implemented here; see SPECIES-RD-020."
+ },
+ "Nerf (Uplifted)": {
+  "classification": "CREATURE_ONLY",
+  "evidence": "Only mentions of nerf as cattle/herd animals (KOTOR line 13400, Starships line 4533); no uplifted-nerf species in local text.",
+  "note": ""
+ },
+ "O'reenian": {
+  "classification": "NEAR_HUMAN_TEMPLATE",
+  "evidence": "Unknown Regions line 18910 'O'REENIANS': 'Using the rules for creating near-Humans in Chapter 1, O'reenians have the following traits and variations: Heightened Awareness, Persistent, Eye Variation (black irises), and Skin Color (orange).' Native tongue is 'based on a very old dialect of Bocce'. No species traits block, no Automatic Languages line.",
+  "note": "Pack languages ['O'reenian'] (without Basic) and the long trait paragraphs are not printed text. Two traits are listed although Table 1-4 instructs selecting one trait replacing either the Human bonus feat or bonus trained skill; see SPECIES-RD-020."
+ },
+ "Pau'an": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Clone Wars Campaign Guide lines 10395-10414 (Utapau planet entry), Starships line 11383; no species traits block.",
+  "note": "Pack record has canonicalStats sourceLine 2561 from an external compilation; legacy variant 'pau-an-variant' retained."
+ },
+ "Polis Massan": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Clone Wars Campaign Guide lines 10138-10193 (planet entry) and line 5717; no species traits block.",
+  "note": "Pack record has canonicalStats sourceLine 2595 from an external compilation."
+ },
+ "Quermian": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Knights of the Old Republic Campaign Guide line 11161: single in-world mention; no species traits block.",
+  "note": ""
+ },
+ "Sith (Pureblood)": {
+  "classification": "NOT_A_SEPARATE_SPECIES_BLOCK",
+  "evidence": "Knights of the Old Republic Campaign Guide prints species traits blocks for Kissai (line 1317) and Massassi (line 1343) but none for 'Sith' or 'Pureblood'; lines 700, 14326, 15913 mention pureblooded Sith in-world.",
+  "note": "Possibly intended as Kissai/Massassi; no merge or rename performed (both already audited)."
+ },
+ "Skakoan": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Clone Wars Campaign Guide lines 9968-10318 (planet entries, Techno Union), Galaxy of Intrigue line 17348 language list; no species traits block.",
+  "note": "Pack record has canonicalStats sourceLine 2619 from an external compilation."
+ },
+ "Stereb": {
+  "classification": "MENTION_ONLY",
+  "evidence": "Knights of the Old Republic Campaign Guide line 21066: single in-world mention.",
+  "note": "Pack record has canonicalStats sourceLine 2635 from an external compilation."
+ },
+ "Theelin": {
+  "classification": "NEAR_HUMAN_CAPTION_ONLY",
+  "evidence": "Unknown Regions line 1516 caption 'A WROONIAN (LEFT) AND A THEELIN (RIGHT), TWO NEAR-HUMANS'; no traits printed.",
+  "note": "Wroonian is already an audited profile (SV-2F-12)."
+ },
+ "Tusken Raider": {
+  "classification": "NPC_ONLY",
+  "evidence": "Core Rulebook lines 15038-15044 are artwork/combat-example captions; Threats/KOTOR/FU/Rebellion are in-world mentions. No species traits block.",
+  "note": "Pack record has canonicalStats sourceLine 2660 from an external compilation."
+ },
+ "Aing-Tii": {
+  "classification": "FORCE_TRADITION_NOT_PLAYABLE",
+  "evidence": "Jedi Academy Training Manual lines 6479-6600 'AING-TII MONKS': describes the species and a Force tradition; states 'the Aing-Tii species does not lend itself easily to heroic adventuring' and instructs building a monk of another species. No ability modifiers, speed, languages ('Aing-Tii Pheromone' not found in the book), or traits are printed.",
+  "note": "Pack stats (+2 Wis, -2 Cha, 'Sanctuary Teleportation') are unsupported by the local text."
+ },
+ "Replica Droid": {
+  "classification": "PUBLISHED_PLAYABLE_PROFILE",
+  "evidence": "Threats of the Galaxy line 14963: 'New SPECIES: REPLICA DROID' with a full Replica Droid Species Traits block (+2 Str, +2 Dex, -2 Cha, no Constitution; variable Medium/Small size, speed 6/4; Bonus Equipment (choose two systems); Droid Traits; Conditional Bonus Feat Skill Focus (Deception); Automatic Languages: Basic and the native language of the copied species).",
+  "note": "Pack record matches ability/size/speed/traits but lists languages ['Binary','Replicated species native language'] while the book prints 'Basic and the native language of the copied species'. Held as a droid-shell species with a variable-size and a copied-species choice (same engineering dependency as Shard); not hydrated."
+ }
+}
