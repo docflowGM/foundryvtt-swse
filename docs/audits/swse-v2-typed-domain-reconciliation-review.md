@@ -6,14 +6,14 @@
 
 | Input | SHA-256 |
 |---|---|
-| `swse_batch_a_typed_domain_crosswalk_232.csv` (232 rows; not committed) | `06cb541309859bfd157e3fe3b276219b50ec2678f3dda18bdec0d1f762d99fd9` |
+| `swse_batch_a_typed_domain_crosswalk_232.csv` (232 rows; committed as read-only evidence) | `06cb541309859bfd157e3fe3b276219b50ec2678f3dda18bdec0d1f762d99fd9` |
 | `swse_batch_a_source_verification_01.md` | `8eb76ea7ba58f23d4261e7e394937d81ec17d944f2ffdbbbb8724b52282e34da` |
 | `swse_batch_a_source_verification_02.md` | `f12067399840bd49f0a11c51a1e78386c70a53e74680eccb9978e6917266c6a4` |
 | `swse_batch_a_source_verification_03.md` | `3d7438c059c60332cf1e230197b594b93c66c600d37f64f328f265d399a521dc` |
 | `swse_batch_a_source_verification_04_errata_and_crosswalk.md` | `65a5932e852997064ccffaa161b3008a6be5c9b4952d1a750f8276897e2066be` |
 | `swse_v2_batch_a_consolidated_claude_handoff.md` | `bd8ac57f155a58ead96bc5f8de39b080edd9468c609d9ea3560c984eb812a86f` |
 
-The CSV is a derived research inventory. It is deliberately not committed, so it cannot be mistaken for data the generator or loader should read; the hash identifies the exact file reviewed. Source observations in Reports 01-03 are the reviewer's visual inspection of the PDFs. **This implementer has not seen those page images** and records them only as reviewer-reported.
+The CSV is a derived research inventory. It is preserved byte-for-byte as read-only audit evidence at `docs/audits/evidence/batch-a/swse_batch_a_typed_domain_crosswalk_232.csv`, with a README that prohibits any generator, validator, ledger, planner or loader from reading it. The hash above identifies the exact file reviewed and equals the committed copy. Source observations in Reports 01-03 are the reviewer's visual inspection of the PDFs. **This implementer has not seen those page images** and records them only as reviewer-reported.
 
 ## 2. Count and identity reconciliation
 
@@ -46,7 +46,7 @@ None of these affects the identity and count findings above.
 
 ## 3. What the Batch A reports establish, by register entry
 
-Everything in this section is reviewer-reported and unverified by the implementer. It is recorded so that later PRs cite it accurately. Labels follow the handoff: `SOURCE_VERIFIED` (reviewer visually checked), `OWNER_POLICY`, `ERRATA_CANDIDATE`, `ENGINEERING_PROPOSAL`.
+Everything in this section is reviewer-reported and unverified by the implementer. It is recorded so that later PRs cite it accurately. Labels follow the handoff: `SOURCE_VERIFIED` (reviewer visually checked), `OWNER_POLICY`, `ERRATA_CANDIDATE`, `ENGINEERING_PROPOSAL`. **A `SOURCE_VERIFIED` label here is a reviewer-reported finding. It is not the repository's component status of the same name and does not create it:** the repository's `SOURCE_VERIFIED` (ledger and specification records) changes only through its own reviewed process.
 
 | Entry | Finding recorded | Label | Effect on blockers |
 |---|---|---|---|
@@ -80,7 +80,7 @@ Both are reported by the independent reviewer as explicit Project Owner decision
 - **OWNER-TEMPLATE-RETROFIT.** An acquired template item has the template as an inherent property. Later application to existing gear is a request routed to the existing GM-approval workflow; printed conversion procedures take precedence; otherwise the GM decides legality, requirements, cost and time; a denial causes no gameplay or economy mutation; template rarity, eligibility and stacking limits still apply. This answers the template-specific part of Q-005 and Q-028 and does not release D-013 or G6. A design proposal is in `swse-v2-template-retrofit-approval-design-proposal.md`.
 - **OWNER-CANONICAL-ONLY.** The V2 player catalog contains published SWSE content only; homebrew is deferred. No record is added or deleted without a reviewed disposition.
 
-Policies not yet ruled, per the handoff: D-014 (retry cost basis, shortest expedited removal, deactivated state, failed-installation state), D-006 (unpriced modifications), and Q-029 (GM-entered manual outcome). These are asked of the owner in one grouped batch after the errata and source evidence are reconciled.
+Policies not yet ruled, per the handoff: D-014 (retry cost basis, shortest expedited removal, deactivated state, failed-installation state), D-006 (unpriced modifications), and Q-029 (GM-entered manual outcome). These do **not** wait for the errata or source PRs. They can be presented to the Project Owner now, in one grouped session, in parallel with the research. Any decision that depends on an unauthenticated erratum must be qualified as such, may need reconsideration if that erratum is authenticated, and does not authorize production implementation until its evidence is resolved. A ruling is not an implementation authorization either way (G4-G9 gates still apply).
 
 ## 6. Future PR plan (documentation first; no blocker releases)
 
@@ -88,7 +88,7 @@ Each PR below is separate, independently reviewed, and releases no blocker by it
 
 | # | PR | Scope | Depends on |
 |---|---|---|---|
-| 1 | Errata authentication record | One note per erratum family with the authenticated artifact, the exact original and replacement sentences, and the search statement for Q-003 | E-Q1 (authentication) |
+| 1 | Errata authentication record (parallel with PR 9) | One note per erratum family with the authenticated artifact, the exact original and replacement sentences, and the search statement for Q-003 | E-Q1 (authentication) |
 | 2 | S&V structural records | Stripping (D-002), size increase (D-003), Retractable Stock (D-004), powered armor (D-012, with the errata outcome) as `PUBLISHED_FACTS` records | PR 1 for D-012 |
 | 3 | D-015 evidence | Certification record for Core pp. 60, 68-70 and S&V pp. 37-41, with an evidence file and the proposed lift row for review; Q-025 reconciliation | Reviewer records; independent review |
 | 4 | D-013 KOTOR accessories | Per-definition record (8): slot cost with errata outcome, host rules, application classification | PR 1; policy Q-027 |
@@ -96,11 +96,11 @@ Each PR below is separate, independently reviewed, and releases no blocker by it
 | 6 | S&V Table 2-3 host records | 16 upgrades / 35 typed definitions, host conditions, with Dual Gear and Silverplate/Spring Loaded errata outcomes | PR 1 |
 | 7 | Phase 1a stock-capacity amendment | Only if the powered-armor erratum is authenticated and confirmed; reviewed contract change plus tests | PR 1, separate authorization |
 | 8 | Q-033 atomicity design | Engineering proposal with fault-injection test plan | none; independent of sources |
-| 9 | Owner batch | One grouped question set: D-014, D-006, Q-029 | PRs 1-3 |
+| 9 | Owner batch (parallel track, not sequenced after PRs 1-8) | One grouped question set: D-014, D-006, Q-029, each qualified where it touches an unauthenticated erratum | none |
 
 ## 7. Validation performed
 
-- Identity, count, field and blocker-set comparisons between the CSV and `data/modifications/runtime-definitions-v1.5.json`, as tabulated in section 2 (one-off script, not committed).
+- Identity, count, field and blocker-set comparisons between the CSV and `data/modifications/runtime-definitions-v1.5.json`, as tabulated in section 2 (one-off script, not committed; the CSV it read is committed as read-only evidence).
 - Cross-references in the errata audit were checked against `scripts/engine/customization/modification-slot-authority.js` (lines 23-25 stock table), `scripts/engine/customization/tech-specialist-modification-service.js` (lines 19 and 38) and the Phase 1a contract.
 - `git diff --check`. No code, data or test file is touched, so the normal test suites are unaffected.
 

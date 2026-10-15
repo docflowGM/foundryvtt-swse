@@ -28,7 +28,7 @@ Repository precedent that applies: the feat-content rolling authority already st
 
 ## 3. Candidate corrections and their impact
 
-All six are `ERRATA_CANDIDATE`. "Typed IDs" come from the reviewer's 232-row crosswalk (`errataReviewFlag`) and are checked against the repository in `swse-v2-typed-domain-reconciliation-review.md` section 4.
+All six are `ERRATA_CANDIDATE`. "Typed IDs" come from the reviewer's 232-row crosswalk (`errataReviewFlag`) and are checked against the repository in `swse-v2-typed-domain-reconciliation-review.md` sections 2 and 2.1 (the CSV is preserved as read-only evidence under `docs/audits/evidence/batch-a/`).
 
 ### 3.1 KOTOR Improved Energy Cell: slot cost 2 to 1
 
