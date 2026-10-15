@@ -1,6 +1,6 @@
 # SWSE V2 Modification System — Master Questions and Decisions
 
-**Status: planning and audit document only.** It changes no runtime code, registry, ledger, specification record, generated data or register entry, lifts no blocker, makes no owner ruling, and begins no work on G4-G9. Every question below is open or recorded as already resolved with its evidence; the Answer and Resolution-evidence fields are deliberately blank.
+**Status: planning and owner-decision audit only.** It changes no runtime code, registry, ledger, specification record, generated data or rules register, lifts no blocker, and begins no work on G4-G9. Six owner policies (Q-021–Q-024, Q-026, Q-029) were expressly approved on 2026-10-15 and are recorded in `docs/audits/swse-v2-owner-decisions-2026-10-15.md`; these decisions do **not** certify underlying mechanics or authorize implementation. Other unanswered questions retain blank Answer and Resolution evidence fields.
 
 | Item | Value |
 |---|---|
@@ -17,12 +17,13 @@
 | Measure | Count |
 |---|---|
 | Questions in this document | 55 (Q-001 to Q-055) |
-| Open | 42 |
-| Already resolved (recorded so they are not re-asked) | 13 (Q-043 to Q-055) |
-| Open by priority | Critical 1, High 19, Medium 18, Low 4 |
-| Open by status | NEEDS_SOURCE 19, UNANSWERED 6, OWNER_DECISION 8, BLOCKED_BY_DEPENDENCY 9 |
-| Open by who answers | ChatGPT 21 (Part 2), Project Owner 11 (Part 3), Claude + ChatGPT 10 (Part 4A) |
-| Open by category | SOURCE_VERIFICATION 21, ARCHITECTURE 8, RULES_AMBIGUITY 5, OWNER_POLICY 6, IMPLEMENTATION 2 |
+| Open | 36 |
+| Already resolved at baseline (recorded so they are not re-asked) | 13 (Q-043 to Q-055) |
+| Newly owner-policy approved (not blocker lifts) | 6 (Q-021–Q-024, Q-026, Q-029) |
+| Open by priority | Critical 1, High 16, Medium 15, Low 4 |
+| Open by status | NEEDS_SOURCE 19, UNANSWERED 6, OWNER_DECISION 2, BLOCKED_BY_DEPENDENCY 9 |
+| Open by who answers | ChatGPT 21 (Part 2), Project Owner 5 (Part 3), Claude + ChatGPT 10 (Part 4A) |
+| Open by category | SOURCE_VERIFICATION 21, ARCHITECTURE 8, RULES_AMBIGUITY 1, OWNER_POLICY 4, IMPLEMENTATION 2 |
 
 ### 1.2 Where the project stands
 
@@ -37,11 +38,7 @@ Twenty-one open questions (Q-001 to Q-020 and Q-025) are source verification. Al
 
 ### 1.4 Owner decisions
 
-Only nine decision groups are proposed for the owner (Part 6, Section B; B2, B4, B5 and B7 are conditional on source returns), and only three of them can be answered now:
-
-1. **D-014 package (Q-021 to Q-024):** four gaps the printed rule leaves undefined. The source is already examined and silent. The owner may keep the sub-mechanics blocked or state the rule.
-2. **Unpriced modifications (Q-026):** a policy question that no source can answer.
-3. A small GM-override preference (Q-029), which only matters before G6.
+Of the nine owner decision groups in Part 6, **B1 (Q-021–Q-024), B3 (Q-026), and B6 (Q-029) are answered** by the explicit owner approval dated 2026-10-15 (`swse-v2-owner-decisions-2026-10-15.md`). They establish GM-adjudicated behavior without invented universal formulas or automated effects; **D-014, D-006 and all other blockers remain unchanged**. Remaining conditional decisions (B2, B4, B5 and B7) still await source outcomes; G9 authorizations (B8–B9) remain future decisions.
 
 The remaining owner questions are conditional on source returns (Q-027, Q-028, Q-030, and a Q-025 escalation only if its source reconciliation finds a genuine ambiguity) or are future authorizations (Q-031, Q-032). Ten register entries (D-002 to D-012) are deliberately not turned into owner questions until a source record shows a real ambiguity (Q-030). Most of them are research gaps, not recorded ambiguities.
 
@@ -60,7 +57,7 @@ Two architecture questions are unusually consequential: **Q-033** (a proven all-
 | Blocker | Questions | Blocks |
 |---|---|---|
 | D-015 evidence | Q-001, Q-002 | D-015 lift; executor check requirements |
-| D-014 silent gaps | Q-021 to Q-024 | Retry, expedited removal, failed/deactivated states for the 76 |
+| D-014 silent gaps | Q-021 to Q-024 (owner policy recorded) | Retry, expedited removal, failed/deactivated states for the 76; blocker remains until separately certified |
 | D-013 family sourcing | Q-004 to Q-010, Q-027, Q-028 | The 156 typed definitions |
 | Host prerequisites missing everywhere | Q-019, Q-035 | Any runtime selectability |
 | Atomic strategy | Q-033 | G6, G7 |
@@ -485,7 +482,7 @@ The 156 definitions fall into the families below. Each family question is a cons
 
 ## Part 3 — Questions for the Project Owner (genuine rules gaps and policy)
 
-Only questions the sources cannot answer appear here, or policy that no source can answer. For D-014 the source has already been examined and is silent. No option below is an invented rule: the options are "stay blocked / table adjudication" or "the owner supplies the ruling". The engineering recommendation, where given, concerns what the executor does and not what the rule is.
+Only questions the sources cannot answer appear here, or policy that no source can answer. For D-014 the source has already been examined and is silent. **The Project Owner approved Q-021–Q-024, Q-026 and Q-029 as policy on 2026-10-15; the decision record is `docs/audits/swse-v2-owner-decisions-2026-10-15.md`.** These are rulings on table adjudication and later design, **not new published mechanics, certification, blocker lifts or authorization to implement**. Other questions retain their original options.
 
 ### 3A. D-014 — gaps in the printed installation and removal procedure (answer as one package)
 
@@ -503,9 +500,9 @@ Only questions the sources cannot answer appear here, or policy that no source c
 | Suggested resolution | Engineering view only: (a) is the safe default because nothing in print supports a base. The rule itself is the owner's. |
 | Who answers | Project Owner (ChatGPT analysis of the page text may precede) |
 | Decision impact | Retry and scratch-built costs in the planner and executor (G3 refusal, G5/G6). |
-| Status | OWNER_DECISION |
-| Answer | |
-| Resolution evidence | |
+| Status | OWNER_POLICY_APPROVED (2026-10-15; blocker unchanged) |
+| Answer | No universal monetary basis is invented for installation attempts, retries or scratch-built attempts. Where the published cost basis is silent, the GM adjudicates the amount; no unknown cost is treated as zero or automatically charged. |
+| Resolution evidence | Explicit Project Owner approval (2026-10-15), verbatim request and policy text preserved in `docs/audits/swse-v2-owner-decisions-2026-10-15.md`; documentation only, no D-014/D-006 lift or G4–G9 authorization. |
 
 #### Q-022 — Expedited removal at the shortest time increment (D-014 item 2)
 
@@ -521,9 +518,9 @@ Only questions the sources cannot answer appear here, or policy that no source c
 | Suggested resolution | Engineering view only: (a) until ruled. |
 | Who answers | Project Owner |
 | Decision impact | Removal planner branch for the shortest increment. |
-| Status | OWNER_DECISION |
-| Answer | |
-| Resolution evidence | |
+| Status | OWNER_POLICY_APPROVED (2026-10-15; blocker unchanged) |
+| Answer | Expedited removal is unavailable when the published removal time is already 10 minutes (the shortest increment). No lower time increment is invented. |
+| Resolution evidence | Explicit Project Owner approval (2026-10-15), verbatim request and policy text preserved in `docs/audits/swse-v2-owner-decisions-2026-10-15.md`; documentation only, no D-014/D-006 lift or G4–G9 authorization. |
 
 #### Q-023 — What is a "deactivated" upgrade, and does it occupy a slot? (D-014 item 3)
 
@@ -539,9 +536,9 @@ Only questions the sources cannot answer appear here, or policy that no source c
 | Suggested resolution | Engineering view only: (a). Slot occupancy stays as installed. |
 | Who answers | Project Owner |
 | Decision impact | Instance state shape (Q-038), effect suppression, slot closure. |
-| Status | OWNER_DECISION |
-| Answer | |
-| Resolution evidence | |
+| Status | OWNER_POLICY_APPROVED (2026-10-15; blocker unchanged) |
+| Answer | A deactivated/failed-removal upgrade continues occupying its installed slot until successfully removed or destroyed. Its effects remain unresolved for GM adjudication; no automatic slot release or uncertified effect-state change. |
+| Resolution evidence | Explicit Project Owner approval (2026-10-15), verbatim request and policy text preserved in `docs/audits/swse-v2-owner-decisions-2026-10-15.md`; documentation only, no D-014/D-006 lift or G4–G9 authorization. |
 
 #### Q-024 — State after a failed installation (D-014 item 4)
 
@@ -557,9 +554,9 @@ Only questions the sources cannot answer appear here, or policy that no source c
 | Suggested resolution | Engineering view only: (a). |
 | Who answers | Project Owner |
 | Decision impact | Instance record shape and the executor result enumeration (G6). |
-| Status | OWNER_DECISION |
-| Answer | |
-| Resolution evidence | |
+| Status | OWNER_POLICY_APPROVED (2026-10-15; blocker unchanged) |
+| Answer | Record failed installation as an attempt outcome, but do not automatically create a functioning installed-upgrade instance. Any physical or malfunctioning state beyond that is GM-adjudicated. |
+| Resolution evidence | Explicit Project Owner approval (2026-10-15), verbatim request and policy text preserved in `docs/audits/swse-v2-owner-decisions-2026-10-15.md`; documentation only, no D-014/D-006 lift or G4–G9 authorization. |
 
 *Q-025 (take 10 / take 20 / Trained Only on the Table 2-2 check) was moved to Part 2E as a source-rules reconciliation; it reaches the owner only if that reconciliation finds a genuine ambiguity or conflict.*
 
@@ -579,9 +576,9 @@ Only questions the sources cannot answer appear here, or policy that no source c
 | Suggested resolution | Policy is the owner's. Q-017 is a cheap evidence check that may shrink the question. |
 | Who answers | Project Owner |
 | Decision impact | Purchase and install flow for 7 definitions. |
-| Status | OWNER_DECISION |
-| Answer | |
-| Resolution evidence | |
+| Status | OWNER_POLICY_APPROVED (2026-10-15; blocker unchanged) |
+| Answer | Permit GM-determined pricing where legitimate acquisition or modification requires a price not printed in the rules. Unknown is never zero, and this does not make feat/talent/destiny properties ordinary purchasable upgrades. |
+| Resolution evidence | Explicit Project Owner approval (2026-10-15), verbatim request and policy text preserved in `docs/audits/swse-v2-owner-decisions-2026-10-15.md`; documentation only, no D-014/D-006 lift or G4–G9 authorization. |
 
 #### Q-027 — Policy where a publication is silent on installation (D-013)
 
@@ -633,9 +630,9 @@ Only questions the sources cannot answer appear here, or policy that no source c
 | Suggested resolution | Preference decision; none recommended. |
 | Who answers | Project Owner |
 | Decision impact | Workbench UX (G6); the instance-record shape. |
-| Status | OWNER_DECISION |
-| Answer | |
-| Resolution evidence | |
+| Status | OWNER_POLICY_APPROVED (2026-10-15; blocker unchanged) |
+| Answer | Allow an audited GM-entered manual outcome for deferred mechanics, without automatically applying an uncertified rules effect or bypassing trusted authorities. |
+| Resolution evidence | Explicit Project Owner approval (2026-10-15), verbatim request and policy text preserved in `docs/audits/swse-v2-owner-decisions-2026-10-15.md`; documentation only, no D-014/D-006 lift or G4–G9 authorization. |
 
 #### Q-030 — Conditional rulings (placeholder; no owner action now)
 
@@ -947,7 +944,7 @@ Nothing in Part 2 depends on another question, so all of Part 2 can be answered 
 
 ## Part 6 — Consolidated answer sheet
 
-Answer by number. Each line is a group; the group's question IDs are in brackets. Blank = not yet answered.
+Answer by number. Each line is a group; the group's question IDs are in brackets. Blank = not yet answered. B1, B3 and B6 have now been approved as owner policy (2026-10-15), without releasing any blockers.
 
 ### Section A — ChatGPT: return these certification records
 
@@ -970,16 +967,16 @@ Answer by number. Each line is a group; the group's question IDs are in brackets
 | A16 | Reconcile Core p. 60 (take 10/20), Trained Only and S&V p. 39 failure consequences for the Table 2-2 check | Q-025 | D-015 / executor check contract |
 | A15 | Slot cost, price, host restriction and effect classification, returned inside A4-A12 records | Q-018, Q-019, Q-020 | Component certification |
 
-### Section B — Project Owner: decisions (goal: 10 meaningful decisions, most only after Section A)
+### Section B — Project Owner: decisions (B1, B3, B6 approved as policy; other groups remain conditional or deferred)
 
 | # | Decision | Questions | Due |
 |---|---|---|---|
-| B1 | D-014 package: what an installation attempt costs; expedited removal at the shortest increment; deactivated-state meaning and slot occupancy; failed-installation state (each: stay blocked and table-adjudicated, or you state the rule) | Q-021, Q-022, Q-023, Q-024 | Now (source already examined and silent) |
+| B1 | D-014 package: GM-adjudicated undefined cost; no expedited removal at 10 minutes; failed-removal slot remains occupied; failed install records an outcome, not a working instance | Q-021, Q-022, Q-023, Q-024 | OWNER_POLICY_APPROVED 2026-10-15; D-014 still blocked |
 | B2 (conditional) | Only if A16 finds a genuine unresolved ambiguity or conflict about Trained Only / take 10 / take 20 on the Table 2-2 check | Q-025 escalation | After A16; may never be needed |
-| B3 | Policy for unpriced modifications | Q-026 | Now (A14 may shrink it) |
+| B3 | GM-determined pricing where needed; unknown price never zero; provenance and legality unchanged | Q-026 | OWNER_POLICY_APPROVED 2026-10-15; D-006 still blocked |
 | B4 | Policy where a book is silent on installation | Q-027 | After A4 |
 | B5 | Classification of items that are not generically installed (templates, heirlooms, alchemy, specialist traits): not eligible / specialist system / non-selectable reference; registry unchanged | Q-028 | After A5, A8, A10 |
-| B6 | Whether a GM manual-outcome path exists for deferred mechanics | Q-029 | Before G6 |
+| B6 | Audited GM-entered manual outcome, without automatic uncertified rules effects | Q-029 | OWNER_POLICY_APPROVED 2026-10-15; G6 not authorized |
 | B7 | Conditional rulings (stripping, size increase, stacking, powered armor, etc.), only if A shows a gap | Q-030 | After Section A |
 | B8 | Legacy macro compatibility policy | Q-031 | At G9 |
 | B9 | Authorization for deletion and for a prerelease character reset (separately) | Q-032 | At G9 |
