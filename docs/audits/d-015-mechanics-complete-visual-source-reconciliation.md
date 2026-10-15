@@ -72,6 +72,12 @@ Q-021 (GM adjudicates an unprinted attempt/retry cost), Q-022 (no expedited remo
 5. Tech Specialist check `take10/take20` stays categorically disallowed under the *Starships* feat procedure.
 6. Source check eligibility does **not** confer `runtimeSelectable`, change pricing, or lift any of D-014, D-015, D-013, `EXECUTOR_NOT_CERTIFIED`; Q-033 exact transactional rollback still blocks G6.
 
+## 5A. Owner-directed optional GM house rules (separate from source findings)
+
+On 2026-10-15, the Project Owner requested a **GM-controlled approval/house-rules route** for taking 10 or 20 on ordinary equipment-upgrade installation. The owner also expressed that optional toolkit and workshop bonuses should be subject to GM fiat rather than assumed printed prerequisites or fixed benefits. The exact policy and open design details are recorded in `docs/audits/modification-v2-gm-installation-check-houserules-owner-direction-2026-10-15.md`.
+
+**This does not change the source conclusions above.** Under the ordinary printed rules, take 10 is conditionally permissible, take 20 is ineligible when installation failure has consequences, and no generic tool-kit/workshop bonus or requirement is printed. A GM who approves take 20 nevertheless is choosing an **explicit house-rule exception**, not certifying a published rule or erasing the printed cost/time/failure consequences. Likewise, a GM-added toolkit or workshop bonus has **no default printed numeric value**. These optional policy controls and the GM audit surface do not lift D-014/D-015, enable the executor or permit any unsupported effect.
+
 ## 6. Repository disposition
 
 - **What this enables:** An independent reviewer can now cite and inspect **Core p. 69 directly** instead of relying on the prior OCR-limited D-015 note. The findings address the **evidence side** of D-015 and Q-025.
