@@ -20,9 +20,9 @@
 | Open | 42 |
 | Already resolved (recorded so they are not re-asked) | 13 (Q-043 to Q-055) |
 | Open by priority | Critical 1, High 19, Medium 18, Low 4 |
-| Open by status | NEEDS_SOURCE 18, UNANSWERED 6, OWNER_DECISION 8, BLOCKED_BY_DEPENDENCY 10 |
-| Open by who answers | ChatGPT 20 (Part 2), Project Owner 12 (Part 3), Claude + ChatGPT 10 (Part 4A) |
-| Open by category | SOURCE_VERIFICATION 20, ARCHITECTURE 8, RULES_AMBIGUITY 6, OWNER_POLICY 6, IMPLEMENTATION 2 |
+| Open by status | NEEDS_SOURCE 19, UNANSWERED 6, OWNER_DECISION 8, BLOCKED_BY_DEPENDENCY 9 |
+| Open by who answers | ChatGPT 21 (Part 2), Project Owner 11 (Part 3), Claude + ChatGPT 10 (Part 4A) |
+| Open by category | SOURCE_VERIFICATION 21, ARCHITECTURE 8, RULES_AMBIGUITY 5, OWNER_POLICY 6, IMPLEMENTATION 2 |
 
 ### 1.2 Where the project stands
 
@@ -33,21 +33,23 @@
 
 ### 1.3 Source verification
 
-Twenty open questions (Q-001 to Q-020) are source verification. All can be answered in parallel by the independent reviewer. The most valuable first returns, in order: Core Rulebook p. 69 (Q-001) and S&V requirement check (Q-002), which close the evidence side of D-015; KOTOR pp. 75-76 (Q-004); the KOTOR template rule (Q-005) and lightsaber record (Q-006), which together cover 78 of the 156 blocked definitions; then Table 2-3 universal upgrade hosts (Q-014), covering 35 definitions.
+Twenty-one open questions (Q-001 to Q-020 and Q-025) are source verification. All can be answered in parallel by the independent reviewer. The most valuable first returns, in order: Core Rulebook p. 69 (Q-001) and S&V requirement check (Q-002), which close the evidence side of D-015; KOTOR pp. 75-76 (Q-004); the KOTOR template rule (Q-005) and lightsaber record (Q-006), which together cover 78 of the 156 blocked definitions as one research pass (certification still follows per definition or demonstrably uniform family); then Table 2-3 universal upgrade hosts (Q-014), covering 35 definitions.
 
 ### 1.4 Owner decisions
 
-Only nine decision groups are proposed for the owner (Part 6, Section B), and only three of them can be answered now:
+Only nine decision groups are proposed for the owner (Part 6, Section B; B2, B4, B5 and B7 are conditional on source returns), and only three of them can be answered now:
 
 1. **D-014 package (Q-021 to Q-024):** four gaps the printed rule leaves undefined. The source is already examined and silent. The owner may keep the sub-mechanics blocked or state the rule.
 2. **Unpriced modifications (Q-026):** a policy question that no source can answer.
 3. A small GM-override preference (Q-029), which only matters before G6.
 
-The remaining owner questions are conditional on source returns (Q-025, Q-027, Q-028, Q-030) or are future authorizations (Q-031, Q-032). Ten register entries (D-002 to D-012) are deliberately not turned into owner questions until a source record shows a real ambiguity (Q-030). Most of them are research gaps, not recorded ambiguities.
+The remaining owner questions are conditional on source returns (Q-027, Q-028, Q-030, and a Q-025 escalation only if its source reconciliation finds a genuine ambiguity) or are future authorizations (Q-031, Q-032). Ten register entries (D-002 to D-012) are deliberately not turned into owner questions until a source record shows a real ambiguity (Q-030). Most of them are research gaps, not recorded ambiguities.
 
 ### 1.5 Key structural finding about D-013
 
-D-013 is framed as "which installation procedure governs each of the 156 typed definitions". The evidence suggests the real question per family is **which printed mechanism applies the item** (installation, template at manufacture, talent, feat, alchemy, crafting, purchase quality). Most families have their own registry-certified procedure and may have no installation step at all. If the family records (Q-005, Q-008, Q-010) confirm this, the scope decision Q-028 could retire much of D-013 as a category error. This is a hypothesis that needs the source records; it is not a ruling.
+D-013 is framed as "which installation procedure governs each of the 156 typed definitions". The evidence suggests the real question per family is **which printed mechanism applies the item** (installation, template at manufacture, talent, feat, alchemy, crafting, purchase quality). Most families have their own registry-certified procedure and may have no installation step at all. If the family records (Q-005, Q-008, Q-010) confirm this, the classification decision Q-028 could change which question applies to a family (a classification, not an installation procedure) without touching the immutable v1.5 registry or lifting any blocker. This is a hypothesis that needs the source records; it is not a ruling.
+
+**Certification rule.** A family-level question is a consolidated research task. One pass can cover many definitions, but the certification may differ by item, domain or application mechanism; no blocker changes until the returned record states applicability and evidence for each typed definition, or demonstrates that the family is uniform.
 
 ### 1.6 Architectural
 
@@ -110,7 +112,7 @@ Field legend for every question: **Priority** · **Category** · **Related regis
 | Known facts | Page 39 says the installer makes a Mechanics check and mentions an "overheated workshop" only descriptively. No examined source imposes or waives a tool or workshop requirement. |
 | Sources | S&V printed p. 39; `docs/audits/d-001-install-remove-pdf-verification.md` |
 | Options | (a) S&V states a requirement. (b) It states none and does not cross-reference. (c) It cross-references the Core Rulebook skill. |
-| Suggested resolution | Verify and report. The question whether the Core Rulebook's Trained Only property applies to the check is Q-025, asked of the owner only if (b) leaves the application genuinely silent. |
+| Suggested resolution | Verify and report. Whether the Core Rulebook's general skill rules (Trained Only, take 10, take 20) determine the check is the source reconciliation Q-025; it reaches the owner only if that reconciliation finds a genuine ambiguity. |
 | Who answers | ChatGPT |
 | Decision impact | Whether the executor needs a training or tool input (G5/G6) and whether D-015 can lift. |
 | Status | NEEDS_SOURCE |
@@ -137,7 +139,7 @@ Field legend for every question: **Priority** · **Category** · **Related regis
 
 ### 2B. D-013 families (the 156 typed definitions)
 
-The 156 definitions fall into the families below. A verified answer for a family resolves every definition in it. The audit's key observation: D-013 as framed asks for an "installation procedure" per definition, but many families (templates, talents, feats, crafting, purchase quality) may have **their own** printed mechanism and no installation step at all. The first question for each family is therefore *which printed mechanism governs*, not whether Table 2-2 applies. Registry provenance already carries a role per definition (for example `not_generic_upgrade`), which is evidence for that framing but is not itself a ruling.
+The 156 definitions fall into the families below. Each family question is a consolidated research task: one pass over the same pages can cover many definitions, but the resulting certification may differ by item, domain or application mechanism. No blocker changes until the returned record states applicability and evidence for each typed definition, or demonstrates that the family is uniform. The audit's key observation: D-013 as framed asks for an "installation procedure" per definition, but many families (templates, talents, feats, crafting, purchase quality) may have **their own** printed mechanism and no installation step at all. The first question for each family is therefore *which printed mechanism governs*, not whether Table 2-2 applies. Registry provenance already carries a role per definition (for example `not_generic_upgrade`), which is evidence for that framing but is not itself a ruling.
 
 | Family | Typed definitions | Question |
 |---|---|---|
@@ -163,7 +165,7 @@ The 156 definitions fall into the families below. A verified answer for a family
 | Options | (a) Wording matches, no installation text (genuine silence). (b) Text states a procedure (record verbatim). (c) Text explicitly points to S&V installation. |
 | Suggested resolution | Report verbatim. (b) or (c) permits a D-013 Partial lift for these 8; (a) is a genuine silence and goes to Q-027. |
 | Who answers | ChatGPT |
-| Decision impact | Releases or routes 8 definitions. |
+| Decision impact | Research scope: 8 definitions; any release needs per-definition or demonstrably uniform conclusions. |
 | Status | NEEDS_SOURCE |
 | Answer | |
 | Resolution evidence | |
@@ -179,9 +181,9 @@ The 156 definitions fall into the families below. A verified answer for a family
 | Known facts | The registry classifies these as `published_template`. Their own registry procedure statuses are mostly certified or runtime-pending. |
 | Sources | KOTOR gear-templates section (pages to be confirmed by the reviewer); registry `procedures` |
 | Options | (a) Applied only at creation or purchase (no installation procedure exists). (b) A conversion procedure is printed (record). (c) Silent. |
-| Suggested resolution | Report the printed application rule. If (a), D-013 for this family is re-scoped (Q-028) rather than answered with Table 2-2. |
+| Suggested resolution | Report the printed application rule. If (a), the family is classified under Q-028 rather than answered with Table 2-2. |
 | Who answers | ChatGPT |
-| Decision impact | One answer resolves 34 of 156 definitions. |
+| Decision impact | Research scope: 34 of 156 definitions; certification per definition or demonstrably uniform family. |
 | Status | NEEDS_SOURCE |
 | Answer | |
 | Resolution evidence | |
@@ -199,7 +201,7 @@ The 156 definitions fall into the families below. A verified answer for a family
 | Options | (a) Parts are chosen at construction under their own rules. (b) Post-construction installation is printed. (c) The text is ambiguous about allowance or stacking (this becomes an owner question under Q-030). |
 | Suggested resolution | Report verbatim, split into (a)-(e). Do not decide stacking. |
 | Who answers | ChatGPT |
-| Decision impact | Resolves D-011 and most lightsaber D-013 definitions (44 of 156); gates Q-039. |
+| Decision impact | Research scope: D-011 and 44 of 156 definitions; certification per definition or demonstrably uniform family; gates Q-039. |
 | Status | NEEDS_SOURCE |
 | Answer | |
 | Resolution evidence | |
@@ -217,7 +219,7 @@ The 156 definitions fall into the families below. A verified answer for a family
 | Options | (a) Trait exists and grants capacity. (b) It does not exist as printed. (c) Traits are feat-granted with no installation step. |
 | Suggested resolution | Report verbatim; locating the Superior Tech source is part of the task. |
 | Who answers | ChatGPT |
-| Decision impact | Resolves D-008, D-009 and 18 of 156 definitions. |
+| Decision impact | Research scope: D-008, D-009 and 18 of 156 definitions; certification per definition or demonstrably uniform family. |
 | Status | NEEDS_SOURCE |
 | Answer | |
 | Resolution evidence | |
@@ -235,7 +237,7 @@ The 156 definitions fall into the families below. A verified answer for a family
 | Options | (a) Governed by the alchemy procedure. (b) Installed like an upgrade. (c) Silent. |
 | Suggested resolution | Report which mechanism governs each. |
 | Who answers | ChatGPT |
-| Decision impact | Resolves 10 definitions; gates Q-040. |
+| Decision impact | Research scope: 10 definitions; certification per definition or demonstrably uniform family; gates Q-040. |
 | Status | NEEDS_SOURCE |
 | Answer | |
 | Resolution evidence | |
@@ -253,7 +255,7 @@ The 156 definitions fall into the families below. A verified answer for a family
 | Options | (a) Constraints printed. (b) Silent. (c) Conflicting. |
 | Suggested resolution | Report verbatim. Keep D-010 separate from the heirloom and biotech residue. |
 | Who answers | ChatGPT |
-| Decision impact | Resolves D-010 and 19 of 156 definitions. |
+| Decision impact | Research scope: D-010 and 19 of 156 definitions; certification per definition or demonstrably uniform family. |
 | Status | NEEDS_SOURCE |
 | Answer | |
 | Resolution evidence | |
@@ -269,9 +271,9 @@ The 156 definitions fall into the families below. A verified answer for a family
 | Known facts | Registry roles already separate `*_not_generic_upgrade`, `temporary_*` and `purchase_quality` cases from installable ones. Architecture G4 lists the corrections as separate producer-side PRs, each with its source. |
 | Sources | Per-item registry provenance; architecture section 7 (G4 row) |
 | Options | Per item: installation / talent / crafting / purchase quality / other. |
-| Suggested resolution | One record per item or small family. Items that are not installed upgrades are candidates for scope removal (Q-028). |
+| Suggested resolution | One record per item or small family. Items that are not installed upgrades are candidates for a non-installation classification (Q-028); the registry is not changed. |
 | Who answers | ChatGPT |
-| Decision impact | Resolves the long tail (23 of 156). |
+| Decision impact | Research scope: the long tail (23 of 156); certification per item. |
 | Status | NEEDS_SOURCE |
 | Answer | |
 | Resolution evidence | |
@@ -345,7 +347,7 @@ The 156 definitions fall into the families below. A verified answer for a family
 | Options | Per upgrade and per domain: permitted / not permitted / not stated. |
 | Suggested resolution | One record per upgrade listing hosts and detail rules. "Not stated" is a legitimate answer and must not be read as permitted. |
 | Who answers | ChatGPT |
-| Decision impact | Largest single group of newly eligible typed definitions after D-001; also feeds Q-019. |
+| Decision impact | Research scope: 35 typed definitions; eligibility is concluded per upgrade and domain, never inferred for the group; also feeds Q-019. |
 | Status | NEEDS_SOURCE |
 | Answer | |
 | Resolution evidence | |
@@ -459,6 +461,28 @@ The 156 definitions fall into the families below. A verified answer for a family
 | Status | UNANSWERED |
 | Answer | |
 | Resolution evidence | |
+### 2E. Reconciliation of the general skill rules with the Table 2-2 check
+
+#### Q-025 — Do the published general skill rules (take 10, take 20, Trained Only) determine the Table 2-2 check?
+
+*Reclassified after the PR #1047 independent review: this is a source-rules reconciliation task first. It is not presented to the owner unless the reconciliation finds a genuine unresolved conflict or ambiguity. The ID is unchanged.*
+
+| Field | Content |
+|---|---|
+| Priority / Category | Medium / SOURCE_VERIFICATION |
+| Related | D-015, D-014, D-001 |
+| Affected | 76 governed definitions; check-input contract (Q-037) |
+| Question | Applying the published general rules as written, what do they determine for the Table 2-2 Mechanics check on each of: (1) Trained Only for the installer; (2) taking 10 (Core printed p. 60: depends on circumstances); (3) taking 20 (Core printed p. 60: failure must carry no penalty), evaluated against the failure consequences S&V p. 39 prints (retry at half the original attempt's cost, a failed removal leaves the upgrade deactivated, a failed expedited removal destroys it, a failed installation does not work properly)? For each, is the result determinate (permitted, forbidden), or does the text leave a genuine ambiguity or conflict? |
+| Known facts | Reported by the independent reviewer and **not seen by the implementer**: Core printed p. 60 states the conditions for taking 10 and taking 20. Read visually by the implementer: Mechanics is Trained Only (p. 68); the Special paragraph allows take 10 and take 20 on a Mechanics check, but not take 20 on a jury-rig (p. 70). S&V p. 39 states its own retry and failure consequences and says nothing about taking 10 or 20. The take-20 evaluation may itself depend on the D-014 gaps (Q-021 to Q-024): whether a stated consequence counts as a "penalty" for failure may turn on what those consequences are. |
+| Sources | Core printed pp. 60, 68, 70 (p. 69 via Q-001); S&V printed p. 39; `docs/audits/d-015-mechanics-requirements-source-examination.md` |
+| Options | (a) The general rules, applied as written, give a determinate result for each of (1)-(3) (record the result and its basis per rule). (b) For one or more of them the text is genuinely ambiguous or conflicting (record exactly where; only then is a separate owner question raised, under this ID). |
+| Suggested resolution | Evaluate first and report per rule. Do not presume that silence in Table 2-2 requires an owner ruling. |
+| Who answers | ChatGPT (the implementer cross-checks the cited repository evidence) |
+| Decision impact | Whether the executor validates training and allows take 10/20; whether Section B2 is needed at all. |
+| Status | NEEDS_SOURCE |
+| Answer | |
+| Resolution evidence | |
+
 ## Part 3 — Questions for the Project Owner (genuine rules gaps and policy)
 
 Only questions the sources cannot answer appear here, or policy that no source can answer. For D-014 the source has already been examined and is silent. No option below is an invented rule: the options are "stay blocked / table adjudication" or "the owner supplies the ruling". The engineering recommendation, where given, concerns what the executor does and not what the rule is.
@@ -537,23 +561,7 @@ Only questions the sources cannot answer appear here, or policy that no source c
 | Answer | |
 | Resolution evidence | |
 
-#### Q-025 — Take 10 / take 20 and Trained Only on the Table 2-2 check
-
-| Field | Content |
-|---|---|
-| Priority / Category | Medium / RULES_AMBIGUITY |
-| Related | D-015, D-014 (candidate addition) |
-| Affected | 76 governed definitions; check-input contract (Q-037) |
-| Question | The Core Rulebook allows take 10 and take 20 on "a Mechanics check" (not take 20 on a jury-rig) and makes Mechanics Trained Only. Page 39 does not address either for Table 2-2. Do these general skill rules apply to the Table 2-2 check? |
-| Known facts | Core Mechanics Special paragraph (p. 70, read visually); Trained Only (p. 68). S&V p. 39 is silent on both. |
-| Sources | Core p. 68, p. 70; S&V p. 39 |
-| Options | (a) The general skill rules apply to a Mechanics check, including this one. (b) Table 2-2 is a separate procedure and the general rules do not carry over. (c) Unresolved: the executor requires an externally rolled result and enforces neither. |
-| Suggested resolution | Ask only after Q-001 and Q-002 return. If they find no S&V statement, (a) and (b) are both readings of silence and the choice is the owner's. |
-| Who answers | Project Owner, after ChatGPT supplies Q-001 and Q-002 |
-| Decision impact | Whether the executor validates training and allows take 10/20. |
-| Status | BLOCKED_BY_DEPENDENCY (Q-001, Q-002) |
-| Answer | |
-| Resolution evidence | |
+*Q-025 (take 10 / take 20 / Trained Only on the Table 2-2 check) was moved to Part 2E as a source-rules reconciliation; it reaches the owner only if that reconciliation finds a genuine ambiguity or conflict.*
 
 ### 3B. Policy
 
@@ -593,20 +601,20 @@ Only questions the sources cannot answer appear here, or policy that no source c
 | Answer | |
 | Resolution evidence | |
 
-#### Q-028 — Scope boundary: which families belong in the V2 modification system at all
+#### Q-028 — Classification of items that are not generically installed
 
 | Field | Content |
 |---|---|
 | Priority / Category | High / OWNER_POLICY |
 | Related | D-013 |
 | Affected | Families whose printed mechanism is not installation: templates (34 + 5), heirlooms (12), Sith alchemy (10), Tech/Biotech Specialist traits (18), purchase-quality, temporary talent effects |
-| Question | When ChatGPT's family records show an item is applied by something other than installation (at manufacture, by a talent, by a feat, by alchemy), is it a catalog entry that the V2 workbench merely displays (not installable), is it handled by its own existing engine, or is it removed from the typed-definition set? |
+| Question | When ChatGPT's family records show an item is applied by something other than installation (at manufacture, by a talent, by a feat, by alchemy), how is it classified in V2? The v1.5 canonical registry is immutable (G1); this decision deletes no typed definition and changes no registry record. |
 | Known facts | The registry already marks several roles `not_generic_upgrade` and `temporary_*`. Existing specialist engines (Tech Specialist, Force Alchemy, lightsaber workbench) remain consumers of the V2 slot authority, per the architecture. |
 | Sources | Registry provenance roles; architecture sections 3 and 7 |
-| Options | (a) Display-only catalog entry, not installable, no D-013 procedure needed. (b) Routed to its own specialist engine, which consumes V2 slot and price authority. (c) Removed from the typed-definition set. |
-| Suggested resolution | The scope decision is the owner's. Evidence-based note: if Q-005, Q-008 and Q-010 find no installation step, requiring "an installation procedure" for those definitions has no source basis. |
+| Options | (a) Not eligible for generic installation: stays in the registry with its printed mechanism recorded, and no D-013 installation procedure is sought for it. (b) Handled by an existing specialist system (Tech Specialist, Force Alchemy, lightsaber workbench) that consumes V2 slot and price authority. (c) Retained as a non-selectable reference: description only, never `runtimeSelectable`. (d) A future canonical-registry version change: outside this decision, requires its own separate authorization and respects the G1 and G9 boundaries. |
+| Suggested resolution | The scope decision is the owner's. Evidence-based note: if Q-005, Q-008 and Q-010 find no installation step for a definition, requiring "an installation procedure" for it has no source basis; its classification (a)-(c) is then recorded with per-definition evidence. |
 | Who answers | Project Owner, informed by ChatGPT's family records |
-| Decision impact | Could retire most of the 156-definition D-013 blocker as a category error. |
+| Decision impact | May change which question applies to a family (classification versus installation procedure). It releases no blocker by itself: each definition still needs recorded evidence of its classification, per definition or for a demonstrably uniform family. |
 | Status | BLOCKED_BY_DEPENDENCY (Q-005, Q-008, Q-010) |
 | Answer | |
 | Resolution evidence | |
@@ -765,16 +773,16 @@ Only questions the sources cannot answer appear here, or policy that no source c
 | Field | Content |
 |---|---|
 | Priority / Category | High / ARCHITECTURE |
-| Related | D-015, D-014, Q-025 |
+| Related | D-015, D-014, Q-025 (source reconciliation) |
 | Affected | G6 executor trust boundary |
 | Question | How does the Mechanics check outcome (success or failure, take 10/20 if allowed) and the required time (10 minutes to a week) reach the executor: as a roll made through the existing roll engine and passed as a validated server-side input, or as a GM confirmation; and is elapsed time recorded or only displayed? |
 | Known facts | The sources require a Mechanics check with a DC and a duration, and the executor must trust neither client data nor invent a clock. No time-passing engine is cited in the audits. |
 | Sources | S&V p. 39; architecture section 5 |
 | Options | (a) Check rolled via the existing roll path, outcome passed as validated input; time informational. (b) GM confirms outcome; time informational. (c) Integrate with a world-time system if one exists (not yet identified). |
-| Suggested resolution | Decide after Q-025 fixes what the check must enforce. |
+| Suggested resolution | Decide after the Q-025 source reconciliation fixes what the check must enforce (an owner question arises only if Q-025 finds a genuine ambiguity). |
 | Who answers | Claude + ChatGPT |
 | Decision impact | Install and removal flow. |
-| Status | BLOCKED_BY_DEPENDENCY (Q-025) |
+| Status | BLOCKED_BY_DEPENDENCY (Q-025 source reconciliation) |
 | Answer | |
 | Resolution evidence | |
 
@@ -893,7 +901,7 @@ These were decided and merged. They are listed so the questionnaire is complete 
 
 | Typed definitions | Count | Blocking register entries | Questions that release or route them |
 |---|---|---|---|
-| Governed by S&V p. 39 (published facts only) | 76 | D-014, D-015 (installProcedure); 35 of them also D-005 (host) | Q-001, Q-002 (D-015); Q-021 to Q-025 (D-014); Q-014, Q-019 (host); Q-018, Q-020 |
+| Governed by S&V p. 39 (published facts only) | 76 | D-014, D-015 (installProcedure); 35 of them also D-005 (host) | Q-001, Q-002 (D-015); Q-021 to Q-024 (D-014); Q-025 (general skill rules); Q-014, Q-019 (host); Q-018, Q-020 |
 | KOTOR accessories | 8 | D-013 | Q-004, Q-027, Q-019 |
 | KOTOR templates | 34 | D-013 | Q-005, Q-028 |
 | Lightsaber crystals and accessories | 44 | D-011, D-013 | Q-006, Q-030, Q-039 |
@@ -923,7 +931,8 @@ The 156 D-013 definitions are the 232 typed definitions minus the 76 governed. T
 ### 5C. Question-to-question dependencies
 
 ```text
-Q-001, Q-002  ──▶ Q-025 ──▶ Q-037
+Q-001, Q-002  ──▶ Q-025 (source reconciliation) ──▶ Q-037
+Q-025 ─ owner escalation only if a genuine ambiguity is found
 Q-004         ──▶ Q-027
 Q-005, Q-008, Q-010 ──▶ Q-028
 Q-006         ──▶ Q-039 ; Q-030 (stacking, only if ambiguous)
@@ -942,7 +951,7 @@ Answer by number. Each line is a group; the group's question IDs are in brackets
 
 ### Section A — ChatGPT: return these certification records
 
-| # | Return | Questions | Resolves |
+| # | Return | Questions | Covers (research scope; certification per definition or uniform family) |
 |---|---|---|---|
 | A1 | Core Rulebook p. 69 (Mechanics) record | Q-001 | D-015 evidence |
 | A2 | S&V pp. 37-41 requirement check (training, tool, workshop) | Q-002 | D-015 evidence |
@@ -958,6 +967,7 @@ Answer by number. Each line is a group; the group's question IDs are in brackets
 | A12 | Table 2-3 universal upgrades hosts (16 upgrades) | Q-014 | D-005, 35 definitions |
 | A13 | Computerized Interface Scope / Night Vision Device search | Q-015 | D-007 |
 | A14 | Componentization / Excellent Kit price confirmation | Q-017 | D-006 evidence |
+| A16 | Reconcile Core p. 60 (take 10/20), Trained Only and S&V p. 39 failure consequences for the Table 2-2 check | Q-025 | D-015 / executor check contract |
 | A15 | Slot cost, price, host restriction and effect classification, returned inside A4-A12 records | Q-018, Q-019, Q-020 | Component certification |
 
 ### Section B — Project Owner: decisions (goal: 10 meaningful decisions, most only after Section A)
@@ -965,10 +975,10 @@ Answer by number. Each line is a group; the group's question IDs are in brackets
 | # | Decision | Questions | Due |
 |---|---|---|---|
 | B1 | D-014 package: what an installation attempt costs; expedited removal at the shortest increment; deactivated-state meaning and slot occupancy; failed-installation state (each: stay blocked and table-adjudicated, or you state the rule) | Q-021, Q-022, Q-023, Q-024 | Now (source already examined and silent) |
-| B2 | Do the general Mechanics rules (Trained Only, take 10/20) apply to the Table 2-2 check | Q-025 | After A1, A2 |
+| B2 (conditional) | Only if A16 finds a genuine unresolved ambiguity or conflict about Trained Only / take 10 / take 20 on the Table 2-2 check | Q-025 escalation | After A16; may never be needed |
 | B3 | Policy for unpriced modifications | Q-026 | Now (A14 may shrink it) |
 | B4 | Policy where a book is silent on installation | Q-027 | After A4 |
-| B5 | Scope boundary for items that are not installed (templates, heirlooms, alchemy, specialist traits) | Q-028 | After A5, A8, A10 |
+| B5 | Classification of items that are not generically installed (templates, heirlooms, alchemy, specialist traits): not eligible / specialist system / non-selectable reference; registry unchanged | Q-028 | After A5, A8, A10 |
 | B6 | Whether a GM manual-outcome path exists for deferred mechanics | Q-029 | Before G6 |
 | B7 | Conditional rulings (stripping, size increase, stacking, powered armor, etc.), only if A shows a gap | Q-030 | After Section A |
 | B8 | Legacy macro compatibility policy | Q-031 | At G9 |
@@ -992,7 +1002,7 @@ Answer by number. Each line is a group; the group's question IDs are in brackets
 
 | Book | Printed pages / sections | Questions | Notes |
 |---|---|---|---|
-| Star Wars Saga Edition Core Rulebook | Mechanics pp. 68-70 (p. 69 outstanding); Modifying Droids p. 197 only for context, droids out of scope | Q-001, Q-025 | pp. 68 and 70 already read visually |
+| Star Wars Saga Edition Core Rulebook | Taking 10 / taking 20 conditions p. 60 (reviewer-reported; not seen by the implementer); Mechanics pp. 68-70 (p. 69 outstanding); Modifying Droids p. 197 only for context, droids out of scope | Q-001, Q-025 | pp. 68 and 70 already read visually; p. 60 to be certified under Q-025 |
 | Scum and Villainy | pp. 37-41 (capacity, stripping pp. 37-38, size increase pp. 38-39, Installing Upgrades p. 39, Table 2-2 p. 39, Table 2-3 pp. 40-41 and each upgrade's text, p. 42 Table 2-4) | Q-002, Q-011 to Q-014, Q-016 | p. 39 already verified for the 76 |
 | Knights of the Old Republic Campaign Guide | pp. 75-76 accessories and Table 5-6; gear templates section; crystals; powered armor; Sith alchemy | Q-004, Q-005, Q-006, Q-008, Q-016 | Page numbers for templates and crystals to be confirmed by the reviewer |
 | Jedi Academy Training Manual | pp. 54, 60; Sith alchemy; crystals; accessories | Q-006, Q-008 | |
