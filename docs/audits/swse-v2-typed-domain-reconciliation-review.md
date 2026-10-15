@@ -13,7 +13,7 @@
 | `swse_batch_a_source_verification_04_errata_and_crosswalk.md` | `65a5932e852997064ccffaa161b3008a6be5c9b4952d1a750f8276897e2066be` |
 | `swse_v2_batch_a_consolidated_claude_handoff.md` | `bd8ac57f155a58ead96bc5f8de39b080edd9468c609d9ea3560c984eb812a86f` |
 
-The CSV is a derived research inventory. It is preserved byte-for-byte as read-only audit evidence at `docs/audits/evidence/batch-a/swse_batch_a_typed_domain_crosswalk_232.csv`, with a README that prohibits any generator, validator, ledger, planner or loader from reading it. The hash above identifies the exact file reviewed and equals the committed copy. Source observations in Reports 01-03 are the reviewer's visual inspection of the PDFs. **This implementer has not seen those page images** and records them only as reviewer-reported.
+The CSV is a derived research inventory. It is preserved byte-for-byte as read-only audit evidence at `docs/audits/evidence/batch-a/swse_batch_a_typed_domain_crosswalk_232.csv`, with a README that prohibits any generator, validator, ledger, planner or loader from reading it. The hash above identifies the exact file as received (CRLF line endings). The repository normalizes text to LF on commit, so the committed copy has a different hash (`01766f5a3e18467c7909c63faf1d80c3b1af9389c2a9f84a493de95310fb2c55`); the evidence README records both and the line-ending cause. Source observations in Reports 01-03 are the reviewer's visual inspection of the PDFs. **This implementer has not seen those page images** and records them only as reviewer-reported.
 
 ## 2. Count and identity reconciliation
 

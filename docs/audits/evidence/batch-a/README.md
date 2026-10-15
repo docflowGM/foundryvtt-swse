@@ -6,7 +6,9 @@
 
 | Item | Value |
 |---|---|
-| SHA-256 | `06cb541309859bfd157e3fe3b276219b50ec2678f3dda18bdec0d1f762d99fd9` |
+| SHA-256 of the file as received (CRLF line endings) | `06cb541309859bfd157e3fe3b276219b50ec2678f3dda18bdec0d1f762d99fd9` |
+| SHA-256 of the committed file (the repository's `.gitattributes` normalizes text to LF) | `01766f5a3e18467c7909c63faf1d80c3b1af9389c2a9f84a493de95310fb2c55` |
+| Line-ending note | The two hashes differ only because of CRLF to LF normalization; the content is otherwise identical. To check the received file against the committed copy, compare after converting line endings |
 | Rows | 232 (one per typed definition, `parentId::domain`) |
 | Distinct parents | **185**. The registry has 186 parent records; the one without a row is `sv-droidification`, an excluded record with no in-scope typed domain |
 | Produced by | The independent reviewer, reconstructed from registry v1.5 (a research inventory, not an approved specification) |
