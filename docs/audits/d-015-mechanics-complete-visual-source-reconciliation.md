@@ -67,8 +67,8 @@ Q-021 (GM adjudicates an unprinted attempt/retry cost), Q-022 (no expedited remo
 
 1. Only trusted **Mechanics-trained** actors may use a normal upgrade-install/remove Mechanics check; untrained `Aid Another` may be a distinct assisted-check pathway if independently certified from errata, **never a way to become the installer**.
 2. Tool-kit requirement is **not forced universally** for Table 2-2. A printed accessory/host-specific requirement is respected.
-3. Taking 10 succeeds only when the source-defined no-rush/no-threat/no-distraction conditions are proven or the GM records the relevant circumstance; do not let a client simply assert `take10Allowed=true`.
-4. Taking 20 is **not offered** for S&V Table 2-2 installation/removal because failures have printed consequences. Conversely, don't rewrite the Core Mechanics `Special` entry to prohibit taking 20 on otherwise safe checks.
+3. **Canonical mode:** taking 10 is eligible only when the source-defined no-rush/no-threat/no-distraction conditions are established. **GM house-rule mode:** a GM may explicitly override those restrictions, with a distinct approval and audit marker; never trust a client-supplied `take10Allowed=true`.
+4. **Canonical mode:** taking 20 is not offered for S&V Table 2-2 installation/removal because failures have printed consequences. **GM house-rule exception (ordinary installation only):** a distinct, audited GM authorization may override this for installation, with time/cost/failure terms adjudicated, but it cannot be presented as a published permission. Removal is not covered by the owner's installation-specific policy. Do not rewrite Core Mechanics `Special` to prohibit take 20 on otherwise safe checks.
 5. Tech Specialist check `take10/take20` stays categorically disallowed under the *Starships* feat procedure.
 6. Source check eligibility does **not** confer `runtimeSelectable`, change pricing, or lift any of D-014, D-015, D-013, `EXECUTOR_NOT_CERTIFIED`; Q-033 exact transactional rollback still blocks G6.
 
