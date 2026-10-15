@@ -14,7 +14,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { REGISTRY_PATH } from '../tools/validate-modification-registry.mjs';
 import { loadInputs, RUNTIME_PATH, LEDGER_PATH, SPECS_PATH } from '../tools/build-modification-runtime.mjs';
-import { deriveRuntime, validateRuntime, canonicalJson, parseRegister, certifySlotCost, domainBasisFor, selectabilityFacts, unmetSelectableConditions, sha256 } from '../tools/lib/modification-runtime.mjs';
+import { deriveRuntime, validateRuntime, canonicalJson, parseRegister, PINNED_SCOPE_SHA256, certifySlotCost, domainBasisFor, selectabilityFacts, unmetSelectableConditions, sha256 } from '../tools/lib/modification-runtime.mjs';
 import { produceTrustedSnapshot, isTrustedSnapshot } from '../tools/lib/modification-snapshot-producer.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -60,28 +60,32 @@ check('accounting-eligible pairs: 41 Scum (14 weapon, 27 armor) + 8 KOTOR (6 wea
   assert.equal(elig.filter((d) => d.applicability.domainBasis === 'table-category').length, 41);
   assert.equal(elig.filter((d) => d.applicability.domainBasis === 'rules-certified').length, 8);
 });
-check('nothing is selectable, implemented or tested; only the 76 page-39 installProcedure components are specified', () => {
+check('nothing is selectable, implemented, tested or mechanically specified; the 76 page-39 installProcedure components are SOURCE_VERIFIED facts only', () => {
   assert.equal(allDomains.filter((d) => d.runtimeSelectable).length, 0);
-  const specified = [];
+  const verifiedFacts = [];
   for (const d of allDomains) for (const [name, c] of Object.entries(d.status.components)) {
-    assert.equal(c.IMPLEMENTED || c.OFFLINE_TESTED || c.FOUNDRY_TESTED, false);
+    assert.equal(c.MECHANIC_SPECIFIED || c.IMPLEMENTED || c.OFFLINE_TESTED || c.FOUNDRY_TESTED, false, `${d.typedDefinitionId}.${name}`);
     assert.equal(c.DATA_RECONCILED, true);
-    if (c.MECHANIC_SPECIFIED) specified.push([d.typedDefinitionId, name]);
+    if (name === 'installProcedure' && c.SOURCE_VERIFIED) verifiedFacts.push(d.typedDefinitionId);
     assert.equal(d.effects.automation, 'none');
     assert.equal(d.applicability.hostEligibility, 'not_established');
   }
-  assert.equal(specified.length, 76);
-  assert.ok(specified.every(([, name]) => name === 'installProcedure'));
-  assert.ok(specified.every(([id]) => id.startsWith('sv-')), 'only Scum and Villainy upgrade options are governed by page 39');
-  assert.ok(!specified.some(([id]) => id.startsWith('sv-retractable-stock') || id.startsWith('kotor-')), 'conditional-cost and KOTOR definitions are not specified');
-  assert.equal(new Set(specified.map(([id]) => id.split('::')[0])).size, 56);
+  assert.equal(verifiedFacts.length, 76);
+  assert.ok(verifiedFacts.every((id) => id.startsWith('sv-')), 'only Scum and Villainy upgrade options are governed by page 39');
+  assert.ok(!verifiedFacts.some((id) => id.startsWith('sv-retractable-stock') || id.startsWith('kotor-')), 'conditional-cost and KOTOR definitions are not verified');
+  assert.equal(new Set(verifiedFacts.map((id) => id.split('::')[0])).size, 56);
+  for (const id of verifiedFacts) {
+    const c = allDomains.find((d) => d.typedDefinitionId === id).status.components.installProcedure;
+    assert.deepEqual(c.deferred, ['D-014'], id);
+    assert.deepEqual(c.pendingSource, ['D-015'], id);
+  }
   assert.equal(records.filter((r) => 'runtimeSelectable' in r).length, 0, 'no parent-level flag');
 });
 check('component certification is independent: a certified cost and a verified procedure do not certify host prerequisites', () => {
   const sv = records.find((r) => r.definitionId.startsWith('sv-') && r.domains.armor && r.domains.armor.accounting.eligible).domains.armor;
   assert.equal(sv.status.components.cost.SOURCE_VERIFIED, true);
-  assert.equal(sv.status.components.installProcedure.SOURCE_VERIFIED, true, 'page 39 governs Scum upgrade options');
-  assert.equal(sv.status.components.installProcedure.MECHANIC_SPECIFIED, true);
+  assert.equal(sv.status.components.installProcedure.SOURCE_VERIFIED, true, 'page 39 facts verified for Scum upgrade options');
+  assert.equal(sv.status.components.installProcedure.MECHANIC_SPECIFIED, false, 'published facts are not a complete mechanic (D-014, D-015)');
   assert.equal(sv.status.components.hostPrerequisites.SOURCE_VERIFIED, false);
   assert.equal(sv.status.components.executableEffect.IMPLEMENTED, false);
   const kotor = records.find((r) => r.definitionId.startsWith('kotor-accessory-') && r.domains.armor).domains.armor;
@@ -188,7 +192,7 @@ check('domain basis', () => {
 
 // ---- non-promotion / fail-closed (ledger, specs, runtime tampering) ---------------------------
 const spec = (o = {}) => ({
-  specId: 'S-1', typedDefinitionId: 'sv-retractable-stock::weapon', component: 'description', basis: 'PUBLISHED_UNAMBIGUOUS',
+  specId: 'S-1', typedDefinitionId: 'sv-retractable-stock::weapon', component: 'description', basis: 'PUBLISHED_UNAMBIGUOUS', coverage: 'COMPLETE_MECHANIC',
   publication: { bookId: 'scum-and-villainy', title: 'Scum and Villainy', printedPage: 42, tableOrSection: 'Table 2-4' },
   verification: 'SOURCE_VERIFIED', evidence: 'test fixture', behavior: 'test fixture', authoredBy: 'test', ...o
 });
@@ -263,13 +267,13 @@ check('REGRESSION: removing the D-013 blocker from the ledger while D-013 is ope
   assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), codes(r).join());
 });
 check('REGRESSION: every scoped open register entry must keep its full ledger scope', () => {
-  for (const [id, drop] of [['D-013', null], ['D-004', null], ['D-005', null], ['D-006', null], ['D-010', null], ['D-011', null]]) {
+  for (const [id, drop] of [['D-013', null], ['D-014', null], ['D-015', null], ['D-004', null], ['D-005', null], ['D-006', null], ['D-010', null], ['D-011', null]]) {
     const whole = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== id); }));
     assert.ok(codes(whole).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} whole removal`);
     void drop;
   }
   // partial removal: drop one typed id from each explicit list
-  for (const id of ['D-004', 'D-005', 'D-006', 'D-010', 'D-011']) {
+  for (const id of ['D-004', 'D-005', 'D-006', 'D-010', 'D-011', 'D-014', 'D-015']) {
     const r = derive(withLedger((l) => { const b = l.blockers.find((x) => x.register === id); b.typedDefinitionIds = b.typedDefinitionIds.slice(1); if (!b.typedDefinitionIds.length) l.blockers = l.blockers.filter((x) => x !== b); }));
     assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} partial removal`);
   }
@@ -414,31 +418,34 @@ check('generator input is read-only: no source file other than the runtime outpu
   const after = ['data/audits/modification-rolling-authority-v1.5.json', 'data/audits/modification-rolling-authority-v1.5.manifest.json', LEDGER_PATH, SPECS_PATH, 'docs/audits/swse-rules-decisions-pending.md'].map((p) => sha256(fs.readFileSync(path.join(ROOT, p))));
   assert.deepEqual(after, before);
 });
-check('register parsing: D-001..D-014 classified; D-006 and D-014 deferred; only D-001 lifted', () => {
+check('register parsing: D-001..D-015 classified; D-006 and D-014 deferred; only D-001 lifted; one D-013 partial lift', () => {
   const reg = parseRegister(readText('docs/audits/swse-rules-decisions-pending.md'));
-  assert.equal(reg.size, 14);
+  assert.equal(reg.size, 15);
   const deferred = new Set(['D-006', 'D-014']);
   for (const [id, t] of reg) assert.deepEqual(t.classifications, [deferred.has(id) ? 'DEFERRED_RULES_REVIEW' : 'PENDING_SOURCE_VERIFICATION'], id);
   for (const [id, t] of reg) {
     if (id === 'D-001') { assert.equal(t.liftValid, true); assert.ok(t.lift.source.includes('page 39') && t.lift.evidence.includes('d-001-install-remove-pdf-verification.md')); }
-    else { assert.equal(t.lift, null, `${id} has no lift row`); assert.equal(t.liftValid, false); }
+    else { assert.equal(t.lift, null, `${id} has no whole lift row`); assert.equal(t.liftValid, false); }
+    assert.equal(t.scopeInvalid, false);
+    assert.equal(t.partialLifts.length, id === 'D-013' ? 1 : 0, id);
   }
-  assert.deepEqual([...reg].filter(([, t]) => t.scope).map(([id]) => id), ['D-001', 'D-004', 'D-005', 'D-006', 'D-010', 'D-011', 'D-013']);
-  assert.equal(reg.get('D-013').scope.kind, 'all');
-  assert.equal(reg.get('D-013').scope.except.length, 56);
-  assert.equal(reg.get('D-014').scope, null);
+  assert.deepEqual([...reg].filter(([, t]) => t.scope).map(([id]) => id), ['D-001', 'D-004', 'D-005', 'D-006', 'D-010', 'D-011', 'D-013', 'D-014', 'D-015']);
+  assert.deepEqual({ ...reg.get('D-013').scope }, { component: 'installProcedure', kind: 'all' }, 'D-013 has no exception list');
+  const pl = reg.get('D-013').partialLifts[0];
+  assert.equal(pl.definitions.split(',').length, 56);
+  assert.ok(pl.source.includes('printed page 39') && pl.evidence.includes('d-001-install-remove-pdf-verification.md'));
 });
 check('D-001 is lifted: a ledger that still blocks it is rejected, and the 156 non-governed definitions stay blocked by D-013', () => {
   assert.ok(codes(derive(withLedger((l) => { l.blockers.push({ register: 'D-001', classification: 'PENDING_SOURCE_VERIFICATION', component: 'installProcedure', appliesToAllTypedDefinitions: true }); }))).includes('BLOCKER_FOR_LIFTED_REGISTER_ENTRY'));
   const d13 = allDomains.filter((d) => d.status.components.installProcedure.pendingSource.includes('D-013'));
   assert.equal(d13.length, 156);
-  assert.equal(d13.length + allDomains.filter((d) => d.status.components.installProcedure.MECHANIC_SPECIFIED).length, 232);
+  assert.equal(d13.length + allDomains.filter((d) => d.status.components.installProcedure.SOURCE_VERIFIED).length, 232);
 });
 check('page-39 specification records: exact provenance and governance', () => {
   const recs = base.specs.records;
   assert.equal(recs.length, 76);
   for (const r of recs) {
-    assert.equal(r.component, 'installProcedure'); assert.equal(r.basis, 'PUBLISHED_UNAMBIGUOUS'); assert.equal(r.verification, 'SOURCE_VERIFIED');
+    assert.equal(r.component, 'installProcedure'); assert.equal(r.basis, 'PUBLISHED_UNAMBIGUOUS'); assert.equal(r.verification, 'SOURCE_VERIFIED'); assert.equal(r.coverage, 'PUBLISHED_FACTS');
     assert.deepEqual(r.publication, { bookId: 'scum-and-villainy', title: 'Scum and Villainy', printedPage: 39, tableOrSection: 'Table 2-2: Upgrade Installation; Installing Upgrades text' });
     assert.ok(r.evidence.includes('fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1'));
     assert.ok(r.behavior.includes('register D-014'));
@@ -461,10 +468,10 @@ check('no runtime (scripts/) file references the generated data or generator yet
 
 
 // ---- canonical non-installability guard (G2 final review) ----------------------------------------
-const allLifted = () => liftedRegister('D-013', 'D-004', 'D-005', 'D-006', 'D-010', 'D-011');
+const allLifted = () => liftedRegister('D-013', 'D-014', 'D-015', 'D-004', 'D-005', 'D-006', 'D-010', 'D-011');
 /** Otherwise-complete promotion: every component specified, implemented, tested, evaluator named, every blocker lifted. */
 function completePromotion(typedId, { skipCostSpec = false } = {}) {
-  const already = new Set(base.specs.records.filter((x) => x.typedDefinitionId === typedId).map((x) => x.component));
+  const already = new Set(base.specs.records.filter((x) => x.typedDefinitionId === typedId && x.coverage === 'COMPLETE_MECHANIC').map((x) => x.component));
   const comps = ['cost', 'description', 'hostPrerequisites', 'installProcedure', 'executableEffect'].filter((c) => !(skipCostSpec && c === 'cost') && !already.has(c));
   return {
     register: allLifted(),
@@ -555,6 +562,159 @@ check('V10\' rejects a runtime that marks an excluded / uncertified / unknown-pr
   }
 });
 check('baseline preserved after the guard: counts unchanged, nothing selectable', () => {
+  assert.deepEqual(committed.header.counts, { records: 186, typedDefinitions: 232, eligibleCandidates: 231, accountingEligiblePairs: 49, certifiedSlotCosts: 84, runtimeSelectable: 0 });
+});
+
+
+// ---- PR #1043 review corrections ----------------------------------------------------------------
+const REGISTER_TEXT = readText('docs/audits/swse-rules-decisions-pending.md');
+/** Parses the real register after inserting extra rows directly after an entry's Ledger scope row. */
+const registerWith = (id, ...rows) => parseRegister(REGISTER_TEXT.replace(new RegExp(`(## ${id} — [\\s\\S]*?\\| Ledger scope \\|[^\\n]*\\n)`), `$1${rows.join('\n')}\n`));
+const governedIds = base.specs.records.map((x) => x.typedDefinitionId);
+const governedPick = governedIds.find((id) => { const d = allDomains.find((x) => x.typedDefinitionId === id); return d.accounting.eligible && d.candidate && records.find((r) => r.definitionId === id.split('::')[0]).price.kind === 'credits'; });
+const kotorParents = [...new Set(allDomains.filter((d) => d.typedDefinitionId.startsWith('kotor-accessory-')).map((d) => d.typedDefinitionId.split('::')[0]))];
+const typedOf = (parents) => allDomains.filter((d) => parents.includes(d.typedDefinitionId.split('::')[0])).map((d) => d.typedDefinitionId);
+const withoutTyped = (ids) => withLedger((l) => { for (const b of l.blockers) if (b.register === 'D-013') b.typedDefinitionIds = b.typedDefinitionIds.filter((t) => !ids.includes(t)); });
+
+check('CORRECTION 1: published facts are certified but the procedure is not complete while D-014 and D-015 are open', () => {
+  assert.ok(governedPick, 'a governed, accounting-eligible, priced definition exists');
+  const c = allDomains.find((d) => d.typedDefinitionId === governedPick).status.components.installProcedure;
+  assert.deepEqual({ SOURCE_VERIFIED: c.SOURCE_VERIFIED, MECHANIC_SPECIFIED: c.MECHANIC_SPECIFIED, deferred: c.deferred, pendingSource: c.pendingSource }, { SOURCE_VERIFIED: true, MECHANIC_SPECIFIED: false, deferred: ['D-014'], pendingSource: ['D-015'] });
+});
+check('CORRECTION 1: a complete-mechanic record, implementation evidence and a selectable entry are all refused while D-014/D-015 are open', () => {
+  const complete = spec({ specId: 'C-1', typedDefinitionId: governedPick, component: 'installProcedure' });
+  assert.ok(codes(derive(withSpecs(complete))).includes('SPEC_WHILE_BLOCKER_OPEN'));
+  const impl = (flags) => withLedger((l) => { l.implementation.push({ typedDefinitionId: governedPick, component: 'installProcedure', flags, commit: 'c', tests: ['t'], foundryEvidence: { route: 'isolated', runId: 'r' } }); });
+  // facts record alone is not a basis for implementation
+  assert.ok(codes(derive(impl({ IMPLEMENTED: true, OFFLINE_TESTED: true, FOUNDRY_TESTED: true }))).includes('IMPL_WITHOUT_SPECIFICATION'));
+  // even with a complete record present, the open blockers still refuse the evidence
+  const both = derive({ ...withSpecs(complete), ...impl({ IMPLEMENTED: true, OFFLINE_TESTED: true, FOUNDRY_TESTED: true }) });
+  assert.equal(both.runtime, null);
+  assert.ok(codes(both).includes('IMPL_WHILE_BLOCKER_OPEN') && codes(both).includes('SPEC_WHILE_BLOCKER_OPEN'), codes(both).join());
+  // otherwise-complete everything else + a selectable entry: the unmet list names the install procedure
+  const sel = derive(withLedger((l) => { l.selectable.push({ typedDefinitionId: governedPick, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'e', offlineTests: ['t'] } }); }));
+  const unmet = sel.failures.find((x) => x.code === 'SELECTABLE_CONDITIONS_UNMET').detail.unmet;
+  assert.ok(unmet.includes('1:installProcedure') && unmet.includes('3:installProcedure'), unmet.join());
+});
+check('CORRECTION 1: D-014 and D-015 cannot be dropped from the ledger or lifted without their required evidence', () => {
+  for (const id of ['D-014', 'D-015']) {
+    const r = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== id); }));
+    assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), id);
+  }
+  const liftRow = (row) => registerWith('D-014', `| Blocker lifted | ${row} |`);
+  assert.equal(liftRow('source=x; evidence=docs/audits/d-001-install-remove-pdf-verification.md').get('D-014').liftValid, false, 'a deferred entry needs an owner ruling, not just a source');
+  assert.equal(liftRow('owner-ruling=fixture').get('D-014').liftValid, true);
+});
+check('CORRECTION 1: with D-014 (owner ruling) and D-015 (source) lifted, a complete-mechanic record is accepted and promotion works end to end (synthetic)', () => {
+  const reg = new Map(base.register);
+  reg.set('D-014', { ...reg.get('D-014'), lift: { 'owner-ruling': 'fixture' }, liftValid: true });
+  reg.set('D-015', { ...reg.get('D-015'), lift: { source: 'f', evidence: 'f' }, liftValid: true });
+  const r = derive({
+    register: reg,
+    ...withSpecs(spec({ specId: 'C-2', typedDefinitionId: governedPick, component: 'installProcedure' }), spec({ specId: 'C-3', typedDefinitionId: governedPick, component: 'hostPrerequisites' })),
+    ...withLedger((l) => {
+      l.blockers = l.blockers.filter((b) => b.register !== 'D-014' && b.register !== 'D-015');
+      l.implementation.push({ typedDefinitionId: governedPick, component: 'installProcedure', flags: { IMPLEMENTED: true, OFFLINE_TESTED: true, FOUNDRY_TESTED: true }, commit: 'c', tests: ['t'], foundryEvidence: { route: 'isolated', runId: 'r' } });
+    })
+  });
+  assert.deepEqual(codes(r), [], JSON.stringify(r.failures));
+  const c = r.runtime.records.find((x) => x.definitionId === governedPick.split('::')[0]).domains[governedPick.split('::')[1]].status.components.installProcedure;
+  assert.deepEqual({ S: c.SOURCE_VERIFIED, M: c.MECHANIC_SPECIFIED, I: c.IMPLEMENTED, F: c.FOUNDRY_TESTED, deferred: c.deferred, pending: c.pendingSource }, { S: true, M: true, I: true, F: true, deferred: [], pending: [] });
+});
+check('CORRECTION 1: spec coverage validation', () => {
+  const bad = (o) => codes(derive(withSpecs(spec({ specId: 'V-1', typedDefinitionId: governedPick, component: 'description', ...o }))));
+  assert.ok(bad({ coverage: undefined }).includes('SPEC_COVERAGE_INVALID'));
+  assert.ok(bad({ coverage: 'PARTIAL' }).includes('SPEC_COVERAGE_INVALID'));
+  assert.ok(bad({ coverage: 'PUBLISHED_FACTS', basis: 'OWNER_RULING', ownerRulingRef: 'x' }).includes('SPEC_FACTS_BASIS_INVALID'));
+  // facts records never set MECHANIC_SPECIFIED
+  const ok = derive(withSpecs(spec({ specId: 'V-2', typedDefinitionId: 'sv-retractable-stock::weapon', component: 'description', coverage: 'PUBLISHED_FACTS' })));
+  const c = ok.runtime.records.find((x) => x.definitionId === 'sv-retractable-stock').domains.weapon.status.components.description;
+  assert.equal(c.SOURCE_VERIFIED, true); assert.equal(c.MECHANIC_SPECIFIED, false);
+  // a facts record may coexist with a complete one for the same component, but not twice with the same coverage
+  assert.ok(codes(derive(withSpecs(spec({ specId: 'V-3', typedDefinitionId: 'sv-retractable-stock::weapon', component: 'description', coverage: 'PUBLISHED_FACTS' }), spec({ specId: 'V-4', typedDefinitionId: 'sv-retractable-stock::weapon', component: 'description', coverage: 'PUBLISHED_FACTS' })))).includes('SPEC_DUPLICATE_COMPONENT'));
+});
+
+check('CORRECTION 2: a valid, evidence-backed partial lift releases exactly the named family and nothing else', () => {
+  assert.equal(kotorParents.length, 8);
+  const row = `| Partial lift | definitions=${kotorParents.join(',')}; source=KOTOR pp. 75-76 (fixture); evidence=docs/audits/d-001-install-remove-pdf-verification.md |`;
+  const reg = registerWith('D-013', row);
+  assert.equal(reg.get('D-013').partialLifts.length, 2);
+  const released = typedOf(kotorParents);
+  assert.equal(released.length, 8);
+  // the register row alone, with the ledger unchanged, is refused: the ledger must drop the released definitions
+  assert.ok(codes(derive({ register: reg })).includes('BLOCKER_OUTSIDE_REGISTER_SCOPE'));
+  // the register row plus the exact ledger change is accepted; the other 148 stay blocked
+  const r = derive({ register: reg, ...withoutTyped(released) });
+  assert.deepEqual(codes(r), [], JSON.stringify(r.failures));
+  const stillBlocked = r.runtime.records.flatMap((x) => Object.values(x.domains)).filter((d) => d.status.components.installProcedure.pendingSource.includes('D-013'));
+  assert.equal(stillBlocked.length, 148);
+  for (const id of released) assert.ok(!stillBlocked.some((d) => d.typedDefinitionId === id));
+  // releasing a blocker certifies nothing
+  for (const d of r.runtime.records.flatMap((x) => Object.values(x.domains)).filter((x) => released.includes(x.typedDefinitionId))) {
+    assert.equal(d.status.components.installProcedure.SOURCE_VERIFIED, false);
+    assert.equal(d.runtimeSelectable, false);
+  }
+});
+check('CORRECTION 2: a ledger change without a lift row, or a lift row plus extra ledger removals, is refused', () => {
+  const released = typedOf(kotorParents);
+  assert.ok(codes(derive(withoutTyped(released))).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), 'ledger edit alone');
+  const reg = registerWith('D-013', `| Partial lift | definitions=${kotorParents.join(',')}; source=s; evidence=docs/audits/d-001-install-remove-pdf-verification.md |`);
+  const extra = allDomains.find((d) => d.status.components.installProcedure.pendingSource.includes('D-013') && !released.includes(d.typedDefinitionId)).typedDefinitionId;
+  assert.ok(codes(derive({ register: reg, ...withoutTyped([...released, extra]) })).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), 'unrelated blocker removed');
+  assert.ok(codes(derive({ register: reg, ...withoutTyped(released.slice(1)) })).includes('BLOCKER_OUTSIDE_REGISTER_SCOPE'), 'released definition still blocked');
+});
+check('CORRECTION 2: invalid partial lifts release nothing and are themselves failures', () => {
+  const released = typedOf(kotorParents);
+  const p = kotorParents.join(',');
+  const cases = [
+    [`definitions=${p}; source=s`, 'missing evidence'],
+    [`definitions=${p}; evidence=docs/audits/d-001-install-remove-pdf-verification.md`, 'missing source'],
+    [`source=s; evidence=docs/audits/d-001-install-remove-pdf-verification.md`, 'no definitions'],
+    [`definitions=nope-definition; source=s; evidence=e`, 'unknown definition'],
+    [`definitions=sv-cheater; source=s; evidence=e`, 'already released by the first row'],
+    [`definitions=${kotorParents[0]},${kotorParents[0]}; source=s; evidence=e`, 'duplicate within one row']
+  ];
+  for (const [row, why] of cases) {
+    const reg = registerWith('D-013', `| Partial lift | ${row} |`);
+    const r = derive({ register: reg, ...withoutTyped(released) });
+    assert.ok(codes(r).includes('REGISTER_PARTIAL_LIFT_INVALID'), why);
+    assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${why}: an invalid row must not release anything`);
+  }
+  // two rows naming the same parent: the second is invalid
+  const two = registerWith('D-013', `| Partial lift | definitions=${kotorParents[0]}; source=s; evidence=e |`, `| Partial lift | definitions=${kotorParents[0]}; source=s; evidence=e |`);
+  assert.ok(codes(derive({ register: two })).includes('REGISTER_PARTIAL_LIFT_INVALID'));
+  // a deferred entry needs an owner ruling for a partial lift too
+  const d14 = registerWith('D-014', `| Partial lift | definitions=${governedIds[0].split('::')[0]}; source=s; evidence=e |`);
+  assert.ok(codes(derive({ register: d14 })).includes('REGISTER_PARTIAL_LIFT_INVALID'));
+  const d14ok = registerWith('D-014', `| Partial lift | definitions=${governedIds[0].split('::')[0]}; owner-ruling=fixture |`);
+  const dropped = typedOf([governedIds[0].split('::')[0]]);
+  const r14 = derive({ register: d14ok, ...withLedger((l) => { const b = l.blockers.find((x) => x.register === 'D-014'); b.typedDefinitionIds = b.typedDefinitionIds.filter((t) => !dropped.includes(t)); }) });
+  assert.deepEqual(codes(r14), [], JSON.stringify(r14.failures));
+});
+check('CORRECTION 2: scope rows are pinned: an edited exception list, a corrupted, removed or new scope row releases nothing', () => {
+  const edit = (id, replacement) => parseRegister(REGISTER_TEXT.replace(new RegExp(`(## ${id} — [\\s\\S]*?\\| Ledger scope \\| )[^\\n]*( \\|\\n)`), `$1${replacement}$2`));
+  assert.ok(codes(derive({ register: edit('D-013', 'component=installProcedure; definitions=ALL; except=sv-cheater') })).includes('REGISTER_SCOPE_UNPARSEABLE'));
+  assert.ok(codes(derive({ register: edit('D-013', 'component=installProcedure; definitions=sv-cheater') })).includes('REGISTER_SCOPE_PINNED_MISMATCH'));
+  assert.ok(codes(derive({ register: edit('D-004', 'component=cost; definitions=sv-cheater') })).includes('REGISTER_SCOPE_PINNED_MISMATCH'));
+  assert.ok(codes(derive({ register: edit('D-005', 'component=hostPrerequisites; definitions=sv-cheater') })).includes('REGISTER_SCOPE_PINNED_MISMATCH'));
+  assert.ok(codes(derive({ register: edit('D-004', 'garbage') })).includes('REGISTER_SCOPE_UNPARSEABLE'));
+  const removed = parseRegister(REGISTER_TEXT.replace(/^\| Ledger scope \| component=cost; definitions=sv-retractable-stock \|\n/m, ''));
+  assert.ok(codes(derive({ register: removed })).includes('REGISTER_SCOPE_MISSING'));
+  const added = parseRegister(REGISTER_TEXT.replace(/(## D-002 — [^\n]*\n[\s\S]*?\| Status \|[^\n]*\n)/, '$1| Ledger scope | component=cost; definitions=sv-cheater |\n'));
+  assert.ok(codes(derive({ register: added })).includes('REGISTER_SCOPE_NOT_PINNED'));
+  assert.deepEqual(Object.keys(PINNED_SCOPE_SHA256), ['D-001', 'D-004', 'D-005', 'D-006', 'D-010', 'D-011', 'D-013', 'D-014', 'D-015']);
+});
+check('CORRECTION 2: every lift and partial-lift row must cite an existing repository file (CLI)', () => {
+  const readWith = (text) => (rel) => (rel === 'docs/audits/swse-rules-decisions-pending.md' ? Buffer.from(text) : fs.existsSync(path.join(ROOT, rel)) ? fs.readFileSync(path.join(ROOT, rel)) : null);
+  const withRow = (row) => REGISTER_TEXT.replace(/(## D-013 — [\s\S]*?\| Ledger scope \|[^\n]*\n)/, `$1${row}\n`);
+  assert.equal(loadInputs(readWith(REGISTER_TEXT)).ok, true);
+  const missingFile = loadInputs(readWith(withRow(`| Partial lift | definitions=${kotorParents[0]}; source=s; evidence=docs/audits/does-not-exist.md |`)));
+  assert.equal(missingFile.ok, false); assert.match(missingFile.error, /LIFT_EVIDENCE_FILE_MISSING/);
+  const noPath = loadInputs(readWith(withRow(`| Partial lift | definitions=${kotorParents[0]}; source=s; evidence=trust me |`)));
+  assert.equal(noPath.ok, false); assert.match(noPath.error, /LIFT_EVIDENCE_FILE_MISSING/);
+  assert.equal(loadInputs(readWith(withRow(`| Partial lift | definitions=${kotorParents[0]}; source=s; evidence=docs/audits/d-001-install-remove-pdf-verification.md |`))).ok, true);
+});
+check('baseline preserved after the review corrections', () => {
   assert.deepEqual(committed.header.counts, { records: 186, typedDefinitions: 232, eligibleCandidates: 231, accountingEligiblePairs: 49, certifiedSlotCosts: 84, runtimeSelectable: 0 });
 });
 

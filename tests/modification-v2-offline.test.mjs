@@ -169,11 +169,16 @@ check('planner: with the real catalog no definition can be planned as executable
     assert.ok(codesOf(p).includes('NOT_SELECTABLE'), id);
     assert.ok(codesOf(p).includes('HOST_NOT_ESTABLISHED'), id);
     const d13 = p.deferrals.some((d) => d.register === 'D-013' && d.component === 'installProcedure');
-    const specified = catalog.getTyped(id).typed.status.components.installProcedure.MECHANIC_SPECIFIED;
+    const specified = catalog.getTyped(id).typed.status.components.installProcedure.SOURCE_VERIFIED; // printed page-39 facts verified (governed)
     assert.equal(d13, !specified, `${id}: D-013 blocks exactly the definitions the page-39 procedure does not govern`);
     assert.equal(codesOf(p).includes('COMPONENT_UNVERIFIED') && p.blockers.some((b) => b.code === 'COMPONENT_UNVERIFIED' && b.detail === 'installProcedure'), !specified);
     assert.ok(p.blockers.some((b) => b.code === 'COMPONENT_UNVERIFIED' && b.detail === 'hostPrerequisites'), 'host prerequisites remain unverified for every definition');
-    if (specified) { governed += 1; assert.ok(!codesOf(p).includes('INSTALL_PROCEDURE_NOT_SPECIFIED')); }
+    if (specified) {
+      governed += 1;
+      assert.ok(codesOf(p).includes('INSTALL_PROCEDURE_NOT_SPECIFIED'), 'verified published facts are not a complete mechanical procedure');
+      assert.ok(p.deferrals.some((d) => d.register === 'D-014' && d.classification === 'DEFERRED_RULES_REVIEW') && p.deferrals.some((d) => d.register === 'D-015' && d.classification === 'PENDING_SOURCE_VERIFICATION'));
+      assert.ok(!p.deferrals.some((d) => d.register === 'D-013'));
+    }
   }
   assert.equal(n, 232);
   assert.equal(governed, 76);

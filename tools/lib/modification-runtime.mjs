@@ -15,7 +15,7 @@ import { isTrustedSnapshot } from './modification-snapshot-producer.mjs';
 export const RUNTIME_SCHEMA_ID = 'swse.modification.runtime/1';
 export const LEDGER_SCHEMA_ID = 'swse.modification.status-ledger/1';
 export const SPECS_SCHEMA_ID = 'swse.modification.specification-records/1';
-export const GENERATOR_VERSION = '1.2.0';
+export const GENERATOR_VERSION = '1.3.0';
 
 export const DOMAINS = Object.freeze(['weapon', 'armor', 'equipment']);
 export const COMPONENTS = Object.freeze(['cost', 'description', 'hostPrerequisites', 'executableEffect', 'installProcedure']);
@@ -51,52 +51,81 @@ export function jsonEqual(a, b) {
 /* ------------------------------------------------------------------------------------------ */
 
 /**
+ * SHA-256 of the exact text of every register "Ledger scope" row. The scope of a blocker is part of the trust boundary: it can
+ * be changed only by a reviewed change to this table, never by editing a register row, an exception list or the ledger.
+ * A new scoped entry needs a new pin here.
+ */
+export const PINNED_SCOPE_SHA256 = Object.freeze({
+  'D-001': 'd7890553665b64cf7f237cbf2cf77e35ae6d58e3322a60da9960cd5ef226e0cd',
+  'D-004': 'ceb4a0814fbd02bf6c23ab65c52c336f1c2a8145fff8bd41a11e29a680061bdc',
+  'D-005': '84be16325cac69264404e9d35bed3cb49b3ed3f36e512467c625afe475edc952',
+  'D-006': 'fb0c57282d8a72daf931eee3d5f55e858f70f23c9fbb351ed1ddf5031d3e8b08',
+  'D-010': '0b266484b12f4b7ec4ba7ab314675cdce15f797e7bb5e4fb28950af94b75537a',
+  'D-011': '89e37a1594b3097b5a8584a4bc8ef8a681f8357bb7e28fa1a04e8e1f23a77826',
+  'D-013': 'd7890553665b64cf7f237cbf2cf77e35ae6d58e3322a60da9960cd5ef226e0cd',
+  'D-014': '56e743418672a823abd69354a69f31c8439d9252fffac2075ad946c65a8ab42c',
+  'D-015': '56e743418672a823abd69354a69f31c8439d9252fffac2075ad946c65a8ab42c'
+});
+
+/**
  * Parses the append-only register. Each entry yields:
  *   classifications : tokens of the "Review classification" row
- *   scope           : the machine-readable "Ledger scope" row (component + which typed definitions the entry blocks), or null
- *   lift            : the "Blocker lifted" row, or null. A blocker is lifted ONLY by a valid lift row
- *                     (PENDING_SOURCE_VERIFICATION needs source= and evidence=; DEFERRED_RULES_REVIEW needs owner-ruling=).
- * @returns {Map<string, { classifications: string[], scope: object|null, lift: object|null, liftValid: boolean }>}
+ *   scope / scopeText / scopeInvalid : the machine-readable "Ledger scope" row (component + which typed definitions the entry blocks)
+ *   lift            : the "Blocker lifted" row (whole-entry lift). Valid only with source= and evidence= (PENDING_SOURCE_VERIFICATION)
+ *                     and/or owner-ruling= (DEFERRED_RULES_REVIEW)
+ *   partialLifts    : every "Partial lift" row: definitions=<parent ids>; source=...; evidence=...[; owner-ruling=...]. Releases only the
+ *                     named definitions, only when valid (see validateInputs).
  */
 export function parseRegister(markdown) {
   const out = new Map();
   const text = String(markdown ?? '');
   const sections = text.split(/^## (?=D-\d{3} )/m).slice(1);
+  const fields = (v) => {
+    if (v === null || v === undefined) return null;
+    const o = {};
+    for (const part of v.split(';')) {
+      const i = part.indexOf('=');
+      if (i > 0) o[part.slice(0, i).trim()] = part.slice(i + 1).trim();
+    }
+    return o;
+  };
   for (const s of sections) {
     const id = /^(D-\d{3}) /.exec(s)?.[1];
     if (!id) continue;
     const row = (label) => new RegExp(`^\\| ${label} \\| (.*?) \\|\\s*$`, 'm').exec(s)?.[1] ?? null;
     const clsRow = /^\| Review classification \(rev\. 2\) \| (.*)$/m.exec(s)?.[1] ?? '';
     const classifications = [...clsRow.split(' — ')[0].matchAll(/`([A-Z_]+)`/g)].map((m) => m[1]).filter((t) => CLASSIFICATIONS.includes(t));
-    const fields = (v) => {
-      if (v === null) return null;
-      const o = {};
-      for (const part of v.split(';')) {
-        const i = part.indexOf('=');
-        if (i > 0) o[part.slice(0, i).trim()] = part.slice(i + 1).trim();
-      }
-      return o;
-    };
-    const scopeRaw = fields(row('Ledger scope'));
+    const scopeText = row('Ledger scope');
+    const scopeRaw = fields(scopeText);
     let scope = null;
-    if (scopeRaw && COMPONENTS.includes(scopeRaw.component)) {
-      if (scopeRaw.definitions === 'ALL') {
-        // `except=` narrows ALL by parent definition ids; every definition NOT named stays in scope (new definitions default to blocked).
-        const except = scopeRaw.except ? scopeRaw.except.split(',').map((x) => x.trim()).filter(Boolean) : [];
-        scope = { component: scopeRaw.component, kind: 'all', except };
-      }
-      else if (scopeRaw.definitions) scope = { component: scopeRaw.component, kind: 'definitions', ids: scopeRaw.definitions.split(',').map((x) => x.trim()).filter(Boolean) };
-      else if (scopeRaw.slotPools) scope = { component: scopeRaw.component, kind: 'slotPools', pools: scopeRaw.slotPools.split(',').map((x) => x.trim()).filter(Boolean) };
+    if (scopeRaw && COMPONENTS.includes(scopeRaw.component) && Object.keys(scopeRaw).every((k) => ['component', 'definitions', 'slotPools'].includes(k))) {
+      const list = (v) => v.split(',').map((x) => x.trim()).filter(Boolean);
+      if (scopeRaw.definitions === 'ALL') scope = { component: scopeRaw.component, kind: 'all' };
+      else if (scopeRaw.definitions) scope = { component: scopeRaw.component, kind: 'definitions', ids: list(scopeRaw.definitions) };
+      else if (scopeRaw.slotPools) scope = { component: scopeRaw.component, kind: 'slotPools', pools: list(scopeRaw.slotPools) };
     }
     const lift = fields(row('Blocker lifted'));
-    let liftValid = false;
-    if (lift) {
-      const need = [];
-      if (classifications.includes('PENDING_SOURCE_VERIFICATION')) need.push('source', 'evidence');
-      if (classifications.includes('DEFERRED_RULES_REVIEW')) need.push('owner-ruling');
-      liftValid = need.length > 0 && need.every((k) => typeof lift[k] === 'string' && lift[k].length > 0);
-    }
-    out.set(id, { classifications, scope, lift, liftValid });
+    const partialLifts = [...s.matchAll(/^\| Partial lift \| (.*?) \|\s*$/gm)].map((m) => fields(m[1]));
+    out.set(id, { classifications, scope, scopeText, scopeInvalid: scopeText !== null && scope === null, lift, liftValid: lift !== null && liftFieldsValid(classifications, lift), partialLifts });
+  }
+  return out;
+}
+
+/** Evidence required to lift: source= and evidence= (pending), owner-ruling= (deferred), both when the entry carries both. */
+export function liftFieldsValid(classifications, f) {
+  if (!f) return false;
+  const need = [];
+  if (classifications.includes('PENDING_SOURCE_VERIFICATION')) need.push('source', 'evidence');
+  if (classifications.includes('DEFERRED_RULES_REVIEW')) need.push('owner-ruling');
+  return need.length > 0 && need.every((k) => typeof f[k] === 'string' && f[k].length > 0);
+}
+
+/** Repository paths cited in the evidence= field of every lift and partial-lift row (the CLI requires each row to cite an existing file). */
+export function liftEvidencePaths(register) {
+  const out = [];
+  for (const [id, e] of register) {
+    const rows = [...(e.lift ? [{ label: 'Blocker lifted', f: e.lift }] : []), ...e.partialLifts.map((f, i) => ({ label: `Partial lift #${i + 1}`, f }))];
+    for (const { label, f } of rows) out.push({ register: id, label, paths: [...String(f?.evidence ?? '').matchAll(/(?:docs|data|tests|tools|reference)\/[A-Za-z0-9_./ -]*?\.(?:md|json|mjs|js|txt)/g)].map((m) => m[0]) });
   }
   return out;
 }
@@ -105,12 +134,7 @@ export function parseRegister(markdown) {
 export function scopeTargets(scope, registry) {
   const all = [];
   for (const d of registry.definitions) for (const t of Object.values(d.typedDefinitions ?? {})) all.push({ id: t.definitionId, parent: d.id, pool: t.slotPoolId ?? null });
-  if (scope.kind === 'all') {
-    const known = new Set(registry.definitions.map((d) => d.id));
-    const except = scope.except ?? [];
-    if (except.some((x) => !known.has(x))) return null;
-    return new Set(all.filter((x) => !except.includes(x.parent)).map((x) => x.id));
-  }
+  if (scope.kind === 'all') return new Set(all.map((x) => x.id));
   if (scope.kind === 'definitions') {
     const known = new Set(registry.definitions.map((d) => d.id));
     if (scope.ids.some((x) => !known.has(x))) return null;
@@ -181,6 +205,21 @@ export function validateInputs({ registry, ledger, specs, register }) {
       const targets = b.appliesToAllTypedDefinitions === true ? [...typed.keys()] : Array.isArray(b.typedDefinitionIds) ? b.typedDefinitionIds : [];
       for (const t of targets) ledgerCover.get(key).add(t);
     });
+    // Scope pins: a scope row can neither be removed, corrupted, added nor edited without changing PINNED_SCOPE_SHA256 in code.
+    for (const [pinId, hash] of Object.entries(PINNED_SCOPE_SHA256)) {
+      const e = register.get(pinId);
+      if (!e || e.scopeText === null || e.scopeText === undefined) fail(f, 'REGISTER_SCOPE_MISSING', `/register/${pinId}`);
+      else if (sha256(e.scopeText) !== hash) fail(f, 'REGISTER_SCOPE_PINNED_MISMATCH', `/register/${pinId}`);
+    }
+    for (const [regId, e] of register) {
+      if (e.scopeText !== null && e.scopeText !== undefined && !PINNED_SCOPE_SHA256[regId]) fail(f, 'REGISTER_SCOPE_NOT_PINNED', `/register/${regId}`);
+      if (e.scopeInvalid) fail(f, 'REGISTER_SCOPE_UNPARSEABLE', `/register/${regId}`);
+    }
+    const parentTyped = new Map();
+    for (const [typedId, info] of typed) {
+      if (!parentTyped.has(info.parentId)) parentTyped.set(info.parentId, []);
+      parentTyped.get(info.parentId).push(typedId);
+    }
     const scoped = new Set();
     for (const [regId, entry] of register) {
       if (!entry.scope) continue;
@@ -196,6 +235,30 @@ export function validateInputs({ registry, ledger, specs, register }) {
         fail(f, 'REGISTER_SCOPE_UNKNOWN_DEFINITION', `/register/${regId}`);
         continue;
       }
+      // Partial lifts release named parent definitions only: valid rows (named, known, inside the scope, not repeated, with the
+      // evidence this entry's classification requires) release exactly those; an invalid row releases nothing and is itself a failure.
+      const base = new Set(want);
+      const releasedParents = new Set();
+      entry.partialLifts.forEach((pl, j) => {
+        const where = `/register/${regId}/partialLifts/${j}`;
+        const parents = typeof pl?.definitions === 'string' ? pl.definitions.split(',').map((x) => x.trim()).filter(Boolean) : [];
+        const reasons = [];
+        if (!parents.length) reasons.push('no definitions named');
+        if (!liftFieldsValid(entry.classifications, pl)) reasons.push('missing source=/evidence= (pending) or owner-ruling= (deferred)');
+        const inRow = new Set();
+        for (const parent of parents) {
+          const typedOfParent = parentTyped.get(parent);
+          if (!typedOfParent) reasons.push(`unknown definition ${parent}`);
+          else if (!typedOfParent.some((t) => base.has(t))) reasons.push(`${parent} is outside the scope`);
+          else if (releasedParents.has(parent) || inRow.has(parent)) reasons.push(`${parent} already released`);
+          inRow.add(parent);
+        }
+        if (reasons.length) return fail(f, 'REGISTER_PARTIAL_LIFT_INVALID', where, reasons);
+        for (const parent of parents) {
+          releasedParents.add(parent);
+          for (const t of parentTyped.get(parent)) want.delete(t);
+        }
+      });
       const missing = [...want].filter((t) => !have.has(t));
       const extra = [...have].filter((t) => !want.has(t));
       if (missing.length) fail(f, 'BLOCKER_REMOVED_WHILE_REGISTER_OPEN', `/register/${regId}`, { component: entry.scope.component, missingCount: missing.length, sample: missing.slice(0, 3) });
@@ -208,11 +271,16 @@ export function validateInputs({ registry, ledger, specs, register }) {
     }
 
     const specKeys = new Map();
+    const specDupes = new Set();
     const seenSpecIds = new Set();
     specs.records.forEach((s, i) => {
       const p = `/specs/records/${i}`;
       if (!isObj(s)) return fail(f, 'SPEC_NOT_OBJECT', p);
       for (const k of ['specId', 'typedDefinitionId', 'component', 'basis', 'evidence', 'behavior', 'authoredBy']) if (!isStr(s[k])) fail(f, 'SPEC_FIELD_MISSING', `${p}/${k}`);
+      // coverage: PUBLISHED_FACTS certifies printed facts only (SOURCE_VERIFIED; never MECHANIC_SPECIFIED, never a basis for implementation);
+      // COMPLETE_MECHANIC states the whole implementation-ready behavior and is refused while any blocker is open for the component.
+      if (!['PUBLISHED_FACTS', 'COMPLETE_MECHANIC'].includes(s.coverage)) fail(f, 'SPEC_COVERAGE_INVALID', `${p}/coverage`, s.coverage);
+      if (s.coverage === 'PUBLISHED_FACTS' && s.basis !== 'PUBLISHED_UNAMBIGUOUS') fail(f, 'SPEC_FACTS_BASIS_INVALID', `${p}/basis`, s.basis);
       if (seenSpecIds.has(s.specId)) fail(f, 'SPEC_ID_DUPLICATE', p, s.specId);
       seenSpecIds.add(s.specId);
       if (!typed.has(s.typedDefinitionId)) fail(f, 'SPEC_TYPED_ID_UNKNOWN', `${p}/typedDefinitionId`, s.typedDefinitionId);
@@ -223,14 +291,16 @@ export function validateInputs({ registry, ledger, specs, register }) {
       if (!isObj(pub) || !isStr(pub.bookId) || !isStr(pub.title) || !Number.isInteger(pub.printedPage) || !isStr(pub.tableOrSection)) fail(f, 'SPEC_PUBLICATION_INCOMPLETE', `${p}/publication`);
       if (s.basis === 'OWNER_RULING' && !isStr(s.ownerRulingRef)) fail(f, 'SPEC_OWNER_RULING_REF_MISSING', `${p}/ownerRulingRef`);
       const key = `${s.typedDefinitionId}|${s.component}`;
-      if (blockedKeys.has(key)) fail(f, 'SPEC_WHILE_BLOCKER_OPEN', p, key);
+      if (s.coverage === 'COMPLETE_MECHANIC' && blockedKeys.has(key)) fail(f, 'SPEC_WHILE_BLOCKER_OPEN', p, key);
       if (s.component === 'cost' && typed.has(s.typedDefinitionId)) {
         const t = typed.get(s.typedDefinitionId);
         const def = registry.definitions.find((d) => d.id === t.parentId);
         if (!certifySlotCost(def, def.typedDefinitions[t.domain]).certified) fail(f, 'SPEC_CANNOT_OVERRIDE_COST_CERTIFICATION', p, s.typedDefinitionId);
       }
-      if (specKeys.has(key)) fail(f, 'SPEC_DUPLICATE_COMPONENT', p, key);
-      specKeys.set(key, s);
+      const dupKey = `${key}|${s.coverage}`;
+      if (specDupes.has(dupKey)) fail(f, 'SPEC_DUPLICATE_COMPONENT', p, dupKey);
+      specDupes.add(dupKey);
+      if (s.coverage === 'COMPLETE_MECHANIC') specKeys.set(key, s);
     });
 
     const implKeys = new Set();
@@ -311,7 +381,7 @@ function buildStatus({ def, typedDef, domainCost, typedId, ledger, specs }) {
     if (s.typedDefinitionId !== typedId) continue;
     // Slot-cost certification comes only from the Phase 1b predicate; a specification can never set it (see SPEC_CANNOT_OVERRIDE_COST_CERTIFICATION).
     if (s.component !== 'cost') components[s.component].SOURCE_VERIFIED = true;
-    components[s.component].MECHANIC_SPECIFIED = true;
+    if (s.coverage === 'COMPLETE_MECHANIC') components[s.component].MECHANIC_SPECIFIED = true;
   }
   for (const e of ledger.implementation) {
     if (e.typedDefinitionId !== typedId) continue;
