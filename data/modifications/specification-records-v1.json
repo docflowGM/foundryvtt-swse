@@ -1,6 +1,1299 @@
 {
  "schema": "swse.modification.specification-records/1",
  "registryVersion": "1.5",
- "notes": "Hand-maintained. A record specifies one mechanic component of one typed domain definition from an explicit, verified, unambiguous published rule (basis PUBLISHED_UNAMBIGUOUS) or from an owner ruling (OWNER_RULING). Empty: no mechanic has been specified.",
- "records": []
+ "notes": "Hand-maintained. A record specifies one mechanic component of one typed domain definition from an explicit, verified, unambiguous published rule (basis PUBLISHED_UNAMBIGUOUS) or from an owner ruling (OWNER_RULING). coverage PUBLISHED_FACTS certifies printed facts only (the component becomes SOURCE_VERIFIED, never MECHANIC_SPECIFIED, and supports no implementation evidence); coverage COMPLETE_MECHANIC states the whole implementation-ready behavior and is refused while any blocker is open for the component. Current records: the Scum and Villainy printed-page-39 installation/removal facts (register D-001) for the Scum Tables 2-3/2-4/2-5 upgrade options with a fixed printed upgrade-point value. See docs/audits/d-001-install-remove-pdf-verification.md.",
+ "records": [
+  {
+   "specId": "D001::sv-cheater::equipment",
+   "typedDefinitionId": "sv-cheater::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-cloaked::weapon",
+   "typedDefinitionId": "sv-cloaked::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-cloaked::armor",
+   "typedDefinitionId": "sv-cloaked::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-cloaked::equipment",
+   "typedDefinitionId": "sv-cloaked::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-dual-gear::equipment",
+   "typedDefinitionId": "sv-dual-gear::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-electrograpple-handle::weapon",
+   "typedDefinitionId": "sv-electrograpple-handle::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-electrograpple-handle::equipment",
+   "typedDefinitionId": "sv-electrograpple-handle::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-environmental-sealing::weapon",
+   "typedDefinitionId": "sv-environmental-sealing::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-environmental-sealing::armor",
+   "typedDefinitionId": "sv-environmental-sealing::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-environmental-sealing::equipment",
+   "typedDefinitionId": "sv-environmental-sealing::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-extra-power-source::weapon",
+   "typedDefinitionId": "sv-extra-power-source::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-extra-power-source::armor",
+   "typedDefinitionId": "sv-extra-power-source::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-extra-power-source::equipment",
+   "typedDefinitionId": "sv-extra-power-source::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-memory-upgrade::equipment",
+   "typedDefinitionId": "sv-memory-upgrade::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-memory-upgrade-advanced::equipment",
+   "typedDefinitionId": "sv-memory-upgrade-advanced::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 2.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '2 or more' upgrade points (2 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-miniaturized::weapon",
+   "typedDefinitionId": "sv-miniaturized::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-miniaturized::armor",
+   "typedDefinitionId": "sv-miniaturized::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-miniaturized::equipment",
+   "typedDefinitionId": "sv-miniaturized::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-recognition-system::weapon",
+   "typedDefinitionId": "sv-recognition-system::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-recognition-system::armor",
+   "typedDefinitionId": "sv-recognition-system::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-recognition-system::equipment",
+   "typedDefinitionId": "sv-recognition-system::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-remote-activation::weapon",
+   "typedDefinitionId": "sv-remote-activation::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-remote-activation::armor",
+   "typedDefinitionId": "sv-remote-activation::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-remote-activation::equipment",
+   "typedDefinitionId": "sv-remote-activation::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-secret-compartment::weapon",
+   "typedDefinitionId": "sv-secret-compartment::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-secret-compartment::armor",
+   "typedDefinitionId": "sv-secret-compartment::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-secret-compartment::equipment",
+   "typedDefinitionId": "sv-secret-compartment::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-silverplate::weapon",
+   "typedDefinitionId": "sv-silverplate::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-silverplate::armor",
+   "typedDefinitionId": "sv-silverplate::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-silverplate::equipment",
+   "typedDefinitionId": "sv-silverplate::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-spring-loaded::weapon",
+   "typedDefinitionId": "sv-spring-loaded::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-spring-loaded::equipment",
+   "typedDefinitionId": "sv-spring-loaded::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-storage-capacity::weapon",
+   "typedDefinitionId": "sv-storage-capacity::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-storage-capacity::armor",
+   "typedDefinitionId": "sv-storage-capacity::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-storage-capacity::equipment",
+   "typedDefinitionId": "sv-storage-capacity::equipment",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-3 upgrade option (printed p. 41) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-bayonet-ring::weapon",
+   "typedDefinitionId": "sv-bayonet-ring::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-bipod::weapon",
+   "typedDefinitionId": "sv-bipod::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-double-trigger::weapon",
+   "typedDefinitionId": "sv-double-trigger::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-ion-charger::weapon",
+   "typedDefinitionId": "sv-ion-charger::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-missile-load::weapon",
+   "typedDefinitionId": "sv-missile-load::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-neutronium-reinforcement::weapon",
+   "typedDefinitionId": "sv-neutronium-reinforcement::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-overload-switch::weapon",
+   "typedDefinitionId": "sv-overload-switch::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-pulse-charger::weapon",
+   "typedDefinitionId": "sv-pulse-charger::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-rangefinder::weapon",
+   "typedDefinitionId": "sv-rangefinder::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-rapid-recycler::weapon",
+   "typedDefinitionId": "sv-rapid-recycler::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-slinker::weapon",
+   "typedDefinitionId": "sv-slinker::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-sniper-switch::weapon",
+   "typedDefinitionId": "sv-sniper-switch::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-targeting-scope-standard::weapon",
+   "typedDefinitionId": "sv-targeting-scope-standard::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-targeting-scope-low-light::weapon",
+   "typedDefinitionId": "sv-targeting-scope-low-light::weapon",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-4 upgrade option (printed p. 42) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-aquatic-adaptation::armor",
+   "typedDefinitionId": "sv-aquatic-adaptation::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-armorplast::armor",
+   "typedDefinitionId": "sv-armorplast::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-climbing-claws::armor",
+   "typedDefinitionId": "sv-climbing-claws::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-diagnostics-system::armor",
+   "typedDefinitionId": "sv-diagnostics-system::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-environmental-systems::armor",
+   "typedDefinitionId": "sv-environmental-systems::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-gyro::armor",
+   "typedDefinitionId": "sv-gyro::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-helmet-package::armor",
+   "typedDefinitionId": "sv-helmet-package::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-holoshroud::armor",
+   "typedDefinitionId": "sv-holoshroud::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-integrated-equipment-1-slot::armor",
+   "typedDefinitionId": "sv-integrated-equipment-1-slot::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-integrated-equipment-2-slots::armor",
+   "typedDefinitionId": "sv-integrated-equipment-2-slots::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-integrated-equipment-5-slots::armor",
+   "typedDefinitionId": "sv-integrated-equipment-5-slots::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-integrated-equipment-10-slots::armor",
+   "typedDefinitionId": "sv-integrated-equipment-10-slots::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 2.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '2 or more' upgrade points (2 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-internal-generator::armor",
+   "typedDefinitionId": "sv-internal-generator::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-jump-servos::armor",
+   "typedDefinitionId": "sv-jump-servos::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-powered-exoskeleton::armor",
+   "typedDefinitionId": "sv-powered-exoskeleton::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 2.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '2 or more' upgrade points (2 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-radiation-shielding::armor",
+   "typedDefinitionId": "sv-radiation-shielding::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-armor-rangefinder::armor",
+   "typedDefinitionId": "sv-armor-rangefinder::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-ready-harness::armor",
+   "typedDefinitionId": "sv-ready-harness::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-repulsorlift::armor",
+   "typedDefinitionId": "sv-repulsorlift::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-shadowskin::armor",
+   "typedDefinitionId": "sv-shadowskin::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-shadowskin-reflec::armor",
+   "typedDefinitionId": "sv-shadowskin-reflec::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-shield-generator-sr5::armor",
+   "typedDefinitionId": "sv-shield-generator-sr5::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 2.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '2 or more' upgrade points (2 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-shield-generator-sr10::armor",
+   "typedDefinitionId": "sv-shield-generator-sr10::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 3.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '2 or more' upgrade points (3 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-shockweb::armor",
+   "typedDefinitionId": "sv-shockweb::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-vacuum-seals::armor",
+   "typedDefinitionId": "sv-vacuum-seals::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 0.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '0' upgrade points (0 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-vacuum-seals-improved::armor",
+   "typedDefinitionId": "sv-vacuum-seals-improved::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D001::sv-weapon-mount::armor",
+   "typedDefinitionId": "sv-weapon-mount::armor",
+   "component": "installProcedure",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 39,
+    "tableOrSection": "Table 2-2: Upgrade Installation; Installing Upgrades text"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
+   "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
+   "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  }
+ ]
 }

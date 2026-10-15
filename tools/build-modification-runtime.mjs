@@ -14,7 +14,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MANIFEST_PATH, REGISTRY_PATH, MARKDOWN_PATH } from './validate-modification-registry.mjs';
 import { produceTrustedSnapshot } from './lib/modification-snapshot-producer.mjs';
-import { deriveRuntime, validateRuntime, canonicalJson, parseRegister, sha256 } from './lib/modification-runtime.mjs';
+import { deriveRuntime, validateRuntime, canonicalJson, parseRegister, liftEvidencePaths, sha256 } from './lib/modification-runtime.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const RUNTIME_PATH = 'data/modifications/runtime-definitions-v1.5.json';
@@ -47,13 +47,18 @@ export function loadInputs(read = readBytes) {
   } catch (err) {
     return { ok: false, error: `INPUT_UNPARSEABLE: ${err.message}` };
   }
+  const register = parseRegister(registerBytes.toString('utf8'));
+  // Every lift and partial-lift row must cite at least one existing repository file as evidence (the row's text alone is not evidence).
+  for (const row of liftEvidencePaths(register)) {
+    if (!row.paths.length || row.paths.some((rel) => !read(rel))) return { ok: false, error: `LIFT_EVIDENCE_FILE_MISSING: ${row.register} ${row.label} cites ${row.paths.length ? 'a file that does not exist' : 'no repository file'}` };
+  }
   return {
     ok: true,
     inputs: {
       snapshot: produced.handle,
       ledger,
       specs,
-      register: parseRegister(registerBytes.toString('utf8')),
+      register,
       inputHashes: { ledger: sha256(ledgerBytes), specs: sha256(specsBytes) }
     }
   };
