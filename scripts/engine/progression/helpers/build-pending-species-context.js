@@ -15,6 +15,9 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SpeciesGrantLedgerBuilder } from '/systems/foundryvtt-swse/scripts/species/species-grant-ledger-builder.js';
+import { resolveAbilityChoice } from '/systems/foundryvtt-swse/scripts/species/species-ability-choice.js';
+import { checkPublicationSelection, isRecordedConfigurationRestore, getSoleSnapshotVersion } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
+import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { computeStartingFeatsRequired } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
 
@@ -90,15 +93,52 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
     const selectedVariantId = typeof speciesIdentity === 'object'
       ? (speciesIdentity.variantId || speciesIdentity.selectedVariantId || speciesIdentity.selectedVariant?.id || null)
       : null;
-    const selectedVariant = selectedVariantId
-      ? (speciesEntry.variants || []).find(variant => String(variant?.id) === String(selectedVariantId))
+    // Project owner ruling RD-001: a species published in more than one verified profile needs an explicit
+    // version; nothing silently defaults to a sourcebook. This is the single choke point for every assignment
+    // path (chargen step, drag-and-drop, templates, followers). An existing actor is never re-evaluated when the
+    // request merely restores the configuration the actor itself already records (species name and variant id);
+    // that evidence comes from the actor, never from a caller-supplied flag.
+    if (!isRecordedConfigurationRestore(actor, speciesEntry, selectedVariantId)) {
+      const publication = checkPublicationSelection(speciesEntry, selectedVariantId);
+      if (!publication.ok) {
+        SWSELogger.warn(`[PendingSpeciesContext] ${speciesEntry.name} requires an explicit published version (${publication.code}); no context built`, {
+          requestedVariantId: selectedVariantId ?? null,
+          source,
+        });
+        return null;
+      }
+    }
+    // A species published exactly once applies its sole verified profile (no choice exists, nothing is inherited
+    // from the legacy base record). An explicit selection always wins.
+    const effectiveVariantId = selectedVariantId || getSoleSnapshotVersion(speciesEntry)?.id || null;
+    const selectedVariant = effectiveVariantId
+      ? (speciesEntry.variants || []).find(variant => String(variant?.id) === String(effectiveVariantId))
       : null;
+    // Complete-snapshot variants never inherit base traits/natural weapons/languages
+    // (species-variant-profile.js); a malformed snapshot throws and fails closed below.
     const variantAppliedSpeciesEntry = selectedVariant
-      ? _applyVariantProfile(speciesEntry, selectedVariant)
+      ? applySpeciesVariantProfile(speciesEntry, selectedVariant)
       : speciesEntry;
-    const selectedAbilityChoice = typeof speciesIdentity === 'object'
+    const suppliedAbilityChoice = typeof speciesIdentity === 'object'
       ? (speciesIdentity.selectedAbilityChoice || speciesIdentity.abilityChoiceSelection || null)
       : null;
+    // A within-profile ability choice is validated here for EVERY assignment path. The published option (not the
+    // caller's payload) supplies the modifiers; nothing is defaulted. An existing actor that merely restores its
+    // recorded configuration may omit the choice (its racial scores already hold it).
+    const recordedChoice = actor?.flags?.swse?.speciesAbilityChoice ?? null;
+    const restoring = isRecordedConfigurationRestore(actor, speciesEntry, selectedVariantId);
+    const choiceCheck = resolveAbilityChoice(variantAppliedSpeciesEntry, suppliedAbilityChoice ?? (restoring && recordedChoice?.id ? { id: recordedChoice.id } : null));
+    // An existing actor whose option was never recorded cannot be rematerialized exactly (the option is not inferred);
+    // fail closed so its stored racial modifiers are preserved.
+    if (!choiceCheck.ok) {
+      SWSELogger.warn(`[PendingSpeciesContext] ${speciesEntry.name} requires a valid published ability choice (${choiceCheck.code}); no context built`, { requested: suppliedAbilityChoice?.id ?? null, source });
+      return null;
+    }
+    // Species that publish no selectable-modifier choice keep the previous pass-through (e.g. Human's template payload).
+    const selectedAbilityChoice = choiceCheck.required ? choiceCheck.choice : suppliedAbilityChoice;
+    if (selectedVariant && variantAppliedSpeciesEntry.variantFallbackFields?.length) {
+      SWSELogger.warn(`[PendingSpeciesContext] Legacy overlay variant "${selectedVariant.id}" inherits base fields: ${variantAppliedSpeciesEntry.variantFallbackFields.join(', ')}`);
+    }
     const effectiveSpeciesEntry = _applyAbilityChoiceProfile(variantAppliedSpeciesEntry, selectedAbilityChoice);
 
     const ledger = await SpeciesGrantLedgerBuilder.build(effectiveSpeciesEntry, effectiveSpeciesEntry.supplementaryTraits || null);
@@ -120,11 +160,7 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
         source: effectiveSpeciesEntry.source || speciesEntry.source || 'Unknown',
         doc: effectiveSpeciesEntry, // Keep effective profile for reference
         baseDoc: speciesEntry,
-        variant: selectedVariant ? {
-          id: selectedVariant.id,
-          label: selectedVariant.label || 'Variant',
-          source: selectedVariant.source || null,
-        } : null,
+        variant: effectiveSpeciesEntry.selectedVariant || null,
         abilityChoice: selectedAbilityChoice ? { ...selectedAbilityChoice } : null,
       },
 
@@ -152,11 +188,7 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
         createdAt: Date.now(),
         source,
         actorType,
-        selectedVariant: selectedVariant ? {
-          id: selectedVariant.id,
-          label: selectedVariant.label || 'Variant',
-          source: selectedVariant.source || null,
-        } : null,
+        selectedVariant: effectiveSpeciesEntry.selectedVariant || null,
         abilityChoice: selectedAbilityChoice ? { ...selectedAbilityChoice } : null,
         attributeGenerationOverride: _buildAttributeGenerationOverride(effectiveSpeciesEntry, selectedAbilityChoice),
         droidBuilder: ledger.rules?.droidBuilder || null,
@@ -181,40 +213,6 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
 }
 
 
-/**
- * Overlay an alternate species profile onto the base registry entry. This keeps
- * one visible species row while allowing the selected variant to drive ability
- * modifiers, movement, languages, and trait grants during materialization.
- * @private
- */
-function _applyVariantProfile(speciesEntry, variant) {
-  if (!speciesEntry || !variant) return speciesEntry;
-  const abilityScores = variant.abilityMods && typeof variant.abilityMods === 'object'
-    ? { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0, ...variant.abilityMods }
-    : speciesEntry.abilityScores;
-  return {
-    ...speciesEntry,
-    id: speciesEntry.id,
-    name: speciesEntry.name,
-    source: variant.source || speciesEntry.source,
-    size: variant.size || speciesEntry.size,
-    speed: Number.isFinite(Number(variant.speed)) ? Number(variant.speed) : speciesEntry.speed,
-    movement: variant.movement && typeof variant.movement === 'object' ? variant.movement : speciesEntry.movement,
-    rawAbilities: variant.abilities || speciesEntry.rawAbilities,
-    abilityScores,
-    abilityChoice: variant.abilityChoice || speciesEntry.abilityChoice || null,
-    skillBonuses: Array.isArray(variant.skillBonuses) && variant.skillBonuses.length ? variant.skillBonuses : speciesEntry.skillBonuses,
-    abilities: Array.isArray(variant.special) && variant.special.length ? [...variant.special] : speciesEntry.abilities,
-    canonicalTraits: Array.isArray(variant.traits) && variant.traits.length ? variant.traits : speciesEntry.canonicalTraits,
-    languages: Array.isArray(variant.languages) && variant.languages.length ? variant.languages : speciesEntry.languages,
-    selectedVariantId: variant.id,
-    selectedVariant: {
-      id: variant.id,
-      label: variant.label || 'Variant',
-      source: variant.source || null,
-    },
-  };
-}
 
 
 /**
@@ -299,12 +297,14 @@ function _buildAttributeGenerationOverride(speciesEntry, selectedChoice) {
   return {
     mode: 'fixed-array-plus-choice',
     label: abilityChoice.label || 'Republic Clone fixed array',
-    helpText: abilityChoice.helpText || 'Republic Clones start from their canonical array, then distribute two +1 attribute increases like the level 4 attribute increase step.',
+    helpText: abilityChoice.helpText || 'Republic Clones start from their canonical array, then choose one ability score to increase by 2.',
     fixedScores,
     bonusChoices,
     allocationPoints,
     maxPerAbility,
-    allocationMode: abilityChoice.allocationMode || 'level-4-two-abilities',
+    singleScore: abilityChoice.singleScore === true,
+    houseRuleAllocation: abilityChoice.houseRuleAllocation ? { ...abilityChoice.houseRuleAllocation } : null,
+    allocationMode: abilityChoice.allocationMode || (abilityChoice.singleScore === true ? 'single-score' : 'level-4-two-abilities'),
     requiresGmApprovalOnOverride: abilityChoice.requiresGmApprovalOnOverride !== false,
     selectedBonusAbility: selectedAbility,
     allocations,

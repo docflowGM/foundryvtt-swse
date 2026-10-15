@@ -409,7 +409,7 @@
       {
         "id": "weapon-familiarity",
         "name": "Weapon Familiarity",
-        "description": "Gungans treat the Atlatl, Cesta, and Electropole as Simple Weapons (Melee) instead of Exotic Weapons (Melee)."
+        "description": "Gungans with the Weapon Proficiency (simple weapons) feat are proficient with the atlatl and the cesta."
       }
     ],
     "variants": [],
@@ -452,7 +452,7 @@
       {
         "id": "force-resistance",
         "name": "Force Resistance",
-        "description": "A Hutt's sharp mind allows them to resist Force abilities. Hutts receive a +5 bonus to their Will Defense against any use of the Use the Force skill."
+        "description": "Hutts have a +5 species bonus to Will Defense against any Use the Force check."
       },
       {
         "id": "supreme-stability",
@@ -462,7 +462,7 @@
       {
         "id": "silver-tongued",
         "name": "Silver Tongued",
-        "description": "Hutts may be known to be heavy handed in their ventures, but they are equally capable in legal negotiations as they are underground business. A Hutt may choose to reroll any Persuasion check, keeping the better of the two results."
+        "description": "A Hutt may reroll a Persuasion check, keeping the better result."
       }
     ],
     "variants": [],
@@ -852,7 +852,7 @@
       {
         "id": "limb-regeneration",
         "name": "Limb Regeneration",
-        "description": "A Trandoshan regrows a lost limb in 1d10 days. At the end of that time, all Persistent Conditions associated with the loss of the limb are removed."
+        "description": "A Trandoshan regrows a lost limb in 1d10 days. At the end of that time, all persistent penalties associated with the loss of the limb are removed."
       },
       {
         "id": "natural-armor",

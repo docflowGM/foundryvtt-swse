@@ -374,6 +374,8 @@ export class SpeciesGrantLedgerBuilder {
     const burrow = maybeNumber(explicitMovement.burrow ?? structuredMovementRules.burrow ?? jsonCanonicalMovement.burrow);
 
     if (walk !== null) ledger.physical.movements.walk = walk;
+    // An explicit "land speed not printed" overrides the ledger's generic initial 6 (never defaulted, never 0).
+    if (doc.landSpeedUnspecified === true || system.landSpeedUnspecified === true) ledger.physical.movements.walk = null;
     if (swim !== null) ledger.physical.movements.swim = swim;
     if (fly !== null) ledger.physical.movements.fly = fly;
     if (climb !== null) ledger.physical.movements.climb = climb;
@@ -683,6 +685,9 @@ export class SpeciesGrantLedgerBuilder {
     if (rawLanguages.length) {
       ledger.languages.automatic = [...rawLanguages];
     }
+    // Published restriction: understood but not spoken (species-languages.js).
+    const restrictions = system.languageRestrictions ?? doc.languageRestrictions ?? {};
+    ledger.languages.understands = Object.keys(restrictions).filter(name => restrictions[name] === 'understand-only');
 
     // Check for Bonus Languages flag
     if (system.tags && Array.isArray(system.tags)) {
@@ -760,33 +765,51 @@ export class SpeciesGrantLedgerBuilder {
       }
     }
 
-    // From special abilities
-    const specialAbilities = Array.isArray(system.special)
-      ? system.special
-      : (Array.isArray(doc.abilities) ? doc.abilities : []);
-    if (specialAbilities.length) {
-      for (const special of specialAbilities) {
-        const trait = this._classifySpecial(special);
+    const addSpecials = (skipCovered) => {
+      // From special abilities
+      const specialAbilities = Array.isArray(system.special)
+        ? system.special
+        : (Array.isArray(doc.abilities) ? doc.abilities : []);
+      if (specialAbilities.length) {
+        for (const special of specialAbilities) {
+          const trait = this._classifySpecial(special);
+          if (!trait) continue;
+          if (skipCovered && ledger.traits.some(t => t.id === trait.id || t.name?.toLowerCase() === trait.name?.toLowerCase())) continue;
+          ledger.traits.push(trait);
+        }
+      }
+    };
+
+    const addCanonical = () => {
+      // From canonical trait blocks, when available from the sanitized species pack/registry.
+      // Route through _classifyTrait (not _classifySpecial) so text-based fallback detection
+      // for skill bonuses, natural armor, and rerolls applies to structured canonicalTrait objects.
+      // Guard: skip entries already present from structuralTraits/conditionalTraits to prevent
+      // double-counting for species (e.g. Barabel, Verpine, Bothan) where both arrays are identical.
+      const canonicalTraits = Array.isArray(system.canonicalTraits)
+        ? system.canonicalTraits
+        : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
+      const existingTraitIds = new Set(ledger.traits.map(t => t.id));
+      const existingTraitNames = new Set(ledger.traits.map(t => t.name?.toLowerCase()).filter(Boolean));
+      for (const canonicalTrait of canonicalTraits) {
+        if (!canonicalTrait?.name) continue;
+        const candidateId = canonicalTrait.id || this._slugify(canonicalTrait.name);
+        if (existingTraitIds.has(candidateId) || existingTraitNames.has(canonicalTrait.name.toLowerCase())) continue;
+        const trait = this._classifyTrait(canonicalTrait, 'json', { structuredOnly: doc?.selectedVariant?.completeSnapshot === true });
         if (trait) ledger.traits.push(trait);
       }
-    }
+    };
 
-    // From canonical trait blocks, when available from the sanitized species pack/registry.
-    // Route through _classifyTrait (not _classifySpecial) so text-based fallback detection
-    // for skill bonuses, natural armor, and rerolls applies to structured canonicalTrait objects.
-    // Guard: skip entries already present from structuralTraits/conditionalTraits to prevent
-    // double-counting for species (e.g. Barabel, Verpine, Bothan) where both arrays are identical.
-    const canonicalTraits = Array.isArray(system.canonicalTraits)
-      ? system.canonicalTraits
-      : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
-    const existingTraitIds = new Set(ledger.traits.map(t => t.id));
-    const existingTraitNames = new Set(ledger.traits.map(t => t.name?.toLowerCase()).filter(Boolean));
-    for (const canonicalTrait of canonicalTraits) {
-      if (!canonicalTrait?.name) continue;
-      const candidateId = canonicalTrait.id || this._slugify(canonicalTrait.name);
-      if (existingTraitIds.has(candidateId) || existingTraitNames.has(canonicalTrait.name.toLowerCase())) continue;
-      const trait = this._classifyTrait(canonicalTrait, 'json');
-      if (trait) ledger.traits.push(trait);
+    // A complete-snapshot publication has no sidecar JSON: its structured trait objects (published
+    // text, classifiable bonuses) are the authority. Process them BEFORE the bare-name stubs from
+    // `special`, which would otherwise shadow them as description-less identity traits. All other
+    // species keep the historical order (stubs first) so their behaviour is unchanged.
+    if (doc?.selectedVariant?.completeSnapshot === true) {
+      addCanonical();
+      addSpecials(true);
+    } else {
+      addSpecials(false);
+      addCanonical();
     }
 
     // Final deduplication: some species JSON files list the same trait in multiple
@@ -840,7 +863,9 @@ export class SpeciesGrantLedgerBuilder {
    * Classify and normalize a trait object
    * @private
    */
-  static _classifyTrait(trait, source = 'json') {
+  static _classifyTrait(trait, source = 'json', options = {}) {
+    // Audited snapshots are structured-only: bonuses/rerolls come from explicit `rules`, never from parsing prose.
+    const structuredOnly = options.structuredOnly === true;
     const classified = {
       id: trait.id || this._slugify(trait.name),
       name: trait.name || 'Unknown Trait',
@@ -891,10 +916,44 @@ export class SpeciesGrantLedgerBuilder {
           // by _compileSpeciesBonusFeatItems (progression-finalizer).
           classified.classification = 'grant';
           classified.source = 'bonusFeat';
-          if (rule.featId && rule.featId !== 'bonus-feat') {
+          if (rule.choice === true) {
+            // Player picks the feat at the level the species grants it (same shape as the generic "bonus feat" trait).
+            classified.grants.push({ grantType: 'feat', target: null, frequency: 'choice', condition: null, requirements: [] });
+          } else if (rule.featName) {
+            // Structured named grant (publication snapshots): the requirement, if any, is data, not parsed prose.
+            // Only skillTrained requirements are resolvable (SpeciesConditionalGrantResolver); a rule with any other
+            // requirement type must not be emitted as a rule at all (see the species profile hydrator).
+            const requirements = Array.isArray(rule.requirements) ? rule.requirements.map(r => ({ ...r })) : [];
+            classified.grants.push({
+              grantType: 'feat',
+              target: rule.featName,
+              frequency: requirements.length ? 'conditional' : 'always',
+              condition: null,
+              requirements,
+            });
+          } else if (rule.featId && rule.featId !== 'bonus-feat') {
             classified.grants.push({
               grantType: 'feat',
               target: rule.featId,
+              frequency: 'always',
+              condition: null,
+              requirements: [],
+            });
+          }
+        } else if (rule.type === 'trainedSkillChoice') {
+          // One additional trained skill chosen from the character's class skills.
+          classified.classification = 'grant';
+          classified.source = 'bonusTrainedSkill';
+          classified.grants.push({ grantType: 'trainedSkill', target: null, frequency: 'choice', condition: null, requirements: [] });
+        } else if (rule.type === 'classSkillGrant') {
+          // Structured class-skill grant: the named skills are class skills for every class.
+          classified.classification = 'grant';
+          classified.source = 'bonusClassSkill';
+          for (const skillName of (Array.isArray(rule.skills) ? rule.skills : [])) {
+            classified.grants.push({
+              grantType: 'classSkill',
+              target: this._normalizeSkillKey(String(skillName).toLowerCase()),
+              targetDisplay: skillName,
               frequency: 'always',
               condition: null,
               requirements: [],
@@ -1075,7 +1134,7 @@ export class SpeciesGrantLedgerBuilder {
     // Only fires for traits that remain 'unresolved' after rule/id checks above.
     // Runs ALL pattern extractors (not early-exit) so one trait can yield multiple passive[].
     // Example: Aleena Small Size grants both a Stealth skill bonus AND a Reflex defense bonus.
-    if (classified.classification === 'unresolved' && trait.description) {
+    if (classified.classification === 'unresolved' && trait.description && !structuredOnly) {
       const desc = trait.description;
       let foundAny = false;
 
@@ -1142,7 +1201,7 @@ export class SpeciesGrantLedgerBuilder {
             scope: 'skill',
             target: this._normalizeSkillKey(rerollMatch[1].trim()),
             frequency: 'atWill',
-            outcome: /must accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
+            outcome: /must\s+(?:be\s+)?accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
           });
         }
       }
@@ -1158,7 +1217,7 @@ export class SpeciesGrantLedgerBuilder {
           scope: 'skill',
           target: this._normalizeSkillKey(rerollMatch[1].trim()),
           frequency: 'atWill',
-          outcome: /must accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
+          outcome: /must\s+(?:be\s+)?accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
         });
       }
     }
@@ -1387,7 +1446,9 @@ export class SpeciesGrantLedgerBuilder {
       ? system.canonicalTraits
       : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
     for (const trait of canonicalTraits) {
-      if (trait?.name) {
+      // A trait the publication audit does not identify as the activated ability this name usually implies
+      // (same printed name, different rule) is display-only: its name must not activate another species' ability.
+      if (trait?.name && trait.displayOnly !== true) {
         const slug = this._slugify(trait.name);
         if (!traitMap.has(slug)) {
           traitMap.set(slug, trait);
@@ -1476,8 +1537,9 @@ export class SpeciesGrantLedgerBuilder {
       });
     }
 
-    if (traitMap.has('sonic-bellow')) {
-      const trait = traitMap.get('sonic-bellow');
+    // 'bellow' is the printed Core trait name; 'sonic-bellow' is the legacy sidecar name.
+    if (traitMap.has('bellow') || traitMap.has('sonic-bellow')) {
+      const trait = traitMap.get('bellow') ?? traitMap.get('sonic-bellow');
       addAbility({
         id: 'bellow',
         name: 'Bellow',
@@ -1556,8 +1618,8 @@ export class SpeciesGrantLedgerBuilder {
       });
     }
 
-    if (traitMap.has('shapeshifter')) {
-      const trait = traitMap.get('shapeshifter');
+    if (traitMap.has('shapeshifter') || traitMap.has('shapeshift')) {
+      const trait = traitMap.get('shapeshifter') ?? traitMap.get('shapeshift');
       addAbility({
         id: 'shapeshift',
         name: 'Shapeshift',
@@ -1579,8 +1641,8 @@ export class SpeciesGrantLedgerBuilder {
       });
     }
 
-    if (traitMap.has('energy-surge')) {
-      const trait = traitMap.get('energy-surge');
+    if (traitMap.has('energy-surge') || traitMap.has('quick-energy')) {
+      const trait = traitMap.get('energy-surge') ?? traitMap.get('quick-energy');
       addAbility({
         id: 'energy-surge',
         name: 'Energy Surge',
@@ -1732,7 +1794,10 @@ export class SpeciesGrantLedgerBuilder {
         properties: {
           alwaysArmed: nw.alwaysArmed ?? true,
           countsAsWeapon: nw.countsAsWeapon ?? true,
-          finesse: nw.finesse ?? false
+          finesse: nw.finesse ?? false,
+          // Printed riders carried by the existing weapon-item vocabulary (attackOptions.noProvokeOpportunity, proficiency group).
+          ...(nw.noProvokeOpportunity === true ? { noProvokeOpportunity: true } : {}),
+          ...(nw.proficiencyGroup ? { proficiencyGroup: String(nw.proficiencyGroup) } : {})
         }
       });
     }

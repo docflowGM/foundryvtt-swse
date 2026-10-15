@@ -285,6 +285,10 @@ export class SpeciesRegistry {
                 id: String(trait.id ?? trait.name ?? '').trim(),
                 name: String(trait.name ?? trait.id ?? 'Trait').trim(),
                 description: String(trait.description ?? '').trim(),
+                // Structured ledger rules (only present on audited snapshot traits that compile strictly).
+                ...(Array.isArray(trait.rules) && trait.rules.length ? { rules: trait.rules } : {}),
+                ...(trait.displayOnly === true ? { displayOnly: true } : {}),
+                ...(trait.sourceFeatureId ? { sourceFeatureId: String(trait.sourceFeatureId) } : {}),
               }))
           : [];
 
@@ -303,6 +307,21 @@ export class SpeciesRegistry {
           languages: Array.isArray(variant.languages) ? variant.languages : [],
           description: String(variant.description ?? '').trim(),
           traits,
+          // Legacy variant provenance (tools/data/species-legacy-variant-provenance.json): superseded by a verified profile.
+          ...(variant.supersededBy ? { supersededBy: String(variant.supersededBy) } : {}),
+          ...(variant.legacyProvenance && typeof variant.legacyProvenance === 'object' ? { legacyProvenance: variant.legacyProvenance } : {}),
+          // Complete-snapshot (single published profile) fields. See species-variant-profile.js.
+          ...(variant.completeSnapshot === true ? {
+            completeSnapshot: true,
+            sourceProfileId: variant.sourceProfileId ?? null,
+            landSpeedUnspecified: variant.landSpeedUnspecified === true,
+            languageRestrictions: variant.languageRestrictions && typeof variant.languageRestrictions === 'object' ? variant.languageRestrictions : {},
+            naturalWeapons: Array.isArray(variant.naturalWeapons) ? variant.naturalWeapons : null,
+            primitive: !!variant.primitive,
+            suppressedClassProficiencies: Array.isArray(variant.suppressedClassProficiencies) ? variant.suppressedClassProficiencies : [],
+            noConstitution: !!variant.noConstitution,
+            retainsConstitution: !!variant.retainsConstitution,
+          } : {}),
         };
       });
   }
@@ -541,6 +560,8 @@ export class SpeciesRegistry {
       retainsConstitution: !!system.retainsConstitution,
       languages: languages,
       variants: this._normalizeVariants(system.variants),
+      languageRestrictions: system.languageRestrictions && typeof system.languageRestrictions === 'object' ? system.languageRestrictions : {},
+      knownPublications: Array.isArray(system.knownPublications) ? system.knownPublications.map(p => ({ ...p })) : [],
       canonicalName: system.canonicalName || doc.name,
       description: system.description?.value || system.description || system.shortDescription || '',
       source: system.source || null,

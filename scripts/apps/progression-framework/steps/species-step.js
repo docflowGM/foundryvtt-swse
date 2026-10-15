@@ -9,6 +9,8 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
+import { buildPublicationComparison, checkPublicationSelection, getSoleSnapshotVersion, isSupersededLegacyVariant, PUBLICATION_SELECTION_ERRORS } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
+import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { normalizeSpecies } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithPicker, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
 // Patch builder lives in the shared progression-framework module — NOT the legacy chargen path.
@@ -170,6 +172,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       if (speciesId) {
         this._committedSpeciesId = speciesId;
         this._committedSpeciesName = draftSpecies.speciesName || draftSpecies.name || speciesId;
+        this._restoreDraftVariant(speciesId, draftSpecies);
         console.log('[SpeciesStep] Hydrated draft species selection:', {
           speciesId,
           speciesName: this._committedSpeciesName,
@@ -244,7 +247,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
       const ability = String(target?.dataset?.ability || '').toLowerCase();
       const choiceIndex = Number(target?.dataset?.choiceIndex ?? -1);
       const species = speciesId ? this._resolveSpeciesEntry(speciesId) : null;
-      const choice = species ? this._formatSpeciesAbilityChoices(species).find(option => option.index === choiceIndex || option.ability === ability) : null;
+      const choices = species ? this._formatSpeciesAbilityChoices(species) : [];
+      const choice = choices.find(option => option.index === choiceIndex) || choices.find(option => option.ability === ability) || null;
       if (speciesId && choice) {
         this._selectedAbilityChoiceBySpeciesId.set(speciesId, {
           id: choice.id,
@@ -262,7 +266,20 @@ export class SpeciesStep extends ProgressionStepPlugin {
       const speciesId = target?.dataset?.speciesId || shell?.focusedItem?.id || null;
       const variantId = target?.dataset?.variantId || 'default';
       if (!speciesId) return true;
-      if (variantId === 'default') {
+      // RD-001: for a species with several verified publications only a verified version may be selected; there is no
+      // "Default" and legacy/unknown ids are rejected. Species without publications keep the original behavior.
+      const speciesEntry = this._resolveSpeciesEntry(speciesId);
+      const publication = checkPublicationSelection(speciesEntry, variantId);
+      if (publication.required) {
+        if (!publication.ok) {
+          swseLogger.warn('[SpeciesStep] Rejected species version selection', { speciesId, variantId, code: publication.code });
+          return true;
+        }
+        if (this._selectedVariantBySpeciesId.get(speciesId) !== variantId) {
+          this._selectedAbilityChoiceBySpeciesId.delete(speciesId);   // a choice belongs to the version that defined it
+        }
+        this._selectedVariantBySpeciesId.set(speciesId, variantId);
+      } else if (variantId === 'default') {
         this._selectedVariantBySpeciesId.delete(speciesId);
       } else {
         this._selectedVariantBySpeciesId.set(speciesId, variantId);
@@ -581,8 +598,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
         abilityLine: this._formatAbilityLine(effectiveSpecies.abilityScores),
         abilities: this._formatSpeciesAbilityRows(effectiveSpecies),
         speciesVariants: this._formatSpeciesVariants(species),
-        abilityChoices: this._formatSpeciesAbilityChoices(species),
-        requiresAbilityChoice: this._requiresAbilityChoice(species),
+        publicationRequired: buildPublicationComparison(species).required,
+        publicationDifferingText: buildPublicationComparison(species).differingFields.join(', '),
+        publicationUnselected: !checkPublicationSelection(species, this._selectedVariantBySpeciesId.get(species.id) || null).ok,
+        publicationUnavailable: this._isPublicationUnavailable(species),
+        abilityChoices: this._formatSpeciesAbilityChoices(this._variantAppliedEntry(species)),
+        requiresAbilityChoice: this._requiresAbilityChoice(this._variantAppliedEntry(species)),
         abilityChoiceSelected: !!this._selectedAbilityChoiceBySpeciesId.get(species.id),
         selectedAbilityChoiceId: this._selectedAbilityChoiceBySpeciesId.get(species.id)?.id || null,
         selectedVariantId,
@@ -782,7 +803,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     const selectedVariantId = this._selectedVariantBySpeciesId.get(entry.id) || null;
     const selectedAbilityChoice = this._selectedAbilityChoiceBySpeciesId.get(entry.id) || null;
-    if (this._requiresAbilityChoice(entry) && !selectedAbilityChoice) {
+    // RD-001: an explicit, valid published version is required before confirming a multi-publication species.
+    if (!checkPublicationSelection(entry, selectedVariantId).ok) {
+      ui?.notifications?.warn?.(`Choose a ${entry.name} species version before confirming.`);
+      return;
+    }
+    if (this._requiresAbilityChoice(this._variantAppliedEntry(entry)) && !selectedAbilityChoice) {
       ui?.notifications?.warn?.(`Choose a ${entry.name} species option before confirming.`);
       return;
     }
@@ -1232,33 +1258,69 @@ export class SpeciesStep extends ProgressionStepPlugin {
     };
   }
 
+  /**
+   * Restore the chosen published version when character creation is reopened (RD-001), so the same
+   * stable variant id keeps driving the species rules. Unknown ids are ignored.
+   */
+  _restoreDraftVariant(speciesId, draftSpecies) {
+    const draftVariantId = draftSpecies?.selectedVariant?.id || draftSpecies?.variantId || null;
+    const entry = draftVariantId ? this._resolveSpeciesEntry(speciesId) : null;
+    if (draftVariantId && entry && (entry.variants || []).some(v => String(v?.id) === String(draftVariantId))) {
+      this._selectedVariantBySpeciesId.set(entry.id, draftVariantId);
+      return draftVariantId;
+    }
+    return null;
+  }
+
+  /**
+   * The species with the selected published version applied but WITHOUT any within-profile choice (RD-001 / ruling #9):
+   * a version is chosen first, then the choices that version defines (e.g. selectable ability modifiers).
+   */
+  _variantAppliedEntry(species) {
+    if (!species) return species;
+    const variantId = this._selectedVariantBySpeciesId.get(species.id) || getSoleSnapshotVersion(species)?.id || null;
+    const variant = variantId ? (species.variants || []).find(option => String(option?.id) === String(variantId)) : null;
+    if (!variant) return species;
+    try {
+      return applySpeciesVariantProfile({ ...species }, variant);
+    } catch (_err) {
+      return species;
+    }
+  }
+
+  /** A verified version is malformed, or publications are known but none is implementable: shown unavailable, never as base rules. */
+  _isPublicationUnavailable(species) {
+    const check = checkPublicationSelection(species, this._selectedVariantBySpeciesId.get(species.id) || null);
+    return check.code === PUBLICATION_SELECTION_ERRORS.UNAVAILABLE_VERSION || check.code === PUBLICATION_SELECTION_ERRORS.NO_IMPLEMENTED_VERSION;
+  }
+
+  _withheldProfile(species, extra = {}) {
+    return {
+      ...species,
+      abilityScores: {}, abilityMods: {}, abilities: [], canonicalTraits: [], languages: [], skillBonuses: [],
+      movement: null, speed: null, size: null, rawAbilities: null, abilityChoice: null,
+      source: null, naturalWeapons: [], ...extra,
+    };
+  }
+
   _getEffectiveSpeciesProfileForDetails(species) {
     if (!species) return species;
-    const variantId = this._selectedVariantBySpeciesId.get(species.id) || null;
+    const variantId = this._selectedVariantBySpeciesId.get(species.id) || getSoleSnapshotVersion(species)?.id || null;
     let effective = { ...species };
+    // RD-001: before a version is chosen, the legacy base record must not be shown as this species' rules.
+    if (!checkPublicationSelection(species, variantId).ok) {
+      return this._withheldProfile(effective, { publicationUnselected: true });
+    }
     if (variantId) {
       const variant = (species.variants || []).find(option => String(option?.id) === String(variantId));
       if (variant) {
-        effective = {
-          ...effective,
-          source: variant.source || effective.source,
-          size: variant.size || effective.size,
-          speed: Number.isFinite(Number(variant.speed)) ? Number(variant.speed) : effective.speed,
-          movement: variant.movement && typeof variant.movement === 'object' ? variant.movement : effective.movement,
-          abilityScores: variant.abilityMods && typeof variant.abilityMods === 'object'
-            ? this._normalizeAbilityMap(variant.abilityMods)
-            : effective.abilityScores,
-          abilityChoice: variant.abilityChoice || effective.abilityChoice || null,
-          abilities: Array.isArray(variant.special) && variant.special.length ? [...variant.special] : effective.abilities,
-          canonicalTraits: Array.isArray(variant.traits) && variant.traits.length ? variant.traits : effective.canonicalTraits,
-          languages: Array.isArray(variant.languages) && variant.languages.length ? [...variant.languages] : effective.languages,
-          description: variant.description || effective.description,
-          selectedVariant: {
-            id: variant.id,
-            label: variant.label || 'Variant',
-            source: variant.source || null,
-          },
-        };
+        try {
+          effective = applySpeciesVariantProfile(effective, variant);
+        } catch (err) {
+          // Malformed complete snapshot: fail closed. Base mechanics are never shown as the selected publication's.
+          swseLogger.error('[SpeciesStep] Variant profile rejected', err);
+          return this._withheldProfile(species, { publicationUnavailable: true });
+        }
       }
     }
     return this._applyAbilityChoiceToProfile(effective);
@@ -1783,23 +1845,45 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const options = Array.isArray(choice.chooseOne) ? choice.chooseOne : [];
     return options.map((rawOption, index) => {
       const mods = normalize(rawOption);
-      const [ability, value] = Object.entries(mods)[0] || [null, null];
+      const nonzero = Object.entries(mods).filter(([, v]) => v !== 0);
+      const [ability, value] = nonzero[0] || Object.entries(mods)[0] || [null, null];
       const signed = Number(value) > 0 ? `+${Number(value)}` : `${Number(value)}`;
-      const fixedText = Object.entries(fixed).map(([key, val]) => `${val > 0 ? '+' : ''}${val} ${labelMap[key] || key.toUpperCase()}`).join(', ');
+      const fixedText = Object.entries(fixed).filter(([, val]) => val !== 0).map(([key, val]) => `${val > 0 ? '+' : ''}${val} ${labelMap[key] || key.toUpperCase()}`).join(', ');
+      // A published option may set several abilities at once (e.g. Devaronian male/female) and carry its own id/label.
+      const named = !!rawOption?.id;
+      const modsText = nonzero.map(([key, val]) => `${val > 0 ? '+' : ''}${val} ${labelMap[key] || key.toUpperCase()}`).join(', ');
+      const singleText = `${signed} ${labelMap[ability] || String(ability || '').toUpperCase()}`;
+      const optionId = named ? String(rawOption.id) : `${ability || 'choice'}-${index}`;
+      const label = nonzero.length > 1 || rawOption?.label ? (rawOption?.label ? `${rawOption.label}: ${modsText}` : modsText) : singleText;
       return {
-        id: `${ability || 'choice'}-${index}`,
+        id: optionId,
         index,
         ability,
-        label: `${signed} ${labelMap[ability] || String(ability || '').toUpperCase()}`,
-        detail: fixedText ? `${signed} ${labelMap[ability] || ability}; ${fixedText}` : `${signed} ${labelMap[ability] || ability}`,
+        label,
+        detail: fixedText ? `${label}; ${fixedText}` : label,
         mods,
-        isSelected: selected?.id === `${ability || 'choice'}-${index}` || selected?.ability === ability,
+        isSelected: selected?.id === optionId || (!named && selected?.ability === ability),
       };
     });
   }
 
   _formatSpeciesVariants(species) {
-    const variants = Array.isArray(species?.variants) ? species.variants : [];
+    // RD-001: species with several verified publications list ONLY those versions (never legacy variants, never a
+    // "Default"), each with the data and differences a player needs to choose.
+    const publication = buildPublicationComparison(species);
+    if (publication.required) {
+      const selectedId = this._selectedVariantBySpeciesId.get(species.id) || null;
+      return publication.versions.map(version => ({
+        ...version,
+        speciesId: species.id,
+        isSelected: selectedId === version.id,
+        speed: version.movement,
+        special: version.traits.map(name => ({ name })),
+      }));
+    }
+    // The sole verified profile of a once-published species is its canonical profile, not an alternative to pick.
+    const sole = getSoleSnapshotVersion(species);
+    const variants = (Array.isArray(species?.variants) ? species.variants : []).filter(variant => variant !== sole && !isSupersededLegacyVariant(variant, species));
     if (!variants.length) {
       return [];
     }

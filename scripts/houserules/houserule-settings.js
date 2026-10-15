@@ -985,6 +985,19 @@ export function registerHouseruleSettings() {
     default: 'raw_two_different'
   });
 
+  register('republicCloneAbilityAllocation', {
+    name: 'Republic Clone Ability Bonus',
+    hint: 'The Clone Wars Campaign Guide gives a Republic clone +2 to ONE chosen ability score at creation. This house rule instead lets the player split it into two separate +1 increases.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      printed_plus_two_one_score: 'Printed: +2 to exactly one ability score',
+      two_different_plus_one: 'House Rule: two separate +1 increases (different abilities)'
+    },
+    default: 'printed_plus_two_one_score'
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                                 SPACE COMBAT                                */
   /* -------------------------------------------------------------------------- */

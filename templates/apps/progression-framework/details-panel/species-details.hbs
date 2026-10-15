@@ -3,6 +3,41 @@
   {{!-- 1. Variant/default selector first, when this species has options --}}
   {{#if speciesVariants.length}}
     <section class="prog-species-details__section prog-species-details__variants">
+      {{#if publicationRequired}}
+        {{!-- RD-001: several verified published versions. No default; the player must choose explicitly. --}}
+        <h4>{{localize "SWSE.Progression.Core.Species.ChooseVersion"}}</h4>
+        <p class="prog-species-details__hint">{{localize "SWSE.Progression.Core.Species.MultipleVersions"}}</p>
+        {{#if publicationUnavailable}}<p><span class="prog-chip prog-chip--warning">{{localize "SWSE.Progression.Core.Species.VersionUnavailable"}}</span></p>{{else if publicationUnselected}}<p><span class="prog-chip prog-chip--warning">{{localize "SWSE.Progression.Core.Species.NoVersionSelected"}}</span></p>{{/if}}
+        {{#if publicationDifferingText}}
+          <p class="prog-species-details__hint">{{localize "SWSE.Progression.Core.Species.DiffersIn" fields=publicationDifferingText}}</p>
+        {{/if}}
+        <div class="prog-species-variant-grid prog-species-publication-grid">
+          {{#each speciesVariants}}
+            <button class="prog-species-variant {{#if this.isSelected}}prog-species-variant--selected{{/if}}"
+                    data-action="select-species-variant"
+                    data-species-id="{{this.speciesId}}"
+                    data-variant-id="{{this.id}}"
+                    data-source-profile-id="{{this.sourceProfileId}}"
+                    type="button">
+              <div class="prog-species-variant__header">
+                <strong>{{this.label}}</strong>
+                {{#if this.isSelected}}<span class="prog-chip">{{localize "SWSE.Progression.Core.Species.Selected"}}</span>{{/if}}
+              </div>
+              <div class="prog-species-variant__meta">
+                <span class="{{#if this.differs.abilities}}prog-species-variant__differs{{/if}}" {{#if this.differs.abilities}}title="{{localize 'SWSE.Progression.Core.Species.DiffersMarker'}}"{{/if}}>{{this.abilities}}</span>
+                {{#if this.size}}<span class="{{#if this.differs.size}}prog-species-variant__differs{{/if}}">{{localize "SWSE.Progression.Core.Species.SizeInline" size=this.size}}</span>{{/if}}
+                {{#if this.movement}}<span class="{{#if this.differs.movement}}prog-species-variant__differs{{/if}}">{{this.movement}}</span>{{/if}}
+                {{#if this.languages.length}}<span class="{{#if this.differs.languages}}prog-species-variant__differs{{/if}}">{{localize "SWSE.Progression.Core.Species.Languages"}}: {{#each this.languages}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}
+              </div>
+              {{#if this.traitRows.length}}
+                <div class="prog-species-variant__list">
+                  {{#each this.traitRows}}<span class="{{#if this.unique}}prog-species-variant__differs{{else if this.differsBy}}prog-species-variant__differs{{/if}}" title="{{this.description}}">• {{this.name}}{{#if this.unique}} <em>({{localize "SWSE.Progression.Core.Species.UniqueTrait"}})</em>{{else if this.differsBy}} <em>({{localize "SWSE.Progression.Core.Species.TraitTextDiffers"}})</em>{{/if}}</span>{{/each}}
+                </div>
+              {{/if}}
+            </button>
+          {{/each}}
+        </div>
+      {{else}}
       <h4>{{localize "SWSE.Progression.Core.Species.Options"}}</h4>
       <div class="prog-species-variant-grid">
         <button class="prog-species-variant prog-species-variant--default {{#if defaultVariantSelected}}prog-species-variant--selected{{/if}}"
@@ -45,6 +80,7 @@
           </button>
         {{/each}}
       </div>
+      {{/if}}
     </section>
   {{/if}}
 

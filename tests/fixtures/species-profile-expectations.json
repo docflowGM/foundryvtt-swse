@@ -1,0 +1,4134 @@
+{
+ "advozse-leg-2c-10": {
+  "species": "Advozse",
+  "sourceProfileId": "LEG-2C-10",
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 2,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Advb",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "heightened-awareness",
+   "low-light-vision",
+   "natural-armor"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [
+   {
+    "skillId": "perception",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "heightened-awareness": "structured-rule",
+   "low-light-vision": "display-only",
+   "natural-armor": "structured-rule"
+  }
+ },
+ "aleena-tfu-2e-01": {
+  "species": "Aleena",
+  "sourceProfileId": "TFU-2E-01",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Small",
+  "speed": 4,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Aleena",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "nimble",
+   "quick-energy"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "acrobatics",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [
+   "quick-energy"
+  ],
+  "automation": {
+   "nimble": "structured-rule",
+   "quick-energy": "named-activation"
+  }
+ },
+ "altiri-ur-2b-18": {
+  "species": "Altiri",
+  "sourceProfileId": "UR-2B-18",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Altirish",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "visually-striking",
+   "bonus-trained-skill-text"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "visually-striking": "display-only",
+   "bonus-trained-skill-text": "display-only"
+  }
+ },
+ "anarrian-ur-2b-19": {
+  "species": "Anarrian",
+  "sourceProfileId": "UR-2B-19",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Anarrese",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "strength-surge",
+   "bonus-feat"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "choice": true
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "strength-surge": "display-only",
+   "bonus-feat": "structured-rule"
+  }
+ },
+ "anzati-ur-2b-01": {
+  "species": "Anzati",
+  "sourceProfileId": "UR-2B-01",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Anzat",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "presence-sense",
+   "mesmerize",
+   "soup-drinking",
+   "hunter-s-instincts",
+   "low-light-vision"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [
+   "Stealth",
+   "Survival"
+  ],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "presence-sense": "display-only",
+   "mesmerize": "display-only",
+   "soup-drinking": "display-only",
+   "hunter-s-instincts": "structured-rule",
+   "low-light-vision": "display-only"
+  }
+ },
+ "arkanian-kotor-2d-01": {
+  "species": "Arkanian",
+  "sourceProfileId": "KOTOR-2D-01",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Arkanian",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "darkvision",
+   "intellectual-reputation",
+   "flash-of-genius"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "intellectual-reputation": "display-only",
+   "flash-of-genius": "display-only"
+  }
+ },
+ "arkanian-offshoot-kotor-2d-02": {
+  "species": "Arkanian Offshoot",
+  "sourceProfileId": "KOTOR-2D-02",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": -2,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Arkanian",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat-text",
+   "determination"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat-text": "display-only",
+   "determination": "display-only"
+  }
+ },
+ "balosar-sv-2f-09": {
+  "species": "Balosar",
+  "sourceProfileId": "SV-2F-09",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": -2,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Balosar"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "antennapalps",
+   "poison-resistance",
+   "moral-ambiguity"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "antennapalps": "display-only",
+   "poison-resistance": "display-only",
+   "moral-ambiguity": "display-only"
+  }
+ },
+ "barabel-gaw-2i-01": {
+  "species": "Barabel",
+  "sourceProfileId": "GAW-2I-01",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Barabel"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-armor",
+   "natural-weapons",
+   "stun-resistance",
+   "radiation-resistance",
+   "darkvision",
+   "primitive",
+   "intimidation-skill-reroll",
+   "jedi-respect-contextual-sidebar"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 2,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   },
+   {
+    "name": "Bite",
+    "damage": "1d6",
+    "type": "piercing"
+   },
+   {
+    "name": "Tail",
+    "damage": "1d6",
+    "type": "bludgeoning"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "natural-weapons": "display-only",
+   "stun-resistance": "display-only",
+   "radiation-resistance": "display-only",
+   "darkvision": "display-only",
+   "primitive": "structured-field",
+   "intimidation-skill-reroll": "display-only",
+   "jedi-respect-contextual-sidebar": "display-only"
+  }
+ },
+ "barabel-sv-2f-10": {
+  "species": "Barabel",
+  "sourceProfileId": "SV-2F-10",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Barabel"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-armor",
+   "natural-weapons-claws-teeth-tail",
+   "radiation-resistance",
+   "darkvision",
+   "primitive",
+   "intimidation-skill-reroll"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 2,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   },
+   {
+    "name": "Teeth",
+    "damage": "1d6",
+    "type": "piercing"
+   },
+   {
+    "name": "Tail",
+    "damage": "1d6",
+    "type": "bludgeoning"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "natural-weapons-claws-teeth-tail": "display-only",
+   "radiation-resistance": "display-only",
+   "darkvision": "display-only",
+   "primitive": "structured-field",
+   "intimidation-skill-reroll": "display-only"
+  }
+ },
+ "blood-carver-sv-2f-01": {
+  "species": "Blood Carver",
+  "sourceProfileId": "SV-2F-01",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Balatorese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat-skill-focus-acrobatics",
+   "deathstrike"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Acrobatics)",
+    "requires": [
+     "trained:acrobatics"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat-skill-focus-acrobatics": "structured-rule",
+   "deathstrike": "display-only"
+  }
+ },
+ "caamasi-tfu-2e-02": {
+  "species": "Caamasi",
+  "sourceProfileId": "TFU-2E-02",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": -2,
+   "int": 0,
+   "wis": 4,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Caamasi"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "adept-diplomat",
+   "pacifism",
+   "memory-sharing"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "persuasion",
+    "outcome": "keepBetter"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "adept-diplomat": "structured-rule",
+   "pacifism": "engine-suppressed",
+   "memory-sharing": "display-only"
+  }
+ },
+ "cathar-kotor-2d-03": {
+  "species": "Cathar",
+  "sourceProfileId": "KOTOR-2D-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": -2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 8,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Catharese",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-weapons",
+   "reactive-claw",
+   "cathar-instincts"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Cathar Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-weapons": "display-only",
+   "reactive-claw": "display-only",
+   "cathar-instincts": "display-only"
+  }
+ },
+ "celegian-jatm-2j-02": {
+  "species": "Celegian",
+  "sourceProfileId": "JATM-2J-02",
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": null,
+  "landSpeedUnspecified": true,
+  "languages": [
+   "Basic"
+  ],
+  "languageRestrictions": {
+   "Basic": "understand-only"
+  },
+  "traitIds": [
+   "cyanogen-breather",
+   "expert-swimmer",
+   "broadcast-telepath"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "cyanogen-breather": "display-only",
+   "expert-swimmer": "display-only",
+   "broadcast-telepath": "engine-suppressed"
+  }
+ },
+ "chistori-tog-2k-02": {
+  "species": "Chistori",
+  "sourceProfileId": "TOG-2K-02",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Chistori"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "cold-blooded",
+   "armor-plating",
+   "rage"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [
+   "rage"
+  ],
+  "automation": {
+   "cold-blooded": "display-only",
+   "armor-plating": "display-only",
+   "rage": "named-activation"
+  }
+ },
+ "clawdite-sv-2f-02": {
+  "species": "Clawdite",
+  "sourceProfileId": "SV-2F-02",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Clawdite"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "shapeshift",
+   "startle"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [
+   "startle"
+  ],
+  "automation": {
+   "shapeshift": "engine-suppressed",
+   "startle": "named-activation"
+  }
+ },
+ "codru-ji-leg-2c-03": {
+  "species": "Codru-Ji",
+  "sourceProfileId": "LEG-2C-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Codruese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "bonus-feat",
+   "extra-arms",
+   "skilled-grappler"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Dual Weapon Mastery",
+    "requires": [
+     "dex>=13",
+     "bab>=1"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-feat": "structured-rule",
+   "extra-arms": "display-only",
+   "skilled-grappler": "display-only"
+  }
+ },
+ "defel-goi-2g-02": {
+  "species": "Defel",
+  "sourceProfileId": "GOI-2G-02",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Small",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Defel"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "partial-invisibility",
+   "special-equipment-ultraviolet-visor"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "partial-invisibility": "display-only",
+   "special-equipment-ultraviolet-visor": "display-only"
+  }
+ },
+ "devaronian-leg-2c-13": {
+  "species": "Devaronian",
+  "sourceProfileId": "LEG-2C-13",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Devaronese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat",
+   "natural-curiosity"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Deception)",
+    "requires": [
+     "trained:deception"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat": "structured-rule",
+   "natural-curiosity": "display-only"
+  }
+ },
+ "draethos-kotor-2d-04": {
+  "species": "Draethos",
+  "sourceProfileId": "KOTOR-2D-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Draethos"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-armor",
+   "natural-telepath",
+   "bonus-feat",
+   "low-light-vision"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Weapon Proficiency (advanced melee weapons)",
+    "requires": []
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "natural-telepath": "engine-suppressed",
+   "bonus-feat": "structured-rule",
+   "low-light-vision": "display-only"
+  }
+ },
+ "dug-cw-2h-01": {
+  "species": "Dug",
+  "sourceProfileId": "CW-2H-01",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Small",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Dug"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "athletic"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "athletic": "display-only"
+  }
+ },
+ "ebruchi-ur-2b-11": {
+  "species": "Ebruchi",
+  "sourceProfileId": "UR-2B-11",
+  "abilityMods": {
+   "str": 2,
+   "dex": 0,
+   "con": 2,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Ebruchese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat",
+   "iron-will",
+   "unsettling"
+  ],
+  "defense": {
+   "will": {
+    "value": 2,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Improved Damage Threshold",
+    "requires": [
+     "con>=13"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat": "structured-rule",
+   "iron-will": "structured-rule",
+   "unsettling": "display-only"
+  }
+ },
+ "elomin-goi-2g-11": {
+  "species": "Elomin",
+  "sourceProfileId": "GOI-2G-11",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Elomin"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "impose-order",
+   "logical-mind"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "impose-order": "display-only",
+   "logical-mind": "display-only"
+  }
+ },
+ "falleen-sv-2f-03": {
+  "species": "Falleen",
+  "sourceProfileId": "SV-2F-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Falleen"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "hold-breath",
+   "pheromones",
+   "pheromone-acclimation"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [
+   "pheromones"
+  ],
+  "automation": {
+   "hold-breath": "display-only",
+   "pheromones": "named-activation",
+   "pheromone-acclimation": "display-only"
+  }
+ },
+ "feeorin-kotor-2d-05": {
+  "species": "Feeorin",
+  "sourceProfileId": "KOTOR-2D-05",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 2,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Feeorin",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "brutal",
+   "great-fortitude",
+   "inborn-resilience",
+   "low-light-vision",
+   "stronger-by-age"
+  ],
+  "defense": {
+   "fortitude": {
+    "value": 2,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "brutal": "display-only",
+   "great-fortitude": "structured-rule",
+   "inborn-resilience": "display-only",
+   "low-light-vision": "display-only",
+   "stronger-by-age": "display-only"
+  }
+ },
+ "felucian-tfu-2e-03": {
+  "species": "Felucian",
+  "sourceProfileId": "TFU-2E-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": -2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Felucianese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "breathe-underwater",
+   "low-light-vision",
+   "natural-camouflage",
+   "bonus-feat-force-sensitivity",
+   "force-blast",
+   "primitive",
+   "weapon-familiarity"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Force Sensitivity",
+    "requires": []
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)",
+   "Weapon Proficiency (Lightsabers)",
+   "Weapon Proficiency (Advanced Melee Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "breathe-underwater": "display-only",
+   "low-light-vision": "display-only",
+   "natural-camouflage": "display-only",
+   "bonus-feat-force-sensitivity": "structured-rule",
+   "force-blast": "engine-suppressed",
+   "primitive": "structured-field",
+   "weapon-familiarity": "display-only"
+  }
+ },
+ "fosh-goi-2g-03": {
+  "species": "Fosh",
+  "sourceProfileId": "GOI-2G-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Small",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Fosh"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "deceptive",
+   "healing-glands"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "deception",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "deceptive": "structured-rule",
+   "healing-glands": "display-only"
+  }
+ },
+ "gand-sv-2f-04": {
+  "species": "Gand",
+  "sourceProfileId": "SV-2F-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Gand"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "darkvision",
+   "hardy",
+   "special-equipment-breathing-apparatus",
+   "limb-regeneration"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "hardy": "display-only",
+   "special-equipment-breathing-apparatus": "display-only",
+   "limb-regeneration": "display-only"
+  }
+ },
+ "gen-dai-cw-2h-02": {
+  "species": "Gen'Dai",
+  "sourceProfileId": "CW-2H-02",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 4,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Large",
+  "speed": 8,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Gen'Dai"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "gen-dai-surge",
+   "hibernation",
+   "mental-instability",
+   "regeneration",
+   "resilient-physiology"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "gen-dai-surge": "display-only",
+   "hibernation": "display-only",
+   "mental-instability": "display-only",
+   "regeneration": "display-only",
+   "resilient-physiology": "display-only"
+  }
+ },
+ "givin-goi-2g-04": {
+  "species": "Givin",
+  "sourceProfileId": "GOI-2G-04",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Givin"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "exoskeleton",
+   "deductive-reasoning",
+   "unique-physiology"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "exoskeleton": "display-only",
+   "deductive-reasoning": "display-only",
+   "unique-physiology": "display-only"
+  }
+ },
+ "gotal-goi-2g-05": {
+  "species": "Gotal",
+  "sourceProfileId": "GOI-2G-05",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Gotal"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "energy-reading",
+   "low-light-vision",
+   "sensor-cones"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "energy-reading": "display-only",
+   "low-light-vision": "display-only",
+   "sensor-cones": "display-only"
+  }
+ },
+ "gran-tfu-2e-04": {
+  "species": "Gran",
+  "sourceProfileId": "TFU-2E-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": -2,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Gran"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "darkvision",
+   "target-awareness",
+   "triple-vision",
+   "conditional-bonus-feat-precise-shot"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Precise Shot",
+    "requires": [
+     "feat:Point Blank Shot"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "target-awareness": "display-only",
+   "triple-vision": "display-only",
+   "conditional-bonus-feat-precise-shot": "structured-rule"
+  }
+ },
+ "herglic-goi-2g-06": {
+  "species": "Herglic",
+  "sourceProfileId": "GOI-2G-06",
+  "abilityMods": {
+   "str": 4,
+   "dex": -4,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Large",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Herglic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "sturdy",
+   "conditional-bonus-feat-skill-focus-gather-information"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Gather Information)",
+    "requires": [
+     "trained:gatherInformation"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "sturdy": "display-only",
+   "conditional-bonus-feat-skill-focus-gather-information": "structured-rule"
+  }
+ },
+ "houk-sv-2f-11": {
+  "species": "Houk",
+  "sourceProfileId": "SV-2F-11",
+  "abilityMods": {
+   "str": 2,
+   "dex": 0,
+   "con": 2,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Houk"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-armor",
+   "physically-intimidating"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "physically-intimidating": "display-only"
+  }
+ },
+ "iktotchi-cw-2h-03": {
+  "species": "Iktotchi",
+  "sourceProfileId": "CW-2H-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Iktotchese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-armor",
+   "limited-precognition",
+   "expert-pilot"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [
+   {
+    "skillId": "pilot",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "limited-precognition": "display-only",
+   "expert-pilot": "structured-rule"
+  }
+ },
+ "ishi-tib-ur-2b-03": {
+  "species": "Ishi Tib",
+  "sourceProfileId": "UR-2B-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Tibranese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "breath-underwater",
+   "ecological-awareness",
+   "expert-swimmer",
+   "natural-weapons",
+   "low-light-vision"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Beak",
+    "damage": "1d6",
+    "type": "piercing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "breath-underwater": "display-only",
+   "ecological-awareness": "display-only",
+   "expert-swimmer": "display-only",
+   "natural-weapons": "display-only",
+   "low-light-vision": "display-only"
+  }
+ },
+ "jawa-sv-2f-05": {
+  "species": "Jawa",
+  "sourceProfileId": "SV-2F-05",
+  "abilityMods": {
+   "str": -2,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Small",
+  "speed": 4,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Jawa",
+   "Jawa Trade Language"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "darkvision",
+   "desert-dweller",
+   "scavenger",
+   "mechanics-aptitude"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "desert-dweller": "display-only",
+   "scavenger": "display-only",
+   "mechanics-aptitude": "display-only"
+  }
+ },
+ "kaleesh-cw-2h-04": {
+  "species": "Kaleesh",
+  "sourceProfileId": "CW-2H-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 2,
+   "int": -2,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Kaleesh"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat-skill-focus-survival",
+   "darkvision",
+   "driven",
+   "persistent"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "endurance",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Survival)",
+    "requires": [
+     "trained:survival"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat-skill-focus-survival": "structured-rule",
+   "darkvision": "display-only",
+   "driven": "display-only",
+   "persistent": "structured-rule"
+  }
+ },
+ "kaminoan-cw-2h-05": {
+  "species": "Kaminoan",
+  "sourceProfileId": "CW-2H-05",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Kaminoan"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat-skill-focus-treat-injury",
+   "resistant"
+  ],
+  "defense": {
+   "fortitude": {
+    "value": 2,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Treat Injury)",
+    "requires": [
+     "trained:treatInjury"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat-skill-focus-treat-injury": "structured-rule",
+   "resistant": "structured-rule"
+  }
+ },
+ "kerkoiden-cw-2h-06": {
+  "species": "Kerkoiden",
+  "sourceProfileId": "CW-2H-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": -2,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Kerkoidese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "predator-s-heritage",
+   "social-cunning"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "predator-s-heritage": "display-only",
+   "social-cunning": "display-only"
+  }
+ },
+ "khil-kotor-2d-06": {
+  "species": "Khil",
+  "sourceProfileId": "KOTOR-2D-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": -2,
+   "int": 2,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Khilese",
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "dependable-worker",
+   "cooperative-spirit",
+   "hullepi"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "dependable-worker": "display-only",
+   "cooperative-spirit": "display-only",
+   "hullepi": "display-only"
+  }
+ },
+ "killik-ur-2b-12": {
+  "species": "Killik",
+  "sourceProfileId": "UR-2B-12",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": -2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Killik",
+   "Sy Bisti"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "joiners",
+   "low-light-vision",
+   "hive-mind",
+   "multiple-limbs",
+   "natural-armor",
+   "natural-weapons"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "joiners": "display-only",
+   "low-light-vision": "display-only",
+   "hive-mind": "display-only",
+   "multiple-limbs": "display-only",
+   "natural-armor": "structured-rule",
+   "natural-weapons": "display-only"
+  }
+ },
+ "kissai-kotor-2d-07": {
+  "species": "Kissai",
+  "sourceProfileId": "KOTOR-2D-07",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Sith"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "inspired",
+   "warrior-s-awareness",
+   "weapon-familiarity"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "inspired": "display-only",
+   "warrior-s-awareness": "display-only",
+   "weapon-familiarity": "display-only"
+  }
+ },
+ "klatooinian-leg-2c-04": {
+  "species": "Klatooinian",
+  "sourceProfileId": "LEG-2C-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": -2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Huttese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "iron-will"
+  ],
+  "defense": {
+   "will": {
+    "value": 2,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "iron-will": "structured-rule"
+  }
+ },
+ "lugubraa-ur-2b-13": {
+  "species": "Lugubraa",
+  "sourceProfileId": "UR-2B-13",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 2,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Lugubraal"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "bonus-feat",
+   "darkvision",
+   "natural-weapons-barbed-tentacles",
+   "natural-weapons-teeth",
+   "lockbite",
+   "lugubraa-learning"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Improved Damage Threshold",
+    "requires": []
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-feat": "structured-rule",
+   "darkvision": "display-only",
+   "natural-weapons-barbed-tentacles": "display-only",
+   "natural-weapons-teeth": "display-only",
+   "lockbite": "display-only",
+   "lugubraa-learning": "display-only"
+  }
+ },
+ "lurmen-gaw-2i-03": {
+  "species": "Lurmen",
+  "sourceProfileId": "GAW-2I-03",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Small",
+  "speed": 4,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Lurmese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "mender",
+   "primitive",
+   "roller",
+   "climbing-skills"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [
+   "roller"
+  ],
+  "automation": {
+   "mender": "display-only",
+   "primitive": "structured-field",
+   "roller": "named-activation",
+   "climbing-skills": "display-only"
+  }
+ },
+ "mantellian-savrip-tog-2k-03": {
+  "species": "Mantellian Savrip",
+  "sourceProfileId": "TOG-2K-03",
+  "abilityMods": {
+   "str": 4,
+   "dex": -2,
+   "con": 4,
+   "int": -4,
+   "wis": -4,
+   "cha": -4
+  },
+  "size": "Large",
+  "speed": 8,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Savrip"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-armor",
+   "natural-weapons",
+   "poison",
+   "primitive",
+   "rage"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 2,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claw",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [
+   "poison",
+   "rage"
+  ],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "natural-weapons": "display-only",
+   "poison": "named-activation",
+   "primitive": "structured-field",
+   "rage": "named-activation"
+  }
+ },
+ "massassi-kotor-2d-08": {
+  "species": "Massassi",
+  "sourceProfileId": "KOTOR-2D-08",
+  "abilityMods": {
+   "str": 4,
+   "dex": 0,
+   "con": 0,
+   "int": -2,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Sith"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat",
+   "duty-bound",
+   "primitive",
+   "warrior-s-awareness",
+   "weapon-familiarity"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Survival)",
+    "requires": [
+     "trained:survival"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat": "structured-rule",
+   "duty-bound": "display-only",
+   "primitive": "structured-field",
+   "warrior-s-awareness": "display-only",
+   "weapon-familiarity": "display-only"
+  }
+ },
+ "miraluka-kotor-2d-09": {
+  "species": "Miraluka",
+  "sourceProfileId": "KOTOR-2D-09",
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Miralukese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "force-sight",
+   "conditional-bonus-feat"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Force Training",
+    "requires": [
+     "trained:useTheForce"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "force-sight": "display-only",
+   "conditional-bonus-feat": "structured-rule"
+  }
+ },
+ "mrlssi-goi-2g-07": {
+  "species": "Mrlssi",
+  "sourceProfileId": "GOI-2G-07",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Small",
+  "speed": 4,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Mrlsstese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "skills-mechanics",
+   "scholarly-inclination",
+   "conditional-bonus-feat-skill-focus-persuasion"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Persuasion)",
+    "requires": [
+     "trained:persuasion"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [
+   "Mechanics"
+  ],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "skills-mechanics": "structured-rule",
+   "scholarly-inclination": "display-only",
+   "conditional-bonus-feat-skill-focus-persuasion": "structured-rule"
+  }
+ },
+ "nagai-leg-2c-05": {
+  "species": "Nagai",
+  "sourceProfileId": "LEG-2C-05",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Nagaian"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "lightning-reflexes",
+   "soothing-voice",
+   "weapon-familiarity"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 2,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [
+   {
+    "skillId": "persuasion",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "lightning-reflexes": "structured-rule",
+   "soothing-voice": "structured-rule",
+   "weapon-familiarity": "display-only"
+  }
+ },
+ "nautolan-cw-2h-07": {
+  "species": "Nautolan",
+  "sourceProfileId": "CW-2H-07",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": -2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Nautila"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "breathe-underwater",
+   "expert-swimmer",
+   "low-light-vision",
+   "natural-damage-reduction",
+   "pheromonal-sensor"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "breathe-underwater": "display-only",
+   "expert-swimmer": "display-only",
+   "low-light-vision": "display-only",
+   "natural-damage-reduction": "display-only",
+   "pheromonal-sensor": "display-only"
+  }
+ },
+ "nelvaanian-cw-2h-08": {
+  "species": "Nelvaanian",
+  "sourceProfileId": "CW-2H-08",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": -2,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Nelvaanese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "low-light-vision",
+   "primitive",
+   "scent",
+   "shadow-swiftness"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "low-light-vision": "display-only",
+   "primitive": "structured-field",
+   "scent": "display-only",
+   "shadow-swiftness": "display-only"
+  }
+ },
+ "nikto-ur-2b-05": {
+  "species": "Nikto",
+  "sourceProfileId": "UR-2B-05",
+  "abilityMods": {
+   "str": 2,
+   "dex": 0,
+   "con": 0,
+   "int": -2,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Nikto"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "great-fortitude",
+   "natural-armor",
+   "survival-instincts"
+  ],
+  "defense": {
+   "fortitude": {
+    "value": 2,
+    "bonusType": "species"
+   },
+   "reflex": {
+    "value": 2,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [
+   {
+    "skillId": "survival",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "great-fortitude": "structured-rule",
+   "natural-armor": "structured-rule",
+   "survival-instincts": "structured-rule"
+  }
+ },
+ "noghri-tfu-2e-11": {
+  "species": "Noghri",
+  "sourceProfileId": "TFU-2E-11",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": -4
+  },
+  "size": "Small",
+  "speed": 4,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Honoghran"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "primitive",
+   "conditional-bonus-feat-running-attack",
+   "scent"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Running Attack",
+    "requires": [
+     "dex>=13"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "primitive": "structured-field",
+   "conditional-bonus-feat-running-attack": "structured-rule",
+   "scent": "display-only"
+  }
+ },
+ "nosaurian-tfu-2e-05": {
+  "species": "Nosaurian",
+  "sourceProfileId": "TFU-2E-05",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Nosaurian"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "climber-s-heritage",
+   "natural-weapon-horns",
+   "survival-instinct"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "survival",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Horns",
+    "damage": "1d6",
+    "type": "piercing"
+   }
+  ],
+  "classSkills": [
+   "Climb"
+  ],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "climber-s-heritage": "structured-rule",
+   "natural-weapon-horns": "display-only",
+   "survival-instinct": "structured-rule"
+  }
+ },
+ "nyriaanan-goi-2g-12": {
+  "species": "Nyriaanan",
+  "sourceProfileId": "GOI-2G-12",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Nyriaanan"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "bonus-class-skill-survival",
+   "bonus-feat",
+   "low-light-vision"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "choice": true
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [
+   "Survival"
+  ],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-class-skill-survival": "structured-rule",
+   "bonus-feat": "structured-rule",
+   "low-light-vision": "display-only"
+  }
+ },
+ "pa-lowick-goi-2g-10": {
+  "species": "Pa'lowick",
+  "sourceProfileId": "GOI-2G-10",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Lowickese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "expert-swimmer",
+   "hold-breath",
+   "primitive"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [],
+  "automation": {
+   "expert-swimmer": "display-only",
+   "hold-breath": "display-only",
+   "primitive": "structured-field"
+  }
+ },
+ "rakata-kotor-2d-10": {
+  "species": "Rakata",
+  "sourceProfileId": "KOTOR-2D-10",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Rakata"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "ancient-knowledge",
+   "conditional-bonus-feat-text",
+   "force-blind",
+   "primitive",
+   "rage"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [
+   "Weapon Proficiency (Pistols)",
+   "Weapon Proficiency (Rifles)",
+   "Weapon Proficiency (Heavy Weapons)"
+  ],
+  "namedActivations": [
+   "rage"
+  ],
+  "automation": {
+   "ancient-knowledge": "display-only",
+   "conditional-bonus-feat-text": "display-only",
+   "force-blind": "display-only",
+   "primitive": "structured-field",
+   "rage": "named-activation"
+  }
+ },
+ "republic-clone-cw-2h-10": {
+  "species": "Republic Clone",
+  "sourceProfileId": "CW-2H-10",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "bonus-trained-skill",
+   "bonus-feat"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "choice": true
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 1,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-trained-skill": "structured-rule",
+   "bonus-feat": "structured-rule"
+  }
+ },
+ "ryn-sv-2f-06": {
+  "species": "Ryn",
+  "sourceProfileId": "SV-2F-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Ryn"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "musical-beak",
+   "prehensile-tail",
+   "connections",
+   "sabacc-fortune-telling-sidebar"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "musical-beak": "display-only",
+   "prehensile-tail": "display-only",
+   "connections": "display-only",
+   "sabacc-fortune-telling-sidebar": "display-only"
+  }
+ },
+ "sakiyan-leg-2c-11": {
+  "species": "Sakiyan",
+  "sourceProfileId": "LEG-2C-11",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Sakiyan"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "darkvision",
+   "conditional-bonus-feat",
+   "lightning-reflexes"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 2,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Perception)",
+    "requires": [
+     "trained:perception"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "conditional-bonus-feat": "structured-rule",
+   "lightning-reflexes": "structured-rule"
+  }
+ },
+ "selkath-kotor-2d-11": {
+  "species": "Selkath",
+  "sourceProfileId": "KOTOR-2D-11",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Selkath"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "breathe-underwater",
+   "expert-swimmer",
+   "able-healer"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "breathe-underwater": "display-only",
+   "expert-swimmer": "display-only",
+   "able-healer": "display-only"
+  }
+ },
+ "shistavanen-ur-2b-06": {
+  "species": "Shistavanen",
+  "sourceProfileId": "UR-2B-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": 0,
+   "int": -2,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Shistavanen"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-weapons",
+   "quick-reflexes",
+   "conditional-bonus-feat",
+   "uncanny-tracker",
+   "low-light-vision"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Perception)",
+    "requires": [
+     "trained:perception"
+    ]
+   }
+  ],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [
+   "Survival"
+  ],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-weapons": "display-only",
+   "quick-reflexes": "display-only",
+   "conditional-bonus-feat": "structured-rule",
+   "uncanny-tracker": "structured-rule",
+   "low-light-vision": "display-only"
+  }
+ },
+ "sluissi-ur-2b-07": {
+  "species": "Sluissi",
+  "sourceProfileId": "UR-2B-07",
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 0,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Sluissese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "careful-worker",
+   "conditional-bonus-feat",
+   "serpentine"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Tech Specialist",
+    "requires": [
+     "trained:mechanics"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "careful-worker": "display-only",
+   "conditional-bonus-feat": "structured-rule",
+   "serpentine": "display-only"
+  }
+ },
+ "snivvian-kotor-2d-12": {
+  "species": "Snivvian",
+  "sourceProfileId": "KOTOR-2D-12",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Small",
+  "speed": 4,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Snivvian"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "observant",
+   "cold-resistance"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "observant": "display-only",
+   "cold-resistance": "display-only"
+  }
+ },
+ "sorcerer-of-rhand-ur-2b-14": {
+  "species": "Sorcerer of Rhand",
+  "sourceProfileId": "UR-2B-14",
+  "abilityMods": {
+   "str": -2,
+   "dex": -2,
+   "con": 0,
+   "int": 4,
+   "wis": 2,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "bonus-feat",
+   "dark-infused",
+   "repulsive-appearance",
+   "special-qualities"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Force Sensitivity",
+    "requires": []
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-feat": "structured-rule",
+   "dark-infused": "display-only",
+   "repulsive-appearance": "display-only",
+   "special-qualities": "display-only"
+  }
+ },
+ "squib-ur-2b-08": {
+  "species": "Squib",
+  "sourceProfileId": "UR-2B-08",
+  "abilityMods": {
+   "str": -2,
+   "dex": 2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Small",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Squibbian"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-diplomat",
+   "tech-savvy",
+   "weapon-familiarity"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-diplomat": "display-only",
+   "tech-savvy": "display-only",
+   "weapon-familiarity": "display-only"
+  }
+ },
+ "ssi-ruuk-ur-2b-15": {
+  "species": "Ssi-Ruuk",
+  "sourceProfileId": "UR-2B-15",
+  "abilityMods": {
+   "str": 2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Ssi-ruuvi"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat",
+   "force-blind",
+   "keen-smell",
+   "natural-armor"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 2,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Persuasion)",
+    "requires": [
+     "trained:persuasion"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat": "structured-rule",
+   "force-blind": "display-only",
+   "keen-smell": "display-only",
+   "natural-armor": "structured-rule"
+  }
+ },
+ "talz-tfu-2e-06": {
+  "species": "Talz",
+  "sourceProfileId": "TFU-2E-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": -2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Talz"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "darkvision",
+   "natural-weapon-claws",
+   "conditional-bonus-feat-skill-focus-mechanics"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Mechanics)",
+    "requires": [
+     "trained:mechanics"
+    ]
+   }
+  ],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "natural-weapon-claws": "display-only",
+   "conditional-bonus-feat-skill-focus-mechanics": "structured-rule"
+  }
+ },
+ "taung-gaw-2i-04": {
+  "species": "Taung",
+  "sourceProfileId": "GAW-2I-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Mando'a"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "armor-training",
+   "superior-defenses",
+   "warrior-culture"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "armor-training": "display-only",
+   "superior-defenses": "display-only",
+   "warrior-culture": "display-only"
+  }
+ },
+ "thakwaash-gaw-2i-05": {
+  "species": "Thakwaash",
+  "sourceProfileId": "GAW-2I-05",
+  "abilityMods": {
+   "str": 4,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Thakwaashi"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "multiple-personalities",
+   "natural-armor"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "multiple-personalities": "display-only",
+   "natural-armor": "structured-rule"
+  }
+ },
+ "tof-ur-2b-16": {
+  "species": "Tof",
+  "sourceProfileId": "UR-2B-16",
+  "abilityMods": {
+   "str": 2,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 2
+  },
+  "size": "Large",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Tof"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "bonus-feat-text",
+   "conditional-bonus-feat-text",
+   "tof-fearlessness"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-feat-text": "display-only",
+   "conditional-bonus-feat-text": "display-only",
+   "tof-fearlessness": "display-only"
+  }
+ },
+ "togorian-tfu-2e-07": {
+  "species": "Togorian",
+  "sourceProfileId": "TFU-2E-07",
+  "abilityMods": {
+   "str": 4,
+   "dex": 0,
+   "con": 0,
+   "int": -2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Large",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Togorian"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "feline-reflexes",
+   "low-light-vision",
+   "physical-intimidation"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "feline-reflexes": "structured-rule",
+   "low-light-vision": "display-only",
+   "physical-intimidation": "display-only"
+  }
+ },
+ "togruta-tfu-2e-08": {
+  "species": "Togruta",
+  "sourceProfileId": "TFU-2E-08",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Togruti"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "pack-hunter",
+   "sneaky",
+   "spatial-awareness"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "pack-hunter": "display-only",
+   "sneaky": "display-only",
+   "spatial-awareness": "display-only"
+  }
+ },
+ "toydarian-sv-2f-07": {
+  "species": "Toydarian",
+  "sourceProfileId": "SV-2F-07",
+  "abilityMods": {
+   "str": -2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Small",
+  "speed": 4,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Huttese",
+   "Toydarian"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "flight-hover-restrictions",
+   "conditional-bonus-feat-skill-focus-deception",
+   "force-resistance"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Deception)",
+    "requires": [
+     "trained:deception"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "flight-hover-restrictions": "display-only",
+   "conditional-bonus-feat-skill-focus-deception": "structured-rule",
+   "force-resistance": "display-only"
+  }
+ },
+ "trianii-gaw-2i-06": {
+  "species": "Trianii",
+  "sourceProfileId": "GAW-2I-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Trianii"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "acrobatic-prowess",
+   "natural-weapons",
+   "prehensile-tail"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "acrobatics",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "acrobatic-prowess": "structured-rule",
+   "natural-weapons": "display-only",
+   "prehensile-tail": "display-only"
+  }
+ },
+ "ubese-sv-2f-08": {
+  "species": "Ubese",
+  "sourceProfileId": "SV-2F-08",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Ubeninal",
+   "Ubese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "aggressive",
+   "survival-instinct",
+   "conditional-bonus-feat-skill-focus-perception",
+   "special-equipment-environment-suit"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "survival",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Perception)",
+    "requires": [
+     "trained:perception"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "aggressive": "display-only",
+   "survival-instinct": "structured-rule",
+   "conditional-bonus-feat-skill-focus-perception": "structured-rule",
+   "special-equipment-environment-suit": "display-only"
+  }
+ },
+ "umbaran-goi-2g-09": {
+  "species": "Umbaran",
+  "sourceProfileId": "GOI-2G-09",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Umbarese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "darkvision",
+   "stealthy",
+   "conditional-bonus-feat-skill-focus-gather-information"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "stealth",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Gather Information)",
+    "requires": [
+     "trained:gatherInformation"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "darkvision": "display-only",
+   "stealthy": "structured-rule",
+   "conditional-bonus-feat-skill-focus-gather-information": "structured-rule"
+  }
+ },
+ "utai-tog-2k-04": {
+  "species": "Utai",
+  "sourceProfileId": "TOG-2K-04",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Small",
+  "speed": 4,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Utapese"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "animal-handler",
+   "cooperative",
+   "low-light-vision"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "animal-handler": "display-only",
+   "cooperative": "display-only",
+   "low-light-vision": "display-only"
+  }
+ },
+ "vagaari-ur-2b-17": {
+  "species": "Vagaari",
+  "sourceProfileId": "UR-2B-17",
+  "abilityMods": {
+   "str": 2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Vagaari",
+   "Sy Bisti"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat",
+   "frightening-visage",
+   "bioknowledge"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Deception)",
+    "requires": [
+     "trained:deception"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat": "structured-rule",
+   "frightening-visage": "display-only",
+   "bioknowledge": "display-only"
+  }
+ },
+ "vahla-leg-2c-09": {
+  "species": "Vahla",
+  "sourceProfileId": "LEG-2C-09",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": -2,
+   "int": 2,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Vahla"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "dark-side-stigma",
+   "force-sensitivity",
+   "cartilaginous-skeleton"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "acrobatics",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [
+   {
+    "feat": "Force Sensitivity",
+    "requires": []
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "dark-side-stigma": "display-only",
+   "force-sensitivity": "structured-rule",
+   "cartilaginous-skeleton": "structured-rule"
+  }
+ },
+ "verpine-ur-2b-09": {
+  "species": "Verpine",
+  "sourceProfileId": "UR-2B-09",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Verpine"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-armor",
+   "heightened-awareness",
+   "verpine-communication",
+   "conditional-bonus-feat"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [
+   {
+    "skillId": "perception",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Mechanics)",
+    "requires": [
+     "trained:mechanics"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-armor": "structured-rule",
+   "heightened-awareness": "structured-rule",
+   "verpine-communication": "display-only",
+   "conditional-bonus-feat": "structured-rule"
+  }
+ },
+ "vultan-jatm-2j-03": {
+  "species": "Vultan",
+  "sourceProfileId": "JATM-2J-03",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Dromnyr"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "bonus-trained-skill",
+   "conditional-bonus-feat-text"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 1,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-trained-skill": "structured-rule",
+   "conditional-bonus-feat-text": "display-only"
+  }
+ },
+ "vurk-cw-2h-09": {
+  "species": "Vurk",
+  "sourceProfileId": "CW-2H-09",
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 2,
+   "int": 0,
+   "wis": 0,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Semblan"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "breathe-underwater",
+   "expert-swimmer",
+   "placid",
+   "nomads"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "survival",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "breathe-underwater": "display-only",
+   "expert-swimmer": "display-only",
+   "placid": "display-only",
+   "nomads": "structured-rule"
+  }
+ },
+ "weequay-leg-2c-06": {
+  "species": "Weequay",
+  "sourceProfileId": "LEG-2C-06",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": -2,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Sriluurian"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "conditional-bonus-feat",
+   "natural-armor",
+   "pheromones"
+  ],
+  "defense": {
+   "reflex": {
+    "value": 1,
+    "bonusType": "naturalArmor"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Skill Focus (Endurance)",
+    "requires": [
+     "trained:endurance"
+    ]
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "conditional-bonus-feat": "structured-rule",
+   "natural-armor": "structured-rule",
+   "pheromones": "display-only"
+  }
+ },
+ "whiphid-tfu-2e-09": {
+  "species": "Whiphid",
+  "sourceProfileId": "TFU-2E-09",
+  "abilityMods": {
+   "str": 4,
+   "dex": 0,
+   "con": 0,
+   "int": -2,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Large",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Whiphid"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "insulating-fur",
+   "natural-weapon-claws",
+   "scent"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "insulating-fur": "display-only",
+   "natural-weapon-claws": "display-only",
+   "scent": "display-only"
+  }
+ },
+ "wroonian-sv-2f-12": {
+  "species": "Wroonian",
+  "sourceProfileId": "SV-2F-12",
+  "abilityMods": {
+   "str": 0,
+   "dex": 2,
+   "con": -2,
+   "int": 0,
+   "wis": 0,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Wroonian"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "free-spirit",
+   "persuasion-skill-reroll"
+  ],
+  "defense": {
+   "will": {
+    "value": 2,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [
+   {
+    "skillId": "persuasion",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "free-spirit": "structured-rule",
+   "persuasion-skill-reroll": "structured-rule"
+  }
+ },
+ "yarkora-tfu-2e-10": {
+  "species": "Yarkora",
+  "sourceProfileId": "TFU-2E-10",
+  "abilityMods": {
+   "str": 0,
+   "dex": -2,
+   "con": 0,
+   "int": 0,
+   "wis": 2,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic",
+   "Yarkora"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "confusion",
+   "deceptive",
+   "streetwise"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "deception",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [
+   "Gather Information"
+  ],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "confusion": "engine-suppressed",
+   "deceptive": "structured-rule",
+   "streetwise": "structured-rule"
+  }
+ },
+ "yevetha-gaw-2i-07": {
+  "species": "Yevetha",
+  "sourceProfileId": "GAW-2I-07",
+  "abilityMods": {
+   "str": 2,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": 0,
+   "cha": -2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Yevethan"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "mechanical-aptitude",
+   "natural-weapons",
+   "xenophobia"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Retractable Claws",
+    "damage": "1d6",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "mechanical-aptitude": "display-only",
+   "natural-weapons": "display-only",
+   "xenophobia": "display-only"
+  }
+ },
+ "yuzzem-gaw-2i-08": {
+  "species": "Yuzzem",
+  "sourceProfileId": "GAW-2I-08",
+  "abilityMods": {
+   "str": 4,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": -2
+  },
+  "size": "Large",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Yuzz"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "natural-weapons",
+   "physically-intimidating",
+   "scent",
+   "climb-skill-reroll"
+  ],
+  "defense": {},
+  "rerolls": [
+   {
+    "skillId": "climb",
+    "outcome": "mustAccept"
+   }
+  ],
+  "featGrants": [],
+  "naturalWeapons": [
+   {
+    "name": "Bite",
+    "damage": "1d8",
+    "type": "piercing"
+   },
+   {
+    "name": "Claws",
+    "damage": "1d8",
+    "type": "slashing"
+   }
+  ],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "natural-weapons": "display-only",
+   "physically-intimidating": "display-only",
+   "scent": "display-only",
+   "climb-skill-reroll": "structured-rule"
+  }
+ },
+ "zeltron-leg-2c-08": {
+  "species": "Zeltron",
+  "sourceProfileId": "LEG-2C-08",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 0,
+   "int": 0,
+   "wis": -2,
+   "cha": 2
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "empathy",
+   "pheromones"
+  ],
+  "defense": {},
+  "rerolls": [],
+  "featGrants": [],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "empathy": "display-only",
+   "pheromones": "display-only"
+  }
+ },
+ "zygerrian-gaw-2i-09": {
+  "species": "Zygerrian",
+  "sourceProfileId": "GAW-2I-09",
+  "abilityMods": {
+   "str": 0,
+   "dex": 0,
+   "con": 2,
+   "int": 0,
+   "wis": -2,
+   "cha": 0
+  },
+  "size": "Medium",
+  "speed": 6,
+  "landSpeedUnspecified": false,
+  "languages": [
+   "Basic"
+  ],
+  "languageRestrictions": {},
+  "traitIds": [
+   "bonus-feat",
+   "iron-will",
+   "strength-of-conviction"
+  ],
+  "defense": {
+   "will": {
+    "value": 2,
+    "bonusType": "species"
+   }
+  },
+  "rerolls": [],
+  "featGrants": [
+   {
+    "feat": "Martial Arts I",
+    "requires": []
+   }
+  ],
+  "naturalWeapons": [],
+  "classSkills": [],
+  "trainedSkillChoices": 0,
+  "suppressedProficiencies": [],
+  "namedActivations": [],
+  "automation": {
+   "bonus-feat": "structured-rule",
+   "iron-will": "structured-rule",
+   "strength-of-conviction": "display-only"
+  }
+ }
+}

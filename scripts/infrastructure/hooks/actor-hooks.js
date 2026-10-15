@@ -130,6 +130,9 @@ export function registerActorHooks() {
         }
     });
 
+    // Feat acquisition / loss re-evaluates deferred species conditional feats (create / delete of feat items).
+    SpeciesConditionalGrantResolver.registerHooks(Hooks);
+
     // Handle item deletion for special feats like Skill Focus
     HooksRegistry.register('deleteItem', handleItemDelete, {
         id: 'item-delete-handler',

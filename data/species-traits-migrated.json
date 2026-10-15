@@ -761,26 +761,7 @@
       }
     ],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "ferocity",
-        "name": "Ferocity",
-        "description": "When reduced to half hit points or fewer, an Aqualish gains a +2 species bonus on melee attack rolls and damage rolls until the end of the encounter.",
-        "rules": [
-          {
-            "type": "damageModifier",
-            "attackType": "melee",
-            "target": "damageRoll",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "ferocity-rule-0"
-          }
-        ]
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -1506,42 +1487,7 @@
     "name": "Bith",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "musical-savant",
-        "name": "Musical Savant",
-        "description": "A Bith gains a +5 species bonus on Perform checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "perform",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "musical-savant-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "fragile",
-        "name": "Fragile",
-        "description": "A Bith takes a -2 species penalty to Fortitude Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "fortitude",
-            "value": -2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "fragile-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -1769,29 +1715,7 @@
       }
     ],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "bothan-spy-network",
-        "name": "Bothan Spy Network",
-        "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse.",
-        "rules": [
-          {
-            "type": "reroll",
-            "triggeredBy": {
-              "type": "skillCheck",
-              "skillId": "gatherInfo"
-            },
-            "timesPerEncounter": 1,
-            "outcome": "mustAccept",
-            "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse.",
-            "when": {
-              "type": "always"
-            },
-            "id": "bothan-spy-network-rule-0"
-          }
-        ]
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -2151,49 +2075,9 @@
     "name": "Cerean",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "binary-brain",
-        "name": "Binary Brain",
-        "description": "A Cerean gains a +2 species bonus on Will Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "will",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "binary-brain-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "binary-brain-reroll",
-        "name": "Binary Brain (Reroll)",
-        "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll.",
-        "rules": [
-          {
-            "type": "reroll",
-            "triggeredBy": {
-              "type": "skillCheck",
-              "skillId": "knowledgeGalacticLore"
-            },
-            "timesPerEncounter": 1,
-            "outcome": "mustAccept",
-            "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll.",
-            "when": {
-              "type": "always"
-            },
-            "id": "binary-brain-reroll-rule-0"
-          }
-        ]
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -2461,11 +2345,6 @@
         "id": "radiation-resistance",
         "name": "Radiation Resistance",
         "description": "Chagrians receive a +5 Species bonus to their Fortitude Defense against Radiation."
-      },
-      {
-        "id": "all-codru-ji-possess-six-limbs",
-        "name": "All Codru-Ji possess six limbs",
-        "description": "four arms and two legs. In addition, juvenile Codru-Ji hardly resemble their parents as much as they resemble small, furred, hexapedal canines. Referred to as Wyrwulves, Codru-Ji children continue to grow and develop in their six-legged form until puberty, when they pupate in cocoons and emerge as bipedal adults."
       }
     ],
     "variants": [],
@@ -2527,42 +2406,7 @@
     "name": "Chiss",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "darkvision",
-        "name": "Darkvision",
-        "description": "A Chiss ignores concealment caused by darkness.",
-        "rules": [
-          {
-            "type": "sense",
-            "senseType": "darkvision",
-            "range": null,
-            "description": "A Chiss ignores concealment caused by darkness.",
-            "when": {
-              "type": "always"
-            },
-            "id": "darkvision-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "tactical-training",
-        "name": "Tactical Training",
-        "description": "A Chiss gains a +2 species bonus on Initiative checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "initiative",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "tactical-training-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -3800,7 +3644,7 @@
       {
         "id": "small-size",
         "name": "Small Size",
-        "description": "As a Small creature, an Ewok gains a +5 species bonus to Stealth checks and a +1 species bonus to Reflex Defense, but takes a -5 penalty on grapple checks.",
+        "description": "As a Small creature, an Ewok gains a +5 species bonus to Stealth checks, but takes a -5 penalty on grapple checks.",
         "rules": [
           {
             "type": "skillModifier",
@@ -3813,11 +3657,6 @@
             "id": "small-size-rule-0"
           }
         ]
-      },
-      {
-        "id": "primitive-weapons",
-        "name": "Primitive Weapons",
-        "description": "An Ewok gains proficiency with primitive weapons."
       }
     ],
     "activatedAbilities": [],
@@ -4266,44 +4105,13 @@
     "inherits": null,
     "structuralTraits": [
       {
-        "id": "low-cunning",
-        "name": "Low Cunning",
-        "description": "A Gamorrean takes a -2 species penalty on Will Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "will",
-            "value": -2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "low-cunning-rule-0"
-          }
-        ]
+        "id": "great-fortitude",
+        "name": "Great Fortitude",
+        "description": "Gamorreans gain a +2 Species bonus to their Fortitude Defense, accounting for their great physical resistance."
       }
     ],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "brutal-charge",
-        "name": "Brutal Charge",
-        "description": "A Gamorrean gains a +2 species bonus on melee damage rolls when charging.",
-        "rules": [
-          {
-            "type": "damageModifier",
-            "attackType": "melee",
-            "target": "damageRoll",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "brutal-charge-rule-0"
-          }
-        ]
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -4359,11 +4167,6 @@
         "id": "primitive",
         "name": "Primitive",
         "description": "Gamorreans do not gain Weapon Proficiency (Heavy Weapons), Weapon Proficiency (Pistols), or Weapon Proficiency (Rifles) as starting Feats at first level, even if their Class normally grants them."
-      },
-      {
-        "id": "weapon-familiarity-arg-garok",
-        "name": "Weapon Familiarity (Arg'garok)",
-        "description": "Gamorreans treat the Arg'garok as an Advanced Melee Weapon, instead of an Exotic Weapons (Melee)."
       }
     ],
     "variants": [],
@@ -5150,35 +4953,12 @@
     "inherits": null,
     "structuralTraits": [
       {
-        "id": "amphibious",
-        "name": "Amphibious",
-        "description": "A Gungan can breathe both air and water.",
-        "rules": [
-          {
-            "type": "breathing",
-            "breathType": "aquatic",
-            "immune": false,
-            "description": "A Gungan can breathe both air and water.",
-            "when": {
-              "type": "always"
-            },
-            "id": "amphibious-rule-0"
-          }
-        ]
+        "id": "lightning-reflexes",
+        "name": "Lightning Reflexes",
+        "description": "Gungans gain a +2 Species bonus to their Reflex Defense, accounting for their uncanny ability to avoid danger."
       }
     ],
-    "activatedAbilities": [
-      {
-        "id": "lucky",
-        "name": "Lucky",
-        "actionType": "free",
-        "usage": {
-          "perEncounter": 1,
-          "perDay": null
-        },
-        "description": "Once per encounter, a Gungan may reroll an attack roll, skill check, or ability check but must accept the new result."
-      }
-    ],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
@@ -5243,7 +5023,7 @@
       {
         "id": "weapon-familiarity",
         "name": "Weapon Familiarity",
-        "description": "Gungans treat the Atlatl, Cesta, and Electropole as Simple Weapons (Melee) instead of Exotic Weapons (Melee)."
+        "description": "Gungans with the Weapon Proficiency (simple weapons) feat are proficient with the atlatl and the cesta."
       }
     ],
     "variants": [],
@@ -5624,30 +5404,7 @@
     "name": "Hutt",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "immense-bulk",
-        "name": "Immense Bulk",
-        "description": "A Hutt gains a +5 species bonus to Fortitude Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "fortitude",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "immense-bulk-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "slow",
-        "name": "Slow",
-        "description": "A Hutt's base speed is reduced by 2 squares."
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -5694,17 +5451,17 @@
       {
         "id": "force-resistance",
         "name": "Force Resistance",
-        "description": "A Hutt's sharp mind allows them to resist Force abilities. Hutts receive a +5 bonus to their Will Defense against any use of the Use the Force skill."
+        "description": "Hutts have a +5 species bonus to Will Defense against any Use the Force check."
       },
       {
         "id": "supreme-stability",
         "name": "Supreme Stability",
-        "description": "A Hutt's sluglike body structure and lack of any kind of legs, allows a Hutt to become completely immune to being knocked Prone."
+        "description": "Hutts can't be tripped or knocked prone."
       },
       {
         "id": "silver-tongued",
         "name": "Silver Tongued",
-        "description": "Hutts may be known to be heavy handed in their ventures, but they are equally capable in legal negotiations as they are underground business. A Hutt may choose to reroll any Persuasion check, keeping the better of the two results."
+        "description": "A Hutt may reroll a Persuasion check, keeping the better result."
       }
     ],
     "variants": [],
@@ -5911,35 +5668,12 @@
     "inherits": null,
     "structuralTraits": [
       {
-        "id": "nature-affinity",
-        "name": "Nature Affinity",
-        "description": "An Ithorian gains a +5 species bonus on Knowledge (life sciences) checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "knowledgeLifeSciences",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "nature-affinity-rule-0"
-          }
-        ]
+        "id": "iron-will",
+        "name": "Iron Will",
+        "description": "Ithorians have above-average willpower and gain a +2 Species bonus to their Will Defense."
       }
     ],
-    "activatedAbilities": [
-      {
-        "id": "sonic-bellow",
-        "name": "Sonic Bellow",
-        "actionType": "standard",
-        "usage": {
-          "perEncounter": null,
-          "perDay": null
-        },
-        "description": "As a standard action, an Ithorian may emit a sonic bellow that deals 1d6 sonic damage to adjacent enemies."
-      }
-    ],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
@@ -6519,25 +6253,7 @@
     "name": "Kel Dor",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "force-awareness",
-        "name": "Force Awareness",
-        "description": "A Kel Dor gains a +2 species bonus on Use the Force checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "useTheForce",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "force-awareness-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -8194,23 +7910,6 @@
             "id": "amphibious-rule-0"
           }
         ]
-      },
-      {
-        "id": "tech-savvy",
-        "name": "Tech Savvy",
-        "description": "A Mon Calamari gains a +2 species bonus on Mechanics checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "mechanics",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "tech-savvy-rule-0"
-          }
-        ]
       }
     ],
     "activatedAbilities": [],
@@ -8870,46 +8569,7 @@
     "name": "Neimoidian",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "cowardly",
-        "name": "Cowardly",
-        "description": "A Neimoidian takes a -2 species penalty on Will Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "will",
-            "value": -2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "cowardly-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "mercantile-training",
-        "name": "Mercantile Training",
-        "description": "A Neimoidian gains a +5 species bonus on Persuasion checks related to business.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "persuasion",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "context": {
-              "type": "trade",
-              "description": "trade"
-            },
-            "id": "mercantile-training-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -10109,23 +9769,6 @@
             "id": "amphibious-rule-0"
           }
         ]
-      },
-      {
-        "id": "forceful-presence",
-        "name": "Forceful Presence",
-        "description": "A Quarren gains a +2 species bonus on Intimidate checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "persuasion",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "forceful-presence-rule-0"
-          }
-        ]
       }
     ],
     "activatedAbilities": [],
@@ -10608,25 +10251,7 @@
     "name": "Rodian",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "keen-senses",
-        "name": "Keen Senses",
-        "description": "A Rodian gains a +2 species bonus on Perception checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "perception",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "keen-senses-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -11871,25 +11496,7 @@
     "name": "Sullustan",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "spatial-awareness",
-        "name": "Spatial Awareness",
-        "description": "A Sullustan gains a +5 species bonus on Pilot checks and Initiative checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "pilot",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "spatial-awareness-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -12659,56 +12266,8 @@
     "name": "Trandoshan",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "claws",
-        "name": "Claws",
-        "description": "A Trandoshan has natural claw attacks that deal 1d6 points of slashing damage.",
-        "rules": [
-          {
-            "type": "naturalWeapon",
-            "id": "claws-rule-0",
-            "name": "Claws",
-            "weaponCategory": "melee",
-            "attackAbility": "str",
-            "damage": {
-              "formula": "1d4",
-              "damageType": "slashing"
-            },
-            "critical": {
-              "range": 20,
-              "multiplier": 2
-            },
-            "proficiency": {
-              "type": "natural",
-              "isProficient": true
-            },
-            "traits": {
-              "alwaysArmed": true,
-              "countsAsWeapon": true,
-              "finesse": false,
-              "light": false,
-              "twoHanded": false
-            },
-            "when": {
-              "type": "always"
-            }
-          }
-        ]
-      }
-    ],
-    "activatedAbilities": [
-      {
-        "id": "regeneration",
-        "name": "Regeneration",
-        "actionType": "free",
-        "usage": {
-          "perEncounter": 1,
-          "perDay": null
-        },
-        "description": "A Trandoshan regains hit points equal to its level once per encounter when reduced below half hit points."
-      }
-    ],
+    "structuralTraits": [],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
@@ -12763,7 +12322,7 @@
       {
         "id": "limb-regeneration",
         "name": "Limb Regeneration",
-        "description": "A Trandoshan regrows a lost limb in 1d10 days. At the end of that time, all Persistent Conditions associated with the loss of the limb are removed."
+        "description": "A Trandoshan regrows a lost limb in 1d10 days. At the end of that time, all persistent penalties associated with the loss of the limb are removed."
       },
       {
         "id": "natural-armor",
@@ -12935,42 +12494,7 @@
     "name": "Twi'lek",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "graceful",
-        "name": "Graceful",
-        "description": "A Twi'lek gains a +2 species bonus to Reflex Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "reflex",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "graceful-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "persuasion-training",
-        "name": "Persuasion Training",
-        "description": "A Twi'lek gains a +5 species bonus on Persuasion checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "persuasion",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "persuasion-training-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
@@ -14054,68 +13578,9 @@
     "name": "Wookiee",
     "renameTo": null,
     "inherits": null,
-    "structuralTraits": [
-      {
-        "id": "mighty",
-        "name": "Mighty",
-        "description": "A Wookiee gains a +4 species bonus to Strength.",
-        "rules": [
-          {
-            "type": "abilityScoreModifier",
-            "ability": "strength",
-            "value": 4,
-            "when": {
-              "type": "always"
-            },
-            "id": "mighty-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "endurance",
-        "name": "Endurance",
-        "description": "A Wookiee gains a +2 species bonus to Fortitude Defense.",
-        "rules": [
-          {
-            "type": "defenseModifier",
-            "defense": "fortitude",
-            "value": 2,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "endurance-rule-0"
-          }
-        ]
-      }
-    ],
+    "structuralTraits": [],
     "activatedAbilities": [],
-    "conditionalTraits": [
-      {
-        "id": "rage",
-        "name": "Rage",
-        "description": "When reduced to half hit points or fewer, a Wookiee gains a +2 bonus on melee attack rolls and damage rolls until the end of the encounter.",
-        "rules": [
-          {
-            "type": "rage",
-            "trigger": {
-              "type": "hpThreshold",
-              "value": 50
-            },
-            "duration": "untilEndOfEncounter",
-            "bonuses": {
-              "meleeAttackBonus": 2,
-              "meleeDamageBonus": 2
-            },
-            "description": "When reduced to half hit points or fewer, a Wookiee gains a +2 bonus on melee attack rolls and damage rolls until the end of the encounter.",
-            "when": {
-              "type": "always"
-            },
-            "id": "rage-rule-0"
-          }
-        ]
-      }
-    ],
+    "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],
     "tags": [
@@ -14177,9 +13642,9 @@
         "description": "Once per day, a Wookiee can fly into a Rage as a Swift Action. While Raging, the Wookiee temporarily gains a +2 Rage bonus on melee attack rolls and melee damage rolls, but cannot use Skills that require patience and concentration, such as Mechanics, Stealth, or Use the Force. A fit of Rage lasts for a number of rounds equal to 5 + the Wookiee's Constitution modifier. At the end of its Rage, the Wookiee moves -1 Persistent step along the Condition Track. The penalties imposed by this Persistent Condition persist until the Wookiee takes at least 10 minutes to recuperate, during which time the Wookiee can't engage in any strenuous activity."
       },
       {
-        "id": "weapon-familiarity-bowcaster-and-ryyk-blade",
-        "name": "Weapon Familiarity (Bowcaster and Ryyk Blade)",
-        "description": "Wookiees treat the Bowcaster as a Rifle instead of an Exotic Weapon (Ranged). They additionally treat the Ryyk Blade as an Advanced Melee Weapon instead of an Exotic Weapon (Melee)."
+        "id": "weapon-familiarity",
+        "name": "Weapon Familiarity",
+        "description": "Wookiees with the Weapon Proficiency (rifles) feat are proficient with the bowcaster."
       }
     ],
     "variants": [],
@@ -14446,7 +13911,7 @@
       {
         "id": "force-immunity",
         "name": "Force Immunity",
-        "description": "A Yuuzhan Vong is immune to the effects of Force powers.",
+        "description": "A Yuuzhan Vong is immune to any Force effect that targets its Will Defense.",
         "rules": [
           {
             "type": "immunity",
@@ -14461,26 +13926,6 @@
               "type": "always"
             },
             "id": "force-immunity-rule-0"
-          }
-        ]
-      },
-      {
-        "id": "living-technology",
-        "name": "Living Technology",
-        "description": "A Yuuzhan Vong may only use organic equipment.",
-        "rules": [
-          {
-            "type": "restriction",
-            "restricts": "equipmentType",
-            "targets": [
-              "inorganic-equipment"
-            ],
-            "reason": "Can only use organic equipment",
-            "description": "A Yuuzhan Vong may only use organic equipment.",
-            "when": {
-              "type": "always"
-            },
-            "id": "living-technology-rule-0"
           }
         ]
       }
@@ -14585,24 +14030,19 @@
     },
     "canonicalTraits": [
       {
-        "id": "biotech-proficiency",
-        "name": "Biotech Proficiency",
-        "description": "Yuuzhan Vong suffer no penalties while wielding Yuuzhan Vong Biotech."
-      },
-      {
         "id": "force-immunity",
         "name": "Force Immunity",
         "description": "Yuuzhan Vong can't take the Force Sensitivity feat, can't make Use the Force checks, and never gain Force Points. In addition, they are immune to any Force effect that targets their Will Defense (including Force Powers and aspects of the Use the Force skill)."
       },
       {
-        "id": "primitive",
-        "name": "Primitive",
-        "description": "Yuuzhan Vong do not gain Weapon Proficiency (Heavy Weapons), Weapon Proficiency (Pistols), or Weapon Proficiency (Rifles), as starting Feats at 1st level, even if their Class normally grants them."
+        "id": "technophobic",
+        "name": "Technophobic",
+        "description": "Yuuzhan Vong take a -5 penalty on attack rolls and skill checks made when using mechanical weapons or tools."
       },
       {
         "id": "weapon-familiarity",
         "name": "Weapon Familiarity",
-        "description": "Yuuzhan Vong treat Amphistaffs as a Simple Weapon (Melee) instead of as an Exotic Weapons (Melee)."
+        "description": "Yuuzhan Vong with the Weapon Proficiency (simple weapons) feat are proficient with the amphistaff."
       }
     ],
     "packSource": null,
@@ -14730,35 +14170,44 @@
     "inherits": null,
     "structuralTraits": [
       {
-        "id": "battle-hardened",
-        "name": "Battle Hardened",
-        "description": "A Zabrak gains a +2 species bonus to Fortitude Defense.",
+        "id": "superior-defenses",
+        "name": "Superior Defenses",
+        "description": "Adapted to a very tough and trying environment, Zabrak gain a +1 Species bonus to all their Defenses.",
         "rules": [
           {
             "type": "defenseModifier",
             "defense": "fortitude",
-            "value": 2,
+            "value": 1,
             "bonusType": "species",
             "when": {
               "type": "always"
             },
-            "id": "battle-hardened-rule-0"
+            "id": "superior-defenses-rule-0"
+          },
+          {
+            "type": "defenseModifier",
+            "defense": "reflex",
+            "value": 1,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "superior-defenses-rule-1"
+          },
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 1,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "superior-defenses-rule-2"
           }
         ]
       }
     ],
-    "activatedAbilities": [
-      {
-        "id": "irrepressible",
-        "name": "Irrepressible",
-        "actionType": "free",
-        "usage": {
-          "perEncounter": 1,
-          "perDay": null
-        },
-        "description": "Once per encounter, a Zabrak may ignore the effects of being stunned or dazed for one turn."
-      }
-    ],
+    "activatedAbilities": [],
     "conditionalTraits": [],
     "bonusFeats": [],
     "equipmentGrants": [],

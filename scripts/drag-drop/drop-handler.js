@@ -12,6 +12,11 @@ import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/pro
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { buildPendingSpeciesContext } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js";
 import { applyCanonicalSpeciesToActor } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-species-to-actor.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { getAbilityChoiceOptions } from "/systems/foundryvtt-swse/scripts/species/species-ability-choice.js";
+import { applySpeciesVariantProfile } from "/systems/foundryvtt-swse/scripts/species/species-variant-profile.js";
+import { getSoleSnapshotVersion, requiresPublicationSelection, checkPublicationSelection, buildVersionChoices } from "/systems/foundryvtt-swse/scripts/species/species-publication-selection.js";
+import { buildSpeciesReplacementPlan, applySpeciesPlanWithRollback } from "/systems/foundryvtt-swse/scripts/species/species-plan-transaction.js";
 import { cloneDroppedItemData } from "/systems/foundryvtt-swse/scripts/engine/interactions/dropped-item-clone.js";
 
 export class DropHandler {
@@ -225,11 +230,45 @@ export class DropHandler {
   }
 
   static async handleSpeciesDrop(actor, species) {
-    // Apply species bonuses:
-    // - Ability score modifiers
-    // - Size
-    // - Speed
-    // - Special abilities/features
+    // Atomic replacement (species-plan-transaction.js):
+    //  1. resolve the species canonically and build the COMPLETE plan with no side effects;
+    //  2. only then confirm replacement of an existing species;
+    //  3. apply delete -> create -> update through ActorEngine with a rollback journal.
+    // A species that cannot be resolved canonically is rejected; there is no legacy
+    // attribute fallback, so a failure never leaves a partially hydrated character.
+    // RD-001: a species published in several verified profiles needs an explicit version here too; the drop never
+    // silently picks a sourcebook. Cancelling leaves the actor untouched.
+    let identity = null;
+    const registryEntry = SpeciesRegistry.getByName(species.name);
+    if (registryEntry && requiresPublicationSelection(registryEntry)) {
+      if (checkPublicationSelection(registryEntry, null).code === 'NO_IMPLEMENTED_VERSION') {
+        ui.notifications.warn(`${species.name} has several published versions, none of which is implemented yet. ${actor.name} was not changed.`);
+        return false;
+      }
+      const versionId = await this._promptSpeciesVersion(registryEntry, actor);
+      if (!versionId || !checkPublicationSelection(registryEntry, versionId).ok) {
+        ui.notifications.warn(`Choose a ${species.name} species version to apply it. ${actor.name} was not changed.`);
+        return false;
+      }
+      identity = { ...registryEntry, selectedVariantId: versionId, variantId: versionId };
+    }
+
+    let plan;
+    try {
+      plan = await buildSpeciesReplacementPlan(actor, species.name, {
+        buildContext: buildPendingSpeciesContext,
+        applyCanonical: applyCanonicalSpeciesToActor,
+        source: 'drag-drop',
+        identity,
+      });
+    } catch (err) {
+      console.warn(`[DropHandler] Species ${species.name} rejected before any change:`, err);
+      const needsChoice = registryEntry && getAbilityChoiceOptions(getSoleSnapshotVersion(registryEntry) ? applySpeciesVariantProfile(registryEntry, getSoleSnapshotVersion(registryEntry)) : registryEntry).length > 0;
+      ui.notifications.error(needsChoice
+        ? `${species.name} requires a published ability choice (for example male or female), which dropping cannot supply. Choose it in the species step. ${actor.name} was not changed.`
+        : `Could not apply ${species.name}: it has no valid canonical profile. ${actor.name} was not changed.`);
+      return false;
+    }
 
     // Check if actor already has a species
     const existingSpecies = actor.items.find(i => i.type === 'species');
@@ -244,66 +283,44 @@ export class DropHandler {
       });
 
       if (!replace) {return;}
-      await existingSpecies.delete();
     }
 
-    // Create the species embedded item first (species document on the actor).
-    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [cloneDroppedItemData(species)]);
-
-    // Route through the canonical species materialization pipeline so drag/drop gets the
-    // same full package as chargen finalization: attributes, movement, languages, passive
-    // skill bonuses (flags.swse.speciesPassiveBonuses), reroll rights
-    // (flags.swse.speciesRerolls), natural weapons, and activated ability items.
-    let canonicalApplied = false;
     try {
-      const pendingContext = await buildPendingSpeciesContext(actor, species.name, { source: 'drag-drop' });
-      if (pendingContext) {
-        const materialization = await applyCanonicalSpeciesToActor(actor, pendingContext);
-        if (materialization.success) {
-          const mutations = materialization.mutations;
-
-          // Apply system/flags mutations through ActorEngine.
-          const fieldMutations = {};
-          for (const [key, value] of Object.entries(mutations)) {
-            if (key.startsWith('system.') || key.startsWith('flags.')) {
-              fieldMutations[key] = value;
-            }
-          }
-          if (Object.keys(fieldMutations).length > 0) {
-            await ActorEngine.updateActor(actor, fieldMutations, { source: 'species-drop' });
-          }
-
-          // Create natural weapons and activated ability items.
-          if (mutations.itemsToCreate?.length > 0) {
-            await ActorEngine.createEmbeddedDocuments(actor, 'Item', mutations.itemsToCreate, { source: 'species-drop' });
-          }
-
-          canonicalApplied = true;
-        }
-      }
+      await applySpeciesPlanWithRollback({
+        actor,
+        engine: ActorEngine,
+        mutations: plan.mutations,
+        newSpeciesItemData: cloneDroppedItemData(species),
+        replaceItemIds: existingSpecies ? [existingSpecies.id] : [],
+        source: 'species-drop',
+      });
     } catch (err) {
-      // Canonical materialization failed — fall back to legacy attribute writes.
-      console.warn(`[DropHandler] Species canonical materialization failed for ${species.name}:`, err);
-    }
-
-    if (!canonicalApplied) {
-      // Legacy fallback: apply attribute modifiers only (no rerolls/bonuses/natural weapons).
-      const abilityMods = species.system.abilityMods || this._parseAbilityString(species.system.abilities || species.system.attributes || 'None');
-      await ActorEngine.updateActor(actor, {
-        'system.attributes.str.racial': abilityMods.str || 0,
-        'system.attributes.dex.racial': abilityMods.dex || 0,
-        'system.attributes.con.racial': abilityMods.con || 0,
-        'system.attributes.int.racial': abilityMods.int || 0,
-        'system.attributes.wis.racial': abilityMods.wis || 0,
-        'system.attributes.cha.racial': abilityMods.cha || 0,
-        'system.size': species.system.size || 'Medium',
-        'system.speed': parseInt(species.system.speed, 10) || 6,
-        'system.race': species.name
-      }, { source: 'species-drop-legacy-fallback' });
+      console.error(`[DropHandler] Species ${species.name} failed; rollback ${err.rollbackComplete ? 'complete' : 'INCOMPLETE'}:`, err);
+      ui.notifications.error(err.rollbackComplete === false
+        ? `Applying ${species.name} failed and could not be fully undone. Check ${actor.name} before continuing.`
+        : `Applying ${species.name} failed. ${actor.name} was restored to its previous species.`);
+      return false;
     }
 
     ui.notifications.info(game.i18n.format('SWSE.Notifications.Items.SpeciesApplied', { species: species.name, actor: actor.name }));
     return true;
+  }
+
+  /**
+   * Ask which published version of a multi-publication species to apply (RD-001).
+   * Resolves to a verified version id, or null if the dialog is dismissed.
+   */
+  static async _promptSpeciesVersion(entry, actor) {
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const choices = buildVersionChoices(entry);
+    const rows = choices.map(c => `<li><strong>${esc(c.label)}</strong><br>${esc(c.summary)}${c.languages ? `<br>Languages: ${esc(c.languages)}` : ''}${c.traits ? `<br>Traits: ${esc(c.traits)}` : ''}</li>`).join('');
+    const buttons = Object.fromEntries(choices.map((c, i) => [`v${i}`, { label: c.label, callback: () => c.id }]));
+    const result = await SWSEDialogV2.wait({
+      title: `Choose ${entry.name} species version`,
+      content: `<p>Multiple published ${esc(entry.name)} profiles are available for ${esc(actor?.name)}. Select a sourcebook version to continue.</p><ul>${rows}</ul>`,
+      buttons,
+    });
+    return typeof result === 'string' && choices.some(c => c.id === result) ? result : null;
   }
 
   /**

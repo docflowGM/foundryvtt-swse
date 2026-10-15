@@ -12,6 +12,7 @@
  * - Empty states explicit, not inferred
  */
 
+import { formatSpeedLine } from '/systems/foundryvtt-swse/scripts/species/species-movement.js';
 import { PanelContextValidator } from './PanelContextValidator.js';
 import { isFollowerSlotOccupied } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 import { RowTransformers } from './RowTransformers.js';
@@ -1349,11 +1350,18 @@ export class PanelContextBuilder {
       this.system.movement?.speed ??
       0
     ) || 0;
-    const speed = {
-      value: speedValue,
-      mode: 'walk',
-      label: `${speedValue} sq`
-    };
+    const speed = this.derived.speed?.landSpeedSpecified === false
+      ? {
+          // No printed land speed: show the printed alternate modes, never 0 or the default.
+          value: Number(this.derived.speed.modes?.[this.derived.speed.mode]) || 0,
+          mode: this.derived.speed.mode,
+          label: formatSpeedLine(this.derived.speed)
+        }
+      : {
+          value: speedValue,
+          mode: 'walk',
+          label: `${speedValue} sq`
+        };
 
     // Initiative: derived.initiative.total (from DerivedCalculator)
     const initiativeTotal = Number(this.derived.initiative?.total) || 0;

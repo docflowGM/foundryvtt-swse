@@ -27,6 +27,7 @@
  */
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { checkPublicationSelection } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
 import { buildPendingSpeciesContext } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
@@ -138,7 +139,16 @@ export class TemplateAdapter {
     let pendingBackgroundContext = null;
 
     // Species (canonical: species object plus the real Species Grant Ledger context)
-    if (template.speciesId) {
+    // RD-001: a template may not silently pick a sourcebook for a multi-publication species. Without an explicit
+    // published version the species is left unassigned so the player chooses it in the species step.
+    if (template.speciesId && !SpeciesRegistry.isInitialized?.()) await SpeciesRegistry.initialize();
+    const templateSpeciesNeedsVersion = template.speciesId && this._templateSpeciesNeedsVersion(template.speciesId);
+    if (templateSpeciesNeedsVersion) {
+      swseLogger.warn('[TemplateAdapter] Template species requires an explicit published version; leaving species for the player to choose', {
+        species: template.speciesId?.name || template.speciesId?.id,
+      });
+    }
+    if (template.speciesId && !templateSpeciesNeedsVersion) {
       pendingSpeciesContext = await this._buildTemplateSpeciesContext(actor, template.speciesId);
       const speciesPayload = {
         id: pendingSpeciesContext?.identity?.id || template.speciesId.id,
@@ -397,15 +407,24 @@ export class TemplateAdapter {
     });
   }
 
+  /** True when the template names a species that has several verified published profiles but no valid version. */
+  static _templateSpeciesNeedsVersion(speciesRef) {
+    const entry = SpeciesRegistry.getById?.(speciesRef?.id) || SpeciesRegistry.getByName?.(speciesRef?.name) || null;
+    if (!entry) return false;
+    return !checkPublicationSelection(entry, speciesRef?.variantId || speciesRef?.versionId || null).ok;
+  }
+
   static async _buildTemplateSpeciesContext(actor, speciesRef) {
     if (!speciesRef) return null;
     try {
       if (!SpeciesRegistry.isInitialized?.()) {
         await SpeciesRegistry.initialize();
       }
-      const identity = SpeciesRegistry.getById?.(speciesRef.id)
+      const entry = SpeciesRegistry.getById?.(speciesRef.id)
         || SpeciesRegistry.getByName?.(speciesRef.name)
         || speciesRef;
+      const variantId = speciesRef.variantId || speciesRef.versionId || null;
+      const identity = variantId ? { ...entry, selectedVariantId: variantId, variantId } : entry;
       return await buildPendingSpeciesContext(actor, identity, { source: 'template' });
     } catch (err) {
       swseLogger.warn('[TemplateAdapter] Failed to build template species context; falling back to raw species selection', {

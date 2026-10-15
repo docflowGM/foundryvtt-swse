@@ -168,6 +168,7 @@ export const SETTINGS_DEFAULTS = {
     // Ability Scores
     abilityIncreaseMethod: 'standard',
     abilityIncreaseAllocationMode: 'raw_two_different',
+    republicCloneAbilityAllocation: 'printed_plus_two_one_score',
 
     // Space Combat
     spaceInitiativeSystem: 'individual',

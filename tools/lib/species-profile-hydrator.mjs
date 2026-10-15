@@ -1,0 +1,392 @@
+/**
+ * Compile one reviewed Phase 4-B source profile into a complete-snapshot species variant.
+ *
+ * Closed, conservative compilers: a feature becomes structured (automated) ONLY when its audited mechanics have an
+ * exactly recognised shape AND its printed text carries no condition the structure cannot express. Everything else is
+ * kept as displayed text and reported as display-only; nothing is inferred from prose. A profile that needs a feature
+ * the species schema cannot carry yet (natural weapons, ability choices, size variation, unresolved speed, droid
+ * integration) is HELD and reported, never approximated.
+ */
+
+import { languageRestrictionsFromAudit } from '../../scripts/species/species-languages.js';
+
+export class HoldProfile extends Error {
+  constructor(reason) { super(reason); this.name = 'HoldProfile'; this.reason = reason; }
+}
+
+export const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const ABILITIES = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+const DEFENSES = { reflex: 'reflex', fortitude: 'fortitude', will: 'will' };
+const SKILL_IDS = new Set(['acrobatics', 'climb', 'deception', 'endurance', 'gatherinformation', 'initiative', 'jump', 'mechanics', 'perception', 'persuasion', 'pilot', 'ride', 'stealth', 'survival', 'swim', 'treatinjury', 'useComputer'.toLowerCase(), 'usetheforce']);
+const skillIdOf = name => {
+  const key = String(name ?? '').replace(/[^A-Za-z]/g, '').toLowerCase();
+  if (!/^[A-Z][A-Za-z ]+$/.test(String(name ?? '')) || !SKILL_IDS.has(key) || key === 'initiative') return null;
+  return { gatherinformation: 'gatherInformation', treatinjury: 'treatInjury', usetheforce: 'useTheForce', usecomputer: 'useComputer' }[key] ?? key;
+};
+
+// Words that make an otherwise simple-looking sentence conditional/limited; their presence keeps the feature display-only.
+const stripEvenIf = t => String(t ?? '').replace(/\beven (?:if|when) (?:it is |they are )?(?:worse|lower)\b/gi, '');
+const CONDITIONAL_TEXT = /\b(when|while|if|only|once per|per day|per encounter|against|versus|to (?:sense|sneak|intimidate|resist|change)|made to|involving|underwater|wearing|within|swift|standard action|free action)\b/i;
+
+function compileDefense(f) {
+  const m = f.mechanics ?? {};
+  if (CONDITIONAL_TEXT.test(stripEvenIf(f.publishedRule))) return null;
+  const amount = [m.bonus, m.modifier, m.amount].filter(v => v !== undefined);
+  if (amount.length !== 1 || !Number.isFinite(amount[0]) || amount[0] === 0) return null;
+  if (!['species', 'natural armor', 'natural-armor', 'naturalArmor'].includes(m.bonusType)) return null;
+  const defense = DEFENSES[String(m.defense ?? '').toLowerCase()];
+  if (!defense || m.defenses) return null;
+  const bonusType = m.bonusType === 'species' ? 'species' : 'naturalArmor';
+  return [{ type: 'defenseModifier', defense, value: amount[0], bonusType, when: { type: 'always' }, id: `${slug(f.name)}-rule-0` }];
+}
+
+function compileReroll(f) {
+  const m = f.mechanics ?? {};
+  if (CONDITIONAL_TEXT.test(stripEvenIf(f.publishedRule))) return null;
+  if (m.subtask || m.application || m.skills || m.checks || m.skillFamily || m.take10 || m.take10When || m.take10Despite) return null;
+  const skillId = skillIdOf(m.check ?? m.skill);
+  if (!skillId) return null;
+  const secondForced = (m.keep === 'second' && m.reroll === 'optional')
+    || (m.take === 'second' && (m.reroll === true || m.reroll === 'any-check'))
+    || (m.mustAcceptNewResult === true && m.reroll === 'optional')
+    || (m.result === 'must-accept-reroll' && m.reroll === 'optional');
+  const better = m.take === 'better' && (m.reroll === true || m.reroll === 'any-check');
+  if (!secondForced && !better) return null;
+  return [{ type: 'reroll', triggeredBy: { type: 'skillCheck', skillId }, outcome: secondForced ? 'mustAccept' : 'keepBetter', when: { type: 'always' }, id: `${slug(f.name)}-rule-0` }];
+}
+
+const DEFENSE_CLASSES = new Set(['PASSIVE_DEFENSE', 'PASSIVE_DEFENSE_BONUS', 'DEFENSE_BONUS', 'SPECIES_DEFENSE_BONUS', 'NATURAL_ARMOR_BONUS', 'NATURAL_ARMOR_DEFENSE']);
+const REROLL_CLASSES = new Set(['OPTIONAL_REROLL_MUST_ACCEPT', 'SKILL_REROLL', 'OPTIONAL_CHECK_REROLL', 'OPTIONAL_REROLL']);
+
+const SKILL_KEYS = {
+  acrobatics: 'acrobatics', climb: 'climb', deception: 'deception', endurance: 'endurance', 'gather information': 'gatherInformation',
+  jump: 'jump', mechanics: 'mechanics', perception: 'perception', persuasion: 'persuasion', pilot: 'pilot', ride: 'ride',
+  stealth: 'stealth', survival: 'survival', swim: 'swim', 'treat injury': 'treatInjury', 'use computer': 'useComputer', 'use the force': 'useTheForce',
+};
+const skillKey = name => SKILL_KEYS[String(name ?? '').toLowerCase().trim()] ?? null;
+
+// Structured grant rules, ONLY for shapes whose meaning is fully expressed: a feat named (or chosen) with an optional
+// "skill is trained" requirement, a pure class-skill list, a class-skill-pool trained-skill choice. Any other
+// condition (ability scores, prerequisite feats, restricted pools) is not expressible and stays display-only.
+function compileGrant(f) {
+  const m = f.mechanics ?? {};
+  const rid = `${slug(f.name)}-rule-0`;
+  const strings = (...v) => v.find(x => typeof x === 'string' && x.trim()) ?? null;
+  switch (f.classification) {
+    case 'CONDITIONAL_FEAT_GRANT': {
+      // Requirement types the existing resolvers evaluate (SpeciesConditionalGrantResolver): skillTrained, attributeMin,
+      // baseAttackMin, featOwned. A printed "may take" option (not an automatic grant) and anything else stays text.
+      if (m.printedVerb === 'can take' || m.bonusFeatOption || m.choices || m.quantity) return null;
+      const requirements = [];
+      const trained = skillKey(strings(m.condition?.trainedSkill, m.requires?.trainedSkill, m.requiresTrainedSkill,
+        m.prerequisite === 'trainedInSurvival' ? m.skill : null, m.prerequisite === 'Use the Force trained' ? 'Use the Force' : null));
+      if (trained) requirements.push({ type: 'skillTrained', skill: trained });
+      const ability = (k, v) => ({ type: 'attributeMin', attribute: k.toLowerCase().slice(0, 3), min: v });
+      const abil = m.condition?.ConstitutionScoreMin !== undefined ? [['con', m.condition.ConstitutionScoreMin]] : Object.entries({ ...(m.abilityThreshold ?? {}), ...(m.prerequisites?.DEX !== undefined ? { DEX: m.prerequisites.DEX } : {}) })
+        .map(([k, v]) => [k.toLowerCase().slice(0, 3), v]);
+      for (const [k, v] of abil) {
+        if (!['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(k) || !Number.isFinite(v)) return null;
+        requirements.push(ability(k, v));
+      }
+      if (m.prerequisites?.BAB !== undefined) { if (!Number.isFinite(m.prerequisites.BAB)) return null; requirements.push({ type: 'baseAttackMin', min: m.prerequisites.BAB }); }
+      if (typeof m.requiresFeat === 'string') requirements.push({ type: 'featOwned', feat: m.requiresFeat });
+      let feat = strings(m.bonusFeat, m.grantFeat, m.grantsFeat, m.grantsFeat, typeof m.feat === 'string' && m.feat !== 'Skill Focus' && m.feat !== 'Force Training' ? m.feat : null);
+      if (!feat && m.feat === 'Skill Focus' && m.skill && !m.choices) feat = `Skill Focus (${m.skill})`;
+      if (!feat && m.feat === 'Force Training') feat = 'Force Training';
+      const known = ['condition', 'requires', 'requiresTrainedSkill', 'bonusFeat', 'grantFeat', 'grantsFeat', 'featSource', 'feat', 'skill', 'prerequisite', 'automaticIfEligible',
+        'abilityThreshold', 'prerequisites', 'trigger', 'grantType', 'requiresFeat', 'grantsFeat'];
+      const conditionKeys = Object.keys(m.condition ?? {}).filter(k => !['trainedSkill', 'ConstitutionScoreMin'].includes(k));
+      const prereqKeys = Object.keys(m.prerequisites ?? {}).filter(k => !['DEX', 'BAB'].includes(k));
+      if (!feat || !requirements.length || Object.keys(m).some(k => !known.includes(k)) || conditionKeys.length || prereqKeys.length || Object.keys(m.requires ?? {}).some(k => k !== 'trainedSkill')) return null;
+      return [{ type: 'featGrant', featName: feat, requirements, id: rid }];
+    }
+    case 'FIXED_FEAT_GRANT':
+    case 'AUTOMATIC_FEAT_GRANT':
+    case 'FIRST_LEVEL_BONUS_FEAT': {
+      let feat = strings(m.bonusFeat, m.grantFeat, m.feat);
+      if (feat && m.choice && /^[a-z]/.test(m.choice)) feat = `${feat} (${m.choice})`;
+      const okKeys = ['bonusFeat', 'grantFeat', 'feat', 'condition', 'automatic', 'grant', 'grantType', 'atLevel', 'choice'];
+      if (!feat || Object.keys(m).some(k => !okKeys.includes(k)) || (m.condition && m.condition !== 'always')) return null;
+      return [{ type: 'featGrant', featName: feat, requirements: [], id: rid }];
+    }
+    case 'FIRST_LEVEL_BONUS_FEAT_CHOICE':
+    case 'LEVEL_ONE_FEAT_GRANT': {
+      const okKeys = ['atLevel', 'extraFeatChoices', 'grant', 'quantity'];
+      if (Object.keys(m).some(k => !okKeys.includes(k)) || m.atLevel !== 1 || (m.extraFeatChoices ?? m.quantity ?? 1) !== 1) return null;
+      return [{ type: 'featGrant', choice: true, id: rid }];
+    }
+    case 'LEVEL_ONE_CHOICE': {
+      if (m.atLevel !== 1 || (m.quantity ?? 1) !== 1 || Object.keys(m).some(k => !['grant', 'quantity', 'atLevel', 'choiceSet'].includes(k))) return null;
+      if (m.grant === 'one-trained-skill' && m.choiceSet === 'current-class-skills') return [{ type: 'trainedSkillChoice', pool: 'classSkills', id: rid }];
+      if (m.grant === 'bonus-feat' && !m.choiceSet) return [{ type: 'featGrant', choice: true, id: rid }];
+      return null;
+    }
+    case 'FIRST_LEVEL_BONUS_TRAINED_SKILL_CHOICE': {
+      const pool = m.pool;
+      if (m.atLevel !== 1 || !['classSkillList', 'characterClassSkills'].includes(pool) || (m.count ?? m.quantity ?? 1) !== 1) return null;
+      return [{ type: 'trainedSkillChoice', pool: 'classSkills', id: rid }];
+    }
+    case 'CLASS_SKILL_GRANT': {
+      const names = [].concat(m.classSkills ?? m.skill ?? m.classSkill ?? []).filter(x => typeof x === 'string');
+      const keys = names.map(skillKey);
+      const okKeys = ['classSkills', 'classSkill', 'skill', 'trainedAutomatically', 'applies'];
+      if (!names.length || keys.some(k => !k) || Object.keys(m).some(k => !okKeys.includes(k)) || m.trainedAutomatically === true) return null;
+      if (m.applies && m.applies !== 'allClasses') return null;
+      return [{ type: 'classSkillGrant', skills: names, id: rid }];
+    }
+    default:
+      return null;
+  }
+}
+
+// Names the ledger turns into an activated species ability (species-grant-ledger-builder.js
+// _populateActivatedSpeciesAbilities). A trait carrying such a name only activates it when the audit identifies the
+// feature as that ability; otherwise it is explicitly display-only (a same-named, different rule).
+const ACTIVATION_NAMES = {
+  // Engine entries whose details were pinned against the audited text (tests/species-activation-exclusions.test.mjs).
+  rage: ['DAILY_SWIFT_ACTIVATED_RAGE_WITH_RECOVERY', 'ACTIVATED_RAGE_WITH_CONDITION_PENALTY', 'ACTIVATED_CONDITION_AND_BONUS'],
+  roller: ['ACTIVATED_ALTERNATE_MOVEMENT_FORM'],
+  startle: ['ENCOUNTER_REACTION'],
+  pheromones: ['INHALED_POISON_ACTIVATED_ABILITY'],
+  'quick-energy': ['LIMITED_ACTIVATED_ABILITY'],
+  // Natural Weapon Poison: free action on a damaging natural-weapon hit, d20 + character level vs Fortitude, -1 condition step,
+  // immobilized (not unconscious) at the end of the track — pinned in tests/species-source-pinned.test.mjs.
+  poison: ['NATURAL_WEAPON_ON_HIT_POISON_CONDITION'],
+  // Engine entries known to differ from (or go beyond) the audited text: never activated from a published profile.
+  // Pacifism omits the "only if the target attacks" condition; Confusion ends at the wrong time; Force Blast is a
+  // different mechanic; Shapeshift invents a duration; Natural Telepath invents an action type; the rest are unverified.
+  'natural-telepath': [], 'broadcast-telepath': [], bellow: [], 'sonic-bellow': [], confusion: [],
+  shapeshifter: [], shapeshift: [], 'energy-surge': [], 'force-blast': [], pacifism: [],
+};
+
+
+export function compileFeature(f) {
+  let rules = null;
+  if (DEFENSE_CLASSES.has(f.classification)) rules = compileDefense(f);
+  else if (REROLL_CLASSES.has(f.classification)) rules = compileReroll(f);
+  else rules = compileGrant(f);
+  // Ids the ledger recognises BY ID and then parses from prose; an unautomated trait must never carry one.
+  const RECOGNIZED_IDS = new Set(['bonus-feat', 'bonus-trained-skill', 'bonus-class-skill', 'bonus-class-skills', 'conditional-bonus-feat']);
+  let id = slug(f.name);
+  if (!rules && RECOGNIZED_IDS.has(id)) id = `${id}-text`;
+  const activation = ACTIVATION_NAMES[id];
+  const displayOnlyGuard = activation && !activation.includes(f.classification);
+  return {
+    trait: { id, name: f.name, description: f.publishedRule, sourceFeatureId: f.featureId, ...(rules ? { rules } : {}), ...(displayOnlyGuard ? { displayOnly: true } : {}) },
+    automation: rules ? 'structured-rule' : (activation && !displayOnlyGuard ? 'named-activation' : (displayOnlyGuard && activation.length === 0 ? 'engine-suppressed' : 'display-only')),
+  };
+}
+
+const titleWords = text => String(text).replace(/-/g, ' ').replace(/\b([a-z])/g, c => c.toUpperCase());
+
+/**
+ * Natural attacks go through the existing species natural-weapon path (ledger -> species-natural-weapon item), so only
+ * the properties that path carries are accepted: a name, a dice damage, a printed damage type, always armed. A profile
+ * carrying anything else (unprinted damage type, no-AoO / counts-as properties, ...) is held, never approximated.
+ */
+// Profiles whose natural attacks print dice but NO damage type. By owner policy the disputed behavior is left unautomated:
+// the attacks stay display-only text (no weapon item, no invented type) while the rest of the verified profile hydrates.
+// Each entry names the open register item. Everything else with an unprinted type is still held.
+export const DISPLAY_ONLY_UNTYPED_NATURAL_ATTACKS = new Map([['UR-2B-13', 'SPECIES-RD-015']]);
+
+function compileNaturalWeapons(snap, speciesSlug, { allowUntyped = false } = {}) {
+  const profiles = (snap.naturalAttackProfiles ?? []).length ? snap.naturalAttackProfiles : (snap.naturalWeapons ?? []);
+  const out = [];
+  for (const p of profiles) {
+    const first = p.attackProfiles?.[0];
+    const featureName = (snap.features ?? []).find(f => f.featureId === p.featureId && /\(([^)]+)\)/.test(f.name))?.name.match(/\(([^),]+)\)/)?.[1];
+    // profileId such as "sv-barabel-claws" / "gaw-3i-07-retractable-claws": drop the publication code, number and species tokens.
+    const speciesTokens = new Set(String(speciesSlug).split('-'));
+    const idName = typeof p.profileId === 'string'
+      ? p.profileId.split('-').filter((t, i, all) => !(all.slice(0, i).every(x => /^(sv|gaw|tfu|tog|kotor|ur|goi|cw|leg|jatm|core)$|^\d+[a-z]?$/.test(x) || speciesTokens.has(x)) && (/^(sv|gaw|tfu|tog|kotor|ur|goi|cw|leg|jatm|core)$|^\d+[a-z]?$/.test(t) || speciesTokens.has(t)))).join('-') || null
+      : null;
+    const name = p.weaponName ?? p.attackName ?? p.name ?? featureName ?? idName;
+    const damage = typeof p.damage === 'string' ? p.damage : first?.damage?.formula;
+    const type = p.type ?? p.damageType ?? first?.damage?.type;
+    if (!name || !/^\d+d\d+$/.test(String(damage ?? ''))) throw new HoldProfile(`natural attack without printed dice damage (${name ?? 'unnamed'})`);
+    if (!type && allowUntyped) continue;
+    if (!type) throw new HoldProfile(`natural attack "${name}": damage type not printed`);
+    // Riders the weapon item can carry: no attack of opportunity (attackOptions.noProvokeOpportunity), counts as a simple weapon
+    // (proficiency group), threatens adjacent squares (every armed melee weapon does), Strength damage (the standard melee rule).
+    const supported = { doesNotProvokeAOO: v => v === true, countsAs: v => v === 'simpleWeapon', threatensAdjacentSquares: v => v === true, damageBonusAbility: v => v === 'Strength' };
+    const extras = Object.keys(supported).filter(k => p[k] !== undefined && !supported[k](p[k]));
+    if (extras.length) throw new HoldProfile(`natural attack "${name}" carries ${extras.join(', ')} which the weapon item cannot represent`);
+    if (p.alwaysArmed === false || first?.alwaysArmed === false) throw new HoldProfile(`natural attack "${name}" is not always armed`);
+    out.push({
+      id: p.profileId ?? p.id ?? slug(name), name: titleWords(name), damage, type: String(type).toLowerCase(),
+      alwaysArmed: true, category: 'melee', attackAbility: 'str',
+      ...(p.doesNotProvokeAOO === true ? { noProvokeOpportunity: true } : {}),
+      ...(p.countsAs === 'simpleWeapon' ? { proficiencyGroup: 'simple' } : {}),
+      sourceFeatureId: p.featureId ?? p.sourceFeatureId ?? null, sourcePrintedPage: p.sourcePrintedPage ?? null,
+    });
+  }
+  return out;
+}
+
+/**
+ * Printed mutually exclusive modifier sets within ONE publication (e.g. Devaronian male/female, Arkanian
+ * Offshoot Strength or Dexterity) become the existing `abilityChoice` (type "choice"): the modifiers every option
+ * shares are fixed, each option carries its own remaining modifiers, and the player chooses exactly one.
+ */
+function compileFixedArray(snap, record) {
+  const gen = snap.abilityScoreGeneration;
+  if (gen.type !== 'FIXED_STARTING_ARRAY_PLUS_SINGLE_CHOICE' || !gen.doNotApplyOrdinaryRacialModifierPipeline) throw new HoldProfile(`ability score generation ${gen.type} not supported`);
+  const lower = o => Object.fromEntries(ABILITIES.map(k => [k.toLowerCase(), o[k]]));
+  if (ABILITIES.some(k => !Number.isFinite(gen.fixedStartingScores?.[k])) || !Number.isFinite(gen.chooseOneScoreToIncreaseBy)) throw new HoldProfile('fixed array incomplete');
+  // The printed array and the printed single +N choice, with the project owner's ruling SPECIES-RD-017 (Option A): the
+  // printed rule is canonical — exactly +N to ONE chosen score. The earlier two-separate-+1 allocation stays only as an
+  // explicitly labelled optional house rule (world setting republicCloneAbilityAllocation).
+  const existing = record?.system?.abilityChoice?.type === 'fixedArray' ? record.system.abilityChoice : null;
+  const common = Object.fromEntries(ABILITIES.map(k => [k, Number.isFinite(snap.abilityModifiers?.[k]) ? snap.abilityModifiers[k] : null]));
+  if (Object.values(common).some(v => v === null)) throw new HoldProfile('fixed array profile without explicit zero modifiers');
+  return {
+    common,
+    abilityChoice: {
+      type: 'fixedArray',
+      label: existing?.label ?? 'Fixed ability score array',
+      fixedScores: lower(gen.fixedStartingScores),
+      bonusChoices: gen.eligibleScores.map(k => k.toLowerCase()),
+      bonusValue: gen.chooseOneScoreToIncreaseBy,
+      printedRule: 'Fixed starting array plus one chosen ability score increased by the printed bonus.',
+      // Canonical (printed) allocation; read by the existing Attribute step.
+      allocationPoints: gen.chooseOneScoreToIncreaseBy,
+      maxPerAbility: gen.chooseOneScoreToIncreaseBy,
+      singleScore: true,
+      requiresGmApprovalOnOverride: existing?.requiresGmApprovalOnOverride ?? true,
+      helpText: `Start from the printed array, then choose exactly one ability score to increase by ${gen.chooseOneScoreToIncreaseBy}.`,
+      houseRuleAllocation: {
+        setting: 'republicCloneAbilityAllocation',
+        value: 'two_different_plus_one',
+        label: 'House rule: two separate +1 increases to different abilities',
+        allocationPoints: gen.chooseOneScoreToIncreaseBy,
+        maxPerAbility: 1,
+        singleScore: false,
+        helpText: `House rule: start from the printed array, then distribute ${gen.chooseOneScoreToIncreaseBy} separate +1 increases to different abilities.`,
+      },
+    },
+  };
+}
+
+function compileAbilityChoice(snap, record = null) {
+  if (snap.abilityScoreGeneration) return compileFixedArray(snap, record);
+  const variants = snap.abilityModifierVariants ?? [];
+  if (!variants.length) return null;
+  if (variants.length < 2 || variants.some(v => !v.selector || ABILITIES.some(k => !Number.isFinite(v.abilityModifiers?.[k])))) throw new HoldProfile('ability choice options incomplete');
+  if (Object.values(snap.abilityModifiers ?? {}).some(v => v)) throw new HoldProfile('ability choice combined with a separate fixed modifier set');
+  const common = Object.fromEntries(ABILITIES.map(k => [k, variants.every(v => v.abilityModifiers[k] === variants[0].abilityModifiers[k]) ? variants[0].abilityModifiers[k] : null]));
+  const differing = ABILITIES.filter(k => common[k] === null);
+  const commonFull = Object.fromEntries(ABILITIES.map(k => [k, common[k] ?? 0]));
+  return {
+    common: commonFull,
+    abilityChoice: {
+      type: 'choice',
+      label: 'Ability modifiers',
+      fixed: Object.fromEntries(ABILITIES.map(k => [k.toLowerCase(), commonFull[k]])),
+      chooseOne: variants.map(v => ({
+        id: slug(v.selector),
+        label: titleWords(v.selector.replace(/^(\w)/, c => c.toUpperCase())),
+        ...Object.fromEntries(differing.map(k => [k.toLowerCase(), v.abilityModifiers[k]])),
+      })),
+    },
+  };
+}
+
+const SUPPRESSION = new Set(['STARTING_PROFICIENCY_SUPPRESSION', 'STARTING_CLASS_FEAT_OVERRIDE', 'LEVEL_ONE_STARTING_PROFICIENCY_SUPPRESSION', 'FIRST_LEVEL_WEAPON_PROFICIENCY_SUPPRESSION', 'STARTING_PROFICIENCY_RESTRICTION']);
+// Weapon-group starting proficiencies a class can grant (class auto-grant data): everything but the simple-weapons group
+// is suppressed when a species is printed as restricted to the allowed groups only.
+const CLASS_WEAPON_GROUPS = ['Pistols', 'Rifles', 'Heavy Weapons', 'Lightsabers', 'Advanced Melee Weapons', 'Simple Weapons'];
+const restrictedGroups = m => {
+  if (m.suppressOtherStartingClassWeaponGroups !== true || !Array.isArray(m.allow) || m.allow.length !== 1 || String(m.allow[0]).toLowerCase() !== 'simple') return null;
+  return CLASS_WEAPON_GROUPS.filter(g => g !== 'Simple Weapons').map(g => `Weapon Proficiency (${g})`);
+};
+const suppressionFeats = m => (restrictedGroups(m) || m.suppressedStartingClassFeats || m.suppressStartingClassBonusFeats || m.denyClassStartingFeats
+  || (Array.isArray(m.suppressStartingClassWeaponProficiencies) ? m.suppressStartingClassWeaponProficiencies.map(g => `Weapon Proficiency (${g})`) : null) || []);
+const titleCase = text => String(text).replace(/\b([a-z])/g, c => c.toUpperCase());
+
+/** @returns {{variant: object, expectation: object, automation: Array<{feature:string, automation:string}>}} */
+export function hydrateProfile(profile, record, { provenance = [] } = {}) {
+  if (profile.disposition === 'DEFERRED_DROID_INTEGRATION') throw new HoldProfile('droid integration deferred');
+  const snap = profile.sourceRuleSnapshot;
+  const choice = compileAbilityChoice(snap, record);
+  // A species printed with a separate, explicit block for one size (Killiks of Medium size) hydrates that printed block;
+  // the other sizes are GM-defined, stay unautomated and are noted on the variant.
+  const sizeVariation = snap.sizeVariation;
+  if (sizeVariation && !(sizeVariation.mode === 'GM_DEFINED_VARIANT' && sizeVariation.baseline === snap.size)) throw new HoldProfile('size variation support');
+  const naturalWeapons = compileNaturalWeapons(snap, slug(profile.speciesDisplayName), { allowUntyped: DISPLAY_ONLY_UNTYPED_NATURAL_ATTACKS.has(profile.sourceProfileId) });
+  if (!snap.features) throw new HoldProfile('no audited features');
+  if (!Array.isArray(snap.automaticLanguages) || !snap.automaticLanguages.length) throw new HoldProfile('automatic languages not recorded in the audit');
+  const m = snap.movementSquares;
+  // A land speed the book does not print is recorded as such (never defaulted), provided other modes are printed (species-movement.js).
+  const altPrinted = Number.isFinite(m?.swim) || Number.isFinite(m?.fly);
+  const landUnspecified = !Number.isFinite(m?.land) && altPrinted && /LAND_UNSPECIFIED|LAND_SPEED_NOT_PRINTED/.test(`${snap.movementCertification ?? ''} ${(profile.openRequirements ?? []).join(' ')}`);
+  if (!Number.isFinite(m?.land) && !landUnspecified) throw new HoldProfile(`land speed not printed/resolved (${JSON.stringify(m)})`);
+  const baseMods = choice ? choice.common : snap.abilityModifiers;
+  if (ABILITIES.some(k => !Number.isFinite(baseMods?.[k]))) throw new HoldProfile('ability modifiers not all printed');
+  const newId = `${slug(profile.speciesDisplayName)}-${profile.sourceProfileId.toLowerCase()}`;
+  const legacy = (record?.system?.variants ?? []).filter(v => v.completeSnapshot !== true);
+  const unexplained = legacy.filter(v => !provenance.some(p => p.variantId === v.id && p.supersededBy === newId));
+  if (unexplained.length) throw new HoldProfile(`legacy variant(s) ${unexplained.map(v => v.id).join(', ')} pending provenance reconciliation`);
+
+  const abilityMods = Object.fromEntries(ABILITIES.map(k => [k.toLowerCase(), baseMods[k]]));
+  const abilityText = ABILITIES.filter(k => baseMods[k]).sort((a, b) => baseMods[b] - baseMods[a])
+    .map(k => `${baseMods[k] > 0 ? '+' : ''}${baseMods[k]} ${k[0] + k.slice(1).toLowerCase()}`).join(', ');
+  // "Fly 6 squares (hover)": the hover flight type is recorded with the same speed, as the existing species records do.
+  const hoverPrinted = /\(hover\)/i.test((profile.sourceNotes ?? []).join(' '));
+  const movement = { walk: landUnspecified ? null : m.land, swim: m.swim ?? null, fly: m.fly ?? null, climb: null, hover: hoverPrinted ? (m.fly ?? null) : null, glide: null, burrow: null, bySize: {} };
+
+  const compiled = snap.features.map(compileFeature);
+  for (const c of compiled) if (SUPPRESSION.has(snap.features.find(f => f.featureId === c.trait.sourceFeatureId)?.classification)) c.automation = 'structured-field';
+  const ids = compiled.map(c => c.trait.id);
+  if (new Set(ids).size !== ids.length) throw new HoldProfile(`duplicate trait ids (${ids.join(', ')})`);
+  const traits = compiled.map(c => c.trait);
+
+  const suppressionFeature = snap.features.find(f => SUPPRESSION.has(f.classification));
+  const suppressed = suppressionFeature
+    ? suppressionFeats(suppressionFeature.mechanics ?? {}).map(titleCase)
+    : [];
+  if (suppressionFeature && !suppressed.length) throw new HoldProfile('proficiency suppression without a feat list');
+
+  const shortPublication = String(profile.publication).replace(/^Star Wars Roleplaying Game: Saga Edition\s+/i, '').replace(/\s*\(\d{4}\)\s*$/, '');
+  const variant = {
+    id: `${slug(profile.speciesDisplayName)}-${profile.sourceProfileId.toLowerCase()}`,
+    label: profile.publication,
+    source: shortPublication,
+    completeSnapshot: true,
+    sourceProfileId: profile.sourceProfileId,
+    size: snap.size,
+    speed: landUnspecified ? null : m.land,
+    ...(landUnspecified ? { landSpeedUnspecified: true } : {}),
+    movement,
+    abilities: abilityText,
+    abilityMods,
+    abilityChoice: choice ? choice.abilityChoice : null,
+    skillBonuses: [],
+    special: traits.map(t => t.name),
+    languages: snap.automaticLanguages.map(l => l.name),
+    ...(Object.keys(languageRestrictionsFromAudit(snap.automaticLanguages)).length ? { languageRestrictions: languageRestrictionsFromAudit(snap.automaticLanguages) } : {}),
+    naturalWeapons,
+    ...(suppressed.length ? { primitive: true, suppressedClassProficiencies: suppressed } : {}),
+    description: `${profile.speciesDisplayName} as printed in ${profile.publication}. Complete publication snapshot; no traits are inherited from other publications.${sizeVariation ? ` This is the printed ${sizeVariation.baseline}-size profile; other sizes are GM-defined and are not automated.` : ''}`,
+    traits,
+    runtimeStatus: 'NOT_RUNTIME_CERTIFIED',
+  };
+
+  // Derived expectations (no rules text) for the committed regression fixture.
+  const rulesOf = type => compiled.flatMap(c => (c.trait.rules ?? []).filter(r => r.type === type));
+  const expectation = {
+    species: profile.speciesDisplayName,
+    sourceProfileId: profile.sourceProfileId,
+    abilityMods, size: snap.size, speed: variant.speed, landSpeedUnspecified: landUnspecified, languages: variant.languages, languageRestrictions: variant.languageRestrictions ?? {},
+    traitIds: ids,
+    defense: Object.fromEntries(rulesOf('defenseModifier').map(r => [r.defense, { value: r.value, bonusType: r.bonusType }])),
+    rerolls: rulesOf('reroll').map(r => ({ skillId: r.triggeredBy.skillId, outcome: r.outcome })),
+    featGrants: rulesOf('featGrant').map(r => (r.choice ? { choice: true } : { feat: r.featName, requires: r.requirements.map(q => q.type === 'skillTrained' ? `trained:${q.skill}` : q.type === 'attributeMin' ? `${q.attribute}>=${q.min}` : q.type === 'baseAttackMin' ? `bab>=${q.min}` : `feat:${q.feat}`) })),
+    naturalWeapons: naturalWeapons.map(w => ({ name: w.name, damage: w.damage, type: w.type })),
+    classSkills: rulesOf('classSkillGrant').flatMap(r => r.skills),
+    trainedSkillChoices: rulesOf('trainedSkillChoice').length,
+    suppressedProficiencies: suppressed,
+    namedActivations: compiled.filter(c => c.automation === 'named-activation').map(c => c.trait.id),
+    automation: Object.fromEntries(compiled.map(c => [c.trait.id, c.automation])),
+  };
+  return { variant, expectation, automation: compiled.map(c => ({ feature: c.trait.name, automation: c.automation, classification: snap.features.find(f => f.featureId === c.trait.sourceFeatureId)?.classification })) };
+}
