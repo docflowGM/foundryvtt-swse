@@ -26,9 +26,9 @@ Interpret as the owner's direction to **provide GM-controlled house-rule choices
 
 The future **world-level GM-controlled** house-rules interface for *ordinary Table 2-2 installation only* should offer clear approval behavior, with no player-side direct authorization. Suggested policy mode names (names are *proposals*, not a committed data schema):
 
-- `AUTO_ALLOW_TAKE_10`: a trained character's eligible take-10 request may be approved under campaign policy; the published Core circumstances are independently represented, not erased.
+- `AUTO_ALLOW_TAKE_10`: a trained character's take-10 request may be approved automatically under campaign policy. **If the Core no-rush/no-threat/no-distraction conditions are met**, this is approval of an otherwise published option; **if they are not met and the GM nevertheless permits it**, the GM is expressly applying a separately audited house-rule exception. Do not conflate these two sources of authority.
 - `AUTO_ALLOW_TAKE_20_HOUSERULE`: GM has knowingly chosen an exception to the printed Core failure-penalty constraint for this operation; UI must visibly label it as house-rule behavior.
-- `AUTO_REJECT_TAKE_10_20`: refuse these alternatives for the governed operation.
+- `AUTO_REJECT_TAKE_10_20`: refuse these alternatives for the governed operation. Rejecting a take-10 request that otherwise meets Core's printed conditions is itself a restrictive GM house-rule policy, not a claim that published SWSE forbids it.
 - `REQUEST_GM_DECISION`: route each request to the GM's approval surface for approve/reject, optionally recording a reason and terms.
 
 **Configuration shape is not yet decided.** Whether to provide one global mode, separate take-10 and take-20 policies, request-specific exceptions and inheritance/default priority needs an implementation design review. No default mode is authorized by this note. No client-side toggle, text field or item flag can assert GM approval.
