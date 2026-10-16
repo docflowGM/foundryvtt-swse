@@ -1030,8 +1030,7 @@
       ],
       "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
       "blockingIssues": [
-        "Full physical mounting, fire arcs and battery composition are not established for strict mechanical certification.",
-        "Printed Grp +3 is conspicuously lower than same-size IRD +33; needs separate page/errata mechanical resolution."
+        "Full physical mounting, fire arcs and battery composition are not established for strict mechanical certification."
       ]
     },
     {

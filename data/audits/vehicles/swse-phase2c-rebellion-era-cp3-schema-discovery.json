@@ -474,10 +474,10 @@
       "requiresFollowup": true
     },
     {
-      "id": "re-ird-a-grapple-outlier",
+      "id": "re-ird-a-page-continuation",
       "ship": "IRD-A Starfighter",
-      "category": "PRINTED_STAT_OUTLIER",
-      "sourceDerivedIssue": "Printed Grp +3 suspicious against IRD +33; retain printed +3 and investigate errata.",
+      "category": "CROSS_PAGE_STATBLOCK",
+      "sourceDerivedIssue": "IRD-A continues from printed page 156 to 157; the latter contains actual Grp +33 and both weapon detail rows; beware OCR truncation.",
       "requiresFollowup": true
     },
     {

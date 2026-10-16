@@ -5516,7 +5516,8 @@
       "phase1PdfPhysicalPage": 157,
       "endPageReviewStatus": "PDF_VERIFIED",
       "reviewedPDFPages": [
-        156
+        156,
+        157
       ],
       "fieldGroups": {
         "printedTypeLine": "PDF_VERIFIED",
@@ -5535,7 +5536,7 @@
         "crew": "PDF_VERIFIED",
         "capacity": "PDF_VERIFIED",
         "payload": "SOURCE_SILENT_CONFIRMED",
-        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
         "cost": "PDF_VERIFIED",
         "weaponAttackProfile": "PDF_VERIFIED"
       },
@@ -5547,10 +5548,6 @@
         {
           "status": "SOURCE_SILENT_CONFIRMED",
           "issue": "Full physical mounting, fire arcs and battery composition are not established for strict mechanical certification."
-        },
-        {
-          "status": "SOURCE_SILENT_CONFIRMED",
-          "issue": "Printed Grp +3 is conspicuously lower than same-size IRD +33; needs separate page/errata mechanical resolution."
         }
       ],
       "printedFacts": {
@@ -5578,7 +5575,7 @@
         "combat": {
           "ranged": "twin medium blaster cannons +5 OR light concussion missiles +5",
           "baseAttackBonus": 2,
-          "grappleBonus": 3,
+          "grappleBonus": 33,
           "attackOptions": [
             "fire-link (light concussion missiles)"
           ]
@@ -5602,7 +5599,7 @@
         "consumables": "1 day",
         "carriedCraft": "none",
         "payload": null,
-        "hyperdrive": null,
+        "hyperdrive": "none (explicit p156 narrative)",
         "economics": "Military; 90,000 credits",
         "supplementalPrintedFacts": {
           "sourceGrapplePrinted": "+3, potential typographical anomaly; do not derive +33",
@@ -5618,7 +5615,7 @@
           "hardwareCount": "SOURCE_SILENT_CONFIRMED",
           "firingArc": "SOURCE_SILENT_CONFIRMED",
           "batteryComposition": "SOURCE_SILENT_CONFIRMED",
-          "sourcePage": 156
+          "sourcePage": 157
         },
         {
           "weaponLabel": "light concussion missiles",
@@ -5628,7 +5625,7 @@
           "hardwareCount": "SOURCE_SILENT_CONFIRMED",
           "firingArc": "SOURCE_SILENT_CONFIRMED",
           "batteryComposition": "SOURCE_SILENT_CONFIRMED",
-          "sourcePage": 156
+          "sourcePage": 157
         }
       ],
       "configurationAndRuleFindings": [
@@ -5649,9 +5646,10 @@
         {
           "status": "PDF_VERIFIED",
           "sourcePrintedPages": [
-            156
+            156,
+            157
           ],
-          "finding": "Printed Grp +3 as opposed to IRD +33; preserve as printed and mark anomalous rather than silently correcting or pretending an explicit contradiction."
+          "finding": "Statblock continues across printed pages 156–157; p157 explicitly prints Grp +33 and both detailed weapon attack rows. DJVU text truncated the last digit; PDF visual is authoritative."
         },
         {
           "status": "PDF_VERIFIED",
@@ -5664,7 +5662,8 @@
       "sourceEvidence": {
         "source": "Rebellion Era Campaign Guide original scanned PDF",
         "printedPages": [
-          156
+          156,
+          157
         ],
         "statblockLocation": "printed p.156",
         "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
@@ -5675,7 +5674,7 @@
         "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
         "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
         "batteryComposition": "SOURCE_SILENT_CONFIRMED",
-        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+        "hyperdrive": "PDF_VERIFIED"
       },
       "sourceConflicts": []
     },
@@ -5706,7 +5705,7 @@
         "crew": "PDF_VERIFIED",
         "capacity": "PDF_VERIFIED",
         "payload": "SOURCE_SILENT_CONFIRMED",
-        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
         "cost": "PDF_VERIFIED",
         "weaponAttackProfile": "PDF_VERIFIED"
       },
@@ -5769,7 +5768,7 @@
         "consumables": "1 day",
         "carriedCraft": "none",
         "payload": null,
-        "hyperdrive": null,
+        "hyperdrive": "none (explicit p156 narrative)",
         "economics": "Military; 75,000 credits",
         "supplementalPrintedFacts": {
           "noHyperdriveNarrative": "Explicitly no hyperdrive"
@@ -5825,7 +5824,7 @@
         "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
         "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
         "batteryComposition": "SOURCE_SILENT_CONFIRMED",
-        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+        "hyperdrive": "PDF_VERIFIED"
       },
       "sourceConflicts": []
     }
@@ -5888,7 +5887,8 @@
       147,
       148,
       154,
-      156
+      156,
+      157
     ],
     "cumulativeReviewed": 35,
     "continuityPolicy": "First 20 entries and 36 old schema discovery cases remain unchanged; strict certification pending."

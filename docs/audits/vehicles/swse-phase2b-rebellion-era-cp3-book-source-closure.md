@@ -36,14 +36,14 @@
 | 147 | Vaksai | Independent enhanced Kihraxz variant CL11; medium missile splash. |
 | 148 | Rihkxyrk Assault Fighter | Laser +5 and printed missile +5 vs missile detail +7: conflict preserved. |
 | 154 | Keldabe-class Battleship | Five-round area shield drain and recharge, damage buffs, mass-driver SR bypass and tractor grapple +65. |
-| 156 | IRD-A Starfighter | CL10 atmosphere capable, no hyperdrive; printed Grp +3 outlier retained. |
+| 156–157 | IRD-A Starfighter | CL10 atmosphere capable, explicitly no hyperdrive; Grp +33 and two weapon rows continue onto p157. |
 | 156 | IRD Starfighter | CL9 nonatmospheric predecessor, no hyperdrive; do not merge with IRD-A. |
 
 ## Published ambiguities, conflicts and preservation policy
 - Original CP1 **Krayt** passenger narrative/statblock discrepancy retained unchanged.
 - **VT-49 Decimator**, printed p139: Ranged says lasers +6 and missiles +8, while detailed pilot lasers are +8, gunner lasers +6, and missile launchers +6. Two separate line-vs-row conflicts preserved.
 - **Rihkxyrk**, p148: Ranged missile +5 vs detailed missile attack +7. Preserve both as explicit published conflict.
-- **IRD-A**, p156: printed Grp +3 is a likely outlier compared with stock IRD +33, but there is no independent contradictory entry. Treat as an anomaly, not an errata correction or a fifth printed conflict.
+- **IRD-A**, pp156–157: printable statblock continues onto p157, which explicitly reads Grp +33; the searchable text truncates this to +3. Original scanned PDF controls, so no anomaly or conflict is recorded. Both weapon detail rows also appear on p157.
 - Where ships lack a hyperdrive line (e.g. TIE Shuttle) the source is silent. Exception: IRD series narrative explicitly says **both lack hyperdrives**.
 - Battlestation/manpower counts, battery attacks, firing arcs, launcher count and weapon mount topology must not be invented. Keldabe attack group labels do not certify total turret objects.
 - This is **source-review complete**, not full mechanical certification or authorization for Foundry V2 production changes.

@@ -52,8 +52,12 @@ def main():
  assert ix['re-keldabe-class-battleship']['printedFacts']['defenses']['shieldRating']==150
  assert len(ix['re-vt-49-decimator']['sourceConflicts'])==2
  assert len(ix['re-rihkxyrk-assault-fighter']['sourceConflicts'])==1
- assert ix['re-ird-a-starfighter']['printedFacts']['combat']['grappleBonus']==3
+ assert ix['re-ird-a-starfighter']['printedFacts']['combat']['grappleBonus']==33
  assert ix['re-ird-starfighter']['printedFacts']['combat']['grappleBonus']==33
+ assert ix['re-ird-a-starfighter']['reviewedPDFPages']==[156,157]
+ assert [w['sourcePage'] for w in ix['re-ird-a-starfighter']['mountAndFiringGroups']]==[157,157]
+ assert ix['re-ird-a-starfighter']['sourceFieldStates']['hyperdrive']=='PDF_VERIFIED'
+ assert ix['re-ird-starfighter']['sourceFieldStates']['hyperdrive']=='PDF_VERIFIED'
  assert ix['re-m22-t-krayt-gunship']['sourceConflicts'][0]['kind']=='NARRATIVE_VS_STATBLOCK_PASSENGERS'
  assert len(ix['re-aeg-77-vigo-gunship']['mountAndFiringGroups'])==2
  assert D['scopeGuardrails'] and '35/35' in T
