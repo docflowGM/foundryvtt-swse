@@ -1,0 +1,232 @@
+{
+  "schema": "swse.vehicle.clone-wars.phase2c.cp3.discovery-only.v1",
+  "book": "Clone Wars Campaign Guide",
+  "status": "DISCOVERY_ONLY_NOT_FROZEN",
+  "productionMutationAuthorized": false,
+  "counts": {
+    "sourcebookLocalCases": 20,
+    "previousSotGGlobalCasesUnaffected": 155
+  },
+  "cases": [
+    {
+      "caseId": "CWCP1-01",
+      "title": "Seltiss-2 main battery contradictory attack bonuses",
+      "finding": "Preserve Ranged +2 vs weapon row +4; schema must support uncorrected printed disagreement.",
+      "sourceEntryKeys": [
+        "cw-ubrikkian-seltiss-2-caravel"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP1-02",
+      "title": "Seltiss-2 detachable independent cabin",
+      "finding": "Parent ship carries a detachable and separately statblocked transport; preserve distinct source identity and deployment relation.",
+      "sourceEntryKeys": [
+        "cw-ubrikkian-seltiss-2-caravel",
+        "cw-ubrikkian-seltiss-2-caravel-cabin"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP1-03",
+      "title": "Dagger printed drive narrative without multiplier",
+      "finding": "Hyperdrive present per prose, numeric rate source-silent; navicomputer only stores three jumps and life-support/shields absent per prose.",
+      "sourceEntryKeys": [
+        "cw-dagger-class-starfighter"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP1-04",
+      "title": "Freefall operator-specific crew bonus",
+      "finding": "Four required duty stations, each provides its own crew member +1 on related rolls; bonus conditional and station-scoped.",
+      "sourceEntryKeys": [
+        "cw-freefall-class-starfighter"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP1-05",
+      "title": "Scurrg generator reload and buffer state",
+      "finding": "Generates one bomblet every ten rounds, stores up to ten energy spheres, exchangeable for proton bomb chute; preserve target-size penalty.",
+      "sourceEntryKeys": [
+        "cw-scurrg-h-6-prototype-bomber"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP1-06",
+      "title": "Stock vs explicitly mentioned named modifications",
+      "finding": "Different stock versions and named modified ships in adjacent prose must not silently inherit into stock records.",
+      "sourceEntryKeys": [
+        "cw-g9-rigger",
+        "cw-gs-100-salvage-ship",
+        "cw-kr-tb-doomtreader",
+        "cw-pursuer-class-enforcement-ship",
+        "cw-morningstar-a-assault-starfighter"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP1-07",
+      "title": "Source-confirmed silence in weapon hardware and arcs",
+      "finding": "Store reviewed silence without equating an attack group, autofire option or ammunition with a physical launcher count.",
+      "sourceEntryKeys": [
+        "cw-s40k-phoenix-hawk-class-light-pinnace",
+        "cw-ubrikkian-seltiss-2-caravel-cabin"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP2-01",
+      "title": "Booster-ring conditional starfighter hyperdrive and consumables",
+      "finding": "Both Delta-7 and Eta-2 variants require optional booster ring for x1 drive and/or a week of supplies; source defines no unconditional ship hyperdrive for these variants. Azure Angel has separately printed unqualified x1 and one-week lines.",
+      "sourceEntryKeys": [
+        "cw-delta-7-aethersprite-interceptor-high-speed-variant",
+        "cw-delta-7-aethersprite-interceptor-high-maneuver-variant",
+        "cw-eta-2-actis-interceptor-high-maneuver-variant",
+        "cw-eta-2-actis-interceptor-heavy-defenses-variant",
+        "cw-azure-angel"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP2-02",
+      "title": "Conditional astromech skill substitution and navigational memory",
+      "finding": "Printed Mechanics/Use Computer starred alternative +13 and ten-jump astromech memory do not imply unconditional crew skill modifiers or a standalone ship navicomputer.",
+      "sourceEntryKeys": [
+        "cw-delta-7-aethersprite-interceptor-high-speed-variant",
+        "cw-delta-7-aethersprite-interceptor-high-maneuver-variant",
+        "cw-azure-angel",
+        "cw-eta-2-actis-interceptor-high-maneuver-variant",
+        "cw-eta-2-actis-interceptor-heavy-defenses-variant"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP2-03",
+      "title": "Special conditional Pilot bonus for Delta-7 High-Speed",
+      "finding": "High-Speed Delta-7 Pilot +13 normally and +20 solely when increasing vehicle speed; separate rule rather than altered base skill.",
+      "sourceEntryKeys": [
+        "cw-delta-7-aethersprite-interceptor-high-speed-variant"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP2-04",
+      "title": "Named Azure Angel distinct variant and unpriced/unsalable availability",
+      "finding": "Azure Angel printed no availability, cost Not available for sale; unique modified Delta-7, 16 torpedoes payload not torpedo tube count, conditional booster-ring data not copied.",
+      "sourceEntryKeys": [
+        "cw-azure-angel"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP2-05",
+      "title": "Printed shield absence versus explicit SR15 between Eta-2 variants",
+      "finding": "High-Maneuver Eta-2 defenses have no SR line, while Heavy-Defenses Eta-2 explicitly SR 15. Preserve source-silent vs printed field and avoid default 0 or automatic variant inheritance.",
+      "sourceEntryKeys": [
+        "cw-eta-2-actis-interceptor-high-maneuver-variant",
+        "cw-eta-2-actis-interceptor-heavy-defenses-variant"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP3-01",
+      "title": "Printed weapon battery counts versus gunner complement",
+      "finding": "Charger, MedStar and Pelta provide battery numbers and multi-gunner crews, not individual gun barrel counts; separate reported battery quantity, crew station requirement and physical hardware.",
+      "sourceEntryKeys": [
+        "cw-consular-class-cruiser-charger-c70-retrofit",
+        "cw-medstar-class-frigate",
+        "cw-pelta-class-medical-frigate"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP3-02",
+      "title": "Attack-scale and multiple firing positions on troop shuttles",
+      "finding": "Kappa prints starship-scale double blasters and character-scale two heavy repeating blasters, requiring mode/scale independent targeting and separate pilot/copilot/gunner stations.",
+      "sourceEntryKeys": [
+        "cw-kappa-class-shuttle"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP3-03",
+      "title": "Modular Pelta interior wings and loadout state",
+      "finding": "Pelta movable wing profile and modular hospital interior are shipyard/servicing operations measured in hours/days, not free combat switching or second independent ship identity.",
+      "sourceEntryKeys": [
+        "cw-pelta-class-medical-frigate"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP3-04",
+      "title": "Nu shuttle unprinted hyperspace vs absent value",
+      "finding": "Nu printed statblock gives no drive or navigational multiplier; encode SOURCE_SILENT_CONFIRMED without importing from narrative expectations or neighbor ships.",
+      "sourceEntryKeys": [
+        "cw-nu-class-attack-shuttle"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP3-05",
+      "title": "BTL-S1 Y-wing alternate simultaneous attack patterns",
+      "finding": "Printed medium lasers + ion OR lasers + proton torpedoes, with gunner ion/torpedo stations and conditional astromech +13 skills. Keep alternating combinations and explicit station assignments.",
+      "sourceEntryKeys": [
+        "cw-koensayr-btl-s1-y-wing"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP3-06",
+      "title": "Printed target size penalty at capital weapon rows",
+      "finding": "Charger and Pelta print -20 attack penalty against targets smaller than Colossal, with explicit modified battery attack bonuses. Must not indiscriminately apply to every point-defense mount.",
+      "sourceEntryKeys": [
+        "cw-consular-class-cruiser-charger-c70-retrofit",
+        "cw-pelta-class-medical-frigate"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP3-07",
+      "title": "Pelta malformed attack-options token and statblock continuation",
+      "finding": "Printed Pelta attack options literal \"if any\" is not a named option. Statblock continues p173; source parser must retain unusual text without creating a phantom combat action.",
+      "sourceEntryKeys": [
+        "cw-pelta-class-medical-frigate"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "CWCP3-08",
+      "title": "Physical carried-craft capacity and interior reconfiguration",
+      "finding": "CR-20 racks carry twelve bikes; Kappa alternatives are two AT-RT or two ISP, with optional trooper-space conversion; MedStar supports up to twelve Colossal carried vessels, not fixed installed craft.",
+      "sourceEntryKeys": [
+        "cw-cr-20-troop-carrier",
+        "cw-kappa-class-shuttle",
+        "cw-medstar-class-frigate"
+      ],
+      "gateStatus": "OPEN_SCHEMA_DESIGN_TEST",
+      "productionMutationAuthorized": false
+    }
+  ]
+}

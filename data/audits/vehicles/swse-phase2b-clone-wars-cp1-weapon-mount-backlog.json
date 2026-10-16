@@ -1,0 +1,674 @@
+{
+  "schema": "swse.vehicle.clone-wars.phase2b.cp1.mount-backlog.v1",
+  "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+  "policy": "SOURCE_SILENT_CONFIRMED means a primary PDF was inspected and does not establish the field. Do not replace with zero, unknown by neglect or constructed mount count.",
+  "counts": {
+    "identities": 41,
+    "sourceReviewed": 13,
+    "unreviewed": 28,
+    "strictMechanicalCertificates": 0,
+    "attackGroupsReviewed": 20,
+    "hardwareCount": 11,
+    "firingArc": 20,
+    "batteryCount": 20
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "cw-azure-angel",
+      "printedPage": 138,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-barloz-class-freighter",
+      "printedPage": 76,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 1,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-bc-714-luxury-transport",
+      "printedPage": 203,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-belbullab-heavy-starfighter",
+      "printedPage": 204,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-c-9979-landing-craft",
+      "printedPage": 205,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-cis-advanced-starfighter",
+      "printedPage": 206,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-consular-class-cruiser-charger-c70-retrofit",
+      "printedPage": 170,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-cr-20-troop-carrier",
+      "printedPage": 166,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-dagger-class-starfighter",
+      "printedPage": 81,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 1,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-delta-7-aethersprite-interceptor-high-maneuver-variant",
+      "printedPage": 137,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-delta-7-aethersprite-interceptor-high-speed-variant",
+      "printedPage": 137,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-diamond-class-cruiser",
+      "printedPage": 206,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-dianoga-class-assault-starfighter",
+      "printedPage": 82,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 2,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-droch-class-boarding-ship",
+      "printedPage": 207,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-eta-2-actis-interceptor-heavy-defenses-variant",
+      "printedPage": 139,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-eta-2-actis-interceptor-high-maneuver-variant",
+      "printedPage": 139,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-freefall-class-starfighter",
+      "printedPage": 82,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 2,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-g9-rigger",
+      "printedPage": 76,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 2,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-gs-100-salvage-ship",
+      "printedPage": 78,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 1,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-hardcell-class-transport",
+      "printedPage": 207,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-hyena-class-bomber",
+      "printedPage": 208,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-invisible-hand",
+      "printedPage": 210,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-kappa-class-shuttle",
+      "printedPage": 171,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-koensayr-btl-s1-y-wing",
+      "printedPage": 173,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-kr-tb-doomtreader",
+      "printedPage": 79,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 1,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-medstar-class-frigate",
+      "printedPage": 171,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-morningstar-a-assault-starfighter",
+      "printedPage": 83,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 2,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-nu-class-attack-shuttle",
+      "printedPage": 172,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-pelta-class-medical-frigate",
+      "printedPage": 172,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-providence-class-destroyer",
+      "printedPage": 210,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-punworcca-116-class-sloop",
+      "printedPage": 209,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-pursuer-class-enforcement-ship",
+      "printedPage": 80,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 2,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-s40k-phoenix-hawk-class-light-pinnace",
+      "printedPage": 84,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 2,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-sabaoth-destroyer",
+      "printedPage": 220,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-sabaoth-starfighter",
+      "printedPage": 221,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-scurrg-h-6-prototype-bomber",
+      "printedPage": 85,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 3,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-sheathipede-class-shuttle",
+      "printedPage": 209,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-soulless-one-modified-belbullab-22",
+      "printedPage": 204,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-subjugator-class-heavy-cruiser",
+      "printedPage": 211,
+      "pdfCloseReadComplete": false,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "NOT_REVIEWED"
+    },
+    {
+      "sourceEntryKey": "cw-ubrikkian-seltiss-2-caravel",
+      "printedPage": 80,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 1,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "printedConflictPresent": true,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "cw-ubrikkian-seltiss-2-caravel-cabin",
+      "printedPage": 81,
+      "pdfCloseReadComplete": true,
+      "strictFieldAndMountCertified": false,
+      "mountRowCount": 0,
+      "sourceSilentMountIndices": {
+        "hardwareCount": [],
+        "firingArc": [],
+        "batteryCount": []
+      },
+      "printedConflictPresent": false,
+      "state": "SOURCE_REVIEWED_AWAITING_MOUNT_POLICY_AND_CERTIFICATION"
+    }
+  ]
+}
