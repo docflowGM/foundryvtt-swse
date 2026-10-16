@@ -177,7 +177,8 @@ check('planner: with the real catalog no definition can be planned as executable
     assert.equal(p.blockers.some((b) => b.code === 'COMPONENT_UNVERIFIED' && b.detail === 'hostPrerequisites'), !hostFacts.SOURCE_VERIFIED, `${id}: host prerequisites are unverified exactly where no host fact record exists`);
     assert.equal(hostFacts.MECHANIC_SPECIFIED, false, `${id}: published host facts are not a specified host mechanic`);
     if (hostFacts.SOURCE_VERIFIED) {
-      assert.ok(p.deferrals.some((d) => d.register === 'D-005' && d.classification === 'PENDING_SOURCE_VERIFICATION' && d.component === 'hostPrerequisites'), `${id}: D-005 stays an open planner deferral while host facts are only source-verified`);
+      assert.ok(!p.deferrals.some((d) => d.register === 'D-005'), `${id}: D-005 source question is lifted (source-only); no planner deferral remains`);
+      assert.ok(codesOf(p).includes('HOST_NOT_ESTABLISHED') && codesOf(p).includes('NOT_SELECTABLE') && codesOf(p).includes('EXECUTOR_NOT_CERTIFIED'), `${id}: host still not established, not selectable`);
     }
     if (specified) {
       governed += 1;

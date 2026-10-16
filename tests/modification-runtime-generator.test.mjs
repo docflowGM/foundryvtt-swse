@@ -129,10 +129,10 @@ check('lightsaber pools never certify as general slot costs', () => {
   assert.equal(l.length, 44);
   for (const d of l) { assert.equal(d.slotCost.certification.certified, false); assert.equal(d.accounting.eligible, false); }
 });
-check('Table 2-3 universal rows (35 pairs) stay blocked', () => {
-  const pending = allDomains.filter((d) => d.status.components.hostPrerequisites.pendingSource.includes('D-005'));
-  assert.equal(pending.length, 35);
-  for (const d of pending) assert.equal(d.accounting.eligible, false);
+check('Table 2-3 universal rows (35 pairs): D-005 source question lifted, but the rows stay non-accounting and non-selectable', () => {
+  const host = allDomains.filter((d) => d.status.components.hostPrerequisites.SOURCE_VERIFIED);
+  assert.equal(host.length, 35);
+  for (const d of host) { assert.deepEqual(d.status.components.hostPrerequisites.pendingSource, []); assert.equal(d.accounting.eligible, false); }
 });
 check('three page-verified fixed costs are uncertified (no attestation exists)', () => {
   for (const id of ['gaw-ion-shielding-cybernetic-prosthesis', 'goi-componentization-basic', 'goi-componentization-deluxe']) {
@@ -267,13 +267,13 @@ check('REGRESSION: removing the D-013 blocker from the ledger while D-013 is ope
   assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), codes(r).join());
 });
 check('REGRESSION: every scoped open register entry must keep its full ledger scope', () => {
-  for (const [id, drop] of [['D-013', null], ['D-014', null], ['D-004', null], ['D-005', null], ['D-006', null], ['D-010', null], ['D-011', null]]) {
+  for (const [id, drop] of [['D-013', null], ['D-014', null], ['D-004', null], ['D-006', null], ['D-010', null], ['D-011', null]]) {
     const whole = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== id); }));
     assert.ok(codes(whole).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} whole removal`);
     void drop;
   }
   // partial removal: drop one typed id from each explicit list
-  for (const id of ['D-004', 'D-005', 'D-006', 'D-010', 'D-011', 'D-014']) {
+  for (const id of ['D-004', 'D-006', 'D-010', 'D-011', 'D-014']) {
     const r = derive(withLedger((l) => { const b = l.blockers.find((x) => x.register === id); b.typedDefinitionIds = b.typedDefinitionIds.slice(1); if (!b.typedDefinitionIds.length) l.blockers = l.blockers.filter((x) => x !== b); }));
     assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} partial removal`);
   }
@@ -418,13 +418,18 @@ check('generator input is read-only: no source file other than the runtime outpu
   const after = ['data/audits/modification-rolling-authority-v1.5.json', 'data/audits/modification-rolling-authority-v1.5.manifest.json', LEDGER_PATH, SPECS_PATH, 'docs/audits/swse-rules-decisions-pending.md'].map((p) => sha256(fs.readFileSync(path.join(ROOT, p))));
   assert.deepEqual(after, before);
 });
-check('register parsing: D-001..D-015 classified; D-006 and D-014 deferred; only D-001 and D-015 lifted; one D-013 partial lift', () => {
+check('register parsing: D-001..D-015 classified; D-006 and D-014 deferred; only D-001, D-005 and D-015 lifted; one D-013 partial lift', () => {
   const reg = parseRegister(readText('docs/audits/swse-rules-decisions-pending.md'));
   assert.equal(reg.size, 15);
   const deferred = new Set(['D-006', 'D-014']);
   for (const [id, t] of reg) assert.deepEqual(t.classifications, [deferred.has(id) ? 'DEFERRED_RULES_REVIEW' : 'PENDING_SOURCE_VERIFICATION'], id);
   for (const [id, t] of reg) {
     if (id === 'D-001') { assert.equal(t.liftValid, true); assert.ok(t.lift.source.includes('page 39') && t.lift.evidence.includes('d-001-install-remove-pdf-verification.md')); }
+    else if (id === 'D-005') {
+      assert.equal(t.liftValid, true);
+      assert.equal(t.lift.source, 'Scum and Villainy printed pages 40-42 (Table 2-3 and Universal Upgrades descriptions)');
+      assert.ok(t.lift.evidence.includes('d-005-universal-upgrade-host-text-transcription.md') && t.lift.evidence.includes('d-005-t2-implementation-plan.md'));
+    }
     else if (id === 'D-015') {
       assert.equal(t.liftValid, true);
       assert.ok(t.lift.source.includes('Core Rulebook printed pages 60 and 68-70') && t.lift.source.includes('Scum and Villainy printed pages 37-41'));
@@ -731,9 +736,9 @@ check('baseline preserved after the review corrections', () => {
   assert.deepEqual(committed.header.counts, { records: 186, typedDefinitions: 232, eligibleCandidates: 231, accountingEligiblePairs: 49, certifiedSlotCosts: 84, runtimeSelectable: 0 });
 });
 
-// ---- D-005 T2: 35 PUBLISHED_FACTS hostPrerequisites records (source facts only; D-005 stays open) ----
-const d005Scope = base.ledger.blockers.find((b) => b.register === 'D-005').typedDefinitionIds;
+// ---- D-005 T2/T3: 35 PUBLISHED_FACTS hostPrerequisites records (source facts only; D-005 source question lifted in T3) ----
 const hostRecs = base.specs.records.filter((x) => x.component === 'hostPrerequisites');
+const d005Scope = hostRecs.map((x) => x.typedDefinitionId); // the D-005 scope is now carried by the register scope pin, not the (removed) ledger blocker
 const installRecs = base.specs.records.filter((x) => x.component === 'installProcedure');
 const hostRecFor = (typedId) => hostRecs.find((x) => x.typedDefinitionId === typedId);
 
@@ -799,7 +804,7 @@ check('D-005 T2: the generated runtime shows SOURCE_VERIFIED host facts for exac
     if (!c.SOURCE_VERIFIED) continue;
     verified += 1;
     assert.equal(c.MECHANIC_SPECIFIED, false); assert.equal(c.IMPLEMENTED, false); assert.equal(c.OFFLINE_TESTED, false); assert.equal(c.FOUNDRY_TESTED, false);
-    assert.deepEqual(c.pendingSource, ['D-005'], `${d.typedDefinitionId}: D-005 stays pending`);
+    assert.deepEqual(c.pendingSource, [], `${d.typedDefinitionId}: D-005 source question lifted (source-only)`);
     assert.equal(d.applicability.hostRequirementsSpecified, false);
     assert.equal(d.applicability.hostEligibility, 'not_established');
     assert.equal(d.applicability.hostEvaluator, null);
@@ -807,25 +812,30 @@ check('D-005 T2: the generated runtime shows SOURCE_VERIFIED host facts for exac
   assert.equal(verified, 35);
   assert.equal(committed.header.counts.runtimeSelectable, 0);
 });
-check('D-005 T2: a COMPLETE_MECHANIC host record is refused while D-005 is open', () => {
+check('D-005 T3: a COMPLETE_MECHANIC host record is not refused by D-005 any more, yet the host requirement is still not specified and nothing becomes selectable', () => {
   const r = derive(withSpecs(spec({ specId: 'X-HOST-1', typedDefinitionId: d005Scope[0], component: 'hostPrerequisites', coverage: 'COMPLETE_MECHANIC' })));
-  assert.equal(r.runtime, null, 'nothing is generated');
-  assert.ok(codes(r).includes('SPEC_WHILE_BLOCKER_OPEN'), codes(r).join());
+  assert.ok(!codes(r).includes('SPEC_WHILE_BLOCKER_OPEN'), codes(r).join());
+  assert.equal(committed.header.counts.runtimeSelectable, 0);
 });
-check('D-005 T2: removing the D-005 ledger blocker (whole or partial) without a valid register lift is refused', () => {
-  const whole = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== 'D-005'); }));
-  assert.equal(whole.runtime, null);
-  assert.ok(codes(whole).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), codes(whole).join());
-  const partial = derive(withLedger((l) => { const b = l.blockers.find((x) => x.register === 'D-005'); b.typedDefinitionIds = b.typedDefinitionIds.slice(1); }));
-  assert.equal(partial.runtime, null);
-  assert.ok(codes(partial).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), codes(partial).join());
+check('D-005 T3: a ledger blocker cannot be reintroduced, and a lift row missing source= or evidence= (or absent) is invalid', () => {
+  const reintroduced = derive(withLedger((l) => { l.blockers.push({ register: 'D-005', classification: 'PENDING_SOURCE_VERIFICATION', component: 'hostPrerequisites', typedDefinitionIds: d005Scope }); }));
+  assert.equal(reintroduced.runtime, null);
+  assert.ok(codes(reintroduced).includes('BLOCKER_FOR_LIFTED_REGISTER_ENTRY'), codes(reintroduced).join());
+  const ev = 'evidence=docs/audits/d-005-universal-upgrade-host-text-transcription.md and docs/audits/d-005-t2-implementation-plan.md';
+  const src = 'source=Scum and Villainy printed pages 40-42 (Table 2-3 and Universal Upgrades descriptions)';
+  const withLiftRow = (v) => parseRegister(REGISTER_TEXT.replace(/^\| Blocker lifted \| source=Scum and Villainy printed pages 40-42[^\n]*\n/m, `| Blocker lifted | ${v} |\n`));
+  assert.equal(withLiftRow(`${src}; ${ev}`).get('D-005').liftValid, true, 'control: source + evidence is valid');
+  assert.equal(withLiftRow(src).get('D-005').liftValid, false, 'source without evidence');
+  assert.equal(withLiftRow(ev).get('D-005').liftValid, false, 'evidence without source');
+  assert.equal(parseRegister(REGISTER_TEXT.replace(/^\| Blocker lifted \| source=Scum and Villainy printed pages 40-42[^\n]*\n/m, '')).get('D-005').liftValid, false, 'no lift row');
 });
-check('D-005 T2: a selectable entry for a host-fact-verified definition is refused (host requirements are not specified, no evaluator, install not specified)', () => {
+check('D-005 T3: a selectable entry for a host-fact-verified definition is still refused (host requirements not mechanically specified, install not specified)', () => {
   const id = d005Scope[0];
   const r = derive(withLedger((l) => l.selectable.push({ typedDefinitionId: id, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'g3-eval', offlineTests: ['t'] } })));
   assert.equal(r.runtime, null);
   const unmet = r.failures.find((f) => f.code === 'SELECTABLE_CONDITIONS_UNMET').detail.unmet;
-  assert.ok(unmet.includes('1:hostPrerequisites') && unmet.includes('2:hostRequirementsSpecified') && unmet.includes('3:installProcedure'), unmet.join());
+  assert.ok(!unmet.includes('1:hostPrerequisites'), 'D-005 lifted: host facts are source-verified and unblocked');
+  assert.ok(unmet.includes('2:hostRequirementsSpecified') && unmet.includes('3:installProcedure'), unmet.join());
 });
 
 console.log(`modification-runtime-generator: ${checks} checks OK`);

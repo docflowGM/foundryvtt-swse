@@ -29,7 +29,7 @@
    ]
   },
   "inputs": {
-   "statusLedgerSha256": "0c05f1a498911daa8588e9a99a264f55711bfe737a38b7456b6ee0222438b35b",
+   "statusLedgerSha256": "8540b281dc7ad78edcb34a3651e69efa4199719e39baf388af8ceecc5580e964",
    "specificationRecordsSha256": "9b56d3b3107e253f642c94562dadac5b2bb65561dfdb26d153d7bb99bc678e45"
   },
   "counts": {
@@ -40,7 +40,7 @@
    "certifiedSlotCosts": 84,
    "runtimeSelectable": 0
   },
-  "recordsSha256": "449cee81160fb53b1a80f44c0480ee08db7a9e8e0489af82922daa83bd4af61d",
+  "recordsSha256": "02348237c5f6501756fb74a8184cf4c613063f6288d2e290b98c02f91725ed0a",
   "notice": "Generated. Do not edit. Research-only unless a typed domain definition is runtimeSelectable. Integrity is anchored outside this file (G8)."
  },
  "records": [
@@ -167,9 +167,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -323,9 +321,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -417,9 +413,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -511,9 +505,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -728,9 +720,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -884,9 +874,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -978,9 +966,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1134,9 +1120,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1228,9 +1212,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1322,9 +1304,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1478,9 +1458,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1572,9 +1550,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1666,9 +1642,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1822,9 +1796,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1978,9 +1950,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2134,9 +2104,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2228,9 +2196,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2322,9 +2288,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2478,9 +2442,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2572,9 +2534,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2666,9 +2626,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2822,9 +2780,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2916,9 +2872,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3010,9 +2964,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3166,9 +3118,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3260,9 +3210,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3354,9 +3302,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3510,9 +3456,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3604,9 +3548,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3698,9 +3640,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3854,9 +3794,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3948,9 +3886,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -4104,9 +4040,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -4198,9 +4132,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -4292,9 +4224,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
