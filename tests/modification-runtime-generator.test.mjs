@@ -216,7 +216,7 @@ const liftedRegister = (...ids) => {
   for (const id of ids) reg.set(id, { ...reg.get(id), lift: { source: 'fixture', evidence: 'fixture' }, liftValid: true });
   return reg;
 };
-const specifiedParents = new Set(base.specs.records.map((x) => x.typedDefinitionId.split('::')[0]));
+const specifiedParents = new Set(base.specs.records.filter((x) => x.component === 'installProcedure').map((x) => x.typedDefinitionId.split('::')[0]));
 const scopedParents = new Set([...specifiedParents, 'sv-retractable-stock', 'goi-componentization-basic', 'goi-componentization-deluxe', 'reb-excellent-kit-purchased-quality', 'legacy-biotech-host-template', 'legacy-weapon-template-antiquated', 'legacy-weapon-template-refitted']);
 check('selectability is per typed domain: the same complete record passes for one domain and fails for another (unit)', () => {
   const rec = {
@@ -447,7 +447,7 @@ check('D-001 is lifted: a ledger that still blocks it is rejected, and the 156 n
   assert.equal(d13.length + allDomains.filter((d) => d.status.components.installProcedure.SOURCE_VERIFIED).length, 232);
 });
 check('page-39 specification records: exact provenance and governance', () => {
-  const recs = base.specs.records;
+  const recs = base.specs.records.filter((x) => x.component === 'installProcedure');
   assert.equal(recs.length, 76);
   for (const r of recs) {
     assert.equal(r.component, 'installProcedure'); assert.equal(r.basis, 'PUBLISHED_UNAMBIGUOUS'); assert.equal(r.verification, 'SOURCE_VERIFIED'); assert.equal(r.coverage, 'PUBLISHED_FACTS');
@@ -575,7 +575,7 @@ check('baseline preserved after the guard: counts unchanged, nothing selectable'
 const REGISTER_TEXT = readText('docs/audits/swse-rules-decisions-pending.md');
 /** Parses the real register after inserting extra rows directly after an entry's Ledger scope row. */
 const registerWith = (id, ...rows) => parseRegister(REGISTER_TEXT.replace(new RegExp(`(## ${id} — [\\s\\S]*?\\| Ledger scope \\|[^\\n]*\\n)`), `$1${rows.join('\n')}\n`));
-const governedIds = base.specs.records.map((x) => x.typedDefinitionId);
+const governedIds = base.specs.records.filter((x) => x.component === 'installProcedure').map((x) => x.typedDefinitionId);
 const governedPick = governedIds.find((id) => { const d = allDomains.find((x) => x.typedDefinitionId === id); return d.accounting.eligible && d.candidate && records.find((r) => r.definitionId === id.split('::')[0]).price.kind === 'credits'; });
 const kotorParents = [...new Set(allDomains.filter((d) => d.typedDefinitionId.startsWith('kotor-accessory-')).map((d) => d.typedDefinitionId.split('::')[0]))];
 const typedOf = (parents) => allDomains.filter((d) => parents.includes(d.typedDefinitionId.split('::')[0])).map((d) => d.typedDefinitionId);
@@ -729,6 +729,103 @@ check('CORRECTION 2: every lift and partial-lift row must cite an existing repos
 });
 check('baseline preserved after the review corrections', () => {
   assert.deepEqual(committed.header.counts, { records: 186, typedDefinitions: 232, eligibleCandidates: 231, accountingEligiblePairs: 49, certifiedSlotCosts: 84, runtimeSelectable: 0 });
+});
+
+// ---- D-005 T2: 35 PUBLISHED_FACTS hostPrerequisites records (source facts only; D-005 stays open) ----
+const d005Scope = base.ledger.blockers.find((b) => b.register === 'D-005').typedDefinitionIds;
+const hostRecs = base.specs.records.filter((x) => x.component === 'hostPrerequisites');
+const installRecs = base.specs.records.filter((x) => x.component === 'installProcedure');
+const hostRecFor = (typedId) => hostRecs.find((x) => x.typedDefinitionId === typedId);
+
+check('D-005 T2: exactly 35 host-prerequisite fact records equal the D-005 ledger scope; 76 install records are unchanged; 111 in total', () => {
+  assert.equal(d005Scope.length, 35);
+  assert.equal(hostRecs.length, 35);
+  assert.deepEqual([...hostRecs.map((x) => x.typedDefinitionId)].sort(), [...d005Scope].sort());
+  assert.equal(new Set(hostRecs.map((x) => x.specId)).size, 35, 'unique specIds');
+  for (const r of hostRecs) assert.equal(r.specId, `D005::${r.typedDefinitionId}`);
+  assert.equal(new Set(hostRecs.map((x) => x.typedDefinitionId.split('::')[0])).size, 15, '15 universal-upgrade parents');
+  assert.equal(installRecs.length, 76);
+  assert.equal(base.specs.records.length, 111);
+  assert.equal(base.specs.registryVersion, '1.5');
+  // the original 76 records are byte-for-byte what they were before T2 (canonical hash of the unchanged set)
+  assert.equal(sha256(canonicalJson(installRecs)), 'dce3f1354ec0daa37d01766e5a9634ac7d1fcce3d7e819bc69193074ab8a67c7');
+});
+check('D-005 T2: every host record is a PUBLISHED_FACTS record with the approved publication metadata and states it is not an evaluator', () => {
+  const pages = { 'sv-cheater': 40, 'sv-cloaked': 40, 'sv-silverplate': 42, 'sv-spring-loaded': 42, 'sv-storage-capacity': 42 };
+  for (const r of hostRecs) {
+    const parent = r.typedDefinitionId.split('::')[0];
+    assert.equal(r.coverage, 'PUBLISHED_FACTS'); assert.equal(r.basis, 'PUBLISHED_UNAMBIGUOUS'); assert.equal(r.verification, 'SOURCE_VERIFIED');
+    assert.equal(r.publication.bookId, 'scum-and-villainy'); assert.equal(r.publication.title, 'Scum and Villainy');
+    assert.equal(r.publication.printedPage, pages[parent] ?? 41, r.specId);
+    assert.ok(r.publication.tableOrSection.includes('Table 2-3 (printed p. 40)'), r.specId);
+    assert.ok(r.evidence.includes('74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399') && r.evidence.includes('d-005-universal-upgrade-host-text-transcription.md'), r.specId);
+    assert.ok(/verifies published host rules only/.test(r.behavior) && /does not establish that a specific owned item satisfies the rules/.test(r.behavior) && /does not certify a COMPLETE_MECHANIC/.test(r.behavior) && /does not define a host evaluator or executor/.test(r.behavior) && /does not lift register D-005/.test(r.behavior), r.specId);
+    assert.ok(/Host finding:/.test(r.behavior) && /Functional prerequisites:/.test(r.behavior) && /Conditional effects:/.test(r.behavior) && /Stacking, repeatability, maximum per host:/.test(r.behavior) && /domain verdict (SUPPORTED|CONDITIONALLY SUPPORTED)\./.test(r.behavior), r.specId);
+    assert.ok(/No separate page-image hash is required/.test(r.evidence), `${r.specId}: rendered-page hashes are not required and none is invented`);
+  }
+  // Secret Compartment: printedPage 41 with the continuation on p. 42 documented in tableOrSection and evidence
+  for (const dom of ['weapon', 'armor', 'equipment']) {
+    const r = hostRecFor(`sv-secret-compartment::${dom}`);
+    assert.equal(r.publication.printedPage, 41);
+    assert.ok(/continues on printed p\. 42/.test(r.publication.tableOrSection) && /continuation on p\. 42/.test(r.evidence));
+  }
+});
+check('D-005 T2: stacking facts are exactly the approved ones; no default or invented maximum; registry stacking values untouched', () => {
+  for (const dom of ['weapon', 'armor', 'equipment']) {
+    const b = hostRecFor(`sv-extra-power-source::${dom}`).behavior;
+    assert.ok(b.includes('EXPLICITLY REPEATABLE') && b.includes('No numerical maximum is printed'), dom);
+  }
+  const memAdv = hostRecFor('sv-memory-upgrade-advanced::equipment').behavior;
+  assert.ok(/benefits DO NOT STACK/.test(memAdv) && /advanced replaces basic/.test(memAdv));
+  assert.ok(/does not expressly require a basic upgrade to be purchased first/.test(memAdv) && /does not establish a universal maximum of one/.test(memAdv), 'no basic-first prerequisite and no universal maximum of one is asserted');
+  for (const r of hostRecs) {
+    const parent = r.typedDefinitionId.split('::')[0];
+    // a positive claim of a maximum (a negated statement such as "does not establish a universal maximum of one" is allowed)
+    assert.ok(!/(?<!not establish a universal )maximum of (one|1|\d)|one per host|only one\b/i.test(r.behavior), `${r.specId}: no invented maximum`);
+    if (parent === 'sv-extra-power-source') continue;
+    assert.ok(r.behavior.includes('NOT SPECIFIED BY SOURCE'), `${r.specId}: silence is stated as NOT SPECIFIED BY SOURCE`);
+  }
+  for (const id of new Set(d005Scope.map((i) => i.split('::')[0]))) {
+    const e = registry.definitions.find((d) => d.id === id).eligibility;
+    assert.equal(e.stackingPolicy, 'UNVERIFIED', id); assert.equal(e.maxPerHost, null, id);
+  }
+});
+check('D-005 T2: the generated runtime shows SOURCE_VERIFIED host facts for exactly the 35 and nothing stronger', () => {
+  const inScope = new Set(d005Scope);
+  let verified = 0;
+  for (const d of allDomains) {
+    const c = d.status.components.hostPrerequisites;
+    assert.equal(c.SOURCE_VERIFIED, inScope.has(d.typedDefinitionId), d.typedDefinitionId);
+    if (!c.SOURCE_VERIFIED) continue;
+    verified += 1;
+    assert.equal(c.MECHANIC_SPECIFIED, false); assert.equal(c.IMPLEMENTED, false); assert.equal(c.OFFLINE_TESTED, false); assert.equal(c.FOUNDRY_TESTED, false);
+    assert.deepEqual(c.pendingSource, ['D-005'], `${d.typedDefinitionId}: D-005 stays pending`);
+    assert.equal(d.applicability.hostRequirementsSpecified, false);
+    assert.equal(d.applicability.hostEligibility, 'not_established');
+    assert.equal(d.applicability.hostEvaluator, null);
+  }
+  assert.equal(verified, 35);
+  assert.equal(committed.header.counts.runtimeSelectable, 0);
+});
+check('D-005 T2: a COMPLETE_MECHANIC host record is refused while D-005 is open', () => {
+  const r = derive(withSpecs(spec({ specId: 'X-HOST-1', typedDefinitionId: d005Scope[0], component: 'hostPrerequisites', coverage: 'COMPLETE_MECHANIC' })));
+  assert.equal(r.runtime, null, 'nothing is generated');
+  assert.ok(codes(r).includes('SPEC_WHILE_BLOCKER_OPEN'), codes(r).join());
+});
+check('D-005 T2: removing the D-005 ledger blocker (whole or partial) without a valid register lift is refused', () => {
+  const whole = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== 'D-005'); }));
+  assert.equal(whole.runtime, null);
+  assert.ok(codes(whole).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), codes(whole).join());
+  const partial = derive(withLedger((l) => { const b = l.blockers.find((x) => x.register === 'D-005'); b.typedDefinitionIds = b.typedDefinitionIds.slice(1); }));
+  assert.equal(partial.runtime, null);
+  assert.ok(codes(partial).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), codes(partial).join());
+});
+check('D-005 T2: a selectable entry for a host-fact-verified definition is refused (host requirements are not specified, no evaluator, install not specified)', () => {
+  const id = d005Scope[0];
+  const r = derive(withLedger((l) => l.selectable.push({ typedDefinitionId: id, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'g3-eval', offlineTests: ['t'] } })));
+  assert.equal(r.runtime, null);
+  const unmet = r.failures.find((f) => f.code === 'SELECTABLE_CONDITIONS_UNMET').detail.unmet;
+  assert.ok(unmet.includes('1:hostPrerequisites') && unmet.includes('2:hostRequirementsSpecified') && unmet.includes('3:installProcedure'), unmet.join());
 });
 
 console.log(`modification-runtime-generator: ${checks} checks OK`);

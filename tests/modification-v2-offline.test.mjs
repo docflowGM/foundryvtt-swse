@@ -172,7 +172,13 @@ check('planner: with the real catalog no definition can be planned as executable
     const specified = catalog.getTyped(id).typed.status.components.installProcedure.SOURCE_VERIFIED; // printed page-39 facts verified (governed)
     assert.equal(d13, !specified, `${id}: D-013 blocks exactly the definitions the page-39 procedure does not govern`);
     assert.equal(codesOf(p).includes('COMPONENT_UNVERIFIED') && p.blockers.some((b) => b.code === 'COMPONENT_UNVERIFIED' && b.detail === 'installProcedure'), !specified);
-    assert.ok(p.blockers.some((b) => b.code === 'COMPONENT_UNVERIFIED' && b.detail === 'hostPrerequisites'), 'host prerequisites remain unverified for every definition');
+    // Host prerequisites are source-verified only where a PUBLISHED_FACTS host record exists (the 35 D-005 definitions); that is a source fact, never an established host or a mechanic.
+    const hostFacts = catalog.getTyped(id).typed.status.components.hostPrerequisites;
+    assert.equal(p.blockers.some((b) => b.code === 'COMPONENT_UNVERIFIED' && b.detail === 'hostPrerequisites'), !hostFacts.SOURCE_VERIFIED, `${id}: host prerequisites are unverified exactly where no host fact record exists`);
+    assert.equal(hostFacts.MECHANIC_SPECIFIED, false, `${id}: published host facts are not a specified host mechanic`);
+    if (hostFacts.SOURCE_VERIFIED) {
+      assert.ok(p.deferrals.some((d) => d.register === 'D-005' && d.classification === 'PENDING_SOURCE_VERIFICATION' && d.component === 'hostPrerequisites'), `${id}: D-005 stays an open planner deferral while host facts are only source-verified`);
+    }
     if (specified) {
       governed += 1;
       assert.ok(codesOf(p).includes('INSTALL_PROCEDURE_NOT_SPECIFIED'), 'verified published facts are not a complete mechanical procedure');
