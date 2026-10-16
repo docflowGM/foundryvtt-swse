@@ -1,0 +1,2793 @@
+{
+  "schema": "swse.vehicle.sotg.phase2b.cp16.book-source-closure-mount-backlog.v1",
+  "book": "Starships of the Galaxy",
+  "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "phase": "PRIMARY_SOURCE_CLOSE_READ_COMPLETE; STRICT_MECHANICAL_CERTIFICATION_OPEN",
+  "counts": {
+    "bookSourceEntries": 104,
+    "bookSourceCloseReads": 104,
+    "completeStrictFieldAndMountCertificates": 4,
+    "remainingStrictCertifications": 100,
+    "publishedAttackGroupRecords": 258,
+    "hardwareCountSourceSilent": 228,
+    "hardwareCountMissingKey": 2,
+    "firingArcSourceSilent": 251,
+    "firingArcMissingKey": 1,
+    "batteryCountSourceSilent": 132,
+    "batteryCountMissingKey": 7,
+    "fullCertificates": 4,
+    "claimsWithSourceConflictFieldGroup": 12
+  },
+  "meaningOfCounts": "Source silence and missing keys are evidence-state/legacy-schema conditions, not proof that a ship has no hardware. Per-row indexes refer to its existing mountAndFiringGroups order.",
+  "gates": {
+    "sourceReview": "PASS",
+    "sourceIdentity": "PASS",
+    "weaponMountCertification": "OPEN",
+    "schemaV06Freeze": "NOT_AUTHORIZED",
+    "phase0BLegacyFixtures": "FAIL_12_SCHEMA_INVALID_2112_NULL_EMPTY_UNCLASSIFIED",
+    "productionHydration": "NOT_AUTHORIZED",
+    "fullBookCertification": false
+  },
+  "nextAuthoritativeWork": [
+    "Define schema-native source silence and physical mount disclosure policies (do not invent mount counts or firing arcs)",
+    "Reconcile source-printed physical inventory, attack-row batteries, firing arcs and per-weapon configuration for 100 outstanding records",
+    "Adjudicate source-conflict fields retaining every printed competing claim",
+    "Resolve phase0b 12 incompatible fixture schemaVersion values and 2112 typed null/empty positions with source evidence",
+    "Run book-wide validators, regenerate certified canonical player-readable content and only then consider production hydration"
+  ],
+  "entries": [
+    {
+      "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-class-transgalactic-military-assault-ship",
+      "printedName": "Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship",
+      "printedStatblockStartPage": 56,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-ii-class-transgalactic-military-assault-ship",
+      "printedName": "Rothana Heavy Engineering Acclamator II-class Transgalactic Military Assault Ship",
+      "printedStatblockStartPage": 57,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-action-vi-bulk-transport",
+      "printedName": "Corellian Engineering Corporation Action VI Bulk Transport",
+      "printedStatblockStartPage": 58,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": true,
+      "strictWeaponMountReconciled": true,
+      "mountGroupCount": 0,
+      "mountRowSourceSilentByField": {},
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 0,
+      "nextAction": "KEEP_PRIOR_FULL_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+      "printedName": "Advanced V-19 Torrent Starfighter",
+      "printedStatblockStartPage": 59,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "initiativeSenses"
+      ],
+      "blockingFindingCount": 2,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-delta-7-aethersprite-light-interceptor",
+      "printedName": "Delta-7 Aethersprite Light Interceptor",
+      "printedStatblockStartPage": 60,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+      "printedName": "Incom/Subpro ARC-170 Starfighter",
+      "printedStatblockStartPage": 61,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-archaic-heavy-cruiser",
+      "printedName": "Archaic Heavy Cruiser",
+      "printedStatblockStartPage": 62,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+      "printedName": "Alliance A-wing Starfighter",
+      "printedStatblockStartPage": 63,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          2
+        ],
+        "firingArc": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {
+        "hardwareCount": [
+          1
+        ],
+        "firingArc": [
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 2,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-banking-clan-munificent-class-frigate",
+      "printedName": "Banking Clan Munificent-class Frigate",
+      "printedStatblockStartPage": 64,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 5,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-baudo-class-star-yacht",
+      "printedName": "Baudo-class Star Yacht",
+      "printedStatblockStartPage": 65,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "firingArc": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {
+        "hardwareCount": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-starfighter",
+      "printedName": "Slayn & Korpil B-wing Starfighter",
+      "printedStatblockStartPage": 66,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 4,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-shuttle",
+      "printedName": "Slayn & Korpil B-wing Shuttle",
+      "printedStatblockStartPage": 67,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-e2-starfighter",
+      "printedName": "Slayn & Korpil B-wing/E2 Starfighter",
+      "printedStatblockStartPage": 67,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-damorian-manufacturing-s-carrack-class-light-cruiser",
+      "printedName": "Damorian Manufacturing's Carrack-class Light Cruiser",
+      "printedStatblockStartPage": 68,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-chiss-nssis-class-clawcraft",
+      "printedName": "Chiss Nssis-class Clawcraft",
+      "printedStatblockStartPage": 69,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-ilh-kk-citadel-class-cruiser",
+      "printedName": "Koensayr ILH-KK Citadel-Class Cruiser",
+      "printedStatblockStartPage": 70,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 4,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-cloakshape-fighter",
+      "printedName": "CloakShape Fighter",
+      "printedStatblockStartPage": 71,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+      "printedName": "Recusant-class Light Destroyer",
+      "printedStatblockStartPage": 72,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 5,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "rangedAttack",
+        "weaponAttackProfile"
+      ],
+      "blockingFindingCount": 2,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-coralskipper",
+      "printedName": "Coralskipper",
+      "printedStatblockStartPage": 73,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr90-corvette",
+      "printedName": "Corellian Engineering Corporation CR90 Corvette",
+      "printedStatblockStartPage": 74,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr70-corvette",
+      "printedName": "Corellian Engineering Corporation CR70 Corvette",
+      "printedStatblockStartPage": 75,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": true,
+      "strictWeaponMountReconciled": true,
+      "mountGroupCount": 0,
+      "mountRowSourceSilentByField": {},
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 0,
+      "nextAction": "KEEP_PRIOR_FULL_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "sotg-rendili-stardrive-dreadnaught-class-heavy-cruiser",
+      "printedName": "Rendili StarDrive Dreadnaught-class Heavy Cruiser",
+      "printedStatblockStartPage": 76,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-outbound-flight",
+      "printedName": "Outbound Flight",
+      "printedStatblockStartPage": 77,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-baktoid-armor-workshop-vulture-class-starfighter",
+      "printedName": "Baktoid Armor Workshop Vulture-class Starfighter",
+      "printedStatblockStartPage": 78,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-haor-chall-engineering-scarab-class-starfighter",
+      "printedName": "Haor Chall Engineering Scarab-class Starfighter",
+      "printedStatblockStartPage": 79,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-phlac-arphocc-automata-industries-droid-tri-fighter",
+      "printedName": "Phlac-Arphocc Automata Industries Droid Tri-Fighter",
+      "printedStatblockStartPage": 79,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-dynamic-class-freighter",
+      "printedName": "Dynamic-class Freighter",
+      "printedStatblockStartPage": 80,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-systems-engineering-eta-2-actis-interceptor",
+      "printedName": "Kuat Systems Engineering Eta-2 Actis Interceptor",
+      "printedStatblockStartPage": 82,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-freitek-inc-e-wing-starfighter-type-b",
+      "printedName": "FreiTek Inc. E-wing Starfighter, Type B",
+      "printedStatblockStartPage": 83,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-systems-engineering-firespray-31-patrol-craft",
+      "printedName": "Kuat Systems Engineering Firespray-31 Patrol Craft",
+      "printedStatblockStartPage": 84,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-slave-i",
+      "printedName": "Slave I",
+      "printedStatblockStartPage": 85,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 6,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-territorial-defense-starfighter",
+      "printedName": "Territorial Defense Starfighter",
+      "printedStatblockStartPage": 86,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-huppla-pasa-tisc-shipwrights-collective-ginivex-class-starfighter",
+      "printedName": "Huppla Pasa Tisc Shipwrights Collective Ginivex-class Starfighter",
+      "printedStatblockStartPage": 87,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-ghtroc-industries-class-720-freighter",
+      "printedName": "Ghtroc Industries Class 720 Freighter",
+      "printedStatblockStartPage": 88,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": true,
+      "strictWeaponMountReconciled": true,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {},
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 0,
+      "nextAction": "KEEP_PRIOR_FULL_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "sotg-gozanti-cruiser",
+      "printedName": "Gozanti Cruiser",
+      "printedStatblockStartPage": 90,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-krayt-s-honor",
+      "printedName": "Krayt's Honor",
+      "printedStatblockStartPage": 91,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 4,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-gunship",
+      "printedName": "Corellian Gunship",
+      "printedStatblockStartPage": 92,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-hapan-battle-dragon",
+      "printedName": "Hapan Battle Dragon",
+      "printedStatblockStartPage": 93,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 6,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "batteryCount": [
+          3,
+          4,
+          5
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-hapes-nova-cruiser",
+      "printedName": "Hapes Nova Cruiser",
+      "printedStatblockStartPage": 94,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-telgorn-corp-gamma-class-assault-shuttle",
+      "printedName": "Telgorn Corp Gamma-class Assault Shuttle",
+      "printedStatblockStartPage": 95,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-imperial-ii-class-star-destroyer",
+      "printedName": "Kuat Drive Yards Imperial II-class Star Destroyer",
+      "printedStatblockStartPage": 96,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 4,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-rendili-stardrive-victory-ii-class-star-destroyer",
+      "printedName": "Rendili StarDrive Victory II-class Star Destroyer",
+      "printedStatblockStartPage": 98,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 4,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+      "printedName": "Kuat Drive Yards Pellaeon-class Star Destroyer",
+      "printedStatblockStartPage": 99,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 5,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "defenses"
+      ],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "printedName": "Immobilizer 418 Interdictor-class Heavy Cruiser",
+      "printedStatblockStartPage": 100,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "weaponAttackProfile"
+      ],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-vindicator-class-heavy-cruiser",
+      "printedName": "Vindicator-class Heavy Cruiser",
+      "printedStatblockStartPage": 101,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 5,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-rendili-star-drive-light-corvette",
+      "printedName": "Rendili Star Drive Light Corvette",
+      "printedStatblockStartPage": 102,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {},
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-j-type-star-skiff",
+      "printedName": "J-Type Star Skiff",
+      "printedStatblockStartPage": 103,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-junker-tye-wing",
+      "printedName": "Junker TYE-wing",
+      "printedStatblockStartPage": 104,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "initiativeSenses",
+        "skills"
+      ],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+      "printedName": "Koensayr Manufacturing BTL-58 K-wing",
+      "printedStatblockStartPage": 105,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 5,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          2,
+          3,
+          4
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "initiativeSenses",
+        "skills",
+        "payload",
+        "weaponAttackProfile"
+      ],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-lambda-class-shuttle",
+      "printedName": "Sienar Fleet Systems Lambda-class Shuttle",
+      "printedStatblockStartPage": 106,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-lancer-class-frigate",
+      "printedName": "Kuat Drive Yards Lancer-class Frigate",
+      "printedStatblockStartPage": 108,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+      "printedName": "Feethan Ottraw Scalable Industries Mankvim-814 Light Interceptor",
+      "printedStatblockStartPage": 109,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+      "printedName": "Sienar Technologies Marauder Corvette",
+      "printedStatblockStartPage": 110,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "weaponAttackProfile"
+      ],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-gallofree-gr-75-medium-transport",
+      "printedName": "Gallofree GR-75 Medium Transport",
+      "printedStatblockStartPage": 111,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-olanji-charubah-miy-til-fighter",
+      "printedName": "Olanji/Charubah Miy'til Fighter",
+      "printedStatblockStartPage": 112,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-olanji-charubah-miy-til-assault-bomber",
+      "printedName": "Olanji/Charubah Miy'til Assault Bomber",
+      "printedStatblockStartPage": 113,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-mon-calamari-mc80-star-cruiser",
+      "printedName": "Mon Calamari MC80 Star Cruiser",
+      "printedStatblockStartPage": 114,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-home-one",
+      "printedName": "Home One",
+      "printedStatblockStartPage": 115,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-mon-calamari-star-defender",
+      "printedName": "Mon Calamari Star Defender",
+      "printedStatblockStartPage": 116,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 6,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "printedTypeLine",
+        "payload",
+        "weaponAttackProfile"
+      ],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-theed-palace-space-vessel-engineering-corps-n-1-royal-starfighter",
+      "printedName": "Theed Palace Space Vessel Engineering Corps N-1 Royal Starfighter",
+      "printedStatblockStartPage": 118,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-nebula-class-star-destroyer",
+      "printedName": "Nebula-class Star Destroyer",
+      "printedStatblockStartPage": 119,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 5,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-nebulon-b-frigate",
+      "printedName": "Kuat Drive Yards Nebulon-B Frigate",
+      "printedStatblockStartPage": 120,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-buuper-torsckil-abbey-devices-porax-38-starfighter",
+      "printedName": "Buuper Torsckil Abbey Devices Porax-38 Starfighter",
+      "printedStatblockStartPage": 121,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-predator-class-starfighter",
+      "printedName": "Predator-class Starfighter",
+      "printedStatblockStartPage": 122,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-rebel-assault-frigate-prototype",
+      "printedName": "Rebel Assault Frigate Prototype",
+      "printedStatblockStartPage": 123,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-rebel-assault-frigate-mk-i",
+      "printedName": "Rebel Assault Frigate Mk I",
+      "printedStatblockStartPage": 124,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-rebel-assault-frigate-mk-ii",
+      "printedName": "Rebel Assault Frigate Mk II",
+      "printedStatblockStartPage": 125,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-consular-class-cruiser",
+      "printedName": "Corellian Engineering Corporation Consular-class Cruiser",
+      "printedStatblockStartPage": 126,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": true,
+      "strictWeaponMountReconciled": true,
+      "mountGroupCount": 0,
+      "mountRowSourceSilentByField": {},
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 0,
+      "nextAction": "KEEP_PRIOR_FULL_CERTIFICATION"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-scimitar-assault-bomber",
+      "printedName": "Sienar Fleet Systems Scimitar Assault Bomber",
+      "printedStatblockStartPage": 127,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-modified-republic-sienar-systems-armored-star-courier",
+      "printedName": "Modified Republic Sienar Systems Armored Star Courier",
+      "printedStatblockStartPage": 128,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sith-interceptor",
+      "printedName": "Sith Interceptor",
+      "printedStatblockStartPage": 130,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-gat-12h",
+      "printedName": "Sienar Fleet Systems GAT-12h",
+      "printedStatblockStartPage": 131,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 4,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sorosuub-cutlass-9-patrol-fighter",
+      "printedName": "SoroSuub Cutlass-9 Patrol Fighter",
+      "printedStatblockStartPage": 132,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-star-galleon",
+      "printedName": "Kuat Drive Yards Star Galleon",
+      "printedStatblockStartPage": 133,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-mandalmotors-starviper-assault-fighter",
+      "printedName": "MandalMotors StarViper Assault Fighter",
+      "printedStatblockStartPage": 134,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-loronar-corporation-strike-class-medium-cruiser",
+      "printedName": "Loronar Corporation Strike-class Medium Cruiser",
+      "printedStatblockStartPage": 135,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 4,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-fondor-shipyards-super-star-destroyer",
+      "printedName": "Fondor Shipyards Super Star Destroyer",
+      "printedStatblockStartPage": 136,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 5,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-lusankya",
+      "printedName": "Lusankya",
+      "printedStatblockStartPage": 138,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 6,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-eclipse",
+      "printedName": "Eclipse",
+      "printedStatblockStartPage": 139,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 6,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "rangedAttack",
+        "weaponAttackProfile"
+      ],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-ipv-1-system-patrol-craft",
+      "printedName": "IPV-1 System Patrol Craft",
+      "printedStatblockStartPage": 140,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-theta-class-shuttle",
+      "printedName": "Theta-class Shuttle",
+      "printedStatblockStartPage": 141,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "initiativeSenses",
+        "skills"
+      ],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-in-fighter",
+      "printedName": "Sienar Fleet Systems TIE/In Fighter",
+      "printedStatblockStartPage": 142,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+      "printedName": "Sienar Fleet Systems TIE Bomber",
+      "printedStatblockStartPage": 143,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "initiativeSenses",
+        "skills"
+      ],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-advanced-x1",
+      "printedName": "Sienar Fleet Systems TIE Advanced x1",
+      "printedStatblockStartPage": 144,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-interceptor",
+      "printedName": "Sienar Fleet Systems TIE Interceptor",
+      "printedStatblockStartPage": 144,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-defender",
+      "printedName": "Sienar Fleet Systems TIE Defender",
+      "printedStatblockStartPage": 145,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-battleship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Battleship",
+      "printedStatblockStartPage": 146,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-core-ship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Core Ship",
+      "printedStatblockStartPage": 147,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-droid-control-ship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Droid Control Ship",
+      "printedStatblockStartPage": 147,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-venator-class-star-destroyer",
+      "printedName": "Venator-class Star Destroyer",
+      "printedStatblockStartPage": 148,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 5,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "batteryCount": [
+          4
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-v-19-torrent-starfighter",
+      "printedName": "V-19 Torrent Starfighter",
+      "printedStatblockStartPage": 149,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-systems-engineering-alpha-3-nimbus-v-wing-starfighter",
+      "printedName": "Kuat Systems Engineering Alpha-3 Nimbus V-wing Starfighter",
+      "printedStatblockStartPage": 150,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-x-83-twintail-starfighter",
+      "printedName": "X-83 TwinTail Starfighter",
+      "printedStatblockStartPage": 151,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-t-65b-x-wing-starfighter",
+      "printedName": "Incom T-65B X-wing Starfighter",
+      "printedStatblockStartPage": 152,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+      "printedName": "Incom T-65XJ3 X-wing Starfighter",
+      "printedStatblockStartPage": 152,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [
+        "payload"
+      ],
+      "blockingFindingCount": 2,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-t-65br-x-wing-starfighter",
+      "printedName": "Incom T-65BR X-wing Starfighter",
+      "printedStatblockStartPage": 153,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-yt-1300-transport",
+      "printedName": "Corellian YT-1300 Transport",
+      "printedStatblockStartPage": 154,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-yt-2000",
+      "printedName": "Corellian YT-2000",
+      "printedStatblockStartPage": 155,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-yt-2400",
+      "printedName": "Corellian YT-2400",
+      "printedStatblockStartPage": 156,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 1,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-millennium-falcon",
+      "printedName": "Millennium Falcon",
+      "printedStatblockStartPage": 156,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          1
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-btl-s3-y-wing",
+      "printedName": "Koensayr BTL-S3 Y-wing",
+      "printedStatblockStartPage": 158,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-btl-a4-lp-longprobe",
+      "printedName": "Koensayr BTL-A4 LP \"Longprobe\"",
+      "printedStatblockStartPage": 159,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 3,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-btl-s3-courier",
+      "printedName": "Koensayr BTL-S3 \"Courier\"",
+      "printedStatblockStartPage": 159,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-subpro-z-95-headhunter",
+      "printedName": "Incom/Subpro Z-95 Headhunter",
+      "printedStatblockStartPage": 160,
+      "primaryPdfCloseReadCompleted": true,
+      "strictFieldCertified": false,
+      "strictWeaponMountReconciled": false,
+      "mountGroupCount": 2,
+      "mountRowSourceSilentByField": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "mountRowLegacyMissingFieldByField": {},
+      "sourceConflictFieldGroups": [],
+      "blockingFindingCount": 1,
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS"
+    }
+  ]
+}
