@@ -29,7 +29,7 @@
    ]
   },
   "inputs": {
-   "statusLedgerSha256": "10bcac3f8d85c8e44d75ad9144ef1ca648c3f8215ed0d2b809d2b8a84b5f7d1a",
+   "statusLedgerSha256": "0c05f1a498911daa8588e9a99a264f55711bfe737a38b7456b6ee0222438b35b",
    "specificationRecordsSha256": "6340618662e7f1aa6f444cb47071f2b9bab8631517b49a37dec4bd5eb12139a4"
   },
   "counts": {
@@ -40,7 +40,7 @@
    "certifiedSlotCosts": 84,
    "runtimeSelectable": 0
   },
-  "recordsSha256": "12104a7376f50349477249e517b33e10d0642fc1f40c3e656a0231b7e857b743",
+  "recordsSha256": "e4a9973bd3d49f90d86b38be065725d8bedd747f9bd2db99a94a12485f0e2b3b",
   "notice": "Generated. Do not edit. Research-only unless a typed domain definition is runtimeSelectable. Integrity is anchored outside this file (G8)."
  },
  "records": [
@@ -189,9 +189,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -347,9 +345,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -443,9 +439,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -539,9 +533,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -758,9 +750,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -916,9 +906,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -1012,9 +1000,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -1170,9 +1156,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -1266,9 +1250,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -1362,9 +1344,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -1520,9 +1500,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -1616,9 +1594,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -1712,9 +1688,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -1870,9 +1844,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -2028,9 +2000,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -2186,9 +2156,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -2282,9 +2250,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -2378,9 +2344,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -2536,9 +2500,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -2632,9 +2594,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -2728,9 +2688,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -2886,9 +2844,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -2982,9 +2938,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -3078,9 +3032,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -3236,9 +3188,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -3332,9 +3282,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -3428,9 +3376,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -3586,9 +3532,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -3682,9 +3626,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -3778,9 +3720,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -3936,9 +3876,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -4032,9 +3970,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -4190,9 +4126,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -4286,9 +4220,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -4382,9 +4314,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -4536,9 +4466,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -4690,9 +4618,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -4844,9 +4770,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -4998,9 +4922,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -5152,9 +5074,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -5306,9 +5226,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -5460,9 +5378,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -5614,9 +5530,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -5768,9 +5682,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -5922,9 +5834,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -6242,9 +6152,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -6396,9 +6304,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -6550,9 +6456,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -6704,9 +6608,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -6858,9 +6760,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -7012,9 +6912,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -7166,9 +7064,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -7320,9 +7216,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -7474,9 +7368,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -7628,9 +7520,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -7782,9 +7672,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -7936,9 +7824,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -8090,9 +7976,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -8244,9 +8128,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -8398,9 +8280,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -8552,9 +8432,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -8706,9 +8584,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -8860,9 +8736,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -9014,9 +8888,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -9168,9 +9040,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -9322,9 +9192,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -9476,9 +9344,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -9630,9 +9496,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -9784,9 +9648,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -9938,9 +9800,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -10092,9 +9952,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -10246,9 +10104,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -10400,9 +10256,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -10554,9 +10408,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -10708,9 +10560,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]
@@ -10862,9 +10712,7 @@
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-015"
-        ],
+        "pendingSource": [],
         "deferred": [
          "D-014"
         ]

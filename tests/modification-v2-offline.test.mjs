@@ -176,7 +176,8 @@ check('planner: with the real catalog no definition can be planned as executable
     if (specified) {
       governed += 1;
       assert.ok(codesOf(p).includes('INSTALL_PROCEDURE_NOT_SPECIFIED'), 'verified published facts are not a complete mechanical procedure');
-      assert.ok(p.deferrals.some((d) => d.register === 'D-014' && d.classification === 'DEFERRED_RULES_REVIEW') && p.deferrals.some((d) => d.register === 'D-015' && d.classification === 'PENDING_SOURCE_VERIFICATION'));
+      assert.ok(p.deferrals.some((d) => d.register === 'D-014' && d.classification === 'DEFERRED_RULES_REVIEW'), 'D-014 (owner ruling) remains deferred on every governed definition');
+      assert.ok(!p.deferrals.some((d) => d.register === 'D-015'), 'D-015 source question is lifted (source-only); it is not a planner deferral any more');
       assert.ok(!p.deferrals.some((d) => d.register === 'D-013'));
     }
   }

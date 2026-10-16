@@ -77,7 +77,7 @@ check('nothing is selectable, implemented, tested or mechanically specified; the
   for (const id of verifiedFacts) {
     const c = allDomains.find((d) => d.typedDefinitionId === id).status.components.installProcedure;
     assert.deepEqual(c.deferred, ['D-014'], id);
-    assert.deepEqual(c.pendingSource, ['D-015'], id);
+    assert.deepEqual(c.pendingSource, [], `${id}: D-015 source question lifted (source-only); D-014 stays deferred`);
   }
   assert.equal(records.filter((r) => 'runtimeSelectable' in r).length, 0, 'no parent-level flag');
 });
@@ -267,13 +267,13 @@ check('REGRESSION: removing the D-013 blocker from the ledger while D-013 is ope
   assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), codes(r).join());
 });
 check('REGRESSION: every scoped open register entry must keep its full ledger scope', () => {
-  for (const [id, drop] of [['D-013', null], ['D-014', null], ['D-015', null], ['D-004', null], ['D-005', null], ['D-006', null], ['D-010', null], ['D-011', null]]) {
+  for (const [id, drop] of [['D-013', null], ['D-014', null], ['D-004', null], ['D-005', null], ['D-006', null], ['D-010', null], ['D-011', null]]) {
     const whole = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== id); }));
     assert.ok(codes(whole).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} whole removal`);
     void drop;
   }
   // partial removal: drop one typed id from each explicit list
-  for (const id of ['D-004', 'D-005', 'D-006', 'D-010', 'D-011', 'D-014', 'D-015']) {
+  for (const id of ['D-004', 'D-005', 'D-006', 'D-010', 'D-011', 'D-014']) {
     const r = derive(withLedger((l) => { const b = l.blockers.find((x) => x.register === id); b.typedDefinitionIds = b.typedDefinitionIds.slice(1); if (!b.typedDefinitionIds.length) l.blockers = l.blockers.filter((x) => x !== b); }));
     assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} partial removal`);
   }
@@ -418,13 +418,18 @@ check('generator input is read-only: no source file other than the runtime outpu
   const after = ['data/audits/modification-rolling-authority-v1.5.json', 'data/audits/modification-rolling-authority-v1.5.manifest.json', LEDGER_PATH, SPECS_PATH, 'docs/audits/swse-rules-decisions-pending.md'].map((p) => sha256(fs.readFileSync(path.join(ROOT, p))));
   assert.deepEqual(after, before);
 });
-check('register parsing: D-001..D-015 classified; D-006 and D-014 deferred; only D-001 lifted; one D-013 partial lift', () => {
+check('register parsing: D-001..D-015 classified; D-006 and D-014 deferred; only D-001 and D-015 lifted; one D-013 partial lift', () => {
   const reg = parseRegister(readText('docs/audits/swse-rules-decisions-pending.md'));
   assert.equal(reg.size, 15);
   const deferred = new Set(['D-006', 'D-014']);
   for (const [id, t] of reg) assert.deepEqual(t.classifications, [deferred.has(id) ? 'DEFERRED_RULES_REVIEW' : 'PENDING_SOURCE_VERIFICATION'], id);
   for (const [id, t] of reg) {
     if (id === 'D-001') { assert.equal(t.liftValid, true); assert.ok(t.lift.source.includes('page 39') && t.lift.evidence.includes('d-001-install-remove-pdf-verification.md')); }
+    else if (id === 'D-015') {
+      assert.equal(t.liftValid, true);
+      assert.ok(t.lift.source.includes('Core Rulebook printed pages 60 and 68-70') && t.lift.source.includes('Scum and Villainy printed pages 37-41'));
+      assert.ok(t.lift.evidence.includes('d-015-mechanics-complete-visual-source-reconciliation.md') && t.lift.evidence.includes('d-015-source-certification-release-acceptance-checklist.md'));
+    }
     else { assert.equal(t.lift, null, `${id} has no whole lift row`); assert.equal(t.liftValid, false); }
     assert.equal(t.scopeInvalid, false);
     assert.equal(t.partialLifts.length, id === 'D-013' ? 1 : 0, id);
@@ -576,10 +581,10 @@ const kotorParents = [...new Set(allDomains.filter((d) => d.typedDefinitionId.st
 const typedOf = (parents) => allDomains.filter((d) => parents.includes(d.typedDefinitionId.split('::')[0])).map((d) => d.typedDefinitionId);
 const withoutTyped = (ids) => withLedger((l) => { for (const b of l.blockers) if (b.register === 'D-013') b.typedDefinitionIds = b.typedDefinitionIds.filter((t) => !ids.includes(t)); });
 
-check('CORRECTION 1: published facts are certified but the procedure is not complete while D-014 and D-015 are open', () => {
+check('CORRECTION 1: published facts are certified but the procedure is not complete while D-014 is open (D-015 source question lifted)', () => {
   assert.ok(governedPick, 'a governed, accounting-eligible, priced definition exists');
   const c = allDomains.find((d) => d.typedDefinitionId === governedPick).status.components.installProcedure;
-  assert.deepEqual({ SOURCE_VERIFIED: c.SOURCE_VERIFIED, MECHANIC_SPECIFIED: c.MECHANIC_SPECIFIED, deferred: c.deferred, pendingSource: c.pendingSource }, { SOURCE_VERIFIED: true, MECHANIC_SPECIFIED: false, deferred: ['D-014'], pendingSource: ['D-015'] });
+  assert.deepEqual({ SOURCE_VERIFIED: c.SOURCE_VERIFIED, MECHANIC_SPECIFIED: c.MECHANIC_SPECIFIED, deferred: c.deferred, pendingSource: c.pendingSource }, { SOURCE_VERIFIED: true, MECHANIC_SPECIFIED: false, deferred: ['D-014'], pendingSource: [] });
 });
 check('CORRECTION 1: a complete-mechanic record, implementation evidence and a selectable entry are all refused while D-014/D-015 are open', () => {
   const complete = spec({ specId: 'C-1', typedDefinitionId: governedPick, component: 'installProcedure' });
@@ -596,11 +601,19 @@ check('CORRECTION 1: a complete-mechanic record, implementation evidence and a s
   const unmet = sel.failures.find((x) => x.code === 'SELECTABLE_CONDITIONS_UNMET').detail.unmet;
   assert.ok(unmet.includes('1:installProcedure') && unmet.includes('3:installProcedure'), unmet.join());
 });
-check('CORRECTION 1: D-014 and D-015 cannot be dropped from the ledger or lifted without their required evidence', () => {
-  for (const id of ['D-014', 'D-015']) {
-    const r = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== id); }));
-    assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), id);
-  }
+check('D-015 (source-only lift): a ledger blocker cannot be reintroduced, and a lift row missing source= or evidence= is invalid', () => {
+  const reintroduced = derive(withLedger((l) => { l.blockers.push({ register: 'D-015', classification: 'PENDING_SOURCE_VERIFICATION', component: 'installProcedure', typedDefinitionIds: governedIds }); }));
+  assert.equal(reintroduced.runtime, null, 'nothing is generated');
+  assert.ok(codes(reintroduced).includes('BLOCKER_FOR_LIFTED_REGISTER_ENTRY'), codes(reintroduced).join());
+  const withLiftRow = (row) => parseRegister(REGISTER_TEXT.replace(/^\| Blocker lifted \| source=Core Rulebook printed pages 60[^\n]*$/m, `| Blocker lifted | ${row} |`));
+  assert.equal(withLiftRow('source=Core Rulebook printed pages 60 and 68-70; evidence=docs/audits/d-015-mechanics-complete-visual-source-reconciliation.md').get('D-015').liftValid, true, 'control: source + evidence is valid');
+  assert.equal(withLiftRow('source=Core Rulebook printed pages 60 and 68-70').get('D-015').liftValid, false, 'source without evidence');
+  assert.equal(withLiftRow('evidence=docs/audits/d-015-mechanics-complete-visual-source-reconciliation.md').get('D-015').liftValid, false, 'evidence without source');
+  assert.equal(parseRegister(REGISTER_TEXT.replace(/^\| Blocker lifted \| source=Core Rulebook printed pages 60[^\n]*\n/m, '')).get('D-015').liftValid, false, 'no lift row');
+});
+check('CORRECTION 1: D-014 cannot be dropped from the ledger or lifted without its required evidence', () => {
+  const r = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== 'D-014'); }));
+  assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), 'D-014');
   const liftRow = (row) => registerWith('D-014', `| Blocker lifted | ${row} |`);
   assert.equal(liftRow('source=x; evidence=docs/audits/d-001-install-remove-pdf-verification.md').get('D-014').liftValid, false, 'a deferred entry needs an owner ruling, not just a source');
   assert.equal(liftRow('owner-ruling=fixture').get('D-014').liftValid, true);
