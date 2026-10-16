@@ -1,0 +1,501 @@
+{
+  "schema": "swse.vehicle.legacy-era.phase2c.cp3.schema-discovery.v1",
+  "book": "Legacy Era Campaign Guide",
+  "status": "DISCOVERY_ONLY",
+  "productionMutationAuthorized": false,
+  "schemaFrozen": false,
+  "counts": {
+    "newCases": 20,
+    "cumulativeLegacyEraCases": 54,
+    "baseCloneWarsDiscoveryCases": 44,
+    "baseSotgDiscoveryCases": 155
+  },
+  "cases": [
+    {
+      "caseId": "legacy-cp1-fire-link-laser-sfoils",
+      "sourceEntryKey": "le-besh-type-personal-starfighter",
+      "caseType": "Fire-linked S-foil weapons vs physical mount count",
+      "printedEvidencePage": 83,
+      "issue": "Preserve group and printed S-foil location; barrel count and firing arc remain unresolved.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-civilian-sport-armament",
+      "sourceEntryKey": "le-phoebos-class-starfighter",
+      "caseType": "Civilian sport designation still has weapon and shield entries",
+      "printedEvidencePage": 84,
+      "issue": "Catalog published armed ship independently from unarmed civilian assumptions.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-ion-versus-laser-groups",
+      "sourceEntryKey": "le-r-28-starfighter",
+      "caseType": "Ion and laser groups and nonlethal narrative",
+      "printedEvidencePage": 85,
+      "issue": "Treat ion weapon mode and fire-linked rules separately.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-conditional-astromech",
+      "sourceEntryKey": "le-x-83-twintail-starfighter",
+      "caseType": "Integrated astromech conditional skill and cover",
+      "printedEvidencePage": 86,
+      "issue": "Represent conditional +13 Mechanics/Use Computer, +5 cover, and 10-jump memory without assuming each is unconditional.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-torpedo-payload",
+      "sourceEntryKey": "le-x-83-twintail-starfighter",
+      "caseType": "Sixteen carried proton torpedoes not launcher counts",
+      "printedEvidencePage": 86,
+      "issue": "Keep ammunition supply distinct from firing group, mount and launcher.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-dorsal-quad-laser",
+      "sourceEntryKey": "le-gladius-class-light-freighter",
+      "caseType": "Dorsal quad laser narrative vs weapon stations",
+      "printedEvidencePage": 87,
+      "issue": "Allow evidence for dorsal placement without inferring four independent mounts.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-vertical-landing-frame",
+      "sourceEntryKey": "le-gpe-7300-space-transport",
+      "caseType": "Vertical landing/thruster and cockpit orientation",
+      "printedEvidencePage": 87,
+      "issue": "Landing configuration narrative is not a weapon firing arc.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-narrative-shieldless",
+      "sourceEntryKey": "le-helot-class-medium-transport",
+      "caseType": "Shield omission confirmed by narrative",
+      "printedEvidencePage": 88,
+      "issue": "Represent absent stock shields as supported assertion, not generic source-silent value.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-conflicting-attack-bonus",
+      "sourceEntryKey": "le-j-1-shuttle",
+      "caseType": "J-1 main ranged +4 vs detail attack +6",
+      "printedEvidencePage": 89,
+      "issue": "Preserve printed conflict pending source authority decision, not silently choose one.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-narrative-unarmed-exception",
+      "sourceEntryKey": "le-j-1-shuttle",
+      "caseType": "Most Jedi shuttles unarmed, printed sample armed",
+      "printedEvidencePage": 89,
+      "issue": "Do not overwrite statblock arms with generalized narrative.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-carried-craft-x83",
+      "sourceEntryKey": "le-j-1-shuttle",
+      "caseType": "An X-83 is carried by J-1; separate publication ship identity",
+      "printedEvidencePage": 89,
+      "issue": "Model as carried-craft relationship, not a second X-83 publication or mounted cannon.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-enhanced-shield-recharge",
+      "sourceEntryKey": "le-mc-24a-light-shuttle",
+      "caseType": "MC-24a recover 10 SR on recharge shields",
+      "printedEvidencePage": 89,
+      "issue": "Preserve exceptional shield recovery as a mechanical modifier.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-hyperdrive-unprinted",
+      "sourceEntryKey": "le-mc-24a-light-shuttle",
+      "caseType": "Hyperdrive omitted in source block",
+      "printedEvidencePage": 89,
+      "issue": "Mark source-silent; do not infer absent physical hyperdrive.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-mechanics-install-upgrade-penalty",
+      "sourceEntryKey": "le-yx-1980-space-transport",
+      "caseType": "-5 penalty for Mechanics ship system installation/upgrade",
+      "printedEvidencePage": 91,
+      "issue": "Preserve action-specific modifier separate from baseline Mechanics skill.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-stock-versus-named-grinning-liar",
+      "sourceEntryKey": "le-yx-1980-space-transport",
+      "caseType": "Separate YX-1980 stock vs named The Grinning Liar",
+      "printedEvidencePage": 91,
+      "issue": "Do not merge distinct Phase 1 source entries.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp1-deck-plan-location",
+      "sourceEntryKey": "le-yx-1980-space-transport",
+      "caseType": "Deck plan p90 exists but no firing-arc calibration",
+      "printedEvidencePage": 91,
+      "issue": "Preserve labeled deck plan as source context, not mount arc proof.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-heavy-transport-penalty",
+      "sourceEntryKey": "le-yz-2500-heavy-transport",
+      "caseType": "scale-sensitive-attack-penalty",
+      "printedEvidencePage": 91,
+      "issue": "Capital-grade double medium turbolaser attack group with -20 against smaller than Colossal; adjusted +8 to -12. Cannot infer hardware.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-crew-prose-conflict",
+      "sourceEntryKey": "le-bb-2-starfire-fighter-bomber",
+      "caseType": "printed-crew-conflict",
+      "printedEvidencePage": 142,
+      "issue": "Three-man crew in p141 narrative versus Crew 2 in p142 statblock. Preserve discrepancy.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-attack-patterns",
+      "sourceEntryKey": "le-bb-2-starfire-fighter-bomber",
+      "caseType": "weapon-attack-group-topology",
+      "printedEvidencePage": 142,
+      "issue": "Three separate complete ranged attack alternatives with conditional salvo/bomb rather than all weapon rows simultaneously.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-atmosphere-only-ion-bomb",
+      "sourceEntryKey": "le-bb-2-starfire-fighter-bomber",
+      "caseType": "weapon-conditional-environment",
+      "printedEvidencePage": 142,
+      "issue": "Gunner ion bomb attack applies only in atmosphere; 3 bombs are ammunition.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-bb2-shield-recharge",
+      "sourceEntryKey": "le-bb-2-starfire-fighter-bomber",
+      "caseType": "conditional-shield-recovery",
+      "printedEvidencePage": 142,
+      "issue": "Recharge shields restores 10 SR and does not increase maximum.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-crossfire-aft-limited-arc",
+      "sourceEntryKey": "le-cf9-crossfire-starfighter",
+      "caseType": "narrative-arc-not-numeric",
+      "printedEvidencePage": 142,
+      "issue": "Aft-mounted double light laser cannon has limited arc in text; precise angle unknown.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-ionizer-asterisk",
+      "sourceEntryKey": "le-i4-ionizer-starfighter",
+      "caseType": "conditional-skill-overrides",
+      "printedEvidencePage": 143,
+      "issue": "With astromech Mechanics +13, Perception +3, Use Computer +13; conditional skills, not defaults.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-ionizer-initiative-conflict",
+      "sourceEntryKey": "le-i4-ionizer-starfighter",
+      "caseType": "printed-initiative-conflict",
+      "printedEvidencePage": 143,
+      "issue": "Main Init +8 versus printed Skills Initiative +9; no silent correction.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-ionizer-torpedo-ion-type",
+      "sourceEntryKey": "le-i4-ionizer-starfighter",
+      "caseType": "narrative-vs-mechanical-type",
+      "printedEvidencePage": 143,
+      "issue": "Narrative says ion-capacitor burst but torpedo shaded row lacks ion damage keyword.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-jumpstar-marker-tracking",
+      "sourceEntryKey": "le-jumpstar-hpf-starfighter",
+      "caseType": "nondamaging-weapon-effect",
+      "printedEvidencePage": 144,
+      "issue": "Marker missile tags successfully targeted ship; no numeric damage; 8 are ammunition.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-jumpstar-hyperspace-pursuit",
+      "sourceEntryKey": "le-jumpstar-hpf-starfighter",
+      "caseType": "multi-step-hyperspace-check",
+      "printedEvidencePage": 144,
+      "issue": "Pursuit DC15 tagged, DC25 observed untagged, range increment penalty -2, ship Int modifier, later astrogation.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-twilight-stealth",
+      "sourceEntryKey": "le-rc-2-twilight-scoutship",
+      "caseType": "multi-actor-stealth-penalty",
+      "printedEvidencePage": 145,
+      "issue": "Perception and Use Computer detect -10; attacker forfeits its ship Intelligence modifier.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-crix-variant-independence",
+      "sourceEntryKey": "le-crix-class-diplomatic-courier-shuttle",
+      "caseType": "same-family-distinct-identities",
+      "printedEvidencePage": 146,
+      "issue": "Diplomatic and Assault Crix statblocks share page but differ in defenses, passenger load, weapon bonuses and carried craft.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-crix-assault-battery-count",
+      "sourceEntryKey": "le-crix-class-assault-shuttle",
+      "caseType": "published-battery-count-vs-mount",
+      "printedEvidencePage": 146,
+      "issue": "Ranged says 2 blaster cannon batteries, detail row aggregated with 4 gunners, not proved 4 physical guns per battery.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-crix-assault-autonomous-fire",
+      "sourceEntryKey": "le-crix-class-assault-shuttle",
+      "caseType": "autonomous-weapon-rule-silent",
+      "printedEvidencePage": 146,
+      "issue": "Narrative allows automatic ground perimeter fire but unspecified numerical firing penalty.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-mt-narrative-hyperdrive-absence",
+      "sourceEntryKey": "le-mt-dropship",
+      "caseType": "narrative-confirmed-system-absence",
+      "printedEvidencePage": 146,
+      "issue": "Narrative confirms ship not hyperspace-capable. Distinguish from mere absent line.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-mt-special-cargo",
+      "sourceEntryKey": "le-mt-dropship",
+      "caseType": "mixed-carried-craft-vs-passenger",
+      "printedEvidencePage": 147,
+      "issue": "Carries special vehicles and up to 200 troops; 24 missiles are payload not mounts.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp2-scarlet-initiative-discrepancy",
+      "sourceEntryKey": "le-scarlet-star-modified-yt-2400-transport",
+      "caseType": "printed-initiative-conflict",
+      "printedEvidencePage": 147,
+      "issue": "Main Init -1 vs printed Skills Initiative +3. Distinct named modified YT-2400, no sourced drive rating.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-sabertooth-capture-teeth",
+      "sourceEntryKey": "le-sabertooth-class-assault-rescue-vessel",
+      "caseType": "sabertooth capture teeth",
+      "printedEvidencePage": 147,
+      "issue": "Grappling teeth described in prose but no discrete attack row; physically modeled capture gear unresolved.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-sabertooth-tactical-fire",
+      "sourceEntryKey": "le-sabertooth-class-assault-rescue-vessel",
+      "caseType": "sabertooth tactical fire",
+      "printedEvidencePage": 147,
+      "issue": "Standard action foregoing attacks adds +1 damage die versus frigate-plus targets in adjacent squares.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-sabertooth-starred-capital-penalty",
+      "sourceEntryKey": "le-sabertooth-class-assault-rescue-vessel",
+      "caseType": "sabertooth starred capital penalty",
+      "printedEvidencePage": 148,
+      "issue": "Starred turbolaser and tractor batteries -20 vs sub-Colossal targets; unstarred point-defense not affected.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-shashore-choice-tactical-fire",
+      "sourceEntryKey": "le-shashore-class-frigate",
+      "caseType": "shashore choice tactical fire",
+      "printedEvidencePage": 148,
+      "issue": "Adjacent allies choose one of 3 mutually exclusive morale buffs until beginning of own next turn.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-shashore-replacement-blades",
+      "sourceEntryKey": "le-shashore-class-frigate",
+      "caseType": "shashore replacement blades",
+      "printedEvidencePage": 149,
+      "issue": "Three alternate blade loads remove two turbolasers and proton torpedo battery groups, replace with sensor, comms jamming or concussion barrage.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-shashore-sensor-range-rewrite",
+      "sourceEntryKey": "le-shashore-class-frigate",
+      "caseType": "shashore sensor range rewrite",
+      "printedEvidencePage": 149,
+      "issue": "Sensor replacement changes distance penalty from -5 to -2 per 10 squares and special detection opportunity within 60 squares.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-shashore-jam-scaling",
+      "sourceEntryKey": "le-shashore-class-frigate",
+      "caseType": "shashore jam scaling",
+      "printedEvidencePage": 149,
+      "issue": "Communications jammer uses +4 Intelligence equipment bonus, 6-square radius and target-size-based debuffs.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-shashore-missile-variant-group",
+      "sourceEntryKey": "le-shashore-class-frigate",
+      "caseType": "shashore missile variant group",
+      "printedEvidencePage": 149,
+      "issue": "Alternative four heavy concussion missile batteries +14; not simultaneously in base stock Ranged sequence.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-scythe-indomitable-separate",
+      "sourceEntryKey": "le-indomitable-scythe-class-battle-cruiser",
+      "caseType": "scythe indomitable separate",
+      "printedEvidencePage": 150,
+      "issue": "Named CL23 expert-crew ship must not merge with generic CL22 skilled-crew Scythe.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-scythe-cross-of-fire",
+      "sourceEntryKey": "le-scythe-class-battle-cruiser",
+      "caseType": "scythe cross of fire",
+      "printedEvidencePage": 150,
+      "issue": "Action selects one square at range six; conditional +2 attack and +1 damage die when attacking that square.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-scythe-tactical-debuff",
+      "sourceEntryKey": "le-scythe-class-battle-cruiser",
+      "caseType": "scythe tactical debuff",
+      "printedEvidencePage": 149,
+      "issue": "Standard action + forgo attacks; two-square zone penalizes enemy Reflex by 2 and DR by 5.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-indomitable-expert-crew",
+      "sourceEntryKey": "le-indomitable-scythe-class-battle-cruiser",
+      "caseType": "indomitable expert crew",
+      "printedEvidencePage": 150,
+      "issue": "Expert crew changes attack bonuses, defenses/skills, carried craft; named publication ship independent.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-tri-scythe-morale-and-damage",
+      "sourceEntryKey": "le-tri-scythe-class-frigate",
+      "caseType": "tri scythe morale and damage",
+      "printedEvidencePage": 151,
+      "issue": "Standard action forgo attacks gives adjacent allies +1 attack and +4 damage; damage bonus is flat, not die.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-spinward-narrative-tractor-not-attack",
+      "sourceEntryKey": "le-spinward-class-tender",
+      "caseType": "spinward narrative tractor not attack",
+      "printedEvidencePage": 152,
+      "issue": "Repair-ship mooring tractor in narrative but NO combat tractor shaded row; do not fabricate attack.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-capital-battery-nonphysical",
+      "sourceEntryKey": "le-tri-scythe-class-frigate",
+      "caseType": "capital battery nonphysical",
+      "printedEvidencePage": 151,
+      "issue": "Named battery counts and gunners not a complete hardpoint, barrel or arc map.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-fury-ace-crew",
+      "sourceEntryKey": "le-fury-class-starfighter",
+      "caseType": "fury ace crew",
+      "printedEvidencePage": 186,
+      "issue": "Ace crew BAB +10 / +12 technical skills must remain separately certified from ship hardware.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-predator-cockpit-options",
+      "sourceEntryKey": "le-predator-class-starfighter",
+      "caseType": "predator cockpit options",
+      "printedEvidencePage": 186,
+      "issue": "Two cockpit layouts are narrative, not distinct printed statblocks.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-neutralizer-alternative-attack",
+      "sourceEntryKey": "le-neutralizer-class-bomber",
+      "caseType": "neutralizer alternative attack",
+      "printedEvidencePage": 187,
+      "issue": "Laser OR proton torpedo attack, 10 torpedoes ammo not ten launchers.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-nune-modular-layout",
+      "sourceEntryKey": "le-nune-class-imperial-shuttle",
+      "caseType": "nune modular layout",
+      "printedEvidencePage": 187,
+      "issue": "Configurable interior uses same published statblock; do not invent model split.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    },
+    {
+      "caseId": "legacy-cp3-nune-gunner-versus-mount",
+      "sourceEntryKey": "le-nune-class-imperial-shuttle",
+      "caseType": "nune gunner versus mount",
+      "printedEvidencePage": 188,
+      "issue": "3 gunner battery personnel positions do not establish three physical guns.",
+      "status": "DISCOVERY_ONLY",
+      "productionMutationAuthorized": false
+    }
+  ]
+}

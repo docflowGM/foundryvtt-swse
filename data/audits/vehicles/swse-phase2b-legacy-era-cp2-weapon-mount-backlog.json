@@ -1,0 +1,932 @@
+{
+  "schema": "swse.vehicle.legacy-era.phase2b.cp2.mount-backlog.v1",
+  "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+  "policy": "Source weapon attack groups are NOT evidence of independent barrels/mounts. No inferred firing arcs or hidden hardware; all Phase 1 publication identities preserved.",
+  "counts": {
+    "publicationShipClaims": 39,
+    "reviewedShipClaims": 20,
+    "unreviewedShipClaims": 19,
+    "weaponAttackGroups": 36,
+    "fullStrictMechanicalCertificates": 0
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "le-besh-type-personal-starfighter",
+      "printedName": "Besh-Type Personal Starfighter",
+      "printedStatblockStartPage": 83,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "light laser cannons",
+          "station": "pilot",
+          "sourcePage": 83,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-phoebos-class-starfighter",
+      "printedName": "Phoebos-class Starfighter",
+      "printedStatblockStartPage": 84,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "double light laser cannons",
+          "station": "pilot",
+          "sourcePage": 84,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-r-28-starfighter",
+      "printedName": "R-28 Starfighter",
+      "printedStatblockStartPage": 85,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "medium laser cannons",
+          "station": "pilot",
+          "sourcePage": 85,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "medium ion cannons",
+          "station": "pilot",
+          "sourcePage": 85,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-x-83-twintail-starfighter",
+      "printedName": "X-83 TwinTail Starfighter",
+      "printedStatblockStartPage": 86,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "enhanced heavy laser cannons",
+          "station": "pilot",
+          "sourcePage": 86,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "proton torpedoes",
+          "station": "pilot",
+          "sourcePage": 86,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-gladius-class-light-freighter",
+      "printedName": "Gladius-class Light Freighter",
+      "printedStatblockStartPage": 87,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "advanced heavy quad laser cannons",
+          "station": "pilot",
+          "sourcePage": 87,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-gpe-7300-space-transport",
+      "printedName": "GPE-7300 Space Transport",
+      "printedStatblockStartPage": 87,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "heavy laser cannons",
+          "station": "pilot",
+          "sourcePage": 87,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-helot-class-medium-transport",
+      "printedName": "Helot-class Medium Transport",
+      "printedStatblockStartPage": 88,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "medium laser cannons",
+          "station": "copilot",
+          "sourcePage": 88,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        },
+        {
+          "status": "NARRATIVE_CONFIRMED_ABSENT",
+          "issue": "Stock shields explicitly absent in narrative; do not fabricate SR."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-j-1-shuttle",
+      "printedName": "J-1 Shuttle",
+      "printedStatblockStartPage": 89,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "double laser cannons",
+          "station": "pilot",
+          "sourcePage": 89,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "issue": "Printed +4 main ranged vs +6 weapon-detail attack bonus."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-mc-24a-light-shuttle",
+      "printedName": "MC-24a Light Shuttle",
+      "printedStatblockStartPage": 89,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "light laser cannons",
+          "station": "pilot",
+          "sourcePage": 89,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        },
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "No printed hyperdrive line. Do not treat an omitted field as proof of hardware absence."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-yx-1980-space-transport",
+      "printedName": "YX-1980 Space Transport",
+      "printedStatblockStartPage": 91,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "medium laser cannons",
+          "station": "copilot",
+          "sourcePage": 91,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-yz-2500-heavy-transport",
+      "printedName": "YZ-2500 Heavy Transport",
+      "printedStatblockStartPage": 91,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "double medium turbolaser battery",
+          "station": "2 gunners",
+          "sourcePage": 91,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "heavy laser cannons",
+          "station": "pilot/copilot",
+          "sourcePage": 91,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-bb-2-starfire-fighter-bomber",
+      "printedName": "BB-2 Starfire Fighter/Bomber",
+      "printedStatblockStartPage": 142,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePage": 142,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "light laser cannon",
+          "station": "gunner",
+          "sourcePage": 142,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "interceptor missile",
+          "station": "gunner",
+          "sourcePage": 142,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "proton torpedo salvo",
+          "station": "gunner",
+          "sourcePage": 142,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "ion bomb",
+          "station": "gunner (atmosphere only)",
+          "sourcePage": 142,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "issue": "Printed field discrepancy retained without editorial resolution; see supplemental printed facts and findings."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-cf9-crossfire-starfighter",
+      "printedName": "CF9 Crossfire Starfighter",
+      "printedStatblockStartPage": 143,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePage": 143,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "double light laser cannon",
+          "station": "gunner",
+          "sourcePage": 143,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "proton torpedoes",
+          "station": "pilot",
+          "sourcePage": 143,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-i4-ionizer-starfighter",
+      "printedName": "I4 Ionizer Starfighter",
+      "printedStatblockStartPage": 143,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePage": 143,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "quad medium ion cannons",
+          "station": "pilot",
+          "sourcePage": 143,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "disruptor torpedo",
+          "station": "pilot",
+          "sourcePage": 143,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "issue": "Printed field discrepancy retained without editorial resolution; see supplemental printed facts and findings."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-jumpstar-hpf-starfighter",
+      "printedName": "Jumpstar HPF Starfighter",
+      "printedStatblockStartPage": 144,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePage": 144,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "marker missile",
+          "station": "pilot",
+          "sourcePage": 144,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-rc-2-twilight-scoutship",
+      "printedName": "RC-2 Twilight Scoutship",
+      "printedStatblockStartPage": 145,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePage": 145,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "proton torpedoes",
+          "station": "pilot",
+          "sourcePage": 145,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-crix-class-assault-shuttle",
+      "printedName": "Crix-class Assault Shuttle",
+      "printedStatblockStartPage": 146,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "twin laser cannons",
+          "station": "pilot",
+          "sourcePage": 146,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "blaster cannon battery",
+          "station": "4 gunners",
+          "sourcePage": 146,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "printedRangedBatteryCount": 2
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-crix-class-diplomatic-courier-shuttle",
+      "printedName": "Crix-class Diplomatic Courier Shuttle",
+      "printedStatblockStartPage": 146,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "twin laser cannons",
+          "station": "pilot",
+          "sourcePage": 146,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "blaster cannon battery",
+          "station": "4 gunners",
+          "sourcePage": 146,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-mt-dropship",
+      "printedName": "MT Dropship",
+      "printedStatblockStartPage": 147,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "laser cannon battery",
+          "station": "6 gunners",
+          "sourcePage": 147,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "concussion missiles",
+          "station": "4 gunners",
+          "sourcePage": 147,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-scarlet-star-modified-yt-2400-transport",
+      "printedName": "Scarlet Star (Modified YT-2400 Transport)",
+      "printedStatblockStartPage": 147,
+      "sourceReviewStatus": "PDF_VERIFIED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "gunner",
+          "sourcePage": 147,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Printed attack-group rows do not certify complete physical weapon count, mount topology, all batteries, or all firing arcs; keep unknown values unfilled."
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "issue": "Printed field discrepancy retained without editorial resolution; see supplemental printed facts and findings."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-sabertooth-class-assault-rescue-vessel",
+      "printedName": "Sabertooth-class Assault & Rescue Vessel",
+      "printedStatblockStartPage": 148,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-shashore-class-frigate",
+      "printedName": "ShaShore-class Frigate",
+      "printedStatblockStartPage": 148,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-indomitable-scythe-class-battle-cruiser",
+      "printedName": "Indomitable (Scythe-class Battle Cruiser)",
+      "printedStatblockStartPage": 150,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-scythe-class-battle-cruiser",
+      "printedName": "Scythe-class Battle Cruiser",
+      "printedStatblockStartPage": 150,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-tri-scythe-class-frigate",
+      "printedName": "Tri-Scythe-class Frigate",
+      "printedStatblockStartPage": 151,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-spinward-class-tender",
+      "printedName": "Spinward-class Tender",
+      "printedStatblockStartPage": 152,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-fury-class-starfighter",
+      "printedName": "Fury-class Starfighter",
+      "printedStatblockStartPage": 186,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-predator-class-starfighter",
+      "printedName": "Predator-class Starfighter",
+      "printedStatblockStartPage": 186,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-neutralizer-class-bomber",
+      "printedName": "Neutralizer-class Bomber",
+      "printedStatblockStartPage": 187,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-nune-class-imperial-shuttle",
+      "printedName": "Nune-class Imperial Shuttle",
+      "printedStatblockStartPage": 188,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-sigma-class-long-range-shuttle",
+      "printedName": "Sigma-class Long-Range Shuttle",
+      "printedStatblockStartPage": 188,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-ardent-class-fast-frigate",
+      "printedName": "Ardent-class Fast Frigate",
+      "printedStatblockStartPage": 189,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-pellaeon-class-star-destroyer",
+      "printedName": "Pellaeon-class Star Destroyer",
+      "printedStatblockStartPage": 190,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-imperious-class-star-destroyer",
+      "printedName": "Imperious-class Star Destroyer",
+      "printedStatblockStartPage": 191,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-crimson-axe",
+      "printedName": "Crimson Axe",
+      "printedStatblockStartPage": 200,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-a519-invader-close-support-starfighter",
+      "printedName": "A519 Invader Close Support Starfighter",
+      "printedStatblockStartPage": 218,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-nemesis-class-patrol-ship",
+      "printedName": "Nemesis-class Patrol Ship",
+      "printedStatblockStartPage": 218,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-the-grinning-liar",
+      "printedName": "The Grinning Liar",
+      "printedStatblockStartPage": 219,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "le-the-mynock",
+      "printedName": "The Mynock",
+      "printedStatblockStartPage": 220,
+      "sourceReviewStatus": "NOT_REVIEWED",
+      "fullWeaponMountReconciled": false,
+      "strictMechanicalCertificate": false,
+      "attackGroups": [],
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ]
+    }
+  ]
+}
