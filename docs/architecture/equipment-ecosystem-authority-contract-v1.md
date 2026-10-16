@@ -1,6 +1,7 @@
 # Universal Equipment Ecosystem — Authority Contract v1 (PROPOSED)
 
 **Status:** E1 deliverable — **proposed for owner review**. Documentation only. Nothing in this document is implemented, schema-approved or authorized for build. Only E0 and E1 are authorized.
+**Revision note (E2A):** §14 records the owner rulings on OA-2, OA-4, OA-7, OA-8, OA-9 and what E2A actually implemented. Sections 1–13 are unchanged E1 text; where §14 differs from §12 (decision status), §14 governs.
 **Audited commit:** `185dac1bded12f5e40cb851539c0a912f42fc24d` (see baseline §1 for the upstream-divergence note).
 **Evidence:** every statement tagged `[CURRENT]` cites `equipment-ecosystem-e0-consumer-matrix.md` (row IDs such as `A4`, `D2`) or `equipment-ecosystem-e0-baseline.md`.
 
@@ -288,3 +289,30 @@ Established policies reused: `docs/architecture/swse-automation-authority.md` �
 ## 13. What this contract does not do
 
 It does not select a schema, create fields, implement a resolver/planner/coordinator/adapter or migration, change any combat, species, droid or modification behaviour, declare any certification status (no item is `SOURCE_VERIFIED`, `MECHANIC_SPECIFIED`, `IMPLEMENTED` or `FOUNDRY_TESTED` by this document), or authorize E2.
+
+## 14. E2A rulings and implementation status (owner-approved; supersedes the status of the listed OA items in §12.1)
+
+Legend: **[APPROVED-FUTURE]** = approved architecture not yet built · **[IMPLEMENTED-E2A]** = built and offline-tested in E2A · **[DEFERRED]** = not authorized yet. Nothing here is Foundry-tested.
+
+| ID | Owner ruling | Status |
+|---|---|---|
+| OA-7 | Species anatomy is an optional structured `anatomy` field on the **effective canonical species profile**, respecting publication-specific complete snapshots; the universal default is two ordinary arms unless an authoritative exception exists; it is **not** placed in the generic trait-rule vocabulary. | Field/schema **[APPROVED-FUTURE]** (E2B; whitelist / `listMissingSnapshotFields` / packs unchanged). **[IMPLEMENTED-E2A]**: the resolver reads `speciesProfile.anatomy` only from the profile passed in, never from a base species; synthetic fixtures only; two-arm default; temporary guards for exact trait ids `extra-arms` and `prehensile-tail` (removed in E2B). |
+| OA-8 | Three separate identities: appendage **slot** (stable location), installed component **instance**, canonical **part**. Two identical droid hands must eventually be independently representable. Component type, array index and `additional-N` are not instance identity. | **[APPROVED-FUTURE]**. **[IMPLEMENTED-E2A]** only as a read-only vocabulary: every appendage carries `identity {slot, instance, part}`; the droid projection establishes `instance` solely from an embedded Item document id, leaves `slot` null, and returns ambiguous records as unresolved. Persistent ids, Garage and resolver repair: **[DEFERRED]** (droid refactor). |
+| OA-4 | Functional status belongs to the actor's effective anatomy: functional / disabled / missing / unresolved. No permanent damage or severed-limb field yet. | **[IMPLEMENTED-E2A]** as read-only derived state (existing installed/enabled evidence + explicit overrides supplied to the resolver; overrides may only restrict). Permanent fields **[DEFERRED]**. |
+| OA-2 | E2A produces a read-only derived anatomy snapshot; no persistent posture, grip or manipulator allocation. | **[IMPLEMENTED-E2A]**: nothing persisted. Persistent equipment state remains **[DEFERRED]** to later approved phases. |
+| OA-9 | Transaction atomicity deferred to E5. | **[DEFERRED]**; no mutation exists in E2A. |
+
+### 14.1 Droid refactor dependency (project invariant, owner addendum)
+
+The comprehensive refactor of droid actors, models, components, equipment/installations, appendages, schemas and the Garage has **not** been done and follows the vehicle refactor. The current droid implementation is **legacy / pre-refactor infrastructure** even where a file calls itself canonical. Consequences for this contract:
+
+- The Equipment Ecosystem accommodates droids **architecturally** (actor-type-neutral resolver contract; droid adapter isolated and replaceable via `deps.projectInstalledComponents`; future droid anatomy may arrive through the input contract) **without** refactoring them.
+- Droid work in E2A is diagnostic and read-only; discoveries are audit findings recorded as `DEFERRED_DROID_REFACTOR` in `docs/audits/equipment-ecosystem-e2a-anatomy-checkpoint.md` §12 (DR-001…DR-010).
+- E2B is split in scope: its **species** work may proceed independently when authorized; its **droid** identity / schema / installation work waits for the dedicated droid refactor. No later phase repairs the old droid implementation; a phase needing unfinished droid functionality documents the dependency and leaves that functionality unimplemented.
+- The eventual droid refactor determines the authoritative droid schema and installation-identity rules; nothing in the E2A droid projection is a permanent V2 decision.
+- **Integration contract for the droid refactor (requirements, not instructions to build now):** provide per-instance appendage records carrying separate slot / instance / part identities; structured `canHold` / `canWield` / `canManipulate` per appendage type; per-instance functional state; installer that can add independent same-type components; a slot vocabulary shared with this project; weapon-to-host links for integrated weapons. The anatomy resolver will consume these through its input contract.
+
+### 14.2 What E2A did not decide
+
+The `anatomy` field's final schema; species exception data (SRC-1, SRC-4, SRC-7/EQUIP-RD-006); droid capabilities (SRC-5); any hand-occupancy, grip, posture or readiness rule (E3+).
+
