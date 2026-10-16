@@ -20,7 +20,7 @@ Every registry definition whose `source.tableId` is `2-3` (16 definitions: the 1
 
 ## 3. Exact proposed future corrections (not applied)
 
-| Definition | Current `printedTablePage` | Proposed `printedTablePage` | Entry description page (see §4) |
+| Definition | Current `printedTablePage` | Proposed `printedTablePage` | Entry description page (informational; not a proposed `rulesPage` value, see §4) |
 |---|---|---|---|
 | `sv-cheater` | 41 | 40 | 40 |
 | `sv-cloaked` | 41 | 40 | 40 |
@@ -41,9 +41,19 @@ Every registry definition whose `source.tableId` is `2-3` (16 definitions: the 1
 
 Droidification is the excluded-scope entry (0 typed definitions). Its table-page value belongs to the same Table 2-3 correction; its own entry page was not covered by the supplied findings and is **not asserted**.
 
-## 4. Open question that blocks proposing `rulesPage` values
+## 4. Meaning of `rulesPage` (resolved by the owner, 2026-10-16)
 
-The registry schema does not document what `rulesPage` means, and it is `null` everywhere checked. The supplied findings give each entry's description page (Cheater and Cloaked 40; Dual Gear through Secret Compartment 41, with Secret Compartment continuing on 42; Silverplate, Spring Loaded and Storage Capacity 42). Whether the migration should record those in `rulesPage` is a registry-semantics decision for the owner, not assumed here.
+`docs/audits/modification-rolling-authority-v1.5.md` separates the two locators: it says `rulesPage=null` means **not yet certified** and directs researchers to retain `printedTablePage` plus the actual `rulesPage`. The owner has confirmed the reading:
+
+- `source.printedTablePage` — the printed page that contains the source table.
+- `source.rulesPage` — the certified printed page that contains the entry's detailed published rules.
+- `rulesPage: null` — the detailed rules page has not been certified in that registry snapshot.
+
+Consequences recorded here:
+
+- **v1.5:** `rulesPage` stays `null` everywhere. Nothing is populated.
+- **Future migration:** a Table 2-3 location correction (`printedTablePage` 41 → 40) and detailed-rules-page certification are distinct changes and must be handled as such. Verifying D-005 host-prerequisite facts does not by itself justify populating `rulesPage` for every entry; full registry certification of rules pages is a separate process.
+- The "Entry description page" column in §3 is source information (where each entry's text sits), **not** a proposed `rulesPage` value.
 
 ## 5. Related, separately tracked reconciliations (recorded, not corrected)
 

@@ -1,6 +1,6 @@
 # D-005 T2 — Implementation plan: PUBLISHED_FACTS records and registry-correction addendum
 
-**Status: PLAN ONLY. Documentation only.** Prepared under the project owner's T2 decisions (immutable v1.5 preserved; `PUBLISHED_FACTS` for the 35 `hostPrerequisites` components; unknown stacking left `UNVERIFIED`/`null`). It adds no records, edits no data, changes no tests and lifts no blocker. The rules are the owner's decisions; this plan only describes how to implement them.
+**Status: PLAN — approved at the design level by the project owner (2026-10-16); implementation awaits a separately authorized execution step. Documentation only.** Prepared under the project owner's T2 decisions (immutable v1.5 preserved; `PUBLISHED_FACTS` for the 35 `hostPrerequisites` components; unknown stacking left `UNVERIFIED`/`null`). It adds no records, edits no data, changes no tests and lifts no blocker. The rules are the owner's decisions; this plan only describes how to implement them.
 **Date:** 2026-10-16. **Baseline:** `main` `6ecbed3efcb020ce2b23963c2f207014ca32cfad`; the simulation below used the #1052 head `edb0a62a73241ac1de958fac5989c8022155058e` as the expected base.
 **Companion:** `docs/audits/modification-registry-v1.5-correction-addendum-d005.md`.
 **Depends on (research input):** `docs/audits/d-005-universal-upgrade-host-text-transcription.md` (PR #1054).
@@ -160,11 +160,11 @@ Registry v1.5 file, manifest and companion markdown; registry SHA-256 `7be427414
 
 ## 5. Engineering conflicts and limits found (reported, nothing modified)
 
-1. **`publication.printedPage` must be a single integer** (`SPEC_PUBLICATION_INCOMPLETE` otherwise). Secret Compartment's entry spans pp. 41–42. Proposed representation: `printedPage: 41` with the continuation stated in `tableOrSection`. This is a data-shape choice, not a rules choice; owner to confirm.
+1. **`publication.printedPage` must be a single integer** (`SPEC_PUBLICATION_INCOMPLETE` otherwise). Secret Compartment's entry spans pp. 41–42. **Resolved by the owner:** `printedPage: 41`, with the continuation on p. 42 stated in `publication.tableOrSection` and in `evidence`. No range-valued field and no schema change.
 2. **Four existing test assertions assume every specification record is an `installProcedure` record.** With 35 more records they fail on counts or on the "host prerequisites remain unverified for every definition" assertion: `tests/modification-runtime-generator.test.mjs` lines 219, 450, 578 (record sets and counts) and `tests/modification-v2-offline.test.mjs` line 175. In the simulation, scoping the three generator-test sets to `component === 'installProcedure'` and conditioning the offline assertion on `hostPrerequisites.SOURCE_VERIFIED` made both files pass (generator 67 checks, offline 17 checks). These are required test updates at implementation time, not changes to safety checks.
 3. **No structured field exists for functional prerequisites or per-domain verdicts**; they live only in free-text `behavior`. A future host evaluator (G4) must not parse that text; it needs its own separately approved contract.
 4. **The specification file's `notes` string** mentions only the page-39 records and should be updated at implementation (the file hash changes regardless).
-5. **No rendered-page hashes** exist for pp. 40–42 (the D-001 records cite one for p. 39). Records can cite only the PDF hash and the review. Owner to say whether page hashes are required.
+5. **No rendered-page hashes exist for pp. 40–42** (the D-001 records cite one for p. 39). **Resolved by the owner:** not required. Accepted evidence is the source PDF SHA-256 `74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399`, exact printed pages, the D-005 source-review document (PR #1054) and accurate provenance (findings supplied by the project rules review). No image hashes are to be invented and no copyrighted page images committed.
 6. **Merge-order hazard.** The implementation regenerates `runtime-definitions-v1.5.json`, as does #1052. The generated file must be regenerated on top of `main` after #1052 merges, never merged by hand.
 
 No generator behavior needs to change to carry out the owner's decisions.
@@ -206,13 +206,53 @@ No generator behavior needs to change to carry out the owner's decisions.
 
 A v1.6 snapshot would need a coordinated, owner-approved package: the registry JSON, its manifest (byte length, SHA-256) and companion markdown; hash/version pins in `tools/validate-modification-registry.mjs` and its path constants; the generator header version and generated-file name; `registryVersion` in the specification-records and status-ledger files; every test with hard-coded version strings, counts or hashes; and the docs that cite v1.5. It should accumulate all certified corrections first (this addendum's page references and the stacking reconciliation; any errata only after authentication of the original publisher documents; other approved corrections) so that one migration carries a complete, reviewed set.
 
-## 11. Open items for the project owner
+The migration must keep table-location corrections (`source.printedTablePage`) distinct from detailed-rules-page certification (`source.rulesPage`, where `null` means not yet certified); see the addendum §4.
 
-1. Confirm the Secret Compartment `printedPage: 41` representation (§5.1).
-2. Say whether rendered-page hashes for pp. 40–42 are required for the records (§5.5).
-3. Confirm `rulesPage` semantics before any registry correction proposes a value for it (see the addendum).
-4. Approve (or amend) this plan before any data change.
+## 11. Owner decisions and remaining gates
+
+Resolved by the owner on 2026-10-16:
+
+1. Secret Compartment is recorded as `publication.printedPage: 41`, with the p. 42 continuation in `tableOrSection` and `evidence` (§5.1).
+2. Rendered-page hashes are not required (§5.5).
+3. `rulesPage` meaning: `source.printedTablePage` is the printed page containing the source table; `source.rulesPage` is the certified printed page containing the entry's detailed published rules; `rulesPage: null` means that page has not been certified in that registry snapshot. This follows `docs/audits/modification-rolling-authority-v1.5.md` (which says `rulesPage=null` means not yet certified and to retain `printedTablePage` plus the actual `rulesPage`). Nothing is populated in v1.5, and verifying D-005 host facts does not by itself justify filling `rulesPage` for every entry; full registry certification is a separate process. The future migration must treat table-location corrections and detailed-rules-page certification as distinct changes.
+4. The T2 design is approved. The specification-record implementation awaits a separately authorized execution step; no data change, merge or retarget is authorized by this plan.
+
+Remaining gate: explicit owner authorization to execute (see §13).
 
 ## 12. Non-effects
 
 Documentation only. No change to the registry, manifest, specification records, ledger, generated runtime, tests, `swse-rules-decisions-pending.md` or production code. No v1.6, no D-005 lift, no host evaluator, no merge or retarget of #1051, #1052 or #1054, no G4–G9 work. Invariants unchanged: 186 parents, 232 typed definitions, 35 D-005 blockers, 0 runtime-selectable, `EXECUTOR_NOT_CERTIFIED` enforced.
+
+## 13. T2 implementation acceptance checklist (for the future authorized execution)
+
+**Preconditions**
+- [ ] Owner has explicitly authorized execution of T2 implementation.
+- [ ] Work is built on a `main` that already contains the approved D-015 changes (#1051, #1052) and the D-005 source-review document (#1054). No stacking on unmerged branches.
+- [ ] Recommended merge order (each subject to explicit owner authorization): #1051, #1052 (retargeted, CI re-run), #1054, #1055.
+
+**Records (35, exactly)**
+- [ ] One `PUBLISHED_FACTS` `hostPrerequisites` record per existing D-005 typed ID; no new parents or typed definitions; typed IDs equal the D-005 ledger scope.
+- [ ] Every record: `basis: PUBLISHED_UNAMBIGUOUS`, `verification: SOURCE_VERIFIED`, `coverage: PUBLISHED_FACTS`, `bookId: scum-and-villainy`, `title: Scum and Villainy`, `specId` of the form `D005::<typedId>`.
+- [ ] `publication.printedPage` is the entry's description page (40 Cheater/Cloaked; 41 Dual Gear through Secret Compartment; 42 Silverplate/Spring Loaded/Storage Capacity); Secret Compartment is 41 with the p. 42 continuation in `tableOrSection` and `evidence`.
+- [ ] `evidence` cites the source PDF SHA-256, printed pp. 40–42, the transcription document entry and the provenance (findings supplied by the project rules review); no page-image hashes.
+- [ ] All 35 `behavior` texts are the approved source-backed descriptions (host finding, functional prerequisites, conditional effects, stacking, typed-domain verdict), not placeholders, and each states that it certifies printed facts only and is not an implementation-ready host rule.
+- [ ] Stacking facts present: Extra Power Source explicitly repeatable, no numeric maximum; Memory Upgrade / Advanced: advanced replaces basic, no stacking of basic and advanced, no universal maximum of one, no basic-first requirement; all others `NOT SPECIFIED BY SOURCE`; no default maximum.
+- [ ] Specification file `notes` updated; `registryVersion` remains `1.5`.
+
+**Generated runtime and counts**
+- [ ] Runtime regenerated only with `node tools/build-modification-runtime.mjs`; `--check` and `--validate` pass; no hand edit.
+- [ ] Counts: 186 parents, 232 typed, 231 candidates, 49 accounting-eligible, 0 runtime-selectable.
+- [ ] Generated diff is limited to 35 `hostPrerequisites.SOURCE_VERIFIED` false → true plus the specification-records and records hashes.
+- [ ] For all 35: `MECHANIC_SPECIFIED` false; `hostRequirementsSpecified` false; `hostEligibility` `not_established`; `pendingSource` still contains D-005.
+
+**Tests**
+- [ ] The four stale assertions are scoped (generator test lines 219, 450, 578; offline test line 175) without weakening any safety check.
+- [ ] New coverage: exactly 35 host records and 111 total; typed IDs equal the D-005 ledger scope; a `COMPLETE_MECHANIC` `hostPrerequisites` record is refused (`SPEC_WHILE_BLOCKER_OPEN`); D-005 blocker removal while the register entry is open is refused; unauthorized selectability is refused; planner keeps a D-005 deferral, `HOST_NOT_ESTABLISHED`, `NOT_SELECTABLE` and `EXECUTOR_NOT_CERTIFIED` for the 35.
+- [ ] Modification tests, registry validator, G1 validation and the full rolling suite pass locally with stdout/stderr inspected; exact-head GitHub Actions passes.
+
+**Unchanged (verify by diff)**
+- [ ] Registry v1.5 file, manifest, companion markdown and SHA-256 `7be427414a95216a8bec45078e62ea2a7fb6e185f24b1f4c2ee250bac7093d00`; `stackingPolicy`/`maxPerHost`; `printedTablePage`/`rulesPage`.
+- [ ] Status ledger and `PINNED_SCOPE_SHA256`; D-005 blocker scope (35); D-013 (156), D-014 (76), D-004, D-006, D-010, D-011; `swse-rules-decisions-pending.md`.
+- [ ] No host evaluator, no implementation/test/Foundry flags, no executor authority, no production module change, no v1.6, no D-005 lift, no G4–G9 work.
+
+**Not part of T2 implementation:** D-005 source lift, registry migration, host evaluator design, any merge or retarget.
