@@ -212,7 +212,7 @@ const record = (p, partId) => p.unresolvedRecords.find((r) => r.partId === partI
   assert.ok(codes(restricted).includes('override-unknown-appendage'));
   const legacy = anatomy(deepFreeze({ system: {}, items: [item('itm_hand_A', 'hand')] }), { functionalOverrides: { 'droid-appendage:itm_hand_A': 'missing' } });
   assert.ok(codes(legacy).includes('override-unknown-appendage'), 'legacy candidates are not appendages, so an override has nothing to attach to');
-  assert.equal(resolveEffectiveAnatomy({ actorType: 'droid', installedComponents: { components: [] }, deps: { projectInstalledComponents: () => ({}) } }).status, 'unresolved', 'a minimal adapter result is tolerated');
+  assert.equal(resolveEffectiveAnatomy({ actorType: 'droid', installedComponents: { components: [] }, deps: { projectInstalledComponents: () => ({ appendages: [], unresolvedRecords: [], issues: [] }) } }).status, 'unresolved', 'a valid adapter reporting nothing is unresolved, not an error');
   ok('replacement adapter can supply allocation-grade appendages; slot/instance gaps, unknown capabilities keep the status partial');
 }
 

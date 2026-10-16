@@ -248,4 +248,147 @@ function packVariantProfile(speciesName, variantId) {
   ok('static guard: the resolver modules reference no mutation, action-economy, inventory, fire-state or UI API');
 }
 
+// ======================================================================================================================
+// E2A-C3 -- injected droid-adapter contract: unknown evidence vs malformed data, capability completeness, caller ownership
+// ======================================================================================================================
+const adapterOf = (result) => ({ actorType: 'droid', installedComponents: { components: [] }, deps: { projectInstalledComponents: () => result } });
+const goodAppendage = (over = {}) => ({
+  id: 'arm-001', kind: 'arm', source: 'future-droid-adapter',
+  identity: { slot: 'left-arm', instance: 'component-001', part: 'hand' },
+  capabilities: { canHold: true, canWield: true, canManipulate: true },
+  functionalState: 'functional', ...over,
+});
+const wrap = (...appendages) => ({ appendages, unresolvedRecords: [], issues: [] });
+const throwsCode = (input, code, msg) => assert.throws(() => resolveEffectiveAnatomy(input), (e) => e instanceof AnatomyInputError && e.code === code, msg ?? code);
+
+// C3-1..3. capability completeness: only canHold supplied -> partial; missing and explicit null are both unknown; never resolved
+{
+  const r = resolveEffectiveAnatomy(adapterOf(wrap(goodAppendage({ capabilities: { canHold: true } }))));
+  assert.equal(r.status, ANATOMY_STATUS.PARTIAL);
+  assert.deepEqual(caps(r.appendages[0]), { canHold: true, canWield: null, canManipulate: null }, 'omitted capabilities are represented as null');
+  const iss = r.issues.find((i) => i.code === 'capability-unknown');
+  assert.deepEqual(iss.details, { id: 'arm-001', unknown: ['canWield', 'canManipulate'] });
+  const explicit = resolveEffectiveAnatomy(adapterOf(wrap(goodAppendage({ capabilities: { canHold: true, canWield: null, canManipulate: null } }))));
+  assert.equal(explicit.status, ANATOMY_STATUS.PARTIAL);
+  assert.deepEqual(caps(explicit.appendages[0]), { canHold: true, canWield: null, canManipulate: null });
+  const none = resolveEffectiveAnatomy(adapterOf(wrap(goodAppendage({ capabilities: {} }))));
+  assert.deepEqual(caps(none.appendages[0]), { canHold: null, canWield: null, canManipulate: null });
+  assert.equal(none.status, ANATOMY_STATUS.PARTIAL);
+  const full = resolveEffectiveAnatomy(adapterOf(wrap(goodAppendage())));
+  assert.equal(full.status, ANATOMY_STATUS.RESOLVED, 'sanity: a complete, identified, functional appendage is resolved');
+  const explicitFalse = resolveEffectiveAnatomy(adapterOf(wrap(goodAppendage({ capabilities: { canHold: true, canWield: false, canManipulate: true } }))));
+  assert.equal(explicitFalse.status, ANATOMY_STATUS.RESOLVED, 'an explicit false is established knowledge');
+  ok('C3: missing / explicit-null capabilities are unknown (null) with a capability-unknown issue naming them; only explicit booleans can be resolved');
+}
+
+// C3-4..7. malformed capability / functional state -> AnatomyInputError; valid "unresolved" -> incomplete, no exception
+{
+  throwsCode(adapterOf(wrap(goodAppendage({ capabilities: { canWield: 'yes' } }))), 'INVALID_CAPABILITY');
+  throwsCode(adapterOf(wrap(goodAppendage({ capabilities: { canHold: 1 } }))), 'INVALID_CAPABILITY');
+  throwsCode(adapterOf(wrap(goodAppendage({ capabilities: 'all' }))), 'INVALID_ADAPTER_APPENDAGE');
+  throwsCode(adapterOf(wrap(goodAppendage({ functionalState: 'bogus' }))), 'INVALID_FUNCTIONAL_STATE');
+  const missingState = goodAppendage(); delete missingState.functionalState;
+  throwsCode(adapterOf(wrap(missingState)), 'INVALID_FUNCTIONAL_STATE', 'a missing functional state is malformed');
+  const unresolved = resolveEffectiveAnatomy(adapterOf(wrap(goodAppendage({ functionalState: 'unresolved' }))));
+  assert.equal(unresolved.status, ANATOMY_STATUS.PARTIAL);
+  assert.equal(unresolved.appendages[0].functionalState, 'unresolved');
+  assert.ok(codes(unresolved).includes('functional-state-unresolved'));
+  for (const state of ['disabled', 'missing']) assert.equal(resolveEffectiveAnatomy(adapterOf(wrap(goodAppendage({ functionalState: state })))).appendages[0].functionalState, state);
+  ok('C3: invalid capability type / invalid or missing functional state raise AnatomyInputError; a valid "unresolved" state is incomplete evidence, not an error');
+}
+
+// C3-8/9. adapter result shape
+{
+  for (const bad of [null, undefined, 'x', 7, [], {}, { appendages: [] }, { appendages: [], unresolvedRecords: [] }, { appendages: {}, unresolvedRecords: [], issues: [] }, { appendages: [], unresolvedRecords: null, issues: [] }, { appendages: [], unresolvedRecords: [], issues: 'none' }]) {
+    throwsCode(adapterOf(bad), 'INVALID_ADAPTER_RESULT', `malformed adapter result ${JSON.stringify(bad)}`);
+  }
+  throwsCode(adapterOf({ appendages: [], unresolvedRecords: ['x'], issues: [] }), 'INVALID_ADAPTER_RESULT');
+  throwsCode(adapterOf({ appendages: [], unresolvedRecords: [], issues: [{ code: 'x', severity: 'fatal', message: 'm' }] }), 'INVALID_ADAPTER_RESULT');
+  throwsCode(adapterOf({ appendages: [], unresolvedRecords: [{ f() {} }], issues: [] }), 'INVALID_ADAPTER_RESULT', 'functions are not plain data');
+  const circular = { a: 1 }; circular.self = circular;
+  throwsCode(adapterOf({ appendages: [], unresolvedRecords: [circular], issues: [] }), 'INVALID_ADAPTER_RESULT', 'circular data');
+  for (const [field, value] of [['id', ''], ['kind', null], ['source', 3]]) throwsCode(adapterOf(wrap(goodAppendage({ [field]: value }))), 'INVALID_ADAPTER_APPENDAGE', `appendage.${field}`);
+  throwsCode(adapterOf(wrap('arm')), 'INVALID_ADAPTER_APPENDAGE');
+  throwsCode(adapterOf(wrap(goodAppendage({ identity: undefined }))), 'INVALID_ADAPTER_IDENTITY');
+  throwsCode(adapterOf(wrap(goodAppendage({ identity: { slot: '', instance: 'i', part: 'p' } }))), 'INVALID_ADAPTER_IDENTITY');
+  throwsCode(adapterOf(wrap(goodAppendage({ identity: { slot: 3, instance: 'i', part: 'p' } }))), 'INVALID_ADAPTER_IDENTITY');
+  // an adapter that throws is not reinterpreted as absent anatomy
+  const boom = new Error('adapter exploded');
+  assert.throws(() => resolveEffectiveAnatomy({ actorType: 'droid', installedComponents: { components: [] }, deps: { projectInstalledComponents: () => { throw boom; } } }), (e) => e === boom);
+  // three empty arrays: valid, unresolved, no crash
+  const empty = resolveEffectiveAnatomy(adapterOf({ appendages: [], unresolvedRecords: [], issues: [] }));
+  assert.equal(empty.status, ANATOMY_STATUS.UNRESOLVED);
+  assert.deepEqual(empty.appendages, []);
+  assert.ok(codes(empty).includes('no-appendage-evidence'));
+  ok('C3: malformed adapter results / records / issues / appendages / identities throw documented codes; adapter exceptions propagate; three empty arrays are a valid unresolved result');
+}
+
+// C3-10/11. identity completeness and duplicate ids
+{
+  for (const identity of [{ slot: null, instance: 'component-001', part: 'hand' }, { slot: 'left-arm', instance: null, part: 'hand' }, { slot: null, instance: null, part: null }, { part: 'hand' }]) {
+    const r = resolveEffectiveAnatomy(adapterOf(wrap(goodAppendage({ identity }))));
+    assert.equal(r.status, ANATOMY_STATUS.PARTIAL, JSON.stringify(identity));
+    assert.ok(codes(r).includes('appendage-identity-incomplete'));
+    assert.deepEqual(Object.keys(r.appendages[0].identity).sort(), ['instance', 'part', 'slot'], 'identity is normalised to the three distinct fields');
+  }
+  const mixed = resolveEffectiveAnatomy(adapterOf(wrap(goodAppendage(), goodAppendage({ id: 'arm-002', identity: { slot: 'right-arm', instance: null, part: 'hand' } }))));
+  assert.equal(mixed.status, ANATOMY_STATUS.PARTIAL, 'one incomplete appendage keeps the whole anatomy from resolving');
+  throwsCode(adapterOf(wrap(goodAppendage(), goodAppendage())), 'DUPLICATE_APPENDAGE_ID');
+  ok('C3: incomplete slot / instance identity can never yield resolved; duplicate appendage ids are rejected');
+}
+
+// C3-12/13/14. caller ownership: nothing the adapter returns is mutated or frozen; the snapshot shares no mutable identities
+{
+  const mkResult = () => ({
+    appendages: [goodAppendage({ restrictions: ['r1'], extra: { nested: ['x', { y: 1 }] } })],
+    unresolvedRecords: [{ partId: 'hand', candidateInstances: [{ documentId: 'd1' }], capabilities: { canManipulate: true } }],
+    issues: [{ code: 'adapter-note', severity: 'info', message: 'm', details: { list: [1, 2] } }],
+  });
+  const collect = (o, acc = []) => { if (o && typeof o === 'object') { acc.push(o); Object.values(o).forEach((v) => collect(v, acc)); } return acc; };
+
+  // unfrozen caller data stays unfrozen and unchanged
+  const live = mkResult();
+  const before = JSON.stringify(live);
+  const r = resolveEffectiveAnatomy(adapterOf(live));
+  assert.equal(JSON.stringify(live), before, 'caller data unchanged');
+  for (const obj of collect(live)) assert.equal(Object.isFrozen(obj), false, 'caller-owned objects are never frozen');
+  assert.ok(Object.isFrozen(r) && Object.isFrozen(r.appendages[0]) && Object.isFrozen(r.appendages[0].capabilities) && Object.isFrozen(r.issues[0].details), 'the returned snapshot is deeply frozen');
+  // no shared mutable identities between the snapshot and the caller's data
+  const owned = new Set(collect(live));
+  for (const obj of [...collect(r.appendages), ...collect(r.unresolvedRecords), ...collect(r.issues)]) assert.ok(!owned.has(obj), 'no mutable object is shared with adapter-owned data');
+  assert.deepEqual(r.appendages[0].extra, live.appendages[0].extra, 'values and diagnostic meaning are preserved');
+  assert.deepEqual(r.issues.find((i) => i.code === 'adapter-note').details, { list: [1, 2] });
+  assert.deepEqual(r.unresolvedRecords[0].candidateInstances, [{ documentId: 'd1' }]);
+
+  // mutating the caller's data afterwards cannot reach the snapshot
+  live.appendages[0].capabilities.canHold = false; live.appendages[0].extra.nested.push('late'); live.issues[0].details.list.push(3);
+  assert.equal(r.appendages[0].capabilities.canHold, true);
+  assert.deepEqual(r.appendages[0].extra.nested, ['x', { y: 1 }]);
+  assert.deepEqual(r.issues.find((i) => i.code === 'adapter-note').details.list, [1, 2]);
+
+  // already-frozen caller data stays frozen and unchanged (the resolver neither thaws nor rewrites it)
+  const frozen = deepFreeze(mkResult());
+  const frozenJson = JSON.stringify(frozen);
+  const rf = resolveEffectiveAnatomy(adapterOf(frozen));
+  assert.equal(JSON.stringify(frozen), frozenJson);
+  assert.ok(collect(frozen).every((o) => Object.isFrozen(o)));
+  assert.deepEqual(rf, resolveEffectiveAnatomy(adapterOf(deepFreeze(mkResult()))));
+
+  // functional overrides act on the copy, never on the caller's appendage
+  const ov = mkResult();
+  const ro = resolveEffectiveAnatomy({ ...adapterOf(ov), functionalOverrides: { 'arm-001': 'missing' } });
+  assert.equal(ro.appendages[0].functionalState, 'missing');
+  assert.equal(ov.appendages[0].functionalState, 'functional', 'the override is applied to the copy');
+  ok('C3: adapter data is copied before freezing; caller objects keep their frozen/unfrozen state and values; the snapshot shares no mutable objects');
+}
+
+// C3-15. determinism across the adapter path
+{
+  const run = () => resolveEffectiveAnatomy({ ...adapterOf(wrap(goodAppendage({ capabilities: { canHold: true } }), goodAppendage({ id: 'arm-002', identity: { slot: 'right-arm', instance: 'component-002', part: 'hand' } }))), functionalOverrides: { 'arm-002': 'disabled' } });
+  const a = run(); const b = run();
+  assert.deepEqual(a, b);
+  assert.equal(JSON.stringify(a), JSON.stringify(b));
+  ok('C3: repeated adapter-path calls with identical evidence are deterministic');
+}
+
 console.log(`equipment-e2a-anatomy-resolver: ${n} checks passed`);

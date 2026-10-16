@@ -12,7 +12,14 @@
  *   OA-4  functional state belongs to the actor's effective anatomy: functional | disabled | missing | unresolved.
  *   OA-2  the result is derived on demand; no persistent equipment state.
  *
- * Capabilities are tri-state (true | false | null; null = unknown). Unknown is never promoted to true.
+ * Capabilities are tri-state (true | false | null; null = unknown). Unknown is never promoted to true. A capability field that is
+ * missing is unknown (null), never ignored: an appendage is allocation-grade only when all three are explicit booleans.
+ *
+ * Unknown evidence versus malformed data (owner ruling E2A-C3):
+ *   incomplete but valid evidence  -> `partial` / `unresolved` plus structured `issues`
+ *   malformed injected-adapter output -> `AnatomyInputError` (documented codes below); never normalised into a success
+ *   caller-owned data              -> never mutated and never frozen: adapter output is validated, then deep-COPIED, and only the
+ *                                     newly owned snapshot is frozen.
  *
  * Provisional input shape for `speciesProfile.anatomy` (E2A test contract only; NOT an approved schema -- E2B decides the schema):
  *   { appendages: [{ id:string, kind:string, capabilities?:{canHold?,canWield?,canManipulate?}, functionalState?:string,
@@ -65,6 +72,89 @@ function deepFreeze(value) {
 }
 
 const issue = (code, severity, message, details = {}) => ({ code, severity, message, details });
+
+// ---- injected droid-adapter boundary (E2A-C3) ----------------------------------------------------------------------------------
+const NONEMPTY = (v) => typeof v === 'string' && v.trim().length > 0;
+const ISSUE_SEVERITIES = ['info', 'warning', 'blocking'];
+
+/** Independent deep copy of plain data (primitives, arrays, plain objects). Anything else is malformed adapter output. */
+function clonePlain(value, where, seen = new WeakSet()) {
+  if (value === null || ['string', 'number', 'boolean'].includes(typeof value)) return value;
+  if (value === undefined) return undefined;
+  if (typeof value !== 'object') throw new AnatomyInputError('INVALID_ADAPTER_RESULT', `${where} contains a non-data value (${typeof value})`);
+  if (seen.has(value)) throw new AnatomyInputError('INVALID_ADAPTER_RESULT', `${where} contains a circular reference`);
+  const proto = Object.getPrototypeOf(value);
+  if (!Array.isArray(value) && proto !== Object.prototype && proto !== null) throw new AnatomyInputError('INVALID_ADAPTER_RESULT', `${where} contains a non-plain object`);
+  seen.add(value);
+  let out;
+  if (Array.isArray(value)) out = value.map((v, i) => clonePlain(v, `${where}[${i}]`, seen));
+  else { out = {}; for (const key of Object.keys(value)) { const v = clonePlain(value[key], `${where}.${key}`, seen); if (v !== undefined) out[key] = v; } }
+  seen.delete(value);
+  return out;
+}
+
+function readAdapterIdentity(raw, where) {
+  if (!isPlainObject(raw)) throw new AnatomyInputError('INVALID_ADAPTER_IDENTITY', `${where}.identity must be an object distinguishing slot, instance and part`);
+  const out = {};
+  for (const field of ['slot', 'instance', 'part']) {
+    const v = raw[field];
+    if (v === undefined || v === null) { out[field] = null; continue; }
+    if (!NONEMPTY(v)) throw new AnatomyInputError('INVALID_ADAPTER_IDENTITY', `${where}.identity.${field} must be null or a non-empty string`);
+    out[field] = v;
+  }
+  return out;
+}
+
+/** Validate one adapter appendage and return an independent, normalised copy (missing capabilities -> null). */
+function readAdapterAppendage(raw, index, seenIds) {
+  const where = `adapter.appendages[${index}]`;
+  if (!isPlainObject(raw)) throw new AnatomyInputError('INVALID_ADAPTER_APPENDAGE', `${where} must be an object`);
+  for (const field of ['id', 'kind', 'source']) {
+    if (!NONEMPTY(raw[field])) throw new AnatomyInputError('INVALID_ADAPTER_APPENDAGE', `${where}.${field} must be a non-empty string`);
+  }
+  if (seenIds.has(raw.id)) throw new AnatomyInputError('DUPLICATE_APPENDAGE_ID', `${where}.id "${raw.id}" is duplicated; duplicates must not create several allocatable manipulators`);
+  seenIds.add(raw.id);
+  const identity = readAdapterIdentity(raw.identity, where);
+  if (!isPlainObject(raw.capabilities)) throw new AnatomyInputError('INVALID_ADAPTER_APPENDAGE', `${where}.capabilities must be an object (individual capabilities may be omitted = unknown)`);
+  const capabilities = { canHold: triState(raw.capabilities.canHold, where, 'canHold'), canWield: triState(raw.capabilities.canWield, where, 'canWield'), canManipulate: triState(raw.capabilities.canManipulate, where, 'canManipulate') };
+  if (!FUNCTIONAL_STATES.includes(raw.functionalState)) throw new AnatomyInputError('INVALID_FUNCTIONAL_STATE', `${where}.functionalState must be one of ${FUNCTIONAL_STATES.join(', ')} (an adapter that cannot establish the state must supply "unresolved")`);
+  if (raw.functionalStateSource !== undefined && !NONEMPTY(raw.functionalStateSource)) throw new AnatomyInputError('INVALID_ADAPTER_APPENDAGE', `${where}.functionalStateSource must be a non-empty string when supplied`);
+  if (raw.restrictions !== undefined && !(Array.isArray(raw.restrictions) && raw.restrictions.every((r) => typeof r === 'string'))) throw new AnatomyInputError('INVALID_ADAPTER_APPENDAGE', `${where}.restrictions must be an array of strings`);
+  const copy = clonePlain(raw, where);
+  return { ...copy, identity, capabilities, functionalState: raw.functionalState, functionalStateSource: raw.functionalStateSource ?? 'adapter' };
+}
+
+/**
+ * Validate an injected droid adapter's result and return an independent copy:
+ * { appendages:[], unresolvedRecords:[], issues:[] } -- all three must be arrays (empty is valid). Malformed output throws; it is never
+ * converted into empty arrays, and errors thrown by the adapter itself propagate unchanged.
+ */
+function readAdapterResult(raw) {
+  if (!isPlainObject(raw)) throw new AnatomyInputError('INVALID_ADAPTER_RESULT', 'the droid adapter must return { appendages: [], unresolvedRecords: [], issues: [] }');
+  for (const field of ['appendages', 'unresolvedRecords', 'issues']) {
+    if (!Array.isArray(raw[field])) throw new AnatomyInputError('INVALID_ADAPTER_RESULT', `adapter result.${field} must be an array`);
+  }
+  const seenIds = new Set();
+  const appendages = raw.appendages.map((a, i) => readAdapterAppendage(a, i, seenIds));
+  const unresolvedRecords = raw.unresolvedRecords.map((r, i) => {
+    if (!isPlainObject(r)) throw new AnatomyInputError('INVALID_ADAPTER_RESULT', `adapter unresolvedRecords[${i}] must be an object`);
+    return clonePlain(r, `adapter.unresolvedRecords[${i}]`);
+  });
+  const issues = raw.issues.map((it, i) => {
+    const where = `adapter.issues[${i}]`;
+    if (!isPlainObject(it) || !NONEMPTY(it.code) || !ISSUE_SEVERITIES.includes(it.severity) || typeof it.message !== 'string') throw new AnatomyInputError('INVALID_ADAPTER_RESULT', `${where} must be { code:string, severity:${ISSUE_SEVERITIES.join('|')}, message:string, details? }`);
+    return { code: it.code, severity: it.severity, message: it.message, details: clonePlain(it.details ?? {}, `${where}.details`) };
+  });
+  return { appendages, unresolvedRecords, issues };
+}
+
+/** Diagnostics for adapter appendages whose physical identity is incomplete (they can never make the anatomy `resolved`). */
+function identityIssues(appendages, issues) {
+  for (const a of appendages) {
+    const missing = ['slot', 'instance'].filter((f) => !a.identity?.[f]);
+    if (missing.length) issues.push(issue('appendage-identity-incomplete', 'warning', `Appendage "${a.id}" has no established ${missing.join(' / ')} identity.`, { id: a.id, missing }));
+  }
+}
 
 function validateInput(input) {
   if (!isPlainObject(input)) throw new AnatomyInputError('INVALID_INPUT', 'input must be an object');
@@ -167,7 +257,8 @@ const result = (r) => deepFreeze({ anatomyKind: r.anatomyKind, status: r.status,
  *   adapter (the droid refactor is pending); other keys are forwarded to the adapter (getDefinition / catalogEntryFor for tests).
  * @returns {{anatomyKind:string, status:'resolved'|'partial'|'unresolved', source:string, defaultApplied:boolean, appendages:object[], issues:object[]}}
  * @throws {AnatomyInputError} for input that violates the API (documented codes: INVALID_INPUT, INVALID_ACTOR_TYPE,
- *   INVALID_SPECIES_PROFILE, INVALID_INSTALLED_COMPONENTS, INVALID_FUNCTIONAL_OVERRIDES, INVALID_ANATOMY, INVALID_CAPABILITY)
+ *   INVALID_SPECIES_PROFILE, INVALID_INSTALLED_COMPONENTS, INVALID_FUNCTIONAL_OVERRIDES, INVALID_ANATOMY, INVALID_CAPABILITY;
+ *   injected droid adapter: INVALID_ADAPTER_RESULT, INVALID_ADAPTER_APPENDAGE, INVALID_ADAPTER_IDENTITY, INVALID_FUNCTIONAL_STATE, DUPLICATE_APPENDAGE_ID)
  */
 export function resolveEffectiveAnatomy(input) {
   validateInput(input);
@@ -186,11 +277,12 @@ export function resolveEffectiveAnatomy(input) {
     }
     // The droid adapter is isolated and replaceable (droid refactor pending): a future adapter can be injected via deps.projectInstalledComponents.
     const project = typeof input.deps?.projectInstalledComponents === 'function' ? input.deps.projectInstalledComponents : projectDroidAppendages;
-    const raw = project(input.installedComponents, input.deps ?? {}) ?? {};
-    const projected = { appendages: Array.isArray(raw.appendages) ? raw.appendages : [], unresolvedRecords: Array.isArray(raw.unresolvedRecords) ? raw.unresolvedRecords : [], issues: Array.isArray(raw.issues) ? raw.issues : [] };
+    // Adapter output is validated and deep-copied before anything else (E2A-C3); the caller's objects are never touched or frozen.
+    const projected = readAdapterResult(project(input.installedComponents, input.deps ?? {}));
     issues.push(...projected.issues);
     const appendages = applyOverrides(projected.appendages, overrides, issues);
     capabilityIssues(appendages, issues);
+    identityIssues(appendages, issues);
     if (!appendages.length && !projected.unresolvedRecords.length) issues.push(issue('no-appendage-evidence', 'blocking', 'No appendage component is recorded in the installed-component evidence; no manipulator is granted (a droid is not given default biological arms).'));
     // `resolved` is reserved for evidence sufficient for future allocation: every appendage has a confirmed slot AND installed-instance
     // identity, all three capabilities are booleans, the functional state is known, and no blocking issue remains. Unresolved records
@@ -198,7 +290,7 @@ export function resolveEffectiveAnatomy(input) {
     // they show installed, enabled hardware that is not stated to be unable to manipulate.
     const blocking = issues.some((i) => i.severity === 'blocking');
     const unknownFacts = issues.some((i) => i.code === 'capability-unknown' || i.code === 'functional-state-unresolved');
-    const allocationGrade = appendages.length > 0 && appendages.every((a) => a.identity?.slot && a.identity?.instance);
+    const allocationGrade = appendages.length > 0 && appendages.every((a) => a.identity?.slot && a.identity?.instance && ['canHold', 'canWield', 'canManipulate'].every((c) => typeof a.capabilities?.[c] === 'boolean') && FUNCTIONAL_STATES.includes(a.functionalState) && a.functionalState !== 'unresolved');
     const usableRecordFacts = projected.unresolvedRecords.some((r) => (r.candidateInstances?.length ? r.candidateInstances.some((c) => c.functionalState === 'functional') : r.componentState === 'functional') && r.capabilities?.canManipulate !== false);
     let status;
     if (!appendages.length) status = usableRecordFacts ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.UNRESOLVED;

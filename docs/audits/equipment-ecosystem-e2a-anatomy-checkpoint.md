@@ -15,6 +15,32 @@ Reviewer findings accepted: (C1) an embedded Item **document id** was treated as
 - **Upstream diagnostics preserved**: the component resolver's `conflicts` (activation-only by construction) become `component-source-conflict` info issues (`activationOnly:true`, `affectsFunctionalState:false`) and never disable a passive appendage; its `warnings` become `component-resolution-warning`; disagreement between sources about installed / enabled becomes a `source-installed-enabled-disagreement` warning, with the most restrictive evidence reported per candidate.
 - No file outside the six authorized files changed; no droid system was touched.
 
+## 0.1 Final adapter contract hardening (E2A-C3) — supersedes the injected-adapter statements above
+
+Three reproduced defects in the universal interface (not in the legacy droid path) were corrected; starting HEAD `7bef36c69659db08d69b85f47119f5ee9793802d`.
+
+| Defect (reproduced before the fix) | Correction |
+|---|---|
+| An injected appendage supplying only `canHold: true`, with slot and instance, resolved with no issue (capability fields that were absent were never examined). | Every adapter appendage is normalised to all three capabilities: **missing = `null` (unknown)**, explicit `null` = unknown, a non-boolean = `INVALID_CAPABILITY`. `capability-unknown` names the missing fields. `resolved` requires slot **and** instance identity, three explicit booleans, and a known (not `unresolved`) valid functional state. |
+| `functionalState: 'bogus'` from an adapter resolved. | Adapter appendages must carry a valid `functionalState`; invalid or **missing** raises `INVALID_FUNCTIONAL_STATE`. An adapter that cannot establish the state must supply `unresolved` (valid, produces incomplete anatomy). |
+| Freezing the result froze the objects the adapter returned. | Adapter output is validated and **deep-copied before anything else**; overrides, diagnostics and completeness run on the copies; only the newly owned snapshot is frozen. Caller objects keep their original frozen / unfrozen state and values; the snapshot shares no mutable object with them. |
+
+### Final injected-adapter contract (`deps.projectInstalledComponents(installedComponents, deps)`)
+Must return `{ appendages: [], unresolvedRecords: [], issues: [] }` — all three arrays (empty is valid and yields `unresolved`). Each appendage: non-empty string `id`, `kind`, `source`; `identity` object with `slot`, `instance`, `part` (each `null` or a non-empty string; a missing key is `null`); `capabilities` object (individual fields may be omitted = unknown); `functionalState` ∈ functional | disabled | missing | unresolved. Nested data must be plain (no functions, class instances or cycles). Issues: `{code:string, severity: info|warning|blocking, message:string, details?}`. Appendage ids must be unique.
+
+### Unknown evidence versus malformed data
+| Situation | Outcome |
+|---|---|
+| Valid but incomplete evidence (null / omitted capability, `unresolved` state, `null` slot or instance identity, empty arrays, legacy droid records) | `partial` or `unresolved` with structured `issues` (`capability-unknown`, `functional-state-unresolved`, `appendage-identity-incomplete`, `no-appendage-evidence`, …) |
+| Malformed adapter output | `AnatomyInputError`; never converted to empty arrays or a success |
+| Exception thrown by the adapter | propagates unchanged; never reinterpreted as absent anatomy |
+
+### Documented `AnatomyInputError` codes
+`INVALID_INPUT`, `INVALID_ACTOR_TYPE`, `INVALID_SPECIES_PROFILE`, `INVALID_INSTALLED_COMPONENTS`, `INVALID_FUNCTIONAL_OVERRIDES`, `INVALID_ANATOMY` (species `anatomy`), `INVALID_CAPABILITY` (non-boolean capability, species or adapter), and the adapter codes: `INVALID_ADAPTER_RESULT` (result shape, non-array fields, bad records / issues, non-plain or circular data), `INVALID_ADAPTER_APPENDAGE` (id / kind / source / capabilities / restrictions), `INVALID_ADAPTER_IDENTITY`, `INVALID_FUNCTIONAL_STATE`, `DUPLICATE_APPENDAGE_ID`.
+
+### Remaining limitations
+Offline only, not Foundry-tested. The legacy projection module needed no change (its output already satisfies the contract). The droid adapter interface is provisional until the droid refactor; DR-001…DR-010 remain `DEFERRED_DROID_REFACTOR`. Species `anatomy` input is still not an approved schema (E2B).
+
 ## 1. Starting point
 
 Starting HEAD: `7cbfd5d0ecc1d50c7f4835dd6329b33d6db2c749` (matched the expected checkpoint; `origin/audit/equipment-ecosystem-e0-e1` was identical). `main` was not synchronized (still `4392c90` upstream); no rebase, merge or cherry-pick.
@@ -106,14 +132,14 @@ Run with `node tests/<file>` from the repository root (Node v22.22.0, offline, i
 
 | File | Result |
 |---|---|
-| `tests/equipment-e2a-anatomy-resolver.test.mjs` | exit 0 — 15 checks passed |
+| `tests/equipment-e2a-anatomy-resolver.test.mjs` | exit 0 — 21 checks passed (15 original + 6 E2A-C3 groups covering 15 required cases) |
 | `tests/equipment-e2a-droid-appendage-projection.test.mjs` | exit 0 — 14 checks passed |
 
-They use the real public exports (and the real `applySpeciesVariantProfile`, `resolveInstalledDroidComponents`, canonical droid definitions and pack data). Correction-pass coverage: (1) two embedded Item documents without established installation identity; (2) one Item with no verified slot; (3) an otherwise complete synthetic catalog with unresolved physical identity (stays `partial`, zero appendages); (4) missing biological species profile (default supplied, `partial`); (5) conflicting installed-component evidence (activation conflict, installed/enabled disagreement, upstream warnings); (6) inactive-but-enabled passive appendage; (7) deterministic output and frozen inputs. Retained: biological default and snapshot isolation, real Codru-Ji / Ryn guards, overrides, tool / probe, non-appendage parts, replaceable adapter (now also proving `resolved` requires slot **and** instance identity), malformed input, static no-mutation guard, DR-010 observation.
+They use the real public exports (and the real `applySpeciesVariantProfile`, `resolveInstalledDroidComponents`, canonical droid definitions and pack data). Correction-pass coverage: (1) two embedded Item documents without established installation identity; (2) one Item with no verified slot; (3) an otherwise complete synthetic catalog with unresolved physical identity (stays `partial`, zero appendages); (4) missing biological species profile (default supplied, `partial`); (5) conflicting installed-component evidence (activation conflict, installed/enabled disagreement, upstream warnings); (6) inactive-but-enabled passive appendage; (7) deterministic output and frozen inputs. E2A-C3 additions (anatomy resolver test): only-`canHold` stays `partial`; missing and explicit-null capabilities are `null`; invalid capability type, invalid functional state and missing functional state raise `AnatomyInputError`; valid `unresolved` state is incomplete; malformed adapter results raise; three empty arrays are a valid `unresolved` result; incomplete slot / instance identity cannot be `resolved`; duplicate ids rejected; caller-owned objects stay unfrozen when unfrozen, unchanged when frozen, and share no mutable identity with the snapshot; determinism on the adapter path; adapter exceptions propagate. Retained: biological default and snapshot isolation, real Codru-Ji / Ryn guards, overrides, tool / probe, non-appendage parts, replaceable adapter (now also proving `resolved` requires slot **and** instance identity), malformed input, static no-mutation guard, DR-010 observation.
 
 ## 11. Existing baseline parity
 
-The 31-file E0 baseline plus the two E2A files were re-run after the correction: **33 files, 33 exit 0, 0 failures** (commands: `node tests/<file>` for each). The directive's named regression tests (`species-variant-atomic-profile`, `species-snapshot-consumers`, `species-profile-invariants`, `droid-installed-component-resolver`, `droid-installation-drift-repair-intent-boundary`, `droid-item-classification`, `weapon-phase-5d-i-d-b2-wielding-size`, `weapon-readiness-production-path`) are all included and pass. `droid-mode-adapter.test.mjs` still exits 0 with no output (unchanged limitation). Remaining `tests/` files were not run, as in E0. Not Foundry-tested.
+The 31-file E0 baseline plus the two E2A files were re-run after the correction and again after E2A-C3: **33 files, 33 exit 0, 0 failures** (commands: `node tests/<file>` for each). The directive's named regression tests (`species-variant-atomic-profile`, `species-snapshot-consumers`, `species-profile-invariants`, `droid-installed-component-resolver`, `droid-installation-drift-repair-intent-boundary`, `droid-item-classification`, `weapon-phase-5d-i-d-b2-wielding-size`, `weapon-readiness-production-path`) are all included and pass. `droid-mode-adapter.test.mjs` still exits 0 with no output (unchanged limitation). Remaining `tests/` files were not run, as in E0. Not Foundry-tested.
 
 ## 12. Deferred Droid Refactor Dependencies
 
