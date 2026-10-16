@@ -1,0 +1,607 @@
+{
+  "schema": "swse.vehicle.rebellion-era.phase2b.cp1.mount-backlog.v1",
+  "sourceBook": "Rebellion Era Campaign Guide",
+  "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+  "counts": {
+    "publicationShipClaims": 35,
+    "primaryPdfCloseReads": 10,
+    "primaryPdfCloseReadsOutstanding": 25,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 35,
+    "attackGroupRowsReviewed": 20,
+    "sourceConflictRecordCount": 1
+  },
+  "records": [
+    {
+      "sourceEntryKey": "re-g1-m4-c-dunelizard-fighter",
+      "printedName": "G1-M4-C Dunelizard Fighter",
+      "printedPage": 63,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "re-ixiyen-class-fast-attack-craft",
+      "printedName": "Ixiyen-class Fast Attack Craft",
+      "printedPage": 64,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "re-m12-l-kimogila-heavy-fighter",
+      "printedName": "M12-L Kimogila Heavy Fighter",
+      "printedPage": 64,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 3,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "proton torpedoes",
+          "station": "pilot or gunner",
+          "attackBonus": 3,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "re-m22-t-krayt-gunship",
+      "printedName": "M22-T Krayt Gunship",
+      "printedPage": 65,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 8,
+          "physicalCount": "Narrative explicitly says four laser cannons under pilot control",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "ion cannons",
+          "station": "gunner",
+          "attackBonus": 7,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "pilot or gunner",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification.",
+        "NARRATIVE_VS_STATBLOCK_PASSENGERS: {'kind': 'NARRATIVE_VS_STATBLOCK_PASSENGERS', 'field': 'passengers', 'printedStatblock': 'none', 'printedNarrative': 'room for two passengers (or prisoners)', 'sourcePage': 65}"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-pinook-fighter",
+      "printedName": "Pinook Fighter",
+      "printedPage": 66,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "light laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "re-razor-class-fighter",
+      "printedName": "Razor-class Fighter",
+      "printedPage": 66,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "ion cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 5,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "re-mobquet-medium-transport",
+      "printedName": "Mobquet Medium Transport",
+      "printedPage": 68,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannon",
+          "station": "gunner",
+          "attackBonus": 4,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "medium concussion missile",
+          "station": "gunner",
+          "attackBonus": 4,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "re-corellian-yv-545",
+      "printedName": "Corellian YV-545",
+      "printedPage": 69,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double lasers",
+          "station": "gunner",
+          "attackBonus": 3,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "re-ykl-37r-nova-courier",
+      "printedName": "YKL-37R Nova Courier",
+      "printedPage": 69,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "2 gunners",
+          "attackBonus": 2,
+          "physicalCount": "2 turrets of twin laser cannons, narratively explicit",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "copilot and 2 gunners",
+          "attackBonus": 2,
+          "physicalCount": "3 small concussion missile launchers, narratively explicit",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "re-corellian-engineering-corporation-ym-2800-limpet-ship",
+      "printedName": "Corellian Engineering Corporation YM-2800 Limpet Ship",
+      "printedPage": 114,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "plasma beam cutter",
+          "station": "pilot",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "re-hoersch-kessel-t-wing-interceptor",
+      "printedName": "Hoersch-Kessel T-Wing Interceptor",
+      "printedPage": 114,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-incom-x4-gunship",
+      "printedName": "Incom X4 Gunship",
+      "printedPage": 115,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-assassin-class-corvette",
+      "printedName": "Assassin-class Corvette",
+      "printedPage": 130,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-assault-gunboat",
+      "printedName": "Assault Gunboat",
+      "printedPage": 131,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-imperial-cargo-ship",
+      "printedName": "Imperial Cargo Ship",
+      "printedPage": 132,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-imperial-ii-class-frigate",
+      "printedName": "Imperial II-class Frigate",
+      "printedPage": 133,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-missile-boat",
+      "printedName": "Missile Boat",
+      "printedPage": 134,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-royal-guard-starfighter",
+      "printedName": "Royal Guard Starfighter",
+      "printedPage": 134,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-tie-aggressor",
+      "printedName": "TIE Aggressor",
+      "printedPage": 135,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-tie-experimental-m2",
+      "printedName": "TIE Experimental M2",
+      "printedPage": 136,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-tie-experimental-m3",
+      "printedName": "TIE Experimental M3",
+      "printedPage": 136,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-tie-oppressor",
+      "printedName": "TIE Oppressor",
+      "printedPage": 136,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-tie-phantom",
+      "printedName": "TIE Phantom",
+      "printedPage": 137,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-tie-scout",
+      "printedName": "TIE Scout",
+      "printedPage": 138,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-tie-shuttle",
+      "printedName": "TIE Shuttle",
+      "printedPage": 138,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-vt-49-decimator",
+      "printedName": "VT-49 Decimator",
+      "printedPage": 139,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-ye-4-gunship",
+      "printedName": "YE-4 Gunship",
+      "printedPage": 139,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-aeg-77-vigo-gunship",
+      "printedName": "AEG-77 \"Vigo\" Gunship",
+      "printedPage": 146,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-kihraxz-light-fighter",
+      "printedName": "Kihraxz Light Fighter",
+      "printedPage": 146,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-supa-fighter",
+      "printedName": "Supa Fighter",
+      "printedPage": 147,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-vaksai",
+      "printedName": "Vaksai",
+      "printedPage": 147,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-rihkxyrk-assault-fighter",
+      "printedName": "Rihkxyrk Assault Fighter",
+      "printedPage": 148,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-keldabe-class-battleship",
+      "printedName": "Keldabe-class Battleship",
+      "printedPage": 154,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-ird-a-starfighter",
+      "printedName": "IRD-A Starfighter",
+      "printedPage": 156,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    },
+    {
+      "sourceEntryKey": "re-ird-starfighter",
+      "printedName": "IRD Starfighter",
+      "printedPage": 156,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next tranche source close-read"
+      ]
+    }
+  ]
+}

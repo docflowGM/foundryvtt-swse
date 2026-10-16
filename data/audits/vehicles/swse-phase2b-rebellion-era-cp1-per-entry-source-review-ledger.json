@@ -1,0 +1,3034 @@
+{
+  "schema": "swse.vehicle.rebellion-era.phase2b.cp1.per-entry-source-review.v1",
+  "sourceBook": "Rebellion Era Campaign Guide",
+  "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+  "phase1ProvenanceBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+  "branchAtInitialization": "audit/vehicle-phase-0-1-canonical-foundation",
+  "branchHeadAtInitialization": "1eeeaeb16ac307116ce4be83ea8e67605d324cf1",
+  "countPolicy": "35 publication-specific Phase1 ships retained; only first 10 PDF close reads completed; physical mounts/arcs unverified; no production hydration.",
+  "stateSemantics": [
+    "PDF_VERIFIED",
+    "SOURCE_SILENT_CONFIRMED",
+    "SOURCE_CONFLICT_PRESERVED",
+    "SCHEMA_INCOMPATIBLE",
+    "NOT_REVIEWED"
+  ],
+  "fieldGroups": [
+    "printedTypeLine",
+    "challenge",
+    "initiativeSenses",
+    "defenses",
+    "durability",
+    "speed",
+    "rangedAttack",
+    "meleeAttack",
+    "fightingSpace",
+    "baseAttack",
+    "attackOptions",
+    "abilities",
+    "skills",
+    "crew",
+    "capacity",
+    "payload",
+    "hyperdrive",
+    "cost",
+    "weaponAttackProfile"
+  ],
+  "counts": {
+    "publicationShipClaims": 35,
+    "primaryPdfCloseReads": 10,
+    "primaryPdfCloseReadsOutstanding": 25,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 35,
+    "attackGroupRowsReviewed": 20,
+    "sourceConflictRecordCount": 1
+  },
+  "checkpoint1": {
+    "printedPages": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      113,
+      114
+    ],
+    "adjacentNarrativePages": [
+      63,
+      67,
+      68,
+      113
+    ],
+    "sourceEntriesReviewed": [
+      "re-g1-m4-c-dunelizard-fighter",
+      "re-ixiyen-class-fast-attack-craft",
+      "re-m12-l-kimogila-heavy-fighter",
+      "re-m22-t-krayt-gunship",
+      "re-pinook-fighter",
+      "re-razor-class-fighter",
+      "re-mobquet-medium-transport",
+      "re-corellian-yv-545",
+      "re-ykl-37r-nova-courier",
+      "re-corellian-engineering-corporation-ym-2800-limpet-ship"
+    ]
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "re-g1-m4-c-dunelizard-fighter",
+      "printedName": "G1-M4-C Dunelizard Fighter",
+      "printedStatblockStartPage": 63,
+      "phase1SectionStartPage": 63,
+      "phase1PdfPhysicalPage": 64,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        63
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 8,
+        "initiative": 4,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 17,
+          "flatFootedReflex": 13,
+          "fortitude": 27,
+          "armorBonus": 8,
+          "shieldRating": 25
+        },
+        "durability": {
+          "hitPoints": 140,
+          "damageReduction": 10,
+          "threshold": 47
+        },
+        "movement": {
+          "characterScaleFlySquares": 15,
+          "starshipScaleFlySquares": 4,
+          "maximumVelocityKmH": 950
+        },
+        "combat": {
+          "ranged": "double medium laser cannons +4",
+          "baseAttackBonus": 0,
+          "grappleBonus": 32,
+          "attackOptions": [
+            "autofire (double medium laser cannons)"
+          ]
+        },
+        "abilities": {
+          "strength": 44,
+          "dexterity": 18,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": 4,
+          "mechanics": "+5 (+13 astromech)",
+          "perception": "+5 (+3 astromech)",
+          "pilot": 4,
+          "useComputer": "+5 (+13 astromech)"
+        },
+        "crew": "2 (normal) plus optional astromech droid",
+        "passengers": "1",
+        "cargo": "110 kg",
+        "consumables": "2 weeks",
+        "carriedCraft": "none",
+        "payload": null,
+        "hyperdrive": "x2, limited navicomputer (3-jump memory) or astromech (10-jump memory)",
+        "economics": "Restricted; 115,000 credits (55,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "sourcePage": 63
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            63
+          ],
+          "finding": "Dunelizard gains +1 equipment bonus to any Mechanics check to repair it."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            63
+          ],
+          "finding": "Stock two-person cockpit; replacing copilot seat with an astromech port is an optional modification, not stock configuration."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            63
+          ],
+          "finding": "3 unused emplacement points; weapons can be swapped for ion, missile or torpedo launchers, which are not stock attacks."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            63
+          ],
+          "finding": "Conditional astromech skill figures and 10-jump memory are alternatives to the regular crew skills and 3-jump navicomputer."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          63
+        ],
+        "statblockLocation": "printed p.63",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-ixiyen-class-fast-attack-craft",
+      "printedName": "Ixiyen-class Fast Attack Craft",
+      "printedStatblockStartPage": 64,
+      "phase1SectionStartPage": 63,
+      "phase1PdfPhysicalPage": 65,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        64
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 8,
+        "initiative": 3,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 13,
+          "fortitude": 27,
+          "armorBonus": 8,
+          "shieldRating": 10
+        },
+        "durability": {
+          "hitPoints": 120,
+          "damageReduction": 10,
+          "threshold": 47
+        },
+        "movement": {
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 4,
+          "maximumVelocityKmH": 1050
+        },
+        "combat": {
+          "ranged": "double medium laser cannons +6 or medium concussion missiles +6",
+          "baseAttackBonus": 0,
+          "grappleBonus": 32,
+          "attackOptions": [
+            "autofire (double medium laser cannons)"
+          ]
+        },
+        "abilities": {
+          "strength": 44,
+          "dexterity": 16,
+          "constitution": "—",
+          "intelligence": 18
+        },
+        "skills": {
+          "initiative": 3,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": 3,
+          "useComputer": 5
+        },
+        "crew": "1 (normal)",
+        "passengers": "none",
+        "cargo": "440 kg",
+        "consumables": "4 weeks",
+        "carriedCraft": "none",
+        "payload": "5 medium concussion missiles",
+        "hyperdrive": "x1, navicomputer",
+        "economics": "Restricted; 180,000 credits (40,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 1,
+          "sourcePage": 64
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "8d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 64
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            64
+          ],
+          "finding": "Narrative explicitly states the fighter lacks droid and gunner slots; stock pilot must choose laser fire or missile attacks."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            64
+          ],
+          "finding": "Limited payload and staying power; do not infer additional ordnance."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          64
+        ],
+        "statblockLocation": "printed p.64",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-m12-l-kimogila-heavy-fighter",
+      "printedName": "M12-L Kimogila Heavy Fighter",
+      "printedStatblockStartPage": 64,
+      "phase1SectionStartPage": 64,
+      "phase1PdfPhysicalPage": 65,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        64,
+        65
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 10,
+        "initiative": 4,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 17,
+          "flatFootedReflex": 13,
+          "fortitude": 28,
+          "armorBonus": 8,
+          "shieldRating": 15
+        },
+        "durability": {
+          "hitPoints": 160,
+          "damageReduction": 10,
+          "threshold": 48
+        },
+        "movement": {
+          "characterScaleFlySquares": 14,
+          "starshipScaleFlySquares": 4,
+          "maximumVelocityKmH": 850
+        },
+        "combat": {
+          "ranged": "heavy laser cannons +5 and medium concussion missiles +3 or heavy laser cannons +5 and proton torpedoes +3 or medium concussion missiles +3 and proton torpedoes +3",
+          "baseAttackBonus": 0,
+          "grappleBonus": 33,
+          "attackOptions": [
+            "autofire (heavy laser cannons)",
+            "fire-link (heavy laser cannons)"
+          ]
+        },
+        "abilities": {
+          "strength": 46,
+          "dexterity": 18,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 4,
+          "mechanics": "+5 (+13 astromech)",
+          "perception": "+5 (+3 astromech)",
+          "pilot": 4,
+          "useComputer": "+5 (+13 astromech)"
+        },
+        "crew": "1 plus astromech droid (normal)",
+        "passengers": "none",
+        "cargo": "110 kg",
+        "consumables": "2 weeks",
+        "carriedCraft": "none",
+        "payload": "12 medium concussion missiles; proton torpedo capacity not quantified",
+        "hyperdrive": "x2, 10-jump memory (astromech droid)",
+        "economics": "Restricted; 175,000 credits (125,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "6d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 0,
+          "sourcePage": 65
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 3,
+          "damage": "8d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 65
+        },
+        {
+          "weaponLabel": "proton torpedoes",
+          "station": "pilot or gunner",
+          "attackBonus": 3,
+          "damage": "9d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "pilotAttackBonus": 5,
+          "sourcePage": 65
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            64
+          ],
+          "finding": "Narrative specifies four linked lasers; weapon attack row uses heavy laser cannons and fire-link. Keep the narrative hardware description distinct from attack-group count."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            64
+          ],
+          "finding": "Proton torpedoes can be controlled by pilot or gunner; conditional +5 pilot attack is in the detailed row."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            65
+          ],
+          "finding": "12 medium concussion missiles printed, but no numbered proton torpedo payload is printed."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            64
+          ],
+          "finding": "Astromech skill numbers are conditional, not always-on crew statistics."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          64,
+          65
+        ],
+        "statblockLocation": "printed p.64",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-m22-t-krayt-gunship",
+      "printedName": "M22-T Krayt Gunship",
+      "printedStatblockStartPage": 65,
+      "phase1SectionStartPage": 65,
+      "phase1PdfPhysicalPage": 66,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        65
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "issue": "NARRATIVE_VS_STATBLOCK_PASSENGERS: {'kind': 'NARRATIVE_VS_STATBLOCK_PASSENGERS', 'field': 'passengers', 'printedStatblock': 'none', 'printedNarrative': 'room for two passengers (or prisoners)', 'sourcePage': 65}"
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 12,
+        "initiative": 4,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 13,
+          "fortitude": 28,
+          "armorBonus": 8,
+          "shieldRating": 20
+        },
+        "durability": {
+          "hitPoints": 160,
+          "damageReduction": 10,
+          "threshold": 48
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": 800
+        },
+        "combat": {
+          "ranged": "heavy laser cannons +8 and ion cannons +7 or heavy laser cannons +8 and medium concussion missiles +6 or ion cannons +7 and medium concussion missiles +8",
+          "baseAttackBonus": 2,
+          "grappleBonus": 35,
+          "attackOptions": [
+            "autofire (heavy laser cannons, ion cannons)"
+          ]
+        },
+        "abilities": {
+          "strength": 46,
+          "dexterity": 16,
+          "constitution": "—",
+          "intelligence": 18
+        },
+        "skills": {
+          "initiative": 4,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 4,
+          "useComputer": 6
+        },
+        "crew": "2 (skilled)",
+        "passengers": "none",
+        "cargo": "440 kg",
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "payload": "16 concussion missiles",
+        "hyperdrive": "x1, navicomputer",
+        "economics": "Military; 350,000 credits (210,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 8,
+          "damage": "5d10x2",
+          "hardwareCount": "Narrative explicitly says four laser cannons under pilot control",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 3,
+          "sourcePage": 65
+        },
+        {
+          "weaponLabel": "ion cannons",
+          "station": "gunner",
+          "attackBonus": 7,
+          "damage": "4d10x2 ion",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 2,
+          "sourcePage": 65
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot or gunner",
+          "attackBonus": 6,
+          "damage": "8d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "pilotAttackBonus": 8,
+          "sourcePage": 65
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            65
+          ],
+          "finding": "Gunner turret can be armed with lasers or ion cannons; the printed stock combat entry specifies ion cannons, not an extra gunner-laser attack group."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            65
+          ],
+          "finding": "Dedicated targeting computer grants +1 equipment bonus on gunner turret weapons only, excluding missiles."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            65
+          ],
+          "finding": "Gunship has room for two passengers or prisoners in narrative; printed statblock says Passengers none. Preserve the mismatch."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            65
+          ],
+          "finding": "Cover panels are designed for cosmetic customization, not stock combat features."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          65
+        ],
+        "statblockLocation": "printed p.65",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": [
+        {
+          "kind": "NARRATIVE_VS_STATBLOCK_PASSENGERS",
+          "field": "passengers",
+          "printedStatblock": "none",
+          "printedNarrative": "room for two passengers (or prisoners)",
+          "sourcePage": 65
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "re-pinook-fighter",
+      "printedName": "Pinook Fighter",
+      "printedStatblockStartPage": 66,
+      "phase1SectionStartPage": 66,
+      "phase1PdfPhysicalPage": 67,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        66
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Huge starfighter",
+        "cl": 10,
+        "initiative": 4,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 12,
+          "flatFootedReflex": 11,
+          "fortitude": 24,
+          "armorBonus": 3,
+          "shieldRating": 10
+        },
+        "durability": {
+          "hitPoints": 75,
+          "damageReduction": 10,
+          "threshold": 34
+        },
+        "movement": {
+          "characterScaleFlySquares": 9,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": 600
+        },
+        "combat": {
+          "ranged": "light laser cannons +4",
+          "baseAttackBonus": 0,
+          "grappleBonus": 24,
+          "attackOptions": [
+            "autofire (light laser cannons)"
+          ]
+        },
+        "abilities": {
+          "strength": 38,
+          "dexterity": 12,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": 4,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": 4,
+          "useComputer": 5
+        },
+        "crew": "1 (normal)",
+        "passengers": "none",
+        "cargo": "25 kg",
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "payload": null,
+        "hyperdrive": "x1.5, navicomputer",
+        "economics": "Military; 50,000 credits (25,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "light laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "3d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "sourcePage": 66
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            66
+          ],
+          "finding": "Huge size must not be normalized to Gargantuan because other fighters here are Gargantuan."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            66
+          ],
+          "finding": "Narrative confirms the Pinook is poorly armed and suited to training, not evidence of any unprinted attack options."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          66
+        ],
+        "statblockLocation": "printed p.66",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-razor-class-fighter",
+      "printedName": "Razor-class Fighter",
+      "printedStatblockStartPage": 66,
+      "phase1SectionStartPage": 66,
+      "phase1PdfPhysicalPage": 67,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        66,
+        67
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 9,
+        "initiative": 6,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 11,
+          "fortitude": 24,
+          "armorBonus": 6,
+          "shieldRating": 15
+        },
+        "durability": {
+          "hitPoints": 90,
+          "damageReduction": 10,
+          "threshold": 44
+        },
+        "movement": {
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 4,
+          "maximumVelocityKmH": 1050
+        },
+        "combat": {
+          "ranged": "medium laser cannons +7 or ion cannons +5 or medium concussion missiles +5",
+          "baseAttackBonus": 2,
+          "grappleBonus": 31,
+          "attackOptions": []
+        },
+        "abilities": {
+          "strength": 38,
+          "dexterity": 20,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 6,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 6,
+          "useComputer": 6
+        },
+        "crew": "1 (skilled)",
+        "passengers": "1",
+        "cargo": "110 kg",
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "payload": "8 medium concussion missiles per tube (tube count unspecified)",
+        "hyperdrive": "x2, navicomputer",
+        "economics": "Licensed; 75,000 credits (45,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 66
+        },
+        {
+          "weaponLabel": "ion cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "3d10x2 ion",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 66
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "9d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 66
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            66
+          ],
+          "finding": "Narrative says no copilot, gunner, or droid port, so the single pilot chooses which weapon system to fire."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            67
+          ],
+          "finding": "Printed payload is 8 concussion missiles per tube; the number of tubes is not printed, so total missiles cannot be inferred."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            66
+          ],
+          "finding": "Statblock splits across printed pp.66-67 and must be read as one record."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          66,
+          67
+        ],
+        "statblockLocation": "printed p.66",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-mobquet-medium-transport",
+      "printedName": "Mobquet Medium Transport",
+      "printedStatblockStartPage": 68,
+      "phase1SectionStartPage": 67,
+      "phase1PdfPhysicalPage": 69,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        68
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal (frigate) capital ship",
+        "cl": 8,
+        "initiative": -1,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 15,
+          "flatFootedReflex": 12,
+          "fortitude": 39,
+          "armorBonus": 12,
+          "shieldRating": 90
+        },
+        "durability": {
+          "hitPoints": 900,
+          "damageReduction": 15,
+          "threshold": 139
+        },
+        "movement": {
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": null
+        },
+        "combat": {
+          "ranged": "laser cannon +4 and medium concussion missiles +4",
+          "baseAttackBonus": 2,
+          "grappleBonus": 51,
+          "attackOptions": [
+            "autofire (laser cannon)"
+          ]
+        },
+        "abilities": {
+          "strength": 69,
+          "dexterity": 16,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": -1,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -1,
+          "useComputer": 6
+        },
+        "crew": "2 (skilled)",
+        "passengers": "24",
+        "cargo": "700 tons",
+        "consumables": "2 months",
+        "carriedCraft": "none",
+        "payload": "32 medium concussion missiles",
+        "hyperdrive": "x2, navicomputer",
+        "economics": "Licensed; 750,000 credits (225,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannon",
+          "station": "gunner",
+          "attackBonus": 4,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "sourcePage": 68
+        },
+        {
+          "weaponLabel": "medium concussion missile",
+          "station": "gunner",
+          "attackBonus": 4,
+          "damage": "8d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 68
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            67
+          ],
+          "finding": "Three modular ship nodes: standard crew quarters/storage/defense in front, speeder racks in second, engineering and computers in third."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            67
+          ],
+          "finding": "Alternative conversion can carry up to 32 passengers in the center node; stock passenger value remains 24."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            67
+          ],
+          "finding": "10 unused emplacement points explicitly printed for modification; heavy turbolaser turret is a pirate modification, not stock."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            68
+          ],
+          "finding": "Despite use as licensed medium transport, statblock explicitly calls it Colossal (frigate) capital ship."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          68
+        ],
+        "statblockLocation": "printed p.68",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-corellian-yv-545",
+      "printedName": "Corellian YV-545",
+      "printedStatblockStartPage": 69,
+      "phase1SectionStartPage": 69,
+      "phase1PdfPhysicalPage": 70,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        69
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 9,
+        "initiative": 0,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 19,
+          "flatFootedReflex": 14,
+          "fortitude": 27,
+          "armorBonus": 14,
+          "shieldRating": 30
+        },
+        "durability": {
+          "hitPoints": 90,
+          "damageReduction": 15,
+          "threshold": 77
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 2,
+          "maximumVelocityKmH": 800
+        },
+        "combat": {
+          "ranged": "double lasers +3",
+          "baseAttackBonus": 0,
+          "grappleBonus": 37,
+          "attackOptions": [
+            "autofire (double lasers)"
+          ]
+        },
+        "abilities": {
+          "strength": 44,
+          "dexterity": 20,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 0,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": 0,
+          "useComputer": 5
+        },
+        "crew": "2 (normal)",
+        "passengers": "5",
+        "cargo": "80 tons",
+        "consumables": "3 months",
+        "carriedCraft": "none",
+        "payload": null,
+        "hyperdrive": "x2 (backup x15), navicomputer",
+        "economics": "Licensed; 120,000 credits (35,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double lasers",
+          "station": "gunner",
+          "attackBonus": 3,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -2,
+          "sourcePage": 69
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            69
+          ],
+          "finding": "Untrained pilot suffers a -2 penalty to Pilot checks to fly this design; do not apply to all pilots."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            69
+          ],
+          "finding": "Only 3 unused emplacement points, not normal 5 for CEC transports."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            69
+          ],
+          "finding": "Rotating cockpit can swing 90 degrees; narrative notes under-and-over gun turrets, but only one double-laser attack-group row is printed."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            69
+          ],
+          "finding": "Complex system makes takeoff/landing require cargo to be strapped and passengers cautious; no numeric penalty unless untrained pilot."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          69
+        ],
+        "statblockLocation": "printed p.69",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-ykl-37r-nova-courier",
+      "printedName": "YKL-37R Nova Courier",
+      "printedStatblockStartPage": 69,
+      "phase1SectionStartPage": 68,
+      "phase1PdfPhysicalPage": 70,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        68,
+        69
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 8,
+        "initiative": -2,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 18,
+          "flatFootedReflex": 15,
+          "fortitude": 27,
+          "armorBonus": 15,
+          "shieldRating": 60
+        },
+        "durability": {
+          "hitPoints": 180,
+          "damageReduction": 15,
+          "threshold": 77
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": 800
+        },
+        "combat": {
+          "ranged": "2 laser cannons +2 and 3 medium concussion missiles +2",
+          "baseAttackBonus": 0,
+          "grappleBonus": 37,
+          "attackOptions": [
+            "autofire (laser cannons)"
+          ]
+        },
+        "abilities": {
+          "strength": 44,
+          "dexterity": 16,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": -2,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": -2,
+          "useComputer": 5
+        },
+        "crew": "4 (normal)",
+        "passengers": "6",
+        "cargo": "60 metric tons",
+        "consumables": "6 months",
+        "carriedCraft": "none",
+        "payload": "12 concussion missiles per tube",
+        "hyperdrive": "x2 (backup x12), navicomputer",
+        "economics": "Licensed; 150,000 credits (45,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "2 gunners",
+          "attackBonus": 2,
+          "damage": "5d10x2",
+          "hardwareCount": "2 turrets of twin laser cannons, narratively explicit",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -3,
+          "sourcePage": 69
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "copilot and 2 gunners",
+          "attackBonus": 2,
+          "damage": "8d10x2",
+          "hardwareCount": "3 small concussion missile launchers, narratively explicit",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 69
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            68
+          ],
+          "finding": "Mechanics-trained character gains +5 equipment bonus to Mechanics checks for this ship."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            68
+          ],
+          "finding": "5 unused emplacement points printed as base modification allowance."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            68
+          ],
+          "finding": "2 turrets of twin laser cannons and 3 small concussion missile launchers explicitly stated in the source narrative."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            69
+          ],
+          "finding": "Weapon attack row aggregates pilot-station roles (copilot, 2 gunners); do not turn three missile launchers into three independent attacks without rules."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            69
+          ],
+          "finding": "Each missile tube holds 12 rounds; source narrative identifies 3 launchers, but do not confuse the Ranged line 3 medium concussion missiles with total payload."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          68,
+          69
+        ],
+        "statblockLocation": "printed p.69",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "PDF_VERIFIED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-corellian-engineering-corporation-ym-2800-limpet-ship",
+      "printedName": "Corellian Engineering Corporation YM-2800 Limpet Ship",
+      "printedStatblockStartPage": 114,
+      "phase1SectionStartPage": 113,
+      "phase1PdfPhysicalPage": 115,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        113,
+        114
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Complete physical weapon mount geometry, independent grouped attacks, batteries and firing arcs remain insufficiently specified; source close read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 7,
+        "initiative": -4,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 12,
+          "flatFootedReflex": 12,
+          "fortitude": 26,
+          "armorBonus": 12,
+          "shieldRating": 10
+        },
+        "durability": {
+          "hitPoints": 120,
+          "damageReduction": 15,
+          "threshold": 76
+        },
+        "movement": {
+          "characterScaleFlySquares": 6,
+          "starshipScaleFlySquares": 2,
+          "maximumVelocityKmH": 800
+        },
+        "combat": {
+          "ranged": "medium laser cannons +6 or plasma beam cutter +6",
+          "baseAttackBonus": 2,
+          "grappleBonus": 38,
+          "attackOptions": []
+        },
+        "abilities": {
+          "strength": 42,
+          "dexterity": 10,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": -4,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -4,
+          "useComputer": 6
+        },
+        "crew": "6 (skilled)",
+        "passengers": "6",
+        "cargo": "125 tons",
+        "consumables": "2 months",
+        "carriedCraft": "none",
+        "payload": null,
+        "hyperdrive": null,
+        "economics": "Restricted; 150,000 credits (70,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 114
+        },
+        {
+          "weaponLabel": "plasma beam cutter",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "— (grapple +38)",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "special": "Boarding attachment/cutter, not conventional weapon damage",
+          "sourcePage": 114
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            113
+          ],
+          "finding": "Printed narrative says heavy-duty particle shielding but no ray shields as stock; SR 10 stat line preserved, not overwritten by generic no-shield inference."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            113
+          ],
+          "finding": "Plasma beam cutter fires as pilot standard action into adjacent square; hit attaches to target hull without collision."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            113
+          ],
+          "finding": "Each later round pilot uses standard action for grapple-based damage equal to the check result, ignoring target SR; accumulated damage beyond damage threshold opens breach for boarding."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            113
+          ],
+          "finding": "Cutter use loses all shielding and prevents firing other weapons for that round; shielding and weapon systems resume at beginning of next pilot turn."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            114
+          ],
+          "finding": "Detailed cutter attack has Dmg dash (grapple +38); no invented cutter damage dice."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            114
+          ],
+          "finding": "No hyperdrive value printed; unknown, not proven absent."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Rebellion Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          113,
+          114
+        ],
+        "statblockLocation": "printed p.114",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Direct rendered PDF page close read; DJVU TXT only used for navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-hoersch-kessel-t-wing-interceptor",
+      "printedName": "Hoersch-Kessel T-Wing Interceptor",
+      "printedStatblockStartPage": 114,
+      "phase1SectionStartPage": 114,
+      "phase1PdfPhysicalPage": 115,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-incom-x4-gunship",
+      "printedName": "Incom X4 Gunship",
+      "printedStatblockStartPage": 115,
+      "phase1SectionStartPage": 115,
+      "phase1PdfPhysicalPage": 116,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-assassin-class-corvette",
+      "printedName": "Assassin-class Corvette",
+      "printedStatblockStartPage": 130,
+      "phase1SectionStartPage": 130,
+      "phase1PdfPhysicalPage": 131,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-assault-gunboat",
+      "printedName": "Assault Gunboat",
+      "printedStatblockStartPage": 131,
+      "phase1SectionStartPage": 131,
+      "phase1PdfPhysicalPage": 132,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-imperial-cargo-ship",
+      "printedName": "Imperial Cargo Ship",
+      "printedStatblockStartPage": 132,
+      "phase1SectionStartPage": 132,
+      "phase1PdfPhysicalPage": 133,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-imperial-ii-class-frigate",
+      "printedName": "Imperial II-class Frigate",
+      "printedStatblockStartPage": 133,
+      "phase1SectionStartPage": 132,
+      "phase1PdfPhysicalPage": 134,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-missile-boat",
+      "printedName": "Missile Boat",
+      "printedStatblockStartPage": 134,
+      "phase1SectionStartPage": 134,
+      "phase1PdfPhysicalPage": 135,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-royal-guard-starfighter",
+      "printedName": "Royal Guard Starfighter",
+      "printedStatblockStartPage": 134,
+      "phase1SectionStartPage": 134,
+      "phase1PdfPhysicalPage": 135,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-tie-aggressor",
+      "printedName": "TIE Aggressor",
+      "printedStatblockStartPage": 135,
+      "phase1SectionStartPage": 135,
+      "phase1PdfPhysicalPage": 136,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-tie-experimental-m2",
+      "printedName": "TIE Experimental M2",
+      "printedStatblockStartPage": 136,
+      "phase1SectionStartPage": 136,
+      "phase1PdfPhysicalPage": 137,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-tie-experimental-m3",
+      "printedName": "TIE Experimental M3",
+      "printedStatblockStartPage": 136,
+      "phase1SectionStartPage": 136,
+      "phase1PdfPhysicalPage": 137,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-tie-oppressor",
+      "printedName": "TIE Oppressor",
+      "printedStatblockStartPage": 136,
+      "phase1SectionStartPage": 136,
+      "phase1PdfPhysicalPage": 137,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-tie-phantom",
+      "printedName": "TIE Phantom",
+      "printedStatblockStartPage": 137,
+      "phase1SectionStartPage": 137,
+      "phase1PdfPhysicalPage": 138,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-tie-scout",
+      "printedName": "TIE Scout",
+      "printedStatblockStartPage": 138,
+      "phase1SectionStartPage": 138,
+      "phase1PdfPhysicalPage": 139,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-tie-shuttle",
+      "printedName": "TIE Shuttle",
+      "printedStatblockStartPage": 138,
+      "phase1SectionStartPage": 138,
+      "phase1PdfPhysicalPage": 139,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-vt-49-decimator",
+      "printedName": "VT-49 Decimator",
+      "printedStatblockStartPage": 139,
+      "phase1SectionStartPage": 139,
+      "phase1PdfPhysicalPage": 140,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-ye-4-gunship",
+      "printedName": "YE-4 Gunship",
+      "printedStatblockStartPage": 139,
+      "phase1SectionStartPage": 139,
+      "phase1PdfPhysicalPage": 140,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-aeg-77-vigo-gunship",
+      "printedName": "AEG-77 \"Vigo\" Gunship",
+      "printedStatblockStartPage": 146,
+      "phase1SectionStartPage": 146,
+      "phase1PdfPhysicalPage": 147,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-kihraxz-light-fighter",
+      "printedName": "Kihraxz Light Fighter",
+      "printedStatblockStartPage": 146,
+      "phase1SectionStartPage": 146,
+      "phase1PdfPhysicalPage": 147,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-supa-fighter",
+      "printedName": "Supa Fighter",
+      "printedStatblockStartPage": 147,
+      "phase1SectionStartPage": 147,
+      "phase1PdfPhysicalPage": 148,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-vaksai",
+      "printedName": "Vaksai",
+      "printedStatblockStartPage": 147,
+      "phase1SectionStartPage": 147,
+      "phase1PdfPhysicalPage": 148,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-rihkxyrk-assault-fighter",
+      "printedName": "Rihkxyrk Assault Fighter",
+      "printedStatblockStartPage": 148,
+      "phase1SectionStartPage": 148,
+      "phase1PdfPhysicalPage": 149,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-keldabe-class-battleship",
+      "printedName": "Keldabe-class Battleship",
+      "printedStatblockStartPage": 154,
+      "phase1SectionStartPage": 154,
+      "phase1PdfPhysicalPage": 155,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-ird-a-starfighter",
+      "printedName": "IRD-A Starfighter",
+      "printedStatblockStartPage": 156,
+      "phase1SectionStartPage": 156,
+      "phase1PdfPhysicalPage": 157,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "re-ird-starfighter",
+      "printedName": "IRD Starfighter",
+      "printedStatblockStartPage": 156,
+      "phase1SectionStartPage": 156,
+      "phase1PdfPhysicalPage": 157,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next tranche source close-read"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    }
+  ]
+}
