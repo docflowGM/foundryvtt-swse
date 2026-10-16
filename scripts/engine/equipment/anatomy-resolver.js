@@ -186,16 +186,23 @@ export function resolveEffectiveAnatomy(input) {
     }
     // The droid adapter is isolated and replaceable (droid refactor pending): a future adapter can be injected via deps.projectInstalledComponents.
     const project = typeof input.deps?.projectInstalledComponents === 'function' ? input.deps.projectInstalledComponents : projectDroidAppendages;
-    const projected = project(input.installedComponents, input.deps ?? {});
+    const raw = project(input.installedComponents, input.deps ?? {}) ?? {};
+    const projected = { appendages: Array.isArray(raw.appendages) ? raw.appendages : [], unresolvedRecords: Array.isArray(raw.unresolvedRecords) ? raw.unresolvedRecords : [], issues: Array.isArray(raw.issues) ? raw.issues : [] };
     issues.push(...projected.issues);
     const appendages = applyOverrides(projected.appendages, overrides, issues);
     capabilityIssues(appendages, issues);
     if (!appendages.length && !projected.unresolvedRecords.length) issues.push(issue('no-appendage-evidence', 'blocking', 'No appendage component is recorded in the installed-component evidence; no manipulator is granted (a droid is not given default biological arms).'));
+    // `resolved` is reserved for evidence sufficient for future allocation: every appendage has a confirmed slot AND installed-instance
+    // identity, all three capabilities are booleans, the functional state is known, and no blocking issue remains. Unresolved records
+    // (legacy evidence without installation identity) never count as appendages; they can raise `unresolved` to `partial` only when
+    // they show installed, enabled hardware that is not stated to be unable to manipulate.
     const blocking = issues.some((i) => i.severity === 'blocking');
     const unknownFacts = issues.some((i) => i.code === 'capability-unknown' || i.code === 'functional-state-unresolved');
+    const allocationGrade = appendages.length > 0 && appendages.every((a) => a.identity?.slot && a.identity?.instance);
+    const usableRecordFacts = projected.unresolvedRecords.some((r) => (r.candidateInstances?.length ? r.candidateInstances.some((c) => c.functionalState === 'functional') : r.componentState === 'functional') && r.capabilities?.canManipulate !== false);
     let status;
-    if (!appendages.length) status = ANATOMY_STATUS.UNRESOLVED;
-    else status = blocking || unknownFacts ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.RESOLVED;
+    if (!appendages.length) status = usableRecordFacts ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.UNRESOLVED;
+    else status = blocking || unknownFacts || !allocationGrade ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.RESOLVED;
     return result({ anatomyKind: 'installed-component', status, source: appendages.length || projected.unresolvedRecords.length ? ANATOMY_SOURCE.DROID_COMPONENTS : ANATOMY_SOURCE.NONE, defaultApplied: false, appendages, issues, unresolvedRecords: projected.unresolvedRecords });
   }
 
@@ -228,12 +235,12 @@ export function resolveEffectiveAnatomy(input) {
       return result({ anatomyKind: 'biological', status: ANATOMY_STATUS.UNRESOLVED, source: ANATOMY_SOURCE.NONE, defaultApplied: false, appendages: [], issues });
     }
   } else {
-    issues.push(issue('species-profile-not-provided', 'info', 'No effective species profile was provided; the universal default was applied without checking for species exceptions.'));
+    issues.push(issue('species-profile-not-provided', 'warning', 'No effective species profile was provided; the provisional two-arm default was applied, but whether a species exception exists cannot be established.'));
   }
 
   const appendages = applyOverrides(defaultNaturalArms(), overrides, issues);
   capabilityIssues(appendages, issues);
-  const defaultIncomplete = issues.some((i) => i.code === 'functional-state-unresolved');
+  const defaultIncomplete = issues.some((i) => i.code === 'functional-state-unresolved' || i.code === 'species-profile-not-provided');
   return result({ anatomyKind: 'biological', status: defaultIncomplete ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.RESOLVED, source: ANATOMY_SOURCE.DEFAULT, defaultApplied: true, appendages, issues });
 }
 

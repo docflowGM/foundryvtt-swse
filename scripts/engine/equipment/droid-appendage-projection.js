@@ -7,14 +7,16 @@
  *
  * Three identities are kept apart (owner ruling OA-8):
  *   slot      stable location on the actor            -- NOT available from the component resolver's output  -> always null here
- *   instance  one specific physical component         -- established ONLY by an embedded Item document id (Foundry id)
+ *   instance  one specific physical component         -- NOT established by legacy evidence; an Item document id is only CANDIDATE evidence
  *   part      the published component definition      -- the canonical component id (what KIND of component it is)
  * A canonical part id answers "what type is it?", never "which installed appendage is this?". Array positions and
  * dynamically generated `additional-N` locations are never used as identity.
  *
- * Why most Garage-authored droids project to zero identified appendages today: the component resolver groups records by part
- * type, and the ledger / `droidSystems` representations carry no per-instance identity. Such a record is reported as an
- * UNRESOLVED RECORD (with every fact that is established) instead of being counted as one or more manipulators.
+ * Legacy evidence therefore projects to ZERO allocatable appendages: the component resolver groups records by part type, the
+ * ledger / `droidSystems` representations carry no per-instance or slot identity, and two embedded Item documents do not prove two
+ * physically installed appendages. Every record is reported as an UNRESOLVED RECORD (with all established facts and the Item
+ * document ids as candidate evidence) instead of being counted as manipulators. Upstream `conflicts` / `warnings` are preserved as
+ * diagnostics; an `active`-only conflict never changes functional state.
  *
  * Capabilities are tri-state: true | false | null (null = unknown). Only an explicit boolean on the structural catalog entry
  * (`canManipulate`, and `canHold` / `canWield` if a catalog ever states them) is read; catalog prose (`features`, `restrictions`)
@@ -65,9 +67,15 @@ function issue(code, severity, message, details = {}) {
 }
 
 /**
- * Pure projection of a component-resolver result.
+ * Pure projection of a component-resolver result (E2A correction C1/C2).
  *
- * @param {{components:object[]}} installedComponents  result of resolveInstalledDroidComponents()
+ * Identity policy: an embedded Item DOCUMENT id is only candidate evidence. Two Item documents do not prove two independently
+ * installed physical appendages, and no slot is available from the legacy evidence, so this projection NEVER promotes legacy
+ * evidence into `appendages` (the allocatable list). Everything it can establish is returned in `unresolvedRecords`, which E3 must
+ * not count as manipulators. A replacement adapter built on a future droid schema may return `appendages` with confirmed
+ * `identity.slot` and `identity.instance`.
+ *
+ * @param {{components:object[], conflicts?:object[], warnings?:string[]}} installedComponents  result of resolveInstalledDroidComponents()
  * @param {{getDefinition?:(id:string)=>object|null, catalogEntryFor?:(definition:object)=>object|null}} [deps]  injectable for tests
  * @returns {{appendages:object[], unresolvedRecords:object[], issues:object[]}}
  */
@@ -76,9 +84,10 @@ export function projectDroidAppendages(installedComponents, deps = {}) {
   const catalogEntryFor = typeof deps.catalogEntryFor === 'function' ? deps.catalogEntryFor : defaultCatalogEntryFor;
   const components = Array.isArray(installedComponents?.components) ? installedComponents.components : [];
 
-  const appendages = [];
+  const appendages = []; // always empty for legacy evidence (see identity policy above)
   const unresolvedRecords = [];
   const issues = [];
+  const appendagePartIds = new Set();
 
   for (const component of components) {
     const definition = component?.definition ?? getDefinition(component?.canonicalId) ?? null;
@@ -89,8 +98,8 @@ export function projectDroidAppendages(installedComponents, deps = {}) {
     if (slot !== 'appendage' || category !== 'appendage') continue;
 
     const partId = String(component.canonicalId);
-    const catalogEntry = catalogEntryFor(definition) ?? null;
-    const capabilities = capabilitiesFrom(catalogEntry);
+    appendagePartIds.add(partId);
+    const capabilities = capabilitiesFrom(catalogEntryFor(definition) ?? null);
     const sources = Array.isArray(component.sources) ? component.sources : [];
 
     if (component.installed !== true) {
@@ -98,51 +107,64 @@ export function projectDroidAppendages(installedComponents, deps = {}) {
       continue;
     }
 
+    const componentState = stateOf({ installed: component.installed, enabled: component.enabled });
     const items = sources.filter((s) => s?.kind === EMBEDDED_ITEM && s?.itemId);
     const others = sources.filter((s) => !(s?.kind === EMBEDDED_ITEM && s?.itemId));
     const tierCounts = new Map();
     for (const s of others) tierCounts.set(s.kind, (tierCounts.get(s.kind) ?? 0) + 1);
     const duplicatedTier = [...tierCounts.values()].some((n) => n > 1);
-    const otherTiersPresent = others.length > 0;
+    const sourceKinds = [...new Set(sources.map((s) => s?.kind).filter(Boolean))].sort();
 
-    const componentState = stateOf({ installed: component.installed, enabled: component.enabled });
-    const base = { partId, appendageType: definition?.appendageType ?? partId, capabilities, componentState, sourceKinds: [...new Set(sources.map((s) => s?.kind).filter(Boolean))].sort() };
+    // Document ids are preserved as CANDIDATE evidence only; each carries the most restrictive functional evidence that applies to it.
+    const candidateInstances = items.map((item) => ({
+      documentId: String(item.itemId),
+      functionalState: moreRestrictive(stateOf({ installed: item.installed !== false, enabled: item.enabled }), componentState),
+    })).sort((a, b) => (a.documentId < b.documentId ? -1 : a.documentId > b.documentId ? 1 : 0));
 
-    // Instance identity exists only through embedded Item document ids, and only when the records can be matched unambiguously:
-    // every non-item tier mentions the part at most once, and several Items are not mixed with other tiers' records.
-    const identifiable = items.length >= 1 && !duplicatedTier && (items.length === 1 || !otherTiersPresent);
-    if (identifiable) {
-      for (const item of items) {
-        let functionalState = stateOf({ installed: item.installed !== false, enabled: item.enabled });
-        functionalState = moreRestrictive(functionalState, componentState);
-        appendages.push({
-          id: `droid-appendage:${item.itemId}`,
-          kind: base.appendageType,
-          source: 'droid-installed-component',
-          identity: { slot: null, instance: String(item.itemId), part: partId },
-          capabilities: { ...capabilities },
-          functionalState,
-          functionalStateSource: 'installed-component-evidence',
-        });
-      }
-      continue;
-    }
+    unresolvedRecords.push({
+      partId,
+      appendageType: definition?.appendageType ?? partId,
+      capabilities,
+      componentState,
+      sourceKinds,
+      recordCount: sources.length,
+      identity: { slot: null, instance: null, part: partId },
+      identityStatus: candidateInstances.length ? 'candidate-document-ids-only' : 'none',
+      candidateInstances,
+    });
 
-    // Not identifiable: preserve what IS established, claim nothing about count or identity.
-    const recordCount = sources.length;
-    unresolvedRecords.push({ ...base, recordCount, identity: { slot: null, instance: null, part: partId } });
-    if (duplicatedTier || items.length > 1) {
+    if (duplicatedTier || candidateInstances.length > 1) {
       issues.push(issue('droid-appendage-duplicate-same-type-records', 'blocking',
-        `Several "${partId}" records exist but the installed-component evidence cannot establish whether they are independent physical appendages; none is counted.`,
-        { partId, recordCount, sourceKinds: base.sourceKinds }));
+        `Several "${partId}" records exist (${candidateInstances.length} candidate Item document(s), ${others.length} other record(s)); the installed-component evidence cannot establish that they are independent physical appendages, so none is counted.`,
+        { partId, recordCount: sources.length, candidateDocumentIds: candidateInstances.map((c) => c.documentId), sourceKinds }));
     } else {
       issues.push(issue('droid-appendage-instance-unestablished', 'blocking',
-        `"${partId}" is recorded as installed (${componentState}) but no installed-instance or slot identity is established; the number of physical appendages is unknown and none is counted.`,
-        { partId, recordCount, sourceKinds: base.sourceKinds, slotIdentity: null }));
+        candidateInstances.length
+          ? `"${partId}" has one Item document (${candidateInstances[0].documentId}) recorded as candidate evidence; a document id does not prove an installed physical appendage and no slot is established, so none is counted.`
+          : `"${partId}" is recorded as installed (${componentState}) but no installed-instance or slot identity is established; the number of physical appendages is unknown and none is counted.`,
+        { partId, recordCount: sources.length, candidateDocumentIds: candidateInstances.map((c) => c.documentId), sourceKinds, slotIdentity: null }));
+    }
+
+    // Conflicting installed / enabled evidence between sources is preserved (the component resolver only reports `active` conflicts).
+    const states = new Set(sources.map((s) => `${s?.installed !== false}/${s?.enabled !== false}`));
+    if (states.size > 1) {
+      issues.push(issue('source-installed-enabled-disagreement', 'warning',
+        `Sources disagree about whether "${partId}" is installed / enabled; the most restrictive evidence is reported for each candidate.`,
+        { partId, sources: sources.map((s) => ({ kind: s?.kind ?? null, installed: s?.installed !== false, enabled: s?.enabled !== false })) }));
     }
   }
 
-  appendages.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  // Upstream reconciliation diagnostics are preserved, not discarded. The component resolver's conflicts concern the `active`
+  // (operating) flag only, so they never change functional state.
+  for (const conflict of Array.isArray(installedComponents?.conflicts) ? installedComponents.conflicts : []) {
+    if (!appendagePartIds.has(String(conflict?.canonicalId))) continue;
+    issues.push(issue('component-source-conflict', 'info', String(conflict?.message ?? 'Installed-component sources disagree.'),
+      { partId: String(conflict.canonicalId), sources: Array.isArray(conflict?.sources) ? [...conflict.sources] : [], activationOnly: true, affectsFunctionalState: false }));
+  }
+  for (const warning of Array.isArray(installedComponents?.warnings) ? installedComponents.warnings : []) {
+    issues.push(issue('component-resolution-warning', 'info', String(warning), { upstream: true }));
+  }
+
   return { appendages, unresolvedRecords, issues };
 }
 

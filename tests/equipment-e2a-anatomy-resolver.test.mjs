@@ -47,10 +47,14 @@ const caps = (a) => a.capabilities;
 // 2b. no species profile at all -> default with an informational note (not silently complete knowledge of exceptions)
 {
   const r = resolveEffectiveAnatomy({ actorType: 'character' });
-  assert.equal(r.status, ANATOMY_STATUS.RESOLVED);
+  assert.equal(r.status, ANATOMY_STATUS.PARTIAL, 'whether a species exception exists cannot be established');
+  assert.equal(r.defaultApplied, true);
+  assert.deepEqual(r.appendages.map((a) => a.id), ['natural-arm-1', 'natural-arm-2'], 'the provisional default is still supplied');
   assert.deepEqual(codes(r), ['species-profile-not-provided']);
-  assert.equal(r.issues[0].severity, 'info');
-  ok('missing species profile: default applied and the absence is reported');
+  assert.equal(r.issues[0].severity, 'warning');
+  const withProfile = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: {} });
+  assert.equal(withProfile.status, ANATOMY_STATUS.RESOLVED, 'a known profile without an exception is still resolved');
+  ok('missing species profile: provisional two-arm default but status partial with a warning; a present profile stays resolved');
 }
 
 // 3. explicit synthetic four-arm anatomy -> four individually identified manipulators, no default
