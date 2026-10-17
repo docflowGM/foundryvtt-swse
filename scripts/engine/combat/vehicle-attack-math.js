@@ -124,24 +124,12 @@ export async function resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapo
 
   const baseline = resolveAttackBonus(gunnerActor, weapon, null, context);
 
-  // Edge case: NPC statblock mode returns a single flat override total with
-  // no BAB/ability decomposition at all (combat-roll-math.js resolveAttackBonus,
-  // npc?.useFlat branch). There is no evidence for how a flat NPC override
-  // should interact with the vehicle INT/range formula, so this preserves
-  // the actor's pre-existing flat-bonus behavior unchanged rather than
-  // inventing a new stacking rule.
+  // A flat NPC statblock total cannot be decomposed into the printed
+  // Gunner BAB + Vehicle INT formula. Never substitute the flat total:
+  // that can conceal the NPC's own DEX or other baked-in bonuses.
   if (baseline.flags?.npcFlat === true) {
-    warnings.push('Gunner actor uses an NPC flat attack-bonus override; preserving that behavior unchanged instead of decomposing into Gunner BAB + Vehicle INT (no verified rule for how a flat override should combine with the vehicle formula).');
-    return {
-      total: baseline.total,
-      ledger: [ledgerEntry({
-        id: 'npc-flat-override', label: 'NPC Flat Attack Bonus', value: baseline.total, category: 'gunner',
-        sourceId: gunnerActor.id ?? null, sourceName: gunnerActor.name ?? null,
-        reason: 'actor.type === "npc" statblock-mode flat attack bonus; pre-existing behavior preserved unchanged.'
-      })],
-      warnings,
-      error: null
-    };
+    warnings.push('NPC flat attack total cannot be decomposed into Gunner BAB + Vehicle INT; require verified crew BAB and a source-specific modifier ledger.');
+    return { total: 0, ledger: [], warnings, error: 'npc-flat-vehicle-attack-unreconciled' };
   }
 
   const abilityKey = getWeaponAttackAbility(gunnerActor, weapon);

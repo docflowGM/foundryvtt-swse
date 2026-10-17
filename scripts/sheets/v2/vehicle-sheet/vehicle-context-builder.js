@@ -129,9 +129,9 @@ function signedNumberString(value, fallback = '+0') {
 
 function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') {
   const name = safeString(weapon.name || weapon.label || `Weapon ${index + 1}`, `Weapon ${index + 1}`);
-  const rawBonus = firstPresent(weapon.bonus, weapon.attackBonus, weapon.attack, weapon.toHit, weapon.total, '+0');
-  const attackSummary = signedNumberString(rawBonus, '+0');
-  const damageSummary = safeString(firstPresent(weapon.damage, weapon.damageFormula, weapon.formula, weapon.damageRoll, '1d10'), '1d10');
+  const rawBonus = firstPresent(weapon.bonus, weapon.attackBonus, weapon.attack, weapon.toHit, weapon.total, null);
+  const attackSummary = rawBonus === null ? null : signedNumberString(rawBonus, null);
+  const damageSummary = safeString(firstPresent(weapon.damage, weapon.damageFormula, weapon.formula, weapon.damageRoll, null), '');
   const rangeProfileSlug = firstPresent(weapon.rangeProfileSlug, weapon.rangeSlug, weapon.rangeProfile, null);
   const rangeProfileName = firstPresent(weapon.rangeProfileName, weapon.rangeProfileLabel, weapon.rangeProfileDisplay, weapon.range, null);
   const rangeSummary = safeString(firstPresent(weapon.rangeSummary, weapon.range, rangeProfileName, rangeProfileSlug, 'Range Profile Pending'), 'Range Profile Pending');
@@ -139,7 +139,7 @@ function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') 
     key: weapon.key || weapon.id || weapon._id || `${source}-weapon-${index}`,
     id: source === 'item' ? weapon.id : null,
     name,
-    arc: safeString(firstPresent(weapon.arc, weapon.firingArc, 'Forward'), 'Forward'),
+    arc: safeString(firstPresent(weapon.arc, weapon.firingArc, 'unknown'), 'unknown'),
     linkedGroup: weapon.linkedGroup || null,
     fireControl: firstPresent(weapon.fireControl, weapon.fireControlBonus, null),
     weaponId: source === 'item' ? weapon.id : `system-weapons-${index}`,
@@ -163,7 +163,7 @@ function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') 
     rangeSource: firstPresent(weapon.rangeSource, null),
     weaponSystemSlug: firstPresent(weapon.weaponSystemSlug, null),
     weaponSystemName: firstPresent(weapon.weaponSystemName, null),
-    count: safeNumber(firstPresent(weapon.count, 1), 1),
+    count: firstPresent(weapon.count) === null ? null : safeNumber(weapon.count, null),
     battery: !!weapon.battery,
     pointDefense: !!weapon.pointDefense,
     modifiers: safeArray(weapon.modifiers),
@@ -454,8 +454,8 @@ function buildVehicleEditContext(actor, options = {}) {
     weapons: safeArray(system.weapons).map((weapon, index) => ({
       index,
       name: weapon?.name ?? '',
-      arc: weapon?.arc ?? 'Forward',
-      bonus: weapon?.bonus ?? weapon?.attackBonus ?? '+0',
+      arc: weapon?.arc ?? 'unknown',
+      bonus: weapon?.bonus ?? weapon?.attackBonus ?? null,
       damage: weapon?.damage ?? weapon?.damageFormula ?? '',
       range: weapon?.range ?? 'Close',
       fireControl: weapon?.fireControl ?? '',

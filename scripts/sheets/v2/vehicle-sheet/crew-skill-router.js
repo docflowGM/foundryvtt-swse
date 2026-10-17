@@ -101,10 +101,16 @@ function getVehicleWeapon(vehicle, weaponId) {
     name: weapon.name || `Vehicle Weapon ${index + 1}`,
     type: 'system-vehicle-weapon',
     system: {
-      bonus: weapon.bonus ?? weapon.attackBonus ?? '+0',
-      attackBonus: weapon.attackBonus ?? weapon.bonus ?? '+0',
-      damage: weapon.damage ?? weapon.damageFormula ?? '1d10',
-      range: weapon.range ?? 'Close'
+      ...(weapon.bonus != null || weapon.attackBonus != null
+        ? { bonus: weapon.bonus ?? weapon.attackBonus, attackBonus: weapon.attackBonus ?? weapon.bonus }
+        : {}),
+      ...(weapon.damage != null || weapon.damageFormula != null
+        ? { damage: weapon.damage ?? weapon.damageFormula }
+        : {}),
+      ...(weapon.range !== undefined ? { range: weapon.range } : {}),
+      ...(weapon.arc !== undefined ? { arc: weapon.arc } : {}),
+      // Source provenance is resolved separately by immutable authority; actor metadata is not certification.
+      operatorStation: weapon.operatorStation ?? null
     }
   };
 }

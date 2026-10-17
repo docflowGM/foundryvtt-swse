@@ -301,10 +301,14 @@ function normalizeWeapons(weapons) {
     })
     .map(w => ({
       name: safeString(w.name, 'Weapon'),
-      arc: safeString(w.arc, 'Forward'),
-      bonus: safeString(w.bonus, '+0'),
-      damage: safeString(w.damage, '1d10'),
-      range: safeString(w.range, 'Close')
+      ...(w.arc !== undefined && w.arc !== null ? { arc: safeString(w.arc, 'unknown') } : {}),
+      ...(w.bonus !== undefined && w.bonus !== null ? { bonus: w.bonus } : {}),
+      ...(w.attackBonus !== undefined && w.attackBonus !== null ? { attackBonus: w.attackBonus } : {}),
+      ...(w.damage !== undefined && w.damage !== null ? { damage: w.damage } : {}),
+      ...(w.range !== undefined && w.range !== null ? { range: w.range } : {}),
+      ...(w.count !== undefined && w.count !== null ? { count: w.count } : {}),
+      ...(w.operatorStation !== undefined ? { operatorStation: w.operatorStation } : {}),
+      ...(w.crewRole !== undefined ? { crewRole: w.crewRole } : {})
     }));
 }
 

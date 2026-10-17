@@ -328,7 +328,7 @@ export function buildVehicleWeaponItemData(parsed, index = 0, options = {}) {
       damage: parsed.damageSummary || '1d10',
       damageType: 'energy',
       ...(bonus !== null ? { attackBonus: bonus } : {}),
-      attackAttribute: 'dex',  // Vehicles typically use DEX
+      // No inherited character DEX authority: mounted gunnery uses the vehicle INT.
       range: parsed.rangeSummary || 'close',
       ...(typeof parsed.attackSummary === 'string' ? { bonus: parsed.attackSummary } : {}),  // Preserve source, including printed +0
       arc: parsed.arc || 'unknown',
@@ -337,6 +337,7 @@ export function buildVehicleWeaponItemData(parsed, index = 0, options = {}) {
       mounted: true,
       vehicleMount: {
         mountKey: `mount-${index}`,
+        attackAbilityAuthority: 'vehicle-int',
         mountLabel: parsed.name,
         arc: parsed.arc || 'unknown',
         linkedGroup: parsed.linkedGroup,
