@@ -360,13 +360,11 @@
         },
         {
           "path": "system.vehicleAttributeNotes",
-          "observed": null,
           "observedState": "MISSING",
           "expected": "Starships of the Galaxy p.75: source-certified stock attributes."
         },
         {
           "path": "system.vehicleAttributeSourceUrl",
-          "observed": null,
           "observedState": "MISSING",
           "expected": null
         },
@@ -390,13 +388,11 @@
         },
         {
           "path": "system.vehicleDRSource",
-          "observed": null,
           "observedState": "MISSING",
           "expected": "Starships of the Galaxy"
         },
         {
           "path": "system.vehicleDRNotes",
-          "observed": null,
           "observedState": "MISSING",
           "expected": "Starships of the Galaxy p.75: stock DR 15."
         },
@@ -569,13 +565,11 @@
         },
         {
           "path": "system.vehicleAttributeNotes",
-          "observed": null,
           "observedState": "MISSING",
           "expected": "Starships of the Galaxy p.88: source-certified stock attributes."
         },
         {
           "path": "system.vehicleAttributeSourceUrl",
-          "observed": null,
           "observedState": "MISSING",
           "expected": null
         },
@@ -599,13 +593,11 @@
         },
         {
           "path": "system.vehicleDRSource",
-          "observed": null,
           "observedState": "MISSING",
           "expected": "Starships of the Galaxy"
         },
         {
           "path": "system.vehicleDRNotes",
-          "observed": null,
           "observedState": "MISSING",
           "expected": "Starships of the Galaxy p.88: stock DR 15."
         },
@@ -1028,5 +1020,11 @@
     "ships": 4,
     "derivedCorrections": 99,
     "classificationGaps": 1
+  },
+  "observedValueSemantics": {
+    "MISSING": "The property does not exist in the historical baseline JSON; omit the observed key rather than serialize a fictional null value.",
+    "NULL": "The property is explicitly present with null, meaning no authoritative information for that field or any nested children.",
+    "PRESENT": "The property exists and contains its recorded value (including 0, false, [], and explicit absence).",
+    "rule": "NULL is reserved for genuinely unavailable source information, not a placeholder for unreviewed, absent-key, known-zero, source-confirmed none, or partially populated parent data."
   }
 }
