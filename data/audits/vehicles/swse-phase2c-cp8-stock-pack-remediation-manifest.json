@@ -123,67 +123,78 @@
           "path": "system.size",
           "observed": "large",
           "expected": "colossal (frigate)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.reflexDefense",
           "observed": 10,
           "expected": 12,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.fortitudeDefense",
           "observed": 10,
           "expected": 36,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.flatFooted",
           "observed": 10,
           "expected": 12,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.armorBonus",
           "observed": 0,
           "expected": 12,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.damageThreshold",
           "observed": 30,
           "expected": 136,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.damageReduction",
           "observed": 5,
           "expected": 15,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.dr",
           "observed": 5,
           "expected": 15,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleDR",
           "observed": 5,
           "expected": 15,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.hitPoints",
           "observed": 50,
           "expected": 600,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHP",
           "observed": 50,
           "expected": 600,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.hp",
@@ -197,7 +208,8 @@
             "value": 600,
             "temp": 0
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.hull",
@@ -211,7 +223,8 @@
             "value": 600,
             "temp": 0
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.shields",
@@ -223,157 +236,183 @@
             "max": 0,
             "value": 0
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleShieldKnown",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHPDataStatus",
           "observed": "existing-compendium-hull",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleDRDataStatus",
           "observed": "rules-derived-size-default",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleShieldDataStatus",
           "observed": "source-verified-none",
           "expected": "published-source-confirmed-unshielded",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.crew",
           "observed": "1 (normal crew)",
           "expected": "8 (normal)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleCrewCount",
           "observed": 1,
           "expected": 8,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.crewNotes",
           "observed": "",
           "expected": "Printed crew 8 (normal).",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.passengers",
           "observed": "0",
           "expected": "none",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.cargo",
           "observed": "100 kg",
           "expected": "90,000 tons",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleCargoKg",
           "observed": 100,
           "expected": 90000000,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.consumables",
           "observed": "1 week",
           "expected": "3 months",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleConsumablesDays",
           "observed": 7,
           "expected": 90,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleConsumablesLabel",
           "observed": "1 Week",
           "expected": "3 months",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleCarriedCraftLabel",
           "observed": "None listed",
           "expected": "None",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.baseAttackBonus",
           "observed": "+1",
           "expected": "+0",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.initiative",
           "observed": "+0",
           "expected": "-5",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.senses",
           "observed": "Perception +0",
           "expected": "Perception +5",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.maneuver",
           "observed": "+0",
           "expected": "-5",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.speed",
           "observed": "12 squares",
           "expected": "Fly 12 squares",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.starshipSpeed",
           "observed": "",
           "expected": "Fly 1 squares",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.starshipScaleSpeed",
           "observed": null,
           "expected": 1,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleHasStarshipScaleSpeed",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.characterScaleMovementMode",
           "observed": "",
           "expected": "fly",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.starshipScaleMovementMode",
           "observed": "",
           "expected": "fly",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementRaw",
           "observed": "12 squares",
           "expected": "Fly 12 squares (Character Scale), Fly 1 squares (Starship Scale)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementModes",
@@ -402,67 +441,78 @@
               "source": "Fly 1 squares (Starship Scale)"
             }
           ],
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementStatus",
           "observed": "character-scale-only",
           "expected": "dual-scale",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.maxVelocityKmh",
           "observed": 800,
           "expected": 650,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.maxVelocity",
           "observed": "800 km/h",
           "expected": "650 km/h",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.sourcebook",
           "observed": "",
           "expected": "Starships of the Galaxy",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.page",
           "observed": null,
           "expected": 58,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.hyperdrive_class",
           "observed": null,
           "expected": "3",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleHasHyperdrive",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHyperdriveClass",
           "observed": null,
           "expected": 3,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleHasNavicomputer",
           "observed": false,
           "expected": null,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAstrogationSupportStatus",
           "observed": "not-applicable",
           "expected": "source-not-stated",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.cost",
@@ -474,7 +524,8 @@
             "new": 1000000,
             "used": 500000
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleRawCost",
@@ -486,91 +537,106 @@
             "new": 1000000,
             "used": 500000
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceNew",
           "observed": null,
           "expected": 1000000,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehiclePriceUsed",
           "observed": null,
           "expected": 500000,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehiclePriceStatus",
           "observed": "unavailable",
           "expected": "priced",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceLabel",
           "observed": "Needs source review",
           "expected": "New 1,000,000 / Used 500,000",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleStoreCanBuyNew",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleStoreCanBuyUsed",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceSourceStatus",
           "observed": "existing-compendium-unavailable",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.availability",
           "observed": "Unknown",
           "expected": "Licensed",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAvailabilityStatus",
           "observed": "missing-source-data",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAttributeSource",
           "observed": "SWSE Fandom",
           "expected": "Starships of the Galaxy",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAttributeDataStatus",
           "observed": "source-verified",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAttributeSourceTitle",
           "observed": "Corellian Action VI Bulk Transport",
           "expected": "Corellian Engineering Corporation Action VI Bulk Transport",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleTransportDataStatus",
           "observed": "source-line-normalized",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleWeaponDataStatus",
           "observed": "unarmed",
           "expected": "published-stock-unarmed",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         }
       ],
       "matchingFields": [
@@ -696,43 +762,50 @@
           "path": "system.attributes.int.base",
           "observed": 10,
           "expected": 18,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.attributes.str.value",
           "observed": null,
           "expected": 66,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.str.mod",
           "observed": null,
           "expected": 28,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.dex.value",
           "observed": null,
           "expected": 18,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.dex.mod",
           "observed": null,
           "expected": 4,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.int.value",
           "observed": null,
           "expected": 18,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.int.mod",
           "observed": null,
           "expected": 4,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.hull",
@@ -746,7 +819,8 @@
             "value": 800,
             "temp": 0
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.shields",
@@ -758,91 +832,106 @@
             "max": 90,
             "value": 90
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHPDataStatus",
           "observed": "existing-compendium-hull",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleDRDataStatus",
           "observed": "existing-compendium",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleShieldDataStatus",
           "observed": "source-verified",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.crew",
           "observed": "18-150* (Normal Crew Quality )",
           "expected": "18-150* (normal)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleCrewCount",
           "observed": 18,
           "expected": 30,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.crewNotes",
           "observed": "",
           "expected": "Printed crew range 18-150; typical 30; normal quality. Do not replace range with a single count.",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.cargo",
           "observed": "5,000 Tons",
           "expected": "5,000 tons",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.consumables",
           "observed": "1 Year",
           "expected": "1 year",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleConsumablesLabel",
           "observed": "1 Year",
           "expected": "1 year",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleCarriedCraftLabel",
           "observed": "None listed",
           "expected": "None",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.baseAttackBonus",
           "observed": "+1",
           "expected": "+0",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.initiative",
           "observed": "+3",
           "expected": "-1",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.senses",
           "observed": "Perception +0",
           "expected": "Perception +5",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementRaw",
           "observed": "Fly 12 squares (Character Scale), Fly 3 Squares (Starship Scale)",
           "expected": "Fly 12 squares (Character Scale), Fly 3 squares (Starship Scale)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementModes",
@@ -878,31 +967,36 @@
               "source": "Fly 3 squares (Starship Scale)"
             }
           ],
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.sourcebook",
           "observed": "",
           "expected": "Starships of the Galaxy",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.page",
           "observed": null,
           "expected": 75,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleHasNavicomputer",
           "observed": null,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleAstrogationSupportStatus",
           "observed": "needs-source-line-review",
           "expected": "printed-navcomputer",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.cost",
@@ -914,7 +1008,8 @@
             "new": 2900000,
             "used": 1000000
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleRawCost",
@@ -926,97 +1021,113 @@
             "new": 2900000,
             "used": 1000000
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceNew",
           "observed": null,
           "expected": 2900000,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehiclePriceUsed",
           "observed": null,
           "expected": 1000000,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehiclePriceStatus",
           "observed": "review",
           "expected": "priced",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceReviewNeeded",
           "observed": true,
           "expected": false,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceLabel",
           "observed": "Needs source review",
           "expected": "New 2,900,000 / Used 1,000,000",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleStoreCanBuyNew",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleStoreCanBuyUsed",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceSourceStatus",
           "observed": "needs-source-review",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.availability",
           "observed": "Unknown",
           "expected": "Licensed",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAvailabilityStatus",
           "observed": "missing-source-data",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAttributeSource",
           "observed": null,
           "expected": "Starships of the Galaxy",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.vehicleAttributeDataStatus",
           "observed": null,
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.vehicleAttributeSourceTitle",
           "observed": null,
           "expected": "Corellian Engineering Corporation CR70 Corvette",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.vehicleTransportDataStatus",
           "observed": "split-passenger-cargo-line+starship-cargo-comma-repaired",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleWeaponDataStatus",
           "observed": "unarmed",
           "expected": "published-stock-unarmed",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         }
       ],
       "matchingFields": [
@@ -1160,55 +1271,64 @@
           "path": "system.size",
           "observed": "gargantuan",
           "expected": "colossal",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.attributes.dex.base",
           "observed": 4,
           "expected": 14,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.attributes.int.base",
           "observed": 10,
           "expected": 13,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.attributes.str.value",
           "observed": null,
           "expected": 40,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.str.mod",
           "observed": null,
           "expected": 15,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.dex.value",
           "observed": null,
           "expected": 14,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.dex.mod",
           "observed": null,
           "expected": 2,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.int.value",
           "observed": null,
           "expected": 13,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.attributes.int.mod",
           "observed": null,
           "expected": 1,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.hull",
@@ -1222,7 +1342,8 @@
             "value": 110,
             "temp": 0
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.shields",
@@ -1234,91 +1355,106 @@
             "max": 15,
             "value": 15
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHPDataStatus",
           "observed": "existing-compendium-hull",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleDRDataStatus",
           "observed": "existing-compendium",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleShieldDataStatus",
           "observed": "source-verified",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.crew",
           "observed": "2 (Normal Crew Quality )",
           "expected": "2 (normal)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.crewNotes",
           "observed": "",
           "expected": "Printed crew 2 (normal).",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.cargo",
           "observed": "135 Tons",
           "expected": "135 tons",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.consumables",
           "observed": "2 Months",
           "expected": "2 months",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleConsumablesLabel",
           "observed": "2 Months",
           "expected": "2 months",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleCarriedCraftLabel",
           "observed": "None listed",
           "expected": "None",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.baseAttackBonus",
           "observed": "+1",
           "expected": "+0",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.initiative",
           "observed": "+3",
           "expected": "-3",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.senses",
           "observed": "Perception +0",
           "expected": "Perception +5",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.maneuver",
           "observed": "+1",
           "expected": "-3",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementRaw",
           "observed": "Fly 12 squares (Character Scale), Fly 2 Squares (Starship Scale)",
           "expected": "Fly 12 squares (Character Scale), Fly 2 squares (Starship Scale)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementModes",
@@ -1354,79 +1490,92 @@
               "source": "Fly 2 squares (Starship Scale)"
             }
           ],
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.sourcebook",
           "observed": "",
           "expected": "Starships of the Galaxy",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.page",
           "observed": null,
           "expected": 88,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleHasNavicomputer",
           "observed": null,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleAstrogationSupportStatus",
           "observed": "needs-source-line-review",
           "expected": "printed-navcomputer",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceSourceStatus",
           "observed": "existing-compendium-priced",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.availability",
           "observed": "Unknown",
           "expected": "Licensed",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAvailabilityStatus",
           "observed": "missing-source-data",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAttributeSource",
           "observed": null,
           "expected": "Starships of the Galaxy",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.vehicleAttributeDataStatus",
           "observed": null,
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.vehicleAttributeSourceTitle",
           "observed": null,
           "expected": "Ghtroc Industries Class 720 Freighter",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "MISSING"
         },
         {
           "path": "system.vehicleTransportDataStatus",
           "observed": "source-line-normalized+split-passenger-cargo-line",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleWeaponDataStatus",
           "observed": "needs-source-statblock",
           "expected": "published-weapon-group-pending-installed-binding",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         }
       ],
       "matchingFields": [
@@ -1597,67 +1746,78 @@
           "path": "system.size",
           "observed": "large",
           "expected": "colossal (frigate)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.reflexDefense",
           "observed": 10,
           "expected": 18,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.fortitudeDefense",
           "observed": 10,
           "expected": 39,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.flatFooted",
           "observed": 10,
           "expected": 14,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.armorBonus",
           "observed": 0,
           "expected": 14,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.damageThreshold",
           "observed": 30,
           "expected": 139,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.damageReduction",
           "observed": 5,
           "expected": 15,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.dr",
           "observed": 5,
           "expected": 15,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleDR",
           "observed": 5,
           "expected": 15,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.hitPoints",
           "observed": 50,
           "expected": 960,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHP",
           "observed": 50,
           "expected": 960,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.hp",
@@ -1671,7 +1831,8 @@
             "value": 960,
             "temp": 0
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.hull",
@@ -1685,7 +1846,8 @@
             "value": 960,
             "temp": 0
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.shields",
@@ -1697,169 +1859,197 @@
             "max": 100,
             "value": 100
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleShieldKnown",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHPDataStatus",
           "observed": "existing-compendium-hull",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleDRDataStatus",
           "observed": "rules-derived-size-default",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleShieldDataStatus",
           "observed": "source-verified",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.crewQuality",
           "observed": "normal",
           "expected": "skilled",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.crew",
           "observed": "1 (normal crew)",
           "expected": "8 (skilled)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleCrewCount",
           "observed": 1,
           "expected": 8,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.crewNotes",
           "observed": "",
           "expected": "Printed crew 8 (skilled).",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.passengers",
           "observed": "0",
           "expected": "16",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePassengerCount",
           "observed": 0,
           "expected": 16,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHasPassengers",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.cargo",
           "observed": "100 kg",
           "expected": "1,000 tons",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleCargoKg",
           "observed": 100,
           "expected": 1000000,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.consumables",
           "observed": "1 week",
           "expected": "6 months",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleConsumablesDays",
           "observed": 7,
           "expected": 180,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleConsumablesLabel",
           "observed": "1 Week",
           "expected": "6 months",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleCarriedCraftLabel",
           "observed": "None listed",
           "expected": "None",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.baseAttackBonus",
           "observed": "+1",
           "expected": "+2",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.senses",
           "observed": "Perception +0",
           "expected": "Perception +6",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.speed",
           "observed": "12 squares",
           "expected": "",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.starshipSpeed",
           "observed": "",
           "expected": "Fly 3 squares",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.characterScaleSpeed",
           "observed": 12,
           "expected": null,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.starshipScaleSpeed",
           "observed": null,
           "expected": 3,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleHasCharacterScaleSpeed",
           "observed": true,
           "expected": false,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHasStarshipScaleSpeed",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.starshipScaleMovementMode",
           "observed": "",
           "expected": "fly",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementRaw",
           "observed": "12 squares",
           "expected": "Fly 3 squares (Starship Scale)",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementModes",
@@ -1881,67 +2071,78 @@
               "source": "Fly 3 squares (Starship Scale)"
             }
           ],
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleMovementStatus",
           "observed": "character-scale-only",
           "expected": "starship-scale-only",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.maxVelocityKmh",
           "observed": 800,
           "expected": null,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.maxVelocity",
           "observed": "800 km/h",
           "expected": "",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.sourcebook",
           "observed": "",
           "expected": "Starships of the Galaxy",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.page",
           "observed": null,
           "expected": 126,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.hyperdrive_class",
           "observed": null,
           "expected": "2",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleHasHyperdrive",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleHyperdriveClass",
           "observed": null,
           "expected": 2,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehicleHasNavicomputer",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAstrogationSupportStatus",
           "observed": "not-applicable",
           "expected": "printed-navcomputer",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.cost",
@@ -1953,7 +2154,8 @@
             "new": 1250000,
             "used": 400000
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleRawCost",
@@ -1965,91 +2167,106 @@
             "new": 1250000,
             "used": 400000
           },
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceNew",
           "observed": null,
           "expected": 1250000,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehiclePriceUsed",
           "observed": null,
           "expected": 400000,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "NULL"
         },
         {
           "path": "system.vehiclePriceStatus",
           "observed": "unavailable",
           "expected": "priced",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceLabel",
           "observed": "Needs source review",
           "expected": "New 1,250,000 / Used 400,000",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleStoreCanBuyNew",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleStoreCanBuyUsed",
           "observed": false,
           "expected": true,
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehiclePriceSourceStatus",
           "observed": "existing-compendium-unavailable",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.availability",
           "observed": "Unknown",
           "expected": "Licensed",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAvailabilityStatus",
           "observed": "missing-source-data",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAttributeSource",
           "observed": "SWSE Fandom",
           "expected": "Starships of the Galaxy",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAttributeDataStatus",
           "observed": "source-verified",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleAttributeSourceTitle",
           "observed": "Consular-Class Space Cruiser",
           "expected": "Corellian Engineering Corporation Consular-class Cruiser",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleTransportDataStatus",
           "observed": "source-line-normalized",
           "expected": "published-source-verified",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         },
         {
           "path": "system.vehicleWeaponDataStatus",
           "observed": "unarmed",
           "expected": "published-stock-unarmed",
-          "action": "REMEDIATE"
+          "action": "REMEDIATE",
+          "observedState": "PRESENT"
         }
       ],
       "matchingFields": [
@@ -2099,5 +2316,10 @@
     "Hydrate Ghtroc's one printed weapon group as a real preserved installed record; audit physical mount, arc, station and weapon category.",
     "Replace the hardcoded false crew station preflight with actual trusted operator/station evidence, before any attack costs.",
     "Run stock and custom attack isolation, producer/consumer, rollback, geometry and Foundry V13 tests; verify GitHub readback before operational certification."
-  ]
+  ],
+  "observedValueSemantics": {
+    "MISSING": "Property did not exist in the baseline pack JSON; observed null is a serialization placeholder, not evidence of stored null.",
+    "NULL": "Property exists with explicit JSON null.",
+    "PRESENT": "Property exists with a JSON value, including false, zero or empty string."
+  }
 }
