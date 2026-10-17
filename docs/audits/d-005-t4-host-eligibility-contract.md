@@ -7,6 +7,8 @@
 
 > **Provenance notice (replaces the earlier completeness notice).** The proposal `d005-t4-host-eligibility-contract-proposal.md` has now been **received and incorporated** (T4a completion commit). The first T4a commit (`c9c56f22`) was written without it and deliberately omitted its engineering sections. The proposal's content was supplied in the owner message that authorized this completion; it is reproduced below in substance, **labelled by approval level**, and cross-checked against the repository and the committed T4b census (`d-005-t4-item-fact-capability-census.md`, unchanged).
 
+> **Update (T4c freeze).** The owner has since approved the 12 design decisions and 11 serialization-freeze decisions recorded in `docs/audits/d-005-t4c-owner-decisions.md` (T4C-D01…D12, T4C-F01…F11). For the items they cover — including the schema id, the closed operator vocabulary, the 30-code diagnostic vocabulary and its case-to-code mapping, size ordering, group semantics, and the integrity-pin approach — that record supersedes the [PROPOSED] tags below. Everything else tagged [PROPOSED] here remains unapproved. Implementation (sidecar, schema, validator, adapter, evaluator) is still not authorized.
+
 ## 0. How to read this document
 
 | Tag | Meaning |
