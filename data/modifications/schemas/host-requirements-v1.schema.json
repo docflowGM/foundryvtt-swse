@@ -2,7 +2,7 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "swse.modification.host-requirements/1",
  "title": "SWSE modification host requirements (D-005 T4c, offline static contract)",
- "description": "Structured host requirements for the 35 D-005 typed definitions. Static contract only: not a host evaluator, not a runtime rule source. Authority: docs/audits/d-005-t4c-owner-decisions.md. The dependency-free validator tools/lib/host-requirements.mjs is the executable authority; enumerations in $defs are checked for exact parity with it by tests/modification-host-requirements.test.mjs.",
+ "description": "Structured host requirements for the 35 D-005 typed definitions. Static contract only: not a host evaluator, not a runtime rule source. Authority: docs/audits/d-005-t4c-owner-decisions.md. The dependency-free validator tools/lib/host-requirements.mjs is the executable authority. The validator checks this file for structural parity (closed shapes, required keys, predicate branches, enumerations, the 35-record bound) and checks the sidecar against it with a restricted checker that fails closed on unsupported keywords. Semantic rules that JSON Schema cannot express are enforced only by the validator: operator/group/fact scope, owner-decision resolution, D005 source linkage, registry scope, the frozen approved-mapping oracle, canonical serialization and the independent integrity pin.",
  "type": "object",
  "additionalProperties": false,
  "required": [

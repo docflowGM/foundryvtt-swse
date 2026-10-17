@@ -13,6 +13,7 @@
 // codes of the owner-decisions record and to the G3 framework reason codes.
 
 import { canonicalJson, sha256, jsonEqual } from './modification-runtime.mjs';
+import { checkJsonSchema } from './mini-json-schema.mjs';
 
 export const HOST_REQUIREMENTS_SCHEMA_ID = 'swse.modification.host-requirements/1';
 export const HOST_REQUIREMENTS_PATH = 'data/modifications/host-requirements-v1.json';
@@ -123,6 +124,100 @@ const isStr = (v) => typeof v === 'string' && v.length > 0;
 const isInt = (v) => Number.isInteger(v);
 const byteCompare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
+
+/* ------------------------------------------------------------------------------------------ */
+/* The approved mapping oracle (owner-decisions record section 4.4, Amendments A1 and A2)      */
+/* ------------------------------------------------------------------------------------------ */
+
+/**
+ * APPROVED_MAPPING: the single, frozen, offline-only oracle of what each of the 35 typed definitions' record must be.
+ * The validator enforces it exactly (HRV_MAPPING), so a sidecar edit that is internally consistent -- even with an updated
+ * revision and pin -- is still rejected when it departs from the approved mapping. It is NOT a second rule source for any
+ * runtime: nothing imports it outside tools/ and tests/. Tests cross-check it independently against the owner-decisions
+ * record (section 4.4 table) and against the committed D005 published-facts records; there is no other copy of this table.
+ */
+const PARENT_MAPPING = {
+  'sv-cheater': { label: 'Cheater', page: 40, verdict: 'SUPPORTED', domains: ['equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Cheating and concealment effects depend on the device and the circumstances of use', install: [{ op: 'compat.evidenced', check: 'canConcealCheater', owners: ['T4C-D05'] }] },
+  'sv-cloaked': { label: 'Cloaked', page: 40, verdict: 'SUPPORTED', domains: ['weapon', 'armor', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Signature, sound and appearance effects differ by host type', install: [] },
+  'sv-dual-gear': { label: 'Dual Gear', page: 41, verdict: 'SUPPORTED', domains: ['equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Combined-function and simultaneous-use effects, and added-item price', install: [{ op: 'size.not_larger', left: 'addedItem.sizeCategory', right: 'host.sizeCategory' }, { op: 'compat.evidenced', check: 'addedComponentQualifiesAsEquipment', owners: ['T4C-D05', 'T4C-F09'] }, { op: 'compat.evidenced', check: 'addedComponentPhysicalFit', owners: ['T4C-D05', 'T4C-F09'] }] },
+  'sv-electrograpple-handle': { label: 'Electrograpple Handle', page: 41, verdict: 'SUPPORTED', domains: ['weapon', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Retrieval and restrained-equipment effects', install: [{ op: 'compat.evidenced', check: 'canFitElectrograppleHandle', owners: ['T4C-D05'] }], use: [{ op: 'bool.equals', fact: 'use.attunedGauntletForHost', value: true }] },
+  'sv-environmental-sealing': { label: 'Environmental Sealing', page: 41, verdict: 'SUPPORTED', domains: ['weapon', 'armor', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Item-level environmental protection effects', install: [] },
+  'sv-extra-power-source': { label: 'Extra Power Source', page: 41, verdict: 'CONDITIONALLY_SUPPORTED', domains: ['weapon', 'armor', 'equipment'], stacking: 'EXPLICITLY_REPEATABLE', effect: 'Additional power supply effect', install: [{ op: 'enum.intersects', fact: 'host.powerSourceTypes', allowed: ['energy-cell', 'power-pack'] }] },
+  'sv-memory-upgrade': { label: 'Memory Upgrade', page: 41, verdict: 'CONDITIONALLY_SUPPORTED', domains: ['equipment'], stacking: 'ADVANCED_REPLACES_BASIC_NO_STACKING', effect: 'Intelligence and data-storage effects', install: [{ op: 'int.explicit', fact: 'host.intelligenceScore' }, { op: 'enum.in', fact: 'host.droidStatus', allowed: ['nondroid'] }] },
+  'sv-memory-upgrade-advanced': { label: 'Memory Upgrade, Advanced', page: 41, verdict: 'CONDITIONALLY_SUPPORTED', domains: ['equipment'], stacking: 'ADVANCED_REPLACES_BASIC_NO_STACKING', effect: 'Intelligence and data-storage effects that replace the basic version', install: [{ op: 'int.explicit', fact: 'host.intelligenceScore' }, { op: 'enum.in', fact: 'host.droidStatus', allowed: ['nondroid'] }] },
+  'sv-miniaturized': { label: 'Miniaturized', page: 41, verdict: 'SUPPORTED', domains: ['weapon', 'armor', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Weight and size effects, and the melee-weapon damage consequence', install: [] },
+  'sv-recognition-system': { label: 'Recognition System', page: 41, verdict: 'SUPPORTED', domains: ['weapon', 'armor', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Authorized-user restriction, bypass and owner-deactivation effects', install: [{ op: 'bool.equals', fact: 'host.functionRestrictable', value: true }] },
+  'sv-remote-activation': { label: 'Remote Activation', page: 41, verdict: 'CONDITIONALLY_SUPPORTED', domains: ['weapon', 'armor', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Remote signal, action and security effects', install: [{ op: 'bool.equals', fact: 'host.remotelyActivatableFunction', value: true }] },
+  'sv-secret-compartment': { label: 'Secret Compartment', page: 41, continuesOnPage: 42, verdict: 'CONDITIONALLY_SUPPORTED', domains: ['weapon', 'armor', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Concealment and detection effects', install: [{ op: 'compat.evidenced', check: 'canAccommodateHiddenCompartment', owners: ['T4C-D05'] }], payload: [{ op: 'size.smaller_by_at_least', left: 'payload.sizeCategory', right: 'host.sizeCategory', steps: 1 }, { op: 'count.at_most', collection: 'payload.items', max: 1 }] },
+  'sv-silverplate': { label: 'Silverplate', page: 42, verdict: 'SUPPORTED', domains: ['weapon', 'armor', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Object protection and related effects; outside host-eligibility scope, see the source record', install: [] },
+  'sv-spring-loaded': { label: 'Spring Loaded', page: 42, verdict: 'CONDITIONALLY_SUPPORTED', domains: ['weapon', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Presentation and drawing effects; outside host-eligibility scope, see the source record', install: [{ op: 'bool.equals', fact: 'host.oneHandedHandheld', value: true }] },
+  'sv-storage-capacity': { label: 'Storage Capacity', page: 42, verdict: 'CONDITIONALLY_SUPPORTED', domains: ['weapon', 'armor', 'equipment'], stacking: 'NOT_SPECIFIED_BY_SOURCE', effect: 'Compartment and storage effects', install: [{ op: 'compat.evidenced', check: 'canCarryPayload', owners: ['T4C-D05'] }], payload: [{ op: 'size.smaller_by_at_least', left: 'payload.sizeCategory', right: 'host.sizeCategory', steps: 1 }, { op: 'weight.sum_lt', items: 'payload.weightKg', limit: 'host.weightKg' }] }
+};
+
+function expandPredicate(t, specId, page) {
+  const authority = { kind: 'PUBLISHED_RULE', sourceSpecId: specId, printedPage: page };
+  const { op, owners, ...operands } = t;
+  const ordered = {};
+  for (const k of PREDICATE_KEYS[op]) {
+    if (k === 'op') ordered.op = op;
+    else if (k === 'authority') ordered.authority = authority;
+    else if (k === 'evidenceMethod') ordered.evidenceMethod = { kind: 'OWNER_ENGINEERING_CHECK', ownerRulingIds: [...owners] };
+    else ordered[k] = operands[k];
+  }
+  return ordered;
+}
+
+function deepFreeze(v) {
+  if (v !== null && typeof v === 'object' && !Object.isFrozen(v)) { Object.freeze(v); Object.values(v).forEach(deepFreeze); }
+  return v;
+}
+
+function expandMapping() {
+  const out = {};
+  for (const [parent, m] of Object.entries(PARENT_MAPPING)) {
+    for (const domain of m.domains) {
+      const id = `${parent}::${domain}`;
+      const specId = `D005::${id}`;
+      const install = (m.install ?? []).map((t) => expandPredicate(t, specId, m.page));
+      const source = { bookId: BOOK_ID, printedPage: m.page };
+      if (m.continuesOnPage) source.continuesOnPage = m.continuesOnPage;
+      out[id] = {
+        typedDefinitionId: id, upgradeLabel: m.label, domain, sourceSpecId: specId, source, domainVerdict: m.verdict,
+        installRequirements: install,
+        noAdditionalHostPrerequisite: install.length === 0 ? { declared: true, statement: NAHP_STATEMENT, sourceSpecId: specId, printedPage: m.page } : null,
+        useRequirements: (m.use ?? []).map((t) => expandPredicate(t, specId, m.page)),
+        payloadRequirements: (m.payload ?? []).map((t) => expandPredicate(t, specId, m.page)),
+        effectReferences: [{ label: m.effect, sourceSpecId: specId }],
+        stacking: { fact: m.stacking, maxPerHost: null, sourceSpecId: specId }
+      };
+    }
+  }
+  return out;
+}
+
+/** typedDefinitionId -> the exact record the sidecar must contain (deep-frozen). */
+export const APPROVED_MAPPING = deepFreeze(expandMapping());
+/** The 35 approved typed identities, byte-wise sorted. */
+export const APPROVED_IDS = Object.freeze(Object.keys(APPROVED_MAPPING).sort(byteCompare));
+export const APPROVED_PARENTS = Object.freeze([...new Set(APPROVED_IDS.map((i) => i.split('::')[0]))]);
+/** Doc-notation of a predicate, used by tests to compare the oracle with the owner-decisions record table. */
+export function predicateNotation(p) {
+  const fmt = (x) => (Array.isArray(x) ? `[${x.join(', ')}]` : String(x));
+  const args = PREDICATE_KEYS[p.op].filter((k) => !['op', 'authority', 'evidenceMethod'].includes(k)).map((k) => fmt(p[k]));
+  return `${p.op}(${args.join(', ')})`;
+}
+
+/** First few differing JSON paths between two values (for HRV_MAPPING diagnostics). */
+function diffPaths(a, b, at = '', out = []) {
+  if (out.length >= 5 || jsonEqual(a, b)) return out;
+  if (isObj(a) && isObj(b)) {
+    for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) diffPaths(a[k], b[k], `${at}/${k}`, out);
+  } else if (Array.isArray(a) && Array.isArray(b)) {
+    for (let i = 0; i < Math.max(a.length, b.length); i += 1) diffPaths(a[i], b[i], `${at}/${i}`, out);
+  } else out.push(at || '/');
+  return out.slice(0, 5);
+}
+
 /** The records array canonicalized and hashed: this value is the sidecar `revision` and the trusted pin. */
 export function computeRevision(records) {
   return sha256(canonicalJson(records));
@@ -173,12 +268,27 @@ export function validateHostRequirements(inputs, options = {}) {
 
   // Schema parity --------------------------------------------------------------------------------
   schemaParity(schema, fail);
+  schemaConformance(schema, sidecar, fail);
 
   // Authoritative source sets --------------------------------------------------------------------
-  const hostSpecs = (Array.isArray(specs) ? specs : []).filter((r) => r && r.component === 'hostPrerequisites');
-  const specById = new Map(hostSpecs.map((r) => [r.specId, r]));
-  const expectedIds = hostSpecs.map((r) => r.typedDefinitionId).sort(byteCompare);
-  const parents = new Set(expectedIds.map((id) => id.split('::')[0]));
+  // Source census (Finding 4): isolated to the D-005 records. Host-prerequisite records of any other audit are ignored;
+  // a missing, duplicate or unexpected D005 identity is a failure. The expected identities come from the frozen oracle.
+  const d005Specs = (Array.isArray(specs) ? specs : []).filter((r) => r && r.component === 'hostPrerequisites' && typeof r.specId === 'string' && r.specId.startsWith('D005::'));
+  const specById = new Map();
+  const dupSpecs = [];
+  for (const r of d005Specs) { if (specById.has(r.specId)) dupSpecs.push(r.specId); else specById.set(r.specId, r); }
+  const expectedSpecIds = APPROVED_IDS.map((id) => `D005::${id}`);
+  const missingSpecs = expectedSpecIds.filter((id) => !specById.has(id));
+  const unexpectedSpecs = [...specById.keys()].filter((id) => !expectedSpecIds.includes(id)).sort(byteCompare);
+  if (dupSpecs.length || missingSpecs.length || unexpectedSpecs.length) fail('HRV_SOURCE_CENSUS', '/specs', { missing: missingSpecs, duplicate: dupSpecs, unexpected: unexpectedSpecs });
+  for (const [id, r] of specById) {
+    const typed = id.slice('D005::'.length);
+    if (r.typedDefinitionId !== typed) fail('HRV_SOURCE_CENSUS', `/specs/${id}`, { typedDefinitionId: r.typedDefinitionId });
+    const m = APPROVED_MAPPING[typed];
+    if (m && (r.publication?.printedPage !== m.source.printedPage || r.publication?.bookId !== m.source.bookId)) fail('HRV_PAGE', `/specs/${id}`, { oracle: m.source.printedPage, record: r.publication?.printedPage });
+  }
+  const expectedIds = [...APPROVED_IDS];
+  const parents = new Set(APPROVED_PARENTS);
   const ownerIds = parseOwnerDecisionIds(ownerDecisionsText);
   if (ownerIds.size === 0) fail('HRV_OWNER_DOC', OWNER_DECISIONS_PATH, 'no decision identifiers found');
 
@@ -211,6 +321,9 @@ export function validateHostRequirements(inputs, options = {}) {
     prev = id;
     if (!expectedIds.includes(id)) fail('HRV_IDENTITY', `${base}/typedDefinitionId`, 'not one of the approved typed definitions');
     const [parent, domain] = id.split('::');
+    // Exact approved mapping (Findings 1 and 2): predicates, operands, groups, evidence methods, verdict, stacking, empty-install
+    // declaration, effect reference and source linkage must equal the frozen oracle, whatever the revision or pin says.
+    if (Object.prototype.hasOwnProperty.call(APPROVED_MAPPING, id) && !jsonEqual(rec, APPROVED_MAPPING[id])) fail('HRV_MAPPING', base, { id, differs: diffPaths(rec, APPROVED_MAPPING[id], '') });
     if (rec.domain !== domain) fail('HRV_DOMAIN', `${base}/domain`, { observed: rec.domain, expected: domain });
     if (TYPED_DOMAINS.includes(domain)) counts.domains[domain] += 1;
     if (!isStr(rec.upgradeLabel)) fail('HRV_SHAPE', `${base}/upgradeLabel`, 'display label required (never an identity)');
@@ -389,10 +502,29 @@ function validatePredicate(p, group, path, ctx) {
 function schemaParity(schema, fail) {
   if (!isObj(schema) || !isObj(schema.$defs)) return fail('HRV_SCHEMA_PARITY', '/schema', 'schema file missing $defs');
   const d = schema.$defs;
+  const bad = (at, detail) => fail('HRV_SCHEMA_PARITY', `/schema${at}`, detail);
   const cmp = (name, observed, expected) => {
-    if (!Array.isArray(observed) || !jsonEqual([...observed], [...expected])) fail('HRV_SCHEMA_PARITY', `/schema/$defs/${name}`, { observed, expected });
+    if (!Array.isArray(observed) || !jsonEqual([...observed], [...expected])) bad(`/$defs/${name}`, { observed, expected });
   };
-  if (schema.properties?.schema?.const !== HOST_REQUIREMENTS_SCHEMA_ID) fail('HRV_SCHEMA_PARITY', '/schema/properties/schema', 'schema id const');
+  const sameSet = (a, b) => Array.isArray(a) && Array.isArray(b) && a.length === b.length && [...a].sort().join('\u0000') === [...b].sort().join('\u0000');
+  /** An object shape must be closed (additionalProperties false) with required/properties equal to the validator's key list. */
+  const shape = (at, node, keys, required = keys) => {
+    if (!isObj(node)) return bad(at, 'missing shape');
+    if (node.type !== 'object') bad(`${at}/type`, 'object expected');
+    if (node.additionalProperties !== false) bad(`${at}/additionalProperties`, 'must be false');
+    if (!sameSet(node.required, required)) bad(`${at}/required`, { observed: node.required, expected: required });
+    if (!isObj(node.properties) || !sameSet(Object.keys(node.properties), keys)) bad(`${at}/properties`, { observed: node.properties && Object.keys(node.properties), expected: keys });
+    return undefined;
+  };
+
+  // Root
+  if (schema.properties?.schema?.const !== HOST_REQUIREMENTS_SCHEMA_ID) bad('/properties/schema', 'schema id const');
+  shape('', schema, ROOT_KEYS);
+  if (schema.properties?.records?.minItems !== APPROVED_IDS.length || schema.properties?.records?.maxItems !== APPROVED_IDS.length) bad('/properties/records', 'minItems and maxItems must equal the 35 approved definitions');
+
+  // Closed enumerations
+  cmp('group', d.group?.enum, GROUPS);
+  cmp('typedDomain', d.typedDomain?.enum, TYPED_DOMAINS);
   cmp('operator', d.operator?.enum, OPERATORS);
   cmp('fact', d.fact?.enum, Object.keys(FACTS));
   cmp('size', d.size?.enum, SIZE_CATEGORIES);
@@ -400,7 +532,41 @@ function schemaParity(schema, fail) {
   cmp('authorityKind', d.authorityKind?.enum, AUTHORITY_KINDS);
   cmp('domainVerdict', d.domainVerdict?.enum, DOMAIN_VERDICTS);
   cmp('stackingFact', d.stackingFact?.enum, STACKING_FACTS);
-  cmp('group', d.group?.enum, GROUPS);
-  cmp('typedDomain', d.typedDomain?.enum, TYPED_DOMAINS);
+
+  // Record and nested shapes
+  const rec = d.record;
+  shape('/$defs/record', rec, RECORD_KEYS);
+  shape('/$defs/record/properties/source', rec?.properties?.source, SOURCE_KEYS_CONT, SOURCE_KEYS);
+  shape('/$defs/record/properties/stacking', rec?.properties?.stacking, STACKING_KEYS);
+  if (rec?.properties?.stacking?.properties?.maxPerHost?.type !== 'null') bad('/$defs/record/properties/stacking/properties/maxPerHost', 'must be type null');
+  shape('/$defs/record/properties/effectReferences/items', rec?.properties?.effectReferences?.items, EFFECT_KEYS);
+  const nahp = rec?.properties?.noAdditionalHostPrerequisite?.oneOf;
+  if (!Array.isArray(nahp) || nahp.length !== 2 || nahp[0]?.type !== 'null') bad('/$defs/record/properties/noAdditionalHostPrerequisite', 'oneOf [null, declaration] expected');
+  else shape('/$defs/record/properties/noAdditionalHostPrerequisite/oneOf/1', nahp[1], NAHP_KEYS);
+  for (const g of GROUPS) {
+    const node = rec?.properties?.[GROUP_FIELD[g]];
+    if (node?.type !== 'array' || node?.items?.$ref !== '#/$defs/predicate') bad(`/$defs/record/properties/${GROUP_FIELD[g]}`, 'array of predicate expected');
+  }
+  shape('/$defs/publishedRuleAuthority', d.publishedRuleAuthority, PUBLISHED_KEYS);
+  shape('/$defs/engineeringAuthority', d.engineeringAuthority, OWNER_KEYS);
+
+  // Predicate union: exactly one closed branch per approved operator, with the validator's key list
+  const branches = d.predicate?.oneOf;
+  if (!Array.isArray(branches) || branches.length !== OPERATORS.length) bad('/$defs/predicate/oneOf', { observed: Array.isArray(branches) ? branches.length : null, expected: OPERATORS.length });
+  else {
+    for (const op of OPERATORS) {
+      const matching = branches.filter((b) => b?.properties?.op?.const === op);
+      if (matching.length !== 1) { bad(`/$defs/predicate/oneOf/${op}`, 'exactly one branch required'); continue; }
+      shape(`/$defs/predicate/oneOf/${op}`, matching[0], PREDICATE_KEYS[op]);
+    }
+  }
   return undefined;
+}
+
+/** The committed sidecar must conform to the committed schema, using the restricted checker (fails closed on unsupported keywords). */
+function schemaConformance(schema, sidecar, fail) {
+  const r = checkJsonSchema(schema, sidecar);
+  for (const u of r.unsupported) fail('HRV_SCHEMA_UNSUPPORTED', `/schema${u.path}`, u.keyword);
+  for (const e of r.errors) fail('HRV_SCHEMA_CONFORMANCE', e.path || '/', { keyword: e.keyword, detail: e.detail });
+  return r;
 }

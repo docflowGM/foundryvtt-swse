@@ -16,8 +16,10 @@ import { fileURLToPath } from 'node:url';
 import {
   validateHostRequirements, computeRevision, parseOwnerDecisionIds, PINNED_HOST_REQUIREMENTS_SHA256,
   HOST_REQUIREMENTS_PATH, HOST_REQUIREMENTS_SCHEMA_PATH, OWNER_DECISIONS_PATH,
-  OPERATORS, OPERATOR_GROUPS, FACTS, COMPATIBILITY_CHECKS, SIZE_CATEGORIES, GROUPS, GROUP_FIELD, NAHP_STATEMENT
+  OPERATORS, OPERATOR_GROUPS, FACTS, COMPATIBILITY_CHECKS, SIZE_CATEGORIES, GROUPS, GROUP_FIELD, NAHP_STATEMENT,
+  APPROVED_MAPPING, APPROVED_IDS, APPROVED_PARENTS, predicateNotation
 } from '../tools/lib/host-requirements.mjs';
+import { checkJsonSchema } from '../tools/lib/mini-json-schema.mjs';
 import { loadAndValidate } from '../tools/validate-host-requirements.mjs';
 import { canonicalJson, sha256, PINNED_SCOPE_SHA256 } from '../tools/lib/modification-runtime.mjs';
 import { createLegalityFramework } from '../scripts/engine/customization/modification-v2/modification-legality.js';
@@ -73,38 +75,6 @@ const EMPTY_INSTALL = [
   'sv-silverplate::weapon', 'sv-silverplate::armor', 'sv-silverplate::equipment'
 ];
 const PREDICATES = (r) => GROUPS.flatMap((g) => r[GROUP_FIELD[g]].map((p) => ({ group: g, p })));
-
-/* The approved 15-upgrade mappings (owner-decisions record section 4.4), as test expectations only. */
-const SIG = {
-  'sv-cheater': { install: ['compat.evidenced:canConcealCheater'], use: [], payload: [] },
-  'sv-cloaked': { install: [], use: [], payload: [] },
-  'sv-dual-gear': { install: ['size.not_larger:addedItem.sizeCategory<=host.sizeCategory', 'compat.evidenced:addedComponentQualifiesAsEquipment', 'compat.evidenced:addedComponentPhysicalFit'], use: [], payload: [] },
-  'sv-electrograpple-handle': { install: ['compat.evidenced:canFitElectrograppleHandle'], use: ['bool.equals:use.attunedGauntletForHost=true'], payload: [] },
-  'sv-environmental-sealing': { install: [], use: [], payload: [] },
-  'sv-extra-power-source': { install: ['enum.intersects:host.powerSourceTypes:energy-cell,power-pack'], use: [], payload: [] },
-  'sv-memory-upgrade': { install: ['int.explicit:host.intelligenceScore', 'enum.in:host.droidStatus:nondroid'], use: [], payload: [] },
-  'sv-memory-upgrade-advanced': { install: ['int.explicit:host.intelligenceScore', 'enum.in:host.droidStatus:nondroid'], use: [], payload: [] },
-  'sv-miniaturized': { install: [], use: [], payload: [] },
-  'sv-recognition-system': { install: ['bool.equals:host.functionRestrictable=true'], use: [], payload: [] },
-  'sv-remote-activation': { install: ['bool.equals:host.remotelyActivatableFunction=true'], use: [], payload: [] },
-  'sv-secret-compartment': { install: ['compat.evidenced:canAccommodateHiddenCompartment'], use: [], payload: ['size.smaller_by_at_least:payload.sizeCategory<host.sizeCategory:1', 'count.at_most:payload.items:1'] },
-  'sv-silverplate': { install: [], use: [], payload: [] },
-  'sv-spring-loaded': { install: ['bool.equals:host.oneHandedHandheld=true'], use: [], payload: [] },
-  'sv-storage-capacity': { install: ['compat.evidenced:canCarryPayload'], use: [], payload: ['size.smaller_by_at_least:payload.sizeCategory<host.sizeCategory:1', 'weight.sum_lt:payload.weightKg<host.weightKg'] }
-};
-const sigOf = (p) => {
-  switch (p.op) {
-    case 'compat.evidenced': return `${p.op}:${p.check}`;
-    case 'bool.equals': return `${p.op}:${p.fact}=${p.value}`;
-    case 'enum.in': case 'enum.intersects': return `${p.op}:${p.fact}:${p.allowed.join(',')}`;
-    case 'int.explicit': return `${p.op}:${p.fact}`;
-    case 'size.not_larger': return `${p.op}:${p.left}<=${p.right}`;
-    case 'size.smaller_by_at_least': return `${p.op}:${p.left}<${p.right}:${p.steps}`;
-    case 'weight.sum_lt': return `${p.op}:${p.items}<${p.limit}`;
-    case 'count.at_most': return `${p.op}:${p.collection}:${p.max}`;
-    default: throw new Error(`unexpected op ${p.op}`);
-  }
-};
 
 /* ---------------------------------- the committed artifact ---------------------------------- */
 
@@ -171,15 +141,77 @@ check('registry scope: the 35 are exactly the CONDITIONAL_UNVERIFIED pairs; the 
   assert.equal(sha256(fs.readFileSync(path.join(root, 'data/audits/modification-rolling-authority-v1.5.json'))), '7be427414a95216a8bec45078e62ea2a7fb6e185f24b1f4c2ee250bac7093d00');
 });
 
-check('the approved 15 mappings are represented exactly (install / use / payload separated)', () => {
-  for (const r of SIDECAR.records) {
-    const parent = r.typedDefinitionId.split('::')[0];
-    const want = SIG[parent];
-    assert.deepEqual(r.installRequirements.map(sigOf), want.install, `${r.typedDefinitionId} install`);
-    assert.deepEqual(r.useRequirements.map(sigOf), want.use, `${r.typedDefinitionId} use`);
-    assert.deepEqual(r.payloadRequirements.map(sigOf), want.payload, `${r.typedDefinitionId} payload`);
+check('the sidecar equals the frozen approved-mapping oracle exactly (35 records, key order included); there is no second golden table', () => {
+  assert.equal(APPROVED_IDS.length, 35);
+  assert.equal(APPROVED_PARENTS.length, 15);
+  assert.deepEqual(Object.keys(APPROVED_MAPPING).sort(), [...APPROVED_IDS]);
+  assert.equal(JSON.stringify(SIDECAR.records), JSON.stringify(APPROVED_IDS.map((id) => APPROVED_MAPPING[id])));
+  assert.ok(Object.isFrozen(APPROVED_MAPPING) && Object.isFrozen(APPROVED_MAPPING['sv-cheater::equipment']) && Object.isFrozen(APPROVED_MAPPING['sv-cheater::equipment'].installRequirements));
+  assert.ok(!/\bSIG\b/.test(read('tests/modification-host-requirements.test.mjs').replace(/\/\/.*$/gm, '').replace(/'[^']*'/g, '')), 'no test-side golden signature table remains');
+});
+
+/** Parses the section 4.4 predicate-classification table of the owner-decisions record (test-side cross-check only). */
+function parseDesignTable(text) {
+  const sec = text.split('**Predicate classification**')[1].split('The one-item limit constrains')[0];
+  const rows = sec.split('\n').filter((l) => l.startsWith('| ') && !l.startsWith('| ---') && !l.startsWith('| Upgrade'));
+  return rows.map((l) => {
+    const cells = l.replace(/^\| /, '').replace(/ \|$/, '').split(' | ');
+    assert.equal(cells.length, 5, l);
+    return {
+      names: cells[0].split('; '),
+      group: cells[1].replace(/\*/g, '').trim(),
+      predicates: cells[2].startsWith('none') ? [] : [...cells[2].matchAll(/`([^`]+)`/g)].map((m) => m[1]),
+      empty: cells[2].startsWith('none'),
+      requirement: cells[3],
+      evidence: cells[4]
+    };
+  });
+}
+
+check('independent cross-check: the oracle agrees with the owner-decisions record (section 4.4 table), predicate by predicate', () => {
+  const rows = parseDesignTable(OWNER_TEXT);
+  assert.ok(rows.length >= 20);
+  const labelToParent = new Map(Object.entries(APPROVED_MAPPING).map(([id, r]) => [r.upgradeLabel, id.split('::')[0]]));
+  const fromDoc = {};
+  for (const row of rows) {
+    for (const name of row.names) {
+      const parent = labelToParent.get(name);
+      assert.ok(parent, `document upgrade name ${name} resolves to an approved parent`);
+      const slot = (fromDoc[parent] ??= { install: [], use: [], payload: [], empty: false, evidence: [] });
+      if (row.empty) { slot.empty = true; continue; }
+      for (const pr of row.predicates) { slot[row.group].push(pr); slot.evidence.push([pr, /OWNER_ENGINEERING_CHECK/.test(row.evidence)]); }
+    }
   }
-  assert.equal(Object.keys(SIG).length, 15);
+  for (const parent of APPROVED_PARENTS) {
+    const rec0 = APPROVED_MAPPING[APPROVED_IDS.find((i) => i.startsWith(`${parent}::`))];
+    const doc = fromDoc[parent];
+    assert.ok(doc, parent);
+    for (const g of GROUPS) assert.deepEqual(rec0[GROUP_FIELD[g]].map(predicateNotation), doc[g], `${parent} ${g}`);
+    assert.equal(rec0.installRequirements.length === 0, doc.empty, `${parent} empty-install`);
+    for (const [notation, engineered] of doc.evidence) {
+      const p = GROUPS.flatMap((g) => rec0[GROUP_FIELD[g]]).find((x) => predicateNotation(x) === notation);
+      assert.equal(p.op === 'compat.evidenced', engineered, `${parent} ${notation} evidence method`);
+    }
+  }
+  for (const id of APPROVED_IDS) assert.deepEqual(APPROVED_MAPPING[id], SIDECAR.records.find((r) => r.typedDefinitionId === id));
+});
+
+check('independent cross-check: the oracle agrees with the committed D005 records (page, domain, verdict, continuation)', () => {
+  let s = 0;
+  for (const id of APPROVED_IDS) {
+    const o = APPROVED_MAPPING[id];
+    const spec = HOST_SPECS.find((x) => x.typedDefinitionId === id);
+    assert.ok(spec, id);
+    assert.equal(spec.specId, `D005::${id}`);
+    assert.equal(spec.publication.printedPage, o.source.printedPage);
+    assert.equal(spec.publication.bookId, o.source.bookId);
+    assert.equal(/domain verdict (SUPPORTED|CONDITIONALLY SUPPORTED)\./.exec(spec.behavior)[1].replace(' ', '_'), o.domainVerdict);
+    if (o.domainVerdict === 'SUPPORTED') s += 1;
+    if (o.source.continuesOnPage) assert.match(spec.publication.tableOrSection, new RegExp(`continues on printed p\\. ${o.source.continuesOnPage}`));
+  }
+  assert.equal(s, 19);
+  assert.equal(APPROVED_IDS.length - s, 16);
+  assert.equal(HOST_SPECS.length, 35);
 });
 
 check('source-specific scoping: attunement is use-only, the one-item limit is payload-only, host accommodation is install-only', () => {
@@ -339,8 +371,9 @@ check('the static contract cannot express unknown / null / default / untrusted a
       assert.equal(r.ok, false, `${fact}=${String(bad)}`);
       assert.ok(r.codes.includes('HRV_UNKNOWN_OPERAND') || r.codes.includes('HRV_OPERAND') || r.codes.includes('HRV_FIELDS'), `${fact}=${String(bad)}: ${r.codes}`);
     }
-    // an explicit boolean false is a representable value but still passes only as a boolean literal, never as 'unknown'
-    assert.equal(run((s) => { triPredicate(s, fact).value = false; }).ok, true);
+    // an explicit boolean false is a well-formed literal, but it departs from the approved mapping and the oracle rejects it even with a self-consistent revision and pin
+    const flipped = run((s) => { triPredicate(s, fact).value = false; });
+    assert.deepEqual(flipped.codes, ['HRV_MAPPING'], `${fact}: ${flipped.codes}`);
   }
   // the droid-status enum: 'unknown' is a runtime state, never an operand, alone or alongside nondroid
   for (const allowed of [['unknown'], ['nondroid', 'unknown'], [], ['droid', 'droid'], ['default'], 'nondroid']) {
@@ -495,19 +528,22 @@ check('integrity: the stored revision equals the canonical records hash and the 
   assert.ok(!read('tools/lib/host-requirements.mjs').includes('PINNED_SCOPE_SHA256 ='), 'the existing scope pin is neither redefined nor modified here');
 });
 
-check('integrity: an unauthorized edit is caught by the revision AND the independent pin; a self-consistent edit is caught by the pin alone', () => {
+check('integrity: an unauthorized edit is caught by the revision, the independent pin and the oracle; the pin alone guards an otherwise identical artifact', () => {
   const tampered = clone(SIDECAR);
   rec(tampered, 'sv-spring-loaded::weapon').upgradeLabel = 'Spring Loaded (edited)';
   // edited content, stale self-reported revision
   const a = validateHostRequirements({ bytes: canonicalJson(tampered), sidecar: tampered, schema: SCHEMA, specs: SPECS, registry: REGISTRY, ownerDecisionsText: OWNER_TEXT });
   const aCodes = new Set(a.failures.map((f) => f.code));
-  assert.ok(aCodes.has('HRV_REVISION') && aCodes.has('HRV_PIN'));
-  // edited content with a recomputed, self-consistent revision: only the trusted pin detects it
+  assert.ok(aCodes.has('HRV_REVISION') && aCodes.has('HRV_PIN') && aCodes.has('HRV_MAPPING'));
+  // edited content with a recomputed, self-consistent revision: the pin and the oracle both still reject it
   tampered.revision = computeRevision(tampered.records);
   const b = validateHostRequirements({ bytes: canonicalJson(tampered), sidecar: tampered, schema: SCHEMA, specs: SPECS, registry: REGISTRY, ownerDecisionsText: OWNER_TEXT });
-  assert.deepEqual([...new Set(b.failures.map((f) => f.code))], ['HRV_PIN']);
-  // the pin override used by these tests is the only way to accept the edit
-  assert.equal(validateHostRequirements({ bytes: canonicalJson(tampered), sidecar: tampered, schema: SCHEMA, specs: SPECS, registry: REGISTRY, ownerDecisionsText: OWNER_TEXT }, { pin: tampered.revision }).ok, true);
+  assert.deepEqual([...new Set(b.failures.map((f) => f.code))].sort(), ['HRV_MAPPING', 'HRV_PIN']);
+  // an unmodified artifact checked against a different trusted pin fails on the pin alone
+  const c = validateHostRequirements({ bytes: BYTES, sidecar: SIDECAR, schema: SCHEMA, specs: SPECS, registry: REGISTRY, ownerDecisionsText: OWNER_TEXT }, { pin: '0'.repeat(64) });
+  assert.deepEqual([...new Set(c.failures.map((f) => f.code))], ['HRV_PIN']);
+  // with the committed pin the unmodified artifact is valid
+  assert.equal(validateHostRequirements({ bytes: BYTES, sidecar: SIDECAR, schema: SCHEMA, specs: SPECS, registry: REGISTRY, ownerDecisionsText: OWNER_TEXT }).ok, true);
 });
 
 check('integrity: noncanonical output and reordered records are rejected', () => {
@@ -547,6 +583,200 @@ check('non-effects: no evaluator exists, G3 still answers not_established for al
   for (const f of fs.readdirSync(path.join(root, 'scripts'), { recursive: true })) {
     if (typeof f === 'string' && f.endsWith('.js')) assert.ok(!/host-requirements/.test(fs.readFileSync(path.join(root, 'scripts', f), 'utf8')), `scripts/${f} must not load the sidecar`);
   }
+});
+
+/* ---------------------------------- Findings 1-2: the validator itself enforces the approved mapping ---------------------------------- */
+
+check('the validator rejects self-consistent departures from the approved mapping (revision and pin recomputed): HRV_MAPPING alone', () => {
+  const only = (r, label) => assert.deepEqual(r.codes, ['HRV_MAPPING'], `${label}: ${r.codes}`);
+  only(run((s) => { rec(s, 'sv-recognition-system::weapon').installRequirements[0].value = false; }), 'required value flipped');
+  only(run((s) => { rec(s, 'sv-silverplate::armor').stacking.fact = 'EXPLICITLY_REPEATABLE'; }), 'silverplate marked repeatable');
+  only(run((s) => { rec(s, 'sv-extra-power-source::armor').stacking.fact = 'NOT_SPECIFIED_BY_SOURCE'; }), 'extra power source repeatability dropped');
+  only(run((s) => { rec(s, 'sv-memory-upgrade::equipment').stacking.fact = 'NOT_SPECIFIED_BY_SOURCE'; }), 'memory replacement dropped');
+  only(run((s) => { rec(s, 'sv-cloaked::weapon').domainVerdict = 'CONDITIONALLY_SUPPORTED'; }), 'verdict flipped (also breaks 19/16)');
+  only(run((s) => { rec(s, 'sv-spring-loaded::weapon').installRequirements[0].fact = 'host.functionRestrictable'; }), 'fact swapped within the same kind');
+  only(run((s) => { rec(s, 'sv-extra-power-source::weapon').installRequirements[0].allowed = ['energy-cell']; }), 'allowed list narrowed');
+  only(run((s) => { rec(s, 'sv-extra-power-source::weapon').installRequirements[0].allowed = ['power-pack', 'energy-cell']; }), 'allowed list reordered');
+  only(run((s) => { const r = rec(s, 'sv-memory-upgrade-advanced::equipment'); r.installRequirements.reverse(); }), 'predicates reordered');
+  only(run((s) => { const r = rec(s, 'sv-memory-upgrade::equipment'); r.installRequirements.pop(); }), 'droid-status requirement dropped');
+  only(run((s) => { rec(s, 'sv-dual-gear::equipment').installRequirements[1].evidenceMethod.ownerRulingIds = ['T4C-D05']; }), 'Dual Gear lost its F09 reference');
+  only(run((s) => { rec(s, 'sv-secret-compartment::armor').payloadRequirements.pop(); }), 'one-item limit dropped');
+  only(run((s) => { rec(s, 'sv-storage-capacity::armor').payloadRequirements[1] = { op: 'weight.sum_lt', items: 'payload.weightKg', limit: 'host.weightKg', authority: rec(s, 'sv-storage-capacity::armor').payloadRequirements[1].authority }; rec(s, 'sv-storage-capacity::armor').payloadRequirements.reverse(); }), 'payload predicates reordered');
+  only(run((s) => { rec(s, 'sv-cheater::equipment').effectReferences[0].label = 'Different neutral label'; }), 'effect label drift');
+  only(run((s) => { rec(s, 'sv-cheater::equipment').upgradeLabel = 'Cheating Device'; }), 'display label drift');
+  only(run((s) => { rec(s, 'sv-electrograpple-handle::weapon').useRequirements = []; }), 'attunement use requirement dropped');
+  assert.equal(run(() => {}).ok, true);
+  assert.deepEqual(Object.values(APPROVED_MAPPING).map((r) => r.domainVerdict).reduce((a, v) => ({ ...a, [v]: (a[v] ?? 0) + 1 }), {}), { SUPPORTED: 19, CONDITIONALLY_SUPPORTED: 16 });
+  const m = run((s) => { rec(s, 'sv-recognition-system::weapon').installRequirements[0].value = false; });
+  const f = m.failures.find((x) => x.code === 'HRV_MAPPING');
+  assert.ok(f.detail.differs.some((d) => d.endsWith('/value')), JSON.stringify(f.detail));
+});
+
+/* ---------------------------------- Finding 4: D-005-scoped source census ---------------------------------- */
+
+check('source census is isolated to the D005 records: missing, duplicate and unexpected D005 identities fail; unrelated audits are ignored', () => {
+  const withSpecs = (fn) => { const sp = clone(SPECS); fn(sp); return sp; };
+  const hostRec = (sp, id) => sp.find((x) => x.specId === `D005::${id}`);
+  // missing
+  expectCode(run(() => {}, { specs: withSpecs((sp) => sp.splice(sp.indexOf(hostRec(sp, 'sv-cheater::equipment')), 1)) }), 'HRV_SOURCE_CENSUS', 'missing D005 record');
+  expectCode(run(() => {}, { specs: withSpecs((sp) => sp.splice(sp.indexOf(hostRec(sp, 'sv-cheater::equipment')), 1)) }), 'HRV_SOURCE_LINK', 'missing D005 record link');
+  // duplicate
+  expectCode(run(() => {}, { specs: withSpecs((sp) => sp.push(clone(hostRec(sp, 'sv-cheater::equipment')))) }), 'HRV_SOURCE_CENSUS', 'duplicate D005 record');
+  // unexpected D005 identity
+  const unexpected = withSpecs((sp) => { const r = clone(hostRec(sp, 'sv-cheater::equipment')); r.specId = 'D005::sv-invented::equipment'; r.typedDefinitionId = 'sv-invented::equipment'; sp.push(r); });
+  expectCode(run(() => {}, { specs: unexpected }), 'HRV_SOURCE_CENSUS', 'unexpected D005 record');
+  // mismatched typed id inside a D005 record
+  expectCode(run(() => {}, { specs: withSpecs((sp) => { hostRec(sp, 'sv-cheater::equipment').typedDefinitionId = 'sv-cloaked::equipment'; }) }), 'HRV_SOURCE_CENSUS', 'record/identity mismatch');
+  // oracle and record page disagree
+  expectCode(run(() => {}, { specs: withSpecs((sp) => { hostRec(sp, 'sv-cheater::equipment').publication.printedPage = 41; }) }), 'HRV_PAGE', 'page disagreement');
+  // unrelated future audits are ignored, even when they also use the hostPrerequisites component
+  const future = withSpecs((sp) => {
+    const r = clone(hostRec(sp, 'sv-cheater::equipment'));
+    r.specId = 'D007::sv-future-upgrade::equipment'; r.typedDefinitionId = 'sv-future-upgrade::equipment';
+    sp.push(r);
+    const r2 = clone(r); r2.specId = 'X-HOST-1'; r2.typedDefinitionId = 'other::weapon'; sp.push(r2);
+  });
+  const ok = run(() => {}, { specs: future });
+  assert.equal(ok.ok, true, JSON.stringify(ok.failures));
+  // non-hostPrerequisites components never count
+  assert.equal(run(() => {}, { specs: withSpecs((sp) => { const r = clone(hostRec(sp, 'sv-cheater::equipment')); r.component = 'installProcedure'; sp.push(r); }) }).ok, true);
+  assert.equal(SPECS.filter((r) => r.component === 'hostPrerequisites' && r.specId.startsWith('D005::')).length, 35);
+});
+
+/* ---------------------------------- Finding 3: schema parity, conformance and the restricted checker ---------------------------------- */
+
+check('schema parity covers structure: required keys, closed objects, predicate branches, nested shapes and the 35-record bound', () => {
+  assert.equal(run(() => {}).ok, true);
+  const bad = (mutate, label) => expectCode(run(() => {}, { schema: (() => { const sc = clone(SCHEMA); mutate(sc); return sc; })() }), 'HRV_SCHEMA_PARITY', label);
+  const branch = (sc, op) => sc.$defs.predicate.oneOf.find((b) => b.properties.op.const === op);
+  bad((sc) => { sc.required.pop(); }, 'root required key dropped');
+  bad((sc) => { sc.additionalProperties = true; }, 'root widened');
+  bad((sc) => { sc.properties.records.maxItems = 36; }, 'record bound widened');
+  bad((sc) => { sc.properties.records.minItems = 0; }, 'record bound removed');
+  bad((sc) => { sc.$defs.record.required = sc.$defs.record.required.filter((k) => k !== 'stacking'); }, 'record required key dropped');
+  bad((sc) => { sc.$defs.record.additionalProperties = true; }, 'record widened');
+  bad((sc) => { sc.$defs.record.properties.extra = { type: 'string' }; }, 'record property added');
+  bad((sc) => { sc.$defs.record.properties.source.additionalProperties = true; }, 'source widened');
+  bad((sc) => { sc.$defs.record.properties.source.required.push('continuesOnPage'); }, 'source requirement changed');
+  bad((sc) => { sc.$defs.record.properties.stacking.properties.maxPerHost = { type: 'integer' }; }, 'maxPerHost type changed');
+  bad((sc) => { sc.$defs.record.properties.effectReferences.items.additionalProperties = true; }, 'effect reference widened');
+  bad((sc) => { sc.$defs.record.properties.noAdditionalHostPrerequisite.oneOf.pop(); }, 'declaration branch removed');
+  bad((sc) => { sc.$defs.record.properties.installRequirements.items = { type: 'object' }; }, 'group items no longer a predicate');
+  bad((sc) => { sc.$defs.publishedRuleAuthority.additionalProperties = true; }, 'authority widened');
+  bad((sc) => { sc.$defs.engineeringAuthority.required = ['kind']; }, 'engineering authority requirement dropped');
+  bad((sc) => { sc.$defs.predicate.oneOf.pop(); }, 'operator branch removed');
+  bad((sc) => { sc.$defs.predicate.oneOf[0] = clone(sc.$defs.predicate.oneOf[1]); }, 'operator branch replaced by a copy of another (count unchanged)');
+  bad((sc) => { branch(sc, 'count.at_most').required.pop(); }, 'count.at_most required key dropped');
+  bad((sc) => { branch(sc, 'bool.equals').additionalProperties = true; }, 'bool.equals widened');
+  bad((sc) => { branch(sc, 'compat.evidenced').required = branch(sc, 'compat.evidenced').required.filter((k) => k !== 'evidenceMethod'); }, 'evidence method requirement dropped');
+  bad((sc) => { branch(sc, 'weight.sum_lt').properties.extra = { type: 'string' }; }, 'branch property added');
+  bad((sc) => { branch(sc, 'enum.in').properties.op.const = 'enum.any'; }, 'branch operator renamed');
+});
+
+check('the restricted JSON Schema checker: supported keywords behave, unsupported validation keywords fail closed', () => {
+  const t = (schema, value) => checkJsonSchema(schema, value);
+  assert.equal(t({ type: 'integer', minimum: 1 }, 1).valid, true);
+  assert.equal(t({ type: 'integer', minimum: 1 }, 0).valid, false);
+  assert.equal(t({ type: 'integer' }, 1.5).valid, false);
+  assert.equal(t({ type: 'integer' }, '1').valid, false);
+  assert.equal(t({ type: 'null' }, null).valid, true);
+  assert.equal(t({ const: true }, 'true').valid, false);
+  assert.equal(t({ enum: ['a', 'b'] }, 'c').valid, false);
+  assert.equal(t({ type: 'string', pattern: '^a+$' }, 'aab').valid, false);
+  assert.equal(t({ type: 'string', minLength: 1 }, '').valid, false);
+  assert.equal(t({ type: 'array', minItems: 1, maxItems: 2, uniqueItems: true, items: { type: 'integer' } }, [1, 1]).valid, false);
+  assert.equal(t({ type: 'array', minItems: 1 }, []).valid, false);
+  assert.equal(t({ type: 'array', maxItems: 1 }, [1, 2]).valid, false);
+  const closed = { type: 'object', additionalProperties: false, required: ['a'], properties: { a: { type: 'integer' } } };
+  assert.equal(t(closed, { a: 1 }).valid, true);
+  assert.equal(t(closed, {}).valid, false);
+  assert.equal(t(closed, { a: 1, b: 2 }).valid, false);
+  assert.equal(t(closed, { a: '1' }).valid, false);
+  assert.equal(t({ oneOf: [{ type: 'integer' }, { type: 'null' }] }, null).valid, true);
+  assert.equal(t({ oneOf: [{ type: 'integer' }, { type: 'integer', minimum: 0 }] }, 1).valid, false, 'oneOf requires exactly one match');
+  assert.equal(t({ $defs: { n: { type: 'integer' } }, $ref: '#/$defs/n' }, 1).valid, true);
+  assert.equal(t({ $defs: { n: { type: 'integer' } }, $ref: '#/$defs/n' }, 'x').valid, false);
+  // fail closed: unsupported validation keywords and unresolved references are never ignored
+  for (const kw of [{ anyOf: [{ type: 'string' }] }, { allOf: [{ type: 'string' }] }, { not: { type: 'string' } }, { format: 'date' }, { patternProperties: {} }, { maximum: 3 }, { if: {} }, { dependentRequired: {} }, { maxLength: 3 }, { additionalProperties: { type: 'string' } }, { $ref: '#/$defs/missing' }, { $ref: 'http://example.com/x' }]) {
+    const r = t({ type: ['string', 'object'][0] === 'string' ? 'object' : 'object', ...kw }, {});
+    assert.equal(r.valid, false, JSON.stringify(kw));
+    assert.ok(r.unsupported.length > 0, JSON.stringify(kw));
+  }
+  // annotations are allowed
+  assert.equal(t({ $schema: 'x', $id: 'y', title: 'z', description: 'd', type: 'integer' }, 1).valid, true);
+  // the committed schema uses only supported keywords
+  const real = checkJsonSchema(SCHEMA, SIDECAR);
+  assert.deepEqual([real.valid, real.unsupported.length, real.errors.length], [true, 0, 0]);
+  // the validator reports an unsupported keyword in the committed schema as a failure
+  const withKw = clone(SCHEMA);
+  withKw.$defs.record.properties.upgradeLabel.format = 'hostname';
+  expectCode(run(() => {}, { schema: withKw }), 'HRV_SCHEMA_UNSUPPORTED', 'unsupported keyword in the schema file');
+});
+
+check('differential corpus: structural malformations are rejected by BOTH the validator and the schema; semantic ones by the validator (documented)', () => {
+  const structural = [
+    ['extra record field', (s) => { rec(s, 'sv-cheater::equipment').extra = 1; }],
+    ['missing record field', (s) => { delete rec(s, 'sv-cheater::equipment').stacking; }],
+    ['record id wrong pattern', (s) => { rec(s, 'sv-cheater::equipment').typedDefinitionId = 'Sv Cheater::equipment'; }],
+    ['unknown operator', (s) => { rec(s, 'sv-spring-loaded::weapon').installRequirements[0].op = 'bool.compare'; }],
+    ['extra predicate field', (s) => { rec(s, 'sv-spring-loaded::weapon').installRequirements[0].extra = 1; }],
+    ['missing predicate operand', (s) => { delete rec(s, 'sv-spring-loaded::weapon').installRequirements[0].value; }],
+    ['unknown fact', (s) => { rec(s, 'sv-spring-loaded::weapon').installRequirements[0].fact = 'host.invented'; }],
+    ['boolean operand is unknown', (s) => { rec(s, 'sv-spring-loaded::weapon').installRequirements[0].value = 'unknown'; }],
+    ['boolean operand is null', (s) => { rec(s, 'sv-spring-loaded::weapon').installRequirements[0].value = null; }],
+    ['steps is a string', (s) => { rec(s, 'sv-storage-capacity::weapon').payloadRequirements[0].steps = '1'; }],
+    ['max is negative', (s) => { rec(s, 'sv-secret-compartment::weapon').payloadRequirements[1].max = -1; }],
+    ['max is fractional', (s) => { rec(s, 'sv-secret-compartment::weapon').payloadRequirements[1].max = 1.5; }],
+    ['unknown check', (s) => { rec(s, 'sv-cheater::equipment').installRequirements[0].check = 'canInvent'; }],
+    ['evidence method missing', (s) => { delete rec(s, 'sv-cheater::equipment').installRequirements[0].evidenceMethod; }],
+    ['owner id malformed', (s) => { rec(s, 'sv-cheater::equipment').installRequirements[0].evidenceMethod.ownerRulingIds = ['T4C-9']; }],
+    ['evidence method kind wrong', (s) => { rec(s, 'sv-cheater::equipment').installRequirements[0].evidenceMethod.kind = 'PUBLISHED_RULE'; }],
+    ['authority kind unsupported', (s) => { rec(s, 'sv-extra-power-source::weapon').installRequirements[0].authority.kind = 'RULES_CERTIFIED'; }],
+    ['verdict outside vocabulary', (s) => { rec(s, 'sv-cheater::equipment').domainVerdict = 'RULES_CERTIFIED'; }],
+    ['domain outside vocabulary', (s) => { rec(s, 'sv-cheater::equipment').domain = 'vehicle'; }],
+    ['stacking maximum invented', (s) => { rec(s, 'sv-spring-loaded::weapon').stacking.maxPerHost = 1; }],
+    ['stacking fact invented', (s) => { rec(s, 'sv-spring-loaded::weapon').stacking.fact = 'UNLIMITED'; }],
+    ['effect label with digits', (s) => { rec(s, 'sv-cheater::equipment').effectReferences[0].label = 'Adds 2 to checks'; }],
+    ['declaration not true', (s) => { rec(s, 'sv-cloaked::weapon').noAdditionalHostPrerequisite.declared = false; }],
+    ['declaration statement changed', (s) => { rec(s, 'sv-cloaked::weapon').noAdditionalHostPrerequisite.statement = 'Any item.'; }],
+    ['source page is a string', (s) => { rec(s, 'sv-cheater::equipment').source.printedPage = '40'; }],
+    ['source book wrong', (s) => { rec(s, 'sv-cheater::equipment').source.bookId = 'other'; }],
+    ['record count 34', (s) => { s.records.pop(); }],
+    ['record count 36', (s) => { s.records.push(clone(s.records[0])); }],
+    ['unexpected root field', (s) => { s.extra = 1; }],
+    ['wrong schema id', (s) => { s.schema = 'swse.modification.host-requirements/2'; }],
+    ['revision not a hash', (s) => { s.revision = 'zz'; }]
+  ];
+  const semantic = [
+    ['operator in a disallowed group', (s) => { const r = rec(s, 'sv-secret-compartment::armor'); r.installRequirements.push(r.payloadRequirements.pop()); }],
+    ['attunement outside use', (s) => { const r = rec(s, 'sv-electrograpple-handle::weapon'); r.installRequirements.push(r.useRequirements.pop()); }],
+    ['duplicate record', (s) => { s.records[1] = clone(s.records[0]); }],
+    ['records reordered', (s) => { s.records.reverse(); }],
+    ['authority cites another record', (s) => { rec(s, 'sv-extra-power-source::weapon').installRequirements[0].authority.sourceSpecId = 'D005::sv-extra-power-source::armor'; }],
+    ['wrong printed page value', (s) => { rec(s, 'sv-cheater::equipment').source.printedPage = 41; }],
+    ['compat check scoped to another upgrade', (s) => { rec(s, 'sv-cheater::equipment').installRequirements[0].check = 'canCarryPayload'; }],
+    ['unresolved owner decision id', (s) => { rec(s, 'sv-cheater::equipment').installRequirements[0].evidenceMethod.ownerRulingIds = ['T4C-D99']; }],
+    ['unknown allowed enum value', (s) => { rec(s, 'sv-extra-power-source::weapon').installRequirements[0].allowed = ['energy-cell', 'plasma']; }],
+    ['unknown in allowed list', (s) => { rec(s, 'sv-memory-upgrade::equipment').installRequirements[1].allowed = ['nondroid', 'unknown']; }]
+  ];
+  let both = 0;
+  for (const [label, mutate] of structural) {
+    const r = run(mutate, { rehash: label !== 'revision not a hash' });
+    assert.equal(r.ok, false, `validator accepted: ${label}`);
+    const mutated = clone(SIDECAR);
+    mutate(mutated);
+    const sc = checkJsonSchema(SCHEMA, mutated);
+    assert.equal(sc.valid, false, `schema accepted: ${label}`);
+    both += 1;
+  }
+  assert.equal(both, structural.length);
+  let validatorOnly = 0;
+  for (const [label, mutate] of semantic) {
+    assert.equal(run(mutate).ok, false, `validator accepted: ${label}`);
+    validatorOnly += 1;
+  }
+  assert.equal(validatorOnly, semantic.length);
+  assert.match(SCHEMA.description, /validator-only|semantic/i, 'the schema file states which rules only the validator enforces');
 });
 
 console.log(`modification-host-requirements: ${checks} checks OK`);
