@@ -1022,9 +1022,9 @@
     "classificationGaps": 1
   },
   "observedValueSemantics": {
-    "MISSING": "The property does not exist in the historical baseline JSON; omit the observed key rather than serialize a fictional null value.",
-    "NULL": "The property is explicitly present with null, meaning no authoritative information for that field or any nested children.",
-    "PRESENT": "The property exists and contains its recorded value (including 0, false, [], and explicit absence).",
-    "rule": "NULL is reserved for genuinely unavailable source information, not a placeholder for unreviewed, absent-key, known-zero, source-confirmed none, or partially populated parent data."
+    "MISSING": "No property existed at this path in the historical snapshot. Preserve that fact with observedState=MISSING and omit the observed key.",
+    "NULL": "The property existed and held literal null in the historical snapshot. This records what the pack stored; it is not proof the null was correct. If printed evidence exists, remediate to a meaningful value.",
+    "PRESENT": "Property existed and held its historical value, including meaningful zero, false, or empty arrays for known absence.",
+    "rule": "In the corrected records, null is reserved for genuinely informationless fields or entire informationless subtrees. Never null a parent if any child has evidence; do not represent published none as null; do not use null to fill an absent historical key."
   }
 }
