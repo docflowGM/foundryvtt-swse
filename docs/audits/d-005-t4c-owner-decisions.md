@@ -2,7 +2,7 @@
 
 **Status:** documentation only. Working PR #1057, branch `audit/d-005-t2-host-published-facts`. Baseline `b73bdb8010edd03f4ed59c576ba41f9cde90a96e`.
 **Authority:** project owner. This is the authoritative repository record of the D-005 T4c **engineering design decisions** (F01). It is not a source verification, a rules amendment, a mechanic specification, an executable schema, or an implementation authorization. It does not alter the append-only rules register (`docs/audits/swse-rules-decisions-pending.md`).
-**Decision date:** 2026-10-17 (design decisions and serialization freeze approved by the project owner). **Amendment A1** (same date, §3a) adds the Electrograpple attunement use fact, the ninth operator `count.at_most` and the 31st diagnostic code, and separates published-rule authority from engineering evidence methods. The 23 decision identifiers and their original text are unchanged.
+**Decision date:** 2026-10-17 (design decisions and serialization freeze approved by the project owner). **Amendment A1** (same date, §3a) adds the Electrograpple attunement use fact, the ninth operator `count.at_most` and the 31st diagnostic code, and separates published-rule authority from engineering evidence methods. The 23 decision identifiers and their original text are unchanged. **Amendment A2** (same date, §3a) adds the 32nd diagnostic code `HOST_ATTUNED_GAUNTLET_UNAVAILABLE`, the attunement case-to-code rows, and a tri-state mutation-test requirement.
 **Scope:** the 15 *Scum and Villainy* universal upgrades (printed pp. 40–42) and their 35 typed definitions.
 
 > **Not authorized by this record:** the JSON sidecar, its schema, any validator, test, adapter or evaluator; any production integration; D-014; G4–G9; merge. The complete 35-record T4c implementation requires a separate owner authorization after independent review of this record. Future `ownerRulingId` references resolve to the identifiers in §2–§3 below.
@@ -37,9 +37,9 @@ Approved by the project owner. Text is preserved from the owner's T4c handoff; n
 
 **T4C-D10 — Stacking and repeatability.** Stacking and repeatability remain separate from eligibility predicates. Extra Power Source is explicitly repeatable, with no invented numerical maximum. Advanced Memory Upgrade replaces the basic upgrade's benefits; they do not stack. All other repeatability remains unspecified unless independently established. `maxPerHost: null` is not interpreted as unlimited permission.
 
-**T4C-D11 — Reason-code vocabulary.** The 19 proposed codes are the starting vocabulary; five additional diagnostic categories are approved. Superseded in detail by T4C-F06 (the frozen 30-code vocabulary, extended to 31 by Amendment A1). Existing G3 framework reason codes remain unchanged.
+**T4C-D11 — Reason-code vocabulary.** The 19 proposed codes are the starting vocabulary; five additional diagnostic categories are approved. Superseded in detail by T4C-F06 (the frozen 30-code vocabulary, extended to 32 by Amendments A1 and A2). Existing G3 framework reason codes remain unchanged.
 
-**T4C-D12 — Acceptance requirements.** The future T4c implementation must demonstrate: exactly 35 unique typed entries; exactly the 35 approved identities; correct `D005::` links and printed pages; exactly 19 SUPPORTED and 16 CONDITIONALLY SUPPORTED verdicts; exactly 15 equipment, 11 weapon and 9 armor definitions; deterministic schema and source validation; negative and mutation tests; rejection of malformed records, unknown predicates, forged authority and missing definitions; complete preservation of all existing G2/G3 certification gates; zero runtime-selectable definitions. T4c implementation scope, when separately authorized, is the JSON sidecar, schema and offline validation/test utilities only.
+**T4C-D12 — Acceptance requirements.** The future T4c implementation must demonstrate: exactly 35 unique typed entries; exactly the 35 approved identities; correct `D005::` links and printed pages; exactly 19 SUPPORTED and 16 CONDITIONALLY SUPPORTED verdicts; exactly 15 equipment, 11 weapon and 9 armor definitions; deterministic schema and source validation; negative and mutation tests; rejection of malformed records, unknown predicates, forged authority and missing definitions; complete preservation of all existing G2/G3 certification gates; zero runtime-selectable definitions. T4c implementation scope, when separately authorized, is the JSON sidecar, schema and offline validation/test utilities only. *(Amendment A2 adds a tri-state mutation-test requirement; original text preserved.)*
 
 ## 3. The eleven serialization-freeze decisions (T4C-F01 … T4C-F11)
 
@@ -53,7 +53,7 @@ Approved by the project owner. Text is preserved from the owner's T4c handoff; n
 
 **T4C-F05 — G3 integration boundary.** The T4c sidecar is an offline design/validation artifact only. It is not an automatically loaded rule source. `createLegalityFramework()` and its registration contract are not modified; `hostRequirementsSpecified` is not set to true, no `hostEvaluator` is assigned, runtime selection is not enabled. The future T4d offline diagnostic requires independent authorization.
 
-**T4C-F06 — Diagnostic reason-code freeze.** 30 approved diagnostic codes (§5) *(Amendment A1 adds a 31st, `PAYLOAD_ITEM_COUNT_EXCEEDED`; original count preserved here as approved at the time)*. A deterministic case-to-code mapping is part of this decision (§5.2). Unknown Intelligence data is distinguished from trusted proof that a host has no Intelligence score; unknown physical compatibility is distinguished from trusted proof that compatibility fails. Existing G3 framework reason codes are preserved separately.
+**T4C-F06 — Diagnostic reason-code freeze.** 30 approved diagnostic codes (§5) *(Amendment A1 adds a 31st, `PAYLOAD_ITEM_COUNT_EXCEEDED`, and Amendment A2 a 32nd, `HOST_ATTUNED_GAUNTLET_UNAVAILABLE`; original count preserved here as approved at the time)*. A deterministic case-to-code mapping is part of this decision (§5.2). Unknown Intelligence data is distinguished from trusted proof that a host has no Intelligence score; unknown physical compatibility is distinguished from trusted proof that compatibility fails. Existing G3 framework reason codes are preserved separately.
 
 **T4C-F07 — Incomplete Item data.** The T4b census is accepted as the current capability boundary. No missing or default-derived Item value may be fabricated to complete a predicate. No actual Item fact becomes certified merely because the sidecar describes a requirement for that fact.
 
@@ -77,6 +77,16 @@ Approved by the project owner on 2026-10-17 after independent review of commit `
 4. **Literal identities.** The coverage table (§7) and the empty-install list (§4.4) now write all 35 typed identities in full.
 
 Standing architecture principle (owner, project-wide): strict single-source-of-truth and correctness take precedence over backward compatibility; future implementation reviews favor authoritative data ownership, removal of conflicting legacy authorities and complete consumer migration, and large refactors are acceptable when architecturally necessary, provided their consumers, invariants and validation requirements are identified and tested. No permanent compatibility shims, duplicate calculations or parallel mutation authorities are introduced solely to preserve abandoned behavior. This principle does not override published SWSE rules, unresolved source evidence, or the explicit scope of an authorized checkpoint, and it authorizes no runtime refactoring here.
+
+## 3b. Amendment A2 — attunement diagnostic code and tri-state mutation requirement
+
+Approved by the project owner on 2026-10-17 after independent review of commit `88c9f8fd`. Documentation only; no numbered decision is added or altered.
+
+* **32nd diagnostic code.** `HOST_ATTUNED_GAUNTLET_UNAVAILABLE` is approved for a trusted `false` result of `use.attunedGauntletForHost`.
+* **Deterministic result for `use.attunedGauntletForHost`:** trusted `true` → the use requirement is satisfied (no code); trusted `false` → `illegal` for the use group only, code `HOST_ATTUNED_GAUNTLET_UNAVAILABLE`; missing or explicit `unknown` → `not_established`, code `HOST_FACT_MISSING`; present but untrusted → `not_established`, code `HOST_FACT_UNTRUSTED` (§5.2, cases 30c–30f).
+* **Scope.** This predicate is evaluated **only in `useRequirements`**, never in `installRequirements`. It can never prevent installation of the Electrograpple Handle; an `illegal` result here means only that the handle's retrieval function cannot be used.
+* **Future acceptance-test requirement.** The implementation must include mutation tests proving that an explicit `unknown` value cannot become a trusted `false` value under `bool.equals` or `enum.in`, and that it likewise cannot satisfy those operators. The requirement applies across **all** tri-state facts (`host.droidStatus`, `host.oneHandedHandheld`, `host.functionRestrictable`, `host.remotelyActivatableFunction`, `use.attunedGauntletForHost`), and also to missing, default-derived and untrusted values: only trusted evidence can satisfy or fail a predicate.
+* **Preserved unchanged:** the nine predicate operators, the 35 typed definitions, the 23 decision identifiers, all other diagnostic codes, and the existing rule-authority classifications (§4.4).
 
 ## 4. Frozen serialization contract (for future implementation; nothing is created now)
 
@@ -158,7 +168,7 @@ The one-item limit constrains compartment contents, **not** the number of Secret
 
 ## 5. Diagnostic vocabulary (T4C-F06)
 
-### 5.1 The 31 approved codes (all unique)
+### 5.1 The 32 approved codes (all unique)
 
 *Group A — the 19 codes recorded in the T4a contract:* `HOST_FACT_MISSING`, `HOST_FACT_UNTRUSTED`, `HOST_POWER_SOURCE_UNKNOWN`, `HOST_POWER_SOURCE_UNSUPPORTED`, `HOST_INTELLIGENCE_MISSING`, `HOST_IS_DROID`, `HOST_DROID_STATUS_UNKNOWN`, `HOST_ONE_HANDED_UNKNOWN`, `HOST_NOT_ONE_HANDED`, `HOST_ACTIVATION_UNKNOWN`, `HOST_RESTRICTABILITY_UNKNOWN`, `HOST_PHYSICAL_FIT_UNKNOWN`, `HOST_ADDED_ITEM_MISSING`, `HOST_SIZE_UNKNOWN`, `PAYLOAD_NOT_SMALLER`, `HOST_WEIGHT_UNKNOWN`, `PAYLOAD_WEIGHT_UNKNOWN`, `PAYLOAD_WEIGHT_LIMIT_EXCEEDED`, `HOST_CONTRACT_VERSION_UNTRUSTED`.
 
@@ -168,7 +178,9 @@ The one-item limit constrains compartment contents, **not** the number of Secret
 
 *Group D — added by Amendment A1 (owner-approved addendum, 31st code):* `PAYLOAD_ITEM_COUNT_EXCEEDED` — a trusted violation of the one-item payload limit.
 
-Total: 19 + 5 + 6 + 1 = **31** (the original freeze approved the first 30; Amendment A1 adds the 31st). The existing G3 framework reason codes (`HOST_REQUIREMENTS_NOT_SPECIFIED`, `HOST_EVALUATOR_NOT_NAMED`, `HOST_EVALUATOR_NOT_REGISTERED`, `HOST_EVALUATOR_THREW`, `HOST_EVALUATOR_MALFORMED`) are unchanged, separate, and not part of this vocabulary.
+*Group E — added by Amendment A2 (32nd code):* `HOST_ATTUNED_GAUNTLET_UNAVAILABLE` — a trusted `false` for `use.attunedGauntletForHost` (use group only).
+
+Total: 19 + 5 + 6 + 1 + 1 = **32** (the original freeze approved the first 30; Amendment A1 adds the 31st, Amendment A2 the 32nd). The existing G3 framework reason codes (`HOST_REQUIREMENTS_NOT_SPECIFIED`, `HOST_EVALUATOR_NOT_NAMED`, `HOST_EVALUATOR_NOT_REGISTERED`, `HOST_EVALUATOR_THREW`, `HOST_EVALUATOR_MALFORMED`) are unchanged, separate, and not part of this vocabulary.
 
 ### 5.2 Deterministic case-to-code mapping
 
@@ -208,6 +220,10 @@ Status rule (T4C-D08): a proven failure yields `illegal`; contradictory, untrust
 | 30 | Sum of payload weights is **greater than or equal to** host weight (**equality fails**: the limit is strict) | **`illegal`** | `PAYLOAD_WEIGHT_LIMIT_EXCEEDED` |
 | 30a | Trusted payload item count is greater than the `count.at_most` maximum (Secret Compartment: more than one contained item) | **`illegal`** (for the evaluated payload group only; no installation limit is inferred) | `PAYLOAD_ITEM_COUNT_EXCEEDED` |
 | 30b | Payload item count unknown, missing or untrusted | `not_established` (never a violation) | `HOST_FACT_MISSING` if absent; `HOST_FACT_UNTRUSTED` if present but untrusted (cases 1–2; no dedicated code is approved, and none is invented) |
+| 30c | `use.attunedGauntletForHost` is trusted `true` (`useRequirements` only) | use requirement satisfied | none |
+| 30d | `use.attunedGauntletForHost` is trusted `false` | **`illegal`** (use group only; installation is never affected) | `HOST_ATTUNED_GAUNTLET_UNAVAILABLE` |
+| 30e | `use.attunedGauntletForHost` missing or explicit `unknown` | `not_established` | `HOST_FACT_MISSING` |
+| 30f | `use.attunedGauntletForHost` present but untrusted | `not_established` | `HOST_FACT_UNTRUSTED` |
 | 31 | Payload group explicitly requested but no payload items supplied | `not_established` | `HOST_FACT_MISSING` (reused; no dedicated code is approved, and none is invented) |
 | 32 | Payload group **not** requested | no verdict | none (T4C-F03: no fourth status) |
 | 33 | Empty `installRequirements` and Item type, typed identity, trusted source declaration and contract revision are all verified | `legal` (absence of additional host prerequisites only; not domain certification, selectability or installation authorization) | none |
@@ -253,7 +269,7 @@ The following specifics were written by the executor to make the approved decisi
 * the predicate classification in §4.4 (requirement authority versus evidence method), which follows the approved mapping text and Amendment A1 item 3;
 * the `payload.items` and `use.attunedGauntletForHost` fact spellings and the `collection` / `max` / `evidenceMethod` operand names (§4.1–§4.2);
 * the `noAdditionalHostPrerequisite` field name and the `effectReferences` / `stacking` block names (§4);
-* cases 30b and 31 of the case-to-code table (unknown payload count, or a payload group requested with no payload supplied, reuse `HOST_FACT_MISSING` / `HOST_FACT_UNTRUSTED`);
+* cases 30b and 31 of the case-to-code table (an unknown payload count, or a payload group requested with no payload supplied, reuses `HOST_FACT_MISSING` / `HOST_FACT_UNTRUSTED`); cases 30c–30f restate the owner's attunement ruling and are not executor-derived;
 * the definition of `revision` as the SHA-256 of the canonical `records` array and the proposed pin constant name (§6).
 
 ## 8. Decision index
