@@ -218,6 +218,98 @@ function diffPaths(a, b, at = '', out = []) {
   return out.slice(0, 5);
 }
 
+
+/* ------------------------------------------------------------------------------------------ */
+/* Frozen schema-constraint expectations (T4c final schema-parity amendment)                   */
+/* ------------------------------------------------------------------------------------------ */
+
+const ID_PATTERN = '^[a-z0-9-]+::(equipment|weapon|armor)$';
+const SPEC_ID_PATTERN = '^D005::[a-z0-9-]+::(equipment|weapon|armor)$';
+const OWNER_ID_PATTERN = '^T4C-[DF][0-9]{2}$';
+const REVISION_PATTERN = '^[0-9a-f]{64}$';
+const EFFECT_LABEL_PATTERN = "^[A-Za-z][A-Za-z ,;()'.-]*$";
+const DIAGNOSTIC_CODE_PATTERN = /^(HOST|PAYLOAD)_[A-Z_]+$/;
+const ANNOTATION_KEYS = new Set(['$schema', '$id', 'title', 'description']);
+
+/**
+ * The complete validation semantics the committed schema file must have, built from the validator's own vocabularies. Every
+ * validation keyword in the schema -- type, const, enum, pattern, minimum, minLength, minItems, maxItems, uniqueItems, items,
+ * oneOf, additionalProperties, required, properties and every $ref target -- must equal this tree; only annotation keywords
+ * (description, title, $schema, $id) may differ. It restates constraints the validator already enforces, it is not a rule source.
+ * `$defs.diagnosticCode` is checked separately (its values are the 32 documented diagnostic codes, compared by the tests).
+ */
+export function buildExpectedSchema() {
+  const ref = (n) => ({ $ref: `#/$defs/${n}` });
+  const obj = (required, properties) => ({ type: 'object', additionalProperties: false, required: [...required], properties });
+  const publishedAuthority = obj(PUBLISHED_KEYS, { kind: { const: 'PUBLISHED_RULE' }, sourceSpecId: ref('specId'), printedPage: { type: 'integer' } });
+  const engineeringAuthority = obj(OWNER_KEYS, { kind: { const: 'OWNER_ENGINEERING_CHECK' }, ownerRulingIds: { type: 'array', minItems: 1, uniqueItems: true, items: ref('ownerDecisionId') } });
+  const allowedList = { type: 'array', minItems: 1, uniqueItems: true, items: { type: 'string' } };
+  const branch = (op, properties) => obj(PREDICATE_KEYS[op], { op: { const: op }, ...properties });
+  const auth = { authority: ref('publishedRuleAuthority') };
+  const predicate = {
+    oneOf: [
+      branch('bool.equals', { fact: ref('fact'), value: { type: 'boolean' }, ...auth }),
+      branch('enum.in', { fact: ref('fact'), allowed: allowedList, ...auth }),
+      branch('enum.intersects', { fact: ref('fact'), allowed: allowedList, ...auth }),
+      branch('int.explicit', { fact: ref('fact'), ...auth }),
+      branch('size.not_larger', { left: ref('fact'), right: ref('fact'), ...auth }),
+      branch('size.smaller_by_at_least', { left: ref('fact'), right: ref('fact'), steps: { type: 'integer', minimum: 1 }, ...auth }),
+      branch('weight.sum_lt', { items: ref('fact'), limit: ref('fact'), ...auth }),
+      branch('count.at_most', { collection: ref('fact'), max: { type: 'integer', minimum: 0 }, ...auth }),
+      branch('compat.evidenced', { check: ref('check'), ...auth, evidenceMethod: ref('engineeringAuthority') })
+    ]
+  };
+  const group = { type: 'array', items: ref('predicate') };
+  const record = obj(RECORD_KEYS, {
+    typedDefinitionId: ref('typedDefinitionId'),
+    upgradeLabel: { type: 'string', minLength: 1 },
+    domain: ref('typedDomain'),
+    sourceSpecId: ref('specId'),
+    source: obj(SOURCE_KEYS, { bookId: { const: BOOK_ID }, printedPage: { type: 'integer' }, continuesOnPage: { type: 'integer' } }),
+    domainVerdict: ref('domainVerdict'),
+    installRequirements: group,
+    noAdditionalHostPrerequisite: { oneOf: [{ type: 'null' }, obj(NAHP_KEYS, { declared: { const: true }, statement: { const: NAHP_STATEMENT }, sourceSpecId: ref('specId'), printedPage: { type: 'integer' } })] },
+    useRequirements: group,
+    payloadRequirements: group,
+    effectReferences: { type: 'array', items: obj(EFFECT_KEYS, { label: { type: 'string', pattern: EFFECT_LABEL_PATTERN }, sourceSpecId: ref('specId') }) },
+    stacking: obj(STACKING_KEYS, { fact: ref('stackingFact'), maxPerHost: { type: 'null' }, sourceSpecId: ref('specId') })
+  });
+  record.properties.source.required = [...SOURCE_KEYS];
+  return {
+    root: obj(ROOT_KEYS, { schema: { const: HOST_REQUIREMENTS_SCHEMA_ID }, revision: { type: 'string', pattern: REVISION_PATTERN }, records: { type: 'array', minItems: APPROVED_IDS.length, maxItems: APPROVED_IDS.length, items: ref('record') } }),
+    $defs: {
+      group: { enum: [...GROUPS] },
+      typedDomain: { enum: [...TYPED_DOMAINS] },
+      operator: { enum: [...OPERATORS] },
+      fact: { enum: Object.keys(FACTS) },
+      size: { enum: [...SIZE_CATEGORIES] },
+      check: { enum: Object.keys(COMPATIBILITY_CHECKS) },
+      authorityKind: { enum: [...AUTHORITY_KINDS] },
+      domainVerdict: { enum: [...DOMAIN_VERDICTS] },
+      stackingFact: { enum: [...STACKING_FACTS] },
+      ownerDecisionId: { type: 'string', pattern: OWNER_ID_PATTERN },
+      typedDefinitionId: { type: 'string', pattern: ID_PATTERN },
+      specId: { type: 'string', pattern: SPEC_ID_PATTERN },
+      publishedRuleAuthority: publishedAuthority,
+      engineeringAuthority,
+      predicate,
+      record
+    }
+  };
+}
+
+/** Removes annotation keywords and makes `required` order-insensitive, so only validation semantics are compared. */
+function normalizeSchemaNode(node) {
+  if (Array.isArray(node)) return node.map(normalizeSchemaNode);
+  if (!isObj(node)) return node;
+  const out = {};
+  for (const [k, v] of Object.entries(node)) {
+    if (ANNOTATION_KEYS.has(k)) continue;
+    out[k] = k === 'required' && Array.isArray(v) ? [...v].sort() : normalizeSchemaNode(v);
+  }
+  return out;
+}
+
 /** The records array canonicalized and hashed: this value is the sidecar `revision` and the trusted pin. */
 export function computeRevision(records) {
   return sha256(canonicalJson(records));
@@ -560,6 +652,22 @@ function schemaParity(schema, fail) {
       shape(`/$defs/predicate/oneOf/${op}`, matching[0], PREDICATE_KEYS[op]);
     }
   }
+
+  // Complete validation-semantics parity: every validation keyword, nested property constraint and $ref target must equal the
+  // frozen expectation. A weakening that the committed sidecar would still satisfy (value: {} , a dropped uniqueItems, a changed
+  // $ref) is therefore reported even though the sidecar and the integrity pin are unchanged.
+  const expected = buildExpectedSchema();
+  const { $defs: defsNode, ...rootNode } = schema;
+  const rootObs = normalizeSchemaNode(rootNode);
+  const rootExp = normalizeSchemaNode(expected.root);
+  const rootDiff = diffPaths(rootObs, rootExp, '');
+  if (rootDiff.length) bad('', { constraintDiffers: rootDiff });
+  const { diagnosticCode, ...otherDefs } = defsNode;
+  const defsDiff = diffPaths(normalizeSchemaNode(otherDefs), normalizeSchemaNode(expected.$defs), '/$defs');
+  if (defsDiff.length) bad('/$defs', { constraintDiffers: defsDiff });
+  const codes = diagnosticCode?.enum;
+  if (!Array.isArray(codes) || codes.length !== 32 || new Set(codes).size !== 32 || codes.some((c) => typeof c !== 'string' || !DIAGNOSTIC_CODE_PATTERN.test(c))) bad('/$defs/diagnosticCode', '32 unique diagnostic code strings expected');
+  if (Object.keys(diagnosticCode ?? {}).some((k) => !['enum', 'description'].includes(k))) bad('/$defs/diagnosticCode', 'only enum and description are allowed');
   return undefined;
 }
 

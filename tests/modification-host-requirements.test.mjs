@@ -17,7 +17,7 @@ import {
   validateHostRequirements, computeRevision, parseOwnerDecisionIds, PINNED_HOST_REQUIREMENTS_SHA256,
   HOST_REQUIREMENTS_PATH, HOST_REQUIREMENTS_SCHEMA_PATH, OWNER_DECISIONS_PATH,
   OPERATORS, OPERATOR_GROUPS, FACTS, COMPATIBILITY_CHECKS, SIZE_CATEGORIES, GROUPS, GROUP_FIELD, NAHP_STATEMENT,
-  APPROVED_MAPPING, APPROVED_IDS, APPROVED_PARENTS, predicateNotation
+  APPROVED_MAPPING, APPROVED_IDS, APPROVED_PARENTS, predicateNotation, buildExpectedSchema
 } from '../tools/lib/host-requirements.mjs';
 import { checkJsonSchema } from '../tools/lib/mini-json-schema.mjs';
 import { loadAndValidate } from '../tools/validate-host-requirements.mjs';
@@ -777,6 +777,150 @@ check('differential corpus: structural malformations are rejected by BOTH the va
   }
   assert.equal(validatorOnly, semantic.length);
   assert.match(SCHEMA.description, /validator-only|semantic/i, 'the schema file states which rules only the validator enforces');
+});
+
+/* ---------------------------------- final schema-parity amendment: nested constraints cannot be weakened ---------------------------------- */
+
+/** A schema mutation must be rejected by parity alone: the sidecar, the integrity pin and the mapping oracle are untouched. */
+const parityOnly = (mutate, label) => {
+  const sc = clone(SCHEMA);
+  mutate(sc);
+  const r = run(() => {}, { schema: sc });
+  assert.equal(r.ok, false, `accepted: ${label}`);
+  assert.ok(r.codes.includes('HRV_SCHEMA_PARITY'), `${label}: ${r.codes}`);
+  assert.ok(!r.codes.includes('HRV_PIN') && !r.codes.includes('HRV_MAPPING') && !r.codes.includes('HRV_REVISION'), `${label}: independent of pin and mapping, got ${r.codes}`);
+  return r;
+};
+const predBranch = (sc, op) => sc.$defs.predicate.oneOf.find((b) => b.properties.op.const === op);
+
+check('weakened operand constraints that the committed sidecar still satisfies are rejected by schema parity alone', () => {
+  // the committed sidecar still conforms to every weakened schema below, which is exactly why parity must catch them
+  const conformsStill = (mutate) => { const sc = clone(SCHEMA); mutate(sc); return checkJsonSchema(sc, SIDECAR).valid; };
+  const cases = [
+    ['boolean operand type removed', (sc) => { predBranch(sc, 'bool.equals').properties.value = {}; }],
+    ['boolean operand type widened to string', (sc) => { predBranch(sc, 'bool.equals').properties.value = { type: 'string' }; }],
+    ['allowed list element type removed (enum.in)', (sc) => { predBranch(sc, 'enum.in').properties.allowed.items = {}; }],
+    ['allowed list element type removed (enum.intersects)', (sc) => { predBranch(sc, 'enum.intersects').properties.allowed.items = {}; }],
+    ['allowed list may be empty (enum.in)', (sc) => { delete predBranch(sc, 'enum.in').properties.allowed.minItems; }],
+    ['allowed list may be empty (enum.intersects)', (sc) => { predBranch(sc, 'enum.intersects').properties.allowed.minItems = 0; }],
+    ['allowed list may repeat (enum.in)', (sc) => { delete predBranch(sc, 'enum.in').properties.allowed.uniqueItems; }],
+    ['allowed list may repeat (enum.intersects)', (sc) => { predBranch(sc, 'enum.intersects').properties.allowed.uniqueItems = false; }],
+    ['steps minimum removed', (sc) => { delete predBranch(sc, 'size.smaller_by_at_least').properties.steps.minimum; }],
+    ['steps minimum lowered', (sc) => { predBranch(sc, 'size.smaller_by_at_least').properties.steps.minimum = 0; }],
+    ['steps type widened', (sc) => { delete predBranch(sc, 'size.smaller_by_at_least').properties.steps.type; }],
+    ['count maximum minimum removed', (sc) => { delete predBranch(sc, 'count.at_most').properties.max.minimum; }],
+    ['count maximum type removed', (sc) => { predBranch(sc, 'count.at_most').properties.max = { minimum: 0 }; }],
+    ['predicate fact reference redirected (bool.equals)', (sc) => { predBranch(sc, 'bool.equals').properties.fact = { $ref: '#/$defs/operator' }; }],
+    ['predicate fact reference removed (int.explicit)', (sc) => { predBranch(sc, 'int.explicit').properties.fact = {}; }],
+    ['size operand reference redirected (size.not_larger)', (sc) => { predBranch(sc, 'size.not_larger').properties.left = { $ref: '#/$defs/size' }; }],
+    ['weight operand reference removed', (sc) => { predBranch(sc, 'weight.sum_lt').properties.limit = {}; }],
+    ['count collection reference redirected', (sc) => { predBranch(sc, 'count.at_most').properties.collection = { $ref: '#/$defs/check' }; }],
+    ['compat check reference redirected', (sc) => { predBranch(sc, 'compat.evidenced').properties.check = { $ref: '#/$defs/fact' }; }],
+    ['evidence method reference redirected to published authority', (sc) => { predBranch(sc, 'compat.evidenced').properties.evidenceMethod = { $ref: '#/$defs/publishedRuleAuthority' }; }],
+    ['predicate authority reference redirected to engineering authority', (sc) => { predBranch(sc, 'bool.equals').properties.authority = { $ref: '#/$defs/engineeringAuthority' }; }],
+    ['operator const removed', (sc) => { const b = predBranch(sc, 'bool.equals'); delete b.properties.op.const; b.properties.op.enum = ['bool.equals']; }],
+    ['published authority kind const removed', (sc) => { sc.$defs.publishedRuleAuthority.properties.kind = {}; }],
+    ['published authority kind const changed', (sc) => { sc.$defs.publishedRuleAuthority.properties.kind.const = 'OWNER_ENGINEERING_CHECK'; }],
+    ['published authority page type removed', (sc) => { sc.$defs.publishedRuleAuthority.properties.printedPage = {}; }],
+    ['published authority spec reference redirected', (sc) => { sc.$defs.publishedRuleAuthority.properties.sourceSpecId = { type: 'string' }; }],
+    ['engineering authority kind const removed', (sc) => { sc.$defs.engineeringAuthority.properties.kind = {}; }],
+    ['engineering authority owner ids may be empty', (sc) => { delete sc.$defs.engineeringAuthority.properties.ownerRulingIds.minItems; }],
+    ['engineering authority owner ids may repeat', (sc) => { delete sc.$defs.engineeringAuthority.properties.ownerRulingIds.uniqueItems; }],
+    ['engineering authority owner id reference removed', (sc) => { sc.$defs.engineeringAuthority.properties.ownerRulingIds.items = { type: 'string' }; }],
+    ['owner id pattern removed', (sc) => { delete sc.$defs.ownerDecisionId.pattern; }],
+    ['owner id pattern loosened', (sc) => { sc.$defs.ownerDecisionId.pattern = '^T4C-.*$'; }],
+    ['typed id pattern removed', (sc) => { delete sc.$defs.typedDefinitionId.pattern; }],
+    ['spec id pattern removed', (sc) => { delete sc.$defs.specId.pattern; }],
+    ['spec id type removed', (sc) => { delete sc.$defs.specId.type; }],
+    ['revision pattern removed', (sc) => { delete sc.properties.revision.pattern; }],
+    ['revision type removed', (sc) => { delete sc.properties.revision.type; }],
+    ['schema id const removed', (sc) => { sc.properties.schema = {}; }],
+    ['records bound minimum lowered', (sc) => { sc.properties.records.minItems = 34; }],
+    ['records items reference removed', (sc) => { sc.properties.records.items = {}; }],
+    ['record label may be empty', (sc) => { delete sc.$defs.record.properties.upgradeLabel.minLength; }],
+    ['record label type removed', (sc) => { delete sc.$defs.record.properties.upgradeLabel.type; }],
+    ['record domain reference removed', (sc) => { sc.$defs.record.properties.domain = {}; }],
+    ['record verdict reference redirected', (sc) => { sc.$defs.record.properties.domainVerdict = { $ref: '#/$defs/stackingFact' }; }],
+    ['source book const removed', (sc) => { sc.$defs.record.properties.source.properties.bookId = {}; }],
+    ['source page type removed', (sc) => { sc.$defs.record.properties.source.properties.printedPage = {}; }],
+    ['source continuation type removed', (sc) => { sc.$defs.record.properties.source.properties.continuesOnPage = {}; }],
+    ['declaration const removed', (sc) => { sc.$defs.record.properties.noAdditionalHostPrerequisite.oneOf[1].properties.declared = {}; }],
+    ['declaration statement const removed', (sc) => { sc.$defs.record.properties.noAdditionalHostPrerequisite.oneOf[1].properties.statement = { type: 'string' }; }],
+    ['declaration null branch removed', (sc) => { sc.$defs.record.properties.noAdditionalHostPrerequisite.oneOf[0] = {}; }],
+    ['group item reference removed (use)', (sc) => { sc.$defs.record.properties.useRequirements.items = {}; }],
+    ['group item reference removed (payload)', (sc) => { sc.$defs.record.properties.payloadRequirements.items = {}; }],
+    ['group type removed', (sc) => { delete sc.$defs.record.properties.installRequirements.type; }],
+    ['effect label pattern removed', (sc) => { delete sc.$defs.record.properties.effectReferences.items.properties.label.pattern; }],
+    ['effect label pattern loosened', (sc) => { sc.$defs.record.properties.effectReferences.items.properties.label.pattern = '^.*$'; }],
+    ['effect reference spec id weakened', (sc) => { sc.$defs.record.properties.effectReferences.items.properties.sourceSpecId = {}; }],
+    ['stacking maximum type removed', (sc) => { sc.$defs.record.properties.stacking.properties.maxPerHost = {}; }],
+    ['stacking fact reference removed', (sc) => { sc.$defs.record.properties.stacking.properties.fact = {}; }],
+    ['unsupported-but-harmless extra keyword added to a def', (sc) => { sc.$defs.specId.maxLength = 999; }],
+    ['extra def added', (sc) => { sc.$defs.invented = { type: 'string' }; }],
+    ['enumeration reordered', (sc) => { sc.$defs.operator.enum.reverse(); }],
+    ['diagnostic code list shortened', (sc) => { sc.$defs.diagnosticCode.enum.pop(); }],
+    ['diagnostic code list has a non-code entry', (sc) => { sc.$defs.diagnosticCode.enum[0] = 'anything'; }]
+  ];
+  let stillConforming = 0;
+  for (const [label, mutate] of cases) {
+    parityOnly(mutate, label);
+    if (conformsStill(mutate)) stillConforming += 1;
+  }
+  // most of these weakenings leave the committed sidecar fully conformant: only parity can detect them
+  assert.ok(stillConforming >= 40, `weakenings the sidecar still satisfies: ${stillConforming}`);
+  assert.ok(cases.length >= 60, String(cases.length));
+});
+
+check('exhaustive sweep: removing or blanking ANY validation keyword or property subschema in the schema is detected by parity alone', () => {
+  const ANN = new Set(['$schema', '$id', 'title', 'description']);
+  const targets = [];
+  const walk = (node, ptr) => {
+    if (Array.isArray(node)) { node.forEach((x, i) => walk(x, [...ptr, i])); return; }
+    if (!node || typeof node !== 'object') return;
+    for (const [k, v] of Object.entries(node)) {
+      const here = [...ptr, k];
+      const inProps = ptr[ptr.length - 1] === 'properties';
+      const inDefs = ptr[ptr.length - 1] === '$defs';
+      if (ptr[0] === '$defs' && ptr[1] === 'diagnosticCode') { continue; }
+      if (inProps || inDefs) targets.push({ ptr: here, mode: 'blank' });
+      if (!inProps && !inDefs && !ANN.has(k) && k !== 'properties' && k !== '$defs') targets.push({ ptr: here, mode: 'delete' });
+      walk(v, here);
+    }
+  };
+  walk(SCHEMA, []);
+  assert.ok(targets.length > 200, `sweep size ${targets.length}`);
+  let swept = 0;
+  for (const t of targets) {
+    const sc = clone(SCHEMA);
+    let parent = sc;
+    for (const k of t.ptr.slice(0, -1)) parent = parent[k];
+    const last = t.ptr[t.ptr.length - 1];
+    if (t.mode === 'blank') parent[last] = {};
+    else if (Array.isArray(parent)) parent.splice(last, 1);
+    else delete parent[last];
+    const r = run(() => {}, { schema: sc });
+    assert.equal(r.ok, false, `accepted: ${t.mode} /${t.ptr.join('/')}`);
+    assert.ok(r.codes.includes('HRV_SCHEMA_PARITY'), `/${t.ptr.join('/')} (${t.mode}): ${r.codes}`);
+    assert.ok(!r.codes.includes('HRV_PIN') && !r.codes.includes('HRV_MAPPING'), `/${t.ptr.join('/')}`);
+    swept += 1;
+  }
+  assert.equal(swept, targets.length);
+});
+
+check('annotation-only schema edits are permitted; the frozen expectation is built from the validator vocabularies, not from the sidecar or schema file', () => {
+  const sc = clone(SCHEMA);
+  sc.description = 'edited';
+  sc.title = 'edited';
+  sc.$defs.record.description = 'edited';
+  sc.$defs.record.properties.stacking.properties.maxPerHost.description = 'edited';
+  sc.$defs.record.required = [...sc.$defs.record.required].reverse();
+  assert.equal(run(() => {}, { schema: sc }).ok, true);
+  const exp = buildExpectedSchema();
+  assert.deepEqual(exp.$defs.operator.enum, OPERATORS);
+  assert.deepEqual(exp.root.properties.records.minItems, 35);
+  assert.equal(exp.$defs.predicate.oneOf.length, 9);
+  assert.ok(!('diagnosticCode' in exp.$defs), 'diagnostic codes are compared against the owner-decisions record by the tests');
+  assert.deepEqual(SCHEMA.$defs.diagnosticCode.enum.length, 32);
 });
 
 console.log(`modification-host-requirements: ${checks} checks OK`);
