@@ -110,7 +110,6 @@ function buildVirtualDroidPartWeapon(actor, itemId) {
       proficiency: profile.weaponType ?? 'simple',
       range: profile.range ?? '',
       attackBonus: profile.attackBonus ?? 0,
-      equipped: true,
       integrated: true,
       description: part.description ?? ''
     }

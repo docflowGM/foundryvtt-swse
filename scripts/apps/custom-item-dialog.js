@@ -190,8 +190,7 @@ export class CustomItemDialog {
                   },
                   upgradeSlots: parseInt(formData.upgradeSlots, 10) || 1,
                   installedUpgrades: [],
-                  description: formData.description || '',
-                  equipped: false
+                  description: formData.description || ''
                 }
               });
 

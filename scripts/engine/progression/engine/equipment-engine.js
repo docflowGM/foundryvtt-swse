@@ -160,8 +160,7 @@ export class EquipmentEngine {
                     img: weapon.img || 'icons/weapons/melee/sword-broad-curved.webp',
                     system: {
                         description: weapon.description || 'Starting weapon',
-                        quantity: weapon.quantity || 1,
-                        equipped: weapon.equipped !== false
+                        quantity: weapon.quantity || 1
                     }
                 });
             }
