@@ -19,6 +19,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { formatVehicleAttackSummary, numericVehicleAttackBonus } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-evidence-import.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -62,7 +63,7 @@ function parseArcFromText(text) {
   if (lower.includes('starboard') || lower.includes('right')) {
     return 'starboard';
   }
-  if (lower.includes('turret') || lower.includes('omni') || lower.includes('all') || lower.includes('360')) {
+  if (/\b(turret|omni|all(?:[ -]arcs)?|360(?:°| degrees)?)\b/.test(lower)) {
     return 'turret';
   }
 
@@ -219,7 +220,7 @@ export function parseVehicleWeaponEntry(entry, index = 0) {
     parsed.arc = safeString(entry.arc, 'unknown');
     parsed.fireControl = safeString(entry.fireControl || entry.firecontrol, null) || null;
     parsed.linkedGroup = safeString(entry.linkedGroup || entry.linkedgroup, null) || null;
-    parsed.attackSummary = safeString(entry.attackBonus || entry.bonus || entry.attack, null) || null;
+    parsed.attackSummary = formatVehicleAttackSummary(entry.attackBonus ?? entry.bonus ?? entry.attack);
     parsed.damageSummary = safeString(entry.damage, null) || null;
     parsed.rangeSummary = safeString(entry.range, null) || null;
     parsed.crewRole = safeString(entry.crewRole || entry.crew, null) || null;
@@ -255,7 +256,7 @@ export function parseVehicleWeaponEntry(entry, index = 0) {
     const bonusMatch = text.match(/([+-]\d+)(?:,|\s|$)/);
     if (bonusMatch) {
       const bonus = parseInt(bonusMatch[1]);
-      parsed.attackSummary = `+${Math.max(0, bonus)}`;
+      parsed.attackSummary = formatVehicleAttackSummary(bonus);
     }
 
     // Extract damage: "4d10" "2d10x2" etc
@@ -318,11 +319,7 @@ export function buildVehicleWeaponMountSummary(parsed, index = 0) {
  */
 export function buildVehicleWeaponItemData(parsed, index = 0, options = {}) {
   // Extract bonus as numeric value if possible
-  let bonus = 0;
-  if (parsed.attackSummary) {
-    const match = safeString(parsed.attackSummary).match(/([+-]?\d+)/);
-    bonus = match ? parseInt(match[1]) : 0;
-  }
+  const bonus = numericVehicleAttackBonus(parsed.attackSummary);
 
   const itemData = {
     name: parsed.name || `Weapon ${index + 1}`,
@@ -330,10 +327,10 @@ export function buildVehicleWeaponItemData(parsed, index = 0, options = {}) {
     system: {
       damage: parsed.damageSummary || '1d10',
       damageType: 'energy',
-      attackBonus: bonus,
+      ...(bonus !== null ? { attackBonus: bonus } : {}),
       attackAttribute: 'dex',  // Vehicles typically use DEX
       range: parsed.rangeSummary || 'close',
-      bonus: parsed.attackSummary || '+0',  // String form for sheet
+      ...(typeof parsed.attackSummary === 'string' ? { bonus: parsed.attackSummary } : {}),  // Preserve source, including printed +0
       arc: parsed.arc || 'unknown',
       fireControl: parsed.fireControl,
       linkedGroup: parsed.linkedGroup,

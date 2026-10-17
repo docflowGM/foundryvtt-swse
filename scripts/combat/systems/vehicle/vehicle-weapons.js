@@ -12,6 +12,7 @@ import { measureDistance, facingTowards } from "/systems/foundryvtt-swse/scripts
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
+import { isTargetWithinVehicleArc } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-firing-arc-geometry.js";
 
 export class SWSEVehicleWeapons {
 
@@ -46,27 +47,10 @@ export class SWSEVehicleWeapons {
   /**
    * Fire Arc Check (forward, aft, port, starboard)
    */
-  static inFireArc(attacker, target, arc = 'forward', tolerance = 75) {
-    const atkTok = attacker.getActiveTokens()[0];
-    const tgtTok = target.getActiveTokens()[0];
-    if (!atkTok || !tgtTok) {return false;}
-
-    const facing = atkTok.document.rotation * (Math.PI / 180);
-    const angleToTarget = Math.atan2(
-      tgtTok.center.y - atkTok.center.y,
-      tgtTok.center.x - atkTok.center.x
-    );
-
-    const deg = ((angleToTarget - facing) * 180) / Math.PI;
-
-    switch (arc) {
-      case 'forward': return Math.abs(deg) <= tolerance;
-      case 'aft': return Math.abs(deg) >= 180 - tolerance;
-      case 'port': return deg > tolerance && deg < 180 - tolerance;
-      case 'starboard': return deg < -tolerance && deg > -(180 - tolerance);
-    }
-
-    return true;
+  static inFireArc(attacker, target, arc = null, tolerance = 75) {
+    // Geometry only. A caller must independently authorize this arc from
+    // the canonical printed-evidence contract or persisted GM adjudication.
+    return isTargetWithinVehicleArc(attacker, target, arc, tolerance);
   }
 
   /**
