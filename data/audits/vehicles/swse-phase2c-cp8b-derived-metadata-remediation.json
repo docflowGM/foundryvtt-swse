@@ -1,0 +1,1032 @@
+{
+  "schema": "swse.vehicle.phase2c.cp8b.derived-compendium-reconciliation.v1",
+  "status": "READ_ONLY_PROPOSAL_NO_PACK_MUTATION",
+  "parentManifest": "data/audits/vehicles/swse-phase2c-cp8-stock-pack-remediation-manifest.json",
+  "parentManifestGitBlobSha": "5b9eac237956c01825869b4724cbf8d02e875ec0",
+  "sourceLedger": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+  "sourceLedgerGitBlobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557",
+  "baselinePacks": [
+    {
+      "path": "packs/vehicles-space-transports.db",
+      "sha": "ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d"
+    },
+    {
+      "path": "packs/vehicles-capital-ships.db",
+      "sha": "9bd523944a37d86454adc3981b4553b7924ae3f4"
+    }
+  ],
+  "runtimeTagConsumer": "scripts/apps/store/store-shared.js",
+  "classificationPolicy": "Use the existing store group threshold contract; source-derived numeric fields remain authoritative. Cached display groups/tags are downstream data only.",
+  "sourceMetadataPolicy": "Published source replaces stale fandom-derived primary provenance; prior external URL is not publication evidence.",
+  "trustedRuntimeAttackBindings": 0,
+  "packMutationsApplied": 0,
+  "modificationRefactorAuthorized": false,
+  "entries": [
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-action-vi-bulk-transport",
+      "pack": {
+        "path": "packs/vehicles-space-transports.db",
+        "blobSha": "ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d",
+        "documentId": "97c5c070d93b7a0a",
+        "documentName": "Corellian Action VI Bulk Transport"
+      },
+      "proposedDerivedCorrections": [
+        {
+          "path": "system.vehicleCrewGroup",
+          "observed": "solo",
+          "observedState": "PRESENT",
+          "expected": "team"
+        },
+        {
+          "path": "system.vehicleCrewGroupLabel",
+          "observed": "Solo Crew",
+          "observedState": "PRESENT",
+          "expected": "Crew Team (6-20)"
+        },
+        {
+          "path": "system.vehicleCargoGroup",
+          "observed": "personal",
+          "observedState": "PRESENT",
+          "expected": "massive"
+        },
+        {
+          "path": "system.vehicleCargoGroupLabel",
+          "observed": "Personal Cargo (≤100 kg)",
+          "observedState": "PRESENT",
+          "expected": "Massive Cargo (1,000+ tons)"
+        },
+        {
+          "path": "system.vehicleMovementSummary",
+          "observed": "Character: 12 squares · Max: 800 km/h",
+          "observedState": "PRESENT",
+          "expected": "Character: Fly 12 squares · Starship: Fly 1 squares · Max: 650 km/h"
+        },
+        {
+          "path": "system.vehicleMovementDataStatus",
+          "observed": "parsed",
+          "observedState": "PRESENT",
+          "expected": "published-source-verified"
+        },
+        {
+          "path": "system.characterScaleSpeedLabel",
+          "observed": "12 squares",
+          "observedState": "PRESENT",
+          "expected": "Fly 12 squares"
+        },
+        {
+          "path": "system.starshipScaleSpeedLabel",
+          "observed": "",
+          "observedState": "PRESENT",
+          "expected": "Fly 1 squares"
+        },
+        {
+          "path": "system.vehicleAvailabilityLabel",
+          "observed": "Unknown",
+          "observedState": "PRESENT",
+          "expected": "Licensed"
+        },
+        {
+          "path": "system.vehicleSaleStatus",
+          "observed": "unavailable",
+          "observedState": "PRESENT",
+          "expected": "priced"
+        },
+        {
+          "path": "system.vehicleSaleStatusLabel",
+          "observed": "Not publicly available",
+          "observedState": "PRESENT",
+          "expected": "Published new and used prices"
+        },
+        {
+          "path": "system.vehicleConsumablesGroup",
+          "observed": "short",
+          "observedState": "PRESENT",
+          "expected": "long"
+        },
+        {
+          "path": "system.vehicleConsumablesGroupLabel",
+          "observed": "Short Duration (≤1 week)",
+          "observedState": "PRESENT",
+          "expected": "Long Duration (≤6 months)"
+        },
+        {
+          "path": "system.vehiclePriceNotes",
+          "observed": [
+            "Price integer hotfix: system.cost now stores only integer/null slots; display text remains in vehiclePriceLabel and raw/source fields."
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "Starships of the Galaxy p.58: published new and used prices."
+          ]
+        },
+        {
+          "path": "system.vehicleAttributeNotes",
+          "observed": "Direct SWSE Fandom vehicle stat block.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.58: source-certified stock attributes."
+        },
+        {
+          "path": "system.vehicleAttributeSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/Corellian_Action_VI_Bulk_Transport",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleShieldSource",
+          "observed": "swse-fandom-defenses",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy"
+        },
+        {
+          "path": "system.vehicleShieldSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/Corellian_Action_VI_Transport",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleShieldNotes",
+          "observed": "Fandom text says stock Action VI transports are sold without deflector shields; Defenses has no Shield Rating.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.58: stock unshielded."
+        },
+        {
+          "path": "system.vehicleDRSource",
+          "observed": "saga-vehicle-size-default",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy"
+        },
+        {
+          "path": "system.vehicleDRNotes",
+          "observed": "DR filled from Saga vehicle size defaults because the compendium/source field was blank.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.58: stock DR 15."
+        },
+        {
+          "path": "system.vehicleTransportSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/Corellian_Action_VI_Transport",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleTransportNotes",
+          "observed": "",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.58: source-certified capacity."
+        },
+        {
+          "path": "system.vehicleCarriedCraftDataStatus",
+          "observed": "none-listed-or-missing-source",
+          "observedState": "PRESENT",
+          "expected": "source-confirmed-none"
+        },
+        {
+          "path": "system.vehicleNavigationNotes",
+          "observed": "",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.58: navcomputer not specified (unknown, not confirmed absent)."
+        },
+        {
+          "path": "system.vehicleAstrogationSupportLabel",
+          "observed": "Not applicable",
+          "observedState": "PRESENT",
+          "expected": "Source does not specify"
+        },
+        {
+          "path": "system.tags",
+          "observed": [
+            "transport",
+            "unshielded",
+            "vehicle",
+            "vehicle-availability-missing",
+            "vehicle-cargo:personal",
+            "vehicle-crew:solo",
+            "vehicle-family:starship",
+            "vehicle-no-hyperdrive",
+            "vehicle-role:heavy",
+            "vehicle-unarmed",
+            "vehicle-unshielded",
+            "vehicle-weapon-data:unarmed",
+            "vehicle:space-transports"
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "transport",
+            "unshielded",
+            "vehicle",
+            "vehicle-cargo:massive",
+            "vehicle-crew:team",
+            "vehicle-family:starship",
+            "vehicle-hyperdrive",
+            "vehicle-role:heavy",
+            "vehicle-unarmed",
+            "vehicle-unshielded",
+            "vehicle-weapon-data:unarmed",
+            "vehicle:space-transports"
+          ]
+        },
+        {
+          "path": "system.vehicleFeatureTags",
+          "observed": [
+            "availability:unknown",
+            "cargo:personal",
+            "crew:solo",
+            "no-hyperdrive",
+            "passengers:none",
+            "price:unavailable",
+            "role:heavy",
+            "sale:unavailable",
+            "transport:cargo",
+            "unarmed",
+            "unshielded",
+            "vehicle-unshielded",
+            "weaponData:unarmed",
+            "movement:character-scale-only",
+            "scale:character",
+            "speed:character:standard",
+            "hyperdrive:none",
+            "consumables:short",
+            "carried-craft:none-listed",
+            "payload:none-listed",
+            "ep:available"
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "availability:licensed",
+            "cargo:massive",
+            "carried-craft:none-listed",
+            "consumables:long",
+            "crew:team",
+            "hyperdrive",
+            "movement:dual-scale",
+            "nav:needs-review",
+            "passengers:none",
+            "payload:none-listed",
+            "price:priced",
+            "role:heavy",
+            "sale:priced",
+            "scale:character",
+            "scale:starship",
+            "speed:character:standard",
+            "speed:starship:slow",
+            "transport:cargo",
+            "unarmed",
+            "unshielded",
+            "weaponData:unarmed"
+          ]
+        }
+      ],
+      "unresolvedClassification": [
+        "Printed ship type is capital ship, but current Foundry bucket is space-transports. Preserve exact pack identity pending an explicit taxonomy/relocation review."
+      ],
+      "sourceProof": {
+        "crew": {
+          "count": 8,
+          "quality": "normal"
+        },
+        "cargoKg": 90000000,
+        "passengers": 0,
+        "navcomputer": "not stated",
+        "printedArmament": false
+      }
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr70-corvette",
+      "pack": {
+        "path": "packs/vehicles-capital-ships.db",
+        "blobSha": "9bd523944a37d86454adc3981b4553b7924ae3f4",
+        "documentId": "18cd29422b66693d",
+        "documentName": "CR70 Corellian Corvette"
+      },
+      "proposedDerivedCorrections": [
+        {
+          "path": "system.vehicleCrewGroup",
+          "observed": "team",
+          "observedState": "PRESENT",
+          "expected": "large"
+        },
+        {
+          "path": "system.vehicleCrewGroupLabel",
+          "observed": "Crew Team (6-20)",
+          "observedState": "PRESENT",
+          "expected": "Large Crew (21-100)"
+        },
+        {
+          "path": "system.vehicleCargoGroup",
+          "observed": "industrial",
+          "observedState": "PRESENT",
+          "expected": "massive"
+        },
+        {
+          "path": "system.vehicleCargoGroupLabel",
+          "observed": "Industrial Cargo (1,000-10,000 tons)",
+          "observedState": "PRESENT",
+          "expected": "Massive Cargo (1,000+ tons)"
+        },
+        {
+          "path": "system.vehicleMovementDataStatus",
+          "observed": "parsed",
+          "observedState": "PRESENT",
+          "expected": "published-source-verified"
+        },
+        {
+          "path": "system.vehicleAvailabilityLabel",
+          "observed": "Unknown",
+          "observedState": "PRESENT",
+          "expected": "Licensed"
+        },
+        {
+          "path": "system.vehicleSaleStatus",
+          "observed": "review",
+          "observedState": "PRESENT",
+          "expected": "priced"
+        },
+        {
+          "path": "system.vehicleSaleStatusLabel",
+          "observed": "Needs source review",
+          "observedState": "PRESENT",
+          "expected": "Published new and used prices"
+        },
+        {
+          "path": "system.vehiclePriceNotes",
+          "observed": [
+            "new price needs source review: 2",
+            "used price needs source review: 9",
+            "Price integer hotfix: system.cost now stores only integer/null slots; display text remains in vehiclePriceLabel and raw/source fields."
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "Starships of the Galaxy p.75: published new and used prices."
+          ]
+        },
+        {
+          "path": "system.vehicleAttributeNotes",
+          "observed": null,
+          "observedState": "MISSING",
+          "expected": "Starships of the Galaxy p.75: source-certified stock attributes."
+        },
+        {
+          "path": "system.vehicleAttributeSourceUrl",
+          "observed": null,
+          "observedState": "MISSING",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleShieldSource",
+          "observed": "swse-fandom",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy"
+        },
+        {
+          "path": "system.vehicleShieldSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/CR70_Corellian_Corvette",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleShieldNotes",
+          "observed": "Fandom defense block lists Shield Rating: 90.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.75: stock shield rating 90."
+        },
+        {
+          "path": "system.vehicleDRSource",
+          "observed": null,
+          "observedState": "MISSING",
+          "expected": "Starships of the Galaxy"
+        },
+        {
+          "path": "system.vehicleDRNotes",
+          "observed": null,
+          "observedState": "MISSING",
+          "expected": "Starships of the Galaxy p.75: stock DR 15."
+        },
+        {
+          "path": "system.vehicleTransportSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/CR70_Corellian_Corvette",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleTransportNotes",
+          "observed": "Split combined passenger/cargo text into separate passenger and cargo fields. Cargo had no unit after import; reconstructed as thousands of tons from comma-truncated starship statblock value.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.75: source-certified capacity."
+        },
+        {
+          "path": "system.vehicleCarriedCraftDataStatus",
+          "observed": "none-listed-or-missing-source",
+          "observedState": "PRESENT",
+          "expected": "source-confirmed-none"
+        },
+        {
+          "path": "system.vehicleNavigationNotes",
+          "observed": "Hyperdrive class is normalized, but the current compendium row does not preserve the exact Hyperdrive line text needed to distinguish Navicomputer, Advanced Navicomputer, or Astromech dependency.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.75: navcomputer printed."
+        },
+        {
+          "path": "system.vehicleAstrogationSupportLabel",
+          "observed": "Needs source-line review",
+          "observedState": "PRESENT",
+          "expected": "Navcomputer (printed)"
+        },
+        {
+          "path": "system.tags",
+          "observed": [
+            "vehicle",
+            "vehicle-availability-missing",
+            "vehicle-cargo:unknown",
+            "vehicle-crew:unknown",
+            "vehicle-family:starship",
+            "vehicle-hyperdrive",
+            "vehicle-price-review",
+            "vehicle-role:corvette",
+            "vehicle-shielded",
+            "vehicle-unarmed",
+            "vehicle-weapon-data:unarmed",
+            "vehicle:capital-ships"
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "vehicle",
+            "vehicle-cargo:massive",
+            "vehicle-crew:large",
+            "vehicle-family:starship",
+            "vehicle-hyperdrive",
+            "vehicle-role:corvette",
+            "vehicle-shielded",
+            "vehicle-unarmed",
+            "vehicle-weapon-data:unarmed",
+            "vehicle:capital-ships"
+          ]
+        },
+        {
+          "path": "system.vehicleFeatureTags",
+          "observed": [
+            "availability:unknown",
+            "cargo:industrial",
+            "crew:team",
+            "hyperdrive",
+            "passengers:battalion",
+            "price:review",
+            "role:corvette",
+            "sale:review",
+            "shielded",
+            "transport:cargo",
+            "transport:mixed",
+            "transport:passengers",
+            "unarmed",
+            "weaponData:unarmed",
+            "movement:dual-scale",
+            "scale:character",
+            "scale:starship",
+            "speed:character:standard",
+            "speed:starship:standard",
+            "hyperdrive:standard",
+            "nav:needs-review",
+            "consumables:extended",
+            "carried-craft:none-listed",
+            "payload:none-listed"
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "availability:licensed",
+            "cargo:massive",
+            "carried-craft:none-listed",
+            "consumables:extended",
+            "crew:large",
+            "hyperdrive",
+            "movement:dual-scale",
+            "nav:printed",
+            "passengers:battalion",
+            "payload:none-listed",
+            "price:priced",
+            "role:corvette",
+            "sale:priced",
+            "scale:character",
+            "scale:starship",
+            "shielded",
+            "speed:character:standard",
+            "speed:starship:standard",
+            "transport:cargo",
+            "transport:mixed",
+            "transport:passengers",
+            "unarmed",
+            "weaponData:unarmed"
+          ]
+        }
+      ],
+      "unresolvedClassification": [],
+      "sourceProof": {
+        "crew": {
+          "range": [
+            18,
+            150
+          ],
+          "typical": 30,
+          "quality": "normal"
+        },
+        "cargoKg": 5000000,
+        "passengers": 600,
+        "navcomputer": "printed",
+        "printedArmament": false
+      }
+    },
+    {
+      "sourceEntryKey": "sotg-ghtroc-industries-class-720-freighter",
+      "pack": {
+        "path": "packs/vehicles-space-transports.db",
+        "blobSha": "ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d",
+        "documentId": "4d5b3422047f5eb8",
+        "documentName": "Ghtroc 720 Freighter"
+      },
+      "proposedDerivedCorrections": [
+        {
+          "path": "system.vehicleMovementDataStatus",
+          "observed": "parsed",
+          "observedState": "PRESENT",
+          "expected": "published-source-verified"
+        },
+        {
+          "path": "system.vehicleAvailabilityLabel",
+          "observed": "Unknown",
+          "observedState": "PRESENT",
+          "expected": "Licensed"
+        },
+        {
+          "path": "system.vehicleSaleStatusLabel",
+          "observed": "Public new/used pricing",
+          "observedState": "PRESENT",
+          "expected": "Published new and used prices"
+        },
+        {
+          "path": "system.vehiclePriceNotes",
+          "observed": [],
+          "observedState": "PRESENT",
+          "expected": [
+            "Starships of the Galaxy p.88: published new and used prices."
+          ]
+        },
+        {
+          "path": "system.vehicleAttributeNotes",
+          "observed": null,
+          "observedState": "MISSING",
+          "expected": "Starships of the Galaxy p.88: source-certified stock attributes."
+        },
+        {
+          "path": "system.vehicleAttributeSourceUrl",
+          "observed": null,
+          "observedState": "MISSING",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleShieldSource",
+          "observed": "swse-fandom",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy"
+        },
+        {
+          "path": "system.vehicleShieldSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/Ghtroc_720_Freighter",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleShieldNotes",
+          "observed": "Fandom defense block lists Shield Rating: 15.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.88: stock shield rating 15."
+        },
+        {
+          "path": "system.vehicleDRSource",
+          "observed": null,
+          "observedState": "MISSING",
+          "expected": "Starships of the Galaxy"
+        },
+        {
+          "path": "system.vehicleDRNotes",
+          "observed": null,
+          "observedState": "MISSING",
+          "expected": "Starships of the Galaxy p.88: stock DR 15."
+        },
+        {
+          "path": "system.vehicleTransportSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/Ghtroc_720_Freighter",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleTransportNotes",
+          "observed": "Split combined passenger/cargo text into separate passenger and cargo fields.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.88: source-certified capacity."
+        },
+        {
+          "path": "system.vehicleCarriedCraftDataStatus",
+          "observed": "none-listed-or-missing-source",
+          "observedState": "PRESENT",
+          "expected": "source-confirmed-none"
+        },
+        {
+          "path": "system.vehicleNavigationNotes",
+          "observed": "Hyperdrive class is normalized, but the current compendium row does not preserve the exact Hyperdrive line text needed to distinguish Navicomputer, Advanced Navicomputer, or Astromech dependency.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.88: navcomputer printed."
+        },
+        {
+          "path": "system.vehicleAstrogationSupportLabel",
+          "observed": "Needs source-line review",
+          "observedState": "PRESENT",
+          "expected": "Navcomputer (printed)"
+        },
+        {
+          "path": "system.tags",
+          "observed": [
+            "vehicle",
+            "vehicle-armed",
+            "vehicle-availability-missing",
+            "vehicle-cargo:bulk",
+            "vehicle-crew:small",
+            "vehicle-family:starship",
+            "vehicle-hyperdrive",
+            "vehicle-role:heavy",
+            "vehicle-role:light",
+            "vehicle-shielded",
+            "vehicle-weapon-data:needs-source-statblock",
+            "vehicle:space-transports"
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "vehicle",
+            "vehicle-armed",
+            "vehicle-cargo:bulk",
+            "vehicle-crew:small",
+            "vehicle-family:starship",
+            "vehicle-hyperdrive",
+            "vehicle-role:heavy",
+            "vehicle-role:light",
+            "vehicle-shielded",
+            "vehicle-weapon-data:needs-pack-hydration",
+            "vehicle:space-transports"
+          ]
+        },
+        {
+          "path": "system.vehicleFeatureTags",
+          "observed": [
+            "armed",
+            "availability:unknown",
+            "cargo:bulk",
+            "crew:small",
+            "hyperdrive",
+            "passengers:squad",
+            "price:priced",
+            "role:heavy",
+            "role:light",
+            "sale:priced",
+            "shielded",
+            "transport:cargo",
+            "transport:mixed",
+            "transport:passengers",
+            "weaponData:needs-source-statblock",
+            "movement:dual-scale",
+            "scale:character",
+            "scale:starship",
+            "speed:character:standard",
+            "speed:starship:slow",
+            "hyperdrive:standard",
+            "backup-hyperdrive",
+            "backup-hyperdrive:very-slow",
+            "nav:needs-review",
+            "consumables:long",
+            "carried-craft:none-listed",
+            "payload:none-listed",
+            "ep:available"
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "armed",
+            "availability:licensed",
+            "backup-hyperdrive",
+            "cargo:bulk",
+            "carried-craft:none-listed",
+            "consumables:long",
+            "crew:small",
+            "hyperdrive",
+            "movement:dual-scale",
+            "nav:printed",
+            "passengers:squad",
+            "payload:none-listed",
+            "price:priced",
+            "role:heavy",
+            "role:light",
+            "sale:priced",
+            "scale:character",
+            "scale:starship",
+            "shielded",
+            "speed:character:standard",
+            "speed:starship:slow",
+            "transport:cargo",
+            "transport:mixed",
+            "transport:passengers",
+            "weaponData:needs-pack-hydration"
+          ]
+        }
+      ],
+      "unresolvedClassification": [],
+      "sourceProof": {
+        "crew": {
+          "count": 2,
+          "quality": "normal"
+        },
+        "cargoKg": 135000,
+        "passengers": 10,
+        "navcomputer": "printed",
+        "printedArmament": true
+      }
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-consular-class-cruiser",
+      "pack": {
+        "path": "packs/vehicles-space-transports.db",
+        "blobSha": "ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d",
+        "documentId": "28f748f51896aa1b",
+        "documentName": "Corellian Consular-Class Cruiser"
+      },
+      "proposedDerivedCorrections": [
+        {
+          "path": "system.vehicleCrewGroup",
+          "observed": "solo",
+          "observedState": "PRESENT",
+          "expected": "team"
+        },
+        {
+          "path": "system.vehicleCrewGroupLabel",
+          "observed": "Solo Crew",
+          "observedState": "PRESENT",
+          "expected": "Crew Team (6-20)"
+        },
+        {
+          "path": "system.vehiclePassengerGroup",
+          "observed": "none",
+          "observedState": "PRESENT",
+          "expected": "squad"
+        },
+        {
+          "path": "system.vehiclePassengerGroupLabel",
+          "observed": "No Passengers",
+          "observedState": "PRESENT",
+          "expected": "Squad (6-20)"
+        },
+        {
+          "path": "system.vehicleCargoGroup",
+          "observed": "personal",
+          "observedState": "PRESENT",
+          "expected": "bulk"
+        },
+        {
+          "path": "system.vehicleCargoGroupLabel",
+          "observed": "Personal Cargo (≤100 kg)",
+          "observedState": "PRESENT",
+          "expected": "Bulk Cargo (100-1,000 tons)"
+        },
+        {
+          "path": "system.vehicleMovementSummary",
+          "observed": "Character: 12 squares · Max: 800 km/h",
+          "observedState": "PRESENT",
+          "expected": "Starship: Fly 3 squares"
+        },
+        {
+          "path": "system.vehicleMovementDataStatus",
+          "observed": "parsed",
+          "observedState": "PRESENT",
+          "expected": "published-source-verified"
+        },
+        {
+          "path": "system.characterScaleSpeedLabel",
+          "observed": "12 squares",
+          "observedState": "PRESENT",
+          "expected": ""
+        },
+        {
+          "path": "system.starshipScaleSpeedLabel",
+          "observed": "",
+          "observedState": "PRESENT",
+          "expected": "Fly 3 squares"
+        },
+        {
+          "path": "system.vehicleAvailabilityLabel",
+          "observed": "Unknown",
+          "observedState": "PRESENT",
+          "expected": "Licensed"
+        },
+        {
+          "path": "system.vehicleSaleStatus",
+          "observed": "unavailable",
+          "observedState": "PRESENT",
+          "expected": "priced"
+        },
+        {
+          "path": "system.vehicleSaleStatusLabel",
+          "observed": "Not publicly available",
+          "observedState": "PRESENT",
+          "expected": "Published new and used prices"
+        },
+        {
+          "path": "system.vehicleConsumablesGroup",
+          "observed": "short",
+          "observedState": "PRESENT",
+          "expected": "long"
+        },
+        {
+          "path": "system.vehicleConsumablesGroupLabel",
+          "observed": "Short Duration (≤1 week)",
+          "observedState": "PRESENT",
+          "expected": "Long Duration (≤6 months)"
+        },
+        {
+          "path": "system.vehiclePriceNotes",
+          "observed": [
+            "Price integer hotfix: system.cost now stores only integer/null slots; display text remains in vehiclePriceLabel and raw/source fields."
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "Starships of the Galaxy p.126: published new and used prices."
+          ]
+        },
+        {
+          "path": "system.vehicleAttributeNotes",
+          "observed": "Direct SWSE Fandom vehicle stat block.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.126: source-certified stock attributes."
+        },
+        {
+          "path": "system.vehicleAttributeSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/Consular-Class_Space_Cruiser",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleShieldSource",
+          "observed": "swse-fandom-defenses-approved-phase4f",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy"
+        },
+        {
+          "path": "system.vehicleShieldSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/Consular-Class_Cruiser",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleShieldNotes",
+          "observed": "Fandom Defenses: SR 100.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.126: stock shield rating 100."
+        },
+        {
+          "path": "system.vehicleDRSource",
+          "observed": "saga-vehicle-size-default",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy"
+        },
+        {
+          "path": "system.vehicleDRNotes",
+          "observed": "DR filled from Saga vehicle size defaults because the compendium/source field was blank.",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.126: stock DR 15."
+        },
+        {
+          "path": "system.vehicleTransportSourceUrl",
+          "observed": "https://swse.fandom.com/wiki/Consular-Class_Cruiser",
+          "observedState": "PRESENT",
+          "expected": null
+        },
+        {
+          "path": "system.vehicleTransportNotes",
+          "observed": "",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.126: source-certified capacity."
+        },
+        {
+          "path": "system.vehicleCarriedCraftDataStatus",
+          "observed": "none-listed-or-missing-source",
+          "observedState": "PRESENT",
+          "expected": "source-confirmed-none"
+        },
+        {
+          "path": "system.vehicleNavigationNotes",
+          "observed": "",
+          "observedState": "PRESENT",
+          "expected": "Starships of the Galaxy p.126: navcomputer printed."
+        },
+        {
+          "path": "system.vehicleAstrogationSupportLabel",
+          "observed": "Not applicable",
+          "observedState": "PRESENT",
+          "expected": "Navcomputer (printed)"
+        },
+        {
+          "path": "system.tags",
+          "observed": [
+            "shielded",
+            "vehicle",
+            "vehicle-availability-missing",
+            "vehicle-cargo:personal",
+            "vehicle-crew:solo",
+            "vehicle-family:starship",
+            "vehicle-no-hyperdrive",
+            "vehicle-role:civilian-transports",
+            "vehicle-role:heavy",
+            "vehicle-shielded",
+            "vehicle-shielded-likely",
+            "vehicle-unarmed",
+            "vehicle-weapon-data:unarmed",
+            "vehicle:space-transports"
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "shielded",
+            "vehicle",
+            "vehicle-cargo:bulk",
+            "vehicle-crew:team",
+            "vehicle-family:starship",
+            "vehicle-hyperdrive",
+            "vehicle-role:civilian-transports",
+            "vehicle-role:heavy",
+            "vehicle-shielded",
+            "vehicle-unarmed",
+            "vehicle-weapon-data:unarmed",
+            "vehicle:space-transports"
+          ]
+        },
+        {
+          "path": "system.vehicleFeatureTags",
+          "observed": [
+            "availability:unknown",
+            "cargo:personal",
+            "crew:solo",
+            "no-hyperdrive",
+            "passengers:none",
+            "price:unavailable",
+            "role:civilian-transports",
+            "role:heavy",
+            "sale:unavailable",
+            "shielded",
+            "shielded:likely",
+            "transport:cargo",
+            "unarmed",
+            "vehicle-shielded",
+            "weaponData:unarmed",
+            "movement:character-scale-only",
+            "scale:character",
+            "speed:character:standard",
+            "hyperdrive:none",
+            "consumables:short",
+            "carried-craft:none-listed",
+            "payload:none-listed",
+            "ep:available"
+          ],
+          "observedState": "PRESENT",
+          "expected": [
+            "availability:licensed",
+            "cargo:bulk",
+            "carried-craft:none-listed",
+            "consumables:long",
+            "crew:team",
+            "hyperdrive",
+            "movement:starship-scale-only",
+            "nav:printed",
+            "passengers:squad",
+            "payload:none-listed",
+            "price:priced",
+            "role:civilian-transports",
+            "role:heavy",
+            "sale:priced",
+            "scale:starship",
+            "shielded",
+            "speed:starship:standard",
+            "transport:cargo",
+            "unarmed",
+            "weaponData:unarmed"
+          ]
+        }
+      ],
+      "unresolvedClassification": [],
+      "sourceProof": {
+        "crew": {
+          "count": 8,
+          "quality": "skilled"
+        },
+        "cargoKg": 1000000,
+        "passengers": 16,
+        "navcomputer": "printed",
+        "printedArmament": false
+      }
+    }
+  ],
+  "summary": {
+    "ships": 4,
+    "derivedCorrections": 99,
+    "classificationGaps": 1
+  }
+}
