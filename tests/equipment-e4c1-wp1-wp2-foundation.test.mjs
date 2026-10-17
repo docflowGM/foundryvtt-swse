@@ -321,7 +321,7 @@ const by = (state, id) => state.weapons.find((w) => w.itemId === id);
   const src = read('scripts/engine/equipment/equipment-state-reader.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
   for (const f of [/ActorEngine/, /InventoryEngine/, /\.update\(/, /updateEmbedded/, /\.setFlag\(/, /\.unsetFlag\(/, /updateOwned/, /ActionEconomy/, /\.spend\(/, /Hooks\./, /\b(item|actor)\??\.name\b/, /\b(item|actor)\??\.(system\??\.)?description\b/, /system\??\.equipped/, /dualWielded/, /wieldedTwoHanded/, /isItemEquipped/, /game\./]) assert.ok(!f.test(src), `reader must not contain ${f}`);
   const imports = [...src.matchAll(/^import .* from '([^']+)'/gm)].map((m) => m[1].replace('/systems/foundryvtt-swse/scripts/', ''));
-  assert.deepEqual(imports.sort(), ['engine/combat/fire-state-store.js', 'engine/equipment/anatomy-resolver.js', 'engine/equipment/effective-equipment-posture.js', 'engine/equipment/equipment-capability-resolver.js', 'engine/equipment/equipment-grip-resolver.js', 'engine/equipment/species-equipment-permissions.js', 'engine/equipment/weapon-record-invariants.js', 'items/weapon-runtime/attack-consumer.js']);
+  assert.deepEqual(imports.sort(), ['engine/combat/fire-state-store.js', 'engine/equipment/anatomy-resolver.js', 'engine/equipment/effective-equipment-posture.js', 'engine/equipment/equipment-capability-resolver.js', 'engine/equipment/equipment-grip-resolver.js', 'engine/equipment/equipment-transaction-journal.js', 'engine/equipment/species-equipment-permissions.js', 'engine/equipment/weapon-record-invariants.js', 'items/weapon-runtime/attack-consumer.js']);
   ok('20: the reader has no writers, no action spending, no name/description/legacy-flag reads and imports only the established authorities');
 }
 
