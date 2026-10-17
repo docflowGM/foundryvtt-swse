@@ -1,0 +1,106 @@
+{
+  "schema": "swse.vehicle.phase2c.cp3.operational-source-contract.v1",
+  "policyApprovalIds": [
+    "P2C-D01",
+    "P2C-D02",
+    "P2C-D03"
+  ],
+  "sourceAuthority": "PUBLISHED_STATBLOCK_AND_APPROVED_ERRATA_ONLY",
+  "canonicalEvidenceStates": [
+    "PRINTED_VALUE",
+    "EXPLICIT_NONE",
+    "SOURCE_SILENT_CONFIRMED",
+    "PUBLISHED_CONFLICT",
+    "NOT_REVIEWED",
+    "CONFIGURATION_CONDITIONAL"
+  ],
+  "certificationLevels": {
+    "SOURCE_COMPLETE": {
+      "requires": [
+        "Full printed statblock and immediately relevant published narrative reviewed",
+        "Published facts faithfully recorded",
+        "Each source silence and conflict typed and located"
+      ],
+      "doesNotRequire": [
+        "Invented independent weapon mounts or arcs",
+        "Runnable special mechanics",
+        "GM instance overrides"
+      ]
+    },
+    "OPERATIONAL_CAPABILITY": {
+      "requires": [
+        "SOURCE_COMPLETE",
+        "Target and crew station resolved for each attempted action",
+        "Relevant installed configuration selected",
+        "Required source or GM-instance-scoped arc resolution",
+        "All source conflicts adjudicated only for game instance"
+      ],
+      "doesNotImply": "STRICT_GLOBAL_MECHANICAL_CERTIFICATION"
+    },
+    "STRICT_MECHANICAL": {
+      "requires": [
+        "SOURCE_COMPLETE",
+        "Structural and field schema fit",
+        "All mandatory combat/crew/target mechanics handled by production consumers",
+        "No unresolved strict gate blocker"
+      ],
+      "gmOverrideCountsAsCertificate": false
+    }
+  },
+  "attackTopology": {
+    "attackGroupNotPhysicalMount": true,
+    "physicalWeaponCountFromExplicitSourceOnly": true,
+    "sourceSilentArcIsNotForward": true,
+    "sourceSilentArcIsNotTurret": true,
+    "batteryCompositionIsNotInferred": true
+  },
+  "unresolvedArc": {
+    "automaticArcDependentAttack": "BLOCK",
+    "gmOverride": "EXPLICIT_VERIFIED_GM_SINGLE_ATTACK_ONLY",
+    "mustPersistReceiptAtRuntime": true,
+    "neverChangesCanon": true,
+    "unknownOrMissingCrewStillBlocks": true
+  },
+  "publishedConflict": {
+    "preserveAllAlternativesAndFieldPageEvidence": true,
+    "defaultNumericSelection": null,
+    "canonicalResolutionRequires": "PUBLISHED_ERRATA_OR_SEPARATELY_APPROVED_ADJUDICATION",
+    "gmOverride": "EXPLICIT_VERIFIED_GM_SINGLE_ATTACK_OR_INSTANCE_SCOPED",
+    "mustPersistReceiptAtRuntime": true,
+    "neverChangesCanon": true
+  },
+  "runtimeIntegrationGuardrails": {
+    "purePolicyLibraryIsDiscoveryOnly": true,
+    "productionConsumerNotYetWired": true,
+    "runtimeReceiptPersistenceNotYetWired": true,
+    "gmIdentityMustBeVerifiedByFoundryHostNotCallerControlled": true,
+    "schemaFrozen": false,
+    "hydrationApproved": false
+  },
+  "knownRuntimeBlockers": [
+    {
+      "path": "scripts/engine/import/vehicle-weapon-import-normalizer.js",
+      "approxLine": 258,
+      "behavior": "Negative attack modifiers forced nonnegative using Math.max(0, bonus)",
+      "correctionRequired": "Preserve signed printed numeric values; regression guard for -2 and -17"
+    },
+    {
+      "path": "scripts/combat/systems/vehicle/vehicle-weapons.js",
+      "approxLine": 49,
+      "behavior": "Default arc forward and unknown-arc permissive fallthrough",
+      "correctionRequired": "Unknown source arc blocks arc-dependent auto targeting; preserve verified GM exception"
+    },
+    {
+      "path": "scripts/engine/vehicles/vehicle-factory.js",
+      "approxLine": 184,
+      "behavior": "A possibly absent shieldRating coerces to zero",
+      "correctionRequired": "Separate absence, source silence and actual zero in authority ingest; runtime defaults must not become source facts"
+    },
+    {
+      "path": "scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js",
+      "approxLine": 34,
+      "behavior": "Already rejects ambiguous or broken station keys",
+      "correctionRequired": "Preserve fail-closed station behavior in new certified vehicle path"
+    }
+  ]
+}
