@@ -767,42 +767,36 @@
         },
         {
           "path": "system.attributes.str.value",
-          "observed": null,
           "expected": 66,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.str.mod",
-          "observed": null,
           "expected": 28,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.dex.value",
-          "observed": null,
           "expected": 18,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.dex.mod",
-          "observed": null,
           "expected": 4,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.int.value",
-          "observed": null,
           "expected": 18,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.int.mod",
-          "observed": null,
           "expected": 4,
           "action": "REMEDIATE",
           "observedState": "MISSING"
@@ -1096,21 +1090,18 @@
         },
         {
           "path": "system.vehicleAttributeSource",
-          "observed": null,
           "expected": "Starships of the Galaxy",
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.vehicleAttributeDataStatus",
-          "observed": null,
           "expected": "published-source-verified",
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.vehicleAttributeSourceTitle",
-          "observed": null,
           "expected": "Corellian Engineering Corporation CR70 Corvette",
           "action": "REMEDIATE",
           "observedState": "MISSING"
@@ -1290,42 +1281,36 @@
         },
         {
           "path": "system.attributes.str.value",
-          "observed": null,
           "expected": 40,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.str.mod",
-          "observed": null,
           "expected": 15,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.dex.value",
-          "observed": null,
           "expected": 14,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.dex.mod",
-          "observed": null,
           "expected": 2,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.int.value",
-          "observed": null,
           "expected": 13,
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.attributes.int.mod",
-          "observed": null,
           "expected": 1,
           "action": "REMEDIATE",
           "observedState": "MISSING"
@@ -1544,21 +1529,18 @@
         },
         {
           "path": "system.vehicleAttributeSource",
-          "observed": null,
           "expected": "Starships of the Galaxy",
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.vehicleAttributeDataStatus",
-          "observed": null,
           "expected": "published-source-verified",
           "action": "REMEDIATE",
           "observedState": "MISSING"
         },
         {
           "path": "system.vehicleAttributeSourceTitle",
-          "observed": null,
           "expected": "Ghtroc Industries Class 720 Freighter",
           "action": "REMEDIATE",
           "observedState": "MISSING"
@@ -2318,8 +2300,9 @@
     "Run stock and custom attack isolation, producer/consumer, rollback, geometry and Foundry V13 tests; verify GitHub readback before operational certification."
   ],
   "observedValueSemantics": {
-    "MISSING": "Property did not exist in the baseline pack JSON; observed null is a serialization placeholder, not evidence of stored null.",
-    "NULL": "Property exists with explicit JSON null.",
-    "PRESENT": "Property exists with a JSON value, including false, zero or empty string."
+    "MISSING": "The property does not exist in the historical baseline JSON; omit the observed key rather than serialize a fictional null value.",
+    "NULL": "The property is explicitly present with null, meaning no authoritative information for that field or any nested children.",
+    "PRESENT": "The property exists and contains its recorded value (including 0, false, [], and explicit absence).",
+    "rule": "NULL is reserved for genuinely unavailable source information, not a placeholder for unreviewed, absent-key, known-zero, source-confirmed none, or partially populated parent data."
   }
 }
