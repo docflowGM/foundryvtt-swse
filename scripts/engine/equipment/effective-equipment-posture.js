@@ -18,10 +18,15 @@
  *   EQUIPPED (that would be a separate, authorized transition). Missing/invalid declarations yield `undeclared`, never STOWED or READIED.
  * Activation is carried through untouched and never establishes, repairs or implies posture (and READIED never implies activation).
  *
- * Always-readied exceptions are claims, never trusted booleans (`alwaysReadied: true` is rejected as an unknown field):
- *   natural-weapon        established only if the effective species profile's selected complete-snapshot publication lists a natural weapon
- *                         with that exact id and `alwaysArmed: true`; the Item-to-record binding is caller-asserted (trust boundary, see
- *                         `exception.binding`). Otherwise pending. No appendage is invented and ordinary occupancy for it is a contradiction.
+ * Always-readied exceptions are claims, never trusted booleans (`alwaysReadied: true` is rejected as an unknown field), and this resolver never
+ * establishes one:
+ *   natural-weapon        two separate conclusions. SOURCE RECORD: the effective species profile's selected complete-snapshot publication lists a
+ *                         natural weapon with that exact id and `alwaysArmed: true` -- reported as `exception.sourceRecord: 'verified'`.
+ *                         OWNED-ITEM IDENTITY: that this Item IS that natural weapon needs an authoritative Item-to-record binding from the
+ *                         production materialization and identity authority, which does not exist yet; a caller-supplied id, flag or token is not
+ *                         one. So the result is always `indeterminate`, `effectivePosture: null`, readiness `unverified`
+ *                         (`exception.itemBinding: 'unverified'`). The claim never overrides a STOWED/EQUIPPED declaration, invents an appendage
+ *                         or grants an attack; ordinary occupancy evidence supplied with the claim is kept and flagged as a possible conflict.
  *   integrated-droid-weapon  always pending: droid installation identity is uncertified (droid refactor deferred), so no readiness is granted.
  * Malformed API input throws EffectivePostureInputError.
  */
@@ -144,23 +149,18 @@ export function resolveEffectiveEquipmentPosture(input) {
     if (exception.claim === 'integrated-droid-weapon') {
       note('integrated-droid-exception-unverified', 'warning', 'An integrated-droid-weapon claim cannot be certified: droid installation identity is not an established authority (droid refactor deferred). No readiness is granted.');
       note('droid-installation-provenance-required', 'info', 'Live integration must supply certified installed-component identity before this exception can be established.');
-      return out(S.INDETERMINATE, null, { claim: exception.claim, established: false, binding: 'unverifiable' });
+      return out(S.INDETERMINATE, null, { claim: exception.claim, established: false, sourceRecord: 'not-applicable', itemBinding: 'unverifiable' });
     }
     const profile = isPlain(input.speciesProfile) ? input.speciesProfile : null;
     const record = profile?.selectedVariant?.completeSnapshot === true && Array.isArray(profile.naturalWeapons)
       ? profile.naturalWeapons.find((w) => isPlain(w) && w.id === exception.naturalWeaponId) ?? null : null;
-    if (!record || record.alwaysArmed !== true) {
-      note('natural-weapon-exception-unverified', 'warning', 'The natural-weapon claim is not corroborated by an always-armed natural weapon of the selected complete-snapshot species publication. No readiness is granted.', { naturalWeaponId: exception.naturalWeaponId });
-      return out(S.INDETERMINATE, null, { claim: exception.claim, naturalWeaponId: exception.naturalWeaponId, established: false, binding: 'unverified' });
-    }
-    if (declared && declared !== EQUIPMENT_POSTURE.READIED) note('declaration-superseded-by-natural-weapon-exception', 'info', 'The established natural-weapon exception is always readied; the declared posture was not used.', { declared });
-    if (assignment || assessment) {
-      note('natural-weapon-has-ordinary-assignment', 'blocking', 'A natural weapon uses no ordinary appendage assignment; the supplied occupancy/grip evidence contradicts the exception and is retained.');
-      return out(S.CONTRADICTORY, null, { claim: exception.claim, naturalWeaponId: exception.naturalWeaponId, established: true, binding: 'caller-asserted' });
-    }
-    note('natural-weapon-item-binding-caller-asserted', 'info', 'The species record is source-certified; that this Item is that natural weapon is asserted by the caller and must be enforced by the live integration.', { naturalWeaponId: exception.naturalWeaponId });
-    verification.physicalHolding = 'not-applicable'; verification.grip = 'not-applicable'; verification.readiness = 'verified';
-    return out(S.ESTABLISHED, EQUIPMENT_POSTURE.READIED, { claim: exception.claim, naturalWeaponId: exception.naturalWeaponId, established: true, binding: 'caller-asserted' });
+    const sourceVerified = !!record && record.alwaysArmed === true;
+    const result = { claim: exception.claim, naturalWeaponId: exception.naturalWeaponId, established: false, sourceRecord: sourceVerified ? 'verified' : 'unverified', itemBinding: 'unverified' };
+    if (sourceVerified) note('natural-weapon-source-record-verified', 'info', 'The selected complete-snapshot species publication lists an always-armed natural weapon with this exact id.', { naturalWeaponId: exception.naturalWeaponId });
+    else note('natural-weapon-exception-unverified', 'warning', 'The natural-weapon claim is not corroborated by an always-armed natural weapon of the selected complete-snapshot species publication.', { naturalWeaponId: exception.naturalWeaponId });
+    note('natural-weapon-item-binding-unverified', 'warning', 'No authoritative Item-to-species-record binding exists, so this Item is not established as that natural weapon. A source record does not prove an owned Item\'s identity; no readiness is granted.', { naturalWeaponId: exception.naturalWeaponId });
+    if (assignment || assessment) note('natural-weapon-claim-conflicts-with-ordinary-assignment', 'warning', 'Ordinary occupancy or grip evidence was supplied for an item claimed to be a natural weapon. The evidence is kept; the conflict is possible, not proven, because the claim itself is unverified.');
+    return out(S.INDETERMINATE, null, result);
   }
 
   if (!declared) {

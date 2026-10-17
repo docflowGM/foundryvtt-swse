@@ -203,26 +203,71 @@ const ready = (id = 's') => scene({ assignments: [as(id, [A1])], weapons: [w(id,
   ok('25: legacy system.equipped never establishes posture and whole item documents or alwaysReadied booleans are rejected');
 }
 
-// 26-27 exceptions
+// 26-27 exceptions (E3-A5-C1: a source record is not owned-Item identity)
 {
   const bar = effective('barabel-sv-2f-10');
-  assert.ok(bar.naturalWeapons.some((x) => x.id === 'sv-barabel-claws' && x.alwaysArmed === true));
+  const claim = { claim: 'natural-weapon', naturalWeaponId: 'sv-barabel-claws' };
   const none = scene({ assignments: [] });
-  const nat = posture(none, 'claws-item', undefined, { exception: { claim: 'natural-weapon', naturalWeaponId: 'sv-barabel-claws' }, speciesProfile: bar });
-  assert.equal(nat.status, S.ESTABLISHED); assert.equal(nat.effectivePosture, 'READIED'); assert.deepEqual(nat.verification, { physicalHolding: 'not-applicable', grip: 'not-applicable', readiness: 'verified' });
-  assert.equal(nat.exception.established, true); assert.equal(nat.exception.binding, 'caller-asserted'); assert.ok(codes(nat).includes('natural-weapon-item-binding-caller-asserted'));
-  const stowedDecl = posture(none, 'claws-item', { posture: 'STOWED' }, { exception: { claim: 'natural-weapon', naturalWeaponId: 'sv-barabel-claws' }, speciesProfile: bar });
-  assert.equal(stowedDecl.effectivePosture, 'READIED'); assert.ok(codes(stowedDecl).includes('declaration-superseded-by-natural-weapon-exception'));
-  const unknownId = posture(none, 'claws-item', undefined, { exception: { claim: 'natural-weapon', naturalWeaponId: 'not-a-record' }, speciesProfile: bar });
-  assert.equal(unknownId.status, S.INDETERMINATE); assert.equal(unknownId.effectivePosture, null); assert.equal(unknownId.exception.established, false);
-  assert.equal(posture(none, 'i', undefined, { exception: { claim: 'natural-weapon', naturalWeaponId: 'sv-barabel-claws' } }).status, S.INDETERMINATE);
-  assert.equal(posture(none, 'i', undefined, { exception: { claim: 'natural-weapon', naturalWeaponId: 'sv-barabel-claws' }, speciesProfile: { ...bar, selectedVariant: { ...bar.selectedVariant, completeSnapshot: false } } }).status, S.INDETERMINATE);
-  const withHands = posture(ready('claws-item'), 'claws-item', { posture: 'READIED' }, { exception: { claim: 'natural-weapon', naturalWeaponId: 'sv-barabel-claws' }, speciesProfile: bar });
-  assert.equal(withHands.status, S.CONTRADICTORY); assert.equal(withHands.effectivePosture, null); assert.ok(withHands.evidence.occupancyAssignment);
-  ok('26: a natural-weapon exception is established only by an always-armed record of the selected publication; ordinary appendage assignment contradicts it');
+  assert.equal(bar.selectedVariant.completeSnapshot, true);
+  assert.ok(bar.naturalWeapons.some((x) => x.id === 'sv-barabel-claws' && x.alwaysArmed === true));
+  ok('26a: the real Barabel complete publication contains the certified always-armed natural-weapon record');
+
+  const nat = posture(none, 'claws-item', undefined, { exception: claim, speciesProfile: bar });
+  assert.equal(nat.exception.sourceRecord, 'verified'); assert.equal(nat.exception.naturalWeaponId, 'sv-barabel-claws'); assert.ok(codes(nat).includes('natural-weapon-source-record-verified'));
+  ok('26b: exact natural-weapon id matching preserves the positive source-record evidence');
+
+  for (const id of ['claws-item', 'item-12345', 'sv-barabel-claws', 'Claws']) {
+    const r = posture(none, id, undefined, { exception: claim, speciesProfile: bar });
+    assert.equal(r.status, S.INDETERMINATE, id); assert.equal(r.effectivePosture, null); assert.equal(r.verification.readiness, 'unverified');
+    assert.equal(r.exception.itemBinding, 'unverified'); assert.equal(r.exception.established, false); assert.ok(codes(r).includes('natural-weapon-item-binding-unverified'));
+  }
+  ok('26c-e: the same source record certifies no owned itemId (including a plausible-looking id), and the result stays indeterminate with no verified Item relationship');
+
+  const forged = posture(none, 'claws-item', undefined, { exception: claim, speciesProfile: bar });
+  throwsCode(() => resolveEffectiveEquipmentPosture({ itemId: 'claws-item', occupancy: none.occupancy, grip: none.grip, exception: { ...claim, bindingVerified: true }, speciesProfile: bar }), 'INVALID_EXCEPTION_CLAIM');
+  throwsCode(() => resolveEffectiveEquipmentPosture({ itemId: 'claws-item', occupancy: none.occupancy, grip: none.grip, exception: { ...claim, trusted: true }, speciesProfile: bar }), 'INVALID_EXCEPTION_CLAIM');
+  throwsCode(() => resolveEffectiveEquipmentPosture({ itemId: 'claws-item', occupancy: none.occupancy, grip: none.grip, exception: claim, speciesProfile: bar, bindingVerified: true }), 'UNKNOWN_FIELD');
+  assert.equal(forged.exception.itemBinding, 'unverified');
+  ok('26f: no caller flag, token or extra field can create a trusted binding (rejected, not accepted)');
+
+  for (const d of [{ posture: 'STOWED' }, { posture: 'EQUIPPED' }]) {
+    const r = posture(none, 'claws-item', d, { exception: claim, speciesProfile: bar });
+    assert.equal(r.declaredPosture, d.posture); assert.notEqual(r.effectivePosture, 'READIED'); assert.equal(r.effectivePosture, null); assert.equal(r.status, S.INDETERMINATE);
+    assert.ok(!codes(r).includes('declaration-superseded-by-natural-weapon-exception'));
+  }
+  ok('26g: STOWED and EQUIPPED declarations are not overridden by an unverified exception (the declaration is kept; nothing becomes READIED)');
+
+  const withHands = posture(ready('claws-item'), 'claws-item', { posture: 'READIED' }, { exception: claim, speciesProfile: bar });
+  assert.equal(withHands.status, S.INDETERMINATE); assert.notEqual(withHands.status, S.CONTRADICTORY); assert.equal(withHands.effectivePosture, null);
+  assert.ok(withHands.evidence.occupancyAssignment && withHands.evidence.gripAssessment); assert.ok(codes(withHands).includes('natural-weapon-claim-conflicts-with-ordinary-assignment'));
+  assert.equal(withHands.issues.find((i) => i.code === 'natural-weapon-claim-conflicts-with-ordinary-assignment').severity, 'warning');
+  ok('26h: ordinary appendage evidence supplied with an unverified natural claim is retained and flagged as a possible conflict, not a certified contradiction');
+
+  const bad = [
+    posture(none, 'i', undefined, { exception: claim }),
+    posture(none, 'i', undefined, { exception: { claim: 'natural-weapon', naturalWeaponId: 'not-a-record' }, speciesProfile: bar }),
+    posture(none, 'i', undefined, { exception: claim, speciesProfile: { ...bar, selectedVariant: { ...bar.selectedVariant, completeSnapshot: false } } }),
+    posture(none, 'i', undefined, { exception: claim, speciesProfile: { ...bar, naturalWeapons: bar.naturalWeapons.map((x) => ({ ...x, alwaysArmed: false })) } }),
+  ];
+  for (const r of bad) { assert.equal(r.status, S.INDETERMINATE); assert.equal(r.effectivePosture, null); assert.equal(r.exception.sourceRecord, 'unverified'); assert.ok(codes(r).includes('natural-weapon-exception-unverified')); }
+  ok('26i: missing or incorrect natural-weapon source identity (no profile, unknown id, incomplete snapshot, not always-armed) stays unverified');
+
   const integ = posture(none, 'port-1', { posture: 'READIED' }, { exception: { claim: 'integrated-droid-weapon' } });
   assert.equal(integ.status, S.INDETERMINATE); assert.equal(integ.effectivePosture, null); assert.equal(integ.verification.readiness, 'unverified'); assert.ok(codes(integ).includes('integrated-droid-exception-unverified'));
   ok('27: an unverified integrated-droid claim is reported as pending and never promoted to READIED');
+
+  const allKeys = new Set([nat, withHands, integ].flatMap((r) => collect(r).flatMap((o) => (Array.isArray(o) ? [] : Object.keys(o)))));
+  for (const k of ['attacks', 'attackEligible', 'attackAuthorized', 'actionCost', 'combatReady', 'canAttack']) assert.ok(!allKeys.has(k), k);
+  assert.deepEqual(nat.evidence.occupancyAssignment, null);
+  ok('27b: the exception creates no attack, readiness permission or invented appendage occupancy');
+
+  const frozenIn = deepFreeze({ itemId: 'claws-item', occupancy: JSON.parse(JSON.stringify(none.occupancy)), grip: JSON.parse(JSON.stringify(none.grip)), exception: { ...claim }, speciesProfile: JSON.parse(JSON.stringify(bar)) });
+  const fb = JSON.stringify(frozenIn); const outFrozen = resolveEffectiveEquipmentPosture(frozenIn);
+  assert.equal(JSON.stringify(frozenIn), fb); assert.ok(collect(outFrozen).every((o) => Object.isFrozen(o)));
+  const liveProfile = JSON.parse(JSON.stringify(bar)); const lp = JSON.stringify(liveProfile);
+  const liveOut = resolveEffectiveEquipmentPosture({ itemId: 'claws-item', occupancy: none.occupancy, grip: none.grip, exception: { ...claim }, speciesProfile: liveProfile });
+  assert.equal(JSON.stringify(liveProfile), lp); assert.ok(!Object.isFrozen(liveProfile)); assert.ok(collect(liveOut).every((o) => !collect(liveProfile).includes(o)));
+  ok('27c: exception inputs remain unchanged and results are deeply frozen and independent');
 }
 
 // 28-29 no writes, no actions/attacks
