@@ -100,3 +100,26 @@ There must be no final-state reader of `system.equipped`, `isEquipped`, `readied
 ## 8. Testing policy
 
 No live Foundry testing happens before the full implementation is merged. Offline unit tests, mocked integration tests, static validation and GitHub Actions gate each phase; runtime behavior is `RUNTIME_UNVERIFIED` until post-merge certification. Automated testing is not weakened for the unavailable runtime.
+
+---
+
+## 9. E3-A5 decision closeout (2026-10-17)
+
+Appended by owner directive E3-A5; §§1–8 above are the historical E3-A4 record and are unchanged. These rulings fix architecture; they do **not** authorize the production consumer cutover, persistence or schema changes.
+
+| Decision | Ruling (approved) |
+|---|---|
+| **OA-2** persisted weapon posture | `system.weaponPosture` is the future **single** persisted weapon-posture field (string enum `STOWED \| EQUIPPED \| READIED`). It is **not** persisted yet: no `template.json`, schema or Item change in E3-A5. |
+| New weapons | Newly created ordinary weapons default **explicitly** to `STOWED` at creation. A missing or malformed existing declaration is never silently read as any valid posture (`projectEquipmentPosture` returns `absent`/`invalid`; the effective resolver returns `undeclared`). |
+| **OA-3** | No temporary dual-writing and no migration of existing character data. |
+| **OA-11** | Ordinary weapons that are merely `EQUIPPED` are excluded from combat-ready weapon selection, reactions and Full Attack. |
+| **OA-12** | Future weapon consumers use **one** effective readiness authority (`resolveEffectiveEquipmentPosture`); activation, gripping, holding, readiness and combat permission stay separate facts, and no reader keeps a private interpretation of equip flags. |
+| **OA-13** | Obsolete weapon-state writers are removed or rerouted through the single equipment mutation authority; none is retained as a competing path. |
+
+**Persisted posture versus effective readiness.** A stored `READIED` is an *intended* state. Effective readiness is re-evaluated against current anatomy and equipment: a character who loses the use of an arm is no longer effectively ready merely because the stored enum still says `READIED`. `resolveEffectiveEquipmentPosture` (implemented in E3-A5, read-only) returns the declared posture, the effective posture (or `null`), separate physical-holding, grip and readiness verification, independent activation, and diagnostics. A failed READIED is never reinterpreted as EQUIPPED; that would be a separate authorized transition.
+
+**Natural, integrated, mounted and worn weapons.** Their special operating rules are preserved, but nothing is granted on a bare claim. A natural-weapon exception is established only when the effective species publication lists an `alwaysArmed` natural weapon with the claimed id (the Item-to-record binding remains caller-asserted — a trust boundary the live integration must enforce, e.g. by materializing natural-weapon Items with a stable species-record reference). An integrated-droid-weapon claim stays pending: an unverified droid installation flag never grants readiness (droid refactor deferred). Mounted and worn weapons keep posture distinct from mounting and host eligibility; their posture semantics remain uncertified.
+
+**Render caches.** Cache signatures (E6 sheet signature, F2 derived calculators, F3 ModifierEngine) must include canonical posture and the relevant operating-state dependencies (fire state), so a posture or grip change invalidates exactly the dependent results.
+
+**Coordinated cutover boundary (not started).** One architectural convergence operation: add `system.weaponPosture` (default `STOWED`) to the weapon template; route all weapon writes through the single coordinator; migrate the §5 readers to the effective-posture authority; remove the weapon `equipped` / `dualWielded` / `wieldedTwoHanded` booleans and `isItemEquipped` for weapons; keep armor/shield worn state. It requires its own authorization and is the point at which the old weapon-state authorities are retired.
