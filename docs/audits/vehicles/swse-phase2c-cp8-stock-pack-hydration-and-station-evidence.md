@@ -27,6 +27,18 @@ Exact installed physical group (Ghtroc):
 - The weapon row stores the published total in `printedAttackTotal`, **not** in `attackBonus` or `bonus`. No fake second mount, implied turret, or additive +1 enhancement.
 - `stockSourceEntryKey`, `sourceWeaponGroupKey`, and the row ID are source/identity evidence **within the pack**, not proof by themselves that an arbitrary world Actor is an unchanged published clone. They never grant firing permission.
 
+## Subsequent null-policy correction (after initial CP8 hydration)
+
+The user clarified that persisted `null` is reserved strictly for a field and its descendants that have **no information**. Printed absence is positive information: represent no mounted stock weapons with `[]`, shield value zero with `0`, and no carried craft with `"None"`. Never null a populated parent because some sibling values remain unknown. See [the null-semantics contract](swse-phase2c-null-semantics-contract.md).
+
+The four printed source ledgers each explicitly state `carriedCraft: "none"`. The four corresponding records now contain `system.carried_craft: "None"` and `system.vehicleCarriedCraftRaw: "None"` rather than `null`/an empty raw display field. The source-silent Action VI navcomputer remains `null` rather than inventing a known false. The CP8A and CP8B historical manifests now omit the `observed` property for `observedState: "MISSING"` (18 + 8 corrected placeholders) while preserving real historical literal-null observations separately.
+
+**Latest verified pack hash after this addendum:**
+- `packs/vehicles-space-transports.db`: `65f516504a7ecfa007924e8161c3a876954f13d3`
+- `packs/vehicles-capital-ships.db`: `8f333b91b684e90f50384dd61a39e5fa80b27994`
+
+The original hash pairs in the section below remain a historical CP8 initial-hydration snapshot, **not** the latest working-pack hashes. The post-hydration checker now pins the updated working-pack hashes. All stock attacks remain unbound/blocked until separate proof of actor-clone identity; no modification code was changed by this policy clarification.
+
 ## Independent GitHub data readback
 
 - `packs/vehicles-space-transports.db`: original `ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d`, new `07364d6650ca945303915430b1ed1f321c1c0cf6`; **3** of **108** document lines changed.
