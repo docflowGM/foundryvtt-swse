@@ -892,6 +892,23 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Blocker lifted | source=Core Rulebook printed pages 60 and 68-70 (Mechanics) and Scum and Villainy printed pages 37-41 (Installing Upgrades and Table 2-2); evidence=docs/audits/d-015-mechanics-complete-visual-source-reconciliation.md and docs/audits/d-015-source-certification-release-acceptance-checklist.md |
 | Resolution (source) | The D-015 source-verification question is answered for its exactly scoped 76 typed definitions. The installer performing Table 2-2 check is trained in Mechanics. The examined books do not state a universal tool kit or workshop prerequisite for that operation; requirements explicitly attached to other Mechanics uses are not silently transferred. General Core take-10/take-20 conditions remain source rules, distinct from optional GM house-rule overrides. This resolution does not specify a complete installation mechanic, lift D-014, certify prices/hosts/effects, make any definition selectable, or authorize G6. |
 
+## EQ-001 — Action cost of changing a drawn weapon between EQUIPPED, READIED or other appendages
+
+| Field | Content |
+|---|---|
+| Rules domain | Equipment posture (weapon draw / stow / ready) |
+| Feature | Moving a weapon that is already drawn between the EQUIPPED (held) and READIED (wielded, combat-ready) postures, or changing which appendages hold it |
+| Source | Not located. The existing project authority `resolveActionCost('drawOrHolsterWeapon')` prices only drawing from, and holstering to, the stowed state (Move Action; Swift with Quick Draw per existing feat metadata) |
+| Evidence | The legacy single drawn/stowed boolean never distinguished EQUIPPED from READIED, so no existing implementation or cited source prices a change between two drawn states. The clean-break posture model (E3-A4) introduced the distinction |
+| Confirmed behavior | STOWED -> drawn and drawn -> STOWED use the existing draw/holster cost authority |
+| Unresolved question | Whether, and at what action cost, a drawn weapon may be moved between EQUIPPED, READIED or different appendages |
+| Options | None supported by a located source |
+| Recommended ruling | None |
+| Implementation impact | `equipment-state-coordinator.js` returns `DEFERRED_RULES_REVIEW` (decision id EQ-001) for any intent that changes a drawn weapon to another drawn configuration; nothing is written or spent. Stowing first and drawing again is the only supported path |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -901,3 +918,4 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 - **Revision 4 (2026-10-14, G2 review corrections):** added a machine-readable **Ledger scope** row to D-001, D-004, D-005, D-006, D-010 and D-011 (which component and which typed definitions each open entry blocks). The generator now requires the ledger to carry the full scope of every open entry and rejects any omission. An entry's blocker is lifted only by an appended **Blocker lifted** row (`source=` and `evidence=` for `PENDING_SOURCE_VERIFICATION`; `owner-ruling=` for `DEFERRED_RULES_REVIEW`); no such row exists for any entry, so every scoped blocker is open. Entries without a Ledger scope row (D-002, D-003, D-007, D-008, D-009, D-012) block no registry definition directly. No ID, original field, ruling or classification changed.
 - **Revision 5 (2026-10-14, D-001 PDF verification):** D-001 resolved from the printed page 39 image (appended source-examination, **Blocker lifted** and source-resolution rows; no existing row changed). New entries D-013 (installation procedure of the 156 typed definitions the page does not demonstrably govern; `PENDING_SOURCE_VERIFICATION`, ledger scope `ALL` except the 56 governed Scum definitions) and D-014 (points the printed procedure leaves undefined; `DEFERRED_RULES_REVIEW`, no ledger scope). No recommended ruling on any entry. D-003 (equipment size) is untouched.
 - **Revision 6 (2026-10-14, PR #1043 review corrections; applied to entries this unmerged PR introduced, plus appended rows):** (a) D-013's base scope is now `ALL` and its 76 governed definitions are released by an appended evidence-bound **Partial lift** row instead of an `except=` list; the generator pins every Ledger scope row by SHA-256, so the scope cannot be altered without a reviewed code change, and a partial lift releases nothing unless it names existing parent definitions inside the scope with `source=` and `evidence=` (and `owner-ruling=` for deferred entries) citing an existing repository file. (b) D-014 now has a Ledger scope on the 76 governed definitions so its unresolved sub-flows are machine-enforced; its former item (5) moved to the new research entry **D-015** (`PENDING_SOURCE_VERIFICATION`, same scope). No recommended ruling on any entry.
+- **Revision 4 (2026-10-17, E4-C1 WP3-A):** appended EQ-001 (action cost of changing a drawn weapon between drawn configurations). No existing entry was changed; no recommended ruling was added.
