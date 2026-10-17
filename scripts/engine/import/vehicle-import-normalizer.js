@@ -174,6 +174,14 @@ function normalizeCrew(system) {
     crew.total = safeNumber(system.crew.total, 1);
     crew.quality = safeString(system.crew.quality, 'normal');
     crew.passenger = safeNumber(system.crew.passenger, 0);
+    // Preserve source-certified variable crew complements when a modern
+    // actor is subsequently passed through the normalizer.
+    if (Array.isArray(system.crew.range) && system.crew.range.length === 2) {
+      crew.range = [...system.crew.range];
+      crew.minimum = safeNumber(system.crew.minimum ?? system.crew.range[0], 0);
+      crew.maximum = safeNumber(system.crew.maximum ?? system.crew.range[1], 0);
+      crew.typical = safeNumber(system.crew.typical ?? crew.total, crew.total);
+    }
   }
   // Legacy format: system.crew_size string like "2 skilled" or "1 untrained"
   else if (typeof system.crew === 'string' || typeof system.crew_size === 'string') {
@@ -183,6 +191,20 @@ function normalizeCrew(system) {
     if (match) {
       crew.total = safeNumber(match[1], 1);
       const quality = match[2].toLowerCase();
+      // A published 18-150* crew complement must not collapse into a
+      // fictional fixed 18-person crew. The typical complement (when
+      // supplied) is separate from the min/max range.
+      const range = crewStr.match(/^\\s*(\\d+)\\s*-\\s*(\\d+)/);
+      if (range) {
+        const minimum = Number(range[1]), maximum = Number(range[2]);
+        const typical = safeNullableInteger(system.vehicleCrewCount);
+        crew.range = [minimum, maximum];
+        crew.minimum = minimum;
+        crew.maximum = maximum;
+        crew.typical = typical !== null && typical >= minimum && typical <= maximum
+          ? typical : minimum;
+        crew.total = crew.typical;
+      }
 
       if (quality.includes('skilled')) crew.quality = 'skilled';
       else if (quality.includes('expert')) crew.quality = 'expert';
@@ -272,6 +294,17 @@ function normalizeCargo(system) {
 
   if (typeof system.cargo_capacity === 'number') {
     return { value: 0, max: system.cargo_capacity, weight: 0, unit: 'ton' };
+  }
+
+  // Published statblock cargo such as "90,000 tons" must survive import
+  // instead of being silently replaced with the 1-ton empty-data default.
+  if (typeof system.cargo === 'string') {
+    const match = system.cargo.trim().match(/^([\\d,]+(?:\\.\\d+)?)\\s*(metric\\s+tons?|tons?|kg|kilograms?)\\b/i);
+    if (match) {
+      const amount = Number(match[1].replace(/,/g, ''));
+      if (Number.isFinite(amount) && amount >= 0)
+        return { value: 0, max: amount, weight: 0, unit: /^(kg|kilogram)/i.test(match[2]) ? 'kg' : 'ton' };
+    }
   }
 
   // Default: empty cargo
@@ -438,11 +471,23 @@ function normalizeVehicleModel(system = {}, sourceName = '') {
  * Normalize vehicle identity fields: type, size, category, domain
  */
 function normalizeIdentity(system) {
+  const explicitDomain = safeString(system.domain).trim().toLowerCase();
+  // The existing vehicle classification authority sets vehicleFamily.
+  // Do not guess that a Ghtroc space transport is planetary merely because
+  // its category says "Space Transports" instead of containing "ship".
+  const family = safeString(system.vehicleFamily).trim().toLowerCase();
+  const rawType = safeString(system.category || system.type || 'planetary').toLowerCase();
+  const domain = explicitDomain === 'starship' || explicitDomain === 'planetary'
+    ? explicitDomain
+    : family === 'starship' ? 'starship'
+    : family === 'planetary' ? 'planetary'
+    : rawType.includes('ship') || rawType.includes('space transport') || rawType.includes('spacecraft')
+      ? 'starship' : 'planetary';
   return {
     type: safeString(system.type || system.vehicle_type, 'Vehicle'),
     size: safeString(system.size, 'Medium'),
     category: safeString(system.category, system.type || 'Vehicle'),
-    domain: (system.domain || system.category || system.type || 'planetary').includes('ship') ? 'starship' : 'planetary'
+    domain
   };
 }
 
