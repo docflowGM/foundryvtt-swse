@@ -27,6 +27,8 @@ import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/c
 import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-preflight.js";
+import { classifyInstalledVehicleWeapon } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-provenance.js";
+import { resolveVehicleCrewStationEvidence } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-crew-station-evidence.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { normalizeRangeBand } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
@@ -713,11 +715,21 @@ export async function rollAttack(actor, weapon, options = {}) {
     const vehicle = vehicleDomain.normalizedContext?.vehicleActor;
     const target = getTargetActorFromOptions(rollOptions);
     const attackId = globalThis.foundry?.utils?.randomID?.() ?? null;
-    // A future trusted source/crew binding must supply proof from the domain,
-    // never from caller-supplied rollOptions flags or synthetic Actor fields.
+    // Crew eligibility must come from the installed weapon and the same
+    // assignment authority used by the crew sheet. Caller flags are never
+    // allowed to assert station resolution. Existing shipyard modifications
+    // retain their separate provenance path, not a fictitious stock binding.
+    const installedProvenance = classifyInstalledVehicleWeapon(vehicle, weapon);
+    const stationEvidence = installedProvenance.kind === 'STOCK_CANDIDATE'
+      ? await resolveVehicleCrewStationEvidence({
+          vehicle, weapon, domainResolution: vehicleDomain,
+          requestedCrewStation: rollOptions.crewStation ?? null
+        })
+      : { crewStationResolved: false };
     const sourceGate = await authorizeVehicleAttackBeforeCosts({
       vehicle, weapon, target, attackId,
-      crewStationResolved: false, gmDecision: null
+      crewStationResolved: stationEvidence.crewStationResolved === true,
+      gmDecision: null
     });
     if (!sourceGate.ok) {
       ui?.notifications?.warn?.('Vehicle attack blocked by strict stock-source evidence policy: ' + sourceGate.reason);
