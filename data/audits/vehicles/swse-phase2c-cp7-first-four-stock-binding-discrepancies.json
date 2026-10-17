@@ -1,0 +1,112 @@
+{
+  "schema": "swse.vehicle.phase2c.cp7.first-four-stock-compendium-parity.v1",
+  "mode": "READ_ONLY_REMEDIATION_EVIDENCE_NOT_RUNTIME_BINDINGS",
+  "repository": "docflowGM/foundryvtt-swse",
+  "baselineBranch": "audit/vehicle-phase-0-1-canonical-foundation",
+  "baselineCommit": "f34a1465c5ae70435d8c833900f759e0cbc73c00",
+  "sourceBook": "Starships of the Galaxy",
+  "sourceLedger": {
+    "path": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+    "gitBlobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557",
+    "sourcePublicationClaims": 104,
+    "strictlyCertifiedClaims": 4
+  },
+  "pinnedPacks": [
+    {"path":"packs/vehicles-space-transports.db","gitBlobSha":"ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d"},
+    {"path":"packs/vehicles-capital-ships.db","gitBlobSha":"9bd523944a37d86454adc3981b4553b7924ae3f4"}
+  ],
+  "method": "Live GitHub branch readback of exact published certification ledger and full JSONL rows in the current vehicle packs. Compendium pack document IDs are candidate targets, not verified immutable source claim links.",
+  "firstFour": [
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-action-vi-bulk-transport",
+      "printedPage": 58,
+      "printedName": "Corellian Engineering Corporation Action VI Bulk Transport",
+      "pack": "packs/vehicles-space-transports.db",
+      "packId": "97c5c070d93b7a0a",
+      "packName": "Corellian Action VI Bulk Transport",
+      "printedAttackGroupCount": 0,
+      "packAttackGroupCount": 0,
+      "discrepancies": [
+        {"field":"hitPoints","printed":600,"compendium":50},
+        {"field":"crew.count","printed":8,"compendium":1},
+        {"field":"size.class","printed":"Colossal","compendium":"large"}
+      ],
+      "missingProvenanceFields": ["system.sourcebook", "system.page"],
+      "status": "NO_WEAPON_GROUP_TO_BIND; STOCK_FIELD_PARITY_NOT_CERTIFIED"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr70-corvette",
+      "printedPage": 75,
+      "printedName": "Corellian Engineering Corporation CR70 Corvette",
+      "pack": "packs/vehicles-capital-ships.db",
+      "packId": "18cd29422b66693d",
+      "packName": "CR70 Corellian Corvette",
+      "printedAttackGroupCount": 0,
+      "packAttackGroupCount": 0,
+      "discrepancies": [
+        {"field":"attributes.int.base","printed":18,"compendium":10}
+      ],
+      "missingProvenanceFields": ["system.sourcebook", "system.page"],
+      "status": "NO_WEAPON_GROUP_TO_BIND; STOCK_FIELD_PARITY_NOT_CERTIFIED"
+    },
+    {
+      "sourceEntryKey": "sotg-ghtroc-industries-class-720-freighter",
+      "printedPage": 88,
+      "printedName": "Ghtroc Industries Class 720 Freighter",
+      "pack": "packs/vehicles-space-transports.db",
+      "packId": "4d5b3422047f5eb8",
+      "packName": "Ghtroc 720 Freighter",
+      "printedAttackGroupCount": 1,
+      "packAttackGroupCount": 0,
+      "printedAttackGroup": {
+        "weaponLabel": "double laser cannons",
+        "printedRangedTotal": "+1",
+        "damage": "4d10x2",
+        "operator": "gunner",
+        "mountCount": 1,
+        "physicalArc": "fixed-forward (SotG p.88, narrative)",
+        "autofireBonus": -4,
+        "physicalStationEvidence": "SotG p.89 deck plan #4"
+      },
+      "discrepancies": [
+        {"field":"attributes.dex.base","printed":14,"compendium":4},
+        {"field":"attributes.int.base","printed":13,"compendium":10},
+        {"field":"size.class","printed":"Colossal","compendium":"gargantuan"},
+        {"field":"system.weapons.length","printed":1,"compendium":0}
+      ],
+      "missingProvenanceFields": ["system.sourcebook", "system.page"],
+      "status": "ARMED_STOCK_GROUP_MISSING; SOURCE_PARITY_AND_TRUSTED_WEAPON_IDENTITY_NOT_CERTIFIED"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-consular-class-cruiser",
+      "printedPage": 126,
+      "printedName": "Corellian Engineering Corporation Consular-class Cruiser",
+      "pack": "packs/vehicles-space-transports.db",
+      "packId": "28f748f51896aa1b",
+      "packName": "Corellian Consular-Class Cruiser",
+      "printedAttackGroupCount": 0,
+      "packAttackGroupCount": 0,
+      "discrepancies": [
+        {"field":"hitPoints","printed":960,"compendium":50},
+        {"field":"crew.count","printed":8,"compendium":1},
+        {"field":"size.class","printed":"Colossal","compendium":"large"}
+      ],
+      "missingProvenanceFields": ["system.sourcebook", "system.page"],
+      "status": "NO_WEAPON_GROUP_TO_BIND; STOCK_FIELD_PARITY_NOT_CERTIFIED"
+    }
+  ],
+  "observedSummary": {
+    "certifiedPublishedShipRecordsConsidered": 4,
+    "foundryCompendiumIdentityCandidates": 4,
+    "publishedArmedShipsInPilot": 1,
+    "publishedUnarmedShipsInPilot": 3,
+    "foundryPackRowsWithAWeapon": 0,
+    "candidateRowsWithAnyCriticalStatMismatch": 4,
+    "packRowsWithMissingSourcebookAndPage": 4,
+    "trustedRuntimeStockWeaponMappingsIssued": 0,
+    "runtimeRegistryModified": false,
+    "compendiumPacksModified": false
+  },
+  "approvedDecisionPreservation": ["P2C-D01","P2C-D02","P2C-D03","P2C-D04-DENY"],
+  "nextGate": "Build source-corrected, exact-ID pack hydration proposal plus source-to-installed-group identity mapping; independently validate all mandatory fields before granting a trusted runtime stock attack. Keep future Pure/Modified instance and legal modification evaluator out of this checkpoint."
+}
