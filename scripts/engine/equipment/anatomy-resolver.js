@@ -144,6 +144,31 @@ function readAdapterAppendage(raw, index, seenIds) {
 }
 
 /**
+ * Confirmed-identity collisions (E2B-I3B). A non-null `identity.slot` names one physical appendage slot and a non-null
+ * `identity.instance` names one installed component instance; two DIFFERENT confirmed appendages may not claim the same one. These are
+ * malformed data (not uncertainty) and throw. Null identities are incomplete evidence and never collide; `identity.part` (the
+ * canonical part definition) is deliberately not unique. Only the adapter's confirmed `appendages` are checked: repeated candidate ids
+ * inside `unresolvedRecords` are diagnostic evidence, not allocatable appendages. Detection is in array order, slot before instance.
+ */
+function assertDistinctConfirmedIdentities(appendages) {
+  const bySlot = new Map();
+  const byInstance = new Map();
+  for (const a of appendages) {
+    for (const [field, seen, code] of [['slot', bySlot, 'DUPLICATE_APPENDAGE_SLOT'], ['instance', byInstance, 'DUPLICATE_INSTALLED_INSTANCE']]) {
+      const value = a.identity?.[field];
+      if (!value) continue;
+      if (seen.has(value)) {
+        const first = seen.get(value);
+        const err = new AnatomyInputError(code, `appendages "${first}" and "${a.id}" both claim confirmed ${field} "${value}"; one physical ${field === 'slot' ? 'slot' : 'installed instance'} cannot be two appendages`);
+        err.details = { [field]: value, appendageIds: [first, a.id] };
+        throw err;
+      }
+      seen.set(value, a.id);
+    }
+  }
+}
+
+/**
  * Validate an injected droid adapter's result and return an independent copy:
  * { appendages:[], unresolvedRecords:[], issues:[] } -- all three must be arrays (empty is valid). Malformed output throws; it is never
  * converted into empty arrays, and errors thrown by the adapter itself propagate unchanged.
@@ -155,6 +180,7 @@ function readAdapterResult(raw) {
   }
   const seenIds = new Set();
   const appendages = raw.appendages.map((a, i) => readAdapterAppendage(a, i, seenIds));
+  assertDistinctConfirmedIdentities(appendages);
   const unresolvedRecords = raw.unresolvedRecords.map((r, i) => {
     if (!isPlainObject(r)) throw new AnatomyInputError('INVALID_ADAPTER_RESULT', `adapter unresolvedRecords[${i}] must be an object`);
     return clonePlain(r, `adapter.unresolvedRecords[${i}]`);
@@ -280,7 +306,8 @@ const result = (r) => deepFreeze({ anatomyKind: r.anatomyKind, status: r.status,
  * @returns {{anatomyKind:string, status:'resolved'|'partial'|'unresolved', source:string, defaultApplied:boolean, appendages:object[], issues:object[]}}
  * @throws {AnatomyInputError} for input that violates the API (documented codes: INVALID_INPUT, INVALID_ACTOR_TYPE,
  *   INVALID_SPECIES_PROFILE, INVALID_INSTALLED_COMPONENTS, INVALID_FUNCTIONAL_OVERRIDES, INVALID_ANATOMY, INVALID_CAPABILITY;
- *   injected droid adapter: INVALID_ADAPTER_RESULT, INVALID_ADAPTER_APPENDAGE, INVALID_ADAPTER_IDENTITY, INVALID_FUNCTIONAL_STATE, DUPLICATE_APPENDAGE_ID)
+ *   injected droid adapter: INVALID_ADAPTER_RESULT, INVALID_ADAPTER_APPENDAGE, INVALID_ADAPTER_IDENTITY, INVALID_FUNCTIONAL_STATE, DUPLICATE_APPENDAGE_ID,
+ *   DUPLICATE_APPENDAGE_SLOT, DUPLICATE_INSTALLED_INSTANCE -- the last two carry `details` {slot|instance, appendageIds})
  */
 export function resolveEffectiveAnatomy(input) {
   validateInput(input);
@@ -305,6 +332,9 @@ export function resolveEffectiveAnatomy(input) {
     const appendages = applyOverrides(projected.appendages, overrides, issues);
     capabilityIssues(appendages, issues);
     identityIssues(appendages, issues);
+    // E2B-I3B: unresolved physical records beside confirmed appendages mean the topology is incomplete -> never `resolved`. The records
+    // stay separate diagnostic evidence; they are never promoted to appendages and no count/identity/capability is inferred from them.
+    if (appendages.length && projected.unresolvedRecords.length) issues.push(issue('unresolved-physical-records-present', 'warning', `${projected.unresolvedRecords.length} unresolved physical appendage record(s) remain beside the confirmed appendages; the anatomy cannot be fully resolved.`, { count: projected.unresolvedRecords.length }));
     if (!appendages.length && !projected.unresolvedRecords.length) issues.push(issue('no-appendage-evidence', 'blocking', 'No appendage component is recorded in the installed-component evidence; no manipulator is granted (a droid is not given default biological arms).'));
     // `resolved` is reserved for evidence sufficient for future allocation: every appendage has a confirmed slot AND installed-instance
     // identity, all three capabilities are booleans, the functional state is known, and no blocking issue remains. Unresolved records
@@ -316,7 +346,7 @@ export function resolveEffectiveAnatomy(input) {
     const usableRecordFacts = projected.unresolvedRecords.some((r) => (r.candidateInstances?.length ? r.candidateInstances.some((c) => c.functionalState === 'functional') : r.componentState === 'functional') && r.capabilities?.canManipulate !== false);
     let status;
     if (!appendages.length) status = usableRecordFacts ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.UNRESOLVED;
-    else status = blocking || unknownFacts || !allocationGrade ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.RESOLVED;
+    else status = blocking || unknownFacts || !allocationGrade || projected.unresolvedRecords.length ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.RESOLVED;
     return result({ anatomyKind: 'installed-component', status, source: appendages.length || projected.unresolvedRecords.length ? ANATOMY_SOURCE.DROID_COMPONENTS : ANATOMY_SOURCE.NONE, defaultApplied: false, appendages, issues, unresolvedRecords: projected.unresolvedRecords });
   }
 
