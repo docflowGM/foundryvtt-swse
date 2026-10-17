@@ -125,3 +125,24 @@ test('Ghtroc printed attack total reconciles with crew BAB and vehicle INT',()=>
   assert.equal(g.deferredGroupHydration[0].sourcePrintedGroup.autofireBonus,-4);
   assert.equal(-4-1,-5,'autofire adjustment is -5, not another weapon enhancement');
 });
+
+test('MISSING historical field is omitted, never filled with fake observed null',()=>{
+  const missing=manifest.entries.flatMap(e=>e.suggestedFieldCorrections)
+    .filter(c=>c.observedState==='MISSING');
+  assert.ok(missing.length>0);
+  assert.ok(missing.every(c=>!Object.hasOwn(c,'observed')));
+  assert.equal(check().ok,true);
+});
+test('audit rejects an observed:null entry for genuinely missing historical field',()=>{
+  const m=structuredClone(manifest);
+  const c=m.entries.flatMap(e=>e.suggestedFieldCorrections).find(x=>x.observedState==='MISSING');
+  c.observed=null;
+  bad(check({manifest:m}),'STALE_OBSERVED_VALUE');
+});
+test('audit distinguishes explicit source null from absent historical key',()=>{
+  const m=structuredClone(manifest);
+  const c=m.entries.flatMap(e=>e.suggestedFieldCorrections).find(x=>x.observedState==='NULL');
+  assert.ok(c && Object.hasOwn(c,'observed') && c.observed===null);
+  delete c.observed;
+  bad(check({manifest:m}),'STALE_OBSERVED_VALUE');
+});
