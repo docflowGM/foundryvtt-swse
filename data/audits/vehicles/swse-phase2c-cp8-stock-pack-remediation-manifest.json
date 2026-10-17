@@ -1,0 +1,2103 @@
+{
+  "schema": "swse.vehicle.phase2c.cp8.stock-pack-remediation-proposal.v1",
+  "phase": "2C",
+  "checkpoint": "8A",
+  "status": "SOURCE_DERIVED_REMEDIATION_PROPOSAL_NOT_APPLIED",
+  "sourceAuthority": {
+    "ledgerPath": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+    "ledgerGitBlobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557",
+    "publication": "Starships of the Galaxy",
+    "strictCertifiedPilotClaims": 4,
+    "overallPublicationClaimScope": 318
+  },
+  "inputBaseline": {
+    "branch": "audit/vehicle-phase-0-1-canonical-foundation",
+    "commit": "ead923ffe2fcb8b5e563eda10bfd369962b0e8b5",
+    "packs": [
+      {
+        "path": "packs/vehicles-space-transports.db",
+        "gitBlobSha": "ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d"
+      },
+      {
+        "path": "packs/vehicles-capital-ships.db",
+        "gitBlobSha": "9bd523944a37d86454adc3981b4553b7924ae3f4"
+      }
+    ]
+  },
+  "policy": {
+    "decisions": [
+      "P2C-D01",
+      "P2C-D02",
+      "P2C-D03",
+      "P2C-D04-DENY"
+    ],
+    "sourceOfTruth": "Phase 2B strict per-entry certification ledger",
+    "proposedCorrectionsApplyAutomatically": false,
+    "sourceAuthoritativePackEditsIssued": false,
+    "runtimeTrustedWeaponBindingsIssued": 0,
+    "vehicleDroidModificationRefactorAuthorized": false,
+    "neverTreatPublishedAttackTotalAsAdditiveBonus": true,
+    "doNotInferSourceSilentFacts": true
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-action-vi-bulk-transport",
+      "printedName": "Corellian Engineering Corporation Action VI Bulk Transport",
+      "printedPage": 58,
+      "candidatePack": {
+        "path": "packs/vehicles-space-transports.db",
+        "blobSha": "ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d",
+        "documentId": "97c5c070d93b7a0a",
+        "documentName": "Corellian Action VI Bulk Transport"
+      },
+      "sourceStrictCertified": true,
+      "targetProfile": {
+        "printedType": "Colossal (frigate) capital ship",
+        "challengeLevel": 7,
+        "initiative": -5,
+        "perception": 5,
+        "defenses": {
+          "reflex": 12,
+          "flatFootedReflex": 12,
+          "fortitude": 36,
+          "armorBonus": 12,
+          "damageReduction": 15,
+          "shieldStatus": "explicitly unshielded in narrative"
+        },
+        "durability": {
+          "hitPoints": 600,
+          "threshold": 136
+        },
+        "movement": {
+          "characterScale": {
+            "mode": "fly",
+            "squares": 12
+          },
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 1
+          },
+          "maxVelocityKmH": 650
+        },
+        "combat": {
+          "baseAttackBonus": 0,
+          "grappleBonus": 46,
+          "ranged": "not printed, explicitly unarmed"
+        },
+        "abilities": {
+          "str": 62,
+          "dex": 10,
+          "con": "—",
+          "int": 12
+        },
+        "skills": {
+          "initiative": -5,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": -5,
+          "useComputer": 5
+        },
+        "crew": {
+          "count": 8,
+          "quality": "normal"
+        },
+        "passengers": "none",
+        "cargo": {
+          "number": 90000,
+          "unit": "tons"
+        },
+        "consumables": "3 months",
+        "hyperspace": {
+          "hyperdrive": "x3",
+          "backup": "not stated",
+          "navcomputer": "not stated"
+        },
+        "economics": {
+          "availability": "Licensed",
+          "newCredits": 1000000,
+          "usedCredits": 500000
+        }
+      },
+      "suggestedFieldCorrections": [
+        {
+          "path": "system.size",
+          "observed": "large",
+          "expected": "colossal (frigate)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.reflexDefense",
+          "observed": 10,
+          "expected": 12,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.fortitudeDefense",
+          "observed": 10,
+          "expected": 36,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.flatFooted",
+          "observed": 10,
+          "expected": 12,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.armorBonus",
+          "observed": 0,
+          "expected": 12,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.damageThreshold",
+          "observed": 30,
+          "expected": 136,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.damageReduction",
+          "observed": 5,
+          "expected": 15,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.dr",
+          "observed": 5,
+          "expected": 15,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleDR",
+          "observed": 5,
+          "expected": 15,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hitPoints",
+          "observed": 50,
+          "expected": 600,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHP",
+          "observed": 50,
+          "expected": 600,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hp",
+          "observed": {
+            "max": 50,
+            "value": 50,
+            "temp": 0
+          },
+          "expected": {
+            "max": 600,
+            "value": 600,
+            "temp": 0
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hull",
+          "observed": {
+            "value": 50,
+            "max": 50,
+            "temp": 0
+          },
+          "expected": {
+            "max": 600,
+            "value": 600,
+            "temp": 0
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.shields",
+          "observed": {
+            "value": 0,
+            "max": 0
+          },
+          "expected": {
+            "max": 0,
+            "value": 0
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleShieldKnown",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHPDataStatus",
+          "observed": "existing-compendium-hull",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleDRDataStatus",
+          "observed": "rules-derived-size-default",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleShieldDataStatus",
+          "observed": "source-verified-none",
+          "expected": "published-source-confirmed-unshielded",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.crew",
+          "observed": "1 (normal crew)",
+          "expected": "8 (normal)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleCrewCount",
+          "observed": 1,
+          "expected": 8,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.crewNotes",
+          "observed": "",
+          "expected": "Printed crew 8 (normal).",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.passengers",
+          "observed": "0",
+          "expected": "none",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.cargo",
+          "observed": "100 kg",
+          "expected": "90,000 tons",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleCargoKg",
+          "observed": 100,
+          "expected": 90000000,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.consumables",
+          "observed": "1 week",
+          "expected": "3 months",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleConsumablesDays",
+          "observed": 7,
+          "expected": 90,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleConsumablesLabel",
+          "observed": "1 Week",
+          "expected": "3 months",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleCarriedCraftLabel",
+          "observed": "None listed",
+          "expected": "None",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.baseAttackBonus",
+          "observed": "+1",
+          "expected": "+0",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.initiative",
+          "observed": "+0",
+          "expected": "-5",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.senses",
+          "observed": "Perception +0",
+          "expected": "Perception +5",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.maneuver",
+          "observed": "+0",
+          "expected": "-5",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.speed",
+          "observed": "12 squares",
+          "expected": "Fly 12 squares",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.starshipSpeed",
+          "observed": "",
+          "expected": "Fly 1 squares",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.starshipScaleSpeed",
+          "observed": null,
+          "expected": 1,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasStarshipScaleSpeed",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.characterScaleMovementMode",
+          "observed": "",
+          "expected": "fly",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.starshipScaleMovementMode",
+          "observed": "",
+          "expected": "fly",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementRaw",
+          "observed": "12 squares",
+          "expected": "Fly 12 squares (Character Scale), Fly 1 squares (Starship Scale)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementModes",
+          "observed": [
+            {
+              "scale": "character",
+              "mode": "",
+              "squares": 12,
+              "label": "12 squares",
+              "source": "12 squares"
+            }
+          ],
+          "expected": [
+            {
+              "scale": "character",
+              "mode": "fly",
+              "squares": 12,
+              "label": "Fly 12 squares",
+              "source": "Fly 12 squares (Character Scale)"
+            },
+            {
+              "scale": "starship",
+              "mode": "fly",
+              "squares": 1,
+              "label": "Fly 1 squares",
+              "source": "Fly 1 squares (Starship Scale)"
+            }
+          ],
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementStatus",
+          "observed": "character-scale-only",
+          "expected": "dual-scale",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.maxVelocityKmh",
+          "observed": 800,
+          "expected": 650,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.maxVelocity",
+          "observed": "800 km/h",
+          "expected": "650 km/h",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.sourcebook",
+          "observed": "",
+          "expected": "Starships of the Galaxy",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.page",
+          "observed": null,
+          "expected": 58,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hyperdrive_class",
+          "observed": null,
+          "expected": "3",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasHyperdrive",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHyperdriveClass",
+          "observed": null,
+          "expected": 3,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasNavicomputer",
+          "observed": false,
+          "expected": null,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAstrogationSupportStatus",
+          "observed": "not-applicable",
+          "expected": "source-not-stated",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.cost",
+          "observed": {
+            "new": null,
+            "used": null
+          },
+          "expected": {
+            "new": 1000000,
+            "used": 500000
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleRawCost",
+          "observed": {
+            "new": "not publicly available",
+            "used": "not publicly available"
+          },
+          "expected": {
+            "new": 1000000,
+            "used": 500000
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceNew",
+          "observed": null,
+          "expected": 1000000,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceUsed",
+          "observed": null,
+          "expected": 500000,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceStatus",
+          "observed": "unavailable",
+          "expected": "priced",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceLabel",
+          "observed": "Needs source review",
+          "expected": "New 1,000,000 / Used 500,000",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleStoreCanBuyNew",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleStoreCanBuyUsed",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceSourceStatus",
+          "observed": "existing-compendium-unavailable",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.availability",
+          "observed": "Unknown",
+          "expected": "Licensed",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAvailabilityStatus",
+          "observed": "missing-source-data",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeSource",
+          "observed": "SWSE Fandom",
+          "expected": "Starships of the Galaxy",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeDataStatus",
+          "observed": "source-verified",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeSourceTitle",
+          "observed": "Corellian Action VI Bulk Transport",
+          "expected": "Corellian Engineering Corporation Action VI Bulk Transport",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleTransportDataStatus",
+          "observed": "source-line-normalized",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleWeaponDataStatus",
+          "observed": "unarmed",
+          "expected": "published-stock-unarmed",
+          "action": "REMEDIATE"
+        }
+      ],
+      "matchingFields": [
+        "system.attributes.str.base",
+        "system.attributes.dex.base",
+        "system.attributes.int.base",
+        "system.attributes.str.value",
+        "system.attributes.str.mod",
+        "system.attributes.dex.value",
+        "system.attributes.dex.mod",
+        "system.attributes.int.value",
+        "system.attributes.int.mod",
+        "system.shieldRating",
+        "system.currentSR",
+        "system.vehicleHasShields",
+        "system.crewQuality",
+        "system.vehiclePassengerCount",
+        "system.vehicleHasPassengers",
+        "system.carried_craft",
+        "system.vehicleHasCarriedCraft",
+        "system.characterScaleSpeed",
+        "system.vehicleHasCharacterScaleSpeed",
+        "system.backup_class",
+        "system.vehicleBackupHyperdriveClass",
+        "system.vehicleHasBackupHyperdrive",
+        "system.vehiclePriceReviewNeeded",
+        "system.vehicleHasWeapons"
+      ],
+      "deferredGroupHydration": [],
+      "publishedStockUnarmed": true,
+      "modelReconciliationRequired": [
+        "Recompute derived tags, role/crew/cargo/price/hyperdrive grouping from authoritative corrected values; do not hand-maintain stale tags.",
+        "Verify printed CL, fighting space, cover and skills against model fields before final pack promotion.",
+        "Not-stated navcomputer must remain unknown, not the same as absent."
+      ]
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr70-corvette",
+      "printedName": "Corellian Engineering Corporation CR70 Corvette",
+      "printedPage": 75,
+      "candidatePack": {
+        "path": "packs/vehicles-capital-ships.db",
+        "blobSha": "9bd523944a37d86454adc3981b4553b7924ae3f4",
+        "documentId": "18cd29422b66693d",
+        "documentName": "CR70 Corellian Corvette"
+      },
+      "sourceStrictCertified": true,
+      "targetProfile": {
+        "printedType": "Colossal (frigate) capital ship",
+        "challengeLevel": 8,
+        "initiative": -1,
+        "perception": 5,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 12,
+          "fortitude": 38,
+          "armorBonus": 12,
+          "damageReduction": 15,
+          "shieldRating": 90
+        },
+        "durability": {
+          "hitPoints": 800,
+          "threshold": 138
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 3
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 12
+          },
+          "maxVelocityKmH": 950
+        },
+        "combat": {
+          "baseAttackBonus": 0,
+          "grappleBonus": 48,
+          "ranged": "not printed; explicitly unarmed in facing narrative"
+        },
+        "abilities": {
+          "str": 66,
+          "dex": 18,
+          "con": "—",
+          "int": 18
+        },
+        "skills": {
+          "initiative": -1,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": -1,
+          "useComputer": 5
+        },
+        "crew": {
+          "range": [
+            18,
+            150
+          ],
+          "typical": 30,
+          "quality": "normal"
+        },
+        "passengers": {
+          "maximum": 600,
+          "typical": 250
+        },
+        "cargo": {
+          "maximumTons": 5000,
+          "typicalTons": 5000
+        },
+        "consumables": "1 year",
+        "hyperspace": {
+          "hyperdrive": "x2",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Licensed",
+          "newCredits": 2900000,
+          "usedCredits": 1000000
+        }
+      },
+      "suggestedFieldCorrections": [
+        {
+          "path": "system.attributes.int.base",
+          "observed": 10,
+          "expected": 18,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.str.value",
+          "observed": null,
+          "expected": 66,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.str.mod",
+          "observed": null,
+          "expected": 28,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.dex.value",
+          "observed": null,
+          "expected": 18,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.dex.mod",
+          "observed": null,
+          "expected": 4,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.int.value",
+          "observed": null,
+          "expected": 18,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.int.mod",
+          "observed": null,
+          "expected": 4,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hull",
+          "observed": {
+            "value": 800,
+            "max": 800,
+            "temp": 0
+          },
+          "expected": {
+            "max": 800,
+            "value": 800,
+            "temp": 0
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.shields",
+          "observed": {
+            "value": 90,
+            "max": 90
+          },
+          "expected": {
+            "max": 90,
+            "value": 90
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHPDataStatus",
+          "observed": "existing-compendium-hull",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleDRDataStatus",
+          "observed": "existing-compendium",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleShieldDataStatus",
+          "observed": "source-verified",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.crew",
+          "observed": "18-150* (Normal Crew Quality )",
+          "expected": "18-150* (normal)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleCrewCount",
+          "observed": 18,
+          "expected": 30,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.crewNotes",
+          "observed": "",
+          "expected": "Printed crew range 18-150; typical 30; normal quality. Do not replace range with a single count.",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.cargo",
+          "observed": "5,000 Tons",
+          "expected": "5,000 tons",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.consumables",
+          "observed": "1 Year",
+          "expected": "1 year",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleConsumablesLabel",
+          "observed": "1 Year",
+          "expected": "1 year",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleCarriedCraftLabel",
+          "observed": "None listed",
+          "expected": "None",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.baseAttackBonus",
+          "observed": "+1",
+          "expected": "+0",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.initiative",
+          "observed": "+3",
+          "expected": "-1",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.senses",
+          "observed": "Perception +0",
+          "expected": "Perception +5",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementRaw",
+          "observed": "Fly 12 squares (Character Scale), Fly 3 Squares (Starship Scale)",
+          "expected": "Fly 12 squares (Character Scale), Fly 3 squares (Starship Scale)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementModes",
+          "observed": [
+            {
+              "scale": "character",
+              "mode": "fly",
+              "squares": 12,
+              "label": "Fly 12 squares",
+              "source": "Fly 12 squares (Character Scale)"
+            },
+            {
+              "scale": "starship",
+              "mode": "fly",
+              "squares": 3,
+              "label": "Fly 3 squares",
+              "source": "Fly 3 Squares (Starship Scale)"
+            }
+          ],
+          "expected": [
+            {
+              "scale": "character",
+              "mode": "fly",
+              "squares": 12,
+              "label": "Fly 12 squares",
+              "source": "Fly 12 squares (Character Scale)"
+            },
+            {
+              "scale": "starship",
+              "mode": "fly",
+              "squares": 3,
+              "label": "Fly 3 squares",
+              "source": "Fly 3 squares (Starship Scale)"
+            }
+          ],
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.sourcebook",
+          "observed": "",
+          "expected": "Starships of the Galaxy",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.page",
+          "observed": null,
+          "expected": 75,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasNavicomputer",
+          "observed": null,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAstrogationSupportStatus",
+          "observed": "needs-source-line-review",
+          "expected": "printed-navcomputer",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.cost",
+          "observed": {
+            "new": null,
+            "used": null
+          },
+          "expected": {
+            "new": 2900000,
+            "used": 1000000
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleRawCost",
+          "observed": {
+            "new": 2,
+            "used": 9
+          },
+          "expected": {
+            "new": 2900000,
+            "used": 1000000
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceNew",
+          "observed": null,
+          "expected": 2900000,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceUsed",
+          "observed": null,
+          "expected": 1000000,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceStatus",
+          "observed": "review",
+          "expected": "priced",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceReviewNeeded",
+          "observed": true,
+          "expected": false,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceLabel",
+          "observed": "Needs source review",
+          "expected": "New 2,900,000 / Used 1,000,000",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleStoreCanBuyNew",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleStoreCanBuyUsed",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceSourceStatus",
+          "observed": "needs-source-review",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.availability",
+          "observed": "Unknown",
+          "expected": "Licensed",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAvailabilityStatus",
+          "observed": "missing-source-data",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeSource",
+          "observed": null,
+          "expected": "Starships of the Galaxy",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeDataStatus",
+          "observed": null,
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeSourceTitle",
+          "observed": null,
+          "expected": "Corellian Engineering Corporation CR70 Corvette",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleTransportDataStatus",
+          "observed": "split-passenger-cargo-line+starship-cargo-comma-repaired",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleWeaponDataStatus",
+          "observed": "unarmed",
+          "expected": "published-stock-unarmed",
+          "action": "REMEDIATE"
+        }
+      ],
+      "matchingFields": [
+        "system.size",
+        "system.attributes.str.base",
+        "system.attributes.dex.base",
+        "system.reflexDefense",
+        "system.fortitudeDefense",
+        "system.flatFooted",
+        "system.armorBonus",
+        "system.damageThreshold",
+        "system.damageReduction",
+        "system.dr",
+        "system.vehicleDR",
+        "system.hitPoints",
+        "system.vehicleHP",
+        "system.hp",
+        "system.shieldRating",
+        "system.currentSR",
+        "system.vehicleHasShields",
+        "system.vehicleShieldKnown",
+        "system.crewQuality",
+        "system.passengers",
+        "system.vehiclePassengerCount",
+        "system.vehicleHasPassengers",
+        "system.vehicleCargoKg",
+        "system.vehicleConsumablesDays",
+        "system.carried_craft",
+        "system.vehicleHasCarriedCraft",
+        "system.maneuver",
+        "system.speed",
+        "system.starshipSpeed",
+        "system.characterScaleSpeed",
+        "system.starshipScaleSpeed",
+        "system.vehicleHasCharacterScaleSpeed",
+        "system.vehicleHasStarshipScaleSpeed",
+        "system.characterScaleMovementMode",
+        "system.starshipScaleMovementMode",
+        "system.vehicleMovementStatus",
+        "system.maxVelocityKmh",
+        "system.maxVelocity",
+        "system.hyperdrive_class",
+        "system.backup_class",
+        "system.vehicleHasHyperdrive",
+        "system.vehicleHyperdriveClass",
+        "system.vehicleBackupHyperdriveClass",
+        "system.vehicleHasBackupHyperdrive",
+        "system.vehicleHasWeapons"
+      ],
+      "deferredGroupHydration": [],
+      "publishedStockUnarmed": true,
+      "modelReconciliationRequired": [
+        "Recompute derived tags, role/crew/cargo/price/hyperdrive grouping from authoritative corrected values; do not hand-maintain stale tags.",
+        "Verify printed CL, fighting space, cover and skills against model fields before final pack promotion.",
+        "Preserve minimum/maximum and typical crew separately; scalar vehicleCrewCount is typical 30, not printed maximum."
+      ]
+    },
+    {
+      "sourceEntryKey": "sotg-ghtroc-industries-class-720-freighter",
+      "printedName": "Ghtroc Industries Class 720 Freighter",
+      "printedPage": 88,
+      "candidatePack": {
+        "path": "packs/vehicles-space-transports.db",
+        "blobSha": "ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d",
+        "documentId": "4d5b3422047f5eb8",
+        "documentName": "Ghtroc 720 Freighter"
+      },
+      "sourceStrictCertified": true,
+      "targetProfile": {
+        "printedType": "Colossal space transport",
+        "challengeLevel": 6,
+        "initiative": -3,
+        "perception": 5,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 12,
+          "fortitude": 25,
+          "armorBonus": 12,
+          "damageReduction": 15,
+          "shieldRating": 15
+        },
+        "durability": {
+          "hitPoints": 110,
+          "threshold": 75
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 2
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 12
+          },
+          "maxVelocityKmH": 750
+        },
+        "combat": {
+          "baseAttackBonus": 0,
+          "grappleBonus": 35,
+          "ranged": "double laser cannons +1",
+          "attackOptions": [
+            "autofire (double laser cannons)"
+          ]
+        },
+        "abilities": {
+          "str": 40,
+          "dex": 14,
+          "con": "—",
+          "int": 13
+        },
+        "skills": {
+          "initiative": -3,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": -3,
+          "useComputer": 5
+        },
+        "crew": {
+          "count": 2,
+          "quality": "normal"
+        },
+        "passengers": 10,
+        "cargo": {
+          "number": 135,
+          "unit": "tons"
+        },
+        "consumables": "2 months",
+        "hyperspace": {
+          "hyperdrive": "x2",
+          "backup": "x15",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Licensed",
+          "newCredits": 98500,
+          "usedCredits": 23000
+        }
+      },
+      "suggestedFieldCorrections": [
+        {
+          "path": "system.size",
+          "observed": "gargantuan",
+          "expected": "colossal",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.dex.base",
+          "observed": 4,
+          "expected": 14,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.int.base",
+          "observed": 10,
+          "expected": 13,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.str.value",
+          "observed": null,
+          "expected": 40,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.str.mod",
+          "observed": null,
+          "expected": 15,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.dex.value",
+          "observed": null,
+          "expected": 14,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.dex.mod",
+          "observed": null,
+          "expected": 2,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.int.value",
+          "observed": null,
+          "expected": 13,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.attributes.int.mod",
+          "observed": null,
+          "expected": 1,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hull",
+          "observed": {
+            "value": 110,
+            "max": 110,
+            "temp": 0
+          },
+          "expected": {
+            "max": 110,
+            "value": 110,
+            "temp": 0
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.shields",
+          "observed": {
+            "value": 15,
+            "max": 15
+          },
+          "expected": {
+            "max": 15,
+            "value": 15
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHPDataStatus",
+          "observed": "existing-compendium-hull",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleDRDataStatus",
+          "observed": "existing-compendium",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleShieldDataStatus",
+          "observed": "source-verified",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.crew",
+          "observed": "2 (Normal Crew Quality )",
+          "expected": "2 (normal)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.crewNotes",
+          "observed": "",
+          "expected": "Printed crew 2 (normal).",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.cargo",
+          "observed": "135 Tons",
+          "expected": "135 tons",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.consumables",
+          "observed": "2 Months",
+          "expected": "2 months",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleConsumablesLabel",
+          "observed": "2 Months",
+          "expected": "2 months",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleCarriedCraftLabel",
+          "observed": "None listed",
+          "expected": "None",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.baseAttackBonus",
+          "observed": "+1",
+          "expected": "+0",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.initiative",
+          "observed": "+3",
+          "expected": "-3",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.senses",
+          "observed": "Perception +0",
+          "expected": "Perception +5",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.maneuver",
+          "observed": "+1",
+          "expected": "-3",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementRaw",
+          "observed": "Fly 12 squares (Character Scale), Fly 2 Squares (Starship Scale)",
+          "expected": "Fly 12 squares (Character Scale), Fly 2 squares (Starship Scale)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementModes",
+          "observed": [
+            {
+              "scale": "character",
+              "mode": "fly",
+              "squares": 12,
+              "label": "Fly 12 squares",
+              "source": "Fly 12 squares (Character Scale)"
+            },
+            {
+              "scale": "starship",
+              "mode": "fly",
+              "squares": 2,
+              "label": "Fly 2 squares",
+              "source": "Fly 2 Squares (Starship Scale)"
+            }
+          ],
+          "expected": [
+            {
+              "scale": "character",
+              "mode": "fly",
+              "squares": 12,
+              "label": "Fly 12 squares",
+              "source": "Fly 12 squares (Character Scale)"
+            },
+            {
+              "scale": "starship",
+              "mode": "fly",
+              "squares": 2,
+              "label": "Fly 2 squares",
+              "source": "Fly 2 squares (Starship Scale)"
+            }
+          ],
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.sourcebook",
+          "observed": "",
+          "expected": "Starships of the Galaxy",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.page",
+          "observed": null,
+          "expected": 88,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasNavicomputer",
+          "observed": null,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAstrogationSupportStatus",
+          "observed": "needs-source-line-review",
+          "expected": "printed-navcomputer",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceSourceStatus",
+          "observed": "existing-compendium-priced",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.availability",
+          "observed": "Unknown",
+          "expected": "Licensed",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAvailabilityStatus",
+          "observed": "missing-source-data",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeSource",
+          "observed": null,
+          "expected": "Starships of the Galaxy",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeDataStatus",
+          "observed": null,
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeSourceTitle",
+          "observed": null,
+          "expected": "Ghtroc Industries Class 720 Freighter",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleTransportDataStatus",
+          "observed": "source-line-normalized+split-passenger-cargo-line",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleWeaponDataStatus",
+          "observed": "needs-source-statblock",
+          "expected": "published-weapon-group-pending-installed-binding",
+          "action": "REMEDIATE"
+        }
+      ],
+      "matchingFields": [
+        "system.attributes.str.base",
+        "system.reflexDefense",
+        "system.fortitudeDefense",
+        "system.flatFooted",
+        "system.armorBonus",
+        "system.damageThreshold",
+        "system.damageReduction",
+        "system.dr",
+        "system.vehicleDR",
+        "system.hitPoints",
+        "system.vehicleHP",
+        "system.hp",
+        "system.shieldRating",
+        "system.currentSR",
+        "system.vehicleHasShields",
+        "system.vehicleShieldKnown",
+        "system.crewQuality",
+        "system.vehicleCrewCount",
+        "system.passengers",
+        "system.vehiclePassengerCount",
+        "system.vehicleHasPassengers",
+        "system.vehicleCargoKg",
+        "system.vehicleConsumablesDays",
+        "system.carried_craft",
+        "system.vehicleHasCarriedCraft",
+        "system.speed",
+        "system.starshipSpeed",
+        "system.characterScaleSpeed",
+        "system.starshipScaleSpeed",
+        "system.vehicleHasCharacterScaleSpeed",
+        "system.vehicleHasStarshipScaleSpeed",
+        "system.characterScaleMovementMode",
+        "system.starshipScaleMovementMode",
+        "system.vehicleMovementStatus",
+        "system.maxVelocityKmh",
+        "system.maxVelocity",
+        "system.hyperdrive_class",
+        "system.backup_class",
+        "system.vehicleHasHyperdrive",
+        "system.vehicleHyperdriveClass",
+        "system.vehicleBackupHyperdriveClass",
+        "system.vehicleHasBackupHyperdrive",
+        "system.cost",
+        "system.vehicleRawCost",
+        "system.vehiclePriceNew",
+        "system.vehiclePriceUsed",
+        "system.vehiclePriceStatus",
+        "system.vehiclePriceReviewNeeded",
+        "system.vehiclePriceLabel",
+        "system.vehicleStoreCanBuyNew",
+        "system.vehicleStoreCanBuyUsed",
+        "system.vehicleHasWeapons"
+      ],
+      "deferredGroupHydration": [
+        {
+          "sourceGroupOrdinal": 1,
+          "sourcePrintedGroup": {
+            "weaponLabel": "double laser cannons",
+            "station": "gunner",
+            "attackBonus": 1,
+            "damage": "4d10x2",
+            "sourcePage": 88,
+            "hardwareCount": 1,
+            "firingArc": "fixed-forward per p.88 capabilities",
+            "batteryCount": 1,
+            "hardwareCountKind": "one installed double-laser emplacement, explicitly singular in capabilities text",
+            "autofireBonus": -4,
+            "physicalMountSource": "p88 narrative + p89 deckplan #4 gunnery station"
+          },
+          "installedPackWeaponRowId": null,
+          "installedOwnedItemId": null,
+          "bindingStatus": "NOT_ISSUED",
+          "bindingRequirements": [
+            "independently verified installed weapon row or Item ID",
+            "single physical fixed-forward mount",
+            "operator role gunner and assigned crew station",
+            "round-trip importer preservation",
+            "BAB plus vehicle INT math without flat +1 double counting"
+          ]
+        }
+      ],
+      "publishedStockUnarmed": false,
+      "modelReconciliationRequired": [
+        "Recompute derived tags, role/crew/cargo/price/hyperdrive grouping from authoritative corrected values; do not hand-maintain stale tags.",
+        "Verify printed CL, fighting space, cover and skills against model fields before final pack promotion.",
+        "Do not create a generic placeholder or trust a source-to-instance mapping while installed row is missing.",
+        "Existing vehicle-import-normalizer normalizeWeapons() omits weapon ID and topology metadata; this must be repaired before a runtime binding."
+      ]
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-consular-class-cruiser",
+      "printedName": "Corellian Engineering Corporation Consular-class Cruiser",
+      "printedPage": 126,
+      "candidatePack": {
+        "path": "packs/vehicles-space-transports.db",
+        "blobSha": "ea5e48bc2aaba4369f29cfa4ff35a49f7d998c5d",
+        "documentId": "28f748f51896aa1b",
+        "documentName": "Corellian Consular-Class Cruiser"
+      },
+      "sourceStrictCertified": true,
+      "targetProfile": {
+        "printedType": "Colossal (frigate) space transport",
+        "challengeLevel": 8,
+        "initiative": 0,
+        "perception": 6,
+        "defenses": {
+          "reflex": 18,
+          "flatFootedReflex": 14,
+          "fortitude": 39,
+          "armorBonus": 14,
+          "damageReduction": 15,
+          "shieldRating": 100,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 960,
+          "threshold": 139
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 3
+          }
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 51,
+          "ranged": "none printed (unarmed diplomatic baseline)"
+        },
+        "abilities": {
+          "str": 69,
+          "dex": 18,
+          "con": "-",
+          "int": 14
+        },
+        "skills": {
+          "initiative": 0,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 0,
+          "useComputer": 6
+        },
+        "crew": {
+          "count": 8,
+          "quality": "skilled"
+        },
+        "passengers": 16,
+        "cargo": {
+          "number": 1000,
+          "unit": "tons"
+        },
+        "consumables": "6 months",
+        "hyperspace": {
+          "hyperdrive": "x2",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Licensed",
+          "newCredits": 1250000,
+          "usedCredits": 400000
+        }
+      },
+      "suggestedFieldCorrections": [
+        {
+          "path": "system.size",
+          "observed": "large",
+          "expected": "colossal (frigate)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.reflexDefense",
+          "observed": 10,
+          "expected": 18,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.fortitudeDefense",
+          "observed": 10,
+          "expected": 39,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.flatFooted",
+          "observed": 10,
+          "expected": 14,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.armorBonus",
+          "observed": 0,
+          "expected": 14,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.damageThreshold",
+          "observed": 30,
+          "expected": 139,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.damageReduction",
+          "observed": 5,
+          "expected": 15,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.dr",
+          "observed": 5,
+          "expected": 15,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleDR",
+          "observed": 5,
+          "expected": 15,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hitPoints",
+          "observed": 50,
+          "expected": 960,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHP",
+          "observed": 50,
+          "expected": 960,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hp",
+          "observed": {
+            "max": 50,
+            "value": 50,
+            "temp": 0
+          },
+          "expected": {
+            "max": 960,
+            "value": 960,
+            "temp": 0
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hull",
+          "observed": {
+            "value": 50,
+            "max": 50,
+            "temp": 0
+          },
+          "expected": {
+            "max": 960,
+            "value": 960,
+            "temp": 0
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.shields",
+          "observed": {
+            "value": 100,
+            "max": 100
+          },
+          "expected": {
+            "max": 100,
+            "value": 100
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleShieldKnown",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHPDataStatus",
+          "observed": "existing-compendium-hull",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleDRDataStatus",
+          "observed": "rules-derived-size-default",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleShieldDataStatus",
+          "observed": "source-verified",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.crewQuality",
+          "observed": "normal",
+          "expected": "skilled",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.crew",
+          "observed": "1 (normal crew)",
+          "expected": "8 (skilled)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleCrewCount",
+          "observed": 1,
+          "expected": 8,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.crewNotes",
+          "observed": "",
+          "expected": "Printed crew 8 (skilled).",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.passengers",
+          "observed": "0",
+          "expected": "16",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePassengerCount",
+          "observed": 0,
+          "expected": 16,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasPassengers",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.cargo",
+          "observed": "100 kg",
+          "expected": "1,000 tons",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleCargoKg",
+          "observed": 100,
+          "expected": 1000000,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.consumables",
+          "observed": "1 week",
+          "expected": "6 months",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleConsumablesDays",
+          "observed": 7,
+          "expected": 180,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleConsumablesLabel",
+          "observed": "1 Week",
+          "expected": "6 months",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleCarriedCraftLabel",
+          "observed": "None listed",
+          "expected": "None",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.baseAttackBonus",
+          "observed": "+1",
+          "expected": "+2",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.senses",
+          "observed": "Perception +0",
+          "expected": "Perception +6",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.speed",
+          "observed": "12 squares",
+          "expected": "",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.starshipSpeed",
+          "observed": "",
+          "expected": "Fly 3 squares",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.characterScaleSpeed",
+          "observed": 12,
+          "expected": null,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.starshipScaleSpeed",
+          "observed": null,
+          "expected": 3,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasCharacterScaleSpeed",
+          "observed": true,
+          "expected": false,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasStarshipScaleSpeed",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.starshipScaleMovementMode",
+          "observed": "",
+          "expected": "fly",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementRaw",
+          "observed": "12 squares",
+          "expected": "Fly 3 squares (Starship Scale)",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementModes",
+          "observed": [
+            {
+              "scale": "character",
+              "mode": "",
+              "squares": 12,
+              "label": "12 squares",
+              "source": "12 squares"
+            }
+          ],
+          "expected": [
+            {
+              "scale": "starship",
+              "mode": "fly",
+              "squares": 3,
+              "label": "Fly 3 squares",
+              "source": "Fly 3 squares (Starship Scale)"
+            }
+          ],
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleMovementStatus",
+          "observed": "character-scale-only",
+          "expected": "starship-scale-only",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.maxVelocityKmh",
+          "observed": 800,
+          "expected": null,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.maxVelocity",
+          "observed": "800 km/h",
+          "expected": "",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.sourcebook",
+          "observed": "",
+          "expected": "Starships of the Galaxy",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.page",
+          "observed": null,
+          "expected": 126,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.hyperdrive_class",
+          "observed": null,
+          "expected": "2",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasHyperdrive",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHyperdriveClass",
+          "observed": null,
+          "expected": 2,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleHasNavicomputer",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAstrogationSupportStatus",
+          "observed": "not-applicable",
+          "expected": "printed-navcomputer",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.cost",
+          "observed": {
+            "new": null,
+            "used": null
+          },
+          "expected": {
+            "new": 1250000,
+            "used": 400000
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleRawCost",
+          "observed": {
+            "new": "not publicly available",
+            "used": "not publicly available"
+          },
+          "expected": {
+            "new": 1250000,
+            "used": 400000
+          },
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceNew",
+          "observed": null,
+          "expected": 1250000,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceUsed",
+          "observed": null,
+          "expected": 400000,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceStatus",
+          "observed": "unavailable",
+          "expected": "priced",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceLabel",
+          "observed": "Needs source review",
+          "expected": "New 1,250,000 / Used 400,000",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleStoreCanBuyNew",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleStoreCanBuyUsed",
+          "observed": false,
+          "expected": true,
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehiclePriceSourceStatus",
+          "observed": "existing-compendium-unavailable",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.availability",
+          "observed": "Unknown",
+          "expected": "Licensed",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAvailabilityStatus",
+          "observed": "missing-source-data",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeSource",
+          "observed": "SWSE Fandom",
+          "expected": "Starships of the Galaxy",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeDataStatus",
+          "observed": "source-verified",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleAttributeSourceTitle",
+          "observed": "Consular-Class Space Cruiser",
+          "expected": "Corellian Engineering Corporation Consular-class Cruiser",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleTransportDataStatus",
+          "observed": "source-line-normalized",
+          "expected": "published-source-verified",
+          "action": "REMEDIATE"
+        },
+        {
+          "path": "system.vehicleWeaponDataStatus",
+          "observed": "unarmed",
+          "expected": "published-stock-unarmed",
+          "action": "REMEDIATE"
+        }
+      ],
+      "matchingFields": [
+        "system.attributes.str.base",
+        "system.attributes.dex.base",
+        "system.attributes.int.base",
+        "system.attributes.str.value",
+        "system.attributes.str.mod",
+        "system.attributes.dex.value",
+        "system.attributes.dex.mod",
+        "system.attributes.int.value",
+        "system.attributes.int.mod",
+        "system.shieldRating",
+        "system.currentSR",
+        "system.vehicleHasShields",
+        "system.carried_craft",
+        "system.vehicleHasCarriedCraft",
+        "system.initiative",
+        "system.maneuver",
+        "system.characterScaleMovementMode",
+        "system.backup_class",
+        "system.vehicleBackupHyperdriveClass",
+        "system.vehicleHasBackupHyperdrive",
+        "system.vehiclePriceReviewNeeded",
+        "system.vehicleHasWeapons"
+      ],
+      "deferredGroupHydration": [],
+      "publishedStockUnarmed": true,
+      "modelReconciliationRequired": [
+        "Recompute derived tags, role/crew/cargo/price/hyperdrive grouping from authoritative corrected values; do not hand-maintain stale tags.",
+        "Verify printed CL, fighting space, cover and skills against model fields before final pack promotion."
+      ]
+    }
+  ],
+  "summary": {
+    "pilotSourceRecords": 4,
+    "stockUnarmed": 3,
+    "stockArmed": 1,
+    "packRecordsAlreadyFullyCorrect": 0,
+    "remediationFieldChangesProposed": 217,
+    "installedWeaponGroupsReady": 0,
+    "trustedRuntimeBindings": 0
+  },
+  "nextGate": [
+    "Resolve model-shape and derived-tag recomputation before pack mutation.",
+    "Apply exact-ID corrections to production compendia without losing printed crew/variant distinctions.",
+    "Hydrate Ghtroc's one printed weapon group as a real preserved installed record; audit physical mount, arc, station and weapon category.",
+    "Replace the hardcoded false crew station preflight with actual trusted operator/station evidence, before any attack costs.",
+    "Run stock and custom attack isolation, producer/consumer, rollback, geometry and Foundry V13 tests; verify GitHub readback before operational certification."
+  ]
+}
