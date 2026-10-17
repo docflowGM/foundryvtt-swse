@@ -10,8 +10,8 @@ import { fileURLToPath } from 'node:url';
 
 export const PINNED_POST_WRITE_BLOBS = Object.freeze({
   'data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json': 'd08ca75b0b30e8b44896588edf3c5ce1cd335557',
-  'packs/vehicles-space-transports.db': '07364d6650ca945303915430b1ed1f321c1c0cf6',
-  'packs/vehicles-capital-ships.db': 'aefe115dd0b7c3b669882b12a4c8519fdd296460'
+  'packs/vehicles-space-transports.db': '65f516504a7ecfa007924e8161c3a876954f13d3',
+  'packs/vehicles-capital-ships.db': '8f333b91b684e90f50384dd61a39e5fa80b27994'
 });
 export const PILOT_TARGETS = Object.freeze([
   { key: 'sotg-corellian-engineering-corporation-action-vi-bulk-transport', pack: 'packs/vehicles-space-transports.db', id: '97c5c070d93b7a0a' },
@@ -67,6 +67,23 @@ export function auditPostHydration({ledger,packs}) {
     check('CREW_QUALITY',p.crew.quality,s.crewQuality);
     if(p.crew.typical!==undefined)check('TYPICAL_CREW',p.crew.typical,s.vehicleCrewCount);
     check('CARGO_KG',1000*(p.cargo.number??p.cargo.maximumTons),s.vehicleCargoKg);
+    // The published statblocks explicitly say "Carried Craft: None".
+    // This is KNOWN absence and must not be encoded as unknown/null.
+    if(p.carriedCraft === 'none'){
+      check('CARRIED_CRAFT_EXPLICIT_NONE','None',s.carried_craft);
+      check('CARRIED_CRAFT_RAW_EXPLICIT_NONE','None',s.vehicleCarriedCraftRaw);
+      check('CARRIED_CRAFT_FLAG_KNOWN_FALSE',false,s.vehicleHasCarriedCraft);
+    }
+    // Unknown/navcomputer source silence is not an asserted absence.
+    if(p.hyperspace.navcomputer === 'not stated'){
+      check('NAVCOMPUTER_UNSPECIFIED_IS_NULL',null,s.vehicleHasNavicomputer);
+    }
+    // Object with populated children must remain an object, never a null
+    // sentinel that discards known subfields.
+    if(s.cost === null || typeof s.cost !== 'object')
+      fail(issues,'KNOWN_COST_PARENT_NULL',target.id,'priced new/used object',s.cost);
+    if(s.attributes?.int === null || typeof s.attributes?.int !== 'object')
+      fail(issues,'KNOWN_INT_PARENT_NULL',target.id,'Int base/mod object',s.attributes?.int);
     check('PRICED_NEW',p.economics.newCredits,s.cost?.new);
     check('PRICED_USED',p.economics.usedCredits,s.cost?.used);
     check('AVAILABILITY',p.economics.availability,s.availability);
