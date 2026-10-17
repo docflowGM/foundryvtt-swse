@@ -11,6 +11,15 @@ import { gitBlobSha } from './audit_phase2c_cp7_stock_bindings.mjs';
 const MANIFEST = 'data/audits/vehicles/swse-phase2c-cp8-stock-pack-remediation-manifest.json';
 const serial = x => JSON.stringify(x);
 const at = (obj, path) => path.split('.').reduce((o, part) => o?.[part], obj);
+function observedField(obj, path) {
+  let node = obj;
+  for (const part of path.split('.')) {
+    if (!node || typeof node !== 'object' || !Object.prototype.hasOwnProperty.call(node, part))
+      return {state:'MISSING', value:null};
+    node = node[part];
+  }
+  return node === null ? {state:'NULL', value:null} : {state:'PRESENT', value:node};
+}
 function put(obj, path, value) {
   const keys = path.split('.');
   let node = obj;
