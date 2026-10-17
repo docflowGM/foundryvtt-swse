@@ -1,17 +1,39 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { gitBlobSha } from '../tools/audits/vehicles/audit_phase2c_cp7_stock_bindings.mjs';
-import { validateRemediationManifest, inspectRepository } from '../tools/audits/vehicles/verify_phase2c_cp8_remediation_manifest.mjs';
+import { validateRemediationManifest } from '../tools/audits/vehicles/verify_phase2c_cp8_remediation_manifest.mjs';
 
 const root = new URL('../', import.meta.url);
 const manifest = JSON.parse(readFileSync(new URL('../data/audits/vehicles/swse-phase2c-cp8-stock-pack-remediation-manifest.json', import.meta.url)));
 const ledgerPath = 'data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json';
 const ledger = JSON.parse(readFileSync(new URL('../'+ledgerPath, import.meta.url)));
 const pinned = [ledgerPath, ...manifest.inputBaseline.packs.map(x=>x.path)];
-const blobs = Object.fromEntries(pinned.map(p=>[p,gitBlobSha(readFileSync(new URL('../'+p, import.meta.url)))]));
+// CP8A is a frozen PRE-MUTATION audit. Once the four ship records were
+// corrected in CP8B, the live pack blobs intentionally changed. Rewind only
+// the audited pilot fields into a synthetic, isolated historical fixture.
+// Never claim this recreates the complete original Git blobs.
+const blobs = {
+  [ledgerPath]: manifest.sourceAuthority.ledgerGitBlobSha,
+  ...Object.fromEntries(manifest.inputBaseline.packs.map(p => [p.path,p.gitBlobSha]))
+};
 const packs = Object.fromEntries(manifest.inputBaseline.packs.map(({path})=>
   [path,readFileSync(new URL('../'+path, import.meta.url),'utf8').trim().split(/\r?\n/).map(JSON.parse)]));
+const meta = JSON.parse(readFileSync(new URL('../data/audits/vehicles/swse-phase2c-cp8b-derived-metadata-remediation.json',import.meta.url)));
+function restore(row, c) {
+  const keys=c.path.split('.');
+  let node=row;
+  for(const k of keys.slice(0,-1)){node[k]??={};node=node[k];}
+  const field=keys.at(-1);
+  if(c.observedState==='MISSING')delete node[field];
+  else node[field]=structuredClone(c.observed);
+}
+for(const entry of manifest.entries){
+  const row=packs[entry.candidatePack.path].find(x=>x._id===entry.candidatePack.documentId);
+  for(const c of entry.suggestedFieldCorrections)restore(row,c);
+  const d=meta.entries.find(x=>x.sourceEntryKey===entry.sourceEntryKey);
+  for(const c of d.proposedDerivedCorrections)restore(row,c);
+  if(d.sourceProof.printedArmament)row.system.weapons=[];
+}
 const check = (patch={}) => validateRemediationManifest({
   manifest:patch.manifest??structuredClone(manifest),
   sourceLedger:patch.sourceLedger??structuredClone(ledger),
@@ -20,8 +42,8 @@ const check = (patch={}) => validateRemediationManifest({
 });
 const bad = (result, term) => assert.ok(result.errors.some(x=>x.includes(term)),JSON.stringify(result.errors));
 
-test('CP8A pinned live repository inputs and source-proposal parity pass',()=>{
-  const r=inspectRepository(new URL('../',import.meta.url).pathname);
+test('archived CP8A four-record pre-mutation fixture validates without granting attack authority',()=>{
+  const r=check();
   assert.equal(r.ok,true,JSON.stringify(r.errors));
   assert.equal(r.candidates,4);
   assert.equal(r.trustedRuntimeBindings,0);
