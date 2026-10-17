@@ -1,0 +1,50 @@
+{
+  "schema": "swse.vehicle.phase2c.schema-discovery.v0.1",
+  "sourceBook": "Threats of the Galaxy",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "threats-of-the-galaxy-001",
+      "sourceEntryKey": "tog-cec-vcx-350-light-freighter",
+      "ship": "CEC VCX-350 Light Freighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        89
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "threats-of-the-galaxy-002",
+      "sourceEntryKey": "tog-cec-vcx-350-light-freighter",
+      "ship": "CEC VCX-350 Light Freighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        89
+      ],
+      "sourceDerivedIssue": "Laser cannons may be controlled by pilot or gunner; preserve selectable station in production data.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "threats-of-the-galaxy-003",
+      "sourceEntryKey": "tog-cec-vcx-350-light-freighter",
+      "ship": "CEC VCX-350 Light Freighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        89
+      ],
+      "sourceDerivedIssue": "Hyperdrive x1 with x11 backup exactly as printed; do not silently change to common x10.",
+      "requiresFollowup": true
+    }
+  ],
+  "additionalStatblockIdentityCandidates": [],
+  "counts": {
+    "discoveryCases": 3
+  },
+  "scopeGuardrails": [
+    "No production pack or schema changes",
+    "Source review is distinct from strict mechanical certification",
+    "No unverified firing arcs, physical mounts, or editorial corrections"
+  ]
+}

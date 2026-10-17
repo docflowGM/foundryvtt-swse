@@ -1,0 +1,636 @@
+{
+  "schema": "swse.vehicle.phase2b.weapon-mount-backlog.v0.1",
+  "sourceBook": "Force Unleashed Campaign Guide",
+  "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+  "counts": {
+    "publicationShipClaims": 19,
+    "primaryPdfCloseReads": 19,
+    "primaryPdfCloseReadsOutstanding": 0,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 19,
+    "attackGroupRowsReviewed": 41,
+    "sourceConflictRecordCount": 5,
+    "phase1PageMappingDiscrepancyCount": 0
+  },
+  "records": [
+    {
+      "sourceEntryKey": "fucg-a-7-hunter-interceptor",
+      "printedName": "A-7 Hunter Interceptor",
+      "printedPage": 204,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 204
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-escort-carrier",
+      "printedName": "Escort Carrier",
+      "printedPage": 207,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "point-defense double laser cannon battery",
+          "station": "5 gunners",
+          "attackBonus": 13,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 207
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 5,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 207
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-gladiator-class-star-destroyer",
+      "printedName": "Gladiator-class Star Destroyer",
+      "printedPage": 208,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "light turbolaser battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 208
+        },
+        {
+          "label": "point-defense laser cannon battery",
+          "station": "5 gunners",
+          "attackBonus": 13,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 208
+        },
+        {
+          "label": "medium concussion missile battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 208
+        },
+        {
+          "label": "tractor beam battery",
+          "station": "2 gunners",
+          "attackBonus": 8,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 208
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified.",
+        "3 published source discrepancy/discrepancies require independent resolution policy."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-guardian-class-light-cruiser",
+      "printedName": "Guardian-class Light Cruiser",
+      "printedPage": 205,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannon battery",
+          "station": "4 gunners",
+          "attackBonus": 11,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 205
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-h-60-tempest-bomber",
+      "printedName": "H-60 Tempest Bomber",
+      "printedPage": 114,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 3,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 114
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 3,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 114
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-hwk-290",
+      "printedName": "HWK-290",
+      "printedPage": 118,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "blaster cannons",
+          "station": "pilot or gunner",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 118
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified.",
+        "1 published source discrepancy/discrepancies require independent resolution policy."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-m3-a-scyk-fighter",
+      "printedName": "M3-A Scyk Fighter",
+      "printedPage": 115,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 1,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 115
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-maka-eekai-l4000-transport",
+      "printedName": "Maka-Eekai L4000 Transport",
+      "printedPage": 120,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double laser cannons",
+          "station": "gunner",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 120
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-neutron-star-bulk-cruiser",
+      "printedName": "Neutron Star Bulk Cruiser",
+      "printedPage": 121,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy quad laser cannon battery",
+          "station": "6 gunners",
+          "attackBonus": 14,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 121
+        },
+        {
+          "label": "tractor beam",
+          "station": "gunner",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 121
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-novasword-space-superiority-fighter",
+      "printedName": "NovaSword Space Superiority Fighter",
+      "printedPage": 115,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 115
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 5,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 115
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-r-41-starchaser",
+      "printedName": "R-41 Starchaser",
+      "printedPage": 116,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 116
+        },
+        {
+          "label": "ion cannon",
+          "station": "pilot",
+          "attackBonus": 6,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 116
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 6,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 116
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-rogue-shadow",
+      "printedName": "Rogue Shadow",
+      "printedPage": 206,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 15,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 206
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-sentinel-class-landing-shuttle",
+      "printedName": "Sentinel-class Landing Shuttle",
+      "printedPage": 207,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "gunner",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 207
+        },
+        {
+          "label": "ion cannon",
+          "station": "copilot",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 207
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "2 gunners",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 207
+        },
+        {
+          "label": "repeating blaster cannons",
+          "station": "2 gunners",
+          "attackBonus": -1,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 207
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-tartan-class-patrol-cruiser",
+      "printedName": "Tartan-class Patrol Cruiser",
+      "printedPage": 209,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "point-defense laser cannon battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 209
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-tie-prototype",
+      "printedName": "TIE Prototype",
+      "printedPage": 205,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 205
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 205
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-toscan-8-q",
+      "printedName": "Toscan 8-Q",
+      "printedPage": 116,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 2,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 116
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 2,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 116
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified.",
+        "1 published source discrepancy/discrepancies require independent resolution policy."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-venator-class-star-destroyer",
+      "printedName": "Venator-class Star Destroyer",
+      "printedPage": 210,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy turbolaser battery",
+          "station": "4 gunners",
+          "attackBonus": 11,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 210
+        },
+        {
+          "label": "medium double turbolaser",
+          "station": "gunner",
+          "attackBonus": 7,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 210
+        },
+        {
+          "label": "point-defense laser battery",
+          "station": "5 gunners",
+          "attackBonus": 13,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 210
+        },
+        {
+          "label": "point-defense flight deck laser battery",
+          "station": "6 gunners",
+          "attackBonus": 15,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 210
+        },
+        {
+          "label": "tractor beam battery",
+          "station": "3 gunners",
+          "attackBonus": 9,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 210
+        },
+        {
+          "label": "proton torpedo",
+          "station": "gunner",
+          "attackBonus": 5,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 210
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-victory-i-class-star-destroyer",
+      "printedName": "Victory I-class Star Destroyer",
+      "printedPage": 211,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy double turbolaser battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 211
+        },
+        {
+          "label": "light quad turbolaser battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 211
+        },
+        {
+          "label": "heavy concussion missile battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 211
+        },
+        {
+          "label": "tractor beam battery",
+          "station": "3 gunners",
+          "attackBonus": 14,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 211
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-zebra-starfighter",
+      "printedName": "Zebra Starfighter",
+      "printedPage": 118,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 1,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 118
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+      ]
+    }
+  ]
+}

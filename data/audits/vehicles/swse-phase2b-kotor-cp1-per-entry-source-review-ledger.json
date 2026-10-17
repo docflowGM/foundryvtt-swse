@@ -1,0 +1,2876 @@
+{
+  "schema": "swse.vehicle.phase2b.source-close-read.v0.1",
+  "sourceBook": "Knights of the Old Republic Campaign Guide",
+  "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+  "phase1ProvenanceBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+  "branchAtInitialization": "audit/vehicle-phase-0-1-canonical-foundation",
+  "branchHeadAtInitialization": "49fabf107f287b8147a59b75a9dd09e49ed7426f",
+  "countPolicy": "Cumulative Phase 1 identities; source-reviewed entries distinct from full field and physical-mount mechanical certificates.",
+  "stateSemantics": {
+    "PDF_VERIFIED": "Visually checked rendered original PDF source",
+    "SOURCE_SILENT_CONFIRMED": "No affirmative fact printed; not equivalent to absent/zero",
+    "SOURCE_CONFLICT_PRESERVED": "Two conflicting published source facts retained",
+    "SCHEMA_INCOMPATIBLE": "Printed mechanic not faithfully represented by current data model",
+    "NOT_REVIEWED": "Not yet source close-read"
+  },
+  "fieldGroups": [
+    "printedTypeLine",
+    "challenge",
+    "initiativeSenses",
+    "defenses",
+    "durability",
+    "speed",
+    "rangedAttack",
+    "meleeAttack",
+    "fightingSpace",
+    "baseAttack",
+    "attackOptions",
+    "abilities",
+    "skills",
+    "crew",
+    "capacity",
+    "payload",
+    "hyperdrive",
+    "cost",
+    "weaponAttackProfile"
+  ],
+  "counts": {
+    "publicationShipClaims": 32,
+    "primaryPdfCloseReads": 10,
+    "primaryPdfCloseReadsOutstanding": 22,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 32,
+    "attackGroupRowsReviewed": 17,
+    "sourceConflictRecordCount": 0,
+    "phase1PageMappingDiscrepancyCount": 1
+  },
+  "checkpoint1": {
+    "trancheOrder": [
+      "kotor-corellian-engineering-corporation-s-100-stinger-class-starfighter",
+      "kotor-republic-fleet-systems-star-saber-xc-01-starfighter",
+      "kotor-amalgamated-hyperdyne-578-r-space-transport",
+      "kotor-hoersch-kessel-drive-g-type-light-shuttle",
+      "kotor-arakyd-industries-lethisk-class-armed-freighter",
+      "kotor-corellia-stardrive-quartermaster-class-supply-carrier",
+      "kotor-pelagia-duplex-command-assault-gunship",
+      "kotor-rendili-hyperworks-praetorian-class-frigate",
+      "kotor-eleaor-propulsion-baronial-class-yacht",
+      "kotor-star-forge-manufacture-interdictor-class-warship"
+    ],
+    "actualSourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+    "sourcePdfPageOffset": "PDF physical page ordinal = printed page + 1; 0-based PDF index = printed page",
+    "mappingCorrectionPolicy": "Preserve Phase 1 locator; store actual Stinger PDF statblock p96 independently; no identity/page mutation"
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "kotor-amalgamated-hyperdyne-578-r-space-transport",
+      "printedName": "Amalgamated Hyperdyne 578-R Space Transport",
+      "printedStatblockStartPage": 98,
+      "phase1SectionStartPage": 98,
+      "phase1PdfPhysicalPage": 99,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        98
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 6,
+        "initiative": -5,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 12,
+          "flatFootedReflex": 12,
+          "fortitude": 24,
+          "armorBonus": 12,
+          "shieldRating": null
+        },
+        "durability": {
+          "hitPoints": 100,
+          "damageReduction": 15,
+          "threshold": 76
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": 800
+        },
+        "combat": {
+          "ranged": "laser cannon +1",
+          "baseAttackBonus": 0,
+          "grappleBonus": 34,
+          "attackOptions": [
+            "autofire (laser cannon)"
+          ],
+          "fightingSpace": "12x12 or 1 starship-scale square",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 39,
+          "dexterity": 10,
+          "constitution": "—",
+          "intelligence": 12
+        },
+        "skills": {
+          "initiative": -5,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": -5,
+          "useComputer": 5
+        },
+        "crew": "2 (normal)",
+        "passengers": 10,
+        "cargo": "40 tons",
+        "consumables": "4 months",
+        "carriedCraft": "none",
+        "payload": null,
+        "hyperdrive": "x3, navicomputer",
+        "economics": "Licensed; 75,000 credits (28,000 used)",
+        "emplacementPoints": 4,
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannon",
+          "station": "gunner",
+          "attackBonus": 1,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -4,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 98,
+          "specialAttackNotation": null
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            98
+          ],
+          "finding": "Production often shipped incomplete; some 578-R transports lacked a hyperdrive motivator or inertial dampener. These defective examples do not override the stock statblock hyperdrive x3."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            98
+          ],
+          "finding": "Four emplacement points are explicitly printed."
+        },
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPages": [
+            98
+          ],
+          "finding": "Shield rating is absent from the printed statblock; do not turn the silence into a certified SR 0."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          98
+        ],
+        "statblockLocation": "printed p.98",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": false
+      },
+      "sourceFieldStates": {
+        "shieldRating": "SOURCE_SILENT_CONFIRMED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-arakyd-industries-lethisk-class-armed-freighter",
+      "printedName": "Arakyd Industries Lethisk-class Armed Freighter",
+      "printedStatblockStartPage": 99,
+      "phase1SectionStartPage": 99,
+      "phase1PdfPhysicalPage": 100,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        99
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 10,
+        "initiative": -3,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 13,
+          "fortitude": 28,
+          "armorBonus": 13,
+          "shieldRating": 30
+        },
+        "durability": {
+          "hitPoints": 150,
+          "damageReduction": 15,
+          "threshold": 78
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": 900
+        },
+        "combat": {
+          "ranged": "double laser cannons +5 AND light concussion missiles +5",
+          "baseAttackBonus": 2,
+          "grappleBonus": 40,
+          "attackOptions": [
+            "autofire (double laser cannons)"
+          ],
+          "fightingSpace": "12x12 or 1 starship-scale square",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 46,
+          "dexterity": 12,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": -3,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -3,
+          "useComputer": 6
+        },
+        "crew": "3 (skilled)",
+        "passengers": 8,
+        "cargo": "60 tons",
+        "consumables": "2 months",
+        "carriedCraft": "none",
+        "payload": "12 light concussion missiles",
+        "hyperdrive": "x2 (backup x12); navicomputer",
+        "economics": "Restricted; 470,000 credits (225,000 used)",
+        "emplacementPoints": 3,
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double laser cannons",
+          "station": "gunner",
+          "attackBonus": 5,
+          "damage": "6d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 0,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 99,
+          "specialAttackNotation": null
+        },
+        {
+          "weaponLabel": "light concussion missiles",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "8d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 99,
+          "specialAttackNotation": null
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            99
+          ],
+          "finding": "Three emplacement points and twelve light concussion missiles are printed; laser gunner and pilot missile stations are separate."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          99
+        ],
+        "statblockLocation": "printed p.99",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": false
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-corellia-stardrive-quartermaster-class-supply-carrier",
+      "printedName": "Corellia StarDrive Quartermaster-class Supply Carrier",
+      "printedStatblockStartPage": 100,
+      "phase1SectionStartPage": 100,
+      "phase1PdfPhysicalPage": 101,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        100
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "SOURCE_SILENT_CONFIRMED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "SOURCE_SILENT_CONFIRMED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "No printed weapon attack profile; cannot certify physical weapons or silently label vessel unarmed."
+        },
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 6,
+        "initiative": -4,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 14,
+          "fortitude": 31,
+          "armorBonus": 14,
+          "shieldRating": 50
+        },
+        "durability": {
+          "hitPoints": 200,
+          "damageReduction": 20,
+          "threshold": 81
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 2,
+          "maximumVelocityKmH": 350
+        },
+        "combat": {
+          "ranged": null,
+          "baseAttackBonus": 2,
+          "grappleBonus": 43,
+          "attackOptions": [],
+          "fightingSpace": "12x12 or 1 starship-scale square",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 52,
+          "dexterity": 10,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": -4,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -4,
+          "useComputer": 6
+        },
+        "crew": "2 (skilled)",
+        "passengers": "10 (standard configuration)",
+        "cargo": "120 tons",
+        "consumables": "6 months",
+        "carriedCraft": "varies by mission",
+        "payload": null,
+        "hyperdrive": "x3 (backup x12); navicomputer",
+        "economics": "Licensed; 300,000 credits (110,000 used)",
+        "emplacementPoints": 2,
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPages": [
+            100
+          ],
+          "finding": "No Ranged attacks, weapon detail rows, or weapon mount inventory are printed. Narrative calls its armament a few minor defense systems, not a stattable zero-weapons declaration."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            100
+          ],
+          "finding": "Passenger count 10 is explicitly the standard configuration; carried craft varies by mission."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            100
+          ],
+          "finding": "Two emplacement points are explicitly printed."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          100
+        ],
+        "statblockLocation": "printed p.100",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": false
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-corellian-engineering-corporation-s-100-stinger-class-starfighter",
+      "printedName": "Corellian Engineering Corporation S-100 Stinger-class Starfighter",
+      "printedStatblockStartPage": 95,
+      "phase1SectionStartPage": 95,
+      "phase1PdfPhysicalPage": 96,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        95,
+        96
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Huge starfighter",
+        "cl": 9,
+        "initiative": 11,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 18,
+          "flatFootedReflex": 11,
+          "fortitude": 24,
+          "armorBonus": 3,
+          "shieldRating": 30
+        },
+        "durability": {
+          "hitPoints": 90,
+          "damageReduction": 5,
+          "threshold": 34
+        },
+        "movement": {
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 4,
+          "maximumVelocityKmH": 1150
+        },
+        "combat": {
+          "ranged": "laser cannons +4 OR proton torpedoes +4",
+          "baseAttackBonus": 2,
+          "grappleBonus": 26,
+          "attackOptions": [
+            "autofire (laser cannons)"
+          ],
+          "fightingSpace": "3x3 or 1 starship-scale square",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 38,
+          "dexterity": 24,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": 11,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 11,
+          "useComputer": 6
+        },
+        "crew": "1 (skilled)",
+        "passengers": "none",
+        "cargo": "30 kg",
+        "consumables": "1 month",
+        "carriedCraft": "none",
+        "payload": "8 proton torpedoes",
+        "hyperdrive": "x2, 10-jump memory (utility droid)",
+        "economics": "Restricted; 150,000 credits (90,000 used)",
+        "emplacementPoints": null,
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 96,
+          "specialAttackNotation": null
+        },
+        {
+          "weaponLabel": "proton torpedoes",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "8d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 96,
+          "specialAttackNotation": null
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            95,
+            96
+          ],
+          "finding": "Phase 1 identifies printed statblock page 95, but p95 only introduces the ship; the complete CL 9 statblock begins on printed p96. Preserve Phase 1 page field and separately record this verified locator."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            96
+          ],
+          "finding": "Eight proton torpedoes are the printed payload; pilot fires either laser cannons or torpedoes (alternative attack options)."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            96
+          ],
+          "finding": "10-jump-memory utility droid is noted with the x2 hyperdrive, not a separate crew-station breakdown."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          95,
+          96
+        ],
+        "statblockLocation": "printed p.96",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": true
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": [],
+      "specializedPublishedVariantsAndPageCorrections": {
+        "verifiedActualPrintedStatblockStartPage": 96,
+        "phase1PageMappingDiscrepancy": true
+      }
+    },
+    {
+      "sourceEntryKey": "kotor-corellian-engineering-corporation-s-250-chela-class-starfighter",
+      "printedName": "Corellian Engineering Corporation S-250 Chela-class Starfighter",
+      "printedStatblockStartPage": 181,
+      "phase1SectionStartPage": 181,
+      "phase1PdfPhysicalPage": 182,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-davaab-type-starfighter",
+      "printedName": "Davaab-type Starfighter",
+      "printedStatblockStartPage": 204,
+      "phase1SectionStartPage": 204,
+      "phase1PdfPhysicalPage": 205,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-ebon-hawk",
+      "printedName": "Ebon Hawk",
+      "printedStatblockStartPage": 220,
+      "phase1SectionStartPage": 220,
+      "phase1PdfPhysicalPage": 221,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-eleaor-propulsion-baronial-class-yacht",
+      "printedName": "Eleaor Propulsion Baronial-class Yacht",
+      "printedStatblockStartPage": 143,
+      "phase1SectionStartPage": 143,
+      "phase1PdfPhysicalPage": 144,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        143
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 6,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 12,
+          "fortitude": 25,
+          "armorBonus": 12,
+          "shieldRating": 10
+        },
+        "durability": {
+          "hitPoints": 115,
+          "damageReduction": 15,
+          "threshold": 75
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": 900
+        },
+        "combat": {
+          "ranged": "laser cannons +7",
+          "baseAttackBonus": 2,
+          "grappleBonus": 37,
+          "attackOptions": [
+            "autofire (double light laser cannons)"
+          ],
+          "fightingSpace": "12x12 or 1 starship-scale square",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 41,
+          "dexterity": 14,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": -2,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -2,
+          "useComputer": 6
+        },
+        "crew": "1 (skilled)",
+        "passengers": 4,
+        "cargo": "30 tons",
+        "consumables": "1 month",
+        "carriedCraft": "none",
+        "payload": null,
+        "hyperdrive": "x3",
+        "economics": "Restricted; 200,000 credits (120,000 used)",
+        "emplacementPoints": null,
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double light laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 2,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 143,
+          "specialAttackNotation": null
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            143
+          ],
+          "finding": "Descriptive heading is Jedi Covenant Shuttle, but the printed CL 6 statblock names the Eleaor Propulsion Baronial-class Yacht. Preserve the Phase 1 ship identity."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            143
+          ],
+          "finding": "Ranged line uses generic laser cannons; detailed weapon row identifies double light laser cannons. These labels are compatible, not a numeric published conflict."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            143
+          ],
+          "finding": "Narrative indicates models can vary, but no alternate complete statblock is provided."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          143
+        ],
+        "statblockLocation": "printed p.143",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": false
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-eleaor-propulsion-starscape-class-yacht",
+      "printedName": "Eleaor Propulsion Starscape-class Yacht",
+      "printedStatblockStartPage": 222,
+      "phase1SectionStartPage": 221,
+      "phase1PdfPhysicalPage": 223,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-hoersch-kessel-drive-g-type-light-shuttle",
+      "printedName": "Hoersch-Kessel Drive G-Type Light Shuttle",
+      "printedStatblockStartPage": 98,
+      "phase1SectionStartPage": 98,
+      "phase1PdfPhysicalPage": 99,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        98,
+        99
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 8,
+        "initiative": 0,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 12,
+          "fortitude": 24,
+          "armorBonus": 12,
+          "shieldRating": 30
+        },
+        "durability": {
+          "hitPoints": 100,
+          "damageReduction": 15,
+          "threshold": 74
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": 950
+        },
+        "combat": {
+          "ranged": "double laser cannons +5",
+          "baseAttackBonus": 2,
+          "grappleBonus": 36,
+          "attackOptions": [
+            "autofire (double laser cannons)"
+          ],
+          "fightingSpace": "12x12 or 1 starship-scale square",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 39,
+          "dexterity": 18,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 0,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 0,
+          "useComputer": 6
+        },
+        "crew": "1 (skilled)",
+        "passengers": 3,
+        "cargo": "10 tons",
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "payload": null,
+        "hyperdrive": null,
+        "economics": "Restricted; 200,000 credits (95,000 used)",
+        "emplacementPoints": null,
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double laser cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 0,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 98,
+          "specialAttackNotation": null
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            98
+          ],
+          "finding": "Pilot assistance grants a +2 equipment bonus to Pilot checks only for characters untrained in Pilot, and no bonus for trained pilots."
+        },
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPages": [
+            98,
+            99
+          ],
+          "finding": "The basic G-Type statblock does not print a hyperdrive entry. Its escape-shuttle variant does; preserve the difference as printed."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            99
+          ],
+          "finding": "G-Type escape shuttle variant: hp 100, DR 15, SR 50, Threshold 74; crew 1 skilled, no passengers, 2 tons cargo, 4 months consumables; x2 hyperdrive with backup x10 and navicomputer; Restricted 230,000 credits (105,000 used). All unlisted base fields remain inherited within this published variation; no separate CL statblock."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          98,
+          99
+        ],
+        "statblockLocation": "printed p.98",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": false
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflicts": [],
+      "specializedPublishedVariantsAndPageCorrections": {
+        "escapeShuttleVariant": {
+          "sourcePrintedPage": 99,
+          "hitPoints": 100,
+          "damageReduction": 15,
+          "shieldRating": 50,
+          "damageThreshold": 74,
+          "crew": "1 (skilled)",
+          "passengers": "none",
+          "cargo": "2 tons",
+          "consumables": "4 months",
+          "carriedCraft": "none",
+          "hyperdrive": "x2 (backup x10); navicomputer",
+          "economics": "Restricted; 230,000 credits (105,000 used)"
+        },
+        "pilotAssistEquipmentBonusUntrainedOnly": 2
+      }
+    },
+    {
+      "sourceEntryKey": "kotor-jehavey-ir-type-assault-ship",
+      "printedName": "Jehavey'ir-type Assault Ship",
+      "printedStatblockStartPage": 206,
+      "phase1SectionStartPage": 205,
+      "phase1PdfPhysicalPage": 207,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-kandosii-type-dreadnaught",
+      "printedName": "Kandosii-type Dreadnaught",
+      "printedStatblockStartPage": 207,
+      "phase1SectionStartPage": 206,
+      "phase1PdfPhysicalPage": 208,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-koros-spaceworks-cx-133-chaos-fighter",
+      "printedName": "Koros Spaceworks CX-133 Chaos Fighter",
+      "printedStatblockStartPage": 220,
+      "phase1SectionStartPage": 220,
+      "phase1PdfPhysicalPage": 221,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-koros-spaceworks-supremacy-class-attack-ship",
+      "printedName": "Koros Spaceworks Supremacy-class Attack Ship",
+      "printedStatblockStartPage": 221,
+      "phase1SectionStartPage": 221,
+      "phase1PdfPhysicalPage": 222,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-kyramud-type-battleship",
+      "printedName": "Kyramud-type Battleship",
+      "printedStatblockStartPage": 206,
+      "phase1SectionStartPage": 206,
+      "phase1PdfPhysicalPage": 207,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-pelagia-duplex-command-assault-gunship",
+      "printedName": "Pelagia Duplex Command Assault Gunship",
+      "printedStatblockStartPage": 100,
+      "phase1SectionStartPage": 100,
+      "phase1PdfPhysicalPage": 101,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        100
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 12,
+        "initiative": 0,
+        "sensesPerception": 8,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 12,
+          "fortitude": 26,
+          "armorBonus": 12,
+          "shieldRating": 20
+        },
+        "durability": {
+          "hitPoints": 130,
+          "damageReduction": 15,
+          "threshold": 76
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": 870
+        },
+        "combat": {
+          "ranged": "2 heavy laser cannons +8 AND 2 laser cannons +8",
+          "baseAttackBonus": 5,
+          "grappleBonus": 41,
+          "attackOptions": [
+            "autofire (heavy laser cannons, laser cannons)"
+          ],
+          "fightingSpace": "8x8 or 1 starship-scale square",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 43,
+          "dexterity": 14,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 0,
+          "mechanics": 8,
+          "perception": 8,
+          "pilot": 0,
+          "useComputer": 8
+        },
+        "crew": "5 (expert)",
+        "passengers": 6,
+        "cargo": "10 tons",
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "payload": null,
+        "hyperdrive": null,
+        "economics": "Restricted; 525,000 credits (310,000 used)",
+        "emplacementPoints": null,
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy laser cannons",
+          "station": "gunner",
+          "attackBonus": 8,
+          "damage": "6d10x2",
+          "hardwareCount": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 3,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 100,
+          "specialAttackNotation": null
+        },
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot/copilot",
+          "attackBonus": 8,
+          "damage": "4d10x2",
+          "hardwareCount": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 3,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 100,
+          "specialAttackNotation": null
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            100
+          ],
+          "finding": "The entry describes two cockpits and two gunnery pods, with stock crew 5 expert; can be flown effectively with a pilot and one other crewmember. Treat as conditional undercrewing, not an automatic stock crew change."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            100
+          ],
+          "finding": "Provides +5 equipment bonus on Mechanics checks made to install weapon systems (not a general Mechanics bonus)."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            100
+          ],
+          "finding": "Multiple preinstalled weapon mount points and power conduits are described, but their unused counts and arcs are not specified."
+        },
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPages": [
+            100
+          ],
+          "finding": "No hyperdrive is provided in the statblock; do not substitute a default value."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          100
+        ],
+        "statblockLocation": "printed p.100",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": false
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "PDF_VERIFIED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-rendili-hyperworks-hammerhead-class-cruiser",
+      "printedName": "Rendili Hyperworks Hammerhead-class Cruiser",
+      "printedStatblockStartPage": 184,
+      "phase1SectionStartPage": 184,
+      "phase1PdfPhysicalPage": 185,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-rendili-hyperworks-inexpugnable-class-tactical-command-vessel",
+      "printedName": "Rendili Hyperworks Inexpugnable-class Tactical Command Vessel",
+      "printedStatblockStartPage": 185,
+      "phase1SectionStartPage": 184,
+      "phase1PdfPhysicalPage": 186,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-rendili-hyperworks-praetorian-class-frigate",
+      "printedName": "Rendili Hyperworks Praetorian-class Frigate",
+      "printedStatblockStartPage": 101,
+      "phase1SectionStartPage": 101,
+      "phase1PdfPhysicalPage": 102,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        101
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal (frigate) capital ship",
+        "cl": 14,
+        "initiative": -4,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 12,
+          "flatFootedReflex": 12,
+          "fortitude": 35,
+          "armorBonus": 12,
+          "shieldRating": 100
+        },
+        "durability": {
+          "hitPoints": 850,
+          "damageReduction": 15,
+          "threshold": 135
+        },
+        "movement": {
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 2,
+          "maximumVelocityKmH": null
+        },
+        "combat": {
+          "ranged": "2 light turbolaser cannon batteries +13* AND 2 point-defense laser cannon batteries +11 AND 2 tractor beam batteries +11*",
+          "baseAttackBonus": 2,
+          "grappleBonus": 47,
+          "attackOptions": [
+            "autofire (point-defense laser cannon battery)"
+          ],
+          "fightingSpace": "2x2 starship-scale squares",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 61,
+          "dexterity": 10,
+          "constitution": "—",
+          "intelligence": 20
+        },
+        "skills": {
+          "initiative": -4,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -4,
+          "useComputer": 6
+        },
+        "crew": "1,470 (skilled)",
+        "passengers": 2700,
+        "cargo": "10,000 tons",
+        "consumables": "2 years",
+        "carriedCraft": "12 starfighters, 6 shuttles",
+        "payload": null,
+        "hyperdrive": "x2 (backup x12); navicomputer",
+        "economics": "Restricted; 12 million credits (6 million used)",
+        "emplacementPoints": null,
+        "supplementalPrintedFacts": {
+          "printedTargetSizePenalty": "* Apply -20 penalty on attacks against targets smaller than Colossal in size."
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "light turbolaser cannon batteries",
+          "station": "4 gunners",
+          "attackBonus": 13,
+          "damage": "2d10x5",
+          "hardwareCount": "2 printed batteries (number of underlying gun mounts unspecified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "smallTargetAttackBonus": -7,
+          "gunnerCountPrinted": 4,
+          "sourcePage": 101,
+          "specialAttackNotation": "-20 attack against targets smaller than Colossal"
+        },
+        {
+          "weaponLabel": "point-defense laser cannon batteries",
+          "station": "3 gunners",
+          "attackBonus": 11,
+          "damage": "4d10x2",
+          "hardwareCount": "2 printed batteries (individual gun mounts unspecified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 7,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": 3,
+          "sourcePage": 101,
+          "specialAttackNotation": null
+        },
+        {
+          "weaponLabel": "tractor beam batteries",
+          "station": "3 gunners",
+          "attackBonus": 11,
+          "damage": "— (grapple +63)",
+          "hardwareCount": "2 printed batteries (underlying emitter count unspecified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "smallTargetAttackBonus": -9,
+          "gunnerCountPrinted": 3,
+          "sourcePage": 101,
+          "specialAttackNotation": "-20 attack against targets smaller than Colossal; grapple +63"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            101
+          ],
+          "finding": "Tactical Fire: as a standard action, forgo all attacks and provide tactical fire to all squares within a 2-square radius; allied starships gain +1 Reflex Defense and +10 Fortitude Defense AND damage threshold."
+        },
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPages": [
+            101
+          ],
+          "finding": "Printed Ranged identifies two groups of each battery type, while separate detail lines specify gunner allocation (4/3/3); individual weapon counts within each battery and arcs are not printed."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            101
+          ],
+          "finding": "Asterisked light turbolaser and tractor attacks apply a -20 penalty against targets smaller than Colossal; detailed rows show corresponding reduced bonuses."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          101
+        ],
+        "statblockLocation": "printed p.101",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": false
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-aurek-tactical-strikefighter",
+      "printedName": "Republic Fleet Systems Aurek Tactical Strikefighter",
+      "printedStatblockStartPage": 181,
+      "phase1SectionStartPage": 181,
+      "phase1PdfPhysicalPage": 182,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-conductor-class-short-haul-landing-craft",
+      "printedName": "Republic Fleet Systems Conductor-class Short-haul Landing Craft",
+      "printedStatblockStartPage": 182,
+      "phase1SectionStartPage": 181,
+      "phase1PdfPhysicalPage": 183,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-foray-class-blockade-runner",
+      "printedName": "Republic Fleet Systems Foray-class Blockade Runner",
+      "printedStatblockStartPage": 183,
+      "phase1SectionStartPage": 183,
+      "phase1PdfPhysicalPage": 184,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-kt-400-military-droid-carrier",
+      "printedName": "Republic Fleet Systems KT-400 Military Droid Carrier",
+      "printedStatblockStartPage": 183,
+      "phase1SectionStartPage": 183,
+      "phase1PdfPhysicalPage": 184,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-star-saber-xc-01-starfighter",
+      "printedName": "Republic Fleet Systems Star Saber XC-01 Starfighter",
+      "printedStatblockStartPage": 96,
+      "phase1SectionStartPage": 96,
+      "phase1PdfPhysicalPage": 97,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        96
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 10,
+        "initiative": 5,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 12,
+          "fortitude": 26,
+          "armorBonus": 7,
+          "shieldRating": 35
+        },
+        "durability": {
+          "hitPoints": 120,
+          "damageReduction": 10,
+          "threshold": 46
+        },
+        "movement": {
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 5,
+          "maximumVelocityKmH": 1280
+        },
+        "combat": {
+          "ranged": "heavy laser cannons +4",
+          "baseAttackBonus": 2,
+          "grappleBonus": 33,
+          "attackOptions": [
+            "autofire (heavy laser cannons)"
+          ],
+          "fightingSpace": "4x4 or 1 starship-scale square",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 42,
+          "dexterity": 18,
+          "constitution": "—",
+          "intelligence": 12
+        },
+        "skills": {
+          "initiative": 5,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 5,
+          "useComputer": 6
+        },
+        "crew": "1 (skilled)",
+        "passengers": "none",
+        "cargo": "45 kg",
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "payload": null,
+        "hyperdrive": "x2, 10-jump memory (utility droid)",
+        "economics": "Restricted; 145,000 credits (75,000 used)",
+        "emplacementPoints": null,
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "7d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": null,
+          "sourcePage": 96,
+          "specialAttackNotation": null
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            96
+          ],
+          "finding": "Published heavy laser cannons are pilot-operated; no proton torpedo weapon or payload appears in the Star Saber statblock."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          96
+        ],
+        "statblockLocation": "printed p.96",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": false
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-shaadlar-type-troopship",
+      "printedName": "Shaadlar-type Troopship",
+      "printedStatblockStartPage": 205,
+      "phase1SectionStartPage": 204,
+      "phase1PdfPhysicalPage": 206,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-centurion-class-battlecruiser",
+      "printedName": "Star Forge Manufacture Centurion-class Battlecruiser",
+      "printedStatblockStartPage": 163,
+      "phase1SectionStartPage": 162,
+      "phase1PdfPhysicalPage": 164,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-derriphan-class-battleship",
+      "printedName": "Star Forge Manufacture Derriphan-class Battleship",
+      "printedStatblockStartPage": 163,
+      "phase1SectionStartPage": 163,
+      "phase1PdfPhysicalPage": 164,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-herald-class-shuttle",
+      "printedName": "Star Forge Manufacture Herald-class Shuttle",
+      "printedStatblockStartPage": 164,
+      "phase1SectionStartPage": 164,
+      "phase1PdfPhysicalPage": 165,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-interdictor-class-warship",
+      "printedName": "Star Forge Manufacture Interdictor-class Warship",
+      "printedStatblockStartPage": 161,
+      "phase1SectionStartPage": 161,
+      "phase1PdfPhysicalPage": 162,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        161
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 16,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 12,
+          "fortitude": 50,
+          "armorBonus": 12,
+          "shieldRating": 110
+        },
+        "durability": {
+          "hitPoints": 1250,
+          "damageReduction": 20,
+          "threshold": 250
+        },
+        "movement": {
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 3,
+          "maximumVelocityKmH": null
+        },
+        "combat": {
+          "ranged": "5 medium turbolaser batteries +14* AND 6 point-defense light laser batteries +10 AND 3 tractor beam batteries +10* AND 4 gravity well projectors +8",
+          "baseAttackBonus": 2,
+          "grappleBonus": 62,
+          "attackOptions": [
+            "autofire (point-defense light laser cannon batteries)"
+          ],
+          "fightingSpace": "2x2 starship-scale squares",
+          "crewCover": "total"
+        },
+        "abilities": {
+          "strength": 90,
+          "dexterity": 14,
+          "constitution": "—",
+          "intelligence": 18
+        },
+        "skills": {
+          "initiative": -2,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -2,
+          "useComputer": 6
+        },
+        "crew": "5,224 (skilled)",
+        "passengers": "3,600 (troops)",
+        "cargo": "11,000 tons",
+        "consumables": "3 years",
+        "carriedCraft": "48 Sith interceptors, various support vehicles",
+        "payload": null,
+        "hyperdrive": "x2 (backup x9); navicomputer",
+        "economics": "Military; cost not available for sale",
+        "emplacementPoints": null,
+        "supplementalPrintedFacts": {
+          "printedTargetSizePenalty": "* Apply a -20 penalty on attacks against targets smaller than Colossal size."
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium turbolaser battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "damage": "5d10x5",
+          "hardwareCount": "5 printed batteries (underlying turbolaser mounts unverified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "smallTargetAttackBonus": -6,
+          "gunnerCountPrinted": 5,
+          "sourcePage": 161,
+          "specialAttackNotation": "-20 attack against targets smaller than Colossal"
+        },
+        {
+          "weaponLabel": "point-defense light laser cannon battery",
+          "station": "3 gunners",
+          "attackBonus": 10,
+          "damage": "3d10x2",
+          "hardwareCount": "6 printed batteries (individual gun counts unverified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 5,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": 3,
+          "sourcePage": 161,
+          "specialAttackNotation": null
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "3 gunners",
+          "attackBonus": 10,
+          "damage": "— (grapple +61)",
+          "hardwareCount": "3 printed batteries (underlying beam projector count unverified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "smallTargetAttackBonus": -10,
+          "gunnerCountPrinted": 3,
+          "sourcePage": 161,
+          "specialAttackNotation": "-20 attack against targets smaller than Colossal; grapple +61"
+        },
+        {
+          "weaponLabel": "gravity well projector",
+          "station": "2 gunners",
+          "attackBonus": 8,
+          "damage": "Special (SG 45)",
+          "hardwareCount": "4 printed projectors (mount locations unverified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "smallTargetAttackBonus": null,
+          "gunnerCountPrinted": 2,
+          "sourcePage": 161,
+          "specialAttackNotation": "3x3-square starship-scale area attack; source says Special (SG 45)"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            161
+          ],
+          "finding": "Tactical Fire: standard action to forgo all attacks and project tactical fire into all squares in a 2-square radius; enemy starships in the area suffer -1 Reflex Defense and speed reduced by 2 squares (minimum 1)."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            161
+          ],
+          "finding": "Four gravity well projectors are printed; their attack uses a 3x3-square starship-scale area and Special (SG 45). The meaning of this cross-reference is not resolved in this book-only audit."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            161
+          ],
+          "finding": "Medium turbolaser and tractor battery lines have a printed -20 attack penalty against targets smaller than Colossal; the detailed rows retain their adjusted values."
+        },
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPages": [
+            161
+          ],
+          "finding": "Five, six and three are printed battery counts (and four projector count), not proof of each underlying weapon component or firing arc."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+        "printedPages": [
+          161
+        ],
+        "statblockLocation": "printed p.161",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+        "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+        "phase1PageMappingDiscrepancy": false
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-sith-interceptor",
+      "printedName": "Star Forge Manufacture Sith Interceptor",
+      "printedStatblockStartPage": 164,
+      "phase1SectionStartPage": 164,
+      "phase1PdfPhysicalPage": 165,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-teroch-type-fast-attack-gunship",
+      "printedName": "Teroch-type Fast Attack Gunship",
+      "printedStatblockStartPage": 205,
+      "phase1SectionStartPage": 205,
+      "phase1PdfPhysicalPage": 206,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "kotor-zentine-dynamics-ministry-class-orbital-shuttle",
+      "printedName": "Zentine Dynamics Ministry-class Orbital Shuttle",
+      "printedStatblockStartPage": 182,
+      "phase1SectionStartPage": 182,
+      "phase1PdfPhysicalPage": 183,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Awaiting next KOTOR checkpoint primary-source review"
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": null,
+      "sourceFieldStates": {
+        "shieldRating": "NOT_REVIEWED",
+        "physicalWeaponHardwareCount": "NOT_REVIEWED",
+        "weaponFiringArc": "NOT_REVIEWED",
+        "batteryComposition": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED"
+      },
+      "sourceConflicts": []
+    }
+  ]
+}

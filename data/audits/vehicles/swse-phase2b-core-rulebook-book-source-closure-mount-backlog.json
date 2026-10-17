@@ -1,0 +1,362 @@
+{
+  "schema": "swse.vehicle.phase2b.mount-backlog.v0.1",
+  "sourceBook": "Core Rulebook",
+  "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+  "counts": {
+    "sourceReviewedEntries": 10,
+    "attackGroupRows": 22,
+    "strictCertificates": 0
+  },
+  "records": [
+    {
+      "sourceEntryKey": "core-arc-170-starfighter",
+      "printedName": "ARC-170 Starfighter",
+      "printedPage": 180,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "6d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 180
+        },
+        {
+          "label": "proton torpedoes",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "9d10x2, 4-square splash",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 180
+        },
+        {
+          "label": "laser cannons",
+          "station": "gunner",
+          "attackBonus": 7,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 180
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "core-corellian-yt-1300-transport",
+      "printedName": "Corellian YT-1300 Transport",
+      "printedPage": 182,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannon",
+          "station": "gunner",
+          "attackBonus": 2,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 182
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "core-droid-tri-fighter",
+      "printedName": "Droid Tri-Fighter",
+      "printedPage": 181,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannon",
+          "station": "automated/droid brain",
+          "attackBonus": 7,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 181
+        },
+        {
+          "label": "light laser cannons",
+          "station": "automated/droid brain",
+          "attackBonus": 7,
+          "damage": "3d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 181
+        },
+        {
+          "label": "concussion missiles",
+          "station": "automated/droid brain",
+          "attackBonus": 7,
+          "damage": "8d10x2, 4-square splash",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 181
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "core-eta-2-actis-interceptor",
+      "printedName": "Eta-2 Actis Interceptor",
+      "printedPage": 180,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 12,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 180
+        },
+        {
+          "label": "ion cannons",
+          "station": "pilot",
+          "attackBonus": 12,
+          "damage": "4d10x2 ion",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 180
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "core-imperial-i-class-star-destroyer",
+      "printedName": "Imperial I-class Star Destroyer",
+      "printedPage": 183,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "turbolaser battery",
+          "station": "6 gunners",
+          "attackBonus": 17,
+          "damage": "5d10x5",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 183
+        },
+        {
+          "label": "ion cannon battery",
+          "station": "6 gunners",
+          "attackBonus": 17,
+          "damage": "3d10x5 ion",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 183
+        },
+        {
+          "label": "point-defense laser battery",
+          "station": "4 gunners",
+          "attackBonus": 13,
+          "damage": "2d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 183
+        },
+        {
+          "label": "tractor beam",
+          "station": "2 gunners",
+          "attackBonus": 7,
+          "damage": "—",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 183
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "core-incom-t-65b-x-wing-starfighter",
+      "printedName": "Incom T-65B X-wing Starfighter",
+      "printedPage": 178,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "6d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 178
+        },
+        {
+          "label": "proton torpedoes",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "9d10x2, 4-square splash",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 178
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "core-koensayr-y-wing-starfighter",
+      "printedName": "Koensayr Y-wing Starfighter",
+      "printedPage": 178,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 179
+        },
+        {
+          "label": "ion cannons",
+          "station": "gunner",
+          "attackBonus": 5,
+          "damage": "4d10x2 ion",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 179
+        },
+        {
+          "label": "proton torpedoes",
+          "station": "gunner",
+          "attackBonus": 5,
+          "damage": "9d10x2, 4-square splash",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 179
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "core-tie-fighter",
+      "printedName": "TIE Fighter",
+      "printedPage": 179,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 180
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "core-tie-interceptor",
+      "printedName": "TIE Interceptor",
+      "printedPage": 179,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "6d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 180
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "core-vulture-class-droid-starfighter",
+      "printedName": "Vulture-class Droid Starfighter",
+      "printedPage": 180,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "droid vessel",
+          "attackBonus": 7,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 181
+        },
+        {
+          "label": "concussion missiles",
+          "station": "droid vessel",
+          "attackBonus": 7,
+          "damage": "8d10x2, 4-square splash",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 181
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    }
+  ]
+}

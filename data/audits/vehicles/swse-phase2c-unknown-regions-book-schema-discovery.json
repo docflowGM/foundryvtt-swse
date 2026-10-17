@@ -1,0 +1,404 @@
+{
+  "schema": "swse.vehicle.phase2c.unknown-regions.book-schema-discovery.v0.1",
+  "sourceBook": "Unknown Regions",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "ur-vaya-01",
+      "sourceEntryKey": "ur-hoersch-kessel-vaya-class-scout-ship",
+      "ship": "Hoersch-Kessel Vaya-class Scout Ship",
+      "category": "MOVEMENT_CONDITION",
+      "sourcePrintedPages": [
+        58
+      ],
+      "sourceDerivedIssue": "When the ship moves down CT from an attack, DC 20 Pilot check; on failure it cannot move through end of pilot's next turn.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-vaya-02",
+      "sourceEntryKey": "ur-hoersch-kessel-vaya-class-scout-ship",
+      "ship": "Hoersch-Kessel Vaya-class Scout Ship",
+      "category": "HARDWARE_TOPOLOGY",
+      "sourcePrintedPages": [
+        59
+      ],
+      "sourceDerivedIssue": "Two printed weapon attack groups; mount arcs and concussion projectile launcher count not specified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-jump-01",
+      "sourceEntryKey": "ur-jumpmaster-5000-scout-ship",
+      "ship": "JumpMaster 5000 Scout Ship",
+      "category": "EQUIPMENT_VARIANT",
+      "sourcePrintedPages": [
+        52
+      ],
+      "sourceDerivedIssue": "Bounty hunter Dengar's modified Punishing One described narratively; no independent printed statblock in this book.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-jump-02",
+      "sourceEntryKey": "ur-jumpmaster-5000-scout-ship",
+      "ship": "JumpMaster 5000 Scout Ship",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        52
+      ],
+      "sourceDerivedIssue": "Stock x3 hyperdrive (backup x15), one laser group; do not inherit the Punishing One's improvements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-killik-01",
+      "sourceEntryKey": "ur-killik-dartship",
+      "ship": "Killik Dartship",
+      "category": "SPECIAL_RAM",
+      "sourcePrintedPages": [
+        133
+      ],
+      "sourceDerivedIssue": "Collision damage on successful ram is 6d6+14 in place of normal size damage; simultaneous same-round rams each gain one extra die.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-killik-02",
+      "sourceEntryKey": "ur-killik-dartship",
+      "ship": "Killik Dartship",
+      "category": "IDENTITY_SCOPE",
+      "sourcePrintedPages": [
+        133
+      ],
+      "sourceDerivedIssue": "Shard-class capital ships and nest ships are described but have no independent statblock here; not added as ship identities.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-killik-03",
+      "sourceEntryKey": "ur-killik-dartship",
+      "ship": "Killik Dartship",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        133
+      ],
+      "sourceDerivedIssue": "No printed shield rating or hyperdrive. Vehicular Combat appears in defenses without source text specifying a DC.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-seeder-01",
+      "sourceEntryKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship",
+      "ship": "Kuat Drive Yards Star Seeder-class Colony Ship",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        58
+      ],
+      "sourceDerivedIssue": "Footnote says -20 attack penalty against targets smaller than Colossal; detailed battery rows print -17 vs targets smaller than Capital.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-seeder-02",
+      "sourceEntryKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship",
+      "ship": "Kuat Drive Yards Star Seeder-class Colony Ship",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        58
+      ],
+      "sourceDerivedIssue": "Six turbolaser battery attack groups and tractor beam battery; ship can enter atmosphere, carries one shuttle and may carry speeders/ground equipment.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-seeder-03",
+      "sourceEntryKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship",
+      "ship": "Kuat Drive Yards Star Seeder-class Colony Ship",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        58
+      ],
+      "sourceDerivedIssue": "No independently documented turret placement, firing arcs or number of guns per battery.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-seeder-conflict-01",
+      "sourceEntryKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship",
+      "ship": "Kuat Drive Yards Star Seeder-class Colony Ship",
+      "category": "PUBLISHED_SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        58
+      ],
+      "sourceDerivedIssue": "Turbolaser attack modifier / size threshold conflict",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-seeder-conflict-02",
+      "sourceEntryKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship",
+      "ship": "Kuat Drive Yards Star Seeder-class Colony Ship",
+      "category": "PUBLISHED_SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        58
+      ],
+      "sourceDerivedIssue": "Tractor beam attack modifier / size threshold conflict",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-skyblind-01",
+      "sourceEntryKey": "ur-loronar-corporation-skyblind-recon-ship",
+      "ship": "Loronar Corporation SkyBlind Recon Ship",
+      "category": "CARGO_DEPENDENCY",
+      "sourcePrintedPages": [
+        57
+      ],
+      "sourceDerivedIssue": "A SkyBlind with landing sphere has 50 tons of cargo; without landing sphere its cargo capacity doubles, to 100 tons.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-skyblind-02",
+      "sourceEntryKey": "ur-loronar-corporation-skyblind-recon-ship",
+      "ship": "Loronar Corporation SkyBlind Recon Ship",
+      "category": "STEALTH_TECH",
+      "sourcePrintedPages": [
+        57
+      ],
+      "sourceDerivedIssue": "Narrative describes low detectability due to spherical shape and sensor baffling but provides no numeric bonus to Stealth or detection DC.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-skyblind-03",
+      "sourceEntryKey": "ur-loronar-corporation-skyblind-recon-ship",
+      "ship": "Loronar Corporation SkyBlind Recon Ship",
+      "category": "NONSHIP_EQUIPMENT",
+      "sourcePrintedPages": [
+        57
+      ],
+      "sourceDerivedIssue": "Carried Landing Sphere is a Huge air vehicle and not a separate ship identity in this census.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-sct-01",
+      "sourceEntryKey": "ur-mesens-corporation-sct-scout-craft",
+      "ship": "Mesens Corporation SCT Scout Craft",
+      "category": "SENSOR_LOGISTICS",
+      "sourcePrintedPages": [
+        56
+      ],
+      "sourceDerivedIssue": "SCT heavy defenses and sensor arrays contrasted with low fuel efficiency; narrative says owners may use cargo for extra tanks/consumables, not a published stock swap.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-sct-02",
+      "sourceEntryKey": "ur-mesens-corporation-sct-scout-craft",
+      "ship": "Mesens Corporation SCT Scout Craft",
+      "category": "CAPITAL_GUN_SIZE_PENALTY",
+      "sourcePrintedPages": [
+        57
+      ],
+      "sourceDerivedIssue": "Turbolaser +4 becomes -16 against targets smaller than Colossal (20-point penalty), distinct from point-defense laser group.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-pacifier-01",
+      "sourceEntryKey": "ur-mrx-br-pacifier-combat-contact-vessel",
+      "ship": "MRX-BR Pacifier Combat/Contact Vessel",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        54
+      ],
+      "sourceDerivedIssue": "Pacifier used for first contact or assault; narrative emphasizes high-power system arrays but assigns no separate detection modifier.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-pacifier-02",
+      "sourceEntryKey": "ur-mrx-br-pacifier-combat-contact-vessel",
+      "ship": "MRX-BR Pacifier Combat/Contact Vessel",
+      "category": "ATTACK_OPTIONS",
+      "sourcePrintedPages": [
+        55
+      ],
+      "sourceDerivedIssue": "Weapon lines are alternate laser or torpedo attacks, not a declaration of two simultaneous attacks.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-fortune-01",
+      "sourceEntryKey": "ur-royal-fortune-light-clipper",
+      "ship": "Royal Fortune Light Clipper",
+      "category": "VESSEL_SIGNATURE",
+      "sourcePrintedPages": [
+        150
+      ],
+      "sourceDerivedIssue": "Energy-emitter sails and rigging: narrative says shots to rigging may cause power surges, but supplies no roll, threshold, damage or subsystem mechanic.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-fortune-02",
+      "sourceEntryKey": "ur-royal-fortune-light-clipper",
+      "ship": "Royal Fortune Light Clipper",
+      "category": "HARDWARE_TOPOLOGY",
+      "sourcePrintedPages": [
+        151
+      ],
+      "sourceDerivedIssue": "Narrative: 38 laser cannons (19 port, 19 starboard), two quad batteries fore and aft, one amidships Fotia's Fire launcher; 8 laser battery attack groups printed, not a one-for-one mount map.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-fortune-03",
+      "sourceEntryKey": "ur-royal-fortune-light-clipper",
+      "ship": "Royal Fortune Light Clipper",
+      "category": "DAMAGE_OVER_TIME",
+      "sourcePrintedPages": [
+        151
+      ],
+      "sourceDerivedIssue": "Fotia's Fire: 7d10x2 initial, 2d10x2 on each of two subsequent rounds. Apply only according to published weapon-specific mechanics; no invented save.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-mu2-01",
+      "sourceEntryKey": "ur-sienar-fleet-systems-mu-2-model-2-shuttle",
+      "ship": "Sienar Fleet Systems Mu-2 Model 2 Shuttle",
+      "category": "MODEL_VARIANT",
+      "sourcePrintedPages": [
+        55
+      ],
+      "sourceDerivedIssue": "Narrative Model 1 seats up to 24 passengers; Model 2 is published CL 8 statblock with 14 passengers. Model 1 is not separately statblocked.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-mu2-02",
+      "sourceEntryKey": "ur-sienar-fleet-systems-mu-2-model-2-shuttle",
+      "ship": "Sienar Fleet Systems Mu-2 Model 2 Shuttle",
+      "category": "SENSOR_BONUS",
+      "sourcePrintedPages": [
+        55
+      ],
+      "sourceDerivedIssue": "Sensor system operator gains +5 equipment bonus to Perception and Use Computer checks operating ship sensors.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-drexl-01",
+      "sourceEntryKey": "ur-sorosuub-drexl-class-planetary-defender-starfighter",
+      "ship": "SoroSuub Drexl-class \"Planetary Defender\" Starfighter",
+      "category": "ASTROMECH_CONDITION",
+      "sourcePrintedPages": [
+        52
+      ],
+      "sourceDerivedIssue": "The +13 Mechanics/Use Computer alternate skill modifiers only apply with astromech droid, per printed footnote.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-drexl-02",
+      "sourceEntryKey": "ur-sorosuub-drexl-class-planetary-defender-starfighter",
+      "ship": "SoroSuub Drexl-class \"Planetary Defender\" Starfighter",
+      "category": "CREW_CONFIGURATION",
+      "sourcePrintedPages": [
+        52
+      ],
+      "sourceDerivedIssue": "Two crew + astromech for optimal operation. Without copilot, 50 kg additional cockpit cargo space is described.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-drexl-03",
+      "sourceEntryKey": "ur-sorosuub-drexl-class-planetary-defender-starfighter",
+      "ship": "SoroSuub Drexl-class \"Planetary Defender\" Starfighter",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        52
+      ],
+      "sourceDerivedIssue": "No hyperdrive printed in this statblock: absence does not prove explicitly lacks hyperdrive.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-preybird-01",
+      "sourceEntryKey": "ur-sorosuub-preybird-class-starfighter",
+      "ship": "SoroSuub Preybird-class Starfighter",
+      "category": "ATTACK_OPTION_SILENCE",
+      "sourcePrintedPages": [
+        56
+      ],
+      "sourceDerivedIssue": "Autofire (laser cannons) listed in attack options, but detailed laser-cannon row prints no separate autofire attack bonus.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-preybird-02",
+      "sourceEntryKey": "ur-sorosuub-preybird-class-starfighter",
+      "ship": "SoroSuub Preybird-class Starfighter",
+      "category": "HISTORICAL_VARIANT",
+      "sourcePrintedPages": [
+        56
+      ],
+      "sourceDerivedIssue": "Later Imperial Remnant use is described, but no different published CL block or armament configuration.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-surfeik-01",
+      "sourceEntryKey": "ur-surfeik-cruiser",
+      "ship": "Surfeik Cruiser",
+      "category": "MOUNT_INVENTORY",
+      "sourcePrintedPages": [
+        154
+      ],
+      "sourceDerivedIssue": "Narrative explicitly states 33 laser cannons and seven projectile launchers; printed attack line is 11 three-gunner laser batteries, seven projectile launchers, plus one projector.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-surfeik-02",
+      "sourceEntryKey": "ur-surfeik-cruiser",
+      "ship": "Surfeik Cruiser",
+      "category": "OPTIONAL_CONFIGURATION",
+      "sourcePrintedPages": [
+        154
+      ],
+      "sourceDerivedIssue": "Only dedicated combat versions have living-shield prisoner blisters; commercial, invasion, and carrier configurations are narrative possibilities, not separately statblocked chassis.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-surfeik-03",
+      "sourceEntryKey": "ur-surfeik-cruiser",
+      "ship": "Surfeik Cruiser",
+      "category": "PRISONER_SHIELDS",
+      "sourcePrintedPages": [
+        155
+      ],
+      "sourceDerivedIssue": "Avoiding blisters imposes -10 on attack roll; battery fire, area attacks and splash attacks cannot selectively avoid them.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-surfeik-04",
+      "sourceEntryKey": "ur-surfeik-cruiser",
+      "ship": "Surfeik Cruiser",
+      "category": "PROJECTILE_SPLASH",
+      "sourcePrintedPages": [
+        155
+      ],
+      "sourceDerivedIssue": "Projectile launcher damage 8d10x5 with 1-square splash; -15 printed against targets smaller than Colossal.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-surfeik-05",
+      "sourceEntryKey": "ur-surfeik-cruiser",
+      "ship": "Surfeik Cruiser",
+      "category": "PSEUDOGRAV",
+      "sourcePrintedPages": [
+        155
+      ],
+      "sourceDerivedIssue": "Area 2x2 or 3x3 starship-scale; attack against Reflex 10; affected squares prevent starting hyperdrive and revert passing hyperspace starships to realspace.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "ur-book-uncensused-deep-x-explorer",
+      "sourceEntryKey": null,
+      "ship": "Uulshos Manufacturing Deep-X Explorer",
+      "category": "PHASE1_IDENTITY_RECONCILIATION_REQUIRED",
+      "sourcePrintedPages": [
+        51
+      ],
+      "sourceDerivedIssue": "Printed p51 contains independent CL5 Gargantuan starfighter statblock for Deep-X Explorer, omitted from the 12 Phase1 Unknown Regions source keys. Hold outside production and counts until formal baseline identity reconciliation. The adjacent SRV-1 is a ground vehicle and excluded.",
+      "requiresFollowup": true
+    }
+  ],
+  "counts": {
+    "discoveryCases": 35,
+    "bookScopeReviewed": 12,
+    "uncensusedShipCandidateCount": 1
+  },
+  "scopeGuardrails": [
+    "No new publication sourceEntryKey until separate Phase1 reconciliation",
+    "Do not treat attack rows as unique mount objects or bank assignments",
+    "Do not collapse raw source conflicts into one chosen combat bonus",
+    "Do not backfill absent SR, hyperdrive or missile splash from related ships"
+  ]
+}

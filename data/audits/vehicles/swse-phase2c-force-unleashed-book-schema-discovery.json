@@ -1,0 +1,448 @@
+{
+  "schema": "swse.vehicle.phase2c.schema-discovery.v0.1",
+  "sourceBook": "Force Unleashed Campaign Guide",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "tfu-a-7-hunter-interceptor-01",
+      "sourceEntryKey": "fucg-a-7-hunter-interceptor",
+      "ship": "A-7 Hunter Interceptor",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        204
+      ],
+      "sourceDerivedIssue": "No SR or hyperdrive; do not substitute TIE Prototype shields or hyperdrive.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-escort-carrier-01",
+      "sourceEntryKey": "fucg-escort-carrier",
+      "ship": "Escort Carrier",
+      "category": "TACTICAL_FIRE",
+      "sourcePrintedPages": [
+        208
+      ],
+      "sourceDerivedIssue": "Tactical Fire (standard action, forgo all attacks): allied starfighters beginning turns in adjacent squares gain +1 speed square until beginning of next turn.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-escort-carrier-02",
+      "sourceEntryKey": "fucg-escort-carrier",
+      "ship": "Escort Carrier",
+      "category": "HANGAR_PAYLOAD",
+      "sourcePrintedPages": [
+        207
+      ],
+      "sourceDerivedIssue": "Carried craft include 72 TIE fighters and 6 Lambda/Sentinel/Theta shuttles; 60 missile payload.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-gladiator-class-star-destroyer-01",
+      "sourceEntryKey": "fucg-gladiator-class-star-destroyer",
+      "ship": "Gladiator-class Star Destroyer",
+      "category": "TACTICAL_FIRE",
+      "sourcePrintedPages": [
+        209
+      ],
+      "sourceDerivedIssue": "Tactical Fire: standard action forgo attacks; allied starships attacking targets in 2-square-radius area gain +2 on attack rolls.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-gladiator-class-star-destroyer-02",
+      "sourceEntryKey": "fucg-gladiator-class-star-destroyer",
+      "ship": "Gladiator-class Star Destroyer",
+      "category": "NARRATIVE_VARIANT",
+      "sourcePrintedPages": [
+        209
+      ],
+      "sourceDerivedIssue": "Broadside-class is narrative hull derivative with eight missile tube batteries and 1,200 payload but no separate complete CL statblock; do not introduce a new ship identity.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-guardian-class-light-cruiser-01",
+      "sourceEntryKey": "fucg-guardian-class-light-cruiser",
+      "ship": "Guardian-class Light Cruiser",
+      "category": "TYPE_AND_STATION",
+      "sourcePrintedPages": [
+        205
+      ],
+      "sourceDerivedIssue": "Despite light-cruiser name, the printed type is Colossal space transport; laser battery details include 4 gunners, not 4 verified batteries.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-h-60-tempest-bomber-01",
+      "sourceEntryKey": "fucg-h-60-tempest-bomber",
+      "ship": "H-60 Tempest Bomber",
+      "category": "LINKED_WEAPON_CONFIGURATION",
+      "sourcePrintedPages": [
+        114
+      ],
+      "sourceDerivedIssue": "Two cockpit stations, four-person crew; missile launchers can fire linked at 9d10x2 or individually at 8d10x2 using one payload missile.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-h-60-tempest-bomber-02",
+      "sourceEntryKey": "fucg-h-60-tempest-bomber",
+      "ship": "H-60 Tempest Bomber",
+      "category": "UPGRADE_OPTION",
+      "sourcePrintedPages": [
+        114
+      ],
+      "sourceDerivedIssue": "No stock hyperdrive; aftermarket hyperdrive is described separately.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-hwk-290-01",
+      "sourceEntryKey": "fucg-hwk-290",
+      "ship": "HWK-290",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        118
+      ],
+      "sourceDerivedIssue": "Stock HWK has NO armaments; printed statblock instead includes two sets of retrofitted blaster cannons. The published equipped profile must not be confused with stock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-hwk-290-02",
+      "sourceEntryKey": "fucg-hwk-290",
+      "ship": "HWK-290",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        118
+      ],
+      "sourceDerivedIssue": "Main Ranged +2 and blaster detail +4 are printed as different attack bonuses; do not choose one.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-hwk-290-03",
+      "sourceEntryKey": "fucg-hwk-290",
+      "ship": "HWK-290",
+      "category": "NARRATIVE_VARIANT",
+      "sourcePrintedPages": [
+        118
+      ],
+      "sourceDerivedIssue": "Moldy Crow mentioned narratively as heavier modified ship; no separate published CL here.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-m3-a-scyk-fighter-01",
+      "sourceEntryKey": "fucg-m3-a-scyk-fighter",
+      "ship": "M3-A Scyk Fighter",
+      "category": "MODULAR_WEAPONS",
+      "sourcePrintedPages": [
+        115
+      ],
+      "sourceDerivedIssue": "Stock has one laser mount; alternatives include ion, missile or torpedo launcher with six-missile payload if configured. These are NOT simultaneous stock weapons.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-m3-a-scyk-fighter-02",
+      "sourceEntryKey": "fucg-m3-a-scyk-fighter",
+      "ship": "M3-A Scyk Fighter",
+      "category": "ASTROGATION_DEPENDENCY",
+      "sourcePrintedPages": [
+        115
+      ],
+      "sourceDerivedIssue": "x2 hyperdrive but lacks navicomputer and astromech interface; requires external hyperspace computations.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-maka-eekai-l4000-transport-01",
+      "sourceEntryKey": "fucg-maka-eekai-l4000-transport",
+      "ship": "Maka-Eekai L4000 Transport",
+      "category": "PHYSICAL_MOUNT_TOPOLOGY",
+      "sourcePrintedPages": [
+        120
+      ],
+      "sourceDerivedIssue": "Stock is two double laser cannons in port/starboard turrets; printed detail is one firing-group row with gunner.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-maka-eekai-l4000-transport-02",
+      "sourceEntryKey": "fucg-maka-eekai-l4000-transport",
+      "ship": "Maka-Eekai L4000 Transport",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        120
+      ],
+      "sourceDerivedIssue": "Cargo/passenger conversion: every +1 passenger uses 10 tons of cargo, up to 40 passengers; source permits stock passenger mixes.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-maka-eekai-l4000-transport-03",
+      "sourceEntryKey": "fucg-maka-eekai-l4000-transport",
+      "ship": "Maka-Eekai L4000 Transport",
+      "category": "OPTIONAL_WEAPON",
+      "sourcePrintedPages": [
+        120
+      ],
+      "sourceDerivedIssue": "Optional aft boom linked laser cannon ball turret is NOT part of the printed statblock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-neutron-star-bulk-cruiser-01",
+      "sourceEntryKey": "fucg-neutron-star-bulk-cruiser",
+      "ship": "Neutron Star Bulk Cruiser",
+      "category": "TACTICAL_FIRE",
+      "sourcePrintedPages": [
+        121
+      ],
+      "sourceDerivedIssue": "Tactical Fire: standard action forgo attacks, allied Gargantuan-or-smaller ships in 2-square-radius area gain +2 Reflex Defense.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-neutron-star-bulk-cruiser-02",
+      "sourceEntryKey": "fucg-neutron-star-bulk-cruiser",
+      "ship": "Neutron Star Bulk Cruiser",
+      "category": "HARDWARE_VS_ATTACK_GROUP",
+      "sourcePrintedPages": [
+        121
+      ],
+      "sourceDerivedIssue": "Five printed heavy quad cannon BATTERIES and two tractor BEAMS, but group rows number two; per-battery firing arcs and composition not specified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-novasword-space-superiority-fighter-01",
+      "sourceEntryKey": "fucg-novasword-space-superiority-fighter",
+      "ship": "NovaSword Space Superiority Fighter",
+      "category": "CREW_ASSIGNMENT",
+      "sourcePrintedPages": [
+        115
+      ],
+      "sourceDerivedIssue": "One skilled crew with one additional passenger or copilot/commander/observer; extra seat is not a gunner station.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-novasword-space-superiority-fighter-02",
+      "sourceEntryKey": "fucg-novasword-space-superiority-fighter",
+      "ship": "NovaSword Space Superiority Fighter",
+      "category": "ATTACK_MODE",
+      "sourcePrintedPages": [
+        115
+      ],
+      "sourceDerivedIssue": "Laser and medium concussion missile attacks are alternatives controlled by pilot.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-r-41-starchaser-01",
+      "sourceEntryKey": "fucg-r-41-starchaser",
+      "ship": "R-41 Starchaser",
+      "category": "NARRATIVE_VARIANT",
+      "sourcePrintedPages": [
+        116
+      ],
+      "sourceDerivedIssue": "R-42 two-seat version has one gunner seat; separate named variant has no complete independent statblock, so retain under R-41 narrative only.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-r-41-starchaser-02",
+      "sourceEntryKey": "fucg-r-41-starchaser",
+      "ship": "R-41 Starchaser",
+      "category": "ATTACK_MODE",
+      "sourcePrintedPages": [
+        116
+      ],
+      "sourceDerivedIssue": "Pilot-operated laser, ion and medium concussion missile attacks are alternatives.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-rogue-shadow-01",
+      "sourceEntryKey": "fucg-rogue-shadow",
+      "ship": "Rogue Shadow",
+      "category": "CLOAK_AND_SENSORS",
+      "sourcePrintedPages": [
+        206
+      ],
+      "sourceDerivedIssue": "Stygium cloak grants total concealment when activated; +5 equipment bonus on Perception and Use Computer sensor checks is conditional.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-rogue-shadow-02",
+      "sourceEntryKey": "fucg-rogue-shadow",
+      "ship": "Rogue Shadow",
+      "category": "CONDITIONAL_SCALE",
+      "sourcePrintedPages": [
+        206
+      ],
+      "sourceDerivedIssue": "Printed Colossal* transport is treated as Gargantuan starfighter only for capital-weapon targeting, dogfighting and starship maneuvers.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-rogue-shadow-03",
+      "sourceEntryKey": "fucg-rogue-shadow",
+      "ship": "Rogue Shadow",
+      "category": "SENSOR_SKILL",
+      "sourcePrintedPages": [
+        206
+      ],
+      "sourceDerivedIssue": "Published sensor Use Computer +17 is conditional, not an always-on skill modifier.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-sentinel-class-landing-shuttle-01",
+      "sourceEntryKey": "fucg-sentinel-class-landing-shuttle",
+      "ship": "Sentinel-class Landing Shuttle",
+      "category": "ATTACK_BUNDLE",
+      "sourcePrintedPages": [
+        207
+      ],
+      "sourceDerivedIssue": "Main attack line has alternative attack bundles: laser+ion OR 2 missiles+repeating blasters; avoid automating all four firing groups simultaneously.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-sentinel-class-landing-shuttle-02",
+      "sourceEntryKey": "fucg-sentinel-class-landing-shuttle",
+      "ship": "Sentinel-class Landing Shuttle",
+      "category": "MOUNT_TOPOLOGY",
+      "sourcePrintedPages": [
+        207
+      ],
+      "sourceDerivedIssue": "Printed 4 linked laser sets, 2 missile gunners and 2 blaster gunners must not be collapsed into 4 guns; physical turret/arcs not fully specified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-sentinel-class-landing-shuttle-03",
+      "sourceEntryKey": "fucg-sentinel-class-landing-shuttle",
+      "ship": "Sentinel-class Landing Shuttle",
+      "category": "CAPACITY",
+      "sourcePrintedPages": [
+        207
+      ],
+      "sourceDerivedIssue": "Up to 36 light ground vehicles and 54 troop passengers; cargo/passenger/craft capacities not interchangeable without rule.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-tartan-class-patrol-cruiser-01",
+      "sourceEntryKey": "fucg-tartan-class-patrol-cruiser",
+      "ship": "Tartan-class Patrol Cruiser",
+      "category": "ACTION_ECONOMY",
+      "sourcePrintedPages": [
+        209
+      ],
+      "sourceDerivedIssue": "Power transfer/recharge shields each need one less swift action (typically two) than normal.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-tartan-class-patrol-cruiser-02",
+      "sourceEntryKey": "fucg-tartan-class-patrol-cruiser",
+      "ship": "Tartan-class Patrol Cruiser",
+      "category": "TACTICAL_FIRE",
+      "sourcePrintedPages": [
+        209
+      ],
+      "sourceDerivedIssue": "Tactical Fire: standard action forgo attacks; enemy starfighter DR is halved (round down) while in adjacent tactical-fire squares.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-tie-prototype-01",
+      "sourceEntryKey": "fucg-tie-prototype",
+      "ship": "TIE Prototype",
+      "category": "MODEL_IDENTITY",
+      "sourcePrintedPages": [
+        205
+      ],
+      "sourceDerivedIssue": "Unlike later stock TIE, prototype carries SR10, x2 hyperdrive with 2-jump memory and 2 medium missiles; do not merge with production TIE.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-toscan-8-q-02",
+      "sourceEntryKey": "fucg-toscan-8-q",
+      "ship": "Toscan 8-Q",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        116,
+        117
+      ],
+      "sourceDerivedIssue": "Narrative base model x2 hyperdrive and simple two laser guns; printed typical variant x1 hyperdrive, laser and medium missile rows. Configuration distinction NOT a second independently CL-statted ship.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-venator-class-star-destroyer-01",
+      "sourceEntryKey": "fucg-venator-class-star-destroyer",
+      "ship": "Venator-class Star Destroyer",
+      "category": "TACTICAL_FIRE",
+      "sourcePrintedPages": [
+        210
+      ],
+      "sourceDerivedIssue": "Tactical Fire: standard action forgo attacks; allied Gargantuan-or-smaller ships within 2-square radius gain +2 attack and one-step increased damage dice.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-venator-class-star-destroyer-02",
+      "sourceEntryKey": "fucg-venator-class-star-destroyer",
+      "ship": "Venator-class Star Destroyer",
+      "category": "CONDITIONAL_COVER",
+      "sourcePrintedPages": [
+        210
+      ],
+      "sourceDerivedIssue": "Hangar-open flight deck imposes printed +5 cover qualifier to craft therein; not unconditional ship Defense bonus.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-venator-class-star-destroyer-03",
+      "sourceEntryKey": "fucg-venator-class-star-destroyer",
+      "ship": "Venator-class Star Destroyer",
+      "category": "MOUNT_TOPOLOGY",
+      "sourcePrintedPages": [
+        210
+      ],
+      "sourceDerivedIssue": "Six detail attack groups include tractor and proton torpedo; battery counts are distinct from groups.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-victory-i-class-star-destroyer-01",
+      "sourceEntryKey": "fucg-victory-i-class-star-destroyer",
+      "ship": "Victory I-class Star Destroyer",
+      "category": "TACTICAL_FIRE",
+      "sourcePrintedPages": [
+        211
+      ],
+      "sourceDerivedIssue": "Tactical Fire: standard action forgo attacks; allies targeting ships in 2-square-radius area gain +2 attack.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-victory-i-class-star-destroyer-02",
+      "sourceEntryKey": "fucg-victory-i-class-star-destroyer",
+      "ship": "Victory I-class Star Destroyer",
+      "category": "NARRATIVE_VARIANT",
+      "sourcePrintedPages": [
+        211
+      ],
+      "sourceDerivedIssue": "Narrative replacement of twenty heavy assault missile tubes by eighty standard launchers with 1,600 total payload describes alternative; not stock 80-heavy-missile statblock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-victory-i-class-star-destroyer-03",
+      "sourceEntryKey": "fucg-victory-i-class-star-destroyer",
+      "ship": "Victory I-class Star Destroyer",
+      "category": "NARRATIVE_VARIANT",
+      "sourcePrintedPages": [
+        211
+      ],
+      "sourceDerivedIssue": "Victory II narrative speed improvement to 3 squares is not a second Phase 1 CL entry.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "tfu-zebra-starfighter-01",
+      "sourceEntryKey": "fucg-zebra-starfighter",
+      "ship": "Zebra Starfighter",
+      "category": "LINKED_WEAPON_CONFIGURATION",
+      "sourcePrintedPages": [
+        118
+      ],
+      "sourceDerivedIssue": "Two linked heavy laser cannons are part of stock craft; no hyperdrive.",
+      "requiresFollowup": true
+    }
+  ],
+  "counts": {
+    "discoveryCases": 39,
+    "bookScopeReviewed": 19
+  },
+  "scopeGuardrails": [
+    "No modifications to canonical production data.",
+    "No mechanical certification from source review alone.",
+    "No automatic inference of physical mount counts from battery attack-group rows.",
+    "No addition of narrative variants as separate publication source identities."
+  ]
+}

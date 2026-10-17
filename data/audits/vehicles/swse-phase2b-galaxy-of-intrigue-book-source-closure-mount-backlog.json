@@ -1,0 +1,180 @@
+{
+  "schema": "swse.vehicle.phase2b.mount-backlog.v0.1",
+  "sourceBook": "Galaxy of Intrigue",
+  "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+  "counts": {
+    "sourceReviewedEntries": 6,
+    "attackGroupRows": 9,
+    "strictCertificates": 0
+  },
+  "records": [
+    {
+      "sourceEntryKey": "goi-modified-incom-a-24-sleuth",
+      "printedName": "Modified Incom A-24 Sleuth",
+      "printedPage": 69,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "4d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 69
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle",
+      "printedName": "Modified Sienar Fleet Systems Lambda-class Shuttle",
+      "printedPage": 186,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "blaster cannon battery",
+          "station": "2 gunners",
+          "attackBonus": 6,
+          "damage": "5d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 187
+        },
+        {
+          "label": "blaster cannon",
+          "station": "copilot",
+          "attackBonus": 4,
+          "damage": "5d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 187
+        },
+        {
+          "label": "twin laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "2d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 187
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-ptv-2100-incarcerator",
+      "printedName": "PTV-2100 Incarcerator",
+      "printedPage": 68,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "turbolaser battery",
+          "station": "4 gunners",
+          "attackBonus": 12,
+          "damage": "5d10x5 (-8 versus targets smaller than Colossal)",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 69
+        },
+        {
+          "label": "point-defense laser battery",
+          "station": "2 gunners",
+          "attackBonus": 8,
+          "damage": "2d10x2",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 69
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "printedName": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel",
+      "printedPage": 69,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 11,
+          "damage": "9d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 69
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+      "printedName": "Republic Engineering Corporation Prowler-class Reconnaissance Vessel",
+      "printedPage": 70,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 10,
+          "damage": "9d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 70
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-sabaoth-frigate-spy-ship",
+      "printedName": "Sabaoth Frigate Spy Ship",
+      "printedPage": 71,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy laser cannon",
+          "station": "gunner",
+          "attackBonus": 9,
+          "damage": "6d10x2",
+          "printedMultiplicity": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 71
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    }
+  ]
+}

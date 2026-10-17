@@ -1,0 +1,120 @@
+{
+  "schema": "swse.vehicle.phase2b.source-review-ledger.v0.1",
+  "sourceBook": "Threats of the Galaxy",
+  "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+  "phase1ProvenanceBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+  "branchAtInitialization": "audit/vehicle-phase-0-1-canonical-foundation",
+  "branchHeadAtInitialization": "49fabf107f287b8147a59b75a9dd09e49ed7426f",
+  "stateSemantics": {
+    "PDF_VERIFIED": "Source printed statblock visually inspected; not full physical mount certification.",
+    "SOURCE_SILENT_CONFIRMED": "No source-proven firing arc/independent mount; do not invent.",
+    "NOT_CERTIFIED": "Full production/physical weapon certification remains pending."
+  },
+  "counts": {
+    "publicationShipClaims": 1,
+    "primaryPdfCloseReads": 1,
+    "primaryPdfCloseReadsOutstanding": 0,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 1,
+    "attackGroupRowsReviewed": 1,
+    "sourceConflictRecordCount": 0,
+    "phase1PageMappingDiscrepancyCount": 0
+  },
+  "bookCloseout": {
+    "phase1RosterComplete": true,
+    "newSourceReviewsThisTranche": 1,
+    "priorCheckpointLedgerSha256": null,
+    "priorCheckpointSixEntriesBytePreserved": false,
+    "phase1InventoryFrozen": true,
+    "newlyFoundIdentityCandidates": "tracked separately in previous tranches; zero added to this roster",
+    "productionDataModified": false,
+    "strictMechanicsCertified": false
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "tog-cec-vcx-350-light-freighter",
+      "printedName": "CEC VCX-350 Light Freighter",
+      "printedStatblockStartPage": 89,
+      "phase1PdfPhysicalPage": 90,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 10,
+        "printedTypeLine": "Colossal space transport",
+        "sourceTxtNavigationOnly": false,
+        "navigationTextExcerpt": "Not reliably located; visual PDF was inspected directly."
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot or gunner",
+          "attackBonus": 4,
+          "damageAsPrinted": "4d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 89,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Laser cannons may be controlled by pilot or gunner; preserve selectable station in production data.",
+          "printedPages": [
+            89
+          ]
+        },
+        {
+          "finding": "Hyperdrive x1 with x11 backup exactly as printed; do not silently change to common x10.",
+          "printedPages": [
+            89
+          ]
+        }
+      ],
+      "sourceConflicts": [],
+      "sourceEvidence": {
+        "printedPages": [
+          89
+        ],
+        "sourcePdfStartPageIndex": 89,
+        "pdfPhysicalPage": 90,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    }
+  ]
+}

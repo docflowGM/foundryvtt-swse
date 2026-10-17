@@ -1,0 +1,35 @@
+{
+  "schema": "swse.vehicle.phase2b.mount-backlog.v0.1",
+  "sourceBook": "Jedi Academy Training Manual",
+  "sourcePdfSha256": "c4dce616776949aa0501b8932012b82d6fd1cd1c27e9646f0a772ab596b4cea9",
+  "counts": {
+    "sourceReviewedEntries": 1,
+    "attackGroupRows": 1,
+    "strictCertificates": 0
+  },
+  "records": [
+    {
+      "sourceEntryKey": "jatm-chu-unthor",
+      "printedName": "Chu'unthor",
+      "printedPage": 151,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "tractor beam battery",
+          "station": "5 gunners",
+          "attackBonus": 8,
+          "damage": "grapple +107 (-12 versus targets smaller than Colossal)",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 151
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    }
+  ]
+}

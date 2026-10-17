@@ -1,0 +1,643 @@
+{
+  "schema": "swse.vehicle.phase2b.source-review-ledger.v0.1",
+  "sourceBook": "Galaxy of Intrigue",
+  "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+  "phase1ProvenanceBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+  "branchAtInitialization": "audit/vehicle-phase-0-1-canonical-foundation",
+  "branchHeadAtInitialization": "49fabf107f287b8147a59b75a9dd09e49ed7426f",
+  "stateSemantics": {
+    "PDF_VERIFIED": "Source printed statblock visually inspected; not full physical mount certification.",
+    "SOURCE_SILENT_CONFIRMED": "No source-proven firing arc/independent mount; do not invent.",
+    "NOT_CERTIFIED": "Full production/physical weapon certification remains pending."
+  },
+  "counts": {
+    "publicationShipClaims": 6,
+    "primaryPdfCloseReads": 6,
+    "primaryPdfCloseReadsOutstanding": 0,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 6,
+    "attackGroupRowsReviewed": 9,
+    "sourceConflictRecordCount": 2,
+    "phase1PageMappingDiscrepancyCount": 0
+  },
+  "bookCloseout": {
+    "phase1RosterComplete": true,
+    "newSourceReviewsThisTranche": 6,
+    "priorCheckpointLedgerSha256": null,
+    "priorCheckpointSixEntriesBytePreserved": false,
+    "phase1InventoryFrozen": true,
+    "newlyFoundIdentityCandidates": "tracked separately in previous tranches; zero added to this roster",
+    "productionDataModified": false,
+    "strictMechanicsCertified": false
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "goi-modified-incom-a-24-sleuth",
+      "printedName": "Modified Incom A-24 Sleuth",
+      "printedStatblockStartPage": 69,
+      "phase1PdfPhysicalPage": 70,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 10,
+        "printedTypeLine": "Gargantuan starfighter",
+        "sourceTxtNavigationOnly": false,
+        "navigationTextExcerpt": "Not reliably located; visual PDF was inspected directly."
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damageAsPrinted": "4d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 69,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Tight-beam transmitter sends a difficult-to-intercept signal; no numeric communications roll bonus printed.",
+          "printedPages": [
+            69
+          ]
+        },
+        {
+          "finding": "Astromech conditional Mechanics and Use Computer values, and separate navicomputer/10-jump memory.",
+          "printedPages": [
+            69
+          ]
+        }
+      ],
+      "sourceConflicts": [],
+      "sourceEvidence": {
+        "printedPages": [
+          69
+        ],
+        "sourcePdfStartPageIndex": 69,
+        "pdfPhysicalPage": 70,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle",
+      "printedName": "Modified Sienar Fleet Systems Lambda-class Shuttle",
+      "printedStatblockStartPage": 186,
+      "phase1PdfPhysicalPage": 187,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 13,
+        "printedTypeLine": "Colossal space transport",
+        "sourceTxtNavigationOnly": true,
+        "initiativeAndSenses": "Init -1; Senses Perception +6",
+        "defensesAsPrinted": "Defense Ref 15 (flat-footed 12), Fort 26; +12 armor, Vehicular Combat",
+        "hitPointsAndShieldsAsPrinted": "hp 120; DR 15; SR 35; Threshold 76",
+        "speedAsPrinted": "Speed fly 12 squares (max. velocity 920 km/h), fly 4 squares (starship scale)",
+        "rangedAttackFirstLine": "Ranged blaster cannon battery +6 (see below) and",
+        "baseAttackAndGrapple": "Base Atk +2; Grp +38",
+        "attackOptions": "Atk Options autofire (blaster cannon, twin laser cannons)",
+        "crewAndPassengers": "Crew 6 (skilled); Passengers 20",
+        "cargoConsumablesAndCarriedCraft": "Cargo 80 tons; Consumables 2 months; Carried Craft none",
+        "hyperdriveAsPrinted": "hyperdrive line. In case this was an accident, I've",
+        "economicsAsPrinted": "Availability Unique; Cost not available for sale (likely valued at 300,000)",
+        "navigationTextExcerpt": "Modified Sienar Fleet Systems Lambda-class Shuttle CL 13 \nColossal space transport \n\nInit -1; Senses Perception +6 \n\nDefense Ref 15 (flat-footed 12), Fort 26; +12 armor, Vehicular Combat \nhp 120; DR 15; SR 35; Threshold 76 \n\n\nSpeed fly 12 squares (max. velocity 920 km/h), fly 4 squares \n(starship scale) \nRanged blaster cannon battery +6 (see below) and \nblaster cannon +4 (see below) and \ntwin laser cannons +6 (see below) \nFighting Space 4x4 or 1 square (starship scale); Cover total \nBase Atk +2; Grp +38 \nAtk Options autofire (blaster cannon, twin laser cannons) \nAbilities Str 42, Dex 16, Con —, Int 16 \nSkills Initiative -1, Mechanics +6, Perception +6, Pilot -1, \nUse Computer +6 \nCrew 6 (skilled); Passengers 20 \nCargo 80 tons; Consumables 2 months; Carried Craft none \n[$Designer omitted the hyperdrive line. In case this was an accident, I've \nincluded it below in red. Delete the line if the exclusion was intentional \n(if the modifications described in text removed the hyperdrive).] \nHyperdrive x1 (backup x10), navicomputer \nAvailability Unique; Cost not available for sale (likely valued at 300,000) \n\n\nBlaster cannon battery (2 gunners) \n\nAtk +6 (+1 autofire), Dmg 5d10x2 \nBlaster cannon (copilot) \n\nAtk +4 (-1 autofire), Dmg 5d10x2 \nTwin laser cannons (pilot) \n\nAtk +6 (+1 autofire), Dmg 2d10x2 \n\n\nCONCLUSION \n\n\nIf the heroes escape with Tehlan Aleece and jump to lightspeed, they earn \nGeneral Airen Cracken's respect for extracting the undercover agent. Most \nlikely, they receive medals and possibly promotions if they choose to con- \ntinue helping Rebel Intelligence. Moff Venra"
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "blaster cannon battery",
+          "station": "2 gunners",
+          "attackBonus": 6,
+          "damageAsPrinted": "5d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 187,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "blaster cannon",
+          "station": "copilot",
+          "attackBonus": 4,
+          "damageAsPrinted": "5d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 187,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "twin laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damageAsPrinted": "2d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 187,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Printed PDF contains bracketed editorial note challenging inclusion of the hyperdrive line; treat as unresolved editorial ambiguity, not cleaned canonical hardware.",
+          "printedPages": [
+            186,
+            187
+          ]
+        },
+        {
+          "finding": "Unique adventure variant tied to Moff Venram Krax, not the generic Lambda statblock.",
+          "printedPages": [
+            186,
+            187
+          ]
+        }
+      ],
+      "sourceConflicts": [
+        {
+          "category": "PRINTED_EDITORIAL_HYPERDRIVE_AMBIGUITY",
+          "page": 187,
+          "mainRanged": "[Designer omitted the hyperdrive line... included it below in red. Delete the line if the exclusion was intentional...]",
+          "detailedWeapon": "Hyperdrive x1 (backup x10), navicomputer (printed following editorial note)",
+          "resolution": "UNRESOLVED_PRESERVE_EDITORIAL_NOTE"
+        }
+      ],
+      "sourceEvidence": {
+        "printedPages": [
+          186,
+          187
+        ],
+        "sourcePdfStartPageIndex": 186,
+        "pdfPhysicalPage": 187,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-ptv-2100-incarcerator",
+      "printedName": "PTV-2100 Incarcerator",
+      "printedStatblockStartPage": 68,
+      "phase1PdfPhysicalPage": 69,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 16,
+        "printedTypeLine": "Colossal (frigate) space transport",
+        "sourceTxtNavigationOnly": true,
+        "initiativeAndSenses": "Init -4; Senses Perception +6",
+        "defensesAsPrinted": "Defense Ref 13 (flat-footed 13), Fort 40; +13 armor",
+        "hitPointsAndShieldsAsPrinted": "hp 1,600; DR 15; Threshold 140",
+        "speedAsPrinted": "Speed fly 1 square (starship scale)",
+        "rangedAttackFirstLine": "Ranged 2 turbolaser batteries +12* (see below)",
+        "baseAttackAndGrapple": "Base Atk +2; Grp +52",
+        "crewAndPassengers": "Crew 250 (skilled); Passengers 1,500 (prisoners)",
+        "cargoConsumablesAndCarriedCraft": "Cargo 5,500 tons; Consumables 1 year; Carried Craft 2 shuttles",
+        "hyperdriveAsPrinted": "Hyperdrive x3 (x12 backup), navicomputer",
+        "economicsAsPrinted": "Availability Military; Cost 4.5 million (1.8 million used)",
+        "navigationTextExcerpt": "PTV-2100 Incarcerator CL 16 \nColossal (frigate) space transport \nInit -4; Senses Perception +6 \nDefense Ref 13 (flat-footed 13), Fort 40; +13 armor \nhp 1,600; DR 15; Threshold 140 \nSpeed fly 1 square (starship scale) \n\nRanged 2 turbolaser batteries +12* (see below) \n\nRanged 2 point-defense batteries +8 (see below) \nFighting Space 1 square (starship scale); Cover total \nBase Atk +2; Grp +52 \n\nAbilities Str 71, Dex 10, Con —, Int 18 \n\nSkills Initiative -4, Mechanics +6, Perception +6, Pilot -4, \n\nUse Computer +6 \nCrew 250 (skilled); Passengers 1,500 (prisoners) \n\nCargo 5,500 tons; Consumables 1 year; Carried Craft 2 shuttles \nHyperdrive x3 (x12 backup), navicomputer \n\nAvailability Military; Cost 4.5 million (1.8 million used) \n\n“Apply a -20 penalty on attacks against targets smaller than Colossal size. \n\n\nTurbolaser battery (4 gunners) \n\nAtk +12 (-8 against targets smaller than Colossal), Dmg 5d10x5 \nPoint-defense laser battery (2 gunners) \n\nAtk +8, Dmg 2d10x2 \n\n\nModified Incom A-24 Sleuth \n\nThe sleuth is a highly maneuverable scout ship with excellent sublight speed. \nDespite being older than more popular scout ship models, the sleuth became \nMol Hedron's choice for spying on the fledgling New Republic. Most of the \ntime, the New Republic never even knew he was there. On the rare occasion \nwhen they did discover his presence, he was able to complete transmission \nand jump away. \n\n\nThe modified sleuth contains a high-powered transmitter capable of \nsending a nearly undetectable signal by tight beam. Intercepting these \nsignals is extremely difficult. Even if intercepted, the "
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "turbolaser battery",
+          "station": "4 gunners",
+          "attackBonus": 12,
+          "damageAsPrinted": "5d10x5 (-8 versus targets smaller than Colossal)",
+          "printedMultiplicity": 2,
+          "sourcePrintedPage": 69,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "point-defense laser battery",
+          "station": "2 gunners",
+          "attackBonus": 8,
+          "damageAsPrinted": "2d10x2",
+          "printedMultiplicity": 2,
+          "sourcePrintedPage": 69,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "An incarcerator and adjacent allied ships gain one extra damage die against ships moving into their square to dock or board, as described in printed narrative.",
+          "printedPages": [
+            68,
+            69
+          ]
+        },
+        {
+          "finding": "Turbolaser battery explicitly applies -20 penalty against targets smaller than Colossal; point defense does not.",
+          "printedPages": [
+            68,
+            69
+          ]
+        },
+        {
+          "finding": "Shield rating not printed; do not infer it.",
+          "printedPages": [
+            68,
+            69
+          ]
+        }
+      ],
+      "sourceConflicts": [],
+      "sourceEvidence": {
+        "printedPages": [
+          68,
+          69
+        ],
+        "sourcePdfStartPageIndex": 68,
+        "pdfPhysicalPage": 69,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "printedName": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel",
+      "printedStatblockStartPage": 69,
+      "phase1PdfPhysicalPage": 70,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 12,
+        "printedTypeLine": "Gargantuan starfighter",
+        "sourceTxtNavigationOnly": false,
+        "navigationTextExcerpt": "Not reliably located; visual PDF was inspected directly."
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 11,
+          "damageAsPrinted": "9d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 69,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Stealth +5 technology bonus; baffled drive at half speed grants additional +5 technology bonus, for at most one hour.",
+          "printedPages": [
+            69
+          ]
+        },
+        {
+          "finding": "Sensor decoys permit a Stealth reroll once per encounter, twice before resupply.",
+          "printedPages": [
+            69
+          ]
+        },
+        {
+          "finding": "Ranged line +9 conflicts with detailed missile weapon attack +11.",
+          "printedPages": [
+            69
+          ]
+        }
+      ],
+      "sourceConflicts": [
+        {
+          "category": "PRINTED_ATTACK_BONUS_CONFLICT",
+          "page": 69,
+          "mainRanged": "Ranged concussion missiles +9 (see below)",
+          "detailedWeapon": "Medium concussion missiles (pilot) Atk +11, Dmg 9d10x2",
+          "resolution": "UNRESOLVED_KEEP_BOTH_PRINTED_VALUES"
+        }
+      ],
+      "sourceEvidence": {
+        "printedPages": [
+          69
+        ],
+        "sourcePdfStartPageIndex": 69,
+        "pdfPhysicalPage": 70,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+      "printedName": "Republic Engineering Corporation Prowler-class Reconnaissance Vessel",
+      "printedStatblockStartPage": 70,
+      "phase1PdfPhysicalPage": 71,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 12,
+        "printedTypeLine": "Gargantuan starfighter",
+        "sourceTxtNavigationOnly": false,
+        "navigationTextExcerpt": "Not reliably located; visual PDF was inspected directly."
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 10,
+          "damageAsPrinted": "9d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 70,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Longer-range Prowler includes ion drives, sensor-masking coatings and reconnaissance role.",
+          "printedPages": [
+            70
+          ]
+        },
+        {
+          "finding": "Ten missiles are payload, not ten individually certified weapon mounts.",
+          "printedPages": [
+            70
+          ]
+        }
+      ],
+      "sourceConflicts": [],
+      "sourceEvidence": {
+        "printedPages": [
+          70
+        ],
+        "sourcePdfStartPageIndex": 70,
+        "pdfPhysicalPage": 71,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    },
+    {
+      "sourceEntryKey": "goi-sabaoth-frigate-spy-ship",
+      "printedName": "Sabaoth Frigate Spy Ship",
+      "printedStatblockStartPage": 71,
+      "phase1PdfPhysicalPage": 72,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 11,
+        "printedTypeLine": "Colossal (frigate) capital ship",
+        "sourceTxtNavigationOnly": true,
+        "initiativeAndSenses": "Init +1; Senses Perception +8 (+13 with sensor package)",
+        "defensesAsPrinted": "Defense Ref 14 (flat-footed 11), Fort 34; +11 armor",
+        "hitPointsAndShieldsAsPrinted": "hp 650; DR 15; SR 105; Threshold 134",
+        "navigationTextExcerpt": "Sabaoth Frigate Spy Ship CL 11 \nColossal (frigate) capital ship \n\nInit +1; Senses Perception +8 (+13 with sensor package) \n\nDefense Ref 14 (flat-footed 11), Fort 34; +11 armor \n\nhp 650; DR 15; SR 105; Threshold 134 \n\n"
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy laser cannon",
+          "station": "gunner",
+          "attackBonus": 9,
+          "damageAsPrinted": "6d10x2",
+          "printedMultiplicity": 4,
+          "sourcePrintedPage": 71,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "This spy variant removes the tractor beams and half of a normal Sabaoth frigate’s heavy lasers; do not restore baseline frigate weapons.",
+          "printedPages": [
+            71
+          ]
+        },
+        {
+          "finding": "Conditional +13 Perception with sensor package, otherwise +8.",
+          "printedPages": [
+            71
+          ]
+        },
+        {
+          "finding": "Two-by-two starship-scale space printed for this specific frigate.",
+          "printedPages": [
+            71
+          ]
+        }
+      ],
+      "sourceConflicts": [],
+      "sourceEvidence": {
+        "printedPages": [
+          71
+        ],
+        "sourcePdfStartPageIndex": 71,
+        "pdfPhysicalPage": 72,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    }
+  ]
+}

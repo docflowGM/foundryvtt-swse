@@ -1,0 +1,278 @@
+{
+  "schema": "swse.vehicle.phase2c.schema-discovery.v0.1",
+  "sourceBook": "Galaxy of Intrigue",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "galaxy-of-intrigue-001",
+      "sourceEntryKey": "goi-modified-incom-a-24-sleuth",
+      "ship": "Modified Incom A-24 Sleuth",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        69
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-002",
+      "sourceEntryKey": "goi-modified-incom-a-24-sleuth",
+      "ship": "Modified Incom A-24 Sleuth",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        69
+      ],
+      "sourceDerivedIssue": "Tight-beam transmitter sends a difficult-to-intercept signal; no numeric communications roll bonus printed.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-003",
+      "sourceEntryKey": "goi-modified-incom-a-24-sleuth",
+      "ship": "Modified Incom A-24 Sleuth",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        69
+      ],
+      "sourceDerivedIssue": "Astromech conditional Mechanics and Use Computer values, and separate navicomputer/10-jump memory.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-004",
+      "sourceEntryKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle",
+      "ship": "Modified Sienar Fleet Systems Lambda-class Shuttle",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        186,
+        187
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-005",
+      "sourceEntryKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle",
+      "ship": "Modified Sienar Fleet Systems Lambda-class Shuttle",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        186,
+        187
+      ],
+      "sourceDerivedIssue": "Printed PDF contains bracketed editorial note challenging inclusion of the hyperdrive line; treat as unresolved editorial ambiguity, not cleaned canonical hardware.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-006",
+      "sourceEntryKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle",
+      "ship": "Modified Sienar Fleet Systems Lambda-class Shuttle",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        186,
+        187
+      ],
+      "sourceDerivedIssue": "Unique adventure variant tied to Moff Venram Krax, not the generic Lambda statblock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-007",
+      "sourceEntryKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle",
+      "ship": "Modified Sienar Fleet Systems Lambda-class Shuttle",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        186,
+        187
+      ],
+      "sourceDerivedIssue": "{\"category\": \"PRINTED_EDITORIAL_HYPERDRIVE_AMBIGUITY\", \"page\": 187, \"mainRanged\": \"[Designer omitted the hyperdrive line... included it below in red. Delete the line if the exclusion was intentional...]\", \"detailedWeapon\": \"Hyperdrive x1 (backup x10), navicomputer (printed following editorial note)\", \"resolution\": \"UNRESOLVED_PRESERVE_EDITORIAL_NOTE\"}",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-008",
+      "sourceEntryKey": "goi-ptv-2100-incarcerator",
+      "ship": "PTV-2100 Incarcerator",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        68,
+        69
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-009",
+      "sourceEntryKey": "goi-ptv-2100-incarcerator",
+      "ship": "PTV-2100 Incarcerator",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        68,
+        69
+      ],
+      "sourceDerivedIssue": "An incarcerator and adjacent allied ships gain one extra damage die against ships moving into their square to dock or board, as described in printed narrative.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-010",
+      "sourceEntryKey": "goi-ptv-2100-incarcerator",
+      "ship": "PTV-2100 Incarcerator",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        68,
+        69
+      ],
+      "sourceDerivedIssue": "Turbolaser battery explicitly applies -20 penalty against targets smaller than Colossal; point defense does not.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-011",
+      "sourceEntryKey": "goi-ptv-2100-incarcerator",
+      "ship": "PTV-2100 Incarcerator",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        68,
+        69
+      ],
+      "sourceDerivedIssue": "Shield rating not printed; do not infer it.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-012",
+      "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "ship": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        69
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-013",
+      "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "ship": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        69
+      ],
+      "sourceDerivedIssue": "Stealth +5 technology bonus; baffled drive at half speed grants additional +5 technology bonus, for at most one hour.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-014",
+      "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "ship": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        69
+      ],
+      "sourceDerivedIssue": "Sensor decoys permit a Stealth reroll once per encounter, twice before resupply.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-015",
+      "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "ship": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        69
+      ],
+      "sourceDerivedIssue": "Ranged line +9 conflicts with detailed missile weapon attack +11.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-016",
+      "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "ship": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        69
+      ],
+      "sourceDerivedIssue": "{\"category\": \"PRINTED_ATTACK_BONUS_CONFLICT\", \"page\": 69, \"mainRanged\": \"Ranged concussion missiles +9 (see below)\", \"detailedWeapon\": \"Medium concussion missiles (pilot) Atk +11, Dmg 9d10x2\", \"resolution\": \"UNRESOLVED_KEEP_BOTH_PRINTED_VALUES\"}",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-017",
+      "sourceEntryKey": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+      "ship": "Republic Engineering Corporation Prowler-class Reconnaissance Vessel",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        70
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-018",
+      "sourceEntryKey": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+      "ship": "Republic Engineering Corporation Prowler-class Reconnaissance Vessel",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        70
+      ],
+      "sourceDerivedIssue": "Longer-range Prowler includes ion drives, sensor-masking coatings and reconnaissance role.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-019",
+      "sourceEntryKey": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+      "ship": "Republic Engineering Corporation Prowler-class Reconnaissance Vessel",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        70
+      ],
+      "sourceDerivedIssue": "Ten missiles are payload, not ten individually certified weapon mounts.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-020",
+      "sourceEntryKey": "goi-sabaoth-frigate-spy-ship",
+      "ship": "Sabaoth Frigate Spy Ship",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        71
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-021",
+      "sourceEntryKey": "goi-sabaoth-frigate-spy-ship",
+      "ship": "Sabaoth Frigate Spy Ship",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        71
+      ],
+      "sourceDerivedIssue": "This spy variant removes the tractor beams and half of a normal Sabaoth frigate’s heavy lasers; do not restore baseline frigate weapons.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-022",
+      "sourceEntryKey": "goi-sabaoth-frigate-spy-ship",
+      "ship": "Sabaoth Frigate Spy Ship",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        71
+      ],
+      "sourceDerivedIssue": "Conditional +13 Perception with sensor package, otherwise +8.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-of-intrigue-023",
+      "sourceEntryKey": "goi-sabaoth-frigate-spy-ship",
+      "ship": "Sabaoth Frigate Spy Ship",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        71
+      ],
+      "sourceDerivedIssue": "Two-by-two starship-scale space printed for this specific frigate.",
+      "requiresFollowup": true
+    }
+  ],
+  "additionalStatblockIdentityCandidates": [],
+  "counts": {
+    "discoveryCases": 23
+  },
+  "scopeGuardrails": [
+    "No production pack or schema changes",
+    "Source review is distinct from strict mechanical certification",
+    "No unverified firing arcs, physical mounts, or editorial corrections"
+  ]
+}

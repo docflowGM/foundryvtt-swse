@@ -1,0 +1,611 @@
+{
+  "schema": "swse.vehicle.phase2b.source-review-ledger.v0.1",
+  "sourceBook": "Galaxy at War",
+  "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+  "phase1ProvenanceBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+  "branchAtInitialization": "audit/vehicle-phase-0-1-canonical-foundation",
+  "branchHeadAtInitialization": "49fabf107f287b8147a59b75a9dd09e49ed7426f",
+  "stateSemantics": {
+    "PDF_VERIFIED": "Source printed statblock visually inspected; not full physical mount certification.",
+    "SOURCE_SILENT_CONFIRMED": "No source-proven firing arc/independent mount; do not invent.",
+    "NOT_CERTIFIED": "Full production/physical weapon certification remains pending."
+  },
+  "counts": {
+    "publicationShipClaims": 5,
+    "primaryPdfCloseReads": 5,
+    "primaryPdfCloseReadsOutstanding": 0,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 5,
+    "attackGroupRowsReviewed": 13,
+    "sourceConflictRecordCount": 1,
+    "phase1PageMappingDiscrepancyCount": 0
+  },
+  "bookCloseout": {
+    "phase1RosterComplete": true,
+    "newSourceReviewsThisTranche": 5,
+    "priorCheckpointLedgerSha256": null,
+    "priorCheckpointSixEntriesBytePreserved": false,
+    "phase1InventoryFrozen": true,
+    "newlyFoundIdentityCandidates": "tracked separately in previous tranches; zero added to this roster",
+    "productionDataModified": false,
+    "strictMechanicsCertified": false
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "gaw-corona-class-armed-transport",
+      "printedName": "Corona-class Armed Transport",
+      "printedStatblockStartPage": 67,
+      "phase1PdfPhysicalPage": 68,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 17,
+        "printedTypeLine": "Colossal (frigate) capital ship",
+        "sourceTxtNavigationOnly": true,
+        "initiativeAndSenses": "Init +0; Senses Perception +6",
+        "defensesAsPrinted": "Defense Ref 15 (flat-footed 11), Fort 35; +11 armor",
+        "hitPointsAndShieldsAsPrinted": "hp 750; DR 15; SR 60; Threshold 135",
+        "speedAsPrinted": "Speed fly 3 squares (starship scale)",
+        "rangedAttackFirstLine": "Ranged 2 medium turbolaser batteries +10° (see below) and",
+        "baseAttackAndGrapple": "Base Atk +2; Grp +47",
+        "crewAndPassengers": "Crew 64; Passengers 200",
+        "cargoConsumablesAndCarriedCraft": "Cargo 450 tons; Consumables 1 year; Carried Craft 6 attack shuttles,",
+        "hyperdriveAsPrinted": "Hyperdrive x1, navicomputer",
+        "economicsAsPrinted": "Availability Restricted; Cost 3,7 million (2.0 million used)",
+        "navigationTextExcerpt": "Corona-class Armed Transport CL17 \n\nColossal (frigate) capital ship \n\nInit +0; Senses Perception +6 \n\nDefense Ref 15 (flat-footed 11), Fort 35; +11 armor \n\nhp 750; DR 15; SR 60; Threshold 135 \n\nSpeed fly 3 squares (starship scale) \n\nRanged 2 medium turbolaser batteries +10° (see below) and \n4 heavy ion cannon batteries +10° (see below) and \n4 point-defense medium laser cannon batteries +6 (see below) and \ntractor beam battery +10* (see below) \n\nFighting Space 1 square (starship scale); Cover total (crew) \n\nBase Atk +2; Grp +47 \n\nAbilities Str 60, Dex 18, Con —, Int 14 \n\nSkills Initiative +0, Mechanics +6, Perception +6, Pilot +0, \nUse Computer +6 \n\nCrew 64; Passengers 200 \n\nCargo 450 tons; Consumables 1 year; Carried Craft 6 attack shuttles, \n12 speeder tanks \n\nHyperdrive x1, navicomputer \n\nAvailability Restricted; Cost 3,7 million (2.0 million used) \n\n“Apply a -20 penalty on attacks against targets smaller than Colossal size. \n\n\nMedium turbolaser battery (4 gunners) \nAtk +10, Dmg 5d10x5 \nHeavy ion cannon battery (4 gunners) \nAtk +10, Dmg 4d10x5 ion \nPoint-defense medium laser cannon battery (2 gunners) \nAtk +6, Dmg 4d10x2 \nTractor beam battery (4 gunners) \nAtk +10, Dmg - (grapple +47) \n\n\nVEHICLE AND \n\nSTARSHIP WEAPONS \n\nThe following new vehicle weapons can be used to create different vehicle \ncombat dynamics. The statistics for these vehicle weapons use the format of \nstarship upgrades from the Starships of the Galoxy supplement, but a Game- \nmaster can add these weapons to the vehicle without using that system. \n\n\nEMPLACEMENT \nWEAPON DAMAGE POINTS cosT \nChaff gun - 1 2,0"
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium turbolaser battery",
+          "station": "4 gunners",
+          "attackBonus": 10,
+          "damageAsPrinted": "5d10x5",
+          "printedMultiplicity": 2,
+          "sourcePrintedPage": 67,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "heavy ion cannon battery",
+          "station": "4 gunners",
+          "attackBonus": 10,
+          "damageAsPrinted": "4d10x5 ion",
+          "printedMultiplicity": 4,
+          "sourcePrintedPage": 67,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "point-defense medium laser cannon battery",
+          "station": "2 gunners",
+          "attackBonus": 6,
+          "damageAsPrinted": "4d10x2",
+          "printedMultiplicity": 4,
+          "sourcePrintedPage": 67,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "4 gunners",
+          "attackBonus": 10,
+          "damageAsPrinted": "grapple +47",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 67,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Narrative and statblock distinguish armaments, carried attack shuttles and carried tanks.",
+          "printedPages": [
+            67
+          ]
+        },
+        {
+          "finding": "Starred capital weapon attack lines impose -20 against targets smaller than Colossal; point-defense row not automatically given same penalty.",
+          "printedPages": [
+            67
+          ]
+        },
+        {
+          "finding": "Printed weapon battery count is not independent barrel, emplacement or firing arc proof.",
+          "printedPages": [
+            67
+          ]
+        }
+      ],
+      "sourceConflicts": [],
+      "sourceEvidence": {
+        "printedPages": [
+          67
+        ],
+        "sourcePdfStartPageIndex": 67,
+        "pdfPhysicalPage": 68,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-imperial-landing-craft",
+      "printedName": "Imperial Landing Craft",
+      "printedStatblockStartPage": 64,
+      "phase1PdfPhysicalPage": 65,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 13,
+        "printedTypeLine": "Colossal space transport",
+        "sourceTxtNavigationOnly": true,
+        "initiativeAndSenses": "Init +0; Senses Perception +8",
+        "defensesAsPrinted": "Defense Ref 14 (flat-footed 12), Fort 27; +12 armor",
+        "hitPointsAndShieldsAsPrinted": "hp 140; DR 15; SR 40; Threshold 77",
+        "speedAsPrinted": "Speed fly 12 squares (max. velocity 800 km/h), fly 4 squares (starship scale)",
+        "rangedAttackFirstLine": "Ranged double medium laser cannons +10 (see below) and",
+        "baseAttackAndGrapple": "Base Atk +5; Grp +42",
+        "attackOptions": "Atk Options autofire (double medium laser cannons, antipersonnel heavy",
+        "crewAndPassengers": "Crew 8 (expert); Passengers 120 troops",
+        "cargoConsumablesAndCarriedCraft": "Cargo 130 tons; Consumables 6 months; Carried Craft 12 speeder bikes,",
+        "hyperdriveAsPrinted": "Hyperdrive x1, navicomputer",
+        "economicsAsPrinted": "Availability Military; Cost 290,000 credits",
+        "navigationTextExcerpt": "Imperial Landing Craft CL 13 \nColossal space transport \nInit +0; Senses Perception +8 \nDefense Ref 14 (flat-footed 12), Fort 27; +12 armor \nhp 140; DR 15; SR 40; Threshold 77 \nSpeed fly 12 squares (max. velocity 800 km/h), fly 4 squares \n\n(starship scale) \n\nRanged double medium laser cannons +10 (see below) and \n\n4 antipersonnel heavy blaster cannons +8 (see below) \n\nFighting Space 12x12 or 1 square (starship scale); Cover total (crew) \n\nBase Atk +5; Grp +42 \n\nAtk Options autofire (double medium laser cannons, antipersonnel heavy \nblaster cannons) \n\nAbilities Str 44, Dex 14, Con—, Int 16 \n\nSkills Initiative +0, Mechanics +8, Perception +8, Pilot +0, \n\nUse Computer +8 \nCrew 8 (expert); Passengers 120 troops \nCargo 130 tons; Consumables 6 months; Carried Craft 12 speeder bikes, \n\n2 LAVr QH-7 Chariot command speeders, 1 PX-4 mobile command base \nHyperdrive x1, navicomputer \nAvailability Military; Cost 290,000 credits \n\n\nDouble medium laser cannons (pilot) \nAtk +10 (+5 autofire), Dmg 5d10x2 \nAntipersonnel heavy blaster cannons (gunner) \nAtk +8 (+3 autofire), Dmg 5d10x2 \n\n\nPenumbra-class Attack Shuttle \nThe Haor Chall Engineering Penumbra-class attack shuttle was produced in \nrelatively small numbers prior to the Clone Wars. As the Trade Federation and \nthe rest of the Confederacy ramped up for all-out war, second-tier vehicle \ndesigns (such as the Penumbra-class attack shuttle) saw drastically smaller \nproduction runs. Since the Penumbra-class attack shuttle was one of the \ndesigns deemed inefficient for the Confederacy's needs, the factories dedi- \ncated to producing the vesse"
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 10,
+          "damageAsPrinted": "5d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 64,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "antipersonnel heavy blaster cannons",
+          "station": "gunner",
+          "attackBonus": 8,
+          "damageAsPrinted": "5d10x2",
+          "printedMultiplicity": 4,
+          "sourcePrintedPage": 64,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Landed IF-120 craft can act as a command base; conversion details are narrative and not an unconditional active buff.",
+          "printedPages": [
+            64
+          ]
+        },
+        {
+          "finding": "Carried complement includes 12 speeder bikes, 2 LAVr QH-7 command speeders, and 1 PX-4 mobile command base.",
+          "printedPages": [
+            64
+          ]
+        }
+      ],
+      "sourceConflicts": [],
+      "sourceEvidence": {
+        "printedPages": [
+          64
+        ],
+        "sourcePdfStartPageIndex": 64,
+        "pdfPhysicalPage": 65,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+      "printedName": "Koensayr ILH-KK Citadel-class Cruiser",
+      "printedStatblockStartPage": 192,
+      "phase1PdfPhysicalPage": 193,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 7,
+        "printedTypeLine": "Colossal space transport",
+        "sourceTxtNavigationOnly": false,
+        "navigationTextExcerpt": "Not reliably located; visual PDF was inspected directly."
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "gunner",
+          "attackBonus": 1,
+          "damageAsPrinted": "5d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 192,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "ion cannons",
+          "station": "gunner",
+          "attackBonus": 1,
+          "damageAsPrinted": "5d10x2 ion",
+          "printedMultiplicity": 2,
+          "sourcePrintedPage": 192,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 3,
+          "damageAsPrinted": "8d10x2, 4-square splash",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 192,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "tractor beam",
+          "station": "pilot",
+          "attackBonus": 1,
+          "damageAsPrinted": "grapple +36",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 192,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Adventure footnote says these are baseline normal-crew statistics and should be adjusted for heroes.",
+          "printedPages": [
+            192
+          ]
+        },
+        {
+          "finding": "Adventure describes a damaged hyperdrive on a specific ship, not a globally broken hyperdrive for the statted baseline cruiser.",
+          "printedPages": [
+            192
+          ]
+        }
+      ],
+      "sourceConflicts": [],
+      "sourceEvidence": {
+        "printedPages": [
+          192
+        ],
+        "sourcePdfStartPageIndex": 192,
+        "pdfPhysicalPage": 193,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
+      "printedName": "Penumbra-class Attack Shuttle",
+      "printedStatblockStartPage": 65,
+      "phase1PdfPhysicalPage": 66,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 9,
+        "printedTypeLine": "Colossal space transport",
+        "sourceTxtNavigationOnly": true,
+        "initiativeAndSenses": "Init +1; Senses Perception +6",
+        "defensesAsPrinted": "Defense Ref 17 (flat-footed 12), Fort 25; +12 armor",
+        "hitPointsAndShieldsAsPrinted": "hp 110; DR 15; SR 20; Threshold 75",
+        "speedAsPrinted": "Speed fly 16 squares (max. velocity 1,175 km/h), fly 4 squares (starship scale)",
+        "rangedAttackFirstLine": "Ranged medium laser cannons +6 (see below) and",
+        "baseAttackAndGrapple": "Base Atk +2; Grp +37",
+        "attackOptions": "Atk Options autofire (medium laser cannons), fire-link (medium laser",
+        "crewAndPassengers": "Crew 3; Passengers 10",
+        "cargoConsumablesAndCarriedCraft": "Cargo 20 tons; Consumables 1 month; Carried Craft none",
+        "payloadAsPrinted": "Payload 12 concussion missiles",
+        "economicsAsPrinted": "Availability Restricted; Cost 250,000 (135,000 used)",
+        "navigationTextExcerpt": "Penumbra-class Attack Shuttle cL9 \n\nColossal space transport \n\nInit +1; Senses Perception +6 \n\nDefense Ref 17 (flat-footed 12), Fort 25; +12 armor \n\nhp 110; DR 15; SR 20; Threshold 75 \n\nSpeed fly 16 squares (max. velocity 1,175 km/h), fly 4 squares \n(starship scale) \n\nRanged medium laser cannons +6 (see below) and \nmedium concussion missiles +4 (see below) \n\nFighting Space 12x12 or 1 squares (starship scale); Cover total (crew) \n\nBase Atk +2; Grp +37 \n\nAtk Options autofire (medium laser cannons), fire-link (medium laser \ncannons, medium concussion missiles) \n\nAbilities Str 40, Dex 20, Con —, Int 14 \n\nSkills Initiative +1, Mechanics +6, Perception +6, Pilot +1, \nUse Computer +6 . \n\nCrew 3; Passengers 10 \n\nCargo 20 tons; Consumables 1 month; Carried Craft none \n\nPayload 12 concussion missiles \n\nAvailability Restricted; Cost 250,000 (135,000 used) \n\n\nMedium laser cannons (pilot) \nAtk +6 (+1 autofire), Dmg 5d10x2 \nMedium concussion missiles (copilot) \nAtk +4, Dmg 10d10x2 \n\n\nLight Freighter \n\nAnother popular design from the Corellian Engineering Corporation, the \nYU-410 light freighter's name is a bit of a misnomer. Considerably larger than \ntypical light freighters, the YU-410 holds an impressive 250 tons of cargo \nin its spacious twin cargo bays. As a cost-cutting measure, the corporation \nincludes smaller-than-normal engines, giving the YU-410 a low maximum \nvelocity and poor maneuverability. To compensate for the lack of speed, the \nYU-410 has stronger shields and twin double laser cannons to defend itself \nagainst attack—often more than enough to dissuade pirates from assau"
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damageAsPrinted": "5d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 65,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "copilot",
+          "attackBonus": 4,
+          "damageAsPrinted": "10d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 65,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Attack options explicitly list fire-link (medium laser cannons, medium concussion missiles).",
+          "printedPages": [
+            65
+          ]
+        },
+        {
+          "finding": "12 concussion missiles is payload inventory, not 12 attack groups.",
+          "printedPages": [
+            65
+          ]
+        },
+        {
+          "finding": "Hyperdrive is not printed in the statblock; do not infer one.",
+          "printedPages": [
+            65
+          ]
+        }
+      ],
+      "sourceConflicts": [],
+      "sourceEvidence": {
+        "printedPages": [
+          65
+        ],
+        "sourcePdfStartPageIndex": 65,
+        "pdfPhysicalPage": 66,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "printedName": "YU-410 Light Freighter",
+      "printedStatblockStartPage": 65,
+      "phase1PdfPhysicalPage": 66,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "fieldGroups": {
+        "challenge": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED",
+        "shields": "PDF_VERIFIED",
+        "printedTypeLine": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED_PARTIAL",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Physical mount enumeration, arcs, group decomposition, production-field reconciliation and strict certification remain open."
+        }
+      ],
+      "printedFacts": {
+        "challengeLevel": 7,
+        "printedTypeLine": "Colossal space transport",
+        "sourceTxtNavigationOnly": true,
+        "initiativeAndSenses": "Init -5; Senses Perception +5",
+        "defensesAsPrinted": "Defense Ref 12 (flat-footed 12), Fort 26; +12 armor",
+        "hitPointsAndShieldsAsPrinted": "hp 120; DR 15; DR 20; Threshold 76",
+        "speedAsPrinted": "Speed fly 12 squares (max. velocity 800 km/h), fly 2 squares (starship scale)",
+        "rangedAttackFirstLine": "Ranged double laser cannons +2 (see below)",
+        "baseAttackAndGrapple": "Base Atk +0; Grp +36",
+        "attackOptions": "Atk Options autofire (double laser cannons)",
+        "crewAndPassengers": "Crew 4 (normal); Passengers 12",
+        "cargoConsumablesAndCarriedCraft": "Cargo 250 tons; Consumables 2 months; Carried Craft none",
+        "hyperdriveAsPrinted": "Hyperdrive x2 (backup x12), navicomputer",
+        "economicsAsPrinted": "Availability Licensed; Cost 110,000 (30,000 used)",
+        "navigationTextExcerpt": "YU-410 Light Freighter cL7 \n\nColossal space transport \n\nInit —5; Senses Perception +5 \n\nDefense Ref 12 (flat-footed 12), Fort 26; +12 armor \n\nhp 120; DR 15; DR 20; Threshold 76 \n\nSpeed fly 12 squares (max. velocity 800 km/h), fly 2 squares \n(starship scale) \n\nRanged double laser cannons +2 (see below) \n\nFighting Space 12x12 or 1 square (starship scale); Cover total \n\nBase Atk +0; Grp +36 \n\nAtk Options autofire (double laser cannons) \n\nAl s Str 42, Dex 10, Con—, Int 14 \n\nSkills Initiative -2, Mechanics +5, Perception +5, Pilot —5, \nUse Computer +5 \n\nCrew 4 (normal); Passengers 12 \n\nCargo 250 tons; Consumables 2 months; Carried Craft none \n\nHyperdrive x2 (backup x12), navicomputer \n\nAvailability Licensed; Cost 110,000 (30,000 used) \n\n\nDouble laser cannons (gunner) \nAtk +2 (-3 autofire), Dmg 5d10x2 \n\n\nfy) \nr \n> \nq \n4 \nLJ \nBy \n\n\n1 BeidvRS \n\n\nSeVAeEEVH) \n\n\nWayfarer-class Medium Transport \n\nThe unusual design of the Wayforer-class medium transport allows cargo \npods to be attached and detached from the port side of the vessel as needed. \nThis modular design enables a Wayfarer to load a passenger section, hangar \nbay, or cargo module, depending on what is needed at the time. A Wayfarer \nfeatures powerful engines that can handle the large mass of bulk freight \nand that give the vessel surprisingly good speed. However, its unusual \nlayout makes the Wayfarer ungainly and difficult to pilot in anything less \nthan ideal conditions. \n\nThe 82-meter Wayfarer-class medium transport requires a crew of ten for \noptimal operation, but it can be flown effectively with only a pilot and one \noth"
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double laser cannons",
+          "station": "gunner",
+          "attackBonus": 2,
+          "damageAsPrinted": "5d10x2",
+          "printedMultiplicity": 1,
+          "sourcePrintedPage": 65,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountCount": "NOT_CERTIFIED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "finding": "Narrative grants +5 to Stealth checks when concealing items due to extensive cargo storage.",
+          "printedPages": [
+            65
+          ]
+        },
+        {
+          "finding": "Statblock durability row literally has DR 15 followed by DR 20; do not silently rewrite second term to SR 20.",
+          "printedPages": [
+            65
+          ]
+        }
+      ],
+      "sourceConflicts": [
+        {
+          "category": "PRINTED_DURABILITY_LABEL_CONFLICT",
+          "page": 65,
+          "mainRanged": "hp 120; DR 15; DR 20; Threshold 76",
+          "detailedWeapon": "Shield description appears in narrative; statblock labels both values DR",
+          "resolution": "UNRESOLVED_KEEP_PRINTED_TERMS"
+        }
+      ],
+      "sourceEvidence": {
+        "printedPages": [
+          65
+        ],
+        "sourcePdfStartPageIndex": 65,
+        "pdfPhysicalPage": 66,
+        "pdfVisualCheckForThisCheckpoint": true,
+        "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "navigationTextNotAuthority": true
+      },
+      "notes": [
+        "Independent published statblock identity preserved from Phase1; no actor/pack/hydration changes."
+      ]
+    }
+  ]
+}

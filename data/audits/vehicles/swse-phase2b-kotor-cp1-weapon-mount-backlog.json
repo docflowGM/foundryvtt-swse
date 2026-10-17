@@ -1,0 +1,581 @@
+{
+  "schema": "swse.vehicle.phase2b.weapon-mount-backlog.v0.1",
+  "sourceBook": "Knights of the Old Republic Campaign Guide",
+  "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+  "counts": {
+    "publicationShipClaims": 32,
+    "primaryPdfCloseReads": 10,
+    "primaryPdfCloseReadsOutstanding": 22,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 32,
+    "attackGroupRowsReviewed": 17,
+    "sourceConflictRecordCount": 0,
+    "phase1PageMappingDiscrepancyCount": 1
+  },
+  "records": [
+    {
+      "sourceEntryKey": "kotor-amalgamated-hyperdyne-578-r-space-transport",
+      "printedName": "Amalgamated Hyperdyne 578-R Space Transport",
+      "printedPage": 98,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannon",
+          "station": "gunner",
+          "attackBonus": 1,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 98
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-arakyd-industries-lethisk-class-armed-freighter",
+      "printedName": "Arakyd Industries Lethisk-class Armed Freighter",
+      "printedPage": 99,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double laser cannons",
+          "station": "gunner",
+          "attackBonus": 5,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 99
+        },
+        {
+          "label": "light concussion missiles",
+          "station": "pilot",
+          "attackBonus": 5,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 99
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-corellia-stardrive-quartermaster-class-supply-carrier",
+      "printedName": "Corellia StarDrive Quartermaster-class Supply Carrier",
+      "printedPage": 100,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "No printed weapon attack profile; cannot certify physical weapons or silently label vessel unarmed.",
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-corellian-engineering-corporation-s-100-stinger-class-starfighter",
+      "printedName": "Corellian Engineering Corporation S-100 Stinger-class Starfighter",
+      "printedPage": 95,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 96
+        },
+        {
+          "label": "proton torpedoes",
+          "station": "pilot",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 96
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-corellian-engineering-corporation-s-250-chela-class-starfighter",
+      "printedName": "Corellian Engineering Corporation S-250 Chela-class Starfighter",
+      "printedPage": 181,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-davaab-type-starfighter",
+      "printedName": "Davaab-type Starfighter",
+      "printedPage": 204,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-ebon-hawk",
+      "printedName": "Ebon Hawk",
+      "printedPage": 220,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-eleaor-propulsion-baronial-class-yacht",
+      "printedName": "Eleaor Propulsion Baronial-class Yacht",
+      "printedPage": 143,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double light laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 143
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-eleaor-propulsion-starscape-class-yacht",
+      "printedName": "Eleaor Propulsion Starscape-class Yacht",
+      "printedPage": 222,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-hoersch-kessel-drive-g-type-light-shuttle",
+      "printedName": "Hoersch-Kessel Drive G-Type Light Shuttle",
+      "printedPage": 98,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double laser cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 98
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-jehavey-ir-type-assault-ship",
+      "printedName": "Jehavey'ir-type Assault Ship",
+      "printedPage": 206,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-kandosii-type-dreadnaught",
+      "printedName": "Kandosii-type Dreadnaught",
+      "printedPage": 207,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-koros-spaceworks-cx-133-chaos-fighter",
+      "printedName": "Koros Spaceworks CX-133 Chaos Fighter",
+      "printedPage": 220,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-koros-spaceworks-supremacy-class-attack-ship",
+      "printedName": "Koros Spaceworks Supremacy-class Attack Ship",
+      "printedPage": 221,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-kyramud-type-battleship",
+      "printedName": "Kyramud-type Battleship",
+      "printedPage": 206,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-pelagia-duplex-command-assault-gunship",
+      "printedName": "Pelagia Duplex Command Assault Gunship",
+      "printedPage": 100,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy laser cannons",
+          "station": "gunner",
+          "attackBonus": 8,
+          "printedHardwareOrBatteryCount": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 100
+        },
+        {
+          "label": "laser cannons",
+          "station": "pilot/copilot",
+          "attackBonus": 8,
+          "printedHardwareOrBatteryCount": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 100
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-rendili-hyperworks-hammerhead-class-cruiser",
+      "printedName": "Rendili Hyperworks Hammerhead-class Cruiser",
+      "printedPage": 184,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-rendili-hyperworks-inexpugnable-class-tactical-command-vessel",
+      "printedName": "Rendili Hyperworks Inexpugnable-class Tactical Command Vessel",
+      "printedPage": 185,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-rendili-hyperworks-praetorian-class-frigate",
+      "printedName": "Rendili Hyperworks Praetorian-class Frigate",
+      "printedPage": 101,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "light turbolaser cannon batteries",
+          "station": "4 gunners",
+          "attackBonus": 13,
+          "printedHardwareOrBatteryCount": "2 printed batteries (number of underlying gun mounts unspecified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": 4,
+          "sourcePrintedPage": 101
+        },
+        {
+          "label": "point-defense laser cannon batteries",
+          "station": "3 gunners",
+          "attackBonus": 11,
+          "printedHardwareOrBatteryCount": "2 printed batteries (individual gun mounts unspecified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": 3,
+          "sourcePrintedPage": 101
+        },
+        {
+          "label": "tractor beam batteries",
+          "station": "3 gunners",
+          "attackBonus": 11,
+          "printedHardwareOrBatteryCount": "2 printed batteries (underlying emitter count unspecified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": 3,
+          "sourcePrintedPage": 101
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-aurek-tactical-strikefighter",
+      "printedName": "Republic Fleet Systems Aurek Tactical Strikefighter",
+      "printedPage": 181,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-conductor-class-short-haul-landing-craft",
+      "printedName": "Republic Fleet Systems Conductor-class Short-haul Landing Craft",
+      "printedPage": 182,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-foray-class-blockade-runner",
+      "printedName": "Republic Fleet Systems Foray-class Blockade Runner",
+      "printedPage": 183,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-kt-400-military-droid-carrier",
+      "printedName": "Republic Fleet Systems KT-400 Military Droid Carrier",
+      "printedPage": 183,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-star-saber-xc-01-starfighter",
+      "printedName": "Republic Fleet Systems Star Saber XC-01 Starfighter",
+      "printedPage": 96,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "printedHardwareOrBatteryCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": null,
+          "sourcePrintedPage": 96
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-shaadlar-type-troopship",
+      "printedName": "Shaadlar-type Troopship",
+      "printedPage": 205,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-centurion-class-battlecruiser",
+      "printedName": "Star Forge Manufacture Centurion-class Battlecruiser",
+      "printedPage": 163,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-derriphan-class-battleship",
+      "printedName": "Star Forge Manufacture Derriphan-class Battleship",
+      "printedPage": 163,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-herald-class-shuttle",
+      "printedName": "Star Forge Manufacture Herald-class Shuttle",
+      "printedPage": 164,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-interdictor-class-warship",
+      "printedName": "Star Forge Manufacture Interdictor-class Warship",
+      "printedPage": 161,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "medium turbolaser battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "printedHardwareOrBatteryCount": "5 printed batteries (underlying turbolaser mounts unverified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": 5,
+          "sourcePrintedPage": 161
+        },
+        {
+          "label": "point-defense light laser cannon battery",
+          "station": "3 gunners",
+          "attackBonus": 10,
+          "printedHardwareOrBatteryCount": "6 printed batteries (individual gun counts unverified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": 3,
+          "sourcePrintedPage": 161
+        },
+        {
+          "label": "tractor beam battery",
+          "station": "3 gunners",
+          "attackBonus": 10,
+          "printedHardwareOrBatteryCount": "3 printed batteries (underlying beam projector count unverified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": 3,
+          "sourcePrintedPage": 161
+        },
+        {
+          "label": "gravity well projector",
+          "station": "2 gunners",
+          "attackBonus": 8,
+          "printedHardwareOrBatteryCount": "4 printed projectors (mount locations unverified)",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "gunnerCountPrinted": 2,
+          "sourcePrintedPage": 161
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Full independent weapon mount geometry, firing arcs and battery decomposition remain uncertified; a source close-read is not strict mechanical certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-sith-interceptor",
+      "printedName": "Star Forge Manufacture Sith Interceptor",
+      "printedPage": 164,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-teroch-type-fast-attack-gunship",
+      "printedName": "Teroch-type Fast Attack Gunship",
+      "printedPage": 205,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    },
+    {
+      "sourceEntryKey": "kotor-zentine-dynamics-ministry-class-orbital-shuttle",
+      "printedName": "Zentine Dynamics Ministry-class Orbital Shuttle",
+      "printedPage": 182,
+      "reviewStatus": "NOT_REVIEWED",
+      "strictCertified": false,
+      "weaponAttackGroups": [],
+      "hardwareEvidenceStatus": "NOT_REVIEWED",
+      "blockingIssues": [
+        "Awaiting next KOTOR checkpoint primary-source review"
+      ]
+    }
+  ]
+}

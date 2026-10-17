@@ -1,0 +1,359 @@
+{
+  "schema": "swse.vehicle.phase2b.unknown-regions.book-mount-backlog.v0.1",
+  "sourceBook": "Unknown Regions",
+  "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+  "counts": {
+    "publicationShipClaims": 12,
+    "primaryPdfCloseReads": 12,
+    "primaryPdfCloseReadsOutstanding": 0,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 12,
+    "attackGroupRowsReviewed": 22,
+    "sourceConflictRecordCount": 2,
+    "phase1UncensusedShipCandidateCount": 1,
+    "phase1PageMappingDiscrepancyCount": 0
+  },
+  "records": [
+    {
+      "sourceEntryKey": "ur-hoersch-kessel-vaya-class-scout-ship",
+      "printedName": "Hoersch-Kessel Vaya-class Scout Ship",
+      "printedPage": 59,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "light laser cannon",
+          "station": "gunner",
+          "attackBonus": 3,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "concussion projectiles",
+          "station": "gunner",
+          "attackBonus": 3,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-jumpmaster-5000-scout-ship",
+      "printedName": "JumpMaster 5000 Scout Ship",
+      "printedPage": 52,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-killik-dartship",
+      "printedName": "Killik Dartship",
+      "printedPage": 133,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannon",
+          "station": "pilot",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship",
+      "printedName": "Kuat Drive Yards Star Seeder-class Colony Ship",
+      "printedPage": 58,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "turbolaser battery",
+          "station": "2 gunners",
+          "attackBonus": 5,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "printedAttackGroupCount": 6
+        },
+        {
+          "label": "tractor beam battery",
+          "station": "2 gunners",
+          "attackBonus": 5,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "printedAttackGroupCount": 1
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified.",
+        "Source modifier/size threshold conflicts are preserved, not resolved."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-loronar-corporation-skyblind-recon-ship",
+      "printedName": "Loronar Corporation SkyBlind Recon Ship",
+      "printedPage": 57,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "proton torpedoes",
+          "station": "pilot",
+          "attackBonus": 2,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-mesens-corporation-sct-scout-craft",
+      "printedName": "Mesens Corporation SCT Scout Craft",
+      "printedPage": 56,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "dual turbolaser turret",
+          "station": "gunner",
+          "attackBonus": 4,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "point-defense dual laser cannon",
+          "station": "gunner",
+          "attackBonus": 4,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-mrx-br-pacifier-combat-contact-vessel",
+      "printedName": "MRX-BR Pacifier Combat/Contact Vessel",
+      "printedPage": 55,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "gunner",
+          "attackBonus": 5,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "proton torpedoes",
+          "station": "gunner",
+          "attackBonus": 5,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-royal-fortune-light-clipper",
+      "printedName": "Royal Fortune Light Clipper",
+      "printedPage": 151,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannon battery",
+          "station": "5 gunners",
+          "attackBonus": 12,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "printedAttackGroupCount": 8
+        },
+        {
+          "label": "quad laser cannon battery",
+          "station": "2 gunners",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "printedAttackGroupCount": 2
+        },
+        {
+          "label": "Fotia's Fire cannon",
+          "station": "gunner",
+          "attackBonus": 4,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "printedAttackGroupCount": 1
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-sienar-fleet-systems-mu-2-model-2-shuttle",
+      "printedName": "Sienar Fleet Systems Mu-2 Model 2 Shuttle",
+      "printedPage": 55,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "copilot",
+          "attackBonus": 4,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-sorosuub-drexl-class-planetary-defender-starfighter",
+      "printedName": "SoroSuub Drexl-class \"Planetary Defender\" Starfighter",
+      "printedPage": 52,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "dual laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "concussion missiles",
+          "station": "pilot",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-sorosuub-preybird-class-starfighter",
+      "printedName": "SoroSuub Preybird-class Starfighter",
+      "printedPage": 56,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "gunner",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "label": "concussion missiles",
+          "station": "gunner",
+          "attackBonus": 6,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    },
+    {
+      "sourceEntryKey": "ur-surfeik-cruiser",
+      "printedName": "Surfeik Cruiser",
+      "printedPage": 154,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannon battery",
+          "station": "3 gunners",
+          "attackBonus": 9,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "printedAttackGroupCount": 11
+        },
+        {
+          "label": "projectile launcher",
+          "station": "gunner",
+          "attackBonus": 5,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "printedAttackGroupCount": 7
+        },
+        {
+          "label": "pseudograv projector",
+          "station": "gunner",
+          "attackBonus": 5,
+          "physicalCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "printedAttackGroupCount": 1
+        }
+      ],
+      "hardwareEvidenceStatus": "SOURCE_SILENT_CONFIRMED",
+      "blockingIssues": [
+        "Complete independent physical mounts, firing arcs, station dependencies, battery composition and special subsystem runtime authority are not strictly certified."
+      ]
+    }
+  ]
+}

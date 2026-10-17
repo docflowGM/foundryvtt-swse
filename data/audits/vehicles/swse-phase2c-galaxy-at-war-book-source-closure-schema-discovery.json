@@ -1,0 +1,215 @@
+{
+  "schema": "swse.vehicle.phase2c.schema-discovery.v0.1",
+  "sourceBook": "Galaxy at War",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "galaxy-at-war-001",
+      "sourceEntryKey": "gaw-corona-class-armed-transport",
+      "ship": "Corona-class Armed Transport",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-002",
+      "sourceEntryKey": "gaw-corona-class-armed-transport",
+      "ship": "Corona-class Armed Transport",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "Narrative and statblock distinguish armaments, carried attack shuttles and carried tanks.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-003",
+      "sourceEntryKey": "gaw-corona-class-armed-transport",
+      "ship": "Corona-class Armed Transport",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "Starred capital weapon attack lines impose -20 against targets smaller than Colossal; point-defense row not automatically given same penalty.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-004",
+      "sourceEntryKey": "gaw-corona-class-armed-transport",
+      "ship": "Corona-class Armed Transport",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "Printed weapon battery count is not independent barrel, emplacement or firing arc proof.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-005",
+      "sourceEntryKey": "gaw-imperial-landing-craft",
+      "ship": "Imperial Landing Craft",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        64
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-006",
+      "sourceEntryKey": "gaw-imperial-landing-craft",
+      "ship": "Imperial Landing Craft",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        64
+      ],
+      "sourceDerivedIssue": "Landed IF-120 craft can act as a command base; conversion details are narrative and not an unconditional active buff.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-007",
+      "sourceEntryKey": "gaw-imperial-landing-craft",
+      "ship": "Imperial Landing Craft",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        64
+      ],
+      "sourceDerivedIssue": "Carried complement includes 12 speeder bikes, 2 LAVr QH-7 command speeders, and 1 PX-4 mobile command base.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-008",
+      "sourceEntryKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+      "ship": "Koensayr ILH-KK Citadel-class Cruiser",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        192
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-009",
+      "sourceEntryKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+      "ship": "Koensayr ILH-KK Citadel-class Cruiser",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        192
+      ],
+      "sourceDerivedIssue": "Adventure footnote says these are baseline normal-crew statistics and should be adjusted for heroes.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-010",
+      "sourceEntryKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+      "ship": "Koensayr ILH-KK Citadel-class Cruiser",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        192
+      ],
+      "sourceDerivedIssue": "Adventure describes a damaged hyperdrive on a specific ship, not a globally broken hyperdrive for the statted baseline cruiser.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-011",
+      "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
+      "ship": "Penumbra-class Attack Shuttle",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        65
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-012",
+      "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
+      "ship": "Penumbra-class Attack Shuttle",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        65
+      ],
+      "sourceDerivedIssue": "Attack options explicitly list fire-link (medium laser cannons, medium concussion missiles).",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-013",
+      "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
+      "ship": "Penumbra-class Attack Shuttle",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        65
+      ],
+      "sourceDerivedIssue": "12 concussion missiles is payload inventory, not 12 attack groups.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-014",
+      "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
+      "ship": "Penumbra-class Attack Shuttle",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        65
+      ],
+      "sourceDerivedIssue": "Hyperdrive is not printed in the statblock; do not infer one.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-015",
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "ship": "YU-410 Light Freighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        65
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-016",
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "ship": "YU-410 Light Freighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        65
+      ],
+      "sourceDerivedIssue": "Narrative grants +5 to Stealth checks when concealing items due to extensive cargo storage.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-017",
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "ship": "YU-410 Light Freighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        65
+      ],
+      "sourceDerivedIssue": "Statblock durability row literally has DR 15 followed by DR 20; do not silently rewrite second term to SR 20.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "galaxy-at-war-018",
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "ship": "YU-410 Light Freighter",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        65
+      ],
+      "sourceDerivedIssue": "{\"category\": \"PRINTED_DURABILITY_LABEL_CONFLICT\", \"page\": 65, \"mainRanged\": \"hp 120; DR 15; DR 20; Threshold 76\", \"detailedWeapon\": \"Shield description appears in narrative; statblock labels both values DR\", \"resolution\": \"UNRESOLVED_KEEP_PRINTED_TERMS\"}",
+      "requiresFollowup": true
+    }
+  ],
+  "additionalStatblockIdentityCandidates": [],
+  "counts": {
+    "discoveryCases": 18
+  },
+  "scopeGuardrails": [
+    "No production pack or schema changes",
+    "Source review is distinct from strict mechanical certification",
+    "No unverified firing arcs, physical mounts, or editorial corrections"
+  ]
+}

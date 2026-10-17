@@ -1,0 +1,207 @@
+{
+  "schema": "swse.vehicle.phase2b.mount-backlog.v0.1",
+  "sourceBook": "Galaxy at War",
+  "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+  "counts": {
+    "sourceReviewedEntries": 5,
+    "attackGroupRows": 13,
+    "strictCertificates": 0
+  },
+  "records": [
+    {
+      "sourceEntryKey": "gaw-corona-class-armed-transport",
+      "printedName": "Corona-class Armed Transport",
+      "printedPage": 67,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "medium turbolaser battery",
+          "station": "4 gunners",
+          "attackBonus": 10,
+          "damage": "5d10x5",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 67
+        },
+        {
+          "label": "heavy ion cannon battery",
+          "station": "4 gunners",
+          "attackBonus": 10,
+          "damage": "4d10x5 ion",
+          "printedMultiplicity": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 67
+        },
+        {
+          "label": "point-defense medium laser cannon battery",
+          "station": "2 gunners",
+          "attackBonus": 6,
+          "damage": "4d10x2",
+          "printedMultiplicity": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 67
+        },
+        {
+          "label": "tractor beam battery",
+          "station": "4 gunners",
+          "attackBonus": 10,
+          "damage": "grapple +47",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 67
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-imperial-landing-craft",
+      "printedName": "Imperial Landing Craft",
+      "printedPage": 64,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 10,
+          "damage": "5d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 64
+        },
+        {
+          "label": "antipersonnel heavy blaster cannons",
+          "station": "gunner",
+          "attackBonus": 8,
+          "damage": "5d10x2",
+          "printedMultiplicity": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 64
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+      "printedName": "Koensayr ILH-KK Citadel-class Cruiser",
+      "printedPage": 192,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "gunner",
+          "attackBonus": 1,
+          "damage": "5d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 192
+        },
+        {
+          "label": "ion cannons",
+          "station": "gunner",
+          "attackBonus": 1,
+          "damage": "5d10x2 ion",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 192
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 3,
+          "damage": "8d10x2, 4-square splash",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 192
+        },
+        {
+          "label": "tractor beam",
+          "station": "pilot",
+          "attackBonus": 1,
+          "damage": "grapple +36",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 192
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
+      "printedName": "Penumbra-class Attack Shuttle",
+      "printedPage": 65,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "5d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 65
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "copilot",
+          "attackBonus": 4,
+          "damage": "10d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 65
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "printedName": "YU-410 Light Freighter",
+      "printedPage": 65,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double laser cannons",
+          "station": "gunner",
+          "attackBonus": 2,
+          "damage": "5d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 65
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    }
+  ]
+}
