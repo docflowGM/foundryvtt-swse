@@ -21,11 +21,17 @@
  *   caller-owned data              -> never mutated and never frozen: adapter output is validated, then deep-COPIED, and only the
  *                                     newly owned snapshot is frozen.
  *
- * Provisional input shape for `speciesProfile.anatomy` (E2A test contract only; NOT an approved schema -- E2B decides the schema):
- *   { appendages: [{ id:string, kind:string, capabilities?:{canHold?,canWield?,canManipulate?}, functionalState?:string,
- *                    restrictions?:string[] }] }
+ * Biological input (E2B-I3A): `speciesProfile.anatomy`, when declared, is validated by the canonical schema authority
+ * (scripts/species/species-anatomy-schema-v1.js, schema v1) -- this module has no validator of its own. Malformed declarations throw
+ * `AnatomyInputError` (code INVALID_ANATOMY, or INVALID_CAPABILITY for a bad capability value) carrying `schemaCode` and `schemaPath` from
+ * the original `SpeciesAnatomySchemaError`; they are never replaced by the default anatomy. Per-actor functional state is not part of
+ * canonical anatomy (the schema rejects it): every species appendage starts `functional` and only `functionalOverrides` restrict it.
+ * Topology: `complete` = all equipment-relevant appendages declared (zero is valid and gets no default); `partial` = known appendages,
+ * incomplete topology -> never `resolved`; `unresolved` = no reliable topology -> `unresolved`, no appendages. Declared `constraints`
+ * are copied through verbatim and are NEVER evaluated here (no size comparison, load or encumbrance calculation).
  */
 import { projectDroidAppendages } from "/systems/foundryvtt-swse/scripts/engine/equipment/droid-appendage-projection.js";
+import { validateSpeciesAnatomyV1, SpeciesAnatomySchemaError } from "/systems/foundryvtt-swse/scripts/species/species-anatomy-schema-v1.js";
 
 export const ANATOMY_STATUS = Object.freeze({ RESOLVED: 'resolved', PARTIAL: 'partial', UNRESOLVED: 'unresolved' });
 export const FUNCTIONAL_STATES = Object.freeze(['functional', 'disabled', 'missing', 'unresolved']);
@@ -46,6 +52,19 @@ export const ANATOMY_SOURCE = Object.freeze({
  * species-name special case. Matching is by exact trait `id`; trait prose is never parsed.
  */
 export const TEMPORARY_UNRESOLVED_EXCEPTION_TRAIT_IDS = Object.freeze(['extra-arms', 'prehensile-tail']);
+
+/**
+ * Temporary E2B-I3A fail-closed migration protection by EXACT publication identity (REMOVE when profile-keyed completeness is
+ * enforced by the species authority itself). These are the source-reviewed exceptional publications plus the independently
+ * unreviewed Jedi Academy Krevaaki profile. When the effective profile selected one of them and carries no structured anatomy, the
+ * result is `unresolved` and the two-arm default is NOT applied. Identity comes only from the selected-variant fields of the effective
+ * profile (`selectedVariantId`, `selectedVariant.id`, `selectedVariant.sourceProfileId`); display names and prose are never consulted.
+ * This is not a species registry and carries no anatomy.
+ */
+export const TEMPORARY_FAIL_CLOSED_PUBLICATION_IDENTITIES = Object.freeze({
+  variantIds: Object.freeze(['codru-ji-leg-2c-03', 'ryn-sv-2f-06', 'trianii-gaw-2i-06', 'krevaaki-ur-2b-04', 'killik-ur-2b-12', 'dug-cw-2h-01', 'lugubraa-ur-2b-13', 'krevaaki-jatm-2j-04']),
+  sourceProfileIds: Object.freeze(['LEG-2C-03', 'SV-2F-06', 'GAW-2I-06', 'UR-2B-04', 'UR-2B-12', 'CW-2H-01', 'UR-2B-13', 'JATM-2J-04']),
+});
 
 /** Thrown for input that violates the resolver API. Ordinary missing / ambiguous evidence is reported as `issues`, not thrown. */
 export class AnatomyInputError extends Error {
@@ -173,33 +192,29 @@ function validateInput(input) {
   }
 }
 
-/** Validate and copy a structured species anatomy (never mutates the input). */
+/** Validate a declared species anatomy with the canonical schema v1 authority and project it. Never mutates or freezes the input. */
 function readSpeciesAnatomy(anatomy) {
-  if (!isPlainObject(anatomy) || !Array.isArray(anatomy.appendages)) throw new AnatomyInputError('INVALID_ANATOMY', 'speciesProfile.anatomy must be { appendages: [] }');
-  const seen = new Set();
-  return anatomy.appendages.map((raw, index) => {
-    const where = `anatomy.appendages[${index}]`;
-    if (!isPlainObject(raw)) throw new AnatomyInputError('INVALID_ANATOMY', `${where} must be an object`);
-    if (typeof raw.id !== 'string' || !raw.id.trim()) throw new AnatomyInputError('INVALID_ANATOMY', `${where}.id must be a non-empty string`);
-    if (typeof raw.kind !== 'string' || !raw.kind.trim()) throw new AnatomyInputError('INVALID_ANATOMY', `${where}.kind must be a non-empty string`);
-    if (seen.has(raw.id)) throw new AnatomyInputError('INVALID_ANATOMY', `duplicate appendage id "${raw.id}"`);
-    seen.add(raw.id);
-    const caps = raw.capabilities === undefined || raw.capabilities === null ? {} : raw.capabilities;
-    if (!isPlainObject(caps)) throw new AnatomyInputError('INVALID_ANATOMY', `${where}.capabilities must be an object`);
-    const state = raw.functionalState === undefined ? 'functional' : raw.functionalState;
-    if (!FUNCTIONAL_STATES.includes(state)) throw new AnatomyInputError('INVALID_ANATOMY', `${where}.functionalState must be one of ${FUNCTIONAL_STATES.join(', ')}`);
-    if (raw.restrictions !== undefined && !(Array.isArray(raw.restrictions) && raw.restrictions.every((r) => typeof r === 'string'))) throw new AnatomyInputError('INVALID_ANATOMY', `${where}.restrictions must be an array of strings`);
-    return {
-      id: raw.id,
-      kind: raw.kind,
-      source: ANATOMY_SOURCE.SPECIES_ANATOMY,
-      identity: { slot: raw.id, instance: null, part: null },
-      capabilities: { canHold: triState(caps.canHold, where, 'canHold'), canWield: triState(caps.canWield, where, 'canWield'), canManipulate: triState(caps.canManipulate, where, 'canManipulate') },
-      functionalState: state,
-      functionalStateSource: 'species-anatomy',
-      ...(raw.restrictions ? { restrictions: [...raw.restrictions] } : {}),
-    };
-  });
+  let canonical;
+  try {
+    canonical = validateSpeciesAnatomyV1(anatomy, 'speciesProfile.anatomy');
+  } catch (e) {
+    if (!(e instanceof SpeciesAnatomySchemaError)) throw e;
+    const err = new AnatomyInputError(e.code === 'INVALID_CAPABILITY' ? 'INVALID_CAPABILITY' : 'INVALID_ANATOMY', e.message);
+    err.schemaCode = e.code;
+    err.schemaPath = e.path ?? null;
+    throw err;
+  }
+  const appendages = canonical.appendages.map((raw) => ({
+    id: raw.id,
+    kind: raw.kind,
+    source: ANATOMY_SOURCE.SPECIES_ANATOMY,
+    identity: { slot: raw.id, instance: null, part: null },
+    capabilities: { canHold: raw.capabilities.canHold, canWield: raw.capabilities.canWield, canManipulate: raw.capabilities.canManipulate },
+    functionalState: 'functional',
+    functionalStateSource: 'species-anatomy',
+    ...(raw.constraints ? { constraints: raw.constraints.map((c) => ({ ...c })) } : {}),
+  }));
+  return { topologyStatus: canonical.topologyStatus, appendages };
 }
 
 function defaultNaturalArms() {
@@ -247,7 +262,14 @@ function traitIds(profile) {
   return out;
 }
 
-const result = (r) => deepFreeze({ anatomyKind: r.anatomyKind, status: r.status, source: r.source, defaultApplied: r.defaultApplied, appendages: r.appendages, issues: r.issues, ...(r.unresolvedRecords ? { unresolvedRecords: r.unresolvedRecords } : {}) });
+/** Exact-match selected-publication identity of the effective profile (null fields when the profile carries none). */
+function publicationIdentity(profile) {
+  const variantId = [profile?.selectedVariantId, profile?.selectedVariant?.id].find((v) => typeof v === 'string' && v) ?? null;
+  const sourceProfileId = typeof profile?.selectedVariant?.sourceProfileId === 'string' && profile.selectedVariant.sourceProfileId ? profile.selectedVariant.sourceProfileId : null;
+  return { variantId, sourceProfileId };
+}
+
+const result = (r) => deepFreeze({ anatomyKind: r.anatomyKind, status: r.status, source: r.source, defaultApplied: r.defaultApplied, appendages: r.appendages, issues: r.issues, ...(r.topologyStatus ? { topologyStatus: r.topologyStatus } : {}), ...(r.unresolvedRecords ? { unresolvedRecords: r.unresolvedRecords } : {}) });
 
 /**
  * Resolve the effective anatomy.
@@ -310,11 +332,29 @@ export function resolveEffectiveAnatomy(input) {
   }
 
   // ---- biological anatomy ----------------------------------------------------------------------------------------------
-  if (speciesProfile && speciesProfile.anatomy !== undefined && speciesProfile.anatomy !== null) {
-    const appendages = applyOverrides(readSpeciesAnatomy(speciesProfile.anatomy), overrides, issues);
+  if (speciesProfile && Object.prototype.hasOwnProperty.call(speciesProfile, 'anatomy') && speciesProfile.anatomy !== undefined) {
+    // a supplied `null` is a malformed declaration (schema INVALID_ANATOMY_TYPE), never an absent one
+    const declared = readSpeciesAnatomy(speciesProfile.anatomy);
+    const { topologyStatus } = declared;
+    if (topologyStatus === 'unresolved') {
+      issues.push(issue('anatomy-topology-unresolved', 'blocking', 'The species anatomy declares no reliable equipment-relevant topology; no appendage is generated and the two-arm default is not applied.'));
+      return result({ anatomyKind: 'biological', status: ANATOMY_STATUS.UNRESOLVED, source: ANATOMY_SOURCE.SPECIES_ANATOMY, defaultApplied: false, appendages: [], issues, topologyStatus });
+    }
+    const appendages = applyOverrides(declared.appendages, overrides, issues);
+    if (topologyStatus === 'partial') issues.push(issue('anatomy-topology-partial', 'warning', 'The species anatomy declares only some equipment-relevant appendages; the known appendages are preserved but the topology is incomplete.', { appendageIds: appendages.map((a) => a.id) }));
     capabilityIssues(appendages, issues);
-    const incomplete = issues.some((i) => i.code === 'capability-unknown' || i.code === 'functional-state-unresolved');
-    return result({ anatomyKind: 'biological', status: incomplete ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.RESOLVED, source: ANATOMY_SOURCE.SPECIES_ANATOMY, defaultApplied: false, appendages, issues });
+    const incomplete = topologyStatus === 'partial' || issues.some((i) => i.code === 'capability-unknown' || i.code === 'functional-state-unresolved');
+    return result({ anatomyKind: 'biological', status: incomplete ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.RESOLVED, source: ANATOMY_SOURCE.SPECIES_ANATOMY, defaultApplied: false, appendages, issues, topologyStatus });
+  }
+
+  // Publication-profile guard (E2B-I3A): an exceptional publication without structured anatomy never falls back to two arms.
+  if (speciesProfile) {
+    const { variantId, sourceProfileId } = publicationIdentity(speciesProfile);
+    const ids = TEMPORARY_FAIL_CLOSED_PUBLICATION_IDENTITIES;
+    if ((variantId && ids.variantIds.includes(variantId)) || (sourceProfileId && ids.sourceProfileIds.includes(sourceProfileId))) {
+      issues.push(issue('anatomy-exception-unresolved', 'blocking', 'The selected publication profile is a recognized anatomical exception (or is not independently certified) and carries no structured anatomy. No appendage count or capability is inferred and the two-arm default is not applied.', { variantId, sourceProfileId, temporary: true }));
+      return result({ anatomyKind: 'biological', status: ANATOMY_STATUS.UNRESOLVED, source: ANATOMY_SOURCE.NONE, defaultApplied: false, appendages: [], issues });
+    }
   }
 
   // Temporary guards: a known anatomical exception exists but its structured data does not. Never flatten it into a complete default.
@@ -336,4 +376,4 @@ export function resolveEffectiveAnatomy(input) {
   return result({ anatomyKind: 'biological', status: defaultIncomplete ? ANATOMY_STATUS.PARTIAL : ANATOMY_STATUS.RESOLVED, source: ANATOMY_SOURCE.DEFAULT, defaultApplied: true, appendages, issues });
 }
 
-export default { resolveEffectiveAnatomy, AnatomyInputError, ANATOMY_STATUS, ANATOMY_SOURCE, FUNCTIONAL_STATES, TEMPORARY_UNRESOLVED_EXCEPTION_TRAIT_IDS };
+export default { resolveEffectiveAnatomy, AnatomyInputError, ANATOMY_STATUS, ANATOMY_SOURCE, FUNCTIONAL_STATES, TEMPORARY_UNRESOLVED_EXCEPTION_TRAIT_IDS, TEMPORARY_FAIL_CLOSED_PUBLICATION_IDENTITIES };

@@ -17,6 +17,9 @@ const ok = (m) => console.log(`  [${++n}] ${m} OK`);
 const deepFreeze = (v) => { if (v && typeof v === 'object' && !Object.isFrozen(v)) { Object.freeze(v); Object.values(v).forEach(deepFreeze); } return v; };
 const codes = (r) => r.issues.map((i) => i.code);
 const caps = (a) => a.capabilities;
+// E2B-I3A: species anatomy fixtures follow canonical schema v1 (the resolver validates with the schema authority)
+const an = (appendages, topologyStatus = 'complete') => ({ schemaVersion: 1, topologyStatus, appendages });
+const ALL3 = { canHold: true, canWield: true, canManipulate: true };
 
 // 1. normal biological actor -> the universal two-arm default, recorded as a default
 {
@@ -60,7 +63,7 @@ const caps = (a) => a.capabilities;
 // 3. explicit synthetic four-arm anatomy -> four individually identified manipulators, no default
 {
   const mk = (id) => ({ id, kind: 'arm', capabilities: { canHold: true, canWield: true, canManipulate: true } });
-  const profile = { name: 'SyntheticQuad', anatomy: { appendages: ['upper-left', 'upper-right', 'lower-left', 'lower-right'].map(mk) } };
+  const profile = { name: 'SyntheticQuad', anatomy: an(['upper-left', 'upper-right', 'lower-left', 'lower-right'].map(mk)) };
   const r = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: profile });
   assert.equal(r.status, ANATOMY_STATUS.RESOLVED);
   assert.equal(r.source, ANATOMY_SOURCE.SPECIES_ANATOMY);
@@ -73,17 +76,18 @@ const caps = (a) => a.capabilities;
 
 // 4. restricted appendage: holds but cannot wield (declared); unknown capability stays unknown and makes the anatomy partial
 {
-  const profile = { anatomy: { appendages: [
-    { id: 'arm-a', kind: 'arm', capabilities: { canHold: true, canWield: true, canManipulate: true } },
-    { id: 'tail', kind: 'tail', capabilities: { canHold: true, canWield: false, canManipulate: true }, restrictions: ['declared-by-fixture'] },
-  ] } };
+  const fixtureConstraint = { type: 'held-item-load-floor', when: 'held-by-appendage', itemSizeAtLeast: 'Medium', loadCategoryFloor: 'heavy', imposesEncumbered: true };
+  const profile = { anatomy: an([
+    { id: 'arm-a', kind: 'arm', capabilities: { ...ALL3 } },
+    { id: 'tail', kind: 'tail', capabilities: { canHold: true, canWield: false, canManipulate: true }, constraints: [fixtureConstraint] },
+  ]) };
   const r = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: profile });
   const tail = r.appendages.find((a) => a.id === 'tail');
   assert.deepEqual(caps(tail), { canHold: true, canWield: false, canManipulate: true });
-  assert.deepEqual(tail.restrictions, ['declared-by-fixture']);
+  assert.deepEqual(tail.constraints, [fixtureConstraint], 'declared constraint is preserved, not evaluated');
   assert.equal(r.status, ANATOMY_STATUS.RESOLVED);
 
-  const partial = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: { anatomy: { appendages: [{ id: 'x', kind: 'arm', capabilities: { canHold: true } }] } } });
+  const partial = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: { anatomy: an([{ id: 'x', kind: 'arm', capabilities: { canHold: true, canWield: null, canManipulate: null } }]) } });
   assert.deepEqual(caps(partial.appendages[0]), { canHold: true, canWield: null, canManipulate: null });
   assert.equal(partial.status, ANATOMY_STATUS.PARTIAL);
   assert.ok(codes(partial).includes('capability-unknown'));
@@ -97,7 +101,7 @@ const variantBase = {
 };
 const baseEntry = (extra = {}) => ({ id: 'base', name: 'Base', type: 'species', category: 'species', tags: [], pack: 'x', canonicalName: 'Base', variants: [], speed: 6, size: 'Medium',
   abilityScores: {}, skillBonuses: [], abilities: [], canonicalTraits: [], languages: [], naturalWeapons: [],
-  anatomy: { appendages: ['b1', 'b2', 'b3', 'b4'].map((id) => ({ id, kind: 'arm', capabilities: { canHold: true, canWield: true, canManipulate: true } })) }, ...extra });
+  anatomy: an(['b1', 'b2', 'b3', 'b4'].map((id) => ({ id, kind: 'arm', capabilities: { ...ALL3 } }))), ...extra });
 {
   const base = baseEntry();
   const snapshot = applySpeciesVariantProfile(base, variantBase);
@@ -157,7 +161,7 @@ function packVariantProfile(speciesName, variantId) {
   assert.deepEqual([...TEMPORARY_UNRESOLVED_EXCEPTION_TRAIT_IDS], ['extra-arms', 'prehensile-tail']);
   const lookalike = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: { canonicalTraits: [{ id: 'extra-arms-lookalike', description: 'four arms' }, { id: 'tail-whip', description: 'prehensile tail' }] } });
   assert.equal(lookalike.defaultApplied, true, 'no prose or partial-id matching');
-  const withData = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: { canonicalTraits: [{ id: 'extra-arms' }], anatomy: { appendages: [{ id: 'a', kind: 'arm', capabilities: { canHold: true, canWield: true, canManipulate: true } }] } } });
+  const withData = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: { canonicalTraits: [{ id: 'extra-arms' }], anatomy: an([{ id: 'a', kind: 'arm', capabilities: { ...ALL3 } }]) } });
   assert.equal(withData.status, ANATOMY_STATUS.RESOLVED);
   assert.equal(withData.source, ANATOMY_SOURCE.SPECIES_ANATOMY);
   ok('temporary guards match exact trait ids only and stand down when structured anatomy is supplied');
@@ -181,9 +185,10 @@ function packVariantProfile(speciesName, variantId) {
   assert.equal(unresolved.status, ANATOMY_STATUS.PARTIAL);
   assert.ok(codes(unresolved).includes('functional-state-unresolved'));
 
-  const species = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: { anatomy: { appendages: [{ id: 'q', kind: 'arm', functionalState: 'disabled', capabilities: { canHold: true, canWield: true, canManipulate: true } }] } }, functionalOverrides: { q: 'functional' } });
-  assert.equal(species.appendages[0].functionalState, 'disabled', 'an override cannot loosen recorded evidence');
-  assert.ok(codes(species).includes('override-less-restrictive-than-evidence'));
+  // E2B-I3A: canonical anatomy cannot declare per-actor state (schema v1 rejects it), so an override restricts the default 'functional' state only
+  const species = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: { anatomy: an([{ id: 'q', kind: 'arm', capabilities: { ...ALL3 } }]) }, functionalOverrides: { q: 'disabled' } });
+  assert.equal(species.appendages[0].functionalState, 'disabled');
+  assert.equal(species.appendages[0].functionalStateSource, 'override');
   ok('functional overrides restrict identified appendages (disabled/missing/unresolved); unknown ids and loosening are reported, not applied');
 }
 
@@ -210,7 +215,7 @@ function packVariantProfile(speciesName, variantId) {
 {
   const input = deepFreeze({
     actorType: 'character',
-    speciesProfile: { name: 'Frozen', canonicalTraits: [{ id: 'x' }], anatomy: { appendages: [{ id: 'a', kind: 'arm', capabilities: { canHold: true, canWield: null, canManipulate: true }, restrictions: ['r'] }] } },
+    speciesProfile: { name: 'Frozen', canonicalTraits: [{ id: 'x' }], anatomy: an([{ id: 'a', kind: 'arm', capabilities: { canHold: true, canWield: null, canManipulate: true }, constraints: [{ type: 'held-item-load-floor', when: 'held-by-appendage', itemSizeAtLeast: 'Medium', loadCategoryFloor: 'heavy', imposesEncumbered: true }] }]) },
     functionalOverrides: { a: 'disabled' },
   });
   const snapshotJson = JSON.stringify(input);
@@ -220,7 +225,7 @@ function packVariantProfile(speciesName, variantId) {
   assert.equal(JSON.stringify(r1), JSON.stringify(r2));
   assert.equal(JSON.stringify(input), snapshotJson, 'inputs unchanged');
   assert.ok(Object.isFrozen(r1) && Object.isFrozen(r1.appendages) && Object.isFrozen(r1.appendages[0].capabilities), 'outputs are frozen');
-  assert.notEqual(r1.appendages[0].restrictions, input.speciesProfile.anatomy.appendages[0].restrictions, 'restrictions are copied, not aliased');
+  assert.notEqual(r1.appendages[0].constraints, input.speciesProfile.anatomy.appendages[0].constraints, 'constraints are copied, not aliased');
   const d1 = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: {} });
   const d2 = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: {} });
   assert.deepEqual(d1, d2);
@@ -238,10 +243,10 @@ function packVariantProfile(speciesName, variantId) {
   bad({ actorType: 'character', functionalOverrides: [] }, 'INVALID_FUNCTIONAL_OVERRIDES');
   bad({ actorType: 'character', functionalOverrides: { a: 'broken' } }, 'INVALID_FUNCTIONAL_OVERRIDES');
   bad({ actorType: 'character', speciesProfile: { anatomy: [] } }, 'INVALID_ANATOMY');
-  bad({ actorType: 'character', speciesProfile: { anatomy: { appendages: [{ id: '', kind: 'arm' }] } } }, 'INVALID_ANATOMY');
-  bad({ actorType: 'character', speciesProfile: { anatomy: { appendages: [{ id: 'a', kind: 'arm' }, { id: 'a', kind: 'arm' }] } } }, 'INVALID_ANATOMY');
-  bad({ actorType: 'character', speciesProfile: { anatomy: { appendages: [{ id: 'a', kind: 'arm', functionalState: 'severed' }] } } }, 'INVALID_ANATOMY');
-  bad({ actorType: 'character', speciesProfile: { anatomy: { appendages: [{ id: 'a', kind: 'arm', capabilities: { canWield: 'yes' } }] } } }, 'INVALID_CAPABILITY');
+  bad({ actorType: 'character', speciesProfile: { anatomy: an([{ id: '', kind: 'arm', capabilities: { ...ALL3 } }]) } }, 'INVALID_ANATOMY');
+  bad({ actorType: 'character', speciesProfile: { anatomy: an([{ id: 'a', kind: 'arm', capabilities: { ...ALL3 } }, { id: 'a', kind: 'arm', capabilities: { ...ALL3 } }]) } }, 'INVALID_ANATOMY');
+  bad({ actorType: 'character', speciesProfile: { anatomy: an([{ id: 'a', kind: 'arm', functionalState: 'severed', capabilities: { ...ALL3 } }]) } }, 'INVALID_ANATOMY');
+  bad({ actorType: 'character', speciesProfile: { anatomy: an([{ id: 'a', kind: 'arm', capabilities: { canHold: true, canWield: 'yes', canManipulate: true } }]) } }, 'INVALID_CAPABILITY');
   ok('malformed API input raises AnatomyInputError with a documented code; ordinary missing evidence never throws');
 }
 
