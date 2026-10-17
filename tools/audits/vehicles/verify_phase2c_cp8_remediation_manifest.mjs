@@ -81,9 +81,15 @@ export function validateRemediationManifest({manifest, sourceLedger, packs, blob
       if (!change.path?.startsWith('system.') || changedPaths.has(change.path))
         errors.push('INVALID_OR_DUPLICATE_CORRECTION_PATH ' + id + ':' + change.path);
       changedPaths.add(change.path);
-      if (serial(at(current, change.path)) !== serial(change.observed))
+      const observed = observedField(current, change.path);
+      const hasObservedValue = Object.prototype.hasOwnProperty.call(change, 'observed');
+      const validObservedState = observed.state === change.observedState &&
+        (observed.state === 'MISSING'
+          ? !hasObservedValue
+          : hasObservedValue && serial(change.observed) === serial(observed.value));
+      if (!validObservedState)
         errors.push('STALE_OBSERVED_VALUE ' + id + ':' + change.path);
-      if (serial(change.expected) === serial(change.observed))
+      if (observed.state !== 'MISSING' && serial(change.expected) === serial(observed.value))
         errors.push('NO_OP_CORRECTION ' + id + ':' + change.path);
       if (change.path === 'system.weapons' || change.path.startsWith('system.weapons.'))
         errors.push('UNREVIEWED_WEAPON_ROW_MUTATION ' + id);
