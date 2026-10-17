@@ -1,0 +1,278 @@
+{
+  "schema": "swse.vehicle.phase2c.cp2.crossbook-research.v0.1",
+  "mode": "RESEARCH_ONLY_DO_NOT_APPLY_POLICY_OR_PRODUCTION_PATCH",
+  "referenceCommit": "eb49083a2947fb49d969609098a50b296930b00f",
+  "phase1FixedCensus": 316,
+  "phase1Immutable": true,
+  "phase2bComplete": true,
+  "books": [
+    {
+      "book": "Starships of the Galaxy",
+      "sourceReviewed": 104,
+      "attackGroupRows": 258,
+      "discoveryCases": 155,
+      "publishedConflictsRecorded": null,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-vehicle-v06-pressure-cases-cp16.json",
+      "discoveryGitBlobSHA": "a7333de1e19514a5082b7d6961085a4c27602275"
+    },
+    {
+      "book": "Clone Wars Campaign Guide",
+      "sourceReviewed": 41,
+      "attackGroupRows": 79,
+      "discoveryCases": 44,
+      "publishedConflictsRecorded": 1,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-clone-wars-cp5-schema-discovery.json",
+      "discoveryGitBlobSHA": "982a67bff57579aa496b4f399491b058ba46c8ff"
+    },
+    {
+      "book": "Legacy Era Campaign Guide",
+      "sourceReviewed": 39,
+      "attackGroupRows": 92,
+      "discoveryCases": 74,
+      "publishedConflictsRecorded": 5,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-legacy-era-cp4-schema-discovery.json",
+      "discoveryGitBlobSHA": "ddfc5edb565eb7ec8590ff9cb2f5a03e622fa1e0"
+    },
+    {
+      "book": "Rebellion Era Campaign Guide",
+      "sourceReviewed": 35,
+      "attackGroupRows": 72,
+      "discoveryCases": 71,
+      "publishedConflictsRecorded": 4,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-rebellion-era-cp3-schema-discovery.json",
+      "discoveryGitBlobSHA": "090112383e5b7c7da1aef8299acf2d1db3e92236"
+    },
+    {
+      "book": "Knights of the Old Republic Campaign Guide",
+      "sourceReviewed": 32,
+      "attackGroupRows": 69,
+      "discoveryCases": 84,
+      "publishedConflictsRecorded": 7,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-kotor-cp3-schema-discovery.json",
+      "discoveryGitBlobSHA": "INCLUDED_IN_PRIOR_COMMITTED_PHASE2B_PACKAGE"
+    },
+    {
+      "book": "Force Unleashed Campaign Guide",
+      "sourceReviewed": 19,
+      "attackGroupRows": 41,
+      "discoveryCases": 39,
+      "publishedConflictsRecorded": 5,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-force-unleashed-book-schema-discovery.json",
+      "discoveryGitBlobSHA": "INCLUDED_IN_PRIOR_COMMITTED_PHASE2B_PACKAGE"
+    },
+    {
+      "book": "Unknown Regions",
+      "sourceReviewed": 12,
+      "attackGroupRows": 22,
+      "discoveryCases": 35,
+      "publishedConflictsRecorded": 2,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-unknown-regions-book-schema-discovery.json",
+      "discoveryGitBlobSHA": "INCLUDED_IN_PRIOR_COMMITTED_PHASE2B_PACKAGE"
+    },
+    {
+      "book": "Scum and Villainy",
+      "sourceReviewed": 11,
+      "attackGroupRows": 21,
+      "discoveryCases": 32,
+      "publishedConflictsRecorded": 1,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-scum-and-villainy-book-source-closure-schema-discovery.json",
+      "discoveryGitBlobSHA": "INCLUDED_IN_PRIOR_COMMITTED_PHASE2B_PACKAGE"
+    },
+    {
+      "book": "Core Rulebook",
+      "sourceReviewed": 10,
+      "attackGroupRows": 22,
+      "discoveryCases": 36,
+      "publishedConflictsRecorded": 2,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-core-rulebook-book-source-closure-schema-discovery.json",
+      "discoveryGitBlobSHA": "INCLUDED_IN_PRIOR_COMMITTED_PHASE2B_PACKAGE"
+    },
+    {
+      "book": "Galaxy at War",
+      "sourceReviewed": 5,
+      "attackGroupRows": 13,
+      "discoveryCases": 18,
+      "publishedConflictsRecorded": 1,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-galaxy-at-war-book-source-closure-schema-discovery.json",
+      "discoveryGitBlobSHA": "INCLUDED_IN_PRIOR_COMMITTED_PHASE2B_PACKAGE"
+    },
+    {
+      "book": "Galaxy of Intrigue",
+      "sourceReviewed": 6,
+      "attackGroupRows": 9,
+      "discoveryCases": 23,
+      "publishedConflictsRecorded": 2,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-galaxy-of-intrigue-book-source-closure-schema-discovery.json",
+      "discoveryGitBlobSHA": "INCLUDED_IN_PRIOR_COMMITTED_PHASE2B_PACKAGE"
+    },
+    {
+      "book": "Jedi Academy Training Manual",
+      "sourceReviewed": 1,
+      "attackGroupRows": 1,
+      "discoveryCases": 4,
+      "publishedConflictsRecorded": 0,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-jedi-academy-training-manual-book-source-closure-schema-discovery.json",
+      "discoveryGitBlobSHA": "INCLUDED_IN_PRIOR_COMMITTED_PHASE2B_PACKAGE"
+    },
+    {
+      "book": "Scavenger's Guide to Droids",
+      "sourceReviewed": 0,
+      "attackGroupRows": 0,
+      "discoveryCases": 0,
+      "publishedConflictsRecorded": 0,
+      "discoveryManifestPath": null,
+      "discoveryGitBlobSHA": null
+    },
+    {
+      "book": "Threats of the Galaxy",
+      "sourceReviewed": 1,
+      "attackGroupRows": 1,
+      "discoveryCases": 3,
+      "publishedConflictsRecorded": 0,
+      "discoveryManifestPath": "data/audits/vehicles/swse-phase2c-threats-of-the-galaxy-book-source-closure-schema-discovery.json",
+      "discoveryGitBlobSHA": "INCLUDED_IN_PRIOR_COMMITTED_PHASE2B_PACKAGE"
+    }
+  ],
+  "aggregate": {
+    "historicalPublishedClaimsReviewed": 316,
+    "attackGroupRowsInventoried": 700,
+    "discoveryCases": 618,
+    "strictMechanicalCertificatesKnown": 4,
+    "documentedPublishedConflictsExcludingSotG": 30,
+    "censusCandidatesPending": 2,
+    "schemaFrozen": false,
+    "schema0bHistoricalGateAllGreen": false
+  },
+  "countingNotes": [
+    "The 618 discovery cases count final cumulative manifest rows, not unique deduplicated mechanics, independent schema fields or verified implementation defects.",
+    "The 30 conflict records exclude Starships of the Galaxy because its final ledger uses a different conflict schema; do not claim this as a project-wide conflict total.",
+    "No ship was newly certified in this checkpoint. All findings are static evidence/audit results, not proof of live Foundry behavior."
+  ],
+  "runtimeRiskFindings": [
+    {
+      "id": "R01",
+      "title": "Negative weapon bonuses clamped to zero",
+      "authority": "GitHub repository source",
+      "repositoryPath": "scripts/engine/import/vehicle-weapon-import-normalizer.js",
+      "sourceLines": [
+        252,
+        258
+      ],
+      "observation": "Text parser converts the extracted attack bonus using `+${Math.max(0, bonus)}`; a printed -2 is converted to +0.",
+      "implication": "Must preserve signed published values, with no authority inferred from reparsed output.",
+      "status": "CONFIRMED_CODE_REVIEW_NOT_A_RUNTIME_EXECUTION_TEST"
+    },
+    {
+      "id": "R02",
+      "title": "Unknown weapon arc in targeting logic",
+      "authority": "GitHub repository source",
+      "repositoryPath": "scripts/combat/systems/vehicle/vehicle-weapons.js",
+      "sourceLines": [
+        47,
+        74
+      ],
+      "observation": "inFireArc defaults `arc='forward'`; any unsupported arc falls through to `return true`.",
+      "implication": "Unknown/source-silent arc is not the same as forward or unrestricted firing; target eligibility needs an explicit policy and failure status.",
+      "status": "CONFIRMED_CODE_REVIEW_NOT_A_RUNTIME_EXECUTION_TEST"
+    },
+    {
+      "id": "R03",
+      "title": "Source-silent stats can become defaults",
+      "authority": "GitHub repository source",
+      "repositoryPath": "scripts/engine/import/vehicle-import-normalizer.js",
+      "sourceLines": [
+        23,
+        27
+      ],
+      "observation": "safeNumber coerces invalid numeric inputs to a default 0; the broader normalizer is designed to coerce legacy values for rendering.",
+      "implication": "Authority ingest must have an evidence-aware strict stage before display/legacy normalization; do not modify current live Actor behavior based on this static observation alone.",
+      "status": "CONFIRMED_CODE_REVIEW_NOT_A_RUNTIME_EXECUTION_TEST"
+    },
+    {
+      "id": "R04",
+      "title": "Crew station resolution already distinguishes ambiguity",
+      "authority": "GitHub repository source",
+      "repositoryPath": "scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js",
+      "sourceLines": [
+        26,
+        65
+      ],
+      "observation": "Explicit station keys win; missing role mapping becomes `unmapped`; multiple role matches become `ambiguous` rather than choosing a gunner.",
+      "implication": "Reuse this existing fail-closed station resolver when vehicle weapon mounts are reconciled.",
+      "status": "CONFIRMED_CODE_REVIEW_NOT_A_RUNTIME_EXECUTION_TEST"
+    },
+    {
+      "id": "R05",
+      "title": "Shipyard data uses default shields and weapon rows",
+      "authority": "GitHub repository source",
+      "repositoryPath": "scripts/engine/vehicles/vehicle-factory.js",
+      "sourceLines": [
+        183,
+        250
+      ],
+      "observation": "Build logic reads a fallback 0 shield rating, derives shipyard weapons and preserves existing hyperdrive strings.",
+      "implication": "Separate canonical stock data certification from mutable shipyard build state; do not treat this as proof production currently ingests the new audit ledger.",
+      "status": "CONFIRMED_CODE_REVIEW_NOT_A_RUNTIME_EXECUTION_TEST"
+    },
+    {
+      "id": "R06",
+      "title": "Crew-scoped gunnery authority already exists",
+      "authority": "GitHub repository source",
+      "repositoryPath": "scripts/engine/combat/vehicle-attack-math.js",
+      "sourceLines": [
+        1,
+        55
+      ],
+      "observation": "Vehicle attack math distinguishes resolved gunner BAB from vehicle Intelligence and separates abstract crew quality.",
+      "implication": "Reuse the attack-math authority rather than storing printed stock crew bonuses as intrinsic weapon bonuses.",
+      "status": "CONFIRMED_CODE_REVIEW_NOT_A_RUNTIME_EXECUTION_TEST"
+    }
+  ],
+  "proposedDecisions": [
+    {
+      "id": "P2C-D01",
+      "title": "Reconcile two omitted printed starships",
+      "recommendation": "APPROVE",
+      "recommendationText": "Approve a corrective, append-only supplemental census that raises publication-claim scope from 316 to 318 *after* independent source close-read and stable ID checks for Deep-X Explorer and Hornet-class Interceptor. Keep the historical 316 Phase 1 file immutable; do not add narrative-only configurations as ship identities.",
+      "why": "Both have independent published CL statblocks and were omitted from the historical roster. Changing the frozen Phase 1 file would destroy provenance.",
+      "choices": [
+        "APPROVE",
+        "DENY",
+        "OTHER"
+      ],
+      "implementationStatus": "AWAITING_USER_APPROVAL"
+    },
+    {
+      "id": "P2C-D02",
+      "title": "Unknown mounts, arcs, and attack groups",
+      "recommendation": "APPROVE",
+      "recommendationText": "Approve two-stage certification: (a) source-complete fact/attack-group record where all printed fields are reconciled and explicit silence is documented, (b) operationally certified only when target/crew rules have sufficient evidence. Never invent physical mount counts or fire arcs; a missing arc blocks automatic arc-dependent eligibility, with a clearly logged GM override allowed at runtime.",
+      "why": "700 attack-group rows are not 700 physical mounts. The runtime currently has a forward-arc default and an unknown-arc permissive fallthrough; neither should decide canonical silence.",
+      "choices": [
+        "APPROVE",
+        "DENY",
+        "OTHER"
+      ],
+      "implementationStatus": "AWAITING_USER_APPROVAL"
+    },
+    {
+      "id": "P2C-D03",
+      "title": "Resolve contradictory printed rules",
+      "recommendation": "APPROVE",
+      "recommendationText": "Keep all conflicting literal printed values with page/field provenance and a PUBLISHED_CONFLICT flag. Do not choose a canonical numeric result without published errata or a separately approved adjudication. Permit a temporary, recorded GM choice for a game instance; it must not mutate the canonical claim.",
+      "why": "At least 30 conflicts are documented outside the Starships of the Galaxy book, including bonus discrepancies and ambiguous hardware lines.",
+      "choices": [
+        "APPROVE",
+        "DENY",
+        "OTHER"
+      ],
+      "implementationStatus": "AWAITING_USER_APPROVAL"
+    }
+  ],
+  "policyStatus": "NOT_APPROVED_PENDING_USER_RESPONSE",
+  "constraints": [
+    "Single Source of Truth: compiled consumer reads designated authority, no duplicate fallback calculation as a second authority.",
+    "No legacy backfill, source fabrication, unconditional variant collapse, or attack-group-to-mount cardinality inference.",
+    "Do not mark Phase2C frozen or Phase3 hydration approved."
+  ]
+}
