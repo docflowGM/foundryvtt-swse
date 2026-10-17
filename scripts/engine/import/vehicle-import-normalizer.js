@@ -279,6 +279,24 @@ function normalizeCargo(system) {
 }
 
 /**
+ * Preserve legitimate installed-row identities and physical topology.
+ * These are retained as DATA only: an actor-provided source key or weapon ID
+ * NEVER proves that a stock attack is canonical. The strict gate still
+ * requires an independently certified installed-group binding.
+ */
+const VEHICLE_WEAPON_PRESERVED_FIELDS = Object.freeze([
+  'id', 'baseName', 'attackType', 'mountId', 'mountCount', 'hardwareCount',
+  'hardwareCountKind', 'battery', 'batteryCount', 'countSource', 'pointDefense',
+  'modifiers', 'fireControl', 'firingArc', 'arcEvidence', 'station',
+  'weaponSystemSlug', 'weaponSystemName', 'weaponSystemSource',
+  'rangeProfileSlug', 'rangeProfileName', 'baseRangeProfileSlug',
+  'baseRangeProfileName', 'rangeSource', 'rawSource', 'parseConfidence',
+  'notes', 'sourcePage', 'sourcePrintedPage', 'printedAttackTotal',
+  'publishedAttackTotal', 'sourceEntryKey', 'weaponGroupKey',
+  'sourceWeaponGroupKey'
+]);
+
+/**
  * Normalize weapons array: ensure all entries have minimal required shape
  * Removes corrupted entries (with category/tag names)
  */
@@ -300,6 +318,11 @@ function normalizeWeapons(weapons) {
       return !CORRUPTED_TERMS.some(term => name.includes(term));
     })
     .map(w => ({
+      // Keep stable installed-row IDs and source/mount evidence through imports.
+      // Never use any retained identifier as a standalone authority to fire.
+      ...Object.fromEntries(VEHICLE_WEAPON_PRESERVED_FIELDS
+        .filter(key => Object.prototype.hasOwnProperty.call(w, key))
+        .map(key => [key, w[key]])),
       name: safeString(w.name, 'Weapon'),
       ...(w.arc !== undefined && w.arc !== null ? { arc: safeString(w.arc, 'unknown') } : {}),
       ...(w.bonus !== undefined && w.bonus !== null ? { bonus: w.bonus } : {}),
