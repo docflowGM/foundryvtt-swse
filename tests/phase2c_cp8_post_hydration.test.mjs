@@ -90,3 +90,42 @@ test('source certification cannot be replaced with pack field similarities',()=>
   l.entries.find(x=>x.sourceEntryKey.includes('ghtroc-industries')).fullFieldCertified=false;
   error(check(l,packs),'CERTIFICATE_COUNT_CHANGED');
 });
+
+test('published carried craft none is known absence, never null',()=>{
+  for(const target of PILOT_TARGETS){
+    const ship=row(packs,target.id);
+    assert.equal(ship.system.carried_craft,'None',target.id);
+    assert.equal(ship.system.vehicleCarriedCraftRaw,'None',target.id);
+    assert.equal(ship.system.vehicleHasCarriedCraft,false,target.id);
+  }
+  assert.equal(check().ok,true);
+});
+test('null carried craft for an explicitly unladen stock ship fails certification',()=>{
+  const alteredPacks=altered();
+  row(alteredPacks,'97c5c070d93b7a0a').system.carried_craft=null;
+  error(check(ledger,alteredPacks),'CARRIED_CRAFT_EXPLICIT_NONE');
+});
+test('no weapon mount is represented as an empty list, not null',()=>{
+  const alteredPacks=altered();
+  for(const id of ['97c5c070d93b7a0a','18cd29422b66693d','28f748f51896aa1b']){
+    const ship=row(packs,id);
+    assert.deepEqual(ship.system.weapons,[]);
+  }
+  row(alteredPacks,'28f748f51896aa1b').system.weapons=null;
+  error(check(ledger,alteredPacks),'WEAPON_GROUP_COUNT');
+});
+test('unknown Action VI navcomputer is null, not a fabricated false',()=>{
+  const ship=row(packs,'97c5c070d93b7a0a');
+  assert.equal(ship.system.vehicleHasNavicomputer,null);
+  const alteredPacks=altered();
+  row(alteredPacks,'97c5c070d93b7a0a').system.vehicleHasNavicomputer=false;
+  error(check(ledger,alteredPacks),'NAVCOMPUTER_UNSPECIFIED_IS_NULL');
+});
+test('known populated pricing/ability subfields never have null parent',()=>{
+  const alteredPacks=altered();
+  row(alteredPacks,'4d5b3422047f5eb8').system.cost=null;
+  error(check(ledger,alteredPacks),'KNOWN_COST_PARENT_NULL');
+  const second=altered();
+  row(second,'4d5b3422047f5eb8').system.attributes.int=null;
+  error(check(ledger,second),'KNOWN_INT_PARENT_NULL');
+});
