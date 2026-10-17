@@ -26,6 +26,7 @@ import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/m
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
 import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
+import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-preflight.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { normalizeRangeBand } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
@@ -683,6 +684,45 @@ export async function rollAttack(actor, weapon, options = {}) {
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
+  }
+
+  // Phase 2C, immediate strict stock mode (approved DENY): every vehicle-
+  // domain attack is checked BEFORE preparation, ammo, action costs or dice.
+  // Only a weapon proven installed through the vehicle shipyard is exempt
+  // from PUBLISHED STOCK provenance; this does not exempt its other weapons.
+  // Personal use of vehicle-class weapons retains the character domain.
+  const vehicleDomain = resolveAttackDomain({
+    actor, item: weapon, operator: rollOptions.operator ?? null,
+    vehicle: rollOptions.vehicleActor ?? null,
+    sourceContext: {
+      vehicleActor: rollOptions.vehicleActor ?? null,
+      abstractCrewQuality: rollOptions.abstractCrewQuality ?? null
+    }
+  });
+  const ownedVehicle = weapon?.actor?.type === 'vehicle' ? weapon.actor : null;
+  if (ownedVehicle && (!vehicleDomain.ok || vehicleDomain.domain === 'character' ||
+       vehicleDomain.normalizedContext?.vehicleActor !== ownedVehicle)) {
+    ui?.notifications?.warn?.('Vehicle-mounted weapon requires its actual vehicle and crew attack context.');
+    return null;
+  }
+  if (!vehicleDomain.ok && (actor.type === 'vehicle' || rollOptions.vehicleActor)) {
+    ui?.notifications?.warn?.('Vehicle attack was blocked: ' + vehicleDomain.reason);
+    return null;
+  }
+  if (vehicleDomain.ok && vehicleDomain.domain !== 'character') {
+    const vehicle = vehicleDomain.normalizedContext?.vehicleActor;
+    const target = getTargetActorFromOptions(rollOptions);
+    const attackId = globalThis.foundry?.utils?.randomID?.() ?? null;
+    // A future trusted source/crew binding must supply proof from the domain,
+    // never from caller-supplied rollOptions flags or synthetic Actor fields.
+    const sourceGate = await authorizeVehicleAttackBeforeCosts({
+      vehicle, weapon, target, attackId,
+      crewStationResolved: false, gmDecision: null
+    });
+    if (!sourceGate.ok) {
+      ui?.notifications?.warn?.('Vehicle attack blocked by strict stock-source evidence policy: ' + sourceGate.reason);
+      return null;
+    }
   }
 
   // Phase 5D-A: canonical weapon/profile resolution is pure -- do it BEFORE any action-option or ammunition cost so an

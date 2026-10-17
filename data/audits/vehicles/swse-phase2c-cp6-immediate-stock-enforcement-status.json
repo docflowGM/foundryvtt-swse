@@ -1,0 +1,43 @@
+{
+  "schema": "swse.vehicle.phase2c.cp6.immediate-stock-enforcement.v1",
+  "mode": "STRICT_STOCK_FAIL_CLOSED_ACTIVE",
+  "recordedUserDecisions": [
+    {"id": "P2C-D01", "decision": "APPROVED", "subject": "318-source-census-append-only"},
+    {"id": "P2C-D02", "decision": "APPROVED", "subject": "unknown-arc-is-not-authorized"},
+    {"id": "P2C-D03", "decision": "APPROVED", "subject": "published-conflicts-preserved"},
+    {"id": "P2C-D04", "decision": "DENY", "subject": "staged-rollout-proposal", "operationalMeaning": "strict canonical-stock gate immediately, including legacy stock attacks lacking trusted source weapon bindings"}
+  ],
+  "userScopeClarification": {
+    "canonicalStockOutOfBox": "STRICT_PUBLISHED_SOURCE_EVIDENCE",
+    "playerOrGMModification": "EXCLUDED_FROM_STOCK_SOURCE_CERTIFICATION; EXISTING_INSTALLATION_AND_WEAPON_RULES_STILL_APPLY",
+    "mixedModifiedVehicle": "MUST_CLASSIFY_EACH_INSTALLED_WEAPON; STOCK_WEAPONS_REMAIN_STRICT",
+    "manualOrUnprovenWeapon": "NO_AUTOMATIC_MODIFICATION_EXEMPTION"
+  },
+  "runtime": {
+    "vehicleAttackRollPreCostGate": "WIRED_IN_SCRIPTS_COMBAT_ROLLS_ATTACKS_JS",
+    "trustedStockGroupMapEntries": 0,
+    "stockAttackWithNoRegistryBinding": "BLOCK",
+    "matchedAppliedShipyardModification": "PASS_STOCK_EVIDENCE_GATE_ONLY",
+    "unownedWeaponOrContextMismatch": "BLOCK",
+    "callerProvidedSourceOrIsGMFlagIsAuthority": false,
+    "publishedArcGMOverride": "REQUIRES_TRUSTED_SOURCE_GROUP_AND_PERSISTED_GM_RECEIPT",
+    "recordedSourceConflictFlatOverrideInjectedIntoVehicleINTMath": false,
+    "strictMechanicalCertificatesIssued": 0,
+    "sourceClaimCensus": 318,
+    "productionCompendiaModified": false,
+    "productionHydrationComplete": false,
+    "foundryV13LiveE2ECompleted": false
+  },
+  "checks": {
+    "isolatedNodePolicyTestsPassed": 42,
+    "integratedRepositoryTestsExecuted": false,
+    "staticGitBlobReviewPending": true
+  },
+  "remainingBlockers": [
+    "Build immutable sourceEntryKey-to-Foundry-ship and weapon-group binding, with exact installed weapon identity / variant proof.",
+    "Bind trusted crew station resolution to stock fire eligibility.",
+    "Apply source-value conflicts without conflating printed stock crew totals with vehicle INT gunnery formula.",
+    "Complete regression suite in full checkout and Foundry V13 live scenario testing.",
+    "Upgrade vehicle modification pipeline for all user-authorized custom weapon installation paths and independent legality tests."
+  ]
+}

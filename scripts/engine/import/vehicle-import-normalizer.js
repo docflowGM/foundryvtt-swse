@@ -308,7 +308,9 @@ function normalizeWeapons(weapons) {
       ...(w.range !== undefined && w.range !== null ? { range: w.range } : {}),
       ...(w.count !== undefined && w.count !== null ? { count: w.count } : {}),
       ...(w.operatorStation !== undefined ? { operatorStation: w.operatorStation } : {}),
-      ...(w.crewRole !== undefined ? { crewRole: w.crewRole } : {})
+      ...(w.crewRole !== undefined ? { crewRole: w.crewRole } : {}),
+      // Shipyard provenance is not canonical publication authority.
+      ...(w.sourceModificationId !== undefined ? { sourceModificationId: w.sourceModificationId } : {})
     }));
 }
 
