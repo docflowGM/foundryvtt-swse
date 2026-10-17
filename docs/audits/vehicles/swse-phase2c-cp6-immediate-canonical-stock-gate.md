@@ -24,3 +24,7 @@ The future trusted stock registry must be compiled from authoritative print audi
 GM arc adjudication is allowed only on a trusted source-bound group and uses the established receipt-before-exception adapter. It cannot grant strict certification. For a printed attack-bonus contradiction, CP6 deliberately blocks use of the printed numeric alternatives in gunnery math until the crew's BAB + vehicle INT composition can be reconciled; choosing a flat total would violate the attack formula.
 
 **Testing status:** CP3 + CP4 policy and new CP6 provenance tests run as 42 isolated Node tests. Full integrated repository and Foundry V13 session tests are not claimed. Source snapshots are not mutated; no compendium change or canonical stock attack group hydration is authorized by this checkpoint.
+
+## Cross-project dependency registered after CP6
+
+The future vehicle/droid customization architecture will preserve immutable printed stock definitions independently from individual actor installation histories, effective configuration and transient combat state. 'Pure' and 'modified' describe instance configuration, not two independent editable canonical compendia. CP6's per-weapon stock-versus-shipyard classification remains an interim provenance boundary, **not** source-audited installation legality or an authorization to build the modification system. See [the future-modification dependency contract](swse-phase2c-future-vehicle-droid-modification-dependencies.md). Immediate strict stock enforcement and the zero trusted stock runtime bindings remain unchanged.

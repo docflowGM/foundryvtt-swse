@@ -15,3 +15,8 @@ This directory preserves the **pre-implementation, sourcebook-based** vehicle/st
 - No Foundry runtime or production pack migration is performed by this commit.
 
 Source text/PDF books are not checked into this directory. Keep source publications outside the repository.
+
+## Current Phase 2C continuation
+
+- The historical 316-source-claim census above remains frozen; Phase 2C D01's append-only overlay brings the reviewed **publication-claim scope to 318**. The Phase 2C CP6 live gate enforces strict stock attack evidence without claiming that all 318 ships are operationally certified.
+- Future modification architecture/dependencies: [Phase 2C vehicle and droid modification dependency contract](swse-phase2c-future-vehicle-droid-modification-dependencies.md). **Design note only**; continue current Phase 2C stock binding and combat certification, not customization implementation.
