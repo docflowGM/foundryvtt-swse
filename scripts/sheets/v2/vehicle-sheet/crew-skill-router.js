@@ -1,3 +1,5 @@
+import { resolveVehicleCrewActor } from "../../../engine/crew/vehicle-crew-actor-authority.js";
+export { resolveVehicleCrewActor };
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
@@ -71,22 +73,6 @@ export function getStationSkillActions(stationKey) {
   return (STATION_SKILLS[stationKey] ?? []).map((action) => ({ ...action }));
 }
 
-function actorFromId(id) {
-  if (!id) return null;
-  return game?.actors?.get?.(id) ?? null;
-}
-
-async function actorFromUuid(uuid) {
-  if (!uuid) return null;
-  try {
-    return await fromUuid(uuid);
-  } catch (err) {
-    console.warn(`SWSE | Could not resolve crew UUID ${uuid}`, err);
-    return null;
-  }
-}
-
-
 function getVehicleWeapon(vehicle, weaponId) {
   if (!vehicle || !weaponId) return null;
   const item = vehicle.items?.get?.(weaponId);
@@ -112,59 +98,6 @@ function getVehicleWeapon(vehicle, weaponId) {
       // Source provenance is resolved separately by immutable authority; actor metadata is not certification.
       operatorStation: weapon.operatorStation ?? null
     }
-  };
-}
-
-function getCrewEntry(vehicle, stationKey) {
-  const system = vehicle?.system ?? {};
-  const positions = system.crewPositions ?? {};
-  const entry = positions?.[stationKey];
-  if (entry) return entry;
-
-  const owned = Array.isArray(system.ownedActors) ? system.ownedActors : [];
-  return owned.find((candidate) => candidate?.position === stationKey || candidate?.role === stationKey) ?? null;
-}
-
-/**
- * Resolve the operator/crew actor for one vehicle crew station.
- *
- * `source` distinguishes three cases that Phase 2 audit work found were
- * silently collapsed into one another:
- * - 'actor': the station has an assigned crew reference and it resolved to
- *   a real actor. Use this actor's own stats.
- * - 'unassigned': the station has no crew reference at all. This is the
- *   legitimate abstract Crew Quality case (SWSE vehicles with no named
- *   gunner use a flat crew-quality bonus instead).
- * - 'invalid': the station HAS a crew reference, but it failed to resolve
- *   (e.g. the assigned actor was deleted, or the UUID/id is stale). This is
- *   a data-integrity problem, not an intentional abstract-crew choice, and
- *   must not be silently treated the same as 'unassigned' — callers should
- *   warn rather than quietly rolling as generic crew quality under a
- *   deleted actor's stale name.
- *
- * @param {Actor} vehicle
- * @param {string} stationKey
- * @returns {Promise<{actor: Actor|null, entry: Object|string|null, label: string, source: 'actor'|'unassigned'|'invalid'}>}
- */
-export async function resolveVehicleCrewActor(vehicle, stationKey) {
-  const entry = getCrewEntry(vehicle, stationKey);
-  if (!entry) {
-    return { actor: null, entry: null, label: 'Crew Quality', source: 'unassigned' };
-  }
-
-  if (typeof entry === 'string') {
-    const fromDirectUuid = await actorFromUuid(entry);
-    const fromDirectId = actorFromId(entry);
-    const actor = fromDirectUuid || fromDirectId;
-    return { actor, entry, label: actor?.name || entry, source: actor ? 'actor' : 'invalid' };
-  }
-
-  const actor = await actorFromUuid(entry.uuid) || actorFromId(entry.id) || actorFromId(entry.actorId);
-  return {
-    actor,
-    entry,
-    label: actor?.name || entry.name || entry.label || 'Crew Quality',
-    source: actor ? 'actor' : 'invalid'
   };
 }
 
