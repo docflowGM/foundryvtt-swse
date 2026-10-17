@@ -28,6 +28,7 @@ import { readFile } from 'node:fs/promises';
 const controls = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js', import.meta.url), 'utf8');
 const characterSheet = await readFile(new URL('../scripts/sheets/v2/vehicle-actor-sheet.js', import.meta.url), 'utf8');
 const crewSkillRouter = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/crew-skill-router.js', import.meta.url), 'utf8');
+const crewAuthority = await readFile(new URL('../scripts/engine/crew/vehicle-crew-actor-authority.js', import.meta.url), 'utf8');
 const contextBuilder = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js', import.meta.url), 'utf8');
 const template = await readFile(new URL('../templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs', import.meta.url), 'utf8');
 
@@ -65,8 +66,10 @@ assert.match(crewSkillRouter, /await rollAttack\(actor, weapon, \{ vehicleActor:
 // (legitimate abstract Crew Quality) from "invalid/deleted assignment"
 // (a data-integrity problem) — these used to collapse into the same silent
 // fallback.
-assert.match(crewSkillRouter, /source: 'unassigned'/);
-assert.match(crewSkillRouter, /source: actor \? 'actor' : 'invalid'/);
+assert.match(crewSkillRouter, /import \{ resolveVehicleCrewActor \} from "\.\.\/\.\.\/\.\.\/engine\/crew\/vehicle-crew-actor-authority\.js"/);
+assert.match(crewSkillRouter, /export \{ resolveVehicleCrewActor \}/);
+assert.match(crewAuthority, /source:\s*'unassigned'/);
+assert.match(crewAuthority, /source:\s*actor\s*\?\s*'actor'\s*:\s*'invalid'/);
 assert.match(crewSkillRouter, /resolution\.source === 'invalid'/);
 
 // 5. An invalid (not merely unassigned) crew resolution must return a
