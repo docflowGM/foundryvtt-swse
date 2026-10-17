@@ -2,6 +2,7 @@
 
 **Status:** documentation-only architecture checkpoint. **Nothing in this document is implemented, activated against production packs, or Foundry-certified.**
 **Branch / PR:** `audit/equipment-ecosystem-e0-e1` / draft PR #1056 · **Starting HEAD:** `5371f712aedaecc9cbe482304326688028fae8e0`
+**E2B-S2A update:** the ten open decisions OD-1…OD-10 in §12 were architecturally resolved in the decision-closeout section **§15** (below). §12 is preserved unchanged as the original record; where §12 and §15 differ, **§15 governs**. Resolutions are design rulings, not published rules and not implementation certification.
 **Decision authority:** the architectural decisions below were supplied by the project owner and ChatGPT. Claude recorded them without redesigning, implementing or extending them. Where the supplied contract is silent or ambiguous the gap is listed in §12 (open decisions), not filled.
 **Published-rules authority:** `docs/audits/equipment-ecosystem-e2b-s1-species-anatomy-source-review.md` (E2B-S1). Claude did not consult any sourcebook. Every source-derived statement below cites an E2B-S1 case (`E2B-RD-nn`) or section.
 **Related:** `equipment-ecosystem-authority-contract-v1.md` (E1, with §14 E2A rulings), `docs/audits/equipment-ecosystem-e2a-anatomy-checkpoint.md`.
@@ -259,6 +260,8 @@ The droid system remains legacy / pre-refactor, scheduled for comprehensive revi
 
 ## 12. Open decisions and ambiguities (reported, not decided)
 
+*E2B-S2A: OD-1…OD-10 below are architecturally resolved in §15, which supersedes this table. The original text is retained as history.*
+
 | ID | Gap in the supplied contract |
 |---|---|
 | OD-1 | Exact final representation of `topologyStatus: partial` versus `unresolved` (what distinguishes them for a species profile) and how each maps onto the resolver's `partial` / `unresolved` result statuses. |
@@ -279,3 +282,74 @@ Schema v1 validation; `SpeciesRegistry._normalizeVariants()` and `applyCompleteS
 ## 14. What this checkpoint does not do
 
 It changes no source, pack, schema, test or tool file; activates no requirement against production data; claims no Foundry or production validation; authorizes no E2B implementation, E2A correction, E3 or later phase; and does not modify any droid, weapon, combat, inventory or modification system.
+
+## 15. E2B-S2A decision closeout — OD-1 through OD-10 architecturally resolved
+
+**Nature of this section.** The rulings below were supplied by the project owner and ChatGPT and are recorded here verbatim in substance; Claude did not redesign them. They are **design rulings**. They are **not** published rules (published claims remain those of E2B-S1) and they are **not** implementation certification: nothing here is implemented, activated against production packs, or Foundry-tested. Repository observations marked `[CURRENT]` were checked at HEAD `edbc29958999ec38af8485046dd757ca4ff91b3b` and are not a substitute for published-page verification.
+
+| ID | Status | Resolution (summary) |
+|---|---|---|
+| OD-1 | resolved (design) | topology definitions; `partial` / `unresolved` topology never produce `resolved` |
+| OD-2 | resolved (design) | standard `held-item-load-floor` shape |
+| OD-3 | resolved (design) | Codru-Ji entitlement preserved via a future read-only trait-to-permission projection |
+| OD-4 | resolved (design) | locomotion-only and vestigial limbs excluded from schema v1 |
+| OD-5 | resolved (design; software default) | added arms are ordinary arms; count must be explicitly recorded |
+| OD-6 | resolved (observation) | Krevaaki publication-profile identities |
+| OD-7 | resolved (design) | no second registry; exact-profile tests plus temporary fail-closed guard |
+| OD-8 | resolved (design) | fail-closed coverage for all recognized exceptions before E3 |
+| OD-9 | resolved (design) | `EncumbranceEngine` remains the authority; a future input is required |
+| OD-10 | resolved (ownership) | Near-Human defect assigned to the Near-Human / Progression Framework workstream |
+
+### OD-1 — Topology completeness
+- `complete`: all equipment-relevant appendages are established, **including an explicitly verified empty set**.
+- `partial`: at least some appendage topology is reliably established, but additional equipment-relevant physical structure remains uncertain.
+- `unresolved`: no reliable equipment-relevant topology can be established.
+
+A `complete` topology can still yield a `partial` effective anatomy when capability, identity or functional-state information is incomplete. `partial` topology cannot produce a `resolved` effective anatomy. `unresolved` topology produces an `unresolved` effective anatomy. If `partial` topology contains no sufficiently identified appendages, the effective result is `unresolved`. Allocation is never authorized merely because some facts are known.
+
+### OD-2 — Conditional tail restriction
+Adopted declarative representation (proposed schema, not production data):
+```json
+{
+  "type": "held-item-load-floor",
+  "when": "held-by-appendage",
+  "itemSizeAtLeast": "Medium",
+  "loadCategoryFloor": "heavy",
+  "imposesEncumbered": true
+}
+```
+Semantics: applies only while the specified appendage holds the item; a held item of Medium or larger activates the consequence; the resulting load category cannot be lower than heavy; an already overloaded character remains overloaded; the published encumbered treatment applies; it never prohibits holding an item solely because of its size; no weight or carrying-capacity calculation occurs within anatomy. This supersedes the "illustrative field names" caveat of §4 and OD-2 for the constraint's key names; the example in §3.4 (Example B) is to be read with these keys.
+
+Size comparison uses the existing canonical SWSE size ordering. `[CURRENT]` repository evidence: `SIZE_RANK` in `scripts/items/weapon-runtime/condition-policy.js` and `sizeRankOf()` in `scripts/items/weapon-runtime/control-rules.js`. These are a **candidate** size-comparison authority only; depending on the weapon runtime requires a later integration review. **Unknown item size must never silently pass a size-dependent permission or restriction** (fail closed).
+
+### OD-3 — Codru-Ji entitlement authority
+The source-specific Extra Arms entitlement (E2B-RD-01) is preserved through a **future read-only species-trait-to-equipment-permission projection**, not inside generic arm anatomy. Its provenance identifies the selected Legacy Era publication profile and the `extra-arms` trait. It preserves: up to four held items or weapons; permission to wield two two-handed weapons simultaneously; no additional attacks. It is not persisted as a duplicate copy in canonical anatomy, and it is not implemented as a generic rule that all four-armed creatures inherit. The anatomy resolver establishes physical appendages; the future equipment permission layer interprets explicitly published special entitlements. No existing species rules or combat data are modified.
+
+### OD-4 — Non-manipulator anatomy
+Schema v1 covers equipment-relevant appendages only. Locomotion-only and vestigial limbs are not added merely to reproduce full creature morphology. Accordingly (E2B-S1): Krevaaki locomotion tentacles, Killik locomotion limbs and Lugubraa vestigial limbs are not equipment manipulators; Dug lower limbs may be equipment manipulators despite their anatomical position. Species description, movement and natural-weapon authorities remain separate. A future expanded-morphology system needs independent authorization.
+
+### OD-5 — Near-Human Additional Arms
+For a successfully established actor-selected Additional Arms trait: require a **recorded count of one or two** added arms; never infer a count from the trait's existence; add stable individual appendage identities; ordinary added arms take the standard ordinary-arm holding, wielding and manipulation capabilities **as a software design default**, unless a source-backed restriction overrides them. This ordinary-arm default is **not** an additional source-verified combat entitlement (E2B-RD-06 states neither the capabilities of the added arms nor any two-handed entitlement). No additional attacks are granted; Codru-Ji's separately printed two-two-handed-weapon permission is not automatically granted. Tests must preserve the distinction between ordinary arms and the Codru-Ji entitlement.
+
+`[CURRENT]`: `additionalArms` exists in `data/near-human-traits.json` as a `physiology` trait whose recorded text says "Up to 2 additional arms"; the catalog entry carries no selected count. The missing `_buildNearHumanContext` is an independent chargen blocker (OD-10). The future validated Near-Human selection record owns the selected count and provenance; the Equipment Ecosystem consumes it read-only and introduces no equipment-owned persistence field. If the validated choice record is unavailable, actor-selected Additional Arms anatomy remains `unresolved`.
+
+### OD-6 — Krevaaki identities
+`[CURRENT]` evidence in `tests/species-multi-publication.test.mjs` (lines 53-54): Unknown Regions — `krevaaki-ur-2b-04`, source profile `UR-2B-04`; Jedi Academy Training Manual — `krevaaki-jatm-2j-04`, source profile `JATM-2J-04`. Only the Unknown Regions treatment was source-certified for anatomy in E2B-S1. Its anatomical capabilities are **not** copied into the Jedi Academy profile, which requires independent source review before anatomy certification. These identity findings are repository observations.
+
+### OD-7 — Profile-keyed certification
+No second runtime species registry is created. Canonical anatomical facts remain in the selected publication-specific species profile. Future validation consists of: (1) schema validation of any declared anatomy; (2) publication-specific test assertions for the exact certified profile ids; (3) a **temporary fail-closed compatibility guard** for recognized exception profiles until migration is complete (migration protection, not permanent species authority). `anatomy` stays globally optional for ordinary complete snapshots; `listMissingSnapshotFields()` is not changed to require it. Once an exception profile is migrated, tests must fail if its required structured anatomy disappears or is dropped during normalization or snapshot application. Legacy-overlay inheritance must be addressed explicitly before activation.
+
+### OD-8 — Interim exception coverage
+Before E3 may consume anatomy in production, fail-closed coverage must recognize all currently identified exceptions that lack verified structured anatomy. Source-reviewed publication profiles: `codru-ji-leg-2c-03`, `ryn-sv-2f-06`, `trianii-gaw-2i-06`, `krevaaki-ur-2b-04`, `killik-ur-2b-12`, `dug-cw-2h-01`, `lugubraa-ur-2b-13`. Also tracked as independently **unreviewed** exceptional anatomy: `krevaaki-jatm-2j-04` (the ordinary two-arm default is not assumed source-certified for it). Near-Human Additional Arms is recognized from a valid actor-specific selection, not a species-wide guard. A recognized exception lacking sufficient anatomy must not silently receive a fully resolved ordinary two-arm result. The E2A guard code is **not** expanded in this documentation checkpoint.
+
+### OD-9 — Encumbrance authority
+The existing authority is `scripts/engine/encumbrance/EncumbranceEngine.js`, specifically `EncumbranceEngine.calculateEncumbrance(actor)`, which determines the load category and consequences; the V2 character actor mirrors the derived result through `mirrorEncumbrance()` in `scripts/actors/v2/character-actor.js`. `[CURRENT]`: the category is calculated from carried weight and carrying capacity and there is **no input for an anatomy-imposed minimum load category**. Future integration must supply a validated minimum-load consequence to this existing authority through an explicitly designed input or adapter. The anatomy resolver remains read-only and never calculates encumbrance penalties; E3 may report prospective consequences read-only. `EncumbranceEngine`, `character-actor.js` and the modifier engines are not modified in E2B-S2A.
+
+### OD-10 — Near-Human defect ownership
+The missing `_buildNearHumanContext` implementation and end-to-end Near-Human selection persistence are assigned to the separate **Near-Human / Progression Framework workstream** and recorded as an existing integration defect. It blocks production activation of actor-selected Additional Arms anatomy until the selection and count are reliably recorded. It does **not** block source certification or implementation of fixed biological species anatomy. It is not repaired here.
+
+### 15.1 Remaining implementation gates (all deferred; none authorized)
+Schema v1 implementation · publication-profile pack migration · independent Jedi Academy Krevaaki anatomy review · Near-Human chargen integration · actor-selected alteration persistence · pre-E3 anatomy completeness and identity corrections (§10) · encumbrance integration · Foundry runtime certification · droid refactor and DR-001 through DR-010 (`DEFERRED_DROID_REFACTOR`).
+
+### 15.2 What this closeout does not do
+It edits only this document. It changes no source, pack, schema, test or tool file, does not modify `EncumbranceEngine`, `character-actor.js` or any modifier engine, does not expand the E2A guard code, repairs no chargen defect, and authorizes no E2B implementation, E2A pre-E3 correction, E3 or later phase.
