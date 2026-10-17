@@ -83,3 +83,23 @@ test('retain immediate strict stock gate and all decision constraints',()=>{
   assert.equal(manifest.policy.vehicleDroidModificationRefactorAuthorized,false);
   assert.equal(check().ok,true);
 });
+
+test('absent pack property is distinguishable from explicitly stored null',()=>{
+  const p=structuredClone(packs),e=manifest.entries.find(x=>x.sourceEntryKey.includes('cr70-corvette'));
+  const row=p[e.candidatePack.path].find(x=>x._id===e.candidatePack.documentId);
+  assert.equal(Object.hasOwn(row.system.attributes.str,'value'),false);
+  row.system.attributes.str.value=null;
+  bad(check({packs:p}),'STALE_OBSERVED_VALUE');
+});
+test('Ghtroc printed attack total reconciles with crew BAB and vehicle INT',()=>{
+  const g=manifest.entries.find(x=>x.sourceEntryKey.includes('ghtroc-industries'));
+  const p=g.targetProfile;
+  const vehicleIntModifier=Math.floor((p.abilities.int-10)/2);
+  assert.equal(p.combat.baseAttackBonus,0);
+  assert.equal(p.crew.quality,'normal');
+  assert.equal(vehicleIntModifier,1);
+  assert.equal(Number(g.deferredGroupHydration[0].sourcePrintedGroup.attackBonus),
+               p.combat.baseAttackBonus+vehicleIntModifier);
+  assert.equal(g.deferredGroupHydration[0].sourcePrintedGroup.autofireBonus,-4);
+  assert.equal(-4-1,-5,'autofire adjustment is -5, not another weapon enhancement');
+});
