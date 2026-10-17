@@ -1,7 +1,7 @@
 {
  "schema": "swse.modification.specification-records/1",
  "registryVersion": "1.5",
- "notes": "Hand-maintained. A record specifies one mechanic component of one typed domain definition from an explicit, verified, unambiguous published rule (basis PUBLISHED_UNAMBIGUOUS) or from an owner ruling (OWNER_RULING). coverage PUBLISHED_FACTS certifies printed facts only (the component becomes SOURCE_VERIFIED, never MECHANIC_SPECIFIED, and supports no implementation evidence); coverage COMPLETE_MECHANIC states the whole implementation-ready behavior and is refused while any blocker is open for the component. Current records: the Scum and Villainy printed-page-39 installation/removal facts (register D-001) for the Scum Tables 2-3/2-4/2-5 upgrade options with a fixed printed upgrade-point value. See docs/audits/d-001-install-remove-pdf-verification.md.",
+ "notes": "Hand-maintained. A record specifies one mechanic component of one typed domain definition from an explicit, verified, unambiguous published rule (basis PUBLISHED_UNAMBIGUOUS) or from an owner ruling (OWNER_RULING). coverage PUBLISHED_FACTS certifies printed facts only (the component becomes SOURCE_VERIFIED, never MECHANIC_SPECIFIED, and supports no implementation evidence); coverage COMPLETE_MECHANIC states the whole implementation-ready behavior and is refused while any blocker is open for the component. Current records (111): (1) 76 installProcedure fact records: the Scum and Villainy printed-page-39 installation/removal facts (register D-001) for the Scum Tables 2-3/2-4/2-5 upgrade options with a fixed printed upgrade-point value; see docs/audits/d-001-install-remove-pdf-verification.md. (2) 35 hostPrerequisites fact records (PUBLISHED_FACTS, register D-005): the Scum and Villainy Table 2-3 universal-upgrade host findings (printed pp. 40-42) for the 35 existing D-005 typed definitions, supplied by the project rules review; see docs/audits/d-005-universal-upgrade-host-text-transcription.md and docs/audits/d-005-t2-implementation-plan.md. These records certify printed facts only; they are not implementation-ready host rules and do not lift D-005.",
  "records": [
   {
    "specId": "D001::sv-cheater::equipment",
@@ -1293,6 +1293,601 @@
    "evidence": "Printed page 39 image inspected directly (SHA-256 fa4c7131829212cec52bb8fd887402aafbdb4b0a9cb6cdfaa246db0d79ca9fc1); transcription and reconciliation in docs/audits/d-001-install-remove-pdf-verification.md. Governance: Scum and Villainy Table 2-5 upgrade option (printed p. 45) whose printed Upgrade Points value is the fixed integer 1.",
    "behavior": "Published facts of the printed page-39 procedure as transcribed in the verification document, section 3, using Table 2-2 row '1' upgrade points (1 printed). Not specified (register D-014): retry cost basis, expedited removal below the shortest increment, effects while deactivated, and state after a failed installation. This record certifies the printed facts only; the procedure is not implementation-ready while D-014 and D-015 are open.",
    "authoredBy": "Claude (source transcription; subject to independent review)",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-cheater::equipment",
+   "typedDefinitionId": "sv-cheater::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 40,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Cheater entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 40. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 01. No separate page-image hash is required.",
+   "behavior": "Published host facts for Cheater (typed domain equipment); domain verdict SUPPORTED. Host finding: Equipment incorporating or concealing the cheating device; published small-device examples are not exhaustive. Functional prerequisites: A suitable functional item capable of incorporating or concealing the cheating device. Conditional effects: Cheating effectiveness and concealment depend on the device and the circumstances of use. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Weapon and armor hosts are not explicitly prohibited but their broader eligibility is not established; no additional typed definitions are proposed. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-cloaked::weapon",
+   "typedDefinitionId": "sv-cloaked::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 40,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Cloaked entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 40. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 02. No separate page-image hash is required.",
+   "behavior": "Published host facts for Cloaked (typed domain weapon); domain verdict SUPPORTED. Host finding: General equipment, weapons, and armor; their effects differ by host context. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Obscures signatures, sound, and appearance and permits more inconspicuous storage; detection differs when an item is used, weapons are more recognizable during use, and armor has a distinct deceptive-appearance interaction. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Distinct effects are not separate host restrictions. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-cloaked::armor",
+   "typedDefinitionId": "sv-cloaked::armor",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 40,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Cloaked entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 40. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 02. No separate page-image hash is required.",
+   "behavior": "Published host facts for Cloaked (typed domain armor); domain verdict SUPPORTED. Host finding: General equipment, weapons, and armor; their effects differ by host context. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Obscures signatures, sound, and appearance and permits more inconspicuous storage; detection differs when an item is used, weapons are more recognizable during use, and armor has a distinct deceptive-appearance interaction. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Distinct effects are not separate host restrictions. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-cloaked::equipment",
+   "typedDefinitionId": "sv-cloaked::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 40,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Cloaked entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 40. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 02. No separate page-image hash is required.",
+   "behavior": "Published host facts for Cloaked (typed domain equipment); domain verdict SUPPORTED. Host finding: General equipment, weapons, and armor; their effects differ by host context. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Obscures signatures, sound, and appearance and permits more inconspicuous storage; detection differs when an item is used, weapons are more recognizable during use, and armor has a distinct deceptive-appearance interaction. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Distinct effects are not separate host restrictions. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-dual-gear::equipment",
+   "typedDefinitionId": "sv-dual-gear::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Dual Gear entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 03. No separate page-image hash is required.",
+   "behavior": "Published host facts for Dual Gear (typed domain equipment); domain verdict SUPPORTED. Host finding: Two physically compatible pieces of equipment may be incorporated into one combined item. Functional prerequisites: The added equipment cannot be larger than the receiving item. Conditional effects: Both functions are retained, but the two components cannot normally be operated simultaneously; pay the full purchase price of the added item. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE; no general permission for repeated installations is established. Additional source limits: Equipment incorporating weapon functionality is among the examples; do not infer that all weapon hosts are categorically excluded. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-electrograpple-handle::weapon",
+   "typedDefinitionId": "sv-electrograpple-handle::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Electrograpple Handle entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 04. No separate page-image hash is required.",
+   "behavior": "Published host facts for Electrograpple Handle (typed domain weapon); domain verdict SUPPORTED. Host finding: A compatible piece of equipment fitted with the specialized electrograpple handle; weapons are a common, not exclusive, application. Functional prerequisites: An attuned electrograpple gauntlet is required to use the handle’s retrieval function; distinguish the use prerequisite from host-domain eligibility. Conditional effects: The attuned gauntlet permits retrieval at range and can assist with freeing held or restrained equipment. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: The phrase most commonly used on a weapon is not a weapons-only restriction; no new armor definition is proposed. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-electrograpple-handle::equipment",
+   "typedDefinitionId": "sv-electrograpple-handle::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Electrograpple Handle entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 04. No separate page-image hash is required.",
+   "behavior": "Published host facts for Electrograpple Handle (typed domain equipment); domain verdict SUPPORTED. Host finding: A compatible piece of equipment fitted with the specialized electrograpple handle; weapons are a common, not exclusive, application. Functional prerequisites: An attuned electrograpple gauntlet is required to use the handle’s retrieval function; distinguish the use prerequisite from host-domain eligibility. Conditional effects: The attuned gauntlet permits retrieval at range and can assist with freeing held or restrained equipment. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: The phrase most commonly used on a weapon is not a weapons-only restriction; no new armor definition is proposed. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-environmental-sealing::weapon",
+   "typedDefinitionId": "sv-environmental-sealing::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Environmental Sealing entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 05. No separate page-image hash is required.",
+   "behavior": "Published host facts for Environmental Sealing (typed domain weapon); domain verdict SUPPORTED. Host finding: General equipment, including weapon and armor items. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Protects the upgraded item against specified environmental hazards using seals and protective coatings; protection of the item does not itself grant environmental protection to its user or wearer. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not grant wearer-level protection from an item-only benefit. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-environmental-sealing::armor",
+   "typedDefinitionId": "sv-environmental-sealing::armor",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Environmental Sealing entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 05. No separate page-image hash is required.",
+   "behavior": "Published host facts for Environmental Sealing (typed domain armor); domain verdict SUPPORTED. Host finding: General equipment, including weapon and armor items. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Protects the upgraded item against specified environmental hazards using seals and protective coatings; protection of the item does not itself grant environmental protection to its user or wearer. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not grant wearer-level protection from an item-only benefit. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-environmental-sealing::equipment",
+   "typedDefinitionId": "sv-environmental-sealing::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Environmental Sealing entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 05. No separate page-image hash is required.",
+   "behavior": "Published host facts for Environmental Sealing (typed domain equipment); domain verdict SUPPORTED. Host finding: General equipment, including weapon and armor items. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Protects the upgraded item against specified environmental hazards using seals and protective coatings; protection of the item does not itself grant environmental protection to its user or wearer. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not grant wearer-level protection from an item-only benefit. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-extra-power-source::weapon",
+   "typedDefinitionId": "sv-extra-power-source::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Extra Power Source entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 06. No separate page-image hash is required.",
+   "behavior": "Published host facts for Extra Power Source (typed domain weapon); domain verdict CONDITIONALLY SUPPORTED. Host finding: Any item, regardless of typed category, that actually operates using energy cells or power packs. Functional prerequisites: The individual host must use energy cells or power packs. Conditional effects: Adds an additional qualifying power supply per installation. Stacking, repeatability, maximum per host: EXPLICITLY REPEATABLE: each installation adds another qualifying power supply. No numerical maximum is printed; ordinary upgrade-point accounting is separate. Additional source limits: A supported domain is not evidence that every item of that category has a qualifying power source. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-extra-power-source::armor",
+   "typedDefinitionId": "sv-extra-power-source::armor",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Extra Power Source entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 06. No separate page-image hash is required.",
+   "behavior": "Published host facts for Extra Power Source (typed domain armor); domain verdict CONDITIONALLY SUPPORTED. Host finding: Any item, regardless of typed category, that actually operates using energy cells or power packs. Functional prerequisites: The individual host must use energy cells or power packs. Conditional effects: Adds an additional qualifying power supply per installation. Stacking, repeatability, maximum per host: EXPLICITLY REPEATABLE: each installation adds another qualifying power supply. No numerical maximum is printed; ordinary upgrade-point accounting is separate. Additional source limits: A supported domain is not evidence that every item of that category has a qualifying power source. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-extra-power-source::equipment",
+   "typedDefinitionId": "sv-extra-power-source::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Extra Power Source entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 06. No separate page-image hash is required.",
+   "behavior": "Published host facts for Extra Power Source (typed domain equipment); domain verdict CONDITIONALLY SUPPORTED. Host finding: Any item, regardless of typed category, that actually operates using energy cells or power packs. Functional prerequisites: The individual host must use energy cells or power packs. Conditional effects: Adds an additional qualifying power supply per installation. Stacking, repeatability, maximum per host: EXPLICITLY REPEATABLE: each installation adds another qualifying power supply. No numerical maximum is printed; ordinary upgrade-point accounting is separate. Additional source limits: A supported domain is not evidence that every item of that category has a qualifying power source. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-memory-upgrade::equipment",
+   "typedDefinitionId": "sv-memory-upgrade::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Memory Upgrade entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 07. No separate page-image hash is required.",
+   "behavior": "Published host facts for Memory Upgrade (typed domain equipment); domain verdict CONDITIONALLY SUPPORTED. Host finding: Intelligence-bearing nondroid devices. Functional prerequisites: Host must have an Intelligence score and must not be a droid, including equipment converted into a droid. Conditional effects: Basic version increases Intelligence by 2 and doubles data storage. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE for repeated basic installations. When an advanced Memory Upgrade is present, its benefits replace the basic version; the basic and advanced benefits do not stack. Additional source limits: Do not infer unlimited stacking of Intelligence bonuses. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-memory-upgrade-advanced::equipment",
+   "typedDefinitionId": "sv-memory-upgrade-advanced::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Memory Upgrade, Advanced entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 08. No separate page-image hash is required.",
+   "behavior": "Published host facts for Memory Upgrade, Advanced (typed domain equipment); domain verdict CONDITIONALLY SUPPORTED. Host finding: Intelligence-bearing nondroid devices. Functional prerequisites: Host must have an Intelligence score and must not be a droid, including equipment converted into a droid. Conditional effects: Advanced version increases Intelligence by 4 and multiplies data storage by five; its benefits replace those of the basic Memory Upgrade. Stacking, repeatability, maximum per host: Basic and advanced Memory Upgrade benefits DO NOT STACK; advanced replaces basic. Other repetition/max-per-host limits are NOT SPECIFIED BY SOURCE. Additional source limits: The source does not expressly require a basic upgrade to be purchased first and does not establish a universal maximum of one. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-miniaturized::weapon",
+   "typedDefinitionId": "sv-miniaturized::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Miniaturized entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 09. No separate page-image hash is required.",
+   "behavior": "Published host facts for Miniaturized (typed domain weapon); domain verdict SUPPORTED. Host finding: General equipment, including weapons and armor. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Halves the item’s weight and decreases its size by one category; miniaturized melee weapons suffer a damage-die reduction. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Melee-weapon damage reduction is a conditional effect, not a restriction against modifying melee weapons. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-miniaturized::armor",
+   "typedDefinitionId": "sv-miniaturized::armor",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Miniaturized entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 09. No separate page-image hash is required.",
+   "behavior": "Published host facts for Miniaturized (typed domain armor); domain verdict SUPPORTED. Host finding: General equipment, including weapons and armor. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Halves the item’s weight and decreases its size by one category; miniaturized melee weapons suffer a damage-die reduction. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Melee-weapon damage reduction is a conditional effect, not a restriction against modifying melee weapons. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-miniaturized::equipment",
+   "typedDefinitionId": "sv-miniaturized::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Miniaturized entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 09. No separate page-image hash is required.",
+   "behavior": "Published host facts for Miniaturized (typed domain equipment); domain verdict SUPPORTED. Host finding: General equipment, including weapons and armor. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Halves the item’s weight and decreases its size by one category; miniaturized melee weapons suffer a damage-die reduction. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Melee-weapon damage reduction is a conditional effect, not a restriction against modifying melee weapons. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-recognition-system::weapon",
+   "typedDefinitionId": "sv-recognition-system::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Recognition System entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 10. No separate page-image hash is required.",
+   "behavior": "Published host facts for Recognition System (typed domain weapon); domain verdict SUPPORTED. Host finding: Equipment whose functions can meaningfully be restricted to an authorized user. Functional prerequisites: Item functionality must be capable of being restricted to an authorized owner; no additional biometric hardware prerequisite is established. Conditional effects: Prevents unauthorized use, supports a published Use Computer bypass procedure, and permits owner deactivation for transfer or other use. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Verdict is for the equipment category, not a determination that every item of that category has restrictable functions. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-recognition-system::armor",
+   "typedDefinitionId": "sv-recognition-system::armor",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Recognition System entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 10. No separate page-image hash is required.",
+   "behavior": "Published host facts for Recognition System (typed domain armor); domain verdict SUPPORTED. Host finding: Equipment whose functions can meaningfully be restricted to an authorized user. Functional prerequisites: Item functionality must be capable of being restricted to an authorized owner; no additional biometric hardware prerequisite is established. Conditional effects: Prevents unauthorized use, supports a published Use Computer bypass procedure, and permits owner deactivation for transfer or other use. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Verdict is for the equipment category, not a determination that every item of that category has restrictable functions. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-recognition-system::equipment",
+   "typedDefinitionId": "sv-recognition-system::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Recognition System entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 10. No separate page-image hash is required.",
+   "behavior": "Published host facts for Recognition System (typed domain equipment); domain verdict SUPPORTED. Host finding: Equipment whose functions can meaningfully be restricted to an authorized user. Functional prerequisites: Item functionality must be capable of being restricted to an authorized owner; no additional biometric hardware prerequisite is established. Conditional effects: Prevents unauthorized use, supports a published Use Computer bypass procedure, and permits owner deactivation for transfer or other use. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Verdict is for the equipment category, not a determination that every item of that category has restrictable functions. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-remote-activation::weapon",
+   "typedDefinitionId": "sv-remote-activation::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Remote Activation entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 11. No separate page-image hash is required.",
+   "behavior": "Published host facts for Remote Activation (typed domain weapon); domain verdict CONDITIONALLY SUPPORTED. Host finding: Equipment with a function capable of meaningful remote activation. Functional prerequisites: The individual host must possess a remotely activatable function. Conditional effects: A communications device can activate the upgraded equipment; action and signal-security considerations are published. Explosives and security systems are examples, not exclusive hosts. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not infer that every item has a function susceptible to remote activation. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-remote-activation::armor",
+   "typedDefinitionId": "sv-remote-activation::armor",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Remote Activation entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 11. No separate page-image hash is required.",
+   "behavior": "Published host facts for Remote Activation (typed domain armor); domain verdict CONDITIONALLY SUPPORTED. Host finding: Equipment with a function capable of meaningful remote activation. Functional prerequisites: The individual host must possess a remotely activatable function. Conditional effects: A communications device can activate the upgraded equipment; action and signal-security considerations are published. Explosives and security systems are examples, not exclusive hosts. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not infer that every item has a function susceptible to remote activation. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-remote-activation::equipment",
+   "typedDefinitionId": "sv-remote-activation::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Remote Activation entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 11. No separate page-image hash is required.",
+   "behavior": "Published host facts for Remote Activation (typed domain equipment); domain verdict CONDITIONALLY SUPPORTED. Host finding: Equipment with a function capable of meaningful remote activation. Functional prerequisites: The individual host must possess a remotely activatable function. Conditional effects: A communications device can activate the upgraded equipment; action and signal-security considerations are published. Explosives and security systems are examples, not exclusive hosts. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not infer that every item has a function susceptible to remote activation. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-secret-compartment::weapon",
+   "typedDefinitionId": "sv-secret-compartment::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Secret Compartment entry (description continues on printed p. 42)"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41 with continuation on p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 12. No separate page-image hash is required.",
+   "behavior": "Published host facts for Secret Compartment (typed domain weapon); domain verdict CONDITIONALLY SUPPORTED. Host finding: Equipment physically capable of containing the specified smaller object. Functional prerequisites: Compartment must be able to contain one item at least one actual size category smaller than its host. Conditional effects: Concealed compartment with distinct published detection difficulties for noticing its use and finding it through close inspection. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE for multiple compartments/installations per host. One stored object is a capacity rule, not a maximum number of upgrades. Additional source limits: Entry begins on printed p. 41 and continues onto printed p. 42. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-secret-compartment::armor",
+   "typedDefinitionId": "sv-secret-compartment::armor",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Secret Compartment entry (description continues on printed p. 42)"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41 with continuation on p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 12. No separate page-image hash is required.",
+   "behavior": "Published host facts for Secret Compartment (typed domain armor); domain verdict CONDITIONALLY SUPPORTED. Host finding: Equipment physically capable of containing the specified smaller object. Functional prerequisites: Compartment must be able to contain one item at least one actual size category smaller than its host. Conditional effects: Concealed compartment with distinct published detection difficulties for noticing its use and finding it through close inspection. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE for multiple compartments/installations per host. One stored object is a capacity rule, not a maximum number of upgrades. Additional source limits: Entry begins on printed p. 41 and continues onto printed p. 42. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-secret-compartment::equipment",
+   "typedDefinitionId": "sv-secret-compartment::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 41,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Secret Compartment entry (description continues on printed p. 42)"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 41 with continuation on p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 12. No separate page-image hash is required.",
+   "behavior": "Published host facts for Secret Compartment (typed domain equipment); domain verdict CONDITIONALLY SUPPORTED. Host finding: Equipment physically capable of containing the specified smaller object. Functional prerequisites: Compartment must be able to contain one item at least one actual size category smaller than its host. Conditional effects: Concealed compartment with distinct published detection difficulties for noticing its use and finding it through close inspection. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE for multiple compartments/installations per host. One stored object is a capacity rule, not a maximum number of upgrades. Additional source limits: Entry begins on printed p. 41 and continues onto printed p. 42. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-silverplate::weapon",
+   "typedDefinitionId": "sv-silverplate::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 42,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Silverplate entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 13. No separate page-image hash is required.",
+   "behavior": "Published host facts for Silverplate (typed domain weapon); domain verdict SUPPORTED. Host finding: Any piece of gear, expressly including armor. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Protective treatment grants damage reduction to the item up to the printed maximum; applying Silverplate to armor does not automatically grant personal DR to the wearer. The entry has a Quick Draw-related benefit whose exact execution is not specified in the approved host-facts review. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not infer wearer DR or implement unspecified Quick Draw mechanics; unauthenticated publisher errata are not applied. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-silverplate::armor",
+   "typedDefinitionId": "sv-silverplate::armor",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 42,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Silverplate entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 13. No separate page-image hash is required.",
+   "behavior": "Published host facts for Silverplate (typed domain armor); domain verdict SUPPORTED. Host finding: Any piece of gear, expressly including armor. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Protective treatment grants damage reduction to the item up to the printed maximum; applying Silverplate to armor does not automatically grant personal DR to the wearer. The entry has a Quick Draw-related benefit whose exact execution is not specified in the approved host-facts review. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not infer wearer DR or implement unspecified Quick Draw mechanics; unauthenticated publisher errata are not applied. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-silverplate::equipment",
+   "typedDefinitionId": "sv-silverplate::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 42,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Silverplate entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 13. No separate page-image hash is required.",
+   "behavior": "Published host facts for Silverplate (typed domain equipment); domain verdict SUPPORTED. Host finding: Any piece of gear, expressly including armor. Functional prerequisites: No additional host prerequisite specified by the approved source findings. Conditional effects: Protective treatment grants damage reduction to the item up to the printed maximum; applying Silverplate to armor does not automatically grant personal DR to the wearer. The entry has a Quick Draw-related benefit whose exact execution is not specified in the approved host-facts review. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not infer wearer DR or implement unspecified Quick Draw mechanics; unauthenticated publisher errata are not applied. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-spring-loaded::weapon",
+   "typedDefinitionId": "sv-spring-loaded::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 42,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Spring Loaded entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 14. No separate page-image hash is required.",
+   "behavior": "Published host facts for Spring Loaded (typed domain weapon); domain verdict CONDITIONALLY SUPPORTED. Host finding: Handheld equipment that can be held and used in one hand. Functional prerequisites: Individual host must be capable of being held and used in one hand. Conditional effects: Permits rapid presentation/drawing of the item using the published action; the exact action is outside the approved host-facts transcription. Pistols, grenades, and datapads are examples. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not infer that every weapon or equipment item qualifies; unauthenticated publisher errata are not applied. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-spring-loaded::equipment",
+   "typedDefinitionId": "sv-spring-loaded::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 42,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Spring Loaded entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 14. No separate page-image hash is required.",
+   "behavior": "Published host facts for Spring Loaded (typed domain equipment); domain verdict CONDITIONALLY SUPPORTED. Host finding: Handheld equipment that can be held and used in one hand. Functional prerequisites: Individual host must be capable of being held and used in one hand. Conditional effects: Permits rapid presentation/drawing of the item using the published action; the exact action is outside the approved host-facts transcription. Pistols, grenades, and datapads are examples. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE. Additional source limits: Do not infer that every weapon or equipment item qualifies; unauthenticated publisher errata are not applied. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-storage-capacity::weapon",
+   "typedDefinitionId": "sv-storage-capacity::weapon",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 42,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Storage Capacity entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 15. No separate page-image hash is required.",
+   "behavior": "Published host facts for Storage Capacity (typed domain weapon); domain verdict CONDITIONALLY SUPPORTED. Host finding: Equipment capable of carrying smaller items under the printed size and weight limits. Functional prerequisites: Each carried item must be at least one actual size category smaller than its host; total carried weight must be below the host item’s weight. Conditional effects: Provides an obvious compartment and permits storage of multiple qualifying items. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE for repeated Storage Capacity installations. Multiple stored objects do not establish upgrade repeatability. Additional source limits: Do not conflate item capacity with number of modification installations. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-storage-capacity::armor",
+   "typedDefinitionId": "sv-storage-capacity::armor",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 42,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Storage Capacity entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 15. No separate page-image hash is required.",
+   "behavior": "Published host facts for Storage Capacity (typed domain armor); domain verdict CONDITIONALLY SUPPORTED. Host finding: Equipment capable of carrying smaller items under the printed size and weight limits. Functional prerequisites: Each carried item must be at least one actual size category smaller than its host; total carried weight must be below the host item’s weight. Conditional effects: Provides an obvious compartment and permits storage of multiple qualifying items. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE for repeated Storage Capacity installations. Multiple stored objects do not establish upgrade repeatability. Additional source limits: Do not conflate item capacity with number of modification installations. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
+   "coverage": "PUBLISHED_FACTS"
+  },
+  {
+   "specId": "D005::sv-storage-capacity::equipment",
+   "typedDefinitionId": "sv-storage-capacity::equipment",
+   "component": "hostPrerequisites",
+   "basis": "PUBLISHED_UNAMBIGUOUS",
+   "publication": {
+    "bookId": "scum-and-villainy",
+    "title": "Scum and Villainy",
+    "printedPage": 42,
+    "tableOrSection": "Universal Upgrades: Table 2-3 (printed p. 40); Storage Capacity entry"
+   },
+   "verification": "SOURCE_VERIFIED",
+   "evidence": "Scum and Villainy, original source PDF SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399; printed p. 42. Source-backed findings supplied by project rules review and recorded at docs/audits/d-005-universal-upgrade-host-text-transcription.md, section 4, entry 15. No separate page-image hash is required.",
+   "behavior": "Published host facts for Storage Capacity (typed domain equipment); domain verdict CONDITIONALLY SUPPORTED. Host finding: Equipment capable of carrying smaller items under the printed size and weight limits. Functional prerequisites: Each carried item must be at least one actual size category smaller than its host; total carried weight must be below the host item’s weight. Conditional effects: Provides an obvious compartment and permits storage of multiple qualifying items. Stacking, repeatability, maximum per host: NOT SPECIFIED BY SOURCE for repeated Storage Capacity installations. Multiple stored objects do not establish upgrade repeatability. Additional source limits: Do not conflate item capacity with number of modification installations. This PUBLISHED_FACTS record verifies published host rules only. It does not establish that a specific owned item satisfies the rules, does not certify a COMPLETE_MECHANIC, does not define a host evaluator or executor, and does not lift register D-005.",
+   "authoredBy": "ChatGPT project rules review (approved source findings); prepared for Claude integration and owner review",
    "coverage": "PUBLISHED_FACTS"
   }
  ]
