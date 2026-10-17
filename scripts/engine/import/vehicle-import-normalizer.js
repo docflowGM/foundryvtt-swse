@@ -325,7 +325,8 @@ const VEHICLE_WEAPON_PRESERVED_FIELDS = Object.freeze([
   'rangeProfileSlug', 'rangeProfileName', 'baseRangeProfileSlug',
   'baseRangeProfileName', 'rangeSource', 'rawSource', 'parseConfidence',
   'notes', 'sourcePage', 'sourcePrintedPage', 'printedAttackTotal',
-  'publishedAttackTotal', 'sourceEntryKey', 'weaponGroupKey',
+  'publishedAttackTotal', 'autofirePrintedTotal', 'autofirePenalty',
+  'sourcePrintedAttackLine', 'sourceEntryKey', 'weaponGroupKey',
   'sourceWeaponGroupKey'
 ]);
 
