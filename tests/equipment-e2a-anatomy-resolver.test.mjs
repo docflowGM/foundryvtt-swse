@@ -107,11 +107,14 @@ const baseEntry = (extra = {}) => ({ id: 'base', name: 'Base', type: 'species', 
   assert.deepEqual(r.appendages.map((a) => a.id), ['natural-arm-1', 'natural-arm-2']);
   ok('complete snapshot without anatomy: base anatomy is NOT inherited (real applySpeciesVariantProfile)');
 
-  // documented observation (not changed in E2A): a LEGACY overlay variant spreads the base entry, so base anatomy would flow through
+  // E2B-I1 publication isolation: a LEGACY overlay variant no longer inherits base anatomy through the historical ...base spread
   const legacy = applySpeciesVariantProfile(base, { id: 'legacy', label: 'Legacy', abilityMods: {} });
+  assert.equal(legacy.anatomy, undefined, 'the overlay carries no inherited base anatomy');
   const r2 = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: legacy });
-  assert.equal(r2.source, ANATOMY_SOURCE.SPECIES_ANATOMY);
-  ok('observation recorded for E2B: legacy overlay variants inherit base fields wholesale, including a future base anatomy');
+  assert.equal(r2.source, ANATOMY_SOURCE.DEFAULT);
+  assert.equal(r2.defaultApplied, true);
+  assert.deepEqual(r2.appendages.map((a) => a.id), ['natural-arm-1', 'natural-arm-2']);
+  ok('legacy overlay variant does not inherit base anatomy (E2B-I1): the resolver applies the ordinary two-arm fallback');
 }
 
 // 6/7. known unresolved exception guards -- REAL pack data through the REAL snapshot projection
