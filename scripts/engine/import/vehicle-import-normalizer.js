@@ -194,7 +194,7 @@ function normalizeCrew(system) {
       // A published 18-150* crew complement must not collapse into a
       // fictional fixed 18-person crew. The typical complement (when
       // supplied) is separate from the min/max range.
-      const range = crewStr.match(/^\\s*(\\d+)\\s*-\\s*(\\d+)/);
+      const range = crewStr.match(/^\s*(\d+)\s*-\s*(\d+)/);
       if (range) {
         const minimum = Number(range[1]), maximum = Number(range[2]);
         const typical = safeNullableInteger(system.vehicleCrewCount);
@@ -299,7 +299,7 @@ function normalizeCargo(system) {
   // Published statblock cargo such as "90,000 tons" must survive import
   // instead of being silently replaced with the 1-ton empty-data default.
   if (typeof system.cargo === 'string') {
-    const match = system.cargo.trim().match(/^([\\d,]+(?:\\.\\d+)?)\\s*(metric\\s+tons?|tons?|kg|kilograms?)\\b/i);
+    const match = system.cargo.trim().match(/^([\d,]+(?:\.\d+)?)\s*(metric\s+tons?|tons?|kg|kilograms?)\b/i);
     if (match) {
       const amount = Number(match[1].replace(/,/g, ''));
       if (Number.isFinite(amount) && amount >= 0)
