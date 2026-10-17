@@ -130,22 +130,26 @@ function packVariantProfile(speciesName, variantId) {
 {
   const codru = packVariantProfile('Codru-Ji', 'codru-ji-leg-2c-03');
   assert.ok(codru.canonicalTraits.some((t) => t.id === 'extra-arms'), 'the guard identity exists in the real snapshot');
+  // E2B-I2: the real Codru-Ji snapshot now carries source-certified structured anatomy, so the temporary guard stands down
   const r = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: codru });
-  assert.equal(r.status, ANATOMY_STATUS.UNRESOLVED);
-  assert.equal(r.defaultApplied, false);
-  assert.deepEqual(r.appendages, [], 'no fabricated arm count (neither two nor four)');
-  const iss = r.issues.find((i) => i.code === 'anatomy-exception-unresolved');
-  assert.equal(iss.details.traitId, 'extra-arms');
-  assert.equal(iss.details.temporary, true);
-  ok('real Codru-Ji snapshot (extra-arms): incomplete anatomy reported, no count fabricated, no default applied');
+  assert.equal(r.source, ANATOMY_SOURCE.SPECIES_ANATOMY);
+  assert.equal(r.defaultApplied, false, 'no ordinary two-arm default');
+  assert.deepEqual(r.appendages.map((a) => a.id), ['arm-1', 'arm-2', 'arm-3', 'arm-4']);
+  assert.ok(!codes(r).includes('anatomy-exception-unresolved'), 'no unresolved-exception diagnostic for structured anatomy');
+  ok('real Codru-Ji snapshot (extra-arms): four source-declared appendages from species-anatomy, no default, no exception diagnostic');
 
   const ryn = packVariantProfile('Ryn', 'ryn-sv-2f-06');
   assert.ok(ryn.canonicalTraits.some((t) => t.id === 'prehensile-tail'));
   const r2 = resolveEffectiveAnatomy({ actorType: 'character', speciesProfile: ryn });
-  assert.equal(r2.status, ANATOMY_STATUS.UNRESOLVED);
-  assert.ok(!r2.appendages.some((a) => /tail/.test(a.kind) || /tail/.test(a.id)), 'no tail hand is invented');
-  assert.equal(r2.issues.find((i) => i.code === 'anatomy-exception-unresolved').details.traitId, 'prehensile-tail');
-  ok('real Ryn snapshot (prehensile-tail): no tail-hand capability invented, anatomy unresolved');
+  assert.equal(r2.source, ANATOMY_SOURCE.SPECIES_ANATOMY);
+  assert.deepEqual(r2.appendages.map((a) => a.id), ['arm-1', 'arm-2', 'tail-1']);
+  const tail = r2.appendages.find((a) => a.id === 'tail-1');
+  assert.equal(tail.capabilities.canHold, true, 'tail holding is established');
+  assert.equal(tail.capabilities.canWield, false, 'tail wielding is prohibited');
+  assert.equal(tail.capabilities.canManipulate, null, 'tail general manipulation stays unknown');
+  assert.notEqual(r2.status, ANATOMY_STATUS.RESOLVED, 'unknown capability prevents complete resolution');
+  assert.ok(!codes(r2).includes('anatomy-exception-unresolved'));
+  ok('real Ryn snapshot (prehensile-tail): two arms and a tail (hold true, wield false, manipulate unknown); not reported as resolved');
 }
 
 // 6b. guards: exact trait id only, dormant once structured anatomy exists, constant documented

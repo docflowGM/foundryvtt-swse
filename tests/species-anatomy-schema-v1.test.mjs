@@ -3,8 +3,7 @@ import { readFileSync } from 'node:fs';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 
-// E2B-I1 -- species anatomy schema v1 foundation. Synthetic fixtures only: no production species record declares anatomy yet, and this
-// test never reads a pack for anatomy except to PROVE that none does. It exercises the real validator, the real SpeciesRegistry
+// E2B-I1 -- species anatomy schema v1 foundation. Synthetic fixtures only; the pack is read only to prove that exactly the seven E2B-I2 authorized variants declare anatomy. It exercises the real validator, the real SpeciesRegistry
 // normalizers and the real publication-snapshot projection.
 registerFoundryPathLoader();
 installFoundryShimGlobals();
@@ -245,13 +244,13 @@ const baseProfile = (over = {}) => ({
 // ------------------------------------------------------------------------------------------------------------------ production data
 {
   const recs = readFileSync(new URL('../packs/species.db', import.meta.url), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
-  let withAnatomy = 0;
+  const declared = [];
   for (const r of recs) {
-    if (declaresSpeciesAnatomy(r.system)) withAnatomy++;
-    for (const v of r.system.variants ?? []) if (declaresSpeciesAnatomy(v)) withAnatomy++;
+    assert.ok(!declaresSpeciesAnatomy(r.system), `base record ${r.name} declares no anatomy`);
+    for (const v of r.system.variants ?? []) if (declaresSpeciesAnatomy(v)) { declared.push(v.id); validateSpeciesAnatomyV1(v.anatomy); }
   }
-  assert.equal(withAnatomy, 0, 'E2B-I1 migrates no production species record');
-  ok('no production species record (base or variant) declares anatomy: E2B-I2 owns the migration');
+  assert.deepEqual(declared.sort(), ['codru-ji-leg-2c-03', 'dug-cw-2h-01', 'killik-ur-2b-12', 'krevaaki-ur-2b-04', 'lugubraa-ur-2b-13', 'ryn-sv-2f-06', 'trianii-gaw-2i-06']);
+  ok('exactly the seven E2B-I2 authorized variant identities declare anatomy (all validate); no base record or other variant does');
 }
 
 console.log(`species-anatomy-schema-v1: ${n} checks passed`);
