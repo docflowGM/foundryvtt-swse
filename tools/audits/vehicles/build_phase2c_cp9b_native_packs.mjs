@@ -87,8 +87,16 @@ export function stagePackSource({root='.',stageDir,spec}) {
   const parsed=parsePackSource(bytes.toString('utf8'),spec);
   const files=join(stageDir,spec.name);
   mkdirSync(files,{recursive:true});
-  for(const row of parsed.rows)
-    writeFileSync(join(files,row._id+'.json'),JSON.stringify(row)+'\n','utf8');
+  for(const row of parsed.rows) {
+    // The Foundry CLI deliberately ignores source files without a database
+    // _key. For a top-level Actor document the canonical LevelDB key is
+    // !actors!<id>. Inject it ONLY in the temporary build input. The
+    // version-controlled NeDB JSONL remains unchanged.
+    if(Object.prototype.hasOwnProperty.call(row,'_key'))
+      fail('SOURCE_MUST_NOT_INCLUDE_COMPILED_DB_KEY',spec.name+':'+row._id);
+    writeFileSync(join(files,row._id+'.json'),
+      JSON.stringify({...row,_key:'!actors!'+row._id})+'\n','utf8');
+  }
   return {parsed,files,sourceGitBlob:gitBlob(bytes),sourceSha256:sha(bytes)};
 }
 export function parseArgs(argv) {
