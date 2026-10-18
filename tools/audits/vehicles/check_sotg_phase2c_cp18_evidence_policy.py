@@ -185,7 +185,7 @@ for value, present, state, has_raw in sample:
     assert obs["state"] == state and ("rawValue" in obs) == has_raw
     if has_raw:
         assert obs["rawValue"] == value
-     Draft202012Validator({"$ref":"#/$defs/observation","$defs":candidate["$defs"]}).validate(obs)
+    Draft202012Validator({"$ref":"#/$defs/observation","$defs":candidate["$defs"]}).validate(obs)
 # Fail closed on mismatched state/raw consistency.
 v = Draft202012Validator({"$ref":"#/$defs/observation","$defs":candidate["$defs"]})
 missing_with_raw = observation(MISSING, False, 56, pointer)
