@@ -1,0 +1,46 @@
+name: Vehicle Phase 2C CP9 Validation
+on:
+  push:
+    branches:
+      - audit/vehicle-phase-0-1-canonical-foundation
+    paths:
+      - 'scripts/actors/vehicle/vehicle-precreate-hooks.js'
+      - 'scripts/engine/import/vehicle-weapon-import-normalizer.js'
+      - 'scripts/engine/import/vehicle-import-normalizer.js'
+      - 'scripts/domain/vehicles/**'
+      - 'scripts/engine/crew/**'
+      - 'scripts/combat/rolls/attacks.js'
+      - 'tests/phase2c_cp8*'
+      - 'tests/phase2c_cp9*'
+      - 'packs/vehicles-space-transports.db'
+      - 'packs/vehicles-capital-ships.db'
+      - 'tools/audits/vehicles/**'
+      - '.github/workflows/vehicle-phase2c-cp9.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cp9-import-and-source-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: CP8/9 stock data and importer regressions
+        run: |
+          node --test tests/phase2c_cp9a_vehicle_import_boundaries.test.mjs
+          node --test tests/phase2c_cp8_vehicle_weapon_import_roundtrip.test.mjs
+          node --test tests/phase2c_cp8_vehicle_import_source_fields.test.mjs
+          node --test tests/phase2c_cp8_crew_station_evidence.test.mjs
+          node --test tests/phase2c_cp8_remediation_manifest.test.mjs
+          node --test tests/phase2c_cp8_post_hydration.test.mjs
+          node --test tests/phase2c-vehicle-stock-vs-custom-gate.test.mjs
+          node --test tests/phase2c-vehicle-live-roll-guard.test.mjs
+          node tests/phase3-vehicle-operator-resolution.test.mjs
+          node tools/audits/vehicles/verify_phase2c_cp8_post_hydration.mjs --repo-root .
+      - name: Syntax gate
+        run: |
+          node --check scripts/engine/import/vehicle-weapon-import-normalizer.js
+          node --check scripts/actors/vehicle/vehicle-precreate-hooks.js
+          node --check scripts/domain/vehicles/vehicle-stock-attack-authority.js
