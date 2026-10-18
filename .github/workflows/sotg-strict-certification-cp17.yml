@@ -1,0 +1,28 @@
+name: SotG CP17 Strict Certification Baseline
+
+on:
+  push:
+    branches:
+      - audit/sotg-strict-certification-cp17
+    paths:
+      - data/audits/vehicles/swse-phase2b-sotg-cp17-*.json
+      - tools/audits/vehicles/check_sotg_phase2b_cp17_baseline.py
+      - docs/audits/vehicles/swse-phase2-sotg-checkpoint-17-independent-baseline.md
+      - .github/workflows/sotg-strict-certification-cp17.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cp17-evidence-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact pushed commit
+        uses: actions/checkout@v4
+      - name: Verify Python syntax
+        run: python3 -m py_compile tools/audits/vehicles/check_sotg_phase2b_cp17_baseline.py
+      - name: Validate CP16 source-review continuity
+        run: python3 tools/audits/vehicles/check_sotg_phase2b_cp16_certifications.py --repo "."
+      - name: Validate CP17 independent baseline and work queue
+        run: python3 tools/audits/vehicles/check_sotg_phase2b_cp17_baseline.py --repo "."
