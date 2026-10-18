@@ -59,3 +59,8 @@ jobs:
         run: node --check tools/audits/vehicles/check_sotg_phase2b_cp19_tranche03.mjs
       - name: Validate CP19 tranche 03 source observations and unapplied corrections
         run: node tools/audits/vehicles/check_sotg_phase2b_cp19_tranche03.mjs
+
+      - name: Verify CP19 tranche 04 validator syntax
+        run: node --check tools/audits/vehicles/check_sotg_phase2b_cp19_tranche04.mjs
+      - name: Validate CP19 tranche 04 reviewed source evidence and no-runtime-authority
+        run: node tools/audits/vehicles/check_sotg_phase2b_cp19_tranche04.mjs
