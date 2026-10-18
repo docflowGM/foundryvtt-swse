@@ -84,8 +84,22 @@
     "All fieldGroup status and conflicts retained and source page locators stable",
     "No manufacturer/model fusion by name",
     "No changes to CP16, CP17, v0.5 vehicle schema, source packs or runtime",
-    "No new per-ship certifications from CP18 mapping"
+    "No new per-ship certifications from CP18 mapping",
+    "Exactly 8 historical sourcePage keys absent across four ships; sourcePageRecorded tracks presence without substituting parent printed page or null."
   ],
   "v05CompatibilityFinding": "UNIVERSAL_V05_UNABLE_TO_EMBED_ALL_EVIDENCE_STATES_IN_PHYSICAL_MOUNT_FIELDS_WITHOUT_UNSAFE_INFERENCE; USE_SIDECAR_AND_FUTURE_V06_DESIGN",
-  "newProductionRules": false
+  "newProductionRules": false,
+  "sourcePageProvenanceContract": {
+    "sourceRowPageField": "/entries/{sourceIndex}/mountAndFiringGroups/{rowIndex}/sourcePage",
+    "originalMissingKeys": 8,
+    "affectedShips": [
+      "Delta-7 Aethersprite Light Interceptor",
+      "Incom/Subpro ARC-170 Starfighter",
+      "Alliance A-wing Starfighter",
+      "Baudo-class Star Yacht"
+    ],
+    "whenPresent": "Preserve integer sourcePage verbatim in group and each observation.sourcePrintedPage.",
+    "whenMissing": "Omit sourcePage and sourcePrintedPage; record sourcePageRecorded=false. Parent printedStatblockStartPage remains a distinct verified ship-level locator, NOT a substitute for missing row key.",
+    "certificationImpact": "Per-ship source-fidelity gate remains pending individual evidence review; CP18 does not retroactively assert each historical attack group had an explicit sourcePage key."
+  }
 }
