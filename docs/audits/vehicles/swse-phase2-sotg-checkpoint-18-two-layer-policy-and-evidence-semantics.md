@@ -27,8 +27,11 @@ This is compatible with the already approved global `P2C-D01`–`P2C-D03` decisi
 | Observed numeric claims other than zero | 146 |
 | Descriptive text arc claims | 6 |
 | Explicit recorded numeric zero | 1 |
+| Historical attack-group rows lacking their own `sourcePage` key | **8** |
 | Newly granted CP18 source-fidelity certificates | **0** |
 | Newly granted CP18 physical-mount certificates | **0** |
+
+**Additional CP18 provenance defect:** Eight of the 258 original attack-group rows do not store a `sourcePage` key: Delta-7 Aethersprite (p.60; 1 row), ARC-170 (p.61; 3), A-wing (p.63; 3), and Baudo-class Yacht (p.65; 1). The corresponding ship statblock start pages are verified, but are separate fields, **not proof that the historical individual row carried source-page provenance**. The overlay records `sourcePageRecorded: false` and omits both row `sourcePage` and `sourcePrintedPage` rather than inventing a value. These four ships need explicit per-row page reconciliation before source-fidelity certificates are issued.
 
 The 611 source-silent positions comprise physical hardware count 228, firing arc 251, battery count 132. The 10 missing historical keys comprise 2, 1 and 7 respectively. The one recorded `batteryCount: 0` remains numeric zero, **not** None or unknown. Six printed firing-arc descriptions are retained as *text* and are not automatically converted to executable line-of-fire geometry. All 12 source-conflict-bearing entries remain conflict-bearing. The append-only 155 schema-discovery cases remain unchanged.
 
@@ -36,7 +39,7 @@ All 104 source identities, exact ledger array offsets, individual weapon attack 
 
 ## Persistence and semantic contract
 
-The `observations` object for each source attack row includes the exact CP16 JSON-pointer locator, the original printed page, the recorded evidence state, and the **raw original value only if the key was actually present**. This is the core lossless/reversible condition.
+The `observations` object for each source attack row includes its exact CP16 JSON-pointer locator, the recorded evidence state, and the original per-row printed page **only when that key was actually recorded**. The **raw original field value is stored only when the key was present**. When `sourcePage` is historically absent, retain the separate entry-level printed statblock start page without pretending it was a row locator. This is the core lossless/reversible condition.
 
 | State | Meaning | Storage behavior |
 |---|---|---|
@@ -85,4 +88,4 @@ python3 tools/audits/vehicles/check_sotg_phase2b_cp17_baseline.py --repo "."
 python3 tools/audits/vehicles/check_sotg_phase2c_cp18_evidence_policy.py --repo "."
 ```
 
-When the original sourcebook is locally accessible, pass `--source-pdf "/path/to/SAGA EDITION - Starships of the Galaxy.pdf"` to each validator for a primary PDF SHA cross-check. Validation checks the exact prior Git blob hashes, all 774 reversible field states, 104/258 identities/groups, source conflicts, v0.5 pressure compatibility and zero new certifications. The proof is structural and does not substitute for independent visual verification of sourcebook pages.
+When the original sourcebook is locally accessible, pass `--source-pdf "/path/to/SAGA EDITION - Starships of the Galaxy.pdf"` to each validator for a primary PDF SHA cross-check. Validation checks the exact prior Git blob hashes, all 774 reversible field states, the 8 missing row-page keys, 104/258 identities/groups, source conflicts, v0.5 pressure compatibility and zero new certifications. The proof is structural and does not substitute for independent visual verification of sourcebook pages.
