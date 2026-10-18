@@ -1,5 +1,6 @@
 import { VehiclePackDataLoader } from "/systems/foundryvtt-swse/scripts/core/vehicle-pack-data-loader.js";
 import { VehicleImportEngine } from "/systems/foundryvtt-swse/scripts/engine/import/vehicle-import-engine.js";
+import { probeControlledVehicleImport } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-cp9c-actor-provenance-probe.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -274,6 +275,19 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
         mode: this.state.mode,
         preserve: this.state.preserve
       });
+      // CP9C: inspect the RESULT of a real controlled import. This is
+      // diagnostics only and MUST NOT create an editable actor stock flag
+      // or register a trusted weapon group. Other import paths remain unbound.
+      try {
+        const proof = await probeControlledVehicleImport({
+          actor: this.actor, sourceDocument: this.state.selectedDocument,
+          mode: this.state.mode
+        });
+        if (!proof.verified) console.info('[SWSE][CP9C] Vehicle stock provenance remains unbound:', proof.reason);
+        else console.info('[SWSE][CP9C] Vehicle source snapshot matched; attack authorization remains blocked:', proof);
+      } catch (proofError) {
+        console.warn('[SWSE][CP9C] Import provenance diagnostic could not complete; stock unbound:', proofError);
+      }
       ui.notifications.info(`Imported ${this.state.selectedDocument.name} into ${this.actor.name}.`);
       this.callback?.();
       await this.close();
