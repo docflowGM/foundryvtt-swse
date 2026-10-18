@@ -30,6 +30,8 @@ jobs:
       - name: CP8/9 stock data and importer regressions
         run: |
           node --test tests/phase2c_cp9a_vehicle_import_boundaries.test.mjs
+          node --test tests/phase2c_cp9a_pack_delivery.test.mjs
+          node tools/audits/vehicles/audit_phase2c_cp9_pack_delivery.mjs --repo-root .
           node --test tests/phase2c_cp8_vehicle_weapon_import_roundtrip.test.mjs
           node --test tests/phase2c_cp8_vehicle_import_source_fields.test.mjs
           node --test tests/phase2c_cp8_crew_station_evidence.test.mjs
