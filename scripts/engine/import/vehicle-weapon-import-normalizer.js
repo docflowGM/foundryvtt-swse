@@ -197,6 +197,10 @@ export function parseVehicleWeaponEntry(entry, index = 0) {
   const parsed = {
     index,
     name: 'Weapon',
+    sourceRowId: null,
+    sourceWeaponGroupKey: null,
+    sourceEntryKey: null,
+    operatorStation: null,
     arc: 'unknown',
     fireControl: null,
     linkedGroup: null,
@@ -217,13 +221,17 @@ export function parseVehicleWeaponEntry(entry, index = 0) {
 
     // Extract fields directly
     parsed.name = coerceWeaponName(entry);
+    parsed.sourceRowId = safeString(entry.id, null) || null;
+    parsed.sourceWeaponGroupKey = safeString(entry.sourceWeaponGroupKey ?? entry.weaponGroupKey, null) || null;
+    parsed.sourceEntryKey = safeString(entry.sourceEntryKey, null) || null;
+    parsed.operatorStation = safeString(entry.operatorStation ?? entry.crewRole, null) || null;
     parsed.arc = safeString(entry.arc, 'unknown');
     parsed.fireControl = safeString(entry.fireControl || entry.firecontrol, null) || null;
     parsed.linkedGroup = safeString(entry.linkedGroup || entry.linkedgroup, null) || null;
     parsed.attackSummary = formatVehicleAttackSummary(entry.attackBonus ?? entry.bonus ?? entry.attack);
     parsed.damageSummary = safeString(entry.damage, null) || null;
     parsed.rangeSummary = safeString(entry.range, null) || null;
-    parsed.crewRole = safeString(entry.crewRole || entry.crew, null) || null;
+    parsed.crewRole = safeString(entry.operatorStation || entry.crewRole || entry.crew, null) || null;
 
     // Normalize arc if it's a raw value
     if (parsed.arc !== 'unknown') {
@@ -298,6 +306,9 @@ export function buildVehicleWeaponMountSummary(parsed, index = 0) {
   return {
     key: `mount-${index}`,
     index,
+    sourceRowId: parsed.sourceRowId,
+    sourceWeaponGroupKey: parsed.sourceWeaponGroupKey,
+    sourceEntryKey: parsed.sourceEntryKey,
     name: parsed.name || 'Weapon',
     arc: parsed.arc || 'unknown',
     linkedGroup: parsed.linkedGroup,
@@ -318,8 +329,10 @@ export function buildVehicleWeaponMountSummary(parsed, index = 0) {
  * Creates data suitable for Item.create({ type: 'weapon', system: {...} })
  */
 export function buildVehicleWeaponItemData(parsed, index = 0, options = {}) {
-  // Extract bonus as numeric value if possible
-  const bonus = numericVehicleAttackBonus(parsed.attackSummary);
+  // Vehicle statblock attack totals are the result of crew BAB + vehicle INT
+  // (plus separately sourced modifiers). They are NOT an Item enhancement.
+  // Preserve a printed total only as evidence, never as attackBonus/bonus.
+  const printedTotal = parsed.attackSummary ?? null;
 
   const itemData = {
     name: parsed.name || `Weapon ${index + 1}`,
@@ -327,16 +340,19 @@ export function buildVehicleWeaponItemData(parsed, index = 0, options = {}) {
     system: {
       damage: parsed.damageSummary || '1d10',
       damageType: 'energy',
-      ...(bonus !== null ? { attackBonus: bonus } : {}),
-      // No inherited character DEX authority: mounted gunnery uses the vehicle INT.
+      // No inherited character DEX authority: mounted gunnery uses vehicle INT.
       range: parsed.rangeSummary || 'close',
-      ...(typeof parsed.attackSummary === 'string' ? { bonus: parsed.attackSummary } : {}),  // Preserve source, including printed +0
+      ...(printedTotal !== null ? { printedAttackTotal: printedTotal } : {}),
       arc: parsed.arc || 'unknown',
       fireControl: parsed.fireControl,
       linkedGroup: parsed.linkedGroup,
       mounted: true,
       vehicleMount: {
         mountKey: `mount-${index}`,
+        sourceRowId: parsed.sourceRowId,
+        sourceWeaponGroupKey: parsed.sourceWeaponGroupKey,
+        sourceEntryKey: parsed.sourceEntryKey,
+        operatorStation: parsed.operatorStation,
         attackAbilityAuthority: 'vehicle-int',
         mountLabel: parsed.name,
         arc: parsed.arc || 'unknown',
@@ -382,14 +398,16 @@ function generateWeaponHash(parsed) {
 function weaponAlreadyExists(actor, parsed) {
   if (!actor.items) return false;
 
-  // Check for matching weapon by name+arc+bonus
   const key = `${parsed.name}|${parsed.arc}|${parsed.attackSummary}`;
 
-  return actor.items.some(item => {
+  return Array.from(actor.items).some(item => {
     if (item.type !== 'weapon') return false;
-
-    const itemKey = `${item.name}|${item.system?.arc || 'unknown'}|${item.system?.bonus || '+0'}`;
-    return itemKey === key;
+    // A physical mount identity takes precedence over names and statistics.
+    const priorRowId = item.system?.vehicleMount?.sourceRowId;
+    if (parsed.sourceRowId && priorRowId) return priorRowId === parsed.sourceRowId;
+    if (parsed.sourceRowId || priorRowId) return false;
+    const observed = item.system?.printedAttackTotal ?? item.system?.bonus ?? null;
+    return `${item.name}|${item.system?.arc || 'unknown'}|${observed}` === key;
   });
 }
 
@@ -446,6 +464,19 @@ export async function normalizeVehicleWeaponImportData(actor, options = {}) {
       const mount = buildVehicleWeaponMountSummary(parsed, i);
       result.mounts.push(mount);
       result.rawSources.push(parsed.rawSource);
+
+      // Source-bound stock rows are already represented by the system.weapons
+      // virtual-weapon facade. Do not materialize a SECOND mounted weapon Item.
+      // This suppresses duplicates but NEVER grants stock-firing authority.
+      const sourceRowIsPresent = Array.isArray(actor.system.weapons) &&
+        actor.system.weapons.some(w => w?.id === parsed.sourceRowId &&
+          w?.sourceWeaponGroupKey === parsed.sourceWeaponGroupKey &&
+          w?.sourceEntryKey === parsed.sourceEntryKey);
+      if (parsed.sourceRowId && parsed.sourceWeaponGroupKey &&
+          parsed.sourceEntryKey && sourceRowIsPresent) {
+        result.parseStats.deduped++;
+        continue;
+      }
 
       // Create embedded item if requested
       if (opts.createItems) {
