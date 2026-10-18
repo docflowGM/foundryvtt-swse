@@ -51,3 +51,5 @@ jobs:
       - name: Validate CP19 tranche 01 reviewed source evidence and certification boundaries
         run: python3 tools/audits/vehicles/check_sotg_phase2b_cp19_tranche01.py --repo "."
 
+      - name: Validate CP19 tranche 02 source review, provenance and non-certification
+        run: node tools/audits/vehicles/check_sotg_phase2b_cp19_tranche02.mjs

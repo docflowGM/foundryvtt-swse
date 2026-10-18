@@ -1,0 +1,1596 @@
+{
+  "schema": "swse.vehicle.sotg.cp19.tranche02.primary-pdf-review.v1",
+  "checkpoint": "CP19_T02",
+  "sourceBook": "Starships of the Galaxy",
+  "pdf": {
+    "fileName": "SAGA EDITION - Starships of the Galaxy.pdf",
+    "sha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+    "printedPdfPageParity": "PRINTED_PAGE_EQUALS_ZERO_INDEXED_PDF_PAGE_IN_THIS_COPY",
+    "renderedAndInspectedPages": [
+      56,
+      57,
+      60,
+      62,
+      64,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      73,
+      74,
+      75,
+      76,
+      77
+    ]
+  },
+  "authority": {
+    "branch": "audit/sotg-strict-certification-cp17",
+    "baseCommitSha": "278b13f3e2b0c51a7e960deefed5cb9e14458a04",
+    "cp16LedgerPath": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+    "cp16LedgerBlobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557",
+    "cp17QueuePath": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+    "cp17QueueBlobSha": "9c7df34eefa54f456721ee18c6ee684ec214dbf6",
+    "cp19Tranche01Path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche01-primary-source-review.json",
+    "cp19Tranche01BlobSha": "e21200f0f8604e16ff3ebbbbb63ea79c44252bf3",
+    "policyId": "SOTG-CP18-D01"
+  },
+  "trancheNumber": 2,
+  "positionRange": [
+    16,
+    30
+  ],
+  "trancheSize": 15,
+  "workQueueSelection": "UNMODIFIED_CP17_POSITIONS_16_TO_30",
+  "counts": {
+    "reviewedInThisTranche": 15,
+    "reviewedAcrossTranches": 30,
+    "originalQueue": 100,
+    "remainingUnreviewedInTrancheSeries": 70,
+    "sourceSilentTrack": 15,
+    "sourceGroupRows": 39,
+    "sourceEvidenceCorrectionsProposed": 1,
+    "newSourceFidelityCertificates": 0,
+    "newPhysicalMountCertificates": 0,
+    "newOperationalStockAttackAuthorities": 0
+  },
+  "certificationAuthority": "TWO_LAYER_CP18_SOURCE_REVIEW_NOT_EQUAL_SOURCE_FIDELITY_CERTIFICATION",
+  "sourceDataMutated": false,
+  "productionHydrationAuthorized": false,
+  "vehicleCombatIntegrationTouched": false,
+  "universalSchemaFrozen": false,
+  "warnings": [
+    "Sourcebook images and diagrams do not automatically establish individual turret arcs or muzzle numbers.",
+    "Acclamator II p57 two torpedo tubes is a SOURCE-SUPPORTED AUDIT CORRECTION CANDIDATE, not an in-place CP16 ledger mutation or an automated runtime permission.",
+    "Shuttle/E2 family training-rule inheritance still requires scope determination rather than silent inheritance.",
+    "CP16 historic PDF continuity gate remains blocked by absent CP15 comparison ledger on source branch."
+  ],
+  "entries": [
+    {
+      "cp17QueuePosition": 16,
+      "cp16LedgerIndex": 0,
+      "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-class-transgalactic-military-assault-ship",
+      "printedName": "Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship",
+      "statblockStartPage": 56,
+      "visualPdfPages": [
+        56,
+        57
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "RANGED_ATTACK_GROUP",
+          "printedPage": 56,
+          "observation": "2 quad turbolaser batteries +15; 4 point-defense light laser cannon batteries +15; 4 proton torpedoes +5"
+        },
+        {
+          "kind": "TACTICAL_FIRE",
+          "printedPage": 57,
+          "observation": "Standard action, forgo all attacks: allied ships within 2-square radius gain +2 Reflex Defense"
+        },
+        {
+          "kind": "PHYSICAL_BOUNDARY",
+          "printedPage": 56,
+          "observation": "Battery numbers and four proton torpedoes in Ranged are not barrel or launch-tube counts"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "quad turbolaser battery",
+          "station": "battery (6 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "point-defense light laser cannon battery",
+          "station": "battery (6 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 4,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 2,
+          "weaponLabel": "proton torpedoes",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "PRINTED_GROUP_COUNTS_WITH_UNRESOLVED_HARDWARE",
+      "reviewFinding": "The three attack families and target-size modifier agree with printed source. Cargo and carried ground equipment are not ship-mounted guns; arcs and per-battery hardware remain unprinted.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 17,
+      "cp16LedgerIndex": 1,
+      "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-ii-class-transgalactic-military-assault-ship",
+      "printedName": "Rothana Heavy Engineering Acclamator II-class Transgalactic Military Assault Ship",
+      "statblockStartPage": 57,
+      "visualPdfPages": [
+        57
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "SOURCE_SUPPORTED_TUBES",
+          "printedPage": 57,
+          "observation": "Armed with two heavy proton torpedo tubes (two launch tubes)"
+        },
+        {
+          "kind": "RANGED_ATTACK_GROUP",
+          "printedPage": 57,
+          "observation": "4 turbolaser batteries +11 AND 2 heavy proton torpedoes -5"
+        },
+        {
+          "kind": "TORPEDO_ATTACK",
+          "printedPage": 57,
+          "observation": "Heavy proton torpedoes Atk -5; -25 vs targets smaller than Colossal; +5 vs planetary shields"
+        },
+        {
+          "kind": "TACTICAL_FIRE",
+          "printedPage": 57,
+          "observation": "Any ship reduced to 0 hit points within a 2-square-radius tactical fire area is destroyed"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (4 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 4,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "heavy proton torpedoes",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "NEW_EXPLICIT_PHYSICAL_TUBE_COUNT_IN_NARRATIVE",
+      "reviewFinding": "Important CP16 evidence underclassification: printed prose explicitly establishes two heavy proton torpedo tubes despite the corresponding source ledger row having SOURCE_SILENT_CONFIRMED hardwareCount. Promote only via audited correction, and do not infer arc, magazine-to-launcher equivalence, or physical counts for turbolaser batteries.",
+      "sourceCorrectionCandidate": {
+        "sourceRowIndex": 1,
+        "field": "hardwareCount",
+        "currentLedgerValue": "SOURCE_SILENT_CONFIRMED",
+        "sourceSupportedPhysicalCount": 2,
+        "countedObject": "heavy proton torpedo tubes / physical launching tubes",
+        "sourcePrintedPage": 57,
+        "disposition": "AUDIT_CORRECTION_CANDIDATE_NOT_APPLIED_TO_CP16"
+      },
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 18,
+      "cp16LedgerIndex": 4,
+      "sourceEntryKey": "sotg-delta-7-aethersprite-light-interceptor",
+      "printedName": "Delta-7 Aethersprite Light Interceptor",
+      "statblockStartPage": 60,
+      "visualPdfPages": [
+        60
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "STOCK_LASERS",
+          "printedPage": 60,
+          "observation": "Ranged laser cannons +9 (pilot); 6d10x2"
+        },
+        {
+          "kind": "HYPERDRIVE_CONFIGURATION",
+          "printedPage": 60,
+          "observation": "Hyperdrive x1 (with booster ring); ship requires separate module"
+        },
+        {
+          "kind": "ASTROMECH",
+          "printedPage": 60,
+          "observation": "R4-P astromech and optional absence create conditional Mechanics/Use Computer check values"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePageRecorded": false,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "HISTORICAL_ROW_PAGE_KEY_ABSENT_SOURCE_SILENCE",
+      "reviewFinding": "The plural laser-cannon family supplies no physical barrel count or arc. The original historical row is missing its own sourcePage key; do not fabricate it from the verified ship-level p60 locator.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 19,
+      "cp16LedgerIndex": 6,
+      "sourceEntryKey": "sotg-archaic-heavy-cruiser",
+      "printedName": "Archaic Heavy Cruiser",
+      "statblockStartPage": 62,
+      "visualPdfPages": [
+        62
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "TEMPLATE_ONLY_WHEN_MODERN",
+          "printedPage": 62,
+          "observation": "Archaic disadvantages apply only in combat with modern starships, not archaic-versus-archaic"
+        },
+        {
+          "kind": "TEMPLATE_NUMERICS",
+          "printedPage": 62,
+          "observation": "CL is two-thirds normal; against modern weapons half damage threshold; shields 50% failure if exceeded; -2 attack vs modern"
+        },
+        {
+          "kind": "RANGED_ATTACK_GROUP",
+          "printedPage": 62,
+          "observation": "2 turbolaser batteries +11, 2 light quad turbolaser batteries +11, 2 light turbolasers +3"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (5 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "light quad turbolaser battery",
+          "station": "battery (5 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 2,
+          "weaponLabel": "light turbolasers",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "ARCHAIC_TEMPLATE_AND_SAMPLE_DISTINCT",
+      "reviewFinding": "The Archaic Heavy Cruiser is the published template-applied Dreadnaught example, not the ordinary source identity. Preserve printed battery counts but never derive number of barrels or arcs from five-gunner stations.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 20,
+      "cp16LedgerIndex": 8,
+      "sourceEntryKey": "sotg-banking-clan-munificent-class-frigate",
+      "printedName": "Banking Clan Munificent-class Frigate",
+      "statblockStartPage": 64,
+      "visualPdfPages": [
+        64
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "RANGED_FAMILIES",
+          "printedPage": 64,
+          "observation": "Heavy turbolasers +7; medium ion cannons +7; 5 twin turbolaser batteries +15; 2 light turbolaser batteries +15; 3 point-defense laser cannon batteries +17"
+        },
+        {
+          "kind": "TACTICAL_FIRE",
+          "printedPage": 64,
+          "observation": "Enemy starships in 2-square radius lose morale and insight bonuses on attack, defense and skill checks"
+        },
+        {
+          "kind": "NARRATIVE_SYSTEM",
+          "printedPage": 64,
+          "observation": "Narrative says jamming arrays, but no separate quantified jammer weapon or A-wing jammer mechanic"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "heavy turbolasers",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "medium ion cannons",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 2,
+          "weaponLabel": "twin turbolaser battery",
+          "station": "battery (5 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 5,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 3,
+          "weaponLabel": "light turbolaser battery",
+          "station": "battery (5 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 4,
+          "weaponLabel": "point-defense laser cannon battery",
+          "station": "battery (6 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 3,
+            "observedState": "VALUE_RECORDED"
+          }
+        }
+      ],
+      "reviewDisposition": "FIVE_ATTACK_FAMILIES_SOURCE_SILENT_MOUNTS",
+      "reviewFinding": "Prose identifies prow heavy turbolasers, not reliable full firing arcs or barrel counts for all five groups. Jamming is narrative and cannot be imported as an unsourced activation modifier.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 21,
+      "cp16LedgerIndex": 10,
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-starfighter",
+      "printedName": "Slayn & Korpil B-wing Starfighter",
+      "statblockStartPage": 66,
+      "visualPdfPages": [
+        66,
+        67
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "FIRE_GROUP_TOPOLOGY",
+          "printedPage": 66,
+          "observation": "Autoblasters OR laser cannons OR light ion cannons OR proton torpedoes; pilot operates all four"
+        },
+        {
+          "kind": "PAYLOAD",
+          "printedPage": 66,
+          "observation": "12 proton torpedoes; hyperdrive x2; limited 2-jump navicomputer"
+        },
+        {
+          "kind": "B_WING_HANDLING",
+          "printedPage": 67,
+          "observation": "Untrained Pilot gives -2 Initiative and Pilot checks; swap a B-wing weapon system in half normal modification time"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "autoblasters",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 2,
+          "weaponLabel": "light ion cannons",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 3,
+          "weaponLabel": "proton torpedoes",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "STANDARD_B_WING_EXCLUSIVE_FIRE_GROUPS",
+      "reviewFinding": "Four listed attack options are exclusive published Ranged alternatives, not simultaneous hardware activations. Weapon quantities and arcs remain silent. E2 and Shuttle must not inherit standard fighter loadout as stock.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 22,
+      "cp16LedgerIndex": 11,
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-shuttle",
+      "printedName": "Slayn & Korpil B-wing Shuttle",
+      "statblockStartPage": 67,
+      "visualPdfPages": [
+        67
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "WEAPON_OPTIONS",
+          "printedPage": 67,
+          "observation": "Laser cannons +6 OR light ion cannons +6, operated by pilot"
+        },
+        {
+          "kind": "SHUTTLE_CAPACITY",
+          "printedPage": 67,
+          "observation": "Passengers 2; SR20; limited navicomputer 5-jump memory"
+        },
+        {
+          "kind": "NO_TORPEDO_SOURCE_ROW",
+          "printedPage": 67,
+          "observation": "No torpedo attack or torpedo payload is printed for this shuttle statblock"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "light ion cannons",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "B_WING_SHUTTLE_SEPARATE_CONFIGURATION",
+      "reviewFinding": "Shuttle does not inherit the standard B-wing's published proton torpedo attack or SR30. No torpedo row is not itself permission to assert physical absence of every optional torpedo system. Adjacent B-wing family handling-rule applicability remains unsettled.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 23,
+      "cp16LedgerIndex": 12,
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-e2-starfighter",
+      "printedName": "Slayn & Korpil B-wing/E2 Starfighter",
+      "statblockStartPage": 67,
+      "visualPdfPages": [
+        66,
+        67
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "WEAPON_COMBINATION",
+          "printedPage": 67,
+          "observation": "Laser cannons +8 AND gunner light ion cannons +6 OR laser cannons +8 AND gunner proton torpedoes +6"
+        },
+        {
+          "kind": "VARIANT_CREW",
+          "printedPage": 66,
+          "observation": "E2 elongated cockpit accommodates second gunner behind pilot"
+        },
+        {
+          "kind": "VARIANT_STATS",
+          "printedPage": 67,
+          "observation": "Crew 2; SR50; 150 HP; payload 8 proton torpedoes"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "light ion cannons",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 2,
+          "weaponLabel": "proton torpedoes",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "B_WING_E2_AND_OR_CONJUNCTIVE_FIRE_GROUP",
+      "reviewFinding": "Repeated pilot laser label denotes one weapon family used in two allowed combinations, not duplicate laser hardware. Pilot/gunner fire profiles must remain distinct; no physical hardware/barrel count or arc inferred.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 24,
+      "cp16LedgerIndex": 13,
+      "sourceEntryKey": "sotg-damorian-manufacturing-s-carrack-class-light-cruiser",
+      "printedName": "Damorian Manufacturing's Carrack-class Light Cruiser",
+      "statblockStartPage": 68,
+      "visualPdfPages": [
+        68
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "RANGED_BATTERIES",
+          "printedPage": 68,
+          "observation": "2 heavy turbolaser batteries +13; 4 point-defense light laser batteries +13; 5 tractor beam batteries +5"
+        },
+        {
+          "kind": "TACTICAL_FIRE",
+          "printedPage": 68,
+          "observation": "Forfeit attacks as standard action; adjacent allied attacks on targets in area gain +1 damage die"
+        },
+        {
+          "kind": "CARRIED_CRAFT",
+          "printedPage": 68,
+          "observation": "Carries four TIE fighters on external racks, not as own guns"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "heavy turbolaser battery",
+          "station": "battery (5 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "point-defense light laser cannon battery",
+          "station": "battery (5 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 4,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 2,
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (5 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 5,
+            "observedState": "VALUE_RECORDED"
+          }
+        }
+      ],
+      "reviewDisposition": "CAPITAL_BATTERY_COUNTS_NOT_BARRELS",
+      "reviewFinding": "Three published battery group counts are not weapons-per-battery. External TIE racks are carried-craft evidence, not weapon mounts or extra Carrack guns.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 25,
+      "cp16LedgerIndex": 14,
+      "sourceEntryKey": "sotg-chiss-nssis-class-clawcraft",
+      "printedName": "Chiss Nssis-class Clawcraft",
+      "statblockStartPage": 69,
+      "visualPdfPages": [
+        69
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "STOCK_LASERS",
+          "printedPage": 69,
+          "observation": "Laser cannons +11 (pilot), 6d10x2; no barrel or arc count"
+        },
+        {
+          "kind": "HYPERDRIVE",
+          "printedPage": 69,
+          "observation": "Hyperdrive x1.5"
+        },
+        {
+          "kind": "EARLY_NAVIGATION",
+          "printedPage": 69,
+          "observation": "Early variants had no astromechs or navcomputers and used a beacon ship; jumps limited to one day from beacon"
+        },
+        {
+          "kind": "LATE_NAVIGATION",
+          "printedPage": 69,
+          "observation": "Later models carried their own navcomputers"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "EARLY_LATE_NAVCOMPUTER_CONFIGURATION_DISTINCTION",
+      "reviewFinding": "Printed statblock does not choose early or late navigation fit. Preserve x1.5 and conditional computer/beacon variations without pretending both are simultaneously stock.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 26,
+      "cp16LedgerIndex": 15,
+      "sourceEntryKey": "sotg-koensayr-ilh-kk-citadel-class-cruiser",
+      "printedName": "Koensayr ILH-KK Citadel-Class Cruiser",
+      "statblockStartPage": 70,
+      "visualPdfPages": [
+        70
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "PHYSICAL_ION_COUNT",
+          "printedPage": 70,
+          "observation": "Ranged 2 ion cannons +1; exactly two physical ion cannons as printed"
+        },
+        {
+          "kind": "FIRE_GROUP_TOPOLOGY",
+          "printedPage": 70,
+          "observation": "Laser cannons +1 AND 2 ion cannons +1 AND medium concussion missiles +3 OR laser and ion plus tractor beam +3"
+        },
+        {
+          "kind": "CARRIED_CRAFT",
+          "printedPage": 70,
+          "observation": "Two underbelly external docking clamps for two starfighters; not ship weapon mounts"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "laser cannons",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "ion cannons",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 2,
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 3,
+          "weaponLabel": "tractor beam",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "PRINTED_TWO_ION_CANNONS_ALREADY_PRESERVED",
+      "reviewFinding": "The ion physical count 2 is already present in CP16 and must remain. Gunnery stations differ: gunner operates laser/ion, pilot missiles/tractor. Other barrel/launcher counts and arcs still source silent.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 27,
+      "cp16LedgerIndex": 16,
+      "sourceEntryKey": "sotg-cloakshape-fighter",
+      "printedName": "CloakShape Fighter",
+      "statblockStartPage": 71,
+      "visualPdfPages": [
+        71
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "STOCK_WEAPONS",
+          "printedPage": 71,
+          "observation": "Laser cannons +4 OR medium concussion missiles +4; payload 16 medium concussion missiles"
+        },
+        {
+          "kind": "SHIELDS",
+          "printedPage": 71,
+          "observation": "Narrative explicitly describes stock lack of shields; no SR printed"
+        },
+        {
+          "kind": "OPTIONAL_MANEUVERING",
+          "printedPage": 71,
+          "observation": "Aftermarket maneuvering jets improve Initiative/Pilot/Ref/Dex for +4,800 credits"
+        },
+        {
+          "kind": "OPTIONAL_HYPERDRIVE",
+          "printedPage": 71,
+          "observation": "Aftermarket hyperdrive sled adds x3 drive and R2 navigation socket for +19,500 credits"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "STOCK_VS_OPTIONAL_CLOAKSHAPE_HARDWARE",
+      "reviewFinding": "Do not materialize aftermarket upgrades into stock. No hyperdrive line in stock statblock does not, by itself, prove an explicit printed 'None' value, despite aftermarket sled context.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 28,
+      "cp16LedgerIndex": 18,
+      "sourceEntryKey": "sotg-coralskipper",
+      "printedName": "Coralskipper",
+      "statblockStartPage": 73,
+      "visualPdfPages": [
+        73
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "RANGED_GROUPS",
+          "printedPage": 73,
+          "observation": "Volcano cannons +11 OR dovin basal +11"
+        },
+        {
+          "kind": "ORGANIC_SHIELD",
+          "printedPage": 73,
+          "observation": "SR25 represents organic dovin basal field, not generator; does not decrement on an individual damaging shot"
+        },
+        {
+          "kind": "DOVIN_OFFENSE",
+          "printedPage": 73,
+          "observation": "If dovin damage exceeds target SR, reduce target SR by 10, not 5; attack acts against shields"
+        },
+        {
+          "kind": "DOVIN_SWIFT_MODES",
+          "printedPage": 73,
+          "observation": "Swift action choose +2 starship speed squares OR +5 own SR OR +1 dovin basal damage die"
+        },
+        {
+          "kind": "TARGET_REPROGRAMMING",
+          "printedPage": 73,
+          "observation": "Attackers cannot add own ship Intelligence bonus until one minute and DC15 Use Computer target recognition"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "volcano cannons",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "dovin basal",
+          "station": "pilot",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "ORGANIC_DOVIN_BASAL_DISTINCT_RESOURCE_AND_MODES",
+      "reviewFinding": "Treat dovin basal as multifunction organic equipment, not conventional shield generator, generic launcher, or simultaneous swift-action stacking. Physical organ count and firing arc unknown.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 29,
+      "cp16LedgerIndex": 19,
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr90-corvette",
+      "printedName": "Corellian Engineering Corporation CR90 Corvette",
+      "statblockStartPage": 74,
+      "visualPdfPages": [
+        74,
+        75
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "STOCK_ATTACK",
+          "printedPage": 74,
+          "observation": "2 turbolaser batteries +10; battery (3 gunners), 5d10x5"
+        },
+        {
+          "kind": "CONFIGURATION_MAXIMA",
+          "printedPage": 74,
+          "observation": "Crew 30 to 165, passengers max 600, cargo max 3,000 tons refer to different configurations; typical armed crew 48 and passengers 150"
+        },
+        {
+          "kind": "CR70_VANGUARD_RETROFIT",
+          "printedPage": 74,
+          "observation": "CR70-to-CR90 retrofit 500,000 credits and 2-3 weeks; default crew quality unchanged"
+        },
+        {
+          "kind": "TACTICAL_FIRE",
+          "printedPage": 75,
+          "observation": "Adjacent allied ships automatically avoid engagement in dogfight when moving adjacent to enemy starfighter"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (3 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          }
+        }
+      ],
+      "reviewDisposition": "CR90_CONFIGURATION_MAXIMA_AND_CR70_NOT_INTERCHANGEABLE",
+      "reviewFinding": "Two published batteries cannot become an inferred two turbolaser physical barrels. CR70 upgrade is optional historical conversion and cannot silently mutate the separately certified unarmed CR70 source entry.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    },
+    {
+      "cp17QueuePosition": 30,
+      "cp16LedgerIndex": 21,
+      "sourceEntryKey": "sotg-rendili-stardrive-dreadnaught-class-heavy-cruiser",
+      "printedName": "Rendili StarDrive Dreadnaught-class Heavy Cruiser",
+      "statblockStartPage": 76,
+      "visualPdfPages": [
+        76,
+        77
+      ],
+      "reviewMethod": "ORIGINAL_PDF_RENDERED_PRIMARY_SOURCE_CLOSE_READ",
+      "priorTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "sourceFieldStates": {},
+      "originalSourceConflictFieldGroups": [],
+      "sourceMechanicsReview": [
+        {
+          "kind": "STOCK_ATTACKS",
+          "printedPage": 76,
+          "observation": "2 turbolaser batteries +13; 2 light quad turbolaser batteries +13; 2 light turbolasers +5"
+        },
+        {
+          "kind": "PHYSICAL_LIGHT_GUN_COUNT",
+          "printedPage": 76,
+          "observation": "Ranged 2 light turbolasers +5 (already captured in CP16 hardwareCount 2)"
+        },
+        {
+          "kind": "TACTICAL_FIRE",
+          "printedPage": 76,
+          "observation": "Standard action, forgo all attacks to grant tactical fire in 2-square radius"
+        },
+        {
+          "kind": "TACTICAL_REDIRECTION",
+          "printedPage": 77,
+          "observation": "Attacks targeting allied ships of Colossal (frigate) size or larger in area are redirected to Dreadnaught"
+        }
+      ],
+      "currentSourceGroupObservations": [
+        {
+          "sourceRowIndex": 0,
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (5 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 1,
+          "weaponLabel": "light quad turbolaser battery",
+          "station": "battery (5 gunners)",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          }
+        },
+        {
+          "sourceRowIndex": 2,
+          "weaponLabel": "light turbolaser",
+          "station": "gunner",
+          "sourcePageRecorded": true,
+          "hardwareCount": {
+            "recorded": true,
+            "rawValue": 2,
+            "observedState": "VALUE_RECORDED"
+          },
+          "firingArc": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          },
+          "batteryCount": {
+            "recorded": true,
+            "rawValue": "SOURCE_SILENT_CONFIRMED",
+            "observedState": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "reviewDisposition": "DREADNAUGHT_CONTINUATION_REDIRECTION",
+      "reviewFinding": "Printed two individual light turbolasers remain distinct from two batteries in other families. P77 continuation is part of the tactical-fire rule; do not substitute ordinary +Reflex or damage bonus.",
+      "sourceCorrectionCandidate": null,
+      "certification": {
+        "sourceReviewComplete": true,
+        "newSourceFidelityCertified": false,
+        "newPhysicalMountCertified": false,
+        "automatedStockAttackAuthorityGranted": false,
+        "reason": "SOURCE_FIDELITY_STRUCTURAL_MAPPING_AND_PHYSICAL_AUTOMATION_GATES_NOT_PROVEN"
+      }
+    }
+  ]
+}
