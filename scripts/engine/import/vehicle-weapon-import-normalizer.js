@@ -228,7 +228,12 @@ export function parseVehicleWeaponEntry(entry, index = 0) {
     parsed.arc = safeString(entry.arc, 'unknown');
     parsed.fireControl = safeString(entry.fireControl || entry.firecontrol, null) || null;
     parsed.linkedGroup = safeString(entry.linkedGroup || entry.linkedgroup, null) || null;
-    parsed.attackSummary = formatVehicleAttackSummary(entry.attackBonus ?? entry.bonus ?? entry.attack);
+    // A published vehicle attack figure is an evidentiary TOTAL, not
+    // an item-level enhancement. The parser may display it but never pass it
+    // into the attack-bonus math through bonus/attackBonus fields.
+    parsed.attackSummary = formatVehicleAttackSummary(
+      entry.printedAttackTotal ?? entry.attackBonus ?? entry.bonus ?? entry.attack
+    );
     parsed.damageSummary = safeString(entry.damage, null) || null;
     parsed.rangeSummary = safeString(entry.range, null) || null;
     parsed.crewRole = safeString(entry.operatorStation || entry.crewRole || entry.crew, null) || null;
