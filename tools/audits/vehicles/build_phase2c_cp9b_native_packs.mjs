@@ -123,9 +123,16 @@ export async function buildNativePacks({root='.',out,cliRoot}) {
       const extracted=join(temp,'roundtrip',spec.name);
       mkdirSync(extracted,{recursive:true});
       await extractPack(compiled,extracted,{log:false});
-      const unpacked=readdirSync(extracted).filter(f=>f.endsWith('.json')).map(f=>
+      const extractedFiles=readdirSync(extracted);
+      const compiledFiles=readdirSync(compiled);
+      const unpacked=extractedFiles.filter(f=>f.endsWith('.json')).map(f=>
         JSON.parse(readFileSync(join(extracted,f),'utf8')));
       const audit=auditRoundTrip(staged.parsed,unpacked,spec);
+      console.log(JSON.stringify({cp9bBuildDiagnostic:spec.name,
+        stageCount:staged.parsed.rows.length,compiledFiles:compiledFiles.slice(0,16),
+        extractedCount:unpacked.length,extractedFiles:extractedFiles.slice(0,16),
+        extractedIds:unpacked.slice(0,4).map(x=>x._id),
+        auditFailures:audit.failures.slice(0,8)},null,2));
       if(!audit.ok)fail('ROUNDTRIP_PARITY_FAILURE',JSON.stringify({pack:spec.name,issues:audit.failures.slice(0,20)}));
       results.push({pack:spec.name,manifestPath:declaration.path,
         source:spec.source,sourceGitBlob:staged.sourceGitBlob,
