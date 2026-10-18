@@ -1,0 +1,375 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "swse.vehicle.sotg.cp18.evidence-observation-overlay.schema.v1",
+  "title": "CP18 Starships of the Galaxy lossless published-observation envelope (audit-only)",
+  "description": "Typed sidecar evidence; NOT a production vehicle schema, installed weapon manifest, firing permission or source-fidelity certificate.",
+  "type": "object",
+  "required": [
+    "schema",
+    "policyId",
+    "sourceBook",
+    "sourcePdfSha256",
+    "sourceLedgerPath",
+    "sourceLedgerBlobSha",
+    "summary",
+    "entries",
+    "productionMutationAuthorized"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "swse.vehicle.sotg.cp18.evidence-observation-overlay.v1"
+    },
+    "policyId": {
+      "const": "SOTG-CP18-D01"
+    },
+    "sourceBook": {
+      "const": "Starships of the Galaxy"
+    },
+    "sourcePdfSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sourceLedgerPath": {
+      "const": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+    },
+    "sourceLedgerBlobSha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "productionMutationAuthorized": {
+      "const": false
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceEntries",
+        "attackGroups",
+        "existingStrictCertificates",
+        "sourceFidelityCertificatesGrantedCp18",
+        "physicalMountCertificatesGrantedCp18",
+        "runtimeTrustedStockGroupsGrantedCp18",
+        "fieldObservationStates"
+      ],
+      "properties": {
+        "sourceEntries": {
+          "const": 104
+        },
+        "attackGroups": {
+          "const": 258
+        },
+        "existingStrictCertificates": {
+          "const": 4
+        },
+        "sourceFidelityCertificatesGrantedCp18": {
+          "const": 0
+        },
+        "physicalMountCertificatesGrantedCp18": {
+          "const": 0
+        },
+        "runtimeTrustedStockGroupsGrantedCp18": {
+          "const": 0
+        },
+        "fieldObservationStates": {
+          "type": "object",
+          "propertyNames": {
+            "enum": [
+              "SOURCE_SILENT_CONFIRMED",
+              "KEY_NOT_STORED",
+              "PRINTED_VALUE",
+              "PRINTED_ZERO",
+              "RECORDED_DESCRIPTIVE_TEXT",
+              "EXPLICIT_NONE",
+              "RECORDED_NULL_UNRESOLVED"
+            ]
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 104,
+      "maxItems": 104,
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sourcePrintedPage",
+        "ledgerJsonPointer",
+        "v05FieldStateSuggestion",
+        "v05PhysicalMountBinding"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "SOURCE_SILENT_CONFIRMED",
+            "KEY_NOT_STORED",
+            "PRINTED_VALUE",
+            "PRINTED_ZERO",
+            "RECORDED_DESCRIPTIVE_TEXT",
+            "EXPLICIT_NONE",
+            "RECORDED_NULL_UNRESOLVED"
+          ]
+        },
+        "rawValue": {
+          "type": [
+            "string",
+            "integer",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        "sourcePrintedPage": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ledgerJsonPointer": {
+          "type": "string",
+          "pattern": "^/entries/[0-9]+/mountAndFiringGroups/[0-9]+/(hardwareCount|firingArc|batteryCount)$"
+        },
+        "v05FieldStateSuggestion": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "not-stated",
+            "not-yet-reviewed",
+            "unclear-source",
+            null
+          ]
+        },
+        "v05PhysicalMountBinding": {
+          "const": "BLOCKED_UNTIL_SOURCE_SUPPORTED_MOUNT_IDENTITY_AND_REQUIRED_GEOMETRY"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "KEY_NOT_STORED"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "rawValue"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "SOURCE_SILENT_CONFIRMED",
+                  "PRINTED_VALUE",
+                  "PRINTED_ZERO",
+                  "RECORDED_DESCRIPTIVE_TEXT",
+                  "EXPLICIT_NONE",
+                  "RECORDED_NULL_UNRESOLVED"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "required": [
+              "rawValue"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "PRINTED_ZERO"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "rawValue": {
+                "const": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "SOURCE_SILENT_CONFIRMED"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "rawValue": {
+                "const": "SOURCE_SILENT_CONFIRMED"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceRowIndex",
+        "sourcePage",
+        "weaponLabel",
+        "stationRaw",
+        "sourceRowLedgerJsonPointer",
+        "physicalAutomationAuthority",
+        "observations"
+      ],
+      "properties": {
+        "sourceRowIndex": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourcePage": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "weaponLabel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stationRaw": {
+          "type": "string"
+        },
+        "sourceRowLedgerJsonPointer": {
+          "type": "string",
+          "pattern": "^/entries/[0-9]+/mountAndFiringGroups/[0-9]+$"
+        },
+        "physicalAutomationAuthority": {
+          "const": false
+        },
+        "observations": {
+          "type": "object",
+          "required": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "hardwareCount": {
+              "$ref": "#/$defs/observation"
+            },
+            "firingArc": {
+              "$ref": "#/$defs/observation"
+            },
+            "batteryCount": {
+              "$ref": "#/$defs/observation"
+            }
+          }
+        }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceEntryKey",
+        "printedName",
+        "printedStatblockStartPage",
+        "cp16LedgerIndex",
+        "reviewedPDFPages",
+        "fieldGroups",
+        "sourceConflictFieldGroups",
+        "sourceFidelityCertification",
+        "historicalPhysicalSourceCertificate",
+        "newPhysicalSourceCertificateGranted",
+        "automatedStockAttackAuthorityGranted",
+        "attackGroups"
+      ],
+      "properties": {
+        "sourceEntryKey": {
+          "type": "string",
+          "pattern": "^sotg-"
+        },
+        "printedName": {
+          "type": "string"
+        },
+        "printedStatblockStartPage": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cp16LedgerIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 103
+        },
+        "reviewedPDFPages": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 1
+        },
+        "fieldGroups": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "sourceConflictFieldGroups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sourceFidelityCertification": {
+          "const": "PENDING_INDIVIDUAL_EVIDENCE_AND_SCHEMA_GATE"
+        },
+        "historicalPhysicalSourceCertificate": {
+          "type": "boolean"
+        },
+        "newPhysicalSourceCertificateGranted": {
+          "const": false
+        },
+        "automatedStockAttackAuthorityGranted": {
+          "const": false
+        },
+        "attackGroups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/group"
+          }
+        }
+      }
+    }
+  }
+}
