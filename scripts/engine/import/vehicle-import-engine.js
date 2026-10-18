@@ -38,7 +38,13 @@ export class VehicleImportEngine {
     const mode = options.mode || 'replace';
     const preserve = options.preserve || {};
     const rawSystem = duplicate(sourceActor.system);
-    const normalizedSystem = normalizeVehicleImportData(rawSystem, { sourceName: sourceActor.name }) ?? rawSystem;
+    const normalized = normalizeVehicleImportData(rawSystem, { sourceName: sourceActor.name }) ?? {};
+    // The normalizer produces a runtime-shape projection, NOT a complete
+    // published stock record. Replacing with it alone discards source-backed
+    // attributes, size-specific facts and CP8 certification metadata.
+    // Preserve every known source field, including meaningful zero, explicit
+    // None and genuinely unknown nulls; overlay only runtime projections.
+    const normalizedSystem = { ...rawSystem, ...normalized };
     if (!normalizedSystem.model) normalizedSystem.model = sourceActor.name || rawSystem.model || rawSystem.vehicleModel || '';
     const update = {};
 
