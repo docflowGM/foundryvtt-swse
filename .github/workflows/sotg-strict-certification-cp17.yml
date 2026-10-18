@@ -1,4 +1,4 @@
-name: SotG CP17-CP18 Source Certification Evidence Gates
+name: SotG CP17-CP19 Source Certification Evidence Gates
 
 on:
   push:
@@ -12,6 +12,9 @@ on:
       - data/audits/vehicles/swse-phase2c-sotg-cp18-*.json
       - tools/audits/vehicles/check_sotg_phase2c_cp18_evidence_policy.py
       - docs/audits/vehicles/swse-phase2-sotg-checkpoint-18-*.md
+      - data/audits/vehicles/swse-phase2b-sotg-cp19-tranche*.json
+      - tools/audits/vehicles/check_sotg_phase2b_cp19_tranche*.py
+      - docs/audits/vehicles/swse-phase2-sotg-checkpoint-19-*.md
       - .github/workflows/sotg-strict-certification-cp17.yml
   workflow_dispatch:
 
@@ -43,3 +46,8 @@ jobs:
         run: python3 -m py_compile tools/audits/vehicles/check_sotg_phase2c_cp18_evidence_policy.py
       - name: Validate CP18 policy evidence losslessness and schema pressure
         run: python3 tools/audits/vehicles/check_sotg_phase2c_cp18_evidence_policy.py --repo "."
+      - name: Verify CP19 tranche 01 validator syntax
+        run: python3 -m py_compile tools/audits/vehicles/check_sotg_phase2b_cp19_tranche01.py
+      - name: Validate CP19 tranche 01 reviewed source evidence and certification boundaries
+        run: python3 tools/audits/vehicles/check_sotg_phase2b_cp19_tranche01.py --repo "."
+
