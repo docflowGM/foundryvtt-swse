@@ -88,7 +88,8 @@ def observation(value, present, page, pointer):
     }.get(state)
     assert state in VALID_STATES
     return dict(state=state, **({"rawValue": value} if present else {}),
-                sourcePrintedPage=page, ledgerJsonPointer=pointer,
+                **({"sourcePrintedPage": page} if page is not MISSING else {}),
+                ledgerJsonPointer=pointer,
                 v05FieldStateSuggestion=suggestion, v05PhysicalMountBinding=BLOCKED)
 
 def reconstruct():
@@ -97,6 +98,7 @@ def reconstruct():
     assert len(by_key) == 104
     items = []
     counted = Counter()
+    missing_row_page_keys = 0
     for i, e in enumerate(ledger["entries"]):
         b = by_key[e["sourceEntryKey"]]
         assert (b["printedName"], b["printedStatblockStartPage"]) == (e["printedName"], e["printedStatblockStartPage"])
@@ -107,15 +109,21 @@ def reconstruct():
         groups = []
         for j, row in enumerate(e["mountAndFiringGroups"]):
             obs = {}
+            page_present = "sourcePage" in row
+            page = row["sourcePage"] if page_present else MISSING
+            if not page_present:
+                missing_row_page_keys += 1
             for field in FIELDS:
                 present = field in row
                 value = row[field] if present else MISSING
-                obs[field] = observation(value, present, row["sourcePage"], f"/entries/{i}/mountAndFiringGroups/{j}/{field}")
+                obs[field] = observation(value, present, page, f"/entries/{i}/mountAndFiringGroups/{j}/{field}")
                 counted[obs[field]["state"]] += 1
             groups.append(dict(
-                sourceRowIndex=j, sourcePage=row["sourcePage"], weaponLabel=row["weaponLabel"],
-                stationRaw=row["station"], sourceRowLedgerJsonPointer=f"/entries/{i}/mountAndFiringGroups/{j}",
-                physicalAutomationAuthority=False, observations=obs
+                sourceRowIndex=j, **({"sourcePage": page} if page_present else {}),
+                weaponLabel=row["weaponLabel"], stationRaw=row["station"],
+                sourceRowLedgerJsonPointer=f"/entries/{i}/mountAndFiringGroups/{j}",
+                physicalAutomationAuthority=False, observations=obs,
+                sourcePageRecorded=page_present
             ))
         items.append(dict(
             sourceEntryKey=e["sourceEntryKey"], printedName=e["printedName"],
@@ -128,12 +136,16 @@ def reconstruct():
             automatedStockAttackAuthorityGranted=False,
             attackGroups=groups
         ))
-    return items, dict(counted)
+    return items, dict(counted), missing_row_page_keys
 
-built, totals = reconstruct()
+built, totals, missing_row_page_keys = reconstruct()
 assert overlay["entries"] == built, "Evidence mapping drift, fields or raw values are not lossless"
 assert overlay["summary"]["fieldObservationStates"] == totals
 assert sum(totals.values()) == 258 * 3
+assert missing_row_page_keys == overlay["summary"]["rowSourcePageKeysNotStored"] == 8
+assert all(g["sourcePageRecorded"] == ("sourcePage" in g) for e in built for g in e["attackGroups"])
+assert all(("sourcePrintedPage" in obs) == g["sourcePageRecorded"]
+           for e in built for g in e["attackGroups"] for obs in g["observations"].values())
 assert totals == {"SOURCE_SILENT_CONFIRMED":611, "PRINTED_VALUE":146,
                   "KEY_NOT_STORED":10, "RECORDED_DESCRIPTIVE_TEXT":6, "PRINTED_ZERO":1}
 assert len(queue["workItems"]) == 100
@@ -142,7 +154,8 @@ assert sum(e["historicalPhysicalSourceCertificate"] for e in built) == 4
 assert overlay["summary"] == {
     "sourceEntries": 104, "attackGroups": 258, "existingStrictCertificates": 4,
     "sourceFidelityCertificatesGrantedCp18": 0, "physicalMountCertificatesGrantedCp18": 0,
-    "runtimeTrustedStockGroupsGrantedCp18": 0, "fieldObservationStates": totals
+    "runtimeTrustedStockGroupsGrantedCp18": 0, "fieldObservationStates": totals,
+    "rowSourcePageKeysNotStored": 8
 }
 assert all(not e["newPhysicalSourceCertificateGranted"] and not e["automatedStockAttackAuthorityGranted"] for e in built)
 assert all(e["sourceFidelityCertification"] == "PENDING_INDIVIDUAL_EVIDENCE_AND_SCHEMA_GATE" for e in built)
@@ -172,8 +185,7 @@ for value, present, state, has_raw in sample:
     assert obs["state"] == state and ("rawValue" in obs) == has_raw
     if has_raw:
         assert obs["rawValue"] == value
-    validator.validate(obs) if False else None  # envelope $defs validation below
-    Draft202012Validator({"$ref":"#/$defs/observation","$defs":candidate["$defs"]}).validate(obs)
+     Draft202012Validator({"$ref":"#/$defs/observation","$defs":candidate["$defs"]}).validate(obs)
 # Fail closed on mismatched state/raw consistency.
 v = Draft202012Validator({"$ref":"#/$defs/observation","$defs":candidate["$defs"]})
 missing_with_raw = observation(MISSING, False, 56, pointer)
@@ -209,6 +221,7 @@ assert pilot["rules"]["reviewStatus"] != "certified"
 print("PASS CP18: explicit owner approval and inherited P2C-D01/D02/D03 compatible")
 print("PASS CP18: JSON Schema verified; all 104 source records and 258 groups deterministically reconstructed")
 print("PASS CP18: 774 raw field observations including 611 source silent, 10 historical absent keys, and 1 printed zero")
+print("PASS CP18: 8 legacy absent row-page keys retained as absence, not inferred parent statblock pages")
 print("PASS CP18: absent vs explicit none vs zero vs null vs descriptive vs source-silent preserved")
 print("PASS CP18: source-fidelity certification remains per-ship; no new certificates or operational authorization")
 print("PASS CP18: v0.5 accepts only a mountless draft firegroup; source evidence sidecar needed for lossless v0.6 design")
