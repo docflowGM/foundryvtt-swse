@@ -77,7 +77,7 @@ export function registerVehiclePreCreateHooks() {
   // ═══════════════════════════════════════════════════════════════════════════
   // PRE-CREATE: Normalize vehicle data
   // ═══════════════════════════════════════════════════════════════════════════
-  Hooks.on('preCreateItem', async (document, data, options, userId) => {
+  Hooks.on('preCreateActor', async (document, data, options, userId) => {
     // Only process vehicles
     if (document.type !== 'vehicle') {
       return;
@@ -92,8 +92,11 @@ export function registerVehiclePreCreateHooks() {
     // Ensures downstream contracts (derived-builder, context-builder) are met
     try {
       const normalized = normalizeVehicleImportData(document.system, { sourceName: data?.name || document.name });
-      Object.assign(document.system, normalized);
-      SWSELogger.debug(`[${SYSTEM_ID}] Normalized vehicle import data`);
+      // Foundry V13 preCreateActor is the actual Actor creation hook.
+      // Persist via document.updateSource instead of mutating transient
+      // system references; never treat normalized source tags as trust.
+      document.updateSource({ system: normalized });
+      SWSELogger.debug(`[${SYSTEM_ID}] Normalized vehicle actor before creation`);
     } catch (err) {
       SWSELogger.error(`[${SYSTEM_ID}] Failed to normalize vehicle import:`, err.message);
       // Continue anyway - normalization errors should not block vehicle creation
@@ -123,11 +126,10 @@ export function registerVehiclePreCreateHooks() {
 
       if (isCanonical) {
         // Update the document data with canonical category
-        document.system.category = category;
-
-        // Also derive domain from category
+        // Keep pack category as descriptive classification. This fallback
+        // only runs if no explicit verified category is supplied.
         const domain = CANONICAL_CATEGORIES.starships.includes(category) ? 'starship' : 'planetary';
-        document.system.domain = domain;
+        document.updateSource({ 'system.category': category, 'system.domain': domain });
 
         SWSELogger.debug(`[${SYSTEM_ID}] Auto-filled vehicle "${vehicleName}" → category: ${category}, domain: ${domain}`);
       }
