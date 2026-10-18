@@ -97,12 +97,14 @@ queue.sort(key=lambda x: (x["priorityTrack"], x["printedStatblockStartPage"], x[
 for pos, row in enumerate(queue, 1):
     row["queuePosition"] = pos
 expected_counts = {
-    "bookSourceEntries": 104, "closeReadComplete": 104, "strictlyCertified": 4,
-    "remainingUncertified": 100, "attackGroups": 258,
-    "hardwareCountSourceSilent": 228, "firingArcSourceSilent": 251,
-    "batteryCountSourceSilent": 132, "hardwareCountLegacyMissing": 2,
-    "firingArcLegacyMissing": 1, "batteryCountLegacyMissing": 7,
-    "sourceConflictEntries": 12, "schemaDiscoveryCases": 155,
+    "bookSourceEntries": len(le), "closeReadComplete": sum(bool(e["reviewedPDFPages"]) and e["endPageReviewStatus"] == "PDF_VERIFIED" for e in le),
+    "strictlyCertified": len(certified), "remainingUncertified": len(queue),
+    "attackGroups": stats["attackGroups"],
+    "hardwareCountSourceSilent": stats["hardwareCountSourceSilent"], "firingArcSourceSilent": stats["firingArcSourceSilent"],
+    "batteryCountSourceSilent": stats["batteryCountSourceSilent"],
+    "hardwareCountLegacyMissing": stats["hardwareCountLegacyMissing"],
+    "firingArcLegacyMissing": stats["firingArcLegacyMissing"], "batteryCountLegacyMissing": stats["batteryCountLegacyMissing"],
+    "sourceConflictEntries": stats["sourceConflictEntries"], "schemaDiscoveryCases": len(pressure["cases"]),
     "priorityTracks": dict(tracks),
 }
 assert dict(tracks) == {"P0_SOURCE_CONFLICT": 12, "P1_LEGACY_MISSING_FIELDS": 3,
@@ -110,6 +112,8 @@ assert dict(tracks) == {"P0_SOURCE_CONFLICT": 12, "P1_LEGACY_MISSING_FIELDS": 3,
 assert len(certified) == 4 and len(queue) == 100
 assert certified == baseline["existingStrictCertificates"]
 assert expected_counts == baseline["counts"]
+assert (expected_counts["attackGroups"], expected_counts["hardwareCountSourceSilent"], expected_counts["firingArcSourceSilent"], expected_counts["batteryCountSourceSilent"]) == (258, 228, 251, 132)
+assert (expected_counts["hardwareCountLegacyMissing"], expected_counts["firingArcLegacyMissing"], expected_counts["batteryCountLegacyMissing"]) == (2, 1, 7)
 assert work["queueCount"] == 100 and work["workItems"] == queue
 assert baseline["decisions"]["sourceSilentHandling"] == "PENDING_OWNER_POLICY_NO_INFERRED_VALUE"
 assert baseline["decisions"]["runtimeStockAttackAuthority"] == "NOT_GRANTED"
