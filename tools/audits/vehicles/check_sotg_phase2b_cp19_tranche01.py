@@ -15,7 +15,7 @@ load = lambda filename: json.loads((d / filename).read_text(encoding="utf-8"))
 
 def git_blob(path):
     raw = path.read_bytes()
-    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
 
 fn_ledger = "swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
 fn_queue = "swse-phase2b-sotg-cp17-strict-certification-work-queue.json"
