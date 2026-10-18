@@ -14,6 +14,7 @@ on:
       - docs/audits/vehicles/swse-phase2-sotg-checkpoint-18-*.md
       - data/audits/vehicles/swse-phase2b-sotg-cp19-tranche*.json
       - tools/audits/vehicles/check_sotg_phase2b_cp19_tranche*.py
+      - tools/audits/vehicles/check_sotg_phase2b_cp19_tranche*.mjs
       - docs/audits/vehicles/swse-phase2-sotg-checkpoint-19-*.md
       - .github/workflows/sotg-strict-certification-cp17.yml
   workflow_dispatch:
@@ -53,3 +54,8 @@ jobs:
 
       - name: Validate CP19 tranche 02 source review, provenance and non-certification
         run: node tools/audits/vehicles/check_sotg_phase2b_cp19_tranche02.mjs
+
+      - name: Verify CP19 tranche 03 validator syntax
+        run: node --check tools/audits/vehicles/check_sotg_phase2b_cp19_tranche03.mjs
+      - name: Validate CP19 tranche 03 source observations and unapplied corrections
+        run: node tools/audits/vehicles/check_sotg_phase2b_cp19_tranche03.mjs
