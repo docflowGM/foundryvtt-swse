@@ -1,4 +1,4 @@
-name: SotG CP17 Strict Certification Baseline
+name: SotG CP17-CP18 Source Certification Evidence Gates
 
 on:
   push:
@@ -8,6 +8,10 @@ on:
       - data/audits/vehicles/swse-phase2b-sotg-cp17-*.json
       - tools/audits/vehicles/check_sotg_phase2b_cp17_baseline.py
       - docs/audits/vehicles/swse-phase2-sotg-checkpoint-17-independent-baseline.md
+      - data/audits/vehicles/swse-phase2c-cp18-*.json
+      - data/audits/vehicles/swse-phase2c-sotg-cp18-*.json
+      - tools/audits/vehicles/check_sotg_phase2c_cp18_evidence_policy.py
+      - docs/audits/vehicles/swse-phase2-sotg-checkpoint-18-*.md
       - .github/workflows/sotg-strict-certification-cp17.yml
   workflow_dispatch:
 
@@ -33,3 +37,9 @@ jobs:
         run: python3 tools/audits/vehicles/check_sotg_phase2b_cp16_certifications.py --repo "."
       - name: Validate CP17 independent baseline and work queue
         run: python3 tools/audits/vehicles/check_sotg_phase2b_cp17_baseline.py --repo "."
+      - name: Install JSON Schema validator (pinned)
+        run: python3 -m pip install --disable-pip-version-check jsonschema==4.25.1
+      - name: Verify CP18 verifier syntax
+        run: python3 -m py_compile tools/audits/vehicles/check_sotg_phase2c_cp18_evidence_policy.py
+      - name: Validate CP18 policy evidence losslessness and schema pressure
+        run: python3 tools/audits/vehicles/check_sotg_phase2c_cp18_evidence_policy.py --repo "."
