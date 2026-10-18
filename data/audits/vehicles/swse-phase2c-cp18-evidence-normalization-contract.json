@@ -1,0 +1,91 @@
+{
+  "schema": "swse.vehicle.sotg.cp18.evidence-normalization-contract.v1",
+  "policyId": "SOTG-CP18-D01",
+  "source": "CP16 source ledger with 104 printed identities and 258 attack group rows",
+  "authorityMode": "READ_ONLY_DERIVED_AUDIT_VIEW",
+  "sourceLedgerPath": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+  "sourceBacklogPath": "data/audits/vehicles/swse-phase2b-sotg-cp16-book-source-closure-mount-backlog.json",
+  "cp17QueuePath": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+  "generatedOverlayPath": "data/audits/vehicles/swse-phase2c-sotg-cp18-evidence-observation-overlay.json",
+  "candidateEnvelopeSchemaPath": "data/audits/vehicles/swse-phase2c-cp18-evidence-envelope.schema.json",
+  "sourceObservationPaths": {
+    "hardwareCount": {
+      "cp16Path": "/entries/{sourceIndex}/mountAndFiringGroups/{rowIndex}/hardwareCount",
+      "schemaV05Target": "UNMAPPABLE_AS_PHYSICAL_MOUNT_WITHOUT_INDEPENDENT_MOUNT_IDENTITY",
+      "futureV06Target": "/sourceAttackGroups/{rowIndex}/physicalHardwareCount/evidence"
+    },
+    "firingArc": {
+      "cp16Path": "/entries/{sourceIndex}/mountAndFiringGroups/{rowIndex}/firingArc",
+      "schemaV05Target": "UNMAPPABLE_TO_WEAPON_MOUNT_ARC_WITHOUT_SOURCE_GEOMETRY_AND_MOUNT_BINDING",
+      "futureV06Target": "/sourceAttackGroups/{rowIndex}/firingArc/evidence"
+    },
+    "batteryCount": {
+      "cp16Path": "/entries/{sourceIndex}/mountAndFiringGroups/{rowIndex}/batteryCount",
+      "schemaV05Target": "NEVER_REINTERPRET_AS_WEAPONS_PER_BATTERY",
+      "futureV06Target": "/sourceAttackGroups/{rowIndex}/printedBatteryCount/evidence"
+    }
+  },
+  "mappingRules": [
+    {
+      "observed": "SOURCE_SILENT_CONFIRMED",
+      "evidenceState": "SOURCE_SILENT_CONFIRMED",
+      "hasRaw": true,
+      "v05": "NOT_STATED_POINTER_ONLY_WITH_SIDECAR",
+      "automatedMountAccess": false
+    },
+    {
+      "observed": "KEY_ABSENT",
+      "evidenceState": "KEY_NOT_STORED",
+      "hasRaw": false,
+      "v05": "NOT_YET_REVIEWED_POINTER_ONLY_WITH_SIDECAR",
+      "automatedMountAccess": false
+    },
+    {
+      "observed": "NUMBER_ZERO",
+      "evidenceState": "PRINTED_ZERO",
+      "hasRaw": true,
+      "v05": "ONLY_IF_ORIGINAL_FIELDS_MATCH_AND_PHYSICAL_MOUNT_LINK_PROVEN",
+      "automatedMountAccess": false
+    },
+    {
+      "observed": "OTHER_NUMBER",
+      "evidenceState": "PRINTED_VALUE",
+      "hasRaw": true,
+      "v05": "ONLY_IF_ORIGINAL_FIELDS_MATCH_AND_PHYSICAL_MOUNT_LINK_PROVEN",
+      "automatedMountAccess": false
+    },
+    {
+      "observed": "TEXT_DESCRIPTOR",
+      "evidenceState": "RECORDED_DESCRIPTIVE_TEXT",
+      "hasRaw": true,
+      "v05": "NO_AUTOMATED_GEOMETRY_FROM_DESCRIPTION_ALONE",
+      "automatedMountAccess": false
+    },
+    {
+      "observed": "EXACT_NONE",
+      "evidenceState": "EXPLICIT_NONE",
+      "hasRaw": true,
+      "v05": "ONLY_WHEN_SOURCE_EXPLICITLY_PRINTS_NONE",
+      "automatedMountAccess": false
+    },
+    {
+      "observed": "NULL",
+      "evidenceState": "RECORDED_NULL_UNRESOLVED",
+      "hasRaw": true,
+      "v05": "NEVER_TREAT_AS_EXPLICIT_NONE_WITHOUT_SOURCE",
+      "automatedMountAccess": false
+    }
+  ],
+  "invariantProofs": [
+    "Exactly 104 stable source keys, 258 source attack rows; no generated physical mounts",
+    "Each observed field roundtrips through evidence {state, observedValue?} back to CP16 presence and raw value",
+    "Only fields literally present in CP16 have observedValue, including SOURCE_SILENT_CONFIRMED sentinel",
+    "Missing historical key keeps observedValue absent; no implicit null",
+    "All fieldGroup status and conflicts retained and source page locators stable",
+    "No manufacturer/model fusion by name",
+    "No changes to CP16, CP17, v0.5 vehicle schema, source packs or runtime",
+    "No new per-ship certifications from CP18 mapping"
+  ],
+  "v05CompatibilityFinding": "UNIVERSAL_V05_UNABLE_TO_EMBED_ALL_EVIDENCE_STATES_IN_PHYSICAL_MOUNT_FIELDS_WITHOUT_UNSAFE_INFERENCE; USE_SIDECAR_AND_FUTURE_V06_DESIGN",
+  "newProductionRules": false
+}
