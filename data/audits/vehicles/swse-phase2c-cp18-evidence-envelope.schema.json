@@ -50,7 +50,8 @@
         "sourceFidelityCertificatesGrantedCp18",
         "physicalMountCertificatesGrantedCp18",
         "runtimeTrustedStockGroupsGrantedCp18",
-        "fieldObservationStates"
+        "fieldObservationStates",
+        "rowSourcePageKeysNotStored"
       ],
       "properties": {
         "sourceEntries": {
@@ -88,6 +89,9 @@
             "type": "integer",
             "minimum": 0
           }
+        },
+        "rowSourcePageKeysNotStored": {
+          "const": 8
         }
       }
     },
@@ -106,7 +110,6 @@
       "additionalProperties": false,
       "required": [
         "state",
-        "sourcePrintedPage",
         "ledgerJsonPointer",
         "v05FieldStateSuggestion",
         "v05PhysicalMountBinding"
@@ -134,7 +137,8 @@
         },
         "sourcePrintedPage": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "description": "Optional because eight historical source group rows omit sourcePage; when absent the row-page provenance is KEY_NOT_STORED, not an inferred statblock page."
         },
         "ledgerJsonPointer": {
           "type": "string",
@@ -245,12 +249,12 @@
       "additionalProperties": false,
       "required": [
         "sourceRowIndex",
-        "sourcePage",
         "weaponLabel",
         "stationRaw",
         "sourceRowLedgerJsonPointer",
         "physicalAutomationAuthority",
-        "observations"
+        "observations",
+        "sourcePageRecorded"
       ],
       "properties": {
         "sourceRowIndex": {
@@ -294,8 +298,50 @@
               "$ref": "#/$defs/observation"
             }
           }
+        },
+        "sourcePageRecorded": {
+          "type": "boolean",
+          "description": "True only if the original CP16 attack group actually stored sourcePage. False means absent historical row-page key; do not substitute its parent ship statblock page."
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "sourcePageRecorded": {
+                "const": true
+              }
+            },
+            "required": [
+              "sourcePageRecorded"
+            ]
+          },
+          "then": {
+            "required": [
+              "sourcePage"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sourcePageRecorded": {
+                "const": false
+              }
+            },
+            "required": [
+              "sourcePageRecorded"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "sourcePage"
+              ]
+            }
+          }
+        }
+      ]
     },
     "entry": {
       "type": "object",
