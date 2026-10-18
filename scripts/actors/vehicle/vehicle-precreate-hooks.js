@@ -102,6 +102,10 @@ export function registerVehiclePreCreateHooks() {
       // Continue anyway - normalization errors should not block vehicle creation
     }
 
+    // A source-backed published record already has a deliberate category.
+    // A name-based mapping is a fallback, not authority to rewrite it.
+    if (document.system?.stockSourceEntryKey && document.system?.category) return;
+
     // Original: Auto-fill category from mapping
     const mapping = await loadVehicleMapping();
     if (!mapping || Object.keys(mapping).length === 0) {
