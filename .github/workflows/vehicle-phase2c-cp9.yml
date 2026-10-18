@@ -41,6 +41,19 @@ jobs:
           node --test tests/phase2c-vehicle-live-roll-guard.test.mjs
           node tests/phase3-vehicle-operator-resolution.test.mjs
           node tools/audits/vehicles/verify_phase2c_cp8_post_hydration.mjs --repo-root .
+      - name: Install pinned official Foundry pack compiler (isolated)
+        run: |
+          mkdir -p "${RUNNER_TEMP}/swse-cli"
+          npm install --no-save --prefix "${RUNNER_TEMP}/swse-cli" @foundryvtt/foundryvtt-cli@3.0.5
+      - name: Compile two source vehicle packs and assert round-trip parity
+        run: |
+          node tools/audits/vehicles/build_phase2c_cp9b_native_packs.mjs --repo-root . --cli-root "${RUNNER_TEMP}/swse-cli/node_modules" --out "${RUNNER_TEMP}/swse-native-packs"
+      - name: Upload certified native pack artifacts (not a full system release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: swse-cp9b-native-vehicle-packs
+          path: ${{ runner.temp }}/swse-native-packs/
+          retention-days: 7
       - name: Syntax gate
         run: |
           node --check scripts/engine/import/vehicle-weapon-import-normalizer.js
