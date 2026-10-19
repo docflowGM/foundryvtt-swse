@@ -1,0 +1,1245 @@
+{
+  "schema": "swse.vehicle.sotg.cp19.tranche06.original-pdf-ship-review.v1",
+  "checkpoint": "CP19_T06",
+  "book": "Starships of the Galaxy",
+  "trancheNumber": 6,
+  "queueRange": [
+    76,
+    90
+  ],
+  "authority": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "branch": "audit/sotg-strict-certification-cp17",
+    "baseCommitSha": "26fc06baadbe51b75909e2bed215492a51278389",
+    "sourceBookSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+    "cp16LedgerPath": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+    "cp16LedgerBlobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557",
+    "cp17QueuePath": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+    "cp17QueueBlobSha": "9c7df34eefa54f456721ee18c6ee684ec214dbf6",
+    "priorTrancheFiles": [
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche01-primary-source-review.json",
+        "blobSha": "e21200f0f8604e16ff3ebbbbb63ea79c44252bf3"
+      },
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche02-primary-source-review.json",
+        "blobSha": "0613ba9a0e1ef82efc0b773c66fbfc592f06cf57"
+      },
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche03-primary-source-review.json",
+        "blobSha": "ad4e95864c402cd83a447a8bfece26e8e40f6c50"
+      },
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche04-primary-source-review.json",
+        "blobSha": "c73fcd8e6477fe0488c9a08588bd8d10656fbf3e"
+      },
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche05-primary-source-review.json",
+        "blobSha": "56d7ffaef64bc8c289b6f41980573d8846be937e"
+      }
+    ],
+    "policyId": "SOTG-CP18-D01"
+  },
+  "reviewMethod": "VISUALLY_RENDERED_PRINTED_PDF_PRIMARY_SOURCE_NOT_OCR_ONLY",
+  "pdfPages": [
+    136,
+    137,
+    138,
+    140,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    149,
+    150,
+    151,
+    152
+  ],
+  "counts": {
+    "reviewedShipRecords": 15,
+    "reviewedAttackGroupRows": 38,
+    "sourceClassificationCandidates": 1,
+    "newSourceFidelityCertificates": 0,
+    "newPhysicalMountCertificates": 0,
+    "newOperationalAttackAuthorities": 0
+  },
+  "noProductionDataAltered": true,
+  "entries": [
+    {
+      "queuePosition": 76,
+      "cp16LedgerIndex": 76,
+      "sourceEntryKey": "sotg-fondor-shipyards-super-star-destroyer",
+      "printedName": "Fondor Shipyards Super Star Destroyer",
+      "printedStatblockStartPage": 136,
+      "reviewedPrintedPages": [
+        136,
+        137
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {},
+      "sourceConflictFieldGroups": [],
+      "category": "BASELINE_SUPER_STAR_DESTROYER_AND_TACTICAL_AURA",
+      "sourceObservations": [
+        {
+          "printedPage": 136,
+          "kind": "type",
+          "observation": "Printed Colossal (station) space station despite mobile super star destroyer context"
+        },
+        {
+          "printedPage": 136,
+          "kind": "armament",
+          "observation": "25 heavy turbolaser batteries, 25 ordinary turbolaser, 25 heavy ion, 8 tractor, 25 heavy concussion missile firing groups"
+        },
+        {
+          "printedPage": 137,
+          "kind": "tactical",
+          "observation": "Standard action to forgo attacks; allied starships within three starship squares gain +1 attack and +1 damage die on a successful attack"
+        }
+      ],
+      "finding": "This generic Super-class record is not Lusankya or Eclipse. Station type line is literal; numerous battery declarations do not provide physical muzzle totals or arcs.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "heavy turbolaser battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "11d10x5",
+            "sourcePage": 136,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 25,
+            "againstSmallerThanColossal": -5
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "turbolaser battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "8d10x5",
+            "sourcePage": 136,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 25,
+            "againstSmallerThanColossal": -5
+          }
+        },
+        {
+          "cp16RowIndex": 2,
+          "originalRow": {
+            "weaponLabel": "heavy ion cannon battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "5d10x5 ion",
+            "sourcePage": 136,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 25,
+            "againstSmallerThanColossal": -5
+          }
+        },
+        {
+          "cp16RowIndex": 3,
+          "originalRow": {
+            "weaponLabel": "tractor beam battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "- (grapple +86)",
+            "sourcePage": 136,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 8,
+            "againstSmallerThanColossal": -5
+          }
+        },
+        {
+          "cp16RowIndex": 4,
+          "originalRow": {
+            "weaponLabel": "heavy concussion missile battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "10d10x5",
+            "sourcePage": 136,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 25,
+            "againstSmallerThanColossal": -5,
+            "splash": "4-square",
+            "payload": 50000
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 77,
+      "cp16LedgerIndex": 77,
+      "sourceEntryKey": "sotg-lusankya",
+      "printedName": "Lusankya",
+      "printedStatblockStartPage": 138,
+      "reviewedPrintedPages": [
+        138
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {},
+      "sourceConflictFieldGroups": [],
+      "category": "LUSANKYA_UNIQUE_CONFIGURATION",
+      "sourceObservations": [
+        {
+          "printedPage": 138,
+          "kind": "weaponProfile",
+          "observation": "15 heavy turbolaser, 25 turbolaser, 25 point-defense laser, 10 heavy ion, 8 tractor and 10 heavy concussion missile batteries"
+        },
+        {
+          "printedPage": 138,
+          "kind": "variant",
+          "observation": "Named Executor sister ship, SR350 and backup hyperdrive x8; not stock Super-class SR400 backup x10"
+        },
+        {
+          "printedPage": 138,
+          "kind": "capacity",
+          "observation": "72 starfighters plus other small craft, substantial troop and prisoner capacity"
+        }
+      ],
+      "finding": "Lusankya is a separate named publication entry, not a renaming of generic Super Star Destroyer; all six weapon families and unique profile stay distinct.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "heavy turbolaser battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "11d10x5",
+            "sourcePage": 138,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 15,
+            "againstSmallerThanColossal": -5
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "turbolaser battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "8d10x5",
+            "sourcePage": 138,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 25,
+            "againstSmallerThanColossal": -5
+          }
+        },
+        {
+          "cp16RowIndex": 2,
+          "originalRow": {
+            "weaponLabel": "point-defense laser cannon battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "3d10x2",
+            "sourcePage": 138,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 25
+          }
+        },
+        {
+          "cp16RowIndex": 3,
+          "originalRow": {
+            "weaponLabel": "heavy ion cannon battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "4d10x5 ion",
+            "sourcePage": 138,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 10,
+            "againstSmallerThanColossal": -5
+          }
+        },
+        {
+          "cp16RowIndex": 4,
+          "originalRow": {
+            "weaponLabel": "tractor beam battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "- (grapple +86)",
+            "sourcePage": 138,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 8,
+            "againstSmallerThanColossal": -5
+          }
+        },
+        {
+          "cp16RowIndex": 5,
+          "originalRow": {
+            "weaponLabel": "heavy concussion missile battery",
+            "station": "battery (5 gunners)",
+            "attackBonus": 15,
+            "damage": "10d10x5",
+            "sourcePage": 138,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 10,
+            "againstSmallerThanColossal": -5,
+            "splash": "4-square",
+            "payload": 10000
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 78,
+      "cp16LedgerIndex": 79,
+      "sourceEntryKey": "sotg-ipv-1-system-patrol-craft",
+      "printedName": "IPV-1 System Patrol Craft",
+      "printedStatblockStartPage": 140,
+      "reviewedPrintedPages": [
+        140
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {},
+      "sourceConflictFieldGroups": [],
+      "category": "IPV1_HYPERDRIVELESS_AND_TACTICAL_CRITICAL_RANGE",
+      "sourceObservations": [
+        {
+          "printedPage": 140,
+          "kind": "attacks",
+          "observation": "Point-defense light turbolaser +2 and medium concussion missile +2; 24 carried missiles"
+        },
+        {
+          "printedPage": 140,
+          "kind": "mobility",
+          "observation": "Narrative explicitly identifies hyperdriveless patrol craft; improvised later hyperdrive may occur but is not baseline"
+        },
+        {
+          "printedPage": 140,
+          "kind": "tactical",
+          "observation": "When giving up attacks, against enemies Colossal or smaller in adjacent ship squares natural 19 or 20 can score critical, but 19 must hit Reflex Defense"
+        }
+      ],
+      "finding": "The text establishes a hyperdriveless stock ship and conditional critical-hit rule, not automatic threat expansion independent of a hit.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "point-defense light turbolasers",
+            "station": "gunner",
+            "attackBonus": 2,
+            "damage": "5d10x5",
+            "sourcePage": 140,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "medium concussion missiles",
+            "station": "gunner",
+            "attackBonus": 2,
+            "damage": "8d10x2",
+            "sourcePage": 140,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "payload": 24,
+            "againstSmallerThanColossal": -18,
+            "splash": "4-square"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 79,
+      "cp16LedgerIndex": 81,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-in-fighter",
+      "printedName": "Sienar Fleet Systems TIE/In Fighter",
+      "printedStatblockStartPage": 142,
+      "reviewedPrintedPages": [
+        142
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "TIE_IN_EXPLICIT_PROSE_ABSENCE_VS_CP16_FIELD_SILENCE",
+      "sourceObservations": [
+        {
+          "printedPage": 142,
+          "kind": "attack",
+          "observation": "Laser cannons +6, pilot operated; no printed weapon muzzle counts or arcs"
+        },
+        {
+          "printedPage": 142,
+          "kind": "noHyperdrive",
+          "observation": "Capabilities says TIE/In is not equipped with deflector shields, hyperdrive, or life-support systems"
+        },
+        {
+          "printedPage": 142,
+          "kind": "operations",
+          "observation": "Pilots need sealed suits, ordinary independent landing requires docking/scaffolding"
+        }
+      ],
+      "finding": "Published prose explicitly states the TIE/In has no hyperdrive, whereas CP16 groups hyperdrive under SOURCE_SILENT_CONFIRMED. Propose provenance reclassification with exact p142 evidence; do not coerce to literal printed 'None' or zero.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 6,
+            "damage": "4d10x2",
+            "sourcePage": 142,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "autofireBonus": 1
+          }
+        }
+      ],
+      "correctionCandidates": [
+        {
+          "field": "hyperdrive",
+          "fromState": "SOURCE_SILENT_CONFIRMED",
+          "proposedEvidenceClass": "EXPLICIT_ABSENCE_ASSERTED_IN_PROSE",
+          "printedPage": 142,
+          "status": "PROVENANCE_CLASSIFICATION_CANDIDATE_NOT_APPLIED",
+          "note": "The book does not print a literal Hyperdrive None field; preserve absent statblock key alongside prose denial.",
+          "sourceEntryKey": "sotg-sienar-fleet-systems-tie-in-fighter"
+        }
+      ],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 80,
+      "cp16LedgerIndex": 83,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-advanced-x1",
+      "printedName": "Sienar Fleet Systems TIE Advanced x1",
+      "printedStatblockStartPage": 144,
+      "reviewedPrintedPages": [
+        144
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "TIE_ADVANCED_X1_DISTINCT_EQUIPMENT",
+      "sourceObservations": [
+        {
+          "printedPage": 144,
+          "kind": "attacks",
+          "observation": "Heavy blaster cannons +10, 6d10x2"
+        },
+        {
+          "printedPage": 144,
+          "kind": "defense",
+          "observation": "SR20 and hyperdrive x4 with 10-jump limited navcomputer"
+        },
+        {
+          "printedPage": 144,
+          "kind": "identity",
+          "observation": "Limited-production TIE Advanced x1 is distinct from ordinary TIE/In and TIE Interceptor"
+        }
+      ],
+      "finding": "Do not import bare TIE/In absence of shield/hyperdrive; its printed higher durability and heavy blasters belong to Advanced x1.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "heavy blaster cannons",
+            "station": "pilot",
+            "attackBonus": 10,
+            "damage": "6d10x2",
+            "sourcePage": 144,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 81,
+      "cp16LedgerIndex": 84,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-interceptor",
+      "printedName": "Sienar Fleet Systems TIE Interceptor",
+      "printedStatblockStartPage": 144,
+      "reviewedPrintedPages": [
+        143,
+        144
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "TIE_INTERCEPTOR_FIRE_LINK_NO_INFERRED_HYPERDRIVE",
+      "sourceObservations": [
+        {
+          "printedPage": 144,
+          "kind": "attackOptions",
+          "observation": "Pilot laser cannons +7 with autofire and fire-linked options"
+        },
+        {
+          "printedPage": 144,
+          "kind": "equipment",
+          "observation": "No printed shield rating or hyperdrive stat field"
+        },
+        {
+          "printedPage": 143,
+          "kind": "narrative",
+          "observation": "Interceptor carries improvements relative to baseline; prose says lacks shields, armor and life-support, but does not assign physical laser count or numeric arc"
+        }
+      ],
+      "finding": "A neighboring TIE/In narrative is not authority to supply unprinted Interceptor hyperdrive; leave absent field source-silent, keep fire-link/auto separate.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 7,
+            "damage": "6d10x2",
+            "sourcePage": 144,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 82,
+      "cp16LedgerIndex": 85,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-defender",
+      "printedName": "Sienar Fleet Systems TIE Defender",
+      "printedStatblockStartPage": 145,
+      "reviewedPrintedPages": [
+        145
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "TIE_DEFENDER_EXPLICIT_CANNON_NUMBERS",
+      "sourceObservations": [
+        {
+          "printedPage": 145,
+          "kind": "physicalGuns",
+          "observation": "Narrative describes four fire-linked laser cannons and a pair of medium ion cannons"
+        },
+        {
+          "printedPage": 145,
+          "kind": "attackOptions",
+          "observation": "Laser +10 OR ion +10 OR proton torpedo +10; torpedoes can fire-link"
+        },
+        {
+          "printedPage": 145,
+          "kind": "payload",
+          "observation": "Eight proton torpedoes carried, not eight installed launch tubes"
+        }
+      ],
+      "finding": "Four lasers and two medium ion cannons are already source-backed in CP16; missiles remain ammunition and arcs remain unresolved.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 10,
+            "damage": "6d10x2",
+            "sourcePage": 145,
+            "hardwareCount": 4,
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "hardwareEvidence": "narrative four fire-linked laser cannons"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "medium ion cannons",
+            "station": "pilot",
+            "attackBonus": 10,
+            "damage": "4d10x2 ion",
+            "sourcePage": 145,
+            "hardwareCount": 2,
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "hardwareEvidence": "narrative pair of medium ion cannons"
+          }
+        },
+        {
+          "cp16RowIndex": 2,
+          "originalRow": {
+            "weaponLabel": "proton torpedoes",
+            "station": "pilot",
+            "attackBonus": 10,
+            "damage": "9d10x2",
+            "sourcePage": 145,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 83,
+      "cp16LedgerIndex": 86,
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-battleship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Battleship",
+      "printedStatblockStartPage": 146,
+      "reviewedPrintedPages": [
+        146,
+        147
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "cost": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "LUCREHULK_BATTLESHIP_TACTICAL_SCOPE",
+      "sourceObservations": [
+        {
+          "printedPage": 146,
+          "kind": "groups",
+          "observation": "Five turbolaser batteries +16; five heavy turbolaser batteries +14; five point-defense quad laser batteries +14"
+        },
+        {
+          "printedPage": 147,
+          "kind": "tactical",
+          "observation": "Only Battleship or Core Ship can forgo attacks to impose -1 enemy attack and Reflex in radius two against Colossal-or-smaller ships"
+        },
+        {
+          "printedPage": 146,
+          "kind": "type",
+          "observation": "This is the complete battleship, not the detachable Core Ship or Droid Control variant"
+        }
+      ],
+      "finding": "Distinct three-family Battleship profile and tactical-fire entitlement; no physical mount counts or precise hull firing arcs.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "turbolaser battery",
+            "station": "6 gunners",
+            "attackBonus": 16,
+            "damage": "5d10x5",
+            "sourcePage": 146,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 5,
+            "firingGroupCountEvidence": "explicit p146 Ranged line and table",
+            "vsTargetsSmallerThanColossalAttackBonus": -4
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "heavy turbolaser battery",
+            "station": "5 gunners",
+            "attackBonus": 14,
+            "damage": "8d10x5",
+            "sourcePage": 146,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 5,
+            "firingGroupCountEvidence": "explicit p146 Ranged line and table",
+            "vsTargetsSmallerThanColossalAttackBonus": -6
+          }
+        },
+        {
+          "cp16RowIndex": 2,
+          "originalRow": {
+            "weaponLabel": "point-defense quad laser cannon battery",
+            "station": "5 gunners",
+            "attackBonus": 14,
+            "damage": "3d10x2",
+            "sourcePage": 146,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 5,
+            "firingGroupCountEvidence": "explicit p146 Ranged line and table"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 84,
+      "cp16LedgerIndex": 87,
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-core-ship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Core Ship",
+      "printedStatblockStartPage": 147,
+      "reviewedPrintedPages": [
+        147
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "cost": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "LUCREHULK_CORE_DETACHABLE_FIRE_ARC_BLOCK",
+      "sourceObservations": [
+        {
+          "printedPage": 147,
+          "kind": "groups",
+          "observation": "Core Ship one turbolaser, two heavy turbolaser and two point-defense quad laser batteries"
+        },
+        {
+          "printedPage": 147,
+          "kind": "configuration",
+          "observation": "Spherical Core Ship detaches from outer cargo ring, can descend to a planet and serve as mobile command center"
+        },
+        {
+          "printedPage": 147,
+          "kind": "geometry",
+          "observation": "When surrounded by attached cargo ring many Core Ship weapons have no open firing arc; no exact arcs printed"
+        }
+      ],
+      "finding": "Attached and detached states affect usable weapon geometry. Source provides no per-mount sector map; Core Ship receives printed tactical rule but no inferred geometry.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "turbolaser battery",
+            "station": "6 gunners",
+            "attackBonus": 16,
+            "damage": "5d10x5",
+            "sourcePage": 147,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 1,
+            "firingGroupCountEvidence": "explicit p147 Ranged line and table",
+            "vsTargetsSmallerThanColossalAttackBonus": -4
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "heavy turbolaser battery",
+            "station": "5 gunners",
+            "attackBonus": 14,
+            "damage": "8d10x5",
+            "sourcePage": 147,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 2,
+            "firingGroupCountEvidence": "explicit p147 Ranged line and table",
+            "vsTargetsSmallerThanColossalAttackBonus": -6
+          }
+        },
+        {
+          "cp16RowIndex": 2,
+          "originalRow": {
+            "weaponLabel": "point-defense quad laser cannon battery",
+            "station": "5 gunners",
+            "attackBonus": 14,
+            "damage": "3d10x2",
+            "sourcePage": 147,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 2,
+            "firingGroupCountEvidence": "explicit p147 Ranged line and table"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 85,
+      "cp16LedgerIndex": 88,
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-droid-control-ship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Droid Control Ship",
+      "printedStatblockStartPage": 147,
+      "reviewedPrintedPages": [
+        146,
+        147
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "cost": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "LUCREHULK_DROID_CONTROL_SEPARATE_FAMILY",
+      "sourceObservations": [
+        {
+          "printedPage": 147,
+          "kind": "attack",
+          "observation": "Droid Control Ship seven quad turbolaser batteries +16, 7d10x5"
+        },
+        {
+          "printedPage": 146,
+          "kind": "function",
+          "observation": "Contains central control computer coordinating droid troops and starfighters"
+        },
+        {
+          "printedPage": 147,
+          "kind": "tacticalScope",
+          "observation": "Paragraph grants Tactical Fire to Battleship or Core Ship; no explicit extension to Droid Control Ship"
+        }
+      ],
+      "finding": "Do not borrow Battleship/Core Ship attack groups or their tactical aura; Droid Control Ship is a distinct source entry.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "quad turbolaser battery",
+            "station": "6 gunners",
+            "attackBonus": 16,
+            "damage": "7d10x5",
+            "sourcePage": 147,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 7,
+            "firingGroupCountEvidence": "explicit p147 Ranged line and table",
+            "vsTargetsSmallerThanColossalAttackBonus": -4
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 86,
+      "cp16LedgerIndex": 89,
+      "sourceEntryKey": "sotg-venator-class-star-destroyer",
+      "printedName": "Venator-class Star Destroyer",
+      "printedStatblockStartPage": 148,
+      "reviewedPrintedPages": [
+        148
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "VENATOR_FLIGHT_DECK_TOGGLE_AND_CARRIED_OR",
+      "sourceObservations": [
+        {
+          "printedPage": 148,
+          "kind": "dorsalHatch",
+          "observation": "Open dorsal deck doors lower Reflex by 2 and give +5 cover to craft on deck"
+        },
+        {
+          "printedPage": 148,
+          "kind": "carriedCraft",
+          "observation": "192 V-wings OR V-19s in the corresponding slot, with additional Eta-2, ARC-170 and other carried craft"
+        },
+        {
+          "printedPage": 148,
+          "kind": "tactical",
+          "observation": "Forfeit attacks to grant allied Gargantuan-or-smaller ships within two squares +2 attack and one higher damage die step"
+        }
+      ],
+      "finding": "Do not add both 192 V-wings and 192 V-19s, or apply open-deck penalties when sealed. Five source attack families have missing physical mount/arc authority.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "heavy turbolaser battery",
+            "station": "4 gunners",
+            "attackBonus": 11,
+            "damage": "8d10x5",
+            "sourcePage": 148,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 2,
+            "firingGroupCountEvidence": "explicit p148 Ranged line and table",
+            "vsTargetsSmallerThanColossalAttackBonus": -9
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "medium double turbolasers",
+            "station": "gunner",
+            "attackBonus": 5,
+            "damage": "6d10x5",
+            "sourcePage": 148,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 2,
+            "firingGroupCountEvidence": "explicit p148 Ranged line and table",
+            "vsTargetsSmallerThanColossalAttackBonus": -15
+          }
+        },
+        {
+          "cp16RowIndex": 2,
+          "originalRow": {
+            "weaponLabel": "point-defense laser cannon battery",
+            "station": "5 gunners",
+            "attackBonus": 13,
+            "damage": "4d10x2",
+            "sourcePage": 148,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 4,
+            "firingGroupCountEvidence": "explicit p148 Ranged line and table"
+          }
+        },
+        {
+          "cp16RowIndex": 3,
+          "originalRow": {
+            "weaponLabel": "tractor beam battery",
+            "station": "3 gunners",
+            "attackBonus": 9,
+            "damage": "— (grapple +64)",
+            "sourcePage": 148,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": 2,
+            "firingGroupCountEvidence": "explicit p148 Ranged line and table",
+            "vsTargetsSmallerThanColossalAttackBonus": -11
+          }
+        },
+        {
+          "cp16RowIndex": 4,
+          "originalRow": {
+            "weaponLabel": "proton torpedoes",
+            "station": "gunner",
+            "attackBonus": 5,
+            "damage": "9d10x2",
+            "sourcePage": 148,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "vsTargetsSmallerThanColossalAttackBonus": -15
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 87,
+      "cp16LedgerIndex": 90,
+      "sourceEntryKey": "sotg-v-19-torrent-starfighter",
+      "printedName": "V-19 Torrent Starfighter",
+      "printedStatblockStartPage": 149,
+      "reviewedPrintedPages": [
+        149
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "V19_EARLY_BOOSTER_AND_LATER_HYPERDRIVE",
+      "sourceObservations": [
+        {
+          "printedPage": 149,
+          "kind": "missileLaunchers",
+          "observation": "Narrative explicitly calls out a pair of concussion-missile launchers; six missiles carried"
+        },
+        {
+          "printedPage": 149,
+          "kind": "hyperdriveVariants",
+          "observation": "Early V-19 uses external booster ring; later V-19 retrofit adds installed x1 hyperdrive"
+        },
+        {
+          "printedPage": 149,
+          "kind": "identity",
+          "observation": "Ordinary CL9 V-19 differs from earlier Advanced V-19 template sample"
+        }
+      ],
+      "finding": "A pair of installed launchers and six missiles are distinct facts; preserve early/later hyperspace configurations and leave launcher firing arc unknown.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 7,
+            "damage": "5d10x2",
+            "sourcePage": 149,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "medium concussion missiles",
+            "station": "pilot",
+            "attackBonus": 7,
+            "damage": "8d10x2",
+            "sourcePage": 149,
+            "hardwareCount": 2,
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "hardwareEvidence": "narrative pair of concussion missile launchers"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 88,
+      "cp16LedgerIndex": 91,
+      "sourceEntryKey": "sotg-kuat-systems-engineering-alpha-3-nimbus-v-wing-starfighter",
+      "printedName": "Kuat Systems Engineering Alpha-3 Nimbus V-wing Starfighter",
+      "printedStatblockStartPage": 150,
+      "reviewedPrintedPages": [
+        150
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "NIMBUS_VWING_RING_DEPENDENCE",
+      "sourceObservations": [
+        {
+          "printedPage": 150,
+          "kind": "hyperdrive",
+          "observation": "Printed x1 hyperdrive requires booster ring; not intrinsic onboard hyperspace travel"
+        },
+        {
+          "printedPage": 150,
+          "kind": "skills",
+          "observation": "Mechanics and Use Computer +6 baseline, +13 when astromech present"
+        },
+        {
+          "printedPage": 150,
+          "kind": "weapons",
+          "observation": "One light laser cannon attack family +6 with unprinted physical count and arc"
+        }
+      ],
+      "finding": "Do not install booster ring as built-in x1 drive, give unconditional +13 skills, or borrow V-19 hardware.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "light laser cannons",
+            "station": "pilot",
+            "attackBonus": 6,
+            "damage": "3d10x2",
+            "sourcePage": 150,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 89,
+      "cp16LedgerIndex": 92,
+      "sourceEntryKey": "sotg-x-83-twintail-starfighter",
+      "printedName": "X-83 TwinTail Starfighter",
+      "printedStatblockStartPage": 151,
+      "reviewedPrintedPages": [
+        151
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "X83_PRINTED_COUNTERINTUITIVE_PERCEPTION",
+      "sourceObservations": [
+        {
+          "printedPage": 151,
+          "kind": "oddSkill",
+          "observation": "Perception +6 (+3*) when astromech present, preserving counterintuitive printed decrease"
+        },
+        {
+          "printedPage": 151,
+          "kind": "computer",
+          "observation": "Astromech hardwired into craft and can develop personality if memory not wiped"
+        },
+        {
+          "printedPage": 151,
+          "kind": "attacks",
+          "observation": "Laser cannon +7 OR proton torpedo +7; no barrel or launcher counts published"
+        }
+      ],
+      "finding": "Keep both printed perception values and hardwired astromech condition. Do not repair the numeric parenthetical from expectation.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 7,
+            "damage": "8d10x2",
+            "sourcePage": 151,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "proton torpedoes",
+            "station": "pilot",
+            "attackBonus": 7,
+            "damage": "10d10x2",
+            "sourcePage": 151,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 90,
+      "cp16LedgerIndex": 93,
+      "sourceEntryKey": "sotg-incom-t-65b-x-wing-starfighter",
+      "printedName": "Incom T-65B X-wing Starfighter",
+      "printedStatblockStartPage": 152,
+      "reviewedPrintedPages": [
+        152
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "BASE_T65B_NOT_RECON_OR_XJ3",
+      "sourceObservations": [
+        {
+          "printedPage": 152,
+          "kind": "stockWeapons",
+          "observation": "Laser cannon +7 OR proton torpedoes +7; six torpedoes payload"
+        },
+        {
+          "printedPage": 152,
+          "kind": "astromech",
+          "observation": "Printed crew one plus astromech; skill alternatives and hyperdrive navigation memory conditional"
+        },
+        {
+          "printedPage": 152,
+          "kind": "sourceIdentity",
+          "observation": "T-65B stock CL10 and SR15 differ from T-65BR recon and upgraded T-65XJ3"
+        }
+      ],
+      "finding": "The 6 torpedoes are not launcher count; stock ship identity is distinct from the two later published X-wing variants.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 7,
+            "damage": "6d10x2",
+            "sourcePage": 152,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "proton torpedoes",
+            "station": "pilot",
+            "attackBonus": 7,
+            "damage": "9d10x2",
+            "sourcePage": 152,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    }
+  ]
+}

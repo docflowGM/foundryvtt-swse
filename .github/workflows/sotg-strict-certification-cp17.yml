@@ -69,3 +69,8 @@ jobs:
         run: node --check tools/audits/vehicles/check_sotg_phase2b_cp19_tranche05.mjs
       - name: Validate CP19 tranche 05 published facts and non-certification
         run: node tools/audits/vehicles/check_sotg_phase2b_cp19_tranche05.mjs
+
+      - name: Verify CP19 final 25 source closeout validator syntax
+        run: node --check tools/audits/vehicles/check_sotg_phase2b_cp19_closeout.mjs
+      - name: Validate all seven CP19 tranches and 100-ship closeout
+        run: node tools/audits/vehicles/check_sotg_phase2b_cp19_closeout.mjs

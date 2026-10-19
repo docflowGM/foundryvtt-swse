@@ -1,0 +1,191 @@
+{
+  "schema": "swse.vehicle.sotg.cp19.source-review-closeout.v1",
+  "checkpoint": "CP19_CLOSEOUT_TRANCHE_07",
+  "book": "Starships of the Galaxy",
+  "repository": "docflowGM/foundryvtt-swse",
+  "branch": "audit/sotg-strict-certification-cp17",
+  "startingBranchHeadSha": "26fc06baadbe51b75909e2bed215492a51278389",
+  "approvedPolicyId": "SOTG-CP18-D01",
+  "sourcePdf": {
+    "filename": "SAGA EDITION - Starships of the Galaxy.pdf",
+    "sha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+    "verification": "LOCALLY_SHA256_CHECKED_AND_PRINTED_PAGES_RENDERED_VISUALLY"
+  },
+  "originalAuthorityBlobs": [
+    {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+      "blobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557"
+    },
+    {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+      "blobSha": "9c7df34eefa54f456721ee18c6ee684ec214dbf6"
+    },
+    {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche01-primary-source-review.json",
+      "blobSha": "e21200f0f8604e16ff3ebbbbb63ea79c44252bf3"
+    },
+    {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche02-primary-source-review.json",
+      "blobSha": "0613ba9a0e1ef82efc0b773c66fbfc592f06cf57"
+    },
+    {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche03-primary-source-review.json",
+      "blobSha": "ad4e95864c402cd83a447a8bfece26e8e40f6c50"
+    },
+    {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche04-primary-source-review.json",
+      "blobSha": "c73fcd8e6477fe0488c9a08588bd8d10656fbf3e"
+    },
+    {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche05-primary-source-review.json",
+      "blobSha": "56d7ffaef64bc8c289b6f41980573d8846be937e"
+    }
+  ],
+  "tranches": [
+    {
+      "tranche": 1,
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche01-primary-source-review.json",
+      "startPosition": 1,
+      "endPosition": 15,
+      "ships": 15,
+      "attackGroupRows": 47
+    },
+    {
+      "tranche": 2,
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche02-primary-source-review.json",
+      "startPosition": 16,
+      "endPosition": 30,
+      "ships": 15,
+      "attackGroupRows": 39
+    },
+    {
+      "tranche": 3,
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche03-primary-source-review.json",
+      "startPosition": 31,
+      "endPosition": 45,
+      "ships": 15,
+      "attackGroupRows": 40
+    },
+    {
+      "tranche": 4,
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche04-primary-source-review.json",
+      "startPosition": 46,
+      "endPosition": 60,
+      "ships": 15,
+      "attackGroupRows": 38
+    },
+    {
+      "tranche": 5,
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche05-primary-source-review.json",
+      "startPosition": 61,
+      "endPosition": 75,
+      "ships": 15,
+      "attackGroupRows": 37
+    },
+    {
+      "tranche": 6,
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche06-primary-source-review.json",
+      "startPosition": 76,
+      "endPosition": 90,
+      "ships": 15,
+      "attackGroupRows": 38
+    },
+    {
+      "tranche": 7,
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche07-primary-source-review.json",
+      "startPosition": 91,
+      "endPosition": 100,
+      "ships": 10,
+      "attackGroupRows": 18
+    }
+  ],
+  "counts": {
+    "publishedShipIdentities": 104,
+    "preexistingStrictFieldAndMountCertificates": 4,
+    "cp17UncertifiedQueue": 100,
+    "cp19QueueShipReviewsComplete": 100,
+    "cp19QueueShipReviewsRemaining": 0,
+    "cp19QueueAttackGroupRowsReviewed": 257,
+    "allPublicationAttackGroupRows": 258,
+    "oldCertificateAttackGroupRows": 1,
+    "discoveryOnlySchemaCases": 155,
+    "newSourceFidelityCertificates": 0,
+    "newPhysicalMountCertificates": 0,
+    "newStockRuntimeAttackAuthorizations": 0,
+    "existingStrictMechanicalBacklogUnresolved": 100
+  },
+  "knownOpenIssues": {
+    "publishedContradictionsPreserved": 12,
+    "proposedNumericOrHardwareLedgerCorrections": [
+      {
+        "sourceKey": "sotg-acclamator-ii-class-assault-ship",
+        "page": 57,
+        "row": 1,
+        "field": "hardwareCount",
+        "proposed": 2,
+        "note": "Two heavy proton torpedo tubes printed; source silence in ledger"
+      },
+      {
+        "sourceKey": "sotg-slave-i",
+        "page": 85,
+        "row": 1,
+        "field": "damage",
+        "recorded": "10d10x2",
+        "proposed": "8d10x2"
+      },
+      {
+        "sourceKey": "sotg-hapan-battle-dragon",
+        "page": 93,
+        "row": 5,
+        "field": "hardwareCount",
+        "proposed": 4,
+        "note": "Four mass-pulse tubes printed"
+      },
+      {
+        "sourceKey": "sotg-nebula-class-star-destroyer",
+        "page": 119,
+        "row": 2,
+        "field": "damage",
+        "recorded": "11d10x5 ion",
+        "proposed": "3d10x5 ion"
+      }
+    ],
+    "proposedNarrativeSourceEvidenceClassifications": [
+      {
+        "sourceKey": "sotg-sienar-fleet-systems-tie-in-fighter",
+        "page": 142,
+        "field": "hyperdrive",
+        "ledgerState": "SOURCE_SILENT_CONFIRMED",
+        "proposed": "EXPLICIT_ABSENCE_ASSERTED_IN_PROSE_NOT_LITERAL_NONE"
+      }
+    ],
+    "semanticRepresentationIssues": [
+      {
+        "sourceKey": "sotg-sienar-fleet-systems-gat-12h",
+        "page": 131,
+        "field": "againstSmallerThanColossal",
+        "printedPenalty": -20,
+        "printedResultantAttack": -15,
+        "status": "FIELD_SEMANTICS_REVIEW"
+      }
+    ],
+    "historicalMissingRowSourcePageKeys": 8,
+    "historicalCp16Comparison": "UNAVAILABLE_MISSING_CP15_INPUT",
+    "sourceSilencePolicy": "SOTG-CP18-D01_FAIL_CLOSED_WITH_INDEPENDENT_RUNTIME_GATE",
+    "otherVariantScope": "PRESERVED_UNRESOLVED_PER_TRANCHE_NOT_AUTO_ADJUDICATED"
+  },
+  "invariants": {
+    "originalCp16AndCp17FilesUnchanged": true,
+    "old15Plus15Plus15Plus15Plus15ReviewedShipCasesPreserved": true,
+    "newTranche6Reviewed": 15,
+    "newTranche7Reviewed": 10,
+    "noAutomaticCorrectionsApplied": true,
+    "sourceReviewCompletionDoesNotGrantCertification": true,
+    "v06SchemaFrozen": false,
+    "productionCompendiumHydrationAuthorized": false,
+    "vehicleCombatIntegrationChanged": false,
+    "pureModifiedDroidAndVehicleRefactorChanged": false
+  },
+  "status": "SOURCE_REVIEW_COMPLETE_STRICT_MECHANICAL_CERTIFICATION_OUTSTANDING",
+  "nextPhaseRecommendation": "Reconcile source-backed corrections by approved provenance, preserve 12 published contradictions, repair 8 missing row-page provenance keys only with page evidence, adjudicate Skipray field semantics, and run individual source-fidelity candidate certificates without granting operational stock attack trust."
+}
