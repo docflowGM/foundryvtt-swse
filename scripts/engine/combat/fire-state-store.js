@@ -259,6 +259,21 @@ function syncInMemory(weapon, delta) {
   try { weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: merged } }; } catch { /* frozen document: the world copy updates on the next render */ }
 }
 
+/**
+ * Foundry's embedded-document update resolves with the documents it ACTUALLY changed (an empty array when nothing was updated: the Item was not
+ * found on that actor, or the data produced no change). Only a result that names the intended Item confirms the write.
+ */
+export const confirmsItemUpdate = (result, itemId) => {
+  if (Array.isArray(result)) return result.some((d) => (d?.id ?? d?._id) === itemId);
+  return !!result && typeof result === 'object' && (result.id ?? result._id) === itemId;   // Document#update resolves with the document
+};
+
+/** Whether the in-memory record already holds everything the delta would set (a no-diff update legitimately changes nothing). */
+function deltaAlreadyHolds(weapon, delta) {
+  const now = readFireState(weapon) ?? {};
+  return Object.entries(delta.set).every(([k, v]) => JSON.stringify(now[k]) === JSON.stringify(v)) && delta.unset.every((k) => now[k] === undefined);
+}
+
 async function writeDelta(actor, weapon, delta, { strict = false } = {}) {
   if (!weapon) return 'failed';
   const update = {};
@@ -269,13 +284,16 @@ async function writeDelta(actor, weapon, delta, { strict = false } = {}) {
   if (!weapon) return 'failed';
   const owner = weapon.actor ?? actor;
   try {
+    let result;
     if (owner && weapon.id) {
       const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-      await ActorEngine.updateOwnedItems(owner, [{ _id: weapon.id, ...update }]);
+      result = await ActorEngine.updateOwnedItems(owner, [{ _id: weapon.id, ...update }]);
     } else if (typeof weapon.update === 'function') {
-      await weapon.update(update);
+      result = await weapon.update(update);
     } else return 'failed';
-    return 'persisted';
+    if (confirmsItemUpdate(result, weapon.id)) return 'persisted';
+    // an unconfirmed update is a persistence failure unless the record demonstrably already holds the requested state
+    return deltaAlreadyHolds(weapon, delta) ? 'unchanged' : 'failed';
   } catch (err) {
     // combat-state writes are best-effort (the attack still resolved); mount / unmount are strict and report the failure
     if (strict) throw err;
@@ -462,7 +480,7 @@ export async function reloadBySecondCrew(gunner, weapon, crewActor, { source = '
         : { success: true, reloadAmount: 0, message: `${weapon?.name ?? 'Weapon'} reloaded` };
     }
   } catch (err) { reload = { success: false, message: String(err?.message ?? err) }; }
-  if (reload?.success === false) { await spend.rollback(); return { ok: false, reason: 'reload-failed', message: reload.message }; }
+  if (reload?.success === false) { await spend.rollback(); return { ok: false, reason: 'reload-failed', message: reload.message, ammunitionRestored: reload.ammunitionRestored === true, reloadStateCleared: false }; }   // the crew action is given back; a restored pool is never double-counted on retry (a full pool only clears the state)
   return { ok: true, reload, action, chargedTo: { id: crewActor.id, name: crewActor.name ?? null }, gunnerId: owner?.id ?? null };
 }
 

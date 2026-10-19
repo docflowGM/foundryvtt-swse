@@ -670,7 +670,11 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
 export { checkAttackSourceReadiness };
 
 export async function rollAttack(actor, weapon, options = {}) {
-  let rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null));
+  // WP5-C3: an optional Force Point transaction (SWSERoll.beginForcePointUse). It is spent only at this function's commitment point, after the last
+  // readiness check, and is kept out of the roll options so it is never serialized into chat or reroll data.
+  const { forcePointTransaction: fpTx = null, ...plainOptions } = options ?? {};
+  let fpCommitted = false;
+  let rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(plainOptions, plainOptions?.combatContext ?? plainOptions?.workflowContext ?? null));
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
@@ -820,6 +824,23 @@ export async function rollAttack(actor, weapon, options = {}) {
     if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
     await actionOptionSpend?.rollback?.();
     return null;
+  }
+  // WP5-C3: the Force Point is committed at the very last point and the source is checked once more, because committing awaits. A refusal after
+  // the spend restores the exact pre-spend Force Point state together with the other payments.
+  if (fpTx) {
+    if (!(await fpTx.commit())) {
+      if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      await actionOptionSpend?.rollback?.();
+      return null;
+    }
+    fpCommitted = true;
+    if (!revalidateAttackSource(actor, weapon, rollOptions, 'the Force Point payment')) {
+      await fpTx.rollback();
+      fpCommitted = false;
+      if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      await actionOptionSpend?.rollback?.();
+      return null;
+    }
   }
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
@@ -1076,6 +1097,7 @@ export async function rollAttack(actor, weapon, options = {}) {
       await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
     }
     await actionOptionSpend?.rollback?.();
+    if (fpCommitted) await fpTx.rollback();
     throw err;
   }
 }

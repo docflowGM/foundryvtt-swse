@@ -3,6 +3,7 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
 import { checkAttackSourceReadiness, refuseUnreadyAttack, revalidateAttackSource } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack-readiness-gate.js";
+import { createForcePointTransaction } from "/systems/foundryvtt-swse/scripts/combat/rolls/force-point-transaction.js";
 import { rollAttack as canonicalRollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { resolveAutofireArea } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
 import { askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
@@ -251,9 +252,32 @@ export class SWSERoll {
    * @param {string} [reason=""] - The reason for spending (for display)
    * @returns {Promise<number>} bonus from FP (0 if not spent)
    */
-  static async promptForcePointUse(actor, reason = '', { guard = null } = {}) {
+  static async promptForcePointUse(actor, reason = '') {
+    const tx = await this.beginForcePointUse(actor, reason);
+    if (!tx) {return 0;}
+    if (!(await tx.commit())) {return 0;}   // the Force Point could not be spent; the player has been told
+    try {
+      await tx.announce();
+    } catch (err) {
+      console.error('Failed to announce Force Point:', err);
+      ui.notifications.error('Failed to spend Force Point. Please try again.');
+      return 0;
+    }
+    return tx.result;
+  }
+
+  /**
+   * E4-C1 WP5-C3: the Force Point as a TRANSACTION. `beginForcePointUse` asks, runs the PRE_FORCE_POINT middleware and rolls the bonus, but spends
+   * nothing and posts nothing. A caller whose use depends on a later decision (an attack that may still be refused) commits at its own point of
+   * commitment, after its last readiness check; a refusal before that costs no Force Point and leaves no "Force Point Used" message.
+   *   commit()    spends one Force Point through ActorEngine (the one authority). Resolves true, or false when it could not be spent.
+   *   rollback()  gives back exactly what this spend took (relative, by entry id) through ActorEngine, preserving any concurrent change; only after a commit.
+   *   announce()  posts the chat message and the POST_FORCE_POINT hook; only after a commit, and only once the use is final.
+   * @returns {Promise<null|{result:number, formula:string, committed:boolean, commit:Function, rollback:Function, announce:Function}>} null when declined / not rolled
+   */
+  static async beginForcePointUse(actor, reason = '') {
     const fp = actor.system.forcePoints;
-    if (!fp || fp.value <= 0) {return 0;}
+    if (!fp || fp.value <= 0) {return null;}
 
     // Get canonical dice from ForcePointsService
     const { diceCount: numDice, dieSize: die } = await ForcePointsService.getScalingDice(actor);
@@ -275,10 +299,7 @@ export class SWSERoll {
       }).render(true);
     });
 
-    if (!confirmed) {return 0;}
-    // WP5-C2 R4: the Force Point is spent only after the player confirms, and the dialog above awaited. A caller whose attack source may have changed
-    // meanwhile passes `guard`; returning false refuses BEFORE the Force Point is rolled or spent (the result is null: the attack is refused).
-    if (typeof guard === 'function' && !guard()) {return null;}
+    if (!confirmed) {return null;}
 
     // Build FP context (middleware pattern)
     const fpContext = {
@@ -297,7 +318,7 @@ export class SWSERoll {
     const formula = `${fpContext.numDice}${fpContext.die}`;
     const roll = await this._safeRoll(formula);
 
-    if (!roll) {return 0;}
+    if (!roll) {return null;}
 
     const diceResults = roll.dice[0].results.map(r => r.result);
     let result = 0;
@@ -320,38 +341,7 @@ export class SWSERoll {
 
     result = result * fpContext.multiplier + fpContext.flatBonus;
 
-    // Get force points with defensive checks
-    const currentFP = actor.system.forcePoints?.value ?? 0;
-    const maxFP = actor.system.forcePoints?.max ?? 0;
-    const newFP = Math.max(0, currentFP - 1);
-
-    // Spend FP with error handling (PHASE 3: Route through ActorEngine)
-    try {
-      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-      await ActorEngine.spendForcePoints(actor, 1);
-
-      // Chat message (use calculated value instead of stale reference)
-      await createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: `
-          <div class="swse-forcepoint-roll">
-            <h3>Force Point Used</h3>
-            <p>Rolled: ${formula}</p>
-            <p>Result Applied: <strong>+${result}</strong></p>
-            <p>FP Remaining: ${newFP}/${maxFP}</p>
-          </div>
-        `
-      });
-
-      // Post-roll hook
-      Hooks.callAll(ROLL_HOOKS.POST_FORCE_POINT, actor, { roll, result, reason });
-    } catch (err) {
-      console.error('Failed to spend Force Point:', err);
-      ui.notifications.error('Failed to spend Force Point. Please try again.');
-      return 0; // Return 0 since operation failed
-    }
-
-    return result;
+    return createForcePointTransaction({ actor, result, formula, reason, roll });   // WP5-C3: spends nothing until commit()
   }
 
 
@@ -425,12 +415,11 @@ export class SWSERoll {
         return { cancelled: true };
       }
 
-      // WP5-C2 R4: the dialog and the pre-roll hook awaited; judge the source again before anything is spent (the Force Point included)
+      // WP5-C2 R4: the dialog and hook awaited; re-check before anything is spent
       if (!revalidateAttackSource(actor, weapon, options, 'the attack dialog')) return null;
-      const fpBonus = (options.skipFP || !modifiers.useForcePoint)
-        ? 0
-        : await this.promptForcePointUse(actor, 'attack roll', { guard: () => revalidateAttackSource(actor, weapon, options, 'the Force Point prompt') });
-      if (fpBonus === null) return null;
+      // WP5-C3: the Force Point is rolled here, spent by the attack at its commitment point
+      const fpTx = (options.skipFP || !modifiers.useForcePoint) ? null : await this.beginForcePointUse(actor, 'attack roll');
+      const fpBonus = fpTx?.result ?? 0;
       context.fpBonus = fpBonus;
 
       const attackResult = await canonicalRollAttack(actor, weapon, {
@@ -439,6 +428,7 @@ export class SWSERoll {
         target: context.target,
         forcePointBonus: fpBonus,
         fpBonus,
+        forcePointTransaction: fpTx,
         sourceElement: options?.sourceElement ?? null,
         companionSource: options?.companionSource ?? null,
         sheet: options?.sheet ?? null,
@@ -446,6 +436,7 @@ export class SWSERoll {
       });
 
       if (!attackResult) return null;
+      if (fpTx?.committed) await fpTx.announce();   // the attack was rolled with the Force Point; only now is the use final
 
       const rolled = attackResult.roll ?? attackResult;
       const attackContext = attackResult.swseAttackContext ?? rolled.swseAttackContext ?? attackResult ?? {};
@@ -638,10 +629,9 @@ export class SWSERoll {
       // Force Point before roll
       // WP5-C2 R4: dialog, hook and Force Point prompt all await; the source is judged again before the first expenditure
       if (!revalidateAttackSource(actor, weapon, options, 'the attack dialog')) {return null;}
-      const fpBonus = (options.skipFP || !modifiers.useForcePoint)
-        ? 0
-        : await this.promptForcePointUse(actor, `${options.burstFire ? 'Burst Fire' : 'Autofire'} attack`, { guard: () => revalidateAttackSource(actor, weapon, options, 'the Force Point prompt') });
-      if (fpBonus === null) {return null;}
+      // WP5-C3: rolled now, spent at the commitment point below (after the last readiness check)
+      const fpTx = (options.skipFP || !modifiers.useForcePoint) ? null : await this.beginForcePointUse(actor, `${options.burstFire ? 'Burst Fire' : 'Autofire'} attack`);
+      const fpBonus = fpTx?.result ?? 0;
       context.fpBonus = fpBonus;
 
       // Calculate attack penalty
@@ -729,9 +719,25 @@ export class SWSERoll {
         await autofireTemporal?.rollback?.();
         return null;
       }
+      // WP5-C3: the Force Point is committed here and checked once more, because committing awaits; a refusal after the spend restores it exactly
+      if (fpTx) {
+        if (!(await fpTx.commit())) {
+          await autofireTemporal?.rollback?.();
+          return null;
+        }
+        if (!revalidateAttackSource(actor, weapon, options, 'the Force Point payment')) {
+          await fpTx.rollback();
+          await autofireTemporal?.rollback?.();
+          return null;
+        }
+      }
       // Perform the roll
       const roll = await this._safeRoll(formula);
-      if (!roll) {return null;}
+      if (!roll) {
+        await fpTx?.rollback?.();
+        return null;
+      }
+      if (fpTx?.committed) await fpTx.announce();
 
       if (isCanonical) await FireStateStore.commitFired(actor, weapon, canon.runtime, canon.selection, autofireTemporal.paid);
       const d20 = roll.dice?.[0]?.results?.[0]?.result ?? null;
@@ -1047,8 +1053,9 @@ export class SWSERoll {
       if (!attackSourcesReady('the Full Attack configuration')) {return null;}
 
       // Prompt for Force Point once for the entire full attack
-      const fpBonus = await this.promptForcePointUse(actor, 'Full Attack', { guard: () => attackSourcesReady('the Force Point prompt') });
-      if (fpBonus === null) {return null;}
+      const fpTx = await this.beginForcePointUse(actor, 'Full Attack');   // WP5-C3: rolled now, spent when the first attack is about to be rolled
+      const fpBonus = fpTx?.result ?? 0;
+      let fpCommitted = false;
 
       // Roll each attack
       const results = [];
@@ -1059,6 +1066,16 @@ export class SWSERoll {
         // WP5-C2 R4: the loop awaits (dice, concealment, hooks); each attack is judged against the equipment as it is NOW. A source that stopped being
         // ready ends the sequence: attacks already rolled stand, later ones are not rolled, and the player is told.
         if (!revalidateAttackSource(actor, weapon, options, `attack ${attack.attackNumber ?? results.length + 1} of the Full Attack`)) {break;}
+        if (fpTx && !fpCommitted) {
+          // commit (and re-check, because committing awaits) only when an attack is actually about to be rolled
+          if (!(await fpTx.commit())) {return null;}
+          fpCommitted = true;
+          if (!revalidateAttackSource(actor, weapon, options, 'the Force Point payment')) {
+            await fpTx.rollback();
+            fpCommitted = false;
+            break;
+          }
+        }
 
         // Calculate attack bonus with this attack's specific penalty
         const baseAttackBonus = computeAttackBonus(actor, weapon);
@@ -1138,6 +1155,11 @@ export class SWSERoll {
           },
           context: { ...context, weapon, attack }
         });
+      }
+
+      if (fpCommitted) {
+        if (results.length === 0) { await fpTx.rollback(); fpCommitted = false; }   // no attack used it
+        else { await fpTx.announce(); }
       }
 
       // Generate combined chat card

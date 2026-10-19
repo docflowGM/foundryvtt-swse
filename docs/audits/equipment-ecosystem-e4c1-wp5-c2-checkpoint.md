@@ -5,6 +5,8 @@
 **Statuses:** `IMPLEMENTED` + `OFFLINE_TESTED`; `RUNTIME_UNVERIFIED`; nothing `FOUNDRY_TESTED`. **NOT CONVERGED.**
 **Rules register:** EQ-001, EQ-002, EQ-003 unchanged. **EQ-004 appended** (`DEFERRED_RULES_REVIEW`): operator authorization / crew eligibility for vehicle weapon attacks. No recommended ruling.
 
+**Superseded in part by WP5-C3 (see `equipment-ecosystem-e4c1-wp5-c3-checkpoint.md`):** the independent review found that the R2 builder options (`extraDamageDieSteps`, `flagMarks`, `attackOptions`) and id-string actor binding were unsafe, that the Force Point guard preceded the spend, and that reload-state failures were swallowed. The R2 "Slammer asks the helper for the variant in one step" description, the R4 Force Point `guard` and the R5 "sheet reload action stays spent" limitation are replaced by the WP5-C3 designs.
+
 ## R1 — Weapon document ownership
 **Defect:** the gate located the owned Item with `i === weapon || i.uuid === weapon.uuid`, so a look-alike object sharing an owned Item's uuid passed readiness (judged on the real Item) while the look-alike's own data went downstream.
 **Fix:** ownership is identity only (`i === weapon`). The authorized document is returned as `source`, so the Item evaluated for readiness is the exact Item whose data the attack uses. Id and uuid equality are not ownership.

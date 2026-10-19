@@ -39,7 +39,7 @@ const mkActor = (items) => {
 };
 const spent = [];
 let writes = 0;
-ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); writes += 1; } };
+ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); writes += 1; } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
 ActionEconomyConsumption.spend = async (actor, type) => { spent.push(type); return { allowed: true, committed: true, rollback: async () => { spent.pop(); } }; };
 const reset = () => { spent.length = 0; writes = 0; };
 const stockOf = (w) => w.flags?.swse?.fireState?.stock;

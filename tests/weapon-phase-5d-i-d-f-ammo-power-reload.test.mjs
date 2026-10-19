@@ -77,7 +77,7 @@ function installHarness({ econAllowed = true } = {}) {
   RollEngine.safeRoll = async (f) => { spent.rolls += 1; return { total: 15, formula: f, dice: [{ results: [{ result: 12 }] }] }; };
   SWSEChat.postRoll = async (p) => { posted.push(p); return {}; };
   AmmoSystem.spendForWorkflow = async () => { spent.ammo += 1; return { success: true, spent: false }; };
-  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } };
+  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
   ActionEconomyConsumption.spend = async (actor, type) => { if (!econAllowed) return { allowed: false, permitted: false, rollback: async () => {} }; spent.actions.push(type); return { allowed: true, committed: true, rollback: async () => { spent.actions.pop(); } }; };
 }
 const restoreHarness = () => { RollEngine.safeRoll = origs.RE; SWSEChat.postRoll = origs.post; AmmoSystem.spendForWorkflow = origs.spendAmmo; ActorEngine.updateOwnedItems = origs.upd; ActionEconomyConsumption.spend = origs.econ; AmmoSystem.consumeAmmunition = origs.consume; AmmoSystem.isTrackingEnabled = origs.track; globalThis.game = undefined; };
@@ -378,7 +378,7 @@ try {
   useRealAmmo();
   const origPrompt = SWSEDialogV2.prompt;
   const charges = [];
-  const mkSheet = (actor) => ({ actor, requestSurfaceRender: async () => {}, _deriveCombatActionEconomyType: () => 'standard', _applyActionEconomy: async (type) => { charges.push({ actor: actor.id, type }); return true; }, _chooseReloadMode: proto._chooseReloadMode });
+  const mkSheet = (actor) => ({ actor, requestSurfaceRender: async () => {}, _deriveCombatActionEconomyType: () => 'standard', _spendActionEconomy: async (type) => { charges.push({ actor: actor.id, type }); return { allowed: true, permitted: true, committed: false, rollback: async () => false }; }, _chooseReloadMode: proto._chooseReloadMode });
   const run = (sheet, ctx = {}, opts = {}) => proto._executeReloadCombatWorkflow.call(sheet, { action: { id: 'reload' }, ...ctx }, opts);
   globalThis.game = { ...(globalThis.game ?? {}), actors: { get: (id) => (id === 'crew-9' ? { id: 'crew-9', name: 'Crew Nine' } : null) }, combat: null, user: { targets: { first: () => null } } };
 

@@ -240,8 +240,10 @@ export class AmmoSystem {
     }
 
     if (currentAmmo === maxAmmo) {
-      // Phase 5D-G: a reload-after-each-shot weapon is mechanically unloaded even with a full pool -- the reload action still restores it
-      await this.#clearFireStateReload(actor, weapon);
+      // Phase 5D-G: a reload-after-each-shot weapon is mechanically unloaded even with a full pool -- the reload action still restores it.
+      // The pool is already full, so a failed state clear changes no ammunition and can simply be retried without adding any.
+      const cleared = await this.#clearFireStateReload(actor, weapon);
+      if (!cleared.ok) return this.#reloadStateNotPersisted(weapon, { reloadAmount: 0, ammunitionRestored: false });
       return {
         success: true,
         message: `${weapon.name} is already fully loaded`,
@@ -254,18 +256,26 @@ export class AmmoSystem {
     try {
       // Update through ActorEngine if owned
       // PHASE 2B: Update through ActorEngine if owned by any actor
+      let updated;
       if (weapon.actor) {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        await ActorEngine.updateOwnedItems(weapon.actor, [{
+        updated = await ActorEngine.updateOwnedItems(weapon.actor, [{
           _id: weapon.id,
           'system.ammunition.current': maxAmmo
         }]);
       } else {
         // Fallback for unowned weapons (compendium, etc)
-        await weapon.update({ 'system.ammunition.current': maxAmmo });
+        updated = await weapon.update({ 'system.ammunition.current': maxAmmo });
+      }
+      // Foundry resolves with the documents it actually changed; an unconfirmed update is a failure unless the pool is demonstrably already full
+      const { confirmsItemUpdate } = await import("/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js");
+      if (!confirmsItemUpdate(updated, weapon.id) && (weapon.system?.ammunition?.current ?? 0) !== maxAmmo) {
+        return { success: false, reason: 'ammunition-not-updated', message: `${weapon.name}: the ammunition update was not applied`, ammunitionRestored: false, reloadStateCleared: false };
       }
 
-      await this.#clearFireStateReload(actor, weapon);
+      // Two distinct facts: the pool is full (above) and the weapon no longer awaits a reload (below). Neither is reported for the other.
+      const cleared = await this.#clearFireStateReload(actor, weapon);
+      if (!cleared.ok) return this.#reloadStateNotPersisted(weapon, { reloadAmount, ammunitionRestored: true });
       return {
         success: true,
         message: `${weapon.name} reloaded: +${reloadAmount} rounds (${currentAmmo} → ${maxAmmo})`,
@@ -280,15 +290,35 @@ export class AmmoSystem {
     }
   }
 
-  /** Phase 5D-G: a reload clears the owned "awaiting reload" fire state (separate from the ammunition counter). Best effort. */
+  /**
+   * Phase 5D-G: a reload clears the owned "awaiting reload" fire state (separate from the ammunition counter).
+   * @returns {Promise<{ok:boolean}>} ok is false when the clear was attempted and not persisted (the weapon STILL records awaiting-reload)
+   */
   static async #clearFireStateReload(actor, weapon) {
     try {
       const { FireStateStore } = await import("/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js");
       const cleared = await FireStateStore.clearReload(actor ?? weapon?.actor, weapon);
-      if (cleared?.outcome === 'failed') swseLogger.warn?.('Fire-state reload clear was not persisted (ammunition was still reloaded; the weapon still records awaiting-reload).');
+      if (cleared?.outcome === 'failed') {
+        swseLogger.warn?.('Fire-state reload clear was not persisted; the weapon still records awaiting-reload.');
+        return { ok: false };
+      }
+      return { ok: true };
     } catch (err) {
-      swseLogger.warn?.('Fire-state reload clear failed (ammunition was still reloaded):', err);
+      swseLogger.warn?.('Fire-state reload clear failed; the weapon still records awaiting-reload:', err);
+      return { ok: false };
     }
+  }
+
+  /** A reload whose ammunition may have been restored but whose awaiting-reload state could not be cleared is NOT a successful reload. */
+  static #reloadStateNotPersisted(weapon, { reloadAmount, ammunitionRestored }) {
+    return {
+      success: false,
+      reason: 'reload-state-not-persisted',
+      message: `${weapon.name}: the reload could not be recorded${ammunitionRestored ? ' (the ammunition was restored; use Reload again to finish)' : ''}`,
+      reloadAmount,
+      ammunitionRestored,
+      reloadStateCleared: false
+    };
   }
 
   /**

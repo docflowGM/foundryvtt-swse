@@ -107,7 +107,7 @@ const install = () => {
   SWSEChat.postRoll = async (p) => { posted.push(p); return {}; };
   AmmoSystem.spendForWorkflow = async () => { spent.ammo += 1; return { success: true, spent: false }; };
   AmmoSystem.consumeAmmunition = async (a, w, n) => ({ success: true, newAmmo: 50 - n, previousAmmo: 50 });
-  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } };
+  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
   ActionEconomyConsumption.spend = async (actor, type) => { spent.actions.push(type); return { allowed: true, committed: true, rollback: async () => { spent.actions.pop(); } }; };
   ActorEngine.createEmbeddedDocuments = async (actor, name, data) => { const made = data.map((d) => ({ id: `ge${++uid}`, ...JSON.parse(JSON.stringify(d)), statuses: new Set(), disabled: false })); actor.effects.push(...made); return made; };
   ActorEngine.deleteEmbeddedDocuments = async (actor, name, ids) => { actor.effects = actor.effects.filter((e) => !ids.includes(e.id)); return ids; };

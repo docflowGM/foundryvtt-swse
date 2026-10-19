@@ -7,40 +7,7 @@ import { buildDamagePacket } from "/systems/foundryvtt-swse/scripts/engine/comba
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-
-function normalizeFeatName(value) {
-  return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-}
-
-function actorHasFeat(actor, featName) {
-  const wanted = normalizeFeatName(featName);
-  try {
-    return Array.from(actor?.items ?? []).some(item => item?.type === 'feat'
-      && item?.system?.disabled !== true
-      && normalizeFeatName(item?.name) === wanted);
-  } catch (_err) {
-    return false;
-  }
-}
-
-function actorGrappleRules(actor) {
-  const rules = [];
-  try {
-    for (const item of Array.from(actor?.items ?? [])) {
-      if (!['feat', 'talent'].includes(item?.type) || item?.system?.disabled === true) continue;
-      const grappleRules = item?.system?.abilityMeta?.grappleRules;
-      if (!Array.isArray(grappleRules)) continue;
-      for (const rule of grappleRules) rules.push({ ...rule, sourceName: item.name, sourceId: item.id });
-    }
-  } catch (_err) {
-    // Treat malformed actor/items as having no grapple rules.
-  }
-  return rules;
-}
-
-function findGrappleRule(actor, type, predicate = null) {
-  return actorGrappleRules(actor).find(rule => rule?.type === type && (!predicate || predicate(rule)));
-}
+import { normalizeFeatName, actorHasFeat, actorGrappleRules, findGrappleRule } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-rules-reader.js";
 
 function actorHasGrappleCapability(actor, type, fallbackFeatName, predicate = null) {
   return !!findGrappleRule(actor, type, predicate) || actorHasFeat(actor, fallbackFeatName);
@@ -351,15 +318,8 @@ export class GrappleFeatActions {
     }
 
     const slammerRule = findGrappleRule(attacker, 'SLAMMER_SPECIAL_ATTACK');
-    // built by the unarmed-attack authority in one step (not cloned and edited afterwards): the attack gate authenticates the record it built
-    const crushDie = actorHasFeat(attacker, 'Crush') || slammerRule?.crushFeatAddsUnarmedDamageDie === true;
-    const weapon = buildVirtualUnarmedWeapon(attacker, {
-      name: 'Slammer',
-      id: 'swse-virtual-slammer',
-      extraDamageDieSteps: crushDie ? 1 : 0,
-      flagMarks: crushDie ? { slammerCrushExtraDie: true } : {},
-      attackOptions: { slammer: true }
-    });
+    // the unarmed-attack authority builds the Slammer strike; it grants the Crush die only to an actor that has it (nothing is supplied here)
+    const weapon = buildVirtualUnarmedWeapon(attacker, { variant: 'slammer' });
     const attack = await rollAttack(attacker, weapon, {
       ...options,
       actionId: options.actionId ?? 'slammer',
