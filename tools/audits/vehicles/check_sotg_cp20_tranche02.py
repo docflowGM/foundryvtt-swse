@@ -168,7 +168,7 @@ for idx, cert in enumerate(B["certificates"]):
             if raw.get(field) == "SOURCE_SILENT_CONFIRMED"
         ]
         if not has_source_page: missing_historic_page_keys += 1
-        assert reviewed["attackGroupSnapshots"][j]["cp16RowIndex"] == j
+        assert reviewed["attackGroupSnapshots"][j]["sourceRowIndex"] == j
         assert reviewed["attackGroupSnapshots"][j]["sourceLedgerRow"] == raw
         assert observed["attackGroups"][j]["sourceRowIndex"] == j
         for field in ("hardwareCount","firingArc","batteryCount"):
