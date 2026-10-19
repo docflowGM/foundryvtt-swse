@@ -24,7 +24,7 @@ export function adaptLegacyWeapon(item, _context = {}) {
     selectors: null,
     semanticTags: Object.freeze([]),
     abilityInteractions: Object.freeze([]),
-    ownedState: Object.freeze({ equipped: sys.equipped ?? null, ammo: Object.freeze({ type: sys.ammunition?.type ?? null, current: sys.ammunition?.current ?? null, max: sys.ammunition?.max ?? null }) }),
+    ownedState: Object.freeze({ ammo: Object.freeze({ type: sys.ammunition?.type ?? null, current: sys.ammunition?.current ?? null, max: sys.ammunition?.max ?? null }) }),
     selection: Object.freeze({ profileId: profile.id, payloadId: null, configurationId: null, damageMode: 'normal' }),
     diagnostics: Object.freeze({ heuristics: Object.freeze(heuristics) }),
     heuristics: Object.freeze(heuristics),

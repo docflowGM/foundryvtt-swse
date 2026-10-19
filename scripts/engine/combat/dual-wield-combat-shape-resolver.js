@@ -3,12 +3,12 @@ import { EffectiveWeaponQualityResolver } from "/systems/foundryvtt-swse/scripts
 import {
   isLightWeaponForActor as canonicalIsLightWeaponForActor,
   isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly,
-  isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon,
-  isItemEquipped
+  isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon
 } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { getReadiedWeapons, isCombatSourceReady } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { canonicalFeatSlug } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
 import { descriptorMatchesAny } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js';
-import { ownedSizeStateOf, resolveHeldGroup } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js';
+import { ownedSizeStateOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js';
 
 function normalizeKey(value) {
   return String(value ?? '')
@@ -60,8 +60,10 @@ function sameWeapon(a, b) {
   return !!aid && !!bid && aid === bid;
 }
 
-function equippedWeapons(actor) {
-  return actorItems(actor).filter(item => item?.type === 'weapon' && item?.system?.equipped);
+// E4-C1 WP5: a weapon takes part in a dual-wield / double-weapon shape only when it is READY (effective READIED through the shared combat-readiness
+// interface). The legacy equipped flag, isOffhand / slot markers and Item order decide nothing, and no hand is inferred when several weapons are ready.
+function readyWeapons(actor) {
+  return getReadiedWeapons(actor);
 }
 
 function isDoubleWeapon(weapon, context = {}) {
@@ -147,23 +149,14 @@ function isProficient(weapon, actor = null) {
 }
 
 function findPrimary(actor) {
-  const weapons = equippedWeapons(actor);
-  return weapons.find(item => !item.system?.isOffhand && item.system?.slot !== 'offhand') ?? weapons[0] ?? null;
+  const weapons = readyWeapons(actor);
+  return weapons.length === 1 ? weapons[0] : null;
 }
 
-function findOffhand(actor, primary = null) {
-  const weapons = equippedWeapons(actor);
-  const explicit = weapons.find(item => item.system?.isOffhand === true || item.system?.slot === 'offhand');
-  if (explicit) return explicit;
-  // Phase 5D-F: a structurally eligible second weapon (canonical eligibleAsSecondWeaponForTwoWeaponFighting: worn, hands stay free)
-  // is the off-hand when none is designated -- structure, not a feat and not a weapon name
-  // Phase 5D-I-D-B2: identical weapons the player ESTABLISHED as held together in one hand count as ONE weapon -- the group is the SAME validated result the attack
-  // preflight uses (resolveHeldGroup: proficiency, ownership, equipped, no off-hand designation, no overlapping group), so a stale or invalid group frees its sticks
-  // as separate weapons and never half-applies. Nothing is counted from the inventory alone.
-  const group = primary ? resolveHeldGroup(actor, primary, { shapeOf: (w) => { try { return shapeOfWeapon(w); } catch { return null; } }, proficient: (w, a) => isProficient(w, a) === true, equipped: (w, a) => isItemEquipped(w, a) }) : { memberIds: [] };
-  const grouped = new Set(group.memberIds);
-  const candidates = weapons.filter(item => primary && !sameWeapon(item, primary) && !grouped.has(item.id));
-  return candidates.find(item => shapeOfWeapon(item).dualWield?.eligibleAsSecondWeapon === true) ?? candidates[0] ?? null;
+// The off-hand is never inferred. A second weapon is the off-hand only when the caller names it (and it is ready); the primary of a double
+// weapon is both ends. (Held-together groups are not representable by the occupancy model yet -- decision register EQ-002.)
+function findOffhand() {
+  return null;
 }
 
 function dualWeaponMasteryLevel(actor) {
@@ -208,10 +201,10 @@ function describeWeapon(weapon, role, context = {}, actor = null) {
 
 export class DualWieldCombatShapeResolver {
   static resolve(actor, options = {}) {
-    const primary = options.primaryWeapon ?? findPrimary(actor);
-    const explicitOffhand = options.offhandWeapon ?? null;
+    const primary = options.primaryWeapon ? (isCombatSourceReady(actor, options.primaryWeapon) ? options.primaryWeapon : null) : findPrimary(actor);
+    const explicitOffhand = options.offhandWeapon && isCombatSourceReady(actor, options.offhandWeapon) ? options.offhandWeapon : null;
     const doubleWeapon = options.isDoubleWeapon === true || isDoubleWeapon(primary, options.primaryForm ?? {});
-    const offhand = doubleWeapon ? primary : explicitOffhand ?? findOffhand(actor, primary);
+    const offhand = doubleWeapon ? primary : explicitOffhand ?? findOffhand();
     const usingTwoWeapons = !!primary && !!offhand && !sameWeapon(primary, offhand);
     const usingDoubleWeapon = !!primary && doubleWeapon;
     const mode = usingDoubleWeapon ? 'doubleWeapon' : usingTwoWeapons ? 'dualWield' : 'singleWeapon';

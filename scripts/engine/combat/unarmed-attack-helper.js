@@ -292,7 +292,6 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
       weaponType: 'unarmed',
       weaponGroup: 'simple',
       proficiency: 'simple',
-      equipped: true,
       isUnarmed: true,
       properties: ['unarmed', 'simple', 'melee'],
       provokesOpportunityAttack: !noProvokeOpportunity,

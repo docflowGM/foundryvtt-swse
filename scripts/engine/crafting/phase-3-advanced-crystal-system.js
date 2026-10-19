@@ -13,6 +13,7 @@
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
+import { getReadiedWeapons } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 
 export class Phase3CrystalSystem {
   /**
@@ -150,7 +151,11 @@ export class Phase3CrystalSystem {
       i => i.type === "weapon" && i.system?.subtype === "lightsaber"
     ) ?? [];
 
-    return weapons.find(w => w.system?.equippable?.equipped === true) || null;
+    // The lightsaber whose READIED posture is verified (shared combat-readiness interface). Activation and installed crystals are separate facts.
+    let ready = [];
+    try { ready = getReadiedWeapons(actor); } catch { ready = []; }
+    const readyIds = new Set(ready.map(w => w.id));
+    return weapons.find(w => readyIds.has(w.id)) || null;
   }
 
   /**

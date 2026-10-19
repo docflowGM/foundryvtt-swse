@@ -33,6 +33,8 @@ const { AmmoSystem } = await import('/systems/foundryvtt-swse/scripts/engine/inv
 const ser = await import('/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js');
 const { registry, registryData } = await import('./helpers/weapon-runtime-fixture.mjs');
 rt.setSharedWeaponAuthorityRegistry(registry);
+const { installReadinessEnvironment, readyAllDirected } = await import('./helpers/ready-weapon-fixture.mjs');
+await installReadinessEnvironment();
 
 let step = 0;
 const ok = (label) => { step += 1; console.log(`  [${step}] ${label} OK`); };
@@ -46,10 +48,11 @@ const optionFeat = (name, optionId) => feat(name, { system: { abilityMeta: { rul
 const PROF = ['Weapon Proficiency (Pistols)', 'Weapon Proficiency (Rifles)', 'Weapon Proficiency (Simple Weapons)', 'Weapon Proficiency (Advanced Melee Weapons)', 'Weapon Proficiency (Heavy Weapons)'].map((n) => feat(n));
 const canon = (k, system = {}, extra = {}) => ({ id: `w-${k}`, name: 'Renamed Thing', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: k } } }, system: { damage: '9d9', damageType: 'sonic', equipped: true, ...system }, ...extra });
 const legacy = (system = {}, name = 'Homebrew') => ({ id: `hb-${name}`, name, type: 'weapon', system: { weaponCategory: 'ranged', damage: '2d6', damageType: 'energy', equipped: true, proficient: true, ...system } });
-const makeActor = ({ feats = [], items = [], level = 6, type = 'character', flags = {} } = {}) => ({
+const makeActor = (opts = {}) => readyAllDirected(makeActorRaw(opts));
+const makeActorRaw = ({ feats = [], items = [], level = 6, type = 'character', flags = {} } = {}) => ({
   id: 'a1', name: 'Tester', type, flags: { swse: flags }, effects: [], getFlag() { return undefined; }, getRollData() { return {}; },
   items: col([...PROF, ...feats, ...items]),
-  system: { bab: 6, level, attributes: { str: ab(3), dex: ab(4), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, derived: {}, forcePoints: { value: 1, max: 5 }, weaponProficiencies: ['pistols', 'rifles', 'simple', 'advanced-melee', 'heavy-weapons'] },
+  system: { species: 'Human', size: 'Medium', bab: 6, level, attributes: { str: ab(3), dex: ab(4), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, derived: {}, forcePoints: { value: 1, max: 5 }, weaponProficiencies: ['pistols', 'rifles', 'simple', 'advanced-melee', 'heavy-weapons'] },
 });
 const target = (o = {}) => ({ id: 't1', name: 'Dummy', type: 'npc', flags: { swse: {} }, effects: [], items: col([]), getFlag() { return undefined; }, system: { size: 'medium', hp: { value: 30, max: 30 }, conditionTrack: { current: 0 }, derived: { defenses: { reflex: { total: 12 }, fortitude: { total: 12 }, will: { total: 10 } } }, ...o } });
 const sel = (weapon, ctx = {}) => rt.shapeOfWeapon(weapon, ctx);
@@ -127,15 +130,15 @@ const sel = (weapon, ctx = {}) => rt.shapeOfWeapon(weapon, ctx);
   assert.equal(ma.actorHasMultiAttackFor(B, 'double', pistol), false);
   // triple requires BOTH feats' selectors to match the same form
   const trpPistols = choiceFeat('triple-attack', 'Triple Attack', { id: 'pistols', group: 'pistols' });
-  const C = makeActor({ feats: [dblPistols, trpPistols] });
+  const C = makeActor({ feats: [dblPistols, trpPistols], items: [pistol] });
   const tri = ma.buildFullAttackSequence(C, { requestedPackage: ma.FULL_ATTACK_PACKAGES.TRIPLE_ATTACK, primaryWeapon: pistol });
   assert.equal(tri.legal, true); assert.equal(tri.attacks.length, 3); assert.equal(tri.attacks[0].finalPenalty, -10);
-  assert.equal(ma.buildFullAttackSequence(makeActor({ feats: [trpPistols] }), { requestedPackage: ma.FULL_ATTACK_PACKAGES.TRIPLE_ATTACK, primaryWeapon: pistol }).legal, false, 'Triple without Double for the same selector');
+  assert.equal(ma.buildFullAttackSequence(makeActor({ feats: [trpPistols], items: [pistol] }), { requestedPackage: ma.FULL_ATTACK_PACKAGES.TRIPLE_ATTACK, primaryWeapon: pistol }).legal, false, 'Triple without Double for the same selector');
   // each attack carries the same selected form
   assert.ok(plan.attacks.every((a) => JSON.stringify(a.form) === JSON.stringify(plan.attacks[0].form)));
   // firing constraints prohibit multi-shot packages on constrained forms
   const bp = canon('weapon-black-powder-pistol');
-  const D = makeActor({ feats: [dblPistols] });
+  const D = makeActor({ feats: [dblPistols], items: [bp] });
   const refused = ma.buildFullAttackSequence(D, { requestedPackage: ma.FULL_ATTACK_PACKAGES.DOUBLE_ATTACK, primaryWeapon: bp });
   assert.equal(refused.legal, false); assert.ok(refused.warnings.some((w) => /prohibits abilities that expend multiple shots/.test(w)));
   ok('Double/Triple Attack: exact feat choice (group or exotic identity) joined to the selected canonical form; wrong choice refused; firing constraints enforced');
@@ -278,23 +281,26 @@ const sel = (weapon, ctx = {}) => rt.shapeOfWeapon(weapon, ctx);
   const base = makeActor({ items: [pistol, pistol2] });
   const shape = DualWieldCombatShapeResolver.resolve(base, { primaryWeapon: pistol, offhandWeapon: pistol2 });
   assert.equal(shape.mode, 'dualWield'); assert.equal(shape.penalty.final, -10); assert.equal(shape.mainHand.proficient, true);
-  assert.equal(penalty(makeActor({ feats: [dwm(1)] })).final, -5); assert.equal(penalty(makeActor({ feats: [dwm(2)] })).final, -2); assert.equal(penalty(makeActor({ feats: [dwm(3)] })).final, 0);
+  const pair = { items: [pistol, pistol2] };
+  assert.equal(penalty(makeActor({ feats: [dwm(1)], ...pair })).final, -5); assert.equal(penalty(makeActor({ feats: [dwm(2)], ...pair })).final, -2); assert.equal(penalty(makeActor({ feats: [dwm(3)], ...pair })).final, 0);
   // not proficient with the off-hand form -> Dual Weapon Mastery does not apply
-  const noProf = makeActor({ feats: [dwm(3)] }); noProf.items = col(noProf.items.filter((i) => !/Pistols/.test(i.name))); noProf.system.weaponProficiencies = ['rifles'];
+  const noProf = makeActor({ feats: [dwm(3)], ...pair }); noProf.items = col(noProf.items.filter((i) => !/Pistols/.test(i.name))); noProf.system.weaponProficiencies = ['rifles'];
   assert.equal(penalty(noProf).final, -10, 'canonical proficiency gate: unproficient -> base -10 even with DWM III');
   // the removed fake feat is not a dependency: owning an item with that name changes nothing
-  assert.equal(penalty(makeActor({ feats: [feat('Two-Weapon Fighting')] })).final, -10);
+  assert.equal(penalty(makeActor({ feats: [feat('Two-Weapon Fighting')], ...pair })).final, -10);
   const lanvarok = canon('weapon-sith-lanvarok', { equipped: true }, { id: 'lan' });
   const rifle = canon('weapon-blaster-rifle', { equipped: true }, { id: 'rif' });
   assert.deepEqual({ ...sel(lanvarok).dualWield }, { eligibleAsSecondWeapon: true, handsRemainFree: true, wornNotHeld: true });
   assert.equal(sel(pistol).dualWield.eligibleAsSecondWeapon, false);
   const L = makeActor({ items: [rifle, lanvarok], feats: [feat('Exotic Weapon Proficiency (Sith Lanvarok)'), dwm(1)] });
-  const eq = ma.getEquippedWeapons(L);
-  assert.equal(eq.primary.id, 'rif'); assert.equal(eq.offhand.id, 'lan', 'structurally eligible second weapon is the off-hand without designation');
+  // E4-C1 WP5: a WORN weapon (Sith Lanvarok) has uncertified hand semantics (mounted/worn certification is deferred), so it is never ready and
+  // is never inferred as the off-hand; the rifle alone is the ready weapon and no second weapon is invented.
+  const eq = ma.getReadiedWeaponSelection(L);
+  assert.equal(eq.primary.id, 'rif'); assert.equal(eq.offhand, null, 'a worn weapon is not READIED and no off-hand is inferred');
   const two = ma.buildFullAttackSequence(L, { requestedPackage: ma.FULL_ATTACK_PACKAGES.TWO_WEAPON, primaryWeapon: rifle, offhandWeapon: lanvarok });
-  assert.equal(two.legal, true); assert.equal(two.attacks.length, 2); assert.equal(two.attacks[1].handRole, 'offhand');
+  assert.equal(two.legal, false, 'a non-ready worn weapon cannot be the explicit off-hand');
   const shape2 = DualWieldCombatShapeResolver.resolve(L, { primaryWeapon: rifle });
-  assert.equal(shape2.offHand.weapon.id, 'lan');
+  assert.ok(!shape2.offHand?.weapon, 'no off-hand is inferred from structural eligibility');
   ok('dual wield on canonical identities; Dual Weapon Mastery I/II/III and the proficiency gate; Two-Weapon Fighting not a dependency; Sith Lanvarok eligible by structure');
 }
 
@@ -440,14 +446,17 @@ const sel = (weapon, ctx = {}) => rt.shapeOfWeapon(weapon, ctx);
   const A = makeActor({ feats: [dbl], items: [hb] });
   assert.equal(ma.getWeaponGroup(hb), 'pistols'); assert.equal(ma.actorHasMultiAttackFor(A, 'double', hb), true);
   const plan = ma.buildFullAttackSequence(A, { requestedPackage: ma.FULL_ATTACK_PACKAGES.DOUBLE_ATTACK, primaryWeapon: hb });
-  assert.equal(plan.legal, true); assert.equal(plan.attacks.length, 2); assert.equal(plan.attacks[0].finalPenalty, -5);
+  // E4-C1 WP5: a homebrew weapon has no certified canonical identity, so it can never be READY (uncertified identity grants no readiness): the
+  // ability/group logic is unchanged, but the Full Attack plan is refused rather than inferring a posture from a legacy flag.
+  assert.equal(plan.legal, false, 'uncertified identity: not ready, so no Full Attack plan');
+  assert.ok(plan.warnings.some((w) => /ready weapon/i.test(w)));
   const staff = legacy({ properties: ['double'], weaponCategory: 'melee', proficiency: 'simple' }, 'Homebrew Staff');
   assert.equal(ma.isDoubleWeapon(staff), true);
   const dwPlan = ma.buildFullAttackSequence(makeActor({ items: [staff] }), { requestedPackage: ma.FULL_ATTACK_PACKAGES.DOUBLE_WEAPON, primaryWeapon: staff });
-  assert.equal(dwPlan.legal, true); assert.equal(dwPlan.attacks.length, 2);
+  assert.equal(dwPlan.legal, false, 'uncertified homebrew double weapon is not ready');
   const cfg = ma.calculateFullAttackConfig(A, hb);
   assert.equal(cfg.hasDoubleAttack, true);
-  ok('legacy/homebrew multi-attack (group-name Double Attack, property double weapon, full attack config) still functions');
+  ok('legacy/homebrew multi-attack: group-name Double Attack, property double weapon and full attack config still resolve, but an uncertified-identity weapon is never ready (no plan)');
 }
 
 console.log(`Phase 5D-F multi-attack convergence: ${step} checks passed.`);

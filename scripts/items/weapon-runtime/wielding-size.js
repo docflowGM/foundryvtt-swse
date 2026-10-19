@@ -165,7 +165,7 @@ export function resolveHeldGroup(actor, weapon, { shapeOf, proficient, equipped 
   const items = Array.from(actor?.items ?? []);
   if (!items.some((i) => i === weapon)) return single('primary-not-owned');
   if (!(typeof proficient === 'function' && proficient(weapon, actor) === true)) return single('not-proficient');
-  // equipped / readied per the repository's own predicate (isItemEquipped), for the primary and every member; no predicate = nothing is held
+  // held per the caller's predicate (the canonical effective-posture authority), for the primary and every member; no predicate = nothing is held
   const held = (it) => typeof equipped === 'function' && equipped(it, actor) === true;
   if (!held(weapon)) return single('primary-not-equipped');
   const stateOf = (it) => { try { return it?.flags?.swse?.fireState ?? it?.getFlag?.('swse', 'fireState') ?? null; } catch { return null; } };
@@ -175,11 +175,9 @@ export function resolveHeldGroup(actor, weapon, { shapeOf, proficient, equipped 
     const sh = shapeOf(it);
     if (!sh || sh.source !== 'canonical' || sh.identityKey !== shape.identityKey) return single('member-not-same-weapon');
     if (!held(it)) return single('member-not-equipped');
-    if (it.system?.isOffhand === true || it.system?.slot === 'offhand') return single('member-is-offhand');
     if (asArray(stateOf(it)?.heldTogetherIds).length) return single('member-has-its-own-group');
     if (items.some((o) => o?.id !== weapon?.id && o?.id !== id && asArray(stateOf(o)?.heldTogetherIds).map(String).includes(id))) return single('member-in-another-group');
   }
-  if (weapon?.system?.isOffhand === true || weapon?.system?.slot === 'offhand') return single('primary-is-offhand');
   if (items.some((o) => o?.id !== weapon?.id && asArray(stateOf(o)?.heldTogetherIds).map(String).includes(String(weapon?.id)))) return single('primary-is-member-of-another-group');
   return { ok: true, count: 1 + ids.length, memberIds: ids, reason: null };
 }

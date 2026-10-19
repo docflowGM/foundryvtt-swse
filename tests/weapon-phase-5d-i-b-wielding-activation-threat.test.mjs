@@ -242,7 +242,7 @@ try {
   const w2 = canon(LH); const a2 = makeActor({ items: [w2] });
   reset(); assert.ok(await attack(a2, w2, { profileId: 'two-handed-base-override', wieldedHands: 2 }), 'two-handed: allowed');
   assert.deepEqual([wfOf().attackShape.wieldedHands, wfOf().attackShape.forgoDoubleStrength, wfOf().weaponForm.profileId], [2, true, 'two-handed-base-override'], 'hands and the choice persist in the workflow');
-  assert.equal(state(w2).wielded, 'two-handed', 'the owned weapon remembers the hands the player chose');
+  assert.equal(state(w2).wielded, undefined, 'E4-C1 WP5: attacking never records the grip on the Item; the hands choice is coordinator-owned (FireStateStore only plans it)');
   // Phase 5D-I-D-B2: the hands are unresolved (so the requirement is asked) only where the weapon's size class does not decide them. For a Large wielder the
   // Long-Handle Lightsaber (Large) is one-handed class; for a Medium wielder it is two-handed class (Core Rulebook p.120), so both hands are already established.
   const w3 = canon(LH); const a3 = makeActor({ items: [w3], size: 'large' }); const asked = ask(async () => true);
@@ -254,7 +254,8 @@ try {
   // the damage roll uses the carried hands (not the Item's current state): changing the owned state later changes nothing
   reset(); const w5 = canon(LH); const a5 = makeActor({ items: [w5] }); a5.system.attributes.str = ab(4);
   assert.ok(await attack(a5, w5, { profileId: 'two-handed-base-override', wieldedHands: 2 })); const wf5 = wfOf();
-  await FS.setWielding(a5, w5, 'one-handed');
+  assert.equal(FS.setWielding, undefined, 'FireStateStore has no grip writer (WP5)');
+  w5.flags.swse.fireState = { ...(w5.flags.swse.fireState ?? {}), v: 1, wielded: 'one-handed' }; // the Item's current state changes by another path (coordinator)
   formulas.length = 0; assert.ok(await rollDamage(a5, w5, { combatContext: wf5, workflowContext: wf5, suppressChat: true, target: target() }));
   assert.equal(formulas[0], '2d10 + 7', '2d10 base + half level 3 + a SINGLE Strength +4, from the carried (forgo) choice -- not re-derived from the changed Item');
   // wielding constraints (siblings): Garrote requires two hands, lightfoils cannot be wielded two-handed

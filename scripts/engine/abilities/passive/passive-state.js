@@ -14,6 +14,8 @@
  * const bonus = evaluateStatePredicates(actor, ['defense.against-ranged', 'movement.while-moving'], context);
  */
 
+import { getReadiedWeapons } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
+
 /**
  * Predicate definitions.
  * Each predicate is a pure function that inspects actor state and returns boolean/number.
@@ -52,8 +54,9 @@ function contextHasToken(context, fields, wanted) {
 
 function equippedWeaponText(actor) {
   try {
+    const readyIds = new Set(getReadiedWeapons(actor).map(w => w.id)); // READY = effective READIED; activation and legacy flags decide nothing
     return Array.from(actor?.items ?? [])
-      .filter(item => item?.type === 'weapon' && item?.system?.equipped !== false)
+      .filter(item => item?.type === 'weapon' && readyIds.has(item.id))
       .map(item => [
         item?.name,
         item?.system?.weaponType,

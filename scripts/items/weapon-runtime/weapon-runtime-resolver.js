@@ -55,7 +55,6 @@ function chooseDefaultProfile(record, profiles, configurationId) {
 function readOwnedState(item) {
   const sys = item?.system ?? {};
   return Object.freeze({
-    equipped: sys.equipped ?? null,
     quantity: sys.quantity ?? null,
     ammo: Object.freeze({ type: sys.ammunition?.type ?? null, current: sys.ammunition?.current ?? null, max: sys.ammunition?.max ?? null }),
   });

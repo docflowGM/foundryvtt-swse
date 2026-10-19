@@ -36,6 +36,8 @@ const ser = await import('/systems/foundryvtt-swse/scripts/engine/combat/workflo
 const { buildCensus, OUT_JSON } = await import('../tools/census-weapon-fire-state-area-selectors.mjs');
 const { registry, registryData } = await import('./helpers/weapon-runtime-fixture.mjs');
 rt.setSharedWeaponAuthorityRegistry(registry);
+const { installReadinessEnvironment, readyAllDirected } = await import('./helpers/ready-weapon-fixture.mjs');
+await installReadinessEnvironment();
 
 let step = 0;
 const ok = (label) => { step += 1; console.log(`  [${step}] ${label} OK`); };
@@ -54,11 +56,12 @@ const optionFeat = (name, optionId) => mk('feat', name, { system: { abilityMeta:
 const PROF = ['Weapon Proficiency (Pistols)', 'Weapon Proficiency (Rifles)', 'Weapon Proficiency (Simple Weapons)', 'Weapon Proficiency (Heavy Weapons)', 'Weapon Proficiency (Advanced Melee Weapons)'].map((n) => mk('feat', n));
 const canon = (k, system = {}, extra = {}) => ({ id: `w${++uid}-${k}`, name: 'Renamed Thing', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: k } } }, system: { damage: '9d9', damageType: 'sonic', equipped: true, ...system }, ...extra });
 const legacy = (system = {}, name = 'Homebrew') => ({ id: `hb${++uid}`, name, type: 'weapon', flags: {}, system: { weaponCategory: 'ranged', damage: '2d6', damageType: 'energy', equipped: true, proficient: true, ...system } });
-const makeActor = ({ feats = [], items = [], level = 6, type = 'character', size = 'medium' } = {}) => {
+const makeActor = (o = {}) => readyAllDirected(makeActorRaw(o));
+const makeActorRaw = ({ feats = [], items = [], level = 6, type = 'character', size = 'medium' } = {}) => {
   const actor = {
     id: 'a1', name: 'Tester', type, flags: { swse: {} }, effects: [], getFlag() { return undefined; }, getRollData() { return {}; },
     items: col([...PROF, ...feats, ...items]),
-    system: { bab: 6, level, size, attributes: { str: ab(0), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, derived: {}, forcePoints: { value: 1, max: 5 }, weaponProficiencies: ['pistols', 'rifles', 'simple', 'heavy-weapons', 'advanced-melee'] },
+    system: { species: 'Human', bab: 6, level, size, attributes: { str: ab(0), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, derived: {}, forcePoints: { value: 1, max: 5 }, weaponProficiencies: ['pistols', 'rifles', 'simple', 'heavy-weapons', 'advanced-melee'] },
   };
   for (const w of items) w.actor = actor;
   return actor;
@@ -136,7 +139,8 @@ const useRealAmmo = () => { AmmoSystem.spendForWorkflow = origs.spendAmmo; AmmoS
 const noRealAmmo = () => { AmmoSystem.isTrackingEnabled = origs.track; };
 const ammoOf = (w) => w.system.ammunition.current;
 const { mountRuleOf, hostEligibility } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/host-mount.js');
-const readState = (w) => w.flags?.swse?.fireState ?? null;
+// the coordinator-owned grip (`wielded`) comes from the readiness fixture and is not part of the operating state these assertions are about (E4-C1 WP5)
+const readState = (w) => { const f = w.flags?.swse?.fireState; if (!f) return null; const { wielded, ...rest } = f; return Object.keys(rest).every((k) => k === 'v') ? null : rest; };
 const rolling = (total, calls = []) => async (a, skill, opts) => { calls.push({ skill, opts }); return total === null ? null : { total }; };
 const code = async (fn) => { try { await fn(); return null; } catch (e) { return e.code ?? e.message; } };
 
@@ -284,7 +288,8 @@ try {
     const r = await FireStateStoreRef.mountOnHost(A, fresh, rifle, { skillRoller: rolling(20) });
     assert.equal(r.ok, false); assert.equal(r.reason, 'persist-failed'); assert.equal(readState(fresh), null, 'not falsely mounted');
     // ordinary combat-state writes keep their best-effort behaviour
-    assert.equal((await FireStateStoreRef.setWielding(A, fresh, 'two-handed')).ok, true);
+    assert.equal(FireStateStoreRef.setWielding, undefined, 'the grip is coordinator-owned: FireStateStore has no wielding writer (WP5)');
+    assert.equal((await FireStateStoreRef.setConfiguration(A, fresh, 'standalone')).ok, true);
   } finally { ActorEngine.updateOwnedItems = realUpd; console.warn = warn; }
   assert.equal((await FireStateStoreRef.unmountFromHost(A, micro)).ok, true); assert.equal(readState(micro).mountedHostId, null);
   ok('unmount (direct and via setConfiguration) requires the owning actor; a rejected write is reported as persist-failed with no falsely confirmed state; ordinary combat-state writes stay best-effort');

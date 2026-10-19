@@ -37,7 +37,7 @@ import { renderFullAttackCardContent } from "/systems/foundryvtt-swse/scripts/en
 import {
   buildFullAttackSequence,
   showFullAttackDialog,
-  getEquippedWeapons,
+  getReadiedWeaponSelection,
   getDoubleAttackGroups as _getDoubleAttackGroups,
   getTripleAttackGroups as _getTripleAttackGroups,
   getWeaponGroup        as _getWeaponGroup,
@@ -236,7 +236,7 @@ export class FullAttackExecutor {
   static async execute(actor, options = {}) {
     if (!actor) {return null;}
 
-    const equipped = getEquippedWeapons(actor);
+    const equipped = getReadiedWeaponSelection(actor);
 
     // 1. Show dialog — returns confirmed sequence or null
     // Phase 5D-F: host-configuration conditions the runtime cannot observe (e.g. "is the host rifle's stock folded?") are asked ONCE
@@ -369,7 +369,7 @@ export class FullAttackExecutor {
 
     if (!actor) {return available;}
 
-    const equipped = getEquippedWeapons(actor);
+    const equipped = getReadiedWeaponSelection(actor);
     const {
       getDoubleAttackGroups,
       getTripleAttackGroups,

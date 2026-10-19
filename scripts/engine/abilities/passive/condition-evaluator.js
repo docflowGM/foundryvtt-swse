@@ -15,6 +15,8 @@
  * No caching, no persistence.
  */
 
+import { getReadiedWeapons } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
+
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ConditionEvaluator {
@@ -174,9 +176,8 @@ export class ConditionEvaluator {
       return false;
     }
 
-    const equippedWeapons = actor.items.filter(i =>
-      i.type === "weapon" && i.system?.equipped === true
-    );
+    // READY weapons only (effective READIED through the shared combat-readiness interface)
+    const equippedWeapons = getReadiedWeapons(actor);
 
     return equippedWeapons.some(w =>
       w.system?.weaponCategory === categoryValue
@@ -201,6 +202,8 @@ export class ConditionEvaluator {
       return false;
     }
 
+    // weapons are READY (effective READIED), never the retired equipped flag; armor, shields and equipment keep their worn state
+    if (typeValue === "weapon") return getReadiedWeapons(actor).length > 0;
     return actor.items.some(i =>
       i.type === typeValue && i.system?.equipped === true
     );

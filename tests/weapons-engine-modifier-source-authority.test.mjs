@@ -51,6 +51,8 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 
 registerFoundryPathLoader();
 installFoundryShimGlobals();
+const { installReadinessEnvironment, readiedWeapon } = await import('./helpers/ready-weapon-fixture.mjs');
+await installReadinessEnvironment();
 
 const { WeaponsEngine } = await import(
   '/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js'
@@ -78,21 +80,18 @@ function makeItemsCollection(items) {
 }
 
 function actorWith(items) {
-  return { id: 'test-actor', items: makeItemsCollection(items) };
+  return { id: 'test-actor', type: 'character', system: { species: 'Human', size: 'Medium' }, flags: {}, items: makeItemsCollection(items) };
 }
 
+// E4-C1 WP5: an "equipped" weapon here means a VERIFIED READIED weapon (canonical identity, valid record, certified appendage, grip, species evidence);
+// the legacy equippable.equipped flag no longer grants anything.
 function equippedWeapon(overrides = {}) {
+  const base = readiedWeapon(overrides.id ?? 'weapon-1', { name: overrides.name ?? 'Test Weapon' });
+  const flags = overrides.flags ?? {};
   return {
-    id: overrides.id ?? 'weapon-1',
-    name: overrides.name ?? 'Test Weapon',
-    type: 'weapon',
-    flags: overrides.flags ?? {},
-    system: {
-      equippable: { equipped: true },
-      combat: overrides.combat ?? {},
-      subtype: overrides.subtype,
-      modifiers: overrides.modifiers ?? []
-    }
+    ...base,
+    flags: { ...flags, swse: { ...base.flags.swse, ...(flags.swse ?? {}) } },
+    system: { ...base.system, combat: overrides.combat ?? {}, subtype: overrides.subtype, modifiers: overrides.modifiers ?? [] }
   };
 }
 
@@ -193,6 +192,8 @@ console.log('  [4/6] the identical crystal record produces NO modifier for a non
     flags: { swse: { builtBy: 'test-actor', attunedBy: 'test-actor', lightsaberConfig: { crystalId: 'crystal-malformed' } } }
   });
   const weaponB = equippedWeapon({ id: 'weapon-b', name: 'Weapon B', combat: { attack: { bonus: 2 } } });
+  // two READIED weapons need two certified appendages (the same appendage cannot hold both)
+  weaponB.system.weaponOccupancy = { ...weaponB.system.weaponOccupancy, appendageIds: ['natural-arm-2'] };
 
   const modifiers = WeaponsEngine.getWeaponModifiers(actorWith([weaponA, weaponB]));
 

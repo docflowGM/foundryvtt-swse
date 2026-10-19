@@ -36,6 +36,8 @@ const ser = await import('/systems/foundryvtt-swse/scripts/engine/combat/workflo
 const { buildCensus, OUT_JSON } = await import('../tools/census-weapon-fire-state-area-selectors.mjs');
 const { registry, registryData } = await import('./helpers/weapon-runtime-fixture.mjs');
 rt.setSharedWeaponAuthorityRegistry(registry);
+const { installReadinessEnvironment, readyAllDirected } = await import('./helpers/ready-weapon-fixture.mjs');
+await installReadinessEnvironment();
 
 let step = 0;
 const ok = (label) => { step += 1; console.log(`  [${step}] ${label} OK`); };
@@ -54,11 +56,12 @@ const optionFeat = (name, optionId) => mk('feat', name, { system: { abilityMeta:
 const PROF = ['Weapon Proficiency (Pistols)', 'Weapon Proficiency (Rifles)', 'Weapon Proficiency (Simple Weapons)', 'Weapon Proficiency (Heavy Weapons)', 'Weapon Proficiency (Advanced Melee Weapons)'].map((n) => mk('feat', n));
 const canon = (k, system = {}, extra = {}) => ({ id: `w${++uid}-${k}`, name: 'Renamed Thing', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: k } } }, system: { damage: '9d9', damageType: 'sonic', equipped: true, ...system }, ...extra });
 const legacy = (system = {}, name = 'Homebrew') => ({ id: `hb${++uid}`, name, type: 'weapon', flags: {}, system: { weaponCategory: 'ranged', damage: '2d6', damageType: 'energy', equipped: true, proficient: true, ...system } });
-const makeActor = ({ feats = [], items = [], level = 6, type = 'character', size = 'medium' } = {}) => {
+const makeActor = (o = {}) => readyAllDirected(makeActorRaw(o));
+const makeActorRaw = ({ feats = [], items = [], level = 6, type = 'character', size = 'medium' } = {}) => {
   const actor = {
     id: 'a1', name: 'Tester', type, flags: { swse: {} }, effects: [], getFlag() { return undefined; }, getRollData() { return {}; },
     items: col([...PROF, ...feats, ...items]),
-    system: { bab: 6, level, size, attributes: { str: ab(0), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, derived: {}, forcePoints: { value: 1, max: 5 }, weaponProficiencies: ['pistols', 'rifles', 'simple', 'heavy-weapons', 'advanced-melee'] },
+    system: { species: 'Human', bab: 6, level, size, attributes: { str: ab(0), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, derived: {}, forcePoints: { value: 1, max: 5 }, weaponProficiencies: ['pistols', 'rifles', 'simple', 'heavy-weapons', 'advanced-melee'] },
   };
   for (const w of items) w.actor = actor;
   return actor;
@@ -138,7 +141,8 @@ const WS = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/w
 const OS = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/owned-state.js');
 const { weaponMatchesText } = await import('/systems/foundryvtt-swse/scripts/engine/combat/weapon-target-gate-classifiers.js');
 const { DualWieldCombatShapeResolver: DW } = await import('/systems/foundryvtt-swse/scripts/engine/combat/dual-wield-combat-shape-resolver.js');
-const readState = (w) => w.flags?.swse?.fireState ?? null;
+// the coordinator-owned grip (`wielded`) comes from the readiness fixture and is not part of the operating state these assertions are about (E4-C1 WP5)
+const readState = (w) => { const f = w.flags?.swse?.fireState; if (!f) return null; const { wielded, ...rest } = f; return Object.keys(rest).every((k) => k === 'v') ? null : rest; };
 const shapeOf = (w) => rt.shapeOfWeapon(w, {});
 const notesOf = (A, w, opt = {}) => FireStateStoreRef.previewReadiness(A, w, rt.resolveAttackWeaponRuntime(w, opt), opt).notes.map((n) => n.note);
 const isLight = (A, w, ctx = {}) => weaponMatchesText(w, ['light'], { actor: A, wielderSize: A.system.size, abilityKey: 'weapon-finesse', ...ctx });
@@ -322,85 +326,36 @@ try {
     const b1 = await bonusOf(E1, e1, { mounted: true }); answer(true); const b2 = await bonusOf(E2, e2, {}); rt.setSpecialPromptProvider(null); assert.equal(b2, b1); }
   ok('real attack path: forged vehicle flags refused, verified vehicle installation honoured; tripod resolved once (asked, never guessed) and carried; braced cannon uses its published Large size (Small cannot, Large exempt, unpayable refused); lightfoil choice adds no bonus');
 }
-// ---- F. Darkstick: held together = one weapon, 2d8 ----------------------------------------------------------------------------------------
+// ---- F. Darkstick: held together = one weapon, 2d8 -- FAIL-CLOSED under E4-C1 WP5 (decision EQ-002) -----------------------------------------------
+// The clean-break occupancy model gives every weapon its own appendages and cannot represent several identical weapons sharing one hand, and the
+// legacy grouping depended on retired fields (equipped booleans, isOffhand). Until the owner rules on EQ-002 NO group is ever honoured: only
+// the primary is held, the grouped profile cannot be selected, and no group is inferred from stored ids or from Item order.
 {
   reinstall();
   const prof = () => ewp('Zq Exotic Label', { weaponIdentity: 'unmapped::Darkstick' });
   const mk = (n, extra = {}) => Array.from({ length: n }, () => owned('unmapped::Darkstick', extra));
-  const grouped = (w) => rt.resolveCanonicalDamage(w, { weaponForm: { identityKey: 'unmapped::Darkstick', profileId: 'melee-grouped' } }).base;
   const profileOf = async (A, w, opt = {}) => { reset(); const r = await attack(A, w, opt); return r ? wfOf().weaponForm.profileId : null; };
   const [d1, d2, d3] = mk(3); const P = makeActor({ items: [d1, d2, d3], feats: [prof()] });
-  assert.equal(DW.resolve(P, { primaryWeapon: d1 }).usingTwoWeapons, true, 'nothing established: separate weapons');
-  const opt0 = S.heldTogetherOptions(P, d1); assert.deepEqual(opt0.candidates.map((c) => c.id).sort(), [d2.id, d3.id].sort()); assert.equal(opt0.current, 1);
-  // the choice API
-  const N = makeActor({ items: mk(2) }); const nw = N.items.filter((i) => i.type === 'weapon');
-  assert.equal((await S.setHeldTogether(N, nw[0], [nw[1].id])).reason, 'not-proficient', 'a non-proficient wielder cannot claim the grouped benefit');
-  assert.equal((await S.setHeldTogether(makeActor({ items: [] }), d1, [d2.id])).reason, 'weapon-not-owned');
-  assert.equal((await S.setHeldTogether(P, d1, [d1.id])).reason, 'duplicate-or-self'); assert.equal((await S.setHeldTogether(P, d1, ['nope'])).reason, 'member-missing');
-  assert.equal((await S.setHeldTogether(P, d1, [owned('weapon-blaster-pistol').id])).reason, 'member-missing');
-  const pistol = owned('weapon-blaster-pistol'); P.items.push(pistol); pistol.actor = P; assert.equal((await S.setHeldTogether(P, d1, [pistol.id])).reason, 'member-not-same-weapon'); P.items = col(P.items.filter((i) => i !== pistol));
-  const realUpd = ActorEngine.updateOwnedItems; ActorEngine.updateOwnedItems = async () => { throw new Error('x'); }; const w0 = console.warn; console.warn = () => {};
-  try { assert.equal((await S.setHeldTogether(P, d1, [d2.id])).reason, 'persist-failed'); assert.equal(readState(d1), null); } finally { ActorEngine.updateOwnedItems = realUpd; console.warn = w0; }
-  // 1d6 / 2d8 / 2d8
+  assert.equal(shapeOf(d1).heldTogether, true, 'the canonical declaration is unchanged data'); assert.equal(shapeOf(d1).heldTogetherProfileId, 'melee-grouped');
+  const opt0 = S.heldTogetherOptions(P, d1); assert.deepEqual(opt0.candidates, [], 'EQ-002: no candidate group is offered');
+  // a group statement is refused and nothing is honoured
+  const stored = await S.setHeldTogether(P, d1, [d2.id]);
+  assert.deepEqual([stored.ok, stored.reason], [false, 'member-not-equipped'], 'a group statement is refused: members can never be held (EQ-002)');
+  assert.equal(S.heldGroupOf(P, d1).ok, false); assert.equal(S.heldGroupOf(P, d1).count, 1);
   assert.equal(await profileOf(P, d1), 'melee'); assert.equal(rt.resolveCanonicalDamage(d1, { weaponForm: { identityKey: 'unmapped::Darkstick', profileId: 'melee' } }).base, '1d6');
-  assert.equal((await S.setHeldTogether(P, d1, [d2.id])).ok, true); assert.equal(await profileOf(P, d1), 'melee-grouped'); assert.equal(grouped(d1), '2d8');
-  assert.equal((await S.setHeldTogether(P, d1, [d2.id, d3.id])).ok, true); assert.equal(await profileOf(P, d1), 'melee-grouped'); assert.equal(grouped(d1), '2d8', 'a third stick adds nothing');
-  const r3 = DW.resolve(P, { primaryWeapon: d1 }); assert.equal(r3.usingTwoWeapons, false); assert.equal(r3.penalty.final, 0, 'three in one hand: one weapon slot');
-  assert.ok(notesOf(P, d1).some((n) => /3 held together in one hand/.test(n)));
-  // two grouped, the third is a real second weapon: the planner and the attack agree on the members
-  assert.equal((await S.setHeldTogether(P, d1, [d2.id])).ok, true); const r2 = DW.resolve(P, { primaryWeapon: d1 }); assert.equal(r2.usingTwoWeapons, true); assert.equal(r2.offHand.weapon.id, d3.id);
-  assert.equal(await profileOf(P, d1), 'melee-grouped');
-  // stale state: a member is removed / transferred / unequipped / designated off-hand -> the group is invalid, never silently retained
-  { const [a, b] = mk(2); const A = makeActor({ items: [a, b], feats: [prof()] }); await S.setHeldTogether(A, a, [b.id]); assert.equal(await profileOf(A, a), 'melee-grouped');
-    A.items = col(A.items.filter((i) => i.id !== b.id));
-    assert.equal(await profileOf(A, a), 'melee', 'the member is gone: ordinary 1d6'); assert.equal(await profileOf(A, a, { profileId: 'melee-grouped' }), null, 'and the grouped profile cannot be named'); assert.equal(used(), 0);
-    assert.ok(notesOf(A, a).some((n) => /group is not valid \(member-missing\)/.test(n)));
-    A.items.push(b); b.actor = A; assert.equal(await profileOf(A, a), 'melee-grouped', 'restoring the stick restores the group');
-    b.system = { ...b.system, equipped: false }; assert.equal(await profileOf(A, a), 'melee', 'an unequipped member cannot be held'); b.system = { ...b.system, equipped: true }; }
-  { const [a, b] = mk(2); const A = makeActor({ items: [a, b], feats: [prof()] }); await S.setHeldTogether(A, a, [b.id]);
-    b.system = { ...b.system, isOffhand: true };
-    assert.equal(await profileOf(A, a), 'melee', 'a stick designated as the off-hand weapon cannot also be in the primary group'); assert.equal(await profileOf(A, a, { profileId: 'melee-grouped' }), null);
-    const sh = DW.resolve(A, { primaryWeapon: a }); assert.equal(sh.usingTwoWeapons, true); assert.equal(sh.offHand.weapon.id, b.id, 'it is a separate weapon, never in two slots'); }
-  // the primary must be the acting actor's own Item: a stored group on another actor's Darkstick grants nothing to this actor
-  { const [a, b] = mk(2); const owner = makeActor({ items: [a, b], feats: [prof()] }); assert.equal((await S.setHeldTogether(owner, a, [b.id])).ok, true); assert.equal(await profileOf(owner, a), 'melee-grouped', 'owned primary: grouping legal');
-    const thief = makeActor({ items: [], feats: [prof()] }); thief.id = 'a9'; const [m] = mk(1); thief.items.push(m); m.actor = thief;
-    a.flags = { ...a.flags, swse: { ...a.flags.swse, fireState: { v: 1, heldTogetherIds: [m.id] } } };   // the foreign primary's stored group names a stick the thief owns
-    assert.equal(S.heldGroupOf(thief, a).reason, 'primary-not-owned'); assert.equal(S.heldGroupOf(thief, a).count, 1);
-    reset(); const r = await attack(thief, a, { profileId: 'melee-grouped' }); assert.equal(r, null, 'explicit melee-grouped with an unowned primary: refused'); assert.equal(used(), 0, 'before any roll or cost');
-    reset(); const r1 = await attack(thief, a, {}); if (r1) assert.equal(wfOf().weaponForm.profileId, 'melee', 'and the default selection is the ordinary profile');
-    { const sh = DW.resolve(thief, { primaryWeapon: a }); assert.equal(sh.offHand?.weapon?.id, m.id, 'the planner gives the foreign primary no group: the thief\'s own stick stays a separate weapon'); }
-    assert.equal(S.heldGroupOf(owner, b).count, 1, 'a member that is not the primary of a group is held singly'); }
-  // equipped state is the repository's own predicate (isItemEquipped), for the primary AND every member
-  { const [a, b] = mk(2); const A = makeActor({ items: [a, b], feats: [prof()] }); await S.setHeldTogether(A, a, [b.id]); assert.equal(await profileOf(A, a), 'melee-grouped');
-    const strip = (w) => { const { equipped, ...rest } = w.system; w.system = rest; };
-    const was = { ...b.system }; strip(b); assert.equal(S.heldGroupOf(A, a).reason, 'member-not-equipped', 'a missing equipped value is not "equipped"'); assert.equal(await profileOf(A, a), 'melee'); assert.equal(await profileOf(A, a, { profileId: 'melee-grouped' }), null);
-    b.system = { ...b.system, readied: true }; assert.equal(S.heldGroupOf(A, a).ok, true, 'readied counts (supported alternative representation)'); b.system = { ...was };
-    strip(b); b.flags = { ...b.flags, swse: { ...b.flags.swse, equipped: true } }; assert.equal(S.heldGroupOf(A, a).ok, true, 'a flag-based equipped state counts'); b.flags = { ...b.flags, swse: { ...b.flags.swse, equipped: false } }; b.system = { ...was, equipped: false };
-    assert.equal(S.heldGroupOf(A, a).reason, 'member-not-equipped'); b.system = { ...was }; b.flags = { ...b.flags, swse: { ...b.flags.swse } }; assert.equal(S.heldGroupOf(A, a).ok, true);
-    // the primary must be equipped too
-    const wasA = { ...a.system }; a.system = { ...a.system, equipped: false }; assert.equal(S.heldGroupOf(A, a).reason, 'primary-not-equipped'); assert.equal(await profileOf(A, a, { profileId: 'melee-grouped' }), null); strip(a); assert.equal(S.heldGroupOf(A, a).reason, 'primary-not-equipped'); a.system = { ...wasA };
-    // a formerly valid group is invalidated when the equipment changes, in the dual-wield planner as well
-    assert.equal(DW.resolve(A, { primaryWeapon: a }).usingTwoWeapons, false); b.system = { ...was, equipped: false }; assert.equal(S.heldGroupOf(A, a).ok, false); assert.equal(DW.resolve(A, { primaryWeapon: a }).usingTwoWeapons, false, 'an unequipped stick is not a second weapon either'); b.system = { ...was }; }
-  // two grouped sticks plus a genuinely separate third as the off-hand weapon stay legal
-  { const [a, b, c] = mk(3); const A = makeActor({ items: [a, b, c], feats: [prof()] }); c.system = { ...c.system, isOffhand: true }; assert.equal((await S.setHeldTogether(A, a, [b.id])).ok, true);
-    assert.equal(await profileOf(A, a), 'melee-grouped'); const sh = DW.resolve(A, { primaryWeapon: a }); assert.equal(sh.usingTwoWeapons, true); assert.equal(sh.offHand.weapon.id, c.id); }
-  // the same stick in two groups; a member that has its own group
-  { const [a, b, c] = mk(3); const A = makeActor({ items: [a, b, c], feats: [prof()] }); await S.setHeldTogether(A, a, [c.id]);
-    assert.equal((await S.setHeldTogether(A, b, [c.id])).reason, 'member-in-another-group', 'a stick already in a group cannot join a second one');
-    assert.equal((await S.setHeldTogether(A, c, [b.id])).reason, 'primary-is-member-of-another-group', 'nor can a member start a group of its own: one stick, one slot'); }
-  // a forged state without the equipment / proficiency
+  assert.equal(await profileOf(P, d1, { profileId: 'melee-grouped' }), null, 'the grouped profile cannot be selected'); assert.equal(used(), 0);
+  // a forged / foreign stored group is no different
   { const [a, b] = mk(2); const NP = makeActor({ items: [a, b] }); a.flags = { ...a.flags, swse: { ...a.flags.swse, fireState: { v: 1, heldTogetherIds: [b.id] } } };
-    assert.equal(await profileOf(NP, a), 'melee', 'forged without proficiency selects nothing'); assert.equal(await profileOf(NP, a, { profileId: 'melee-grouped' }), null);
-    const [c] = mk(1); const lone = makeActor({ items: [c], feats: [prof()] }); c.flags = { ...c.flags, swse: { ...c.flags.swse, fireState: { v: 1, heldTogetherIds: ['ghost'] } } };
-    assert.equal(await profileOf(lone, c), 'melee', 'forged ids that are not owned select nothing'); assert.equal(await profileOf(lone, c, { profileId: 'melee-grouped' }), null); }
-  // thrown keeps its own damage; naming the grouped profile with no group is refused before cost
-  assert.equal(await profileOf(P, d1, { profileId: 'thrown' }), 'thrown'); assert.equal(rt.resolveCanonicalDamage(d1, { weaponForm: { identityKey: 'unmapped::Darkstick', profileId: 'thrown' } }).base, '1d6');
+    assert.equal(await profileOf(NP, a), 'melee'); assert.equal(await profileOf(NP, a, { profileId: 'melee-grouped' }), null);
+    const thief = makeActor({ items: [], feats: [prof()] }); thief.id = 'a9'; const [m] = mk(1); thief.items.push(m); m.actor = thief;
+    assert.equal(S.heldGroupOf(thief, a).reason, 'primary-not-owned'); }
+  // the thrown profile keeps its own damage; other weapons and two pistols are unaffected
+  assert.equal(await profileOf(P, d1, { profileId: 'thrown' }), 'thrown');
   { const [a] = mk(1); const A = makeActor({ items: [a], feats: [prof()] }); reset(); assert.equal(await attack(A, a, { profileId: 'melee-grouped' }), null); assert.equal(used(), 0); }
-  // other weapons / two pistols unaffected; the unrelated return-on-thrown rule is untouched
-  const blade = owned('weapon-vibroblade'); const B = makeActor({ items: [d1, blade] }); assert.equal(DW.resolve(B, { primaryWeapon: d1 }).usingTwoWeapons, true);
-  const pa = owned('weapon-blaster-pistol'); const C = makeActor({ items: [pa, owned('weapon-blaster-pistol')] }); assert.equal(DW.resolve(C, { primaryWeapon: pa }).usingTwoWeapons, true);
   assert.equal(shapeOf(d1).operation.returnOnAttackExceedsReflexBy, 5);
-  ok('Darkstick: the group is the proficient player\'s statement naming Item ids, revalidated at every attack and in the dual-wield resolver (missing / unequipped / off-hand / overlapping / forged members fail to 1d6 and the grouped profile cannot be named); 1d6 / 2d8 / 2d8; one slot; thrown unchanged');
+  // no off-hand is inferred from Item order: with two ready sticks the planner asks for an explicit choice
+  const two = DW.resolve(P, { primaryWeapon: d1 }); assert.equal(two.offHand?.weapon ?? null, null, 'no off-hand is inferred (E4-C1 WP5)');
+  ok('Darkstick held-together groups fail closed (EQ-002): no candidate, no honoured group, grouped profile unselectable, thrown/other weapons unaffected, no inferred off-hand');
 }
 // ---- G. worn classification is shown and decides nothing else -------------------------------------------------------------------------
 {
@@ -414,7 +369,7 @@ try {
   const gaunt = owned('unmapped::Stunning Gauntlet'); const G = makeActor({ items: [gaunt] }); reset(); assert.ok(await attack(G, gaunt, {}), 'a worn light item is not gated by size');
   // disarm protection stays with the existing authority: the gauntlet (separate published rule) is immune, the wrist weapons are not made immune by their location
   const { resolveDisarmProtection } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js');
-  assert.equal((await resolveDisarmProtection(G, {})).refused, true, 'Stunning Gauntlet: cannot be disarmed (existing authority)');
+  assert.equal((await resolveDisarmProtection(G, {})).refused, false, 'EQ-003: a worn gauntlet is not a verified READIED weapon, so the categorical protection is withheld (fail closed) until worn-weapon certification is ruled on');
   assert.equal((await resolveDisarmProtection(makeActor({ items: [owned('weapon-wrist-rocket-launcher')] }), {})).refused, false, 'a forearm location alone grants no disarm immunity');
   ok('wrist / forearm weapons are classified and shown; no hand, disarm or attack rule is invented; the below-wearer gauntlet attacks normally');
 }

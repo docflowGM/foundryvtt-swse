@@ -1,3 +1,4 @@
+import { isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { BLASTER_BOLT_COLORS, BLASTER_FX_TYPES, DEFAULT_BOLT_COLOR, DEFAULT_FX_TYPE } from "/systems/foundryvtt-swse/scripts/data/blaster-config.js";
 import { BLADE_COLOR_MAP, DEFAULT_BLADE_COLOR, getBladeColorHex } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 import { BEAM_STYLES, getBoltColor } from "/systems/foundryvtt-swse/scripts/constants/beam-styles.js";
@@ -170,11 +171,9 @@ export class WeaponVisualProfileResolver {
     return item?.system?.activated === true || item?.system?.active === true;
   }
 
-  static isEquipped(item) {
-    const system = item?.system ?? {};
-    return system.equipped === true
-      || system.equippable?.equipped === true
-      || system.carried === true;
+  /** True when the weapon is verified HELD (effective EQUIPPED/READIED through the shared interface). Without an actor there is no evidence: false. */
+  static isEquipped(item, actor = null) {
+    return actor ? isWeaponHeld(actor, item) : false;
   }
 
   static emitsLight(item) {
@@ -186,7 +185,7 @@ export class WeaponVisualProfileResolver {
     const isLightsaber = kind === "lightsaber";
     const isBlaster = kind === "blaster";
     const active = this.isActive(item);
-    const equipped = this.isEquipped(item);
+    const equipped = this.isEquipped(item, options.actor ?? item?.actor ?? null);
     const emitLight = this.emitsLight(item);
 
     const bladeColor = this.getBladeColor(item, options);

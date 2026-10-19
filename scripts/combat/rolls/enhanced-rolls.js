@@ -28,7 +28,7 @@ import {
   rollConcealmentCheck
 } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import {
-  getEquippedWeapons,
+  getReadiedWeaponSelection,
   calculateFullAttackConfig,
   showFullAttackDialog,
   generateFullAttackCard
@@ -972,7 +972,7 @@ export class SWSERoll {
 
     try {
       // Get equipped weapons
-      const equippedWeapons = getEquippedWeapons(actor);
+      const equippedWeapons = getReadiedWeaponSelection(actor);
 
       // Allow overrides
       if (options.primaryWeapon) {
@@ -983,7 +983,7 @@ export class SWSERoll {
       }
 
       if (!equippedWeapons.primary) {
-        ui.notifications.warn('No weapon equipped for Full Attack.');
+        ui.notifications.warn('No ready weapon for Full Attack. Ready a weapon (verified READIED) or choose which ready weapon to use.');
         return null;
       }
 
