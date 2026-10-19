@@ -52,65 +52,63 @@ const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governanc
 const { ActionEconomyConsumption } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js');
 const { isItemActivated } = await import('/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js');
 
+const { installCoordinatorHarness, REC } = await import('./helpers/equipment-coordinator-harness.mjs');
 const spent = []; let allow = true;
 ActionEconomyConsumption.spend = async (_a, type) => { if (!allow) return { allowed: false }; spent.push(type); return { allowed: true }; };
-const writes = [];
-ActorEngine.updateOwnedItems = async (actor, updates) => {
-  writes.push(updates);
-  for (const patch of updates) {
-    const item = actor.items.get(patch._id);
-    for (const [k, v] of Object.entries(patch)) {
-      if (k === '_id') continue;
-      const parts = k.split('.'); let node = item;
-      for (let i = 0; i < parts.length - 1; i++) node = (node[parts[i]] ??= {});
-      node[parts.at(-1)] = v;
-    }
-  }
-};
-const mk = (items, extra = {}) => { const a = { id: 'a', items, system: {}, ...extra }; items.get = (id) => items.find((i) => i.id === id); return a; };
-const saber = (o = {}) => ({ id: 's1', name: 'Lightsaber', type: 'weapon', system: { equipped: false, activated: false, weaponCategory: 'lightsaber', subtype: 'lightsaber', ...o } });
+const harness = installCoordinatorHarness(ActorEngine);
+const writes = harness.log.itemWrites;
+const opts = { deps: harness.deps };
+const mk = (items, extra = {}) => { const a = { id: 'a', type: 'character', items, system: {}, flags: {}, ...extra }; items.get = (id) => items.find((i) => i.id === id); return a; };
+const saber = (o = {}, record = REC('STOWED', null, [])) => ({ id: 's1', name: 'Lightsaber', type: 'weapon', system: { ...record, activated: false, weaponCategory: 'lightsaber', subtype: 'lightsaber', ...o } });
+const held = (purpose = 'hold') => REC('EQUIPPED', purpose, ['natural-arm-1']);
 
 assert.equal(isItemActivated({ system: { activated: true } }), true);
 assert.equal(isItemActivated({ system: {} }), false);
 ok('isItemActivated is the shared activation reader');
 
-{ // draw / stow
-  const s = saber(), a = mk([s]); spent.length = 0;
-  let r = await InventoryEngine.setWeaponReadied(a, 's1', true);
-  assert.equal(r.ok, true); assert.equal(s.system.equipped, true); assert.deepEqual(spent, ['move']);
-  r = await InventoryEngine.setWeaponReadied(a, 's1', false);
-  assert.equal(s.system.equipped, false); assert.deepEqual(spent, ['move', 'move']);
+{ // draw / stow: the coordinator owns posture; stowing is a complete intent, drawing needs explicit appendages
+  const s = saber({}, held()), a = mk([s]); spent.length = 0;
+  let r = await InventoryEngine.setWeaponReadied(a, 's1', false, opts);
+  assert.equal(r.ok, true); assert.equal(s.system.weaponPosture, 'STOWED'); assert.deepEqual(spent, ['move']);
+  assert.equal(s.system.equipped, undefined, 'no retired alias is written');
+  r = await InventoryEngine.setWeaponReadied(a, 's1', true, opts);
+  assert.equal(r.ok, false); assert.equal(r.status, 'CHOICE_REQUIRED'); assert.ok(r.choices.some((c) => c.id === 'appendageIds'));
+  assert.equal(s.system.weaponPosture, 'STOWED'); assert.deepEqual(spent, ['move'], 'a choice-required draw spends nothing');
+  r = await InventoryEngine.requestWeaponPosture(a, { type: 'equip', itemId: 's1', purpose: 'hold', appendageIds: ['natural-arm-1'] }, opts);
+  assert.equal(r.ok, true); assert.equal(s.system.weaponPosture, 'EQUIPPED'); assert.deepEqual(spent, ['move', 'move']);
 }
-ok('Draw / Stow flip system.equipped and spend a Move action');
+ok('Draw / Stow go through the coordinator: posture fields only, a Move action each, and a draw without explicit appendages is CHOICE_REQUIRED');
 
-{ // failed spend writes nothing
+{ // failed spend writes nothing durable
   const s = saber(), a = mk([s]); writes.length = 0; allow = false;
-  const r = await InventoryEngine.setWeaponReadied(a, 's1', true);
+  const r = await InventoryEngine.requestWeaponPosture(a, { type: 'equip', itemId: 's1', purpose: 'hold', appendageIds: ['natural-arm-1'] }, opts);
   allow = true;
-  assert.equal(r.ok, false); assert.equal(writes.length, 0); assert.equal(s.system.equipped, false);
+  assert.equal(r.ok, false); assert.equal(r.status, 'FAILED_COMPENSATED');
+  assert.equal(s.system.weaponPosture, 'STOWED'); assert.deepEqual(s.system.weaponOccupancy, { schemaVersion: 1, purpose: null, appendageIds: [] });
 }
-ok('a failed action spend writes nothing');
+ok('a failed action spend leaves the weapon stowed (owned fields compensated, journal closed)');
 
 { // stowed cannot activate; drawn can; active cannot stow
   const s = saber(), a = mk([s]); spent.length = 0;
-  assert.equal((await InventoryEngine.setActivated(a, 's1', true)).ok, false);
+  assert.equal((await InventoryEngine.setActivated(a, 's1', true, opts)).ok, false);
   assert.equal(s.system.activated, false);
-  s.system.equipped = true;
-  assert.equal((await InventoryEngine.setActivated(a, 's1', true)).ok, true);
+  s.system.weaponPosture = 'EQUIPPED'; s.system.weaponOccupancy = { schemaVersion: 1, purpose: 'hold', appendageIds: ['natural-arm-1'] };
+  assert.equal((await InventoryEngine.setActivated(a, 's1', true, opts)).ok, true);
   assert.equal(s.system.activated, true); assert.deepEqual(spent, ['swift']);
-  const stow = await InventoryEngine.setWeaponReadied(a, 's1', false);
-  assert.equal(stow.ok, false); assert.equal(stow.reason, 'deactivate-before-stowing'); assert.equal(s.system.equipped, true);
+  const stow = await InventoryEngine.setWeaponReadied(a, 's1', false, opts);
+  assert.equal(stow.ok, false); assert.equal(stow.reason, 'deactivate-before-stowing'); assert.equal(s.system.weaponPosture, 'EQUIPPED');
   assert.equal((await InventoryEngine.setActivated(a, 's1', false)).ok, true);
-  assert.equal((await InventoryEngine.setWeaponReadied(a, 's1', false)).ok, true);
+  assert.equal((await InventoryEngine.setWeaponReadied(a, 's1', false, opts)).ok, true);
+  assert.equal(s.system.weaponPosture, 'STOWED');
 }
 ok('stowed saber cannot activate; drawn activates (Swift); active saber cannot stow; inactive can');
 
-{ // Draw & Ignite refused without the combined feat effect, nothing spent
+{ // Draw & Ignite: unavailable until the coordinator supports the combined action; nothing is written or spent
   const s = saber(), a = mk([s]); spent.length = 0; writes.length = 0;
   const r = await InventoryEngine.drawAndActivateLightsaber(a, 's1');
-  assert.equal(r.ok, false); assert.equal(spent.length, 0); assert.equal(writes.length, 0);
+  assert.equal(r.ok, false); assert.equal(r.status, 'COORDINATOR_SUPPORT_REQUIRED'); assert.equal(spent.length, 0); assert.equal(writes.length, 0);
 }
-ok('Draw & Ignite is unavailable (and spends nothing) without the existing combined Quick Draw effect');
+ok('Draw & Ignite is unavailable (and writes and spends nothing) until the coordinator supports the combined action');
 
 { // shield
   const sh = { id: 'sh', name: 'Energy Shield (SR 10)', type: 'armor', system: { equipped: true, armorType: 'shield', shieldRating: 10, currentSR: 0, activated: false, charges: { current: 5, max: 5 } } };

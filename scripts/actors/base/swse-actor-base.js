@@ -20,6 +20,9 @@
  * - Higher-level callsites: handle UI feedback, hooks, side-effects
  */
 
+/** Coordinator-owned and retired weapon state paths (system.weaponPosture/weaponOccupancy, equip aliases, legacy grip booleans, the grip choice). */
+const WEAPON_STATE_KEYS = /^(system\.(weaponPosture|weaponOccupancy|equipped|isEquipped|readied|dualWielded|wieldedTwoHanded)(\.|$)|system\.equippable(\.equipped)?$|system\.equippable\.equipped$|flags\.swse\.equipped$|flags\.swse\.fireState\.wielded$)/;
+
 export class SWSEActorBase extends Actor {
   /* -------------------------------------------------------------------------- */
   /* DERIVED DATA ENTRY POINT                                                   */
@@ -142,6 +145,12 @@ export class SWSEActorBase extends Actor {
       return item.update(changes, options); // @mutation-exception: Unowned directory item
     }
 
+    // Owned weapons: posture, occupancy and the retired equip/grip aliases are never written through this generic helper. The equipment-state
+    // coordinator is the only writer (InventoryEngine.requestWeaponPosture); a rejected write changes nothing.
+    if ((item.type === 'weapon' || item.type === 'lightsaber') && Object.keys(changes ?? {}).some((k) => WEAPON_STATE_KEYS.test(k))) {
+      throw new Error(`Weapon posture, occupancy and equip/grip aliases are changed only through the equipment-state coordinator (rejected: ${Object.keys(changes).filter((k) => WEAPON_STATE_KEYS.test(k)).join(', ')}).`);
+    }
+
     // PHASE 2: No fallback to direct update. ActorEngine is required.
     // If this fails, the error indicates a module loading problem that must be fixed.
     const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
@@ -158,6 +167,10 @@ export class SWSEActorBase extends Actor {
    * @returns {Promise<Item|null>}
    */
   async setItemEquipped(item, equipped, options = {}) {
+    // Weapon posture belongs to the equipment-state coordinator (InventoryEngine.requestWeaponPosture); the worn-state helper never writes it.
+    if (item?.type === 'weapon' || item?.type === 'lightsaber') {
+      return { ok: false, reason: 'weapon-posture-owned-by-coordinator', message: 'Weapon posture is changed only through the equipment-state coordinator.' };
+    }
     return this.updateOwnedItem(item, { 'system.equipped': !!equipped }, options);
   }
 

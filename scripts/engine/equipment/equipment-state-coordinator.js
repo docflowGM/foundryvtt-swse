@@ -140,7 +140,8 @@ async function defaultWriteJournal(actor, stored) {
 async function defaultResolveActionCost(actor, item, direction) {
   const { resolveActionCost } = await import('/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js');
   const mutation = resolveActionCost(actor, 'drawOrHolsterWeapon', { workflowValidated: true, weaponId: item.id, direction });
-  return mutation?.mutatedActionCost ?? mutation?.baseActionCost ?? null;
+  // Draw/holster is a Move Action (Core Rulebook); a feat mutation (Quick Draw: Swift) overrides it. Same default the former InventoryEngine path used.
+  return mutation?.mutatedActionCost ?? mutation?.baseActionCost ?? 'move';
 }
 async function defaultSpendAction(actor, actionType, metadata) {
   const { ActionEconomyConsumption } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js');
@@ -249,6 +250,12 @@ async function buildPlan(actor, intent, deps, requestIntentDigest) {
     const actionType = await (deps.resolveActionCost ?? defaultResolveActionCost)(actor, item, direction);
     if (!nonEmpty(actionType)) return reject('action-cost-unavailable', 'The existing action-cost authority returned no cost; none is assumed.', { direction });
     action = { required: true, actionType, direction };
+  }
+
+  // fail closed on missing authoritative species evidence: without it the anatomy resolver would apply its provisional two-arm default, and a
+  // posture that holds appendages must never be established from a default. Stowing needs no anatomy.
+  if (species.status !== 'resolved' && targetPosture !== EQUIPMENT_POSTURE.STOWED) {
+    return planResult(OUTCOME.NOT_ESTABLISHED, { ...base, issues: [issue('species-evidence-unavailable', 'blocking', 'The actor\'s species evidence could not be obtained from the registry authorities, so no appendage is certified and nothing is written.', { itemId: intent.itemId, reason: species.reason })] });
   }
 
   // hypothetical evaluation through the SAME reader, with the proposed record/grip overlaid (planning only; nothing persisted)

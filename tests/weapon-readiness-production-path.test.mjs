@@ -23,19 +23,11 @@ const { isItemActivated } = await import('/systems/foundryvtt-swse/scripts/engin
 let n = 0;
 const ok = (m) => console.log(`  [${++n}] ${m} OK`);
 
+const { installCoordinatorHarness, REC } = await import('./helpers/equipment-coordinator-harness.mjs');
 const spent = []; let allow = true;
 ActionEconomyConsumption.spend = async (_a, type) => { if (!allow) return { allowed: false }; spent.push(type); return { allowed: true }; };
-ActorEngine.updateOwnedItems = async (actor, updates) => {
-  for (const patch of updates) {
-    const item = actor.items.get(patch._id);
-    for (const [k, v] of Object.entries(patch)) {
-      if (k === '_id') continue;
-      const parts = k.split('.'); let node = item;
-      for (let i = 0; i < parts.length - 1; i++) node = (node[parts[i]] ??= {});
-      node[parts.at(-1)] = v;
-    }
-  }
-};
+const harness = installCoordinatorHarness(ActorEngine);
+const opts = { deps: harness.deps };
 
 const mkActor = (items, extra = {}) => { items.get = (id) => items.find((i) => i.id === id); const a = { id: 'a', type: 'character', items, system: {}, flags: {}, ...extra }; for (const i of items) i.actor = a; return a; }; // owned Items carry .actor
 const saber = (o = {}, id = 's1') => ({ id, name: 'Lightsaber', type: 'weapon', system: { equipped: false, activated: false, weaponCategory: 'lightsaber', subtype: 'lightsaber', ...o } });
@@ -67,73 +59,73 @@ function gearEntries(actor) {
 ok('production Gear ledger hydrates readiness for stowed and drawn weapons');
 
 { // 2. active saber: stow blocked in view and in engine
-  const s = saber({ equipped: true, activated: true });
+  const s = saber({ equipped: true, activated: true, ...REC('EQUIPPED', 'hold', ['natural-arm-1']) });
   const a = mkActor([s]);
   const r = gearEntries(a).get('s1').weaponReadiness;
   assert.equal(r.stowBlocked, true); assert.equal(r.activated, true);
-  const res = await InventoryEngine.setWeaponReadied(a, 's1', false);
-  assert.equal(res.ok, false); assert.equal(res.reason, 'deactivate-before-stowing'); assert.equal(s.system.equipped, true);
+  const res = await InventoryEngine.setWeaponReadied(a, 's1', false, opts);
+  assert.equal(res.ok, false); assert.equal(res.reason, 'deactivate-before-stowing'); assert.equal(s.system.weaponPosture, 'EQUIPPED');
 }
-ok('active lightsaber stow is blocked in the production view and rejected by the engine');
+ok('active lightsaber stow is blocked in the production view and rejected by the engine (coordinator plan)');
 
-{ // 3. legacy Equip control can no longer bypass action economy
-  const b = blaster({ equipped: false }); const a = mkActor([b]); spent.length = 0;
+{ // 3. legacy Equip control routes through the coordinator and can no longer bypass action economy
+  const b = blaster({ ...REC('EQUIPPED', 'hold', ['natural-arm-1']) }); const a = mkActor([b]); spent.length = 0;
   await InventoryEngine.toggleEquip(a, 'b1');
-  assert.equal(b.system.equipped, true); assert.deepEqual(spent, ['move']);
-  await InventoryEngine.toggleEquip(a, 'b1');
-  assert.equal(b.system.equipped, false); assert.deepEqual(spent, ['move', 'move']);
-  allow = false; spent.length = 0;
-  await InventoryEngine.toggleEquip(a, 'b1');
-  allow = true;
-  assert.equal(b.system.equipped, false, 'failed spend: legacy Equip writes nothing');
+  assert.equal(b.system.weaponPosture, 'STOWED'); assert.deepEqual(spent, ['move']);
+  assert.equal(b.system.equipped, false, 'the retired alias is never written (fixture value untouched)');
+  const r = await InventoryEngine.toggleEquip(a, 'b1');
+  assert.equal(r.ok, false); assert.equal(r.status, 'CHOICE_REQUIRED');
+  assert.equal(b.system.weaponPosture, 'STOWED'); assert.deepEqual(spent, ['move'], 'a draw without explicit appendages spends nothing');
+  const w = harness.log.itemWrites.length;
+  harness.setGm(false);
+  const denied = await InventoryEngine.requestWeaponPosture(a, { type: 'equip', itemId: 'b1', purpose: 'hold', appendageIds: ['natural-arm-1'] }, opts);
+  harness.setGm(true);
+  assert.equal(denied.ok, false); assert.equal(denied.status, 'REJECTED_NOT_GM'); assert.equal(harness.log.itemWrites.length, w); assert.deepEqual(spent, ['move']);
 }
-ok('legacy toggleEquip on an ordinary weapon routes through Draw/Stow (Move) and writes nothing on failed spend');
+ok('legacy toggleEquip on an ordinary weapon routes through the coordinator (stow = Move; draw = CHOICE_REQUIRED) and a non-GM client writes and spends nothing');
 
-{ // 4. always-readied weapons: natural (canonical fields) and integrated droid weapons
-  const nat = { id: 'n1', name: 'Claws', type: 'weapon', system: { equipped: false, naturalWeapon: true }, flags: { swse: { autoEquipped: true } } };
-  const integ = { id: 'i1', name: 'Integrated Blaster', type: 'weapon', system: { equipped: false, integrated: true, weaponCategory: 'pistols' } };
+{ // 4. natural / integrated weapons: identity is not certified, the coordinator refuses and writes nothing
+  const nat = { id: 'n1', name: 'Claws', type: 'weapon', system: { equipped: false, naturalWeapon: true, ...REC('STOWED', null, []) }, flags: { swse: { isNaturalWeapon: true, alwaysArmed: true, autoEquipped: true } } };
+  const integ = { id: 'i1', name: 'Integrated Blaster', type: 'weapon', system: { equipped: false, integrated: true, weaponCategory: 'pistols', ...REC('STOWED', null, []) } };
   for (const [item, actor, label] of [[nat, mkActor([nat]), 'natural'], [integ, mkActor([integ], { type: 'droid', system: { isDroid: true } }), 'integrated']]) {
-    const before = JSON.stringify(item.system); spent.length = 0;
-    assert.equal(isItemEquipped(item, actor), true, `${label} reads readied`);
+    const before = JSON.stringify(item.system); spent.length = 0; const w = harness.log.itemWrites.length;
+    assert.equal(isItemEquipped(item, actor), true, `${label} reads readied (legacy reader, migrated in a later work package)`);
     const gear = gearVm(actor);
     const row = gear.groups.flatMap((g) => g.entries).find((e) => e.id === item.id);
     assert.equal(row.weaponReadiness.alwaysReadied, true, `${label} flagged always-readied`);
     assert.equal(row.weaponReadiness.canDrawStow, false, `${label}: no Draw/Stow control`);
     assert.equal(row.canToggleEquip, false, `${label}: no legacy Equip control`);
-    assert.equal(row.equipped, true, `${label} row reads equipped`);
-    assert.ok(gear.equippedEntries.some((e) => e.id === item.id), `${label} stays in the Equipped Loadout`);
-    for (const attempt of [() => InventoryEngine.setWeaponReadied(actor, item.id, false), () => InventoryEngine.toggleWeaponReadied(actor, item.id), () => InventoryEngine.toggleEquip(actor, item.id)]) {
+    for (const attempt of [() => InventoryEngine.setWeaponReadied(actor, item.id, false, opts), () => InventoryEngine.toggleWeaponReadied(actor, item.id, opts), () => InventoryEngine.toggleEquip(actor, item.id)]) {
       const r = await attempt();
-      assert.equal(r?.ok, false); assert.equal(r?.reason, 'always-readied');
+      assert.equal(r?.ok, false); assert.equal(r?.reason, 'weapon-identity-uncertified');
     }
     assert.deepEqual(spent, [], `${label}: no action spent`);
     assert.equal(JSON.stringify(item.system), before, `${label}: nothing written`);
-    assert.equal(isItemEquipped(item, actor), true);
+    assert.equal(harness.log.itemWrites.length, w);
   }
 }
-ok('natural and integrated-droid weapons: no Draw/Stow UI, stay in loadout, direct stow/toggle spend and write nothing');
+ok('natural and integrated-droid weapons: no Draw/Stow UI; direct stow/toggle are refused by the coordinator (identity uncertified) and spend and write nothing');
 
-{ // 5. legacy-shaped readiness: Stow clears every alias isItemEquipped reads
-  for (const legacy of [{ active: true }, { readied: true }, { equippable: { equipped: true, active: true } }, { activation: { active: true } }, { isEquipped: true }]) {
-    const b = blaster({ equipped: true, ...legacy }); const a = mkActor([b]);
-    assert.equal(isItemEquipped(b, a), true);
-    const r = await InventoryEngine.setWeaponReadied(a, 'b1', false);
+{ // 5. legacy aliases are never written: stow changes only the coordinator-owned fields
+  for (const legacy of [{ active: true }, { readied: true }, { equippable: { equipped: true, active: true } }, { activation: { active: true } }, { isEquipped: true }, { equipped: true }]) {
+    const b = blaster({ ...REC('EQUIPPED', 'hold', ['natural-arm-1']), ...legacy }); const a = mkActor([b]); const before = JSON.stringify(legacy);
+    const r = await InventoryEngine.setWeaponReadied(a, 'b1', false, opts);
     assert.equal(r.ok, true, JSON.stringify(legacy));
-    assert.equal(isItemEquipped(b, a), false, `stowed reads stowed for ${JSON.stringify(legacy)}`);
-    await InventoryEngine.setWeaponReadied(a, 'b1', true);
-    assert.equal(isItemEquipped(b, a), true);
+    assert.equal(b.system.weaponPosture, 'STOWED');
+    for (const [k, v] of Object.entries(legacy)) assert.equal(JSON.stringify({ [k]: b.system[k] }), JSON.stringify({ [k]: v }), `${k} is left untouched`);
+    assert.ok(harness.log.itemWrites.at(-1).every((u) => Object.keys(u).every((key) => key === '_id' || ['system.weaponPosture', 'system.weaponOccupancy', 'flags.swse.fireState.wielded', 'flags.swse.fireState.v'].includes(key))), 'only coordinator-owned paths are sent');
   }
 }
-ok('Draw/Stow reads and writes agree for legacy active/readied/equippable/activation/isEquipped shapes');
+ok('Stow never writes a retired equip alias (active/readied/equippable/activation/isEquipped/equipped stay untouched); only coordinator-owned paths are sent');
 
-{ // 6. legacy system.active saber: deactivation actually deactivates
-  const s = saber({ equipped: true, activated: true, active: true }); const a = mkActor([s]);
-  assert.equal((await InventoryEngine.setActivated(a, 's1', false)).ok, true);
+{ // 6. legacy system.active saber: deactivation still mirrors, then it can be stowed
+  const s = saber({ ...REC('EQUIPPED', 'hold', ['natural-arm-1']), activated: true, active: true }); const a = mkActor([s]);
+  assert.equal((await InventoryEngine.setActivated(a, 's1', false, opts)).ok, true);
   assert.equal(isItemActivated(s), false);
-  assert.equal((await InventoryEngine.setWeaponReadied(a, 's1', false)).ok, true);
-  assert.equal(isItemEquipped(s, a), false);
+  assert.equal((await InventoryEngine.setWeaponReadied(a, 's1', false, opts)).ok, true);
+  assert.equal(s.system.weaponPosture, 'STOWED'); assert.equal(s.system.active, false);
 }
-ok('legacy system.active is mirrored on deactivation, so the saber can then be stowed');
+ok('legacy system.active is mirrored on deactivation (activation authority), so the saber can then be stowed');
 
 // Quick Draw as the feat normalizer stores it (attack-options-feat-normalization-hooks.js drawWeaponSpeedMutation)
 const quickDrawRule = {
@@ -146,16 +138,16 @@ const quickDrawRule = {
 const quickDrawFeat = () => ({ id: 'f1', name: 'Quick Draw', type: 'feat', system: { abilityMeta: { attackOptionRules: [quickDrawRule] } } });
 const lightsaberProf = () => ({ id: 'f2', name: 'Weapon Proficiency (Lightsabers)', type: 'feat', system: {} });
 
-{ // 7. Quick Draw: Draw and Stow cost Swift, not Move
-  const b = blaster(); const a = mkActor([b, quickDrawFeat()]); spent.length = 0;
-  await InventoryEngine.setWeaponReadied(a, 'b1', true);
-  await InventoryEngine.setWeaponReadied(a, 'b1', false);
+{ // 7. Quick Draw: Draw and Stow cost Swift, not Move (existing action-speed metadata, priced by the coordinator)
+  const b = blaster(REC('STOWED', null, [])); const a = mkActor([b, quickDrawFeat()]); spent.length = 0;
+  await InventoryEngine.requestWeaponPosture(a, { type: 'equip', itemId: 'b1', purpose: 'hold', appendageIds: ['natural-arm-1'] }, opts);
+  await InventoryEngine.setWeaponReadied(a, 'b1', false, opts);
   assert.deepEqual(spent, ['swift', 'swift']);
 }
 ok('Quick Draw makes Draw/Stow a Swift via the existing action-speed metadata');
 
-{ // 8. Draw & Ignite: one Swift, only with the combined effect; production view offers it
-  const s = saber(); const plain = mkActor([s]); spent.length = 0;
+{ // 8. Draw & Ignite: the view still offers it with the combined effect, but the engine needs coordinator support and does nothing until then
+  const s = saber(); const plain = mkActor([s]); spent.length = 0; const w = harness.log.itemWrites.length;
   let r = await InventoryEngine.drawAndActivateLightsaber(plain, 's1');
   assert.equal(r.ok, false); assert.equal(spent.length, 0);
   assert.equal(gearEntries(plain).get('s1').weaponReadiness.canDrawAndIgnite, false);
@@ -163,11 +155,10 @@ ok('Quick Draw makes Draw/Stow a Swift via the existing action-speed metadata');
   const s2 = saber(); const a = mkActor([s2, quickDrawFeat(), lightsaberProf()]);
   assert.equal(gearEntries(a).get('s1').weaponReadiness.canDrawAndIgnite, true);
   r = await InventoryEngine.drawAndActivateLightsaber(a, 's1');
-  assert.equal(r.ok, true); assert.deepEqual(spent, ['swift'], 'ONE swift, not draw + activate');
-  assert.equal(isItemEquipped(s2, a), true); assert.equal(isItemActivated(s2), true);
-  assert.equal(gearEntries(a).get('s1').weaponReadiness.canDrawAndIgnite, false);
+  assert.equal(r.ok, false); assert.equal(r.status, 'COORDINATOR_SUPPORT_REQUIRED'); assert.deepEqual(spent, []);
+  assert.equal(s2.system.weaponPosture, undefined, 'posture untouched'); assert.equal(isItemActivated(s2), false); assert.equal(harness.log.itemWrites.length, w);
 }
-ok('Draw & Ignite: unavailable without the combined effect; with it, exactly one Swift draws and ignites');
+ok('Draw & Ignite: reports COORDINATOR_SUPPORT_REQUIRED and writes and spends nothing (the published single-Swift action returns with coordinator support)');
 
 { // 9. alternate weapons: no lightsaber activation affordance
   const sword = { id: 'ss', name: 'Sith Sword', type: 'weapon', system: { equipped: true } };

@@ -3883,6 +3883,7 @@ const forcePoints = [];
             const result = await InventoryEngine.toggleWeaponReadied(this.actor, itemId);
             if (!result?.ok) {
               if (result?.reason === "deactivate-before-stowing") ui?.notifications?.warn?.(`${item.name}: deactivate the lightsaber before stowing it.`);
+              else if (result?.message) ui?.notifications?.warn?.(`${item.name}: ${result.message}`);
               break;
             }
             await this.requestSurfaceRender({ reason: "weapon-readiness-change" });
@@ -3891,7 +3892,7 @@ const forcePoints = [];
           case "draw-and-ignite-lightsaber": {
             const result = await InventoryEngine.drawAndActivateLightsaber(this.actor, itemId);
             if (!result?.ok) {
-              ui?.notifications?.warn?.(`${item.name}: unable to draw and ignite.`);
+              ui?.notifications?.warn?.(`${item.name}: ${result?.message ?? "unable to draw and ignite."}`);
               break;
             }
             await this.requestSurfaceRender({ reason: "weapon-draw-and-ignite" });
