@@ -523,6 +523,8 @@ check('synthetic trusted fixtures validate under a synthetic authority and remai
     assert.ok(p.reasons.includes('HOST_FACT_UNTRUSTED'));
   }
   assert.ok(E.describeObservationSet(sset).entries.every((e) => e.result.productionTrusted === false));
+  const ev = E.resolveFact(sset, { factRef: 'host.droidStatus', subject: { role: 'host', itemId: 'host1' }, requestedBasis: 'base', purpose: 'printed-statistics' }).evidence;
+  assert.ok(ev.length === 1 && ev[0].synthetic === true && ev[0].productionTrusted === false, 'resolved evidence reports its trust class');
 });
 
 

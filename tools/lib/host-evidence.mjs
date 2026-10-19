@@ -439,7 +439,7 @@ export function resolveFact(set, { factRef, subject, requestedBasis, purpose, st
 
   const distinct = [];
   for (const e of usable) if (!distinct.some((d) => jsonEqual({ s: d.observation.status, v: d.observation.value }, { s: e.observation.status, v: e.observation.value }))) distinct.push(e);
-  const evidence = usable.map((e) => ({ factRef, role: subject.role, itemId: subject.itemId, memberRef: subject.memberRef ?? null, basis: requestedBasis, recordRef: e.observation.provenance.source.recordRef, path: e.observation.provenance.source.path }))
+  const evidence = usable.map((e) => ({ factRef, role: subject.role, itemId: subject.itemId, memberRef: subject.memberRef ?? null, basis: requestedBasis, recordRef: e.observation.provenance.source.recordRef, path: e.observation.provenance.source.path, synthetic: e.result.synthetic, productionTrusted: e.result.productionTrusted }))
     .sort((a, b) => (a.recordRef + a.path < b.recordRef + b.path ? -1 : 1));
   if (distinct.length > 1) {
     // Genuine contradiction: two TRUSTED observations of the same fact, subject and applicable state that disagree.
