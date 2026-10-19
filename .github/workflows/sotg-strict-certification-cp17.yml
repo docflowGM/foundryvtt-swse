@@ -19,6 +19,7 @@ on:
       - data/audits/vehicles/swse-sotg-cp20-*.json
       - tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
       - docs/audits/vehicles/swse-sotg-cp20-*.md
+      - tools/audits/vehicles/check_sotg_cp20_tranche*.py
       - .github/workflows/sotg-strict-certification-cp17.yml
   workflow_dispatch:
 
@@ -82,3 +83,8 @@ jobs:
         run: python3 -m py_compile tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
       - name: Validate CP20 source fidelity, accepted audit-only corrections and zero runtime authority
         run: python3 tools/audits/vehicles/check_sotg_cp20_source_fidelity.py --repo "."
+
+      - name: Compile CP20 tranche 02 independent source-fidelity validator
+        run: python3 -m py_compile tools/audits/vehicles/check_sotg_cp20_tranche02.py
+      - name: Verify CP20 tranche 02 publication certificates and strict runtime boundaries
+        run: python3 tools/audits/vehicles/check_sotg_cp20_tranche02.py --repo "."
