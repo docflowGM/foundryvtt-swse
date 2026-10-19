@@ -6949,7 +6949,12 @@ const forcePoints = [];
 
     let result;
     if (trackingOn) result = await AmmoSystem.reloadWeapon(this.actor, weapon);
-    else { await FireStateStore.clearReload(this.actor, weapon); result = { success: true, message: `${weapon.name} reloaded` }; }
+    else {
+      const cleared = await FireStateStore.clearReload(this.actor, weapon);
+      result = cleared?.outcome === 'failed'
+        ? { success: false, message: `${weapon.name}: the reload could not be recorded.` }   // the awaiting-reload fact is still stored; never report a reload that was not recorded
+        : { success: true, message: `${weapon.name} reloaded` };
+    }
     if (result?.success === false) {
       ui?.notifications?.error?.(result.message || 'Reload failed.');
       return null;

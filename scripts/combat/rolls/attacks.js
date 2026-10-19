@@ -1,4 +1,4 @@
-import { checkAttackSourceReadiness, refuseUnreadyAttack, verifiedVehicleInstallation } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack-readiness-gate.js";
+import { checkAttackSourceReadiness, refuseUnreadyAttack, routedVehicleWeapon, revalidateAttackSource } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack-readiness-gate.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
@@ -266,10 +266,10 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   // Phase 5D-I-B: what the OWNED weapon state already says (hands, mount, this round's crew adjudication) -- read once, never rediscovered later
   const shape = resolveAttackShapeFor(runtime, rollOptions);
   const owned = FireStateStore.readFireState(weapon) ?? {};
-  // Phase 5D-I-D-B2: the EFFECTIVE size class (Core Rulebook p.120) joins the hands resolution. Only a VERIFIED vehicle / starship installation keeps its own
+  // Phase 5D-I-D-B2: the EFFECTIVE size class (Core Rulebook p.120) joins the hands resolution. Only a ROUTED vehicle / starship weapon (routing evidence, not an installation certification) keeps its own
   // mounting rules (a caller-supplied flag proves nothing); everything else is personally wielded. All facts that decide the size (the tripod answer, a size the
   // wielder chose, a size-changing preparation) are resolved ONCE here, before the conditional modifiers are evaluated, and carried with the attack.
-  const personallyWielded = !verifiedVehicleInstallation(actor, weapon, rollOptions);
+  const personallyWielded = !routedVehicleWeapon(actor, weapon, rollOptions);
   const wielderSize = actor?.system?.size ?? actor?.system?.details?.size ?? null;
   const beneficialSizeChoice = rollOptions.beneficialSizeChoice ?? owned.sizeTreatment ?? undefined;
   // a preparation that temporarily changes the size (the braced Heavy Blaster Cannon) counts only when the readiness authority says it is done this round or is
@@ -745,6 +745,9 @@ export async function rollAttack(actor, weapon, options = {}) {
     ui?.notifications?.error?.(ammoPreflight.message || `${weapon.name} does not have enough ammunition.`);
     return null;
   }
+  // WP5-C2 R4: the selection / opportunity / target-side / special-question steps above can await the player. Equipment may have changed meanwhile, so
+  // the attack source is judged again, live, before the first expenditure.
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'attack preparation')) return null;
   let actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
   if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
     ui?.notifications?.warn?.(actionOptionSpend.reason || 'Selected attack option action cost could not be paid.');
@@ -767,6 +770,8 @@ export async function rollAttack(actor, weapon, options = {}) {
   let ammoSpend = null;
 
   try {
+  // WP5-C2 R4: the action spends above awaited; nothing irreversible beyond them has happened, so refuse and give them back before ammunition is touched.
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'action payment')) { await actionOptionSpend?.rollback?.(); return null; }
   ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
     workflowContext,
     options: rollOptions,
@@ -810,6 +815,12 @@ export async function rollAttack(actor, weapon, options = {}) {
   }
   const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = composition;
 
+  // WP5-C2 R4: last check before the dice. Ammunition and action payments are given back together if the source is no longer ready.
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'ammunition payment')) {
+    if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+    await actionOptionSpend?.rollback?.();
+    return null;
+  }
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
 
@@ -1157,6 +1168,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   // optionModifiers still needed for die-formula and effect modifiers below.
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
   const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? null, { actor, weapon });
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'attack composition')) return null;   // WP5-C2 R4: composition awaited
   const actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
   if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
     ui?.notifications?.warn?.(actionOptionSpend.reason || 'Selected attack option action cost could not be paid.');
@@ -1173,6 +1185,11 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   if (ammoSpend?.success === false) {
     await actionOptionSpend?.rollback?.();
     ui?.notifications?.error?.(ammoSpend.message || `${weapon.name} does not have enough ammunition.`);
+    return null;
+  }
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'ammunition payment')) {   // WP5-C2 R4
+    if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+    await actionOptionSpend?.rollback?.();
     return null;
   }
 

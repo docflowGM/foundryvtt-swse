@@ -202,7 +202,9 @@ console.log('  [5/6] the penalty is presence-based, not effect-count-based: two 
 
     // Exempt weapon while Grabbed: no penalty, no ledger entry, roll parity
     // with baseline.
-    const grabbedUnarmedResult = await rollAttack(grabbedAttacker, virtualWeapon, { suppressChat: true, targetContext: { mode: 'none' } });
+    // WP5-C2 R2: a virtual unarmed strike is bound to the actor it was built for, so each attacker uses the strike built for them
+    const grabbedVirtualWeapon = buildVirtualUnarmedWeapon(grabbedAttacker, { name: 'Test Strike' });
+    const grabbedUnarmedResult = await rollAttack(grabbedAttacker, grabbedVirtualWeapon, { suppressChat: true, targetContext: { mode: 'none' } });
     const baselineUnarmedResult = await rollAttack(baselineAttacker, virtualWeapon, { suppressChat: true, targetContext: { mode: 'none' } });
     assert.equal(
       grabbedUnarmedResult.roll.swseAttackContext.attackBonus,

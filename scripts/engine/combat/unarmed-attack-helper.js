@@ -252,11 +252,40 @@ export function getUnarmedDamage(actor, options = {}) {
   return increaseDamageDie(getBaseUnarmedDamage(actor, options), getMartialArtsStep(actor));
 }
 
+/**
+ * Provenance of the virtual unarmed source (E4-C1 WP5-C2 R2). `buildVirtualUnarmedWeapon` is the ONLY producer: every record it returns is
+ * registered here, bound to the actor it was built for and to a digest of its exact content. The virtual+unarmed flags a caller can write onto
+ * any object prove nothing; combat readiness asks `isGenuineVirtualUnarmed`, which accepts only a registered record that is still byte-identical
+ * to what the helper built, for the SAME actor. A fabricated marker, an edited damage record, a clone / serialized copy, or a record built for
+ * another actor is rejected. The registry is module-private, so it cannot be populated or spoofed from outside this module.
+ */
+const GENUINE_VIRTUAL_UNARMED = new WeakMap();
+const actorKeyOf = (actor) => (actor && typeof actor === 'object' ? (actor.uuid ?? actor.id ?? null) : null);
+const digestOf = (w) => { try { return JSON.stringify({ id: w.id, name: w.name, type: w.type, flags: w.flags, system: w.system }); } catch { return null; } };
+
+/** True only for a record `buildVirtualUnarmedWeapon` produced for this very actor and that has not been altered since. */
+export function isGenuineVirtualUnarmed(actor, weapon) {
+  if (!weapon || typeof weapon !== 'object') return false;
+  const rec = GENUINE_VIRTUAL_UNARMED.get(weapon);
+  const key = actorKeyOf(actor);
+  if (!rec || key === null || rec.actorKey !== key) return false;
+  const digest = digestOf(weapon);
+  return digest !== null && digest === rec.digest;
+}
+
+/**
+ * @param {object} actor
+ * @param {object} [options]
+ * @param {number} [options.extraDamageDieSteps] additional die-step increases applied to the computed damage (Slammer with Crush)
+ * @param {object} [options.flagMarks] extra flags.swse markers recorded on the strike (e.g. slammerCrushExtraDie)
+ * @param {object} [options.attackOptions] extra system.attackOptions entries (e.g. slammer)
+ */
 export function buildVirtualUnarmedWeapon(actor, options = {}) {
   const baseDamage = getUnarmedDamage(actor, options);
   const martialArtsStep = getMartialArtsStep(actor);
   const extraWeaponDice = getUnarmedFamilyExtraWeaponDice(actor);
-  const damage = appendExtraWeaponDice(baseDamage, extraWeaponDice);
+  // same order Slammer used when it edited the built record: extra weapon dice first, then the die-step increase
+  const damage = increaseDamageDie(appendExtraWeaponDice(baseDamage, extraWeaponDice), Math.max(0, Number(options.extraDamageDieSteps) || 0));
   const appendageLabel = options.appendage?.name ? ` (${options.appendage.name})` : '';
   const noProvokeOpportunity = unarmedAttackDoesNotProvoke(actor);
   const styleRules = categorizedUnarmedStyleRules(actor);
@@ -265,7 +294,7 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
     styles: [...new Set(styleRules.all.map(rule => rule.style).filter(Boolean))],
     ruleCount: styleRules.all.length
   };
-  return {
+  const weapon = {
     id: options.id ?? 'swse-virtual-unarmed',
     name: options.name ?? `Unarmed Strike${appendageLabel}`,
     type: 'weapon',
@@ -281,7 +310,8 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
         unarmedExtraWeaponDiceApplied: extraWeaponDice > 0,
         noProvokeOpportunity,
         unarmedStyle: styleFlags,
-        unarmedStyleRules: styleRules.all
+        unarmedStyleRules: styleRules.all,
+        ...(options.flagMarks && typeof options.flagMarks === 'object' ? options.flagMarks : {})
       }
     },
     system: {
@@ -298,12 +328,17 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
       noProvokeOpportunity,
       attackOptions: {
         noProvokeOpportunity,
-        unarmedStyle: styleRules
+        unarmedStyle: styleRules,
+        ...(options.attackOptions && typeof options.attackOptions === 'object' ? options.attackOptions : {})
       },
       unarmedStyle: styleRules,
       description: `Always-available unarmed strike. Damage includes size, droid appendage type when applicable, Martial Arts feat die-step increases, unarmed-family extra weapon dice from talents, and Strength modifier via the damage pipeline.${noProvokeOpportunity ? ' Martial Arts I prevents this unarmed attack from provoking attacks of opportunity.' : ''}${styleRules.all.length ? ' Unarmed style feat riders are exposed in system.unarmedStyle and flags.swse.unarmedStyleRules for the roll workflow.' : ''}`
     }
   };
+  const actorKey = actorKeyOf(actor);
+  const digest = digestOf(weapon);
+  if (actorKey !== null && digest !== null) GENUINE_VIRTUAL_UNARMED.set(weapon, { actorKey, digest });
+  return weapon;
 }
 
 export function buildUnarmedAttackContext(actor, options = {}) {

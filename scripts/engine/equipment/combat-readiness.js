@@ -20,6 +20,7 @@
 import { readActorEquipmentState } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-state-reader.js';
 import { resolveActorSpeciesProfile } from '/systems/foundryvtt-swse/scripts/engine/equipment/species-evidence-adapter.js';
 import { isItemActivated } from '/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js';
+import { isGenuineVirtualUnarmed } from '/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js';
 
 const isPlain = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const itemList = (actor) => (Array.isArray(actor?.items) ? actor.items : actor?.items && typeof actor.items[Symbol.iterator] === 'function' ? Array.from(actor.items) : []);
@@ -109,13 +110,13 @@ export const VIRTUAL_UNARMED_ID = 'swse-virtual-unarmed';
 
 /**
  * The owner-approved unarmed-strike exception. An unarmed strike is a VIRTUAL ATTACK SOURCE, not a weapon Item: it needs no posture, occupancy or
- * grip record. The exception is narrow and explicit: the object must carry the helper's virtual+unarmed markers AND must not be (or share an id
- * with) any Item the actor owns, so a persisted Item can never claim it by carrying flags. The source authorizes nothing else: damage, Martial Arts,
- * proficiency, reaction and style effects, and the prerequisites of every maneuver (grapple, trip, ...) keep their own rules.
+ * grip record. It is authenticated through the unarmed-attack authority (R2): the record must have been built by `buildVirtualUnarmedWeapon` for
+ * THIS actor and be unaltered, and it must not be (or share an id with) any Item the actor owns. The virtual+unarmed flags alone prove nothing, so
+ * a fabricated marker, an edited damage record, a copy or another actor's strike is refused. The source authorizes nothing else: damage, Martial
+ * Arts, proficiency, reaction and style effects, and the prerequisites of every maneuver (grapple, trip, ...) keep their own rules.
  */
 export function isVirtualUnarmedAttack(actor, weapon) {
-  const f = weapon?.flags?.swse;
-  if (!(f?.virtual === true && f?.unarmed === true)) return false;
+  if (!isGenuineVirtualUnarmed(actor, weapon)) return false;
   if (typeof weapon.id !== 'string' || !weapon.id) return false;
   return !itemList(actor).some((i) => i === weapon || i?.id === weapon.id);
 }

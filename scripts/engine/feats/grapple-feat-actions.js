@@ -2,7 +2,7 @@ import { SWSEGrappling } from "/systems/foundryvtt-swse/scripts/combat/systems/g
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
-import { buildVirtualUnarmedWeapon, increaseDamageDie } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
+import { buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { buildDamagePacket } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -89,11 +89,6 @@ function formulaWithModifier(baseFormula, modifier) {
   const value = Number(modifier) || 0;
   if (!value) return base;
   return `${base} ${value >= 0 ? '+' : '-'} ${Math.abs(value)}`;
-}
-
-function cloneWeapon(weapon) {
-  const cloner = globalThis.foundry?.utils?.deepClone;
-  return cloner ? cloner(weapon) : JSON.parse(JSON.stringify(weapon));
 }
 
 function hasSuccessfulGrab(result) {
@@ -356,16 +351,15 @@ export class GrappleFeatActions {
     }
 
     const slammerRule = findGrappleRule(attacker, 'SLAMMER_SPECIAL_ATTACK');
-    const weapon = cloneWeapon(buildVirtualUnarmedWeapon(attacker, { name: 'Slammer', id: 'swse-virtual-slammer' }));
-    if (actorHasFeat(attacker, 'Crush') || slammerRule?.crushFeatAddsUnarmedDamageDie === true) {
-      weapon.system.damage = increaseDamageDie(weapon.system.damage, 1);
-      weapon.flags.swse.slammerCrushExtraDie = true;
-    }
-    weapon.system.attackOptions = {
-      ...(weapon.system.attackOptions ?? {}),
-      slammer: true
-    };
-
+    // built by the unarmed-attack authority in one step (not cloned and edited afterwards): the attack gate authenticates the record it built
+    const crushDie = actorHasFeat(attacker, 'Crush') || slammerRule?.crushFeatAddsUnarmedDamageDie === true;
+    const weapon = buildVirtualUnarmedWeapon(attacker, {
+      name: 'Slammer',
+      id: 'swse-virtual-slammer',
+      extraDamageDieSteps: crushDie ? 1 : 0,
+      flagMarks: crushDie ? { slammerCrushExtraDie: true } : {},
+      attackOptions: { slammer: true }
+    });
     const attack = await rollAttack(attacker, weapon, {
       ...options,
       actionId: options.actionId ?? 'slammer',

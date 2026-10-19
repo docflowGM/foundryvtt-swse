@@ -233,16 +233,25 @@ function applyDelta(latest, delta) {
  * Persist ONLY the FireStateStore-owned delta, then synchronize the in-memory Item by applying that same delta to the record as it is NOW. The
  * stored record is never replaced wholesale, so a coordinator-owned grip (or any other concurrent change) written while the update was in flight
  * survives. In-memory state is updated only when the write succeeded: a failed best-effort write never leaves the Item claiming it was stored.
- * Returns { persisted, state } where `state` is the record now in memory (after the delta when persisted, else unchanged).
+ * Returns { outcome, persisted, state }. `outcome` is the truthful persistence result and callers must not collapse it:
+ *   'persisted'  the delta was written and applied in memory
+ *   'unchanged'  the delta was empty: the stored record already holds the requested state, nothing was written (not a failure)
+ *   'failed'     the write was attempted (or could not be attempted) and did not succeed; the in-memory record is untouched
+ * `state` is the record now in memory (after the delta only when persisted). On 'failed' it is the OLD record, never the requested one.
  */
 async function commitState(actor, weapon, base, next, { strict = false } = {}) {
   // the delta is taken against the record the operation READ (`base`), not whatever is stored by now: a field changed concurrently and not by
   // this operation is not part of the delta and so is never reverted
   const delta = fireStateDeltaFor(base, next);
-  const persisted = await writeDelta(actor, weapon, delta, { strict });
-  if (persisted) syncInMemory(weapon, delta);
-  return { persisted, state: readFireState(weapon) ?? next };
+  const outcome = await writeDelta(actor, weapon, delta, { strict });
+  if (outcome === 'persisted') syncInMemory(weapon, delta);
+  return { outcome, persisted: outcome === 'persisted', state: outcome === 'failed' ? (readFireState(weapon) ?? base ?? null) : (readFireState(weapon) ?? next) };
 }
+
+/** The shape every player-intent operation reports: a failed write is `ok:false` with a stable reason, never an apparent success. */
+const persistReport = (commit, extra = {}) => (commit.outcome === 'failed'
+  ? { ok: false, reason: 'persist-failed', persistence: 'failed', state: commit.state, ...extra }
+  : { ok: true, persistence: commit.outcome, state: commit.state, ...extra });
 
 function syncInMemory(weapon, delta) {
   if (!weapon) return;
@@ -251,12 +260,13 @@ function syncInMemory(weapon, delta) {
 }
 
 async function writeDelta(actor, weapon, delta, { strict = false } = {}) {
-  if (!weapon) return false;
+  if (!weapon) return 'failed';
   const update = {};
   for (const [key, value] of Object.entries(delta.set)) update[`${FLAG_PATH}.${key}`] = value;
   for (const key of delta.unset) update[`${FLAG_PATH}.-=${key}`] = null;
   if (delta.initialize) update[`${FLAG_PATH}.v`] = 1;
-  if (!Object.keys(update).length) return false;   // nothing to store, nothing to synchronize
+  if (!Object.keys(update).length) return 'unchanged';   // nothing to store, nothing to synchronize; the stored record already holds this state
+  if (!weapon) return 'failed';
   const owner = weapon.actor ?? actor;
   try {
     if (owner && weapon.id) {
@@ -264,13 +274,13 @@ async function writeDelta(actor, weapon, delta, { strict = false } = {}) {
       await ActorEngine.updateOwnedItems(owner, [{ _id: weapon.id, ...update }]);
     } else if (typeof weapon.update === 'function') {
       await weapon.update(update);
-    } else return false;
-    return true;
+    } else return 'failed';
+    return 'persisted';
   } catch (err) {
     // combat-state writes are best-effort (the attack still resolved); mount / unmount are strict and report the failure
     if (strict) throw err;
-    console.warn('[SWSE] Could not persist weapon fire state (the attack still resolved).', err);
-    return false;
+    console.warn('[SWSE] Could not persist weapon fire state.', err);
+    return 'failed';
   }
 }
 
@@ -292,7 +302,7 @@ export async function spendRequiredActions(actor, requiredActions = [], metadata
   return { ok: true, paid, committed: spends.length > 0 && spends.every((s) => s?.committed === true), rollback: async () => { for (const s of [...spends].reverse()) await s.rollback?.(); } };
 }
 
-/** Record that a shot was fired (after the attack resolved). No-op for unconstrained forms. */
+/** Record that a shot was fired (after the attack resolved). No-op (null) for unconstrained forms; otherwise `{ outcome, persisted, state, bestEffort:true }`. */
 export async function commitFired(actor, weapon, runtime, rollOptions = {}, paid = []) {
   const shape = resolveAttackShapeFor(runtime, rollOptions);
   if (shape.source !== 'canonical') return null;
@@ -314,15 +324,19 @@ export async function commitFired(actor, weapon, runtime, rollOptions = {}, paid
   if (shape.temporal.length && shape.temporal.every((c) => c.family === 'prepared-attack') && !state?.primed && !changed) return null;
   let next = shape.temporal.length ? stateAfterFire(shape.temporal, state, clock, context(actor, rollOptions), paid) : { ...(state ?? {}) };
   next = patchOwnedState(next, owned);
-  return (await commitState(actor, weapon, state, next)).state;
+  // INTENTIONALLY best-effort: the shot has already been rolled, so a failed record never undoes the attack. The outcome is still reported
+  // truthfully ('failed' leaves the Item unchanged) so a caller can surface that the cooldown / reload / usage record was NOT stored.
+  const commit = await commitState(actor, weapon, state, next);
+  return { outcome: commit.outcome, persisted: commit.persisted, state: commit.state, bestEffort: true };
 }
 
-/** A reload action restored the weapon (called by AmmoSystem.reloadWeapon). */
+/** A reload action restored the weapon (called by AmmoSystem.reloadWeapon). Null when nothing awaited a reload; otherwise `{ outcome, persisted, state }` (outcome 'failed' = the awaiting-reload fact is STILL stored). */
 export async function clearReload(actor, weapon) {
   const state = readFireState(weapon);
   if (!state?.needsReload) return null;
   const next = stateAfterReload(state);
-  return (await commitState(actor, weapon, state, next)).state;
+  const commit = await commitState(actor, weapon, state, next);
+  return { outcome: commit.outcome, persisted: commit.persisted, state: commit.state };
 }
 
 /**
@@ -340,13 +354,16 @@ export async function primePreparedAttack(actor, weapon, runtime, rollOptions = 
   if (!spend.ok) return { ok: false, reason: 'action-unavailable' };
   const base = readFireState(weapon);
   const next = statePrimed(base, check.constraint, clock);
-  return { ok: true, state: (await commitState(actor, weapon, base, next)).state };
+  const commit = await commitState(actor, weapon, base, next);
+  // the priming was paid for; a failed record means the weapon is NOT primed, so the payment is given back
+  if (commit.outcome === 'failed') { await spend.rollback?.(); return persistReport(commit); }
+  return persistReport(commit);
 }
 
 async function persistOwned(actor, weapon, patch, { strict = false } = {}) {
   const base = readFireState(weapon);
   const next = patchOwnedState(base, patch);
-  return (await commitState(actor, weapon, base, next, { strict })).state;
+  return commitState(actor, weapon, base, next, { strict });
 }
 
 /**
@@ -361,11 +378,14 @@ export async function setStockState(actor, weapon, stockState, { free = false } 
   let stockShape = null;
   try { stockShape = shapeOfWeapon(weapon, {}); } catch { stockShape = null; }
   if (stockShape?.source === 'canonical' && stockShape.operation?.hasFoldingStock === false) return { ok: false, reason: 'no-stock' };
+  let spend = null;
   if (!free && readFireState(weapon)?.stock !== stockState) {
-    const spend = await spendRequiredActions(actor, [{ action: 'move', count: 1, family: 'stock', reason: `stock:${stockState}` }], { weaponName: weapon?.name });
+    spend = await spendRequiredActions(actor, [{ action: 'move', count: 1, family: 'stock', reason: `stock:${stockState}` }], { weaponName: weapon?.name });
     if (!spend.ok) return { ok: false, reason: 'action-unavailable' };
   }
-  return { ok: true, state: await persistOwned(actor, weapon, { stock: stockState }) };
+  const commit = await persistOwned(actor, weapon, { stock: stockState });
+  if (commit.outcome === 'failed') await spend?.rollback?.();   // the stock did not change, so the Move action is given back
+  return persistReport(commit);
 }
 
 /**
@@ -399,7 +419,7 @@ export async function setPowerSourceState(actor, weapon, powerSource) {
   let shape;
   try { shape = shapeOfWeapon(weapon, {}); } catch { return { ok: false, reason: 'not-canonical' }; }
   if (shape.source !== 'canonical' || !shape.powerSource) return { ok: false, reason: 'no-power-source-requirement' };
-  return { ok: true, state: await persistOwned(actor, weapon, { powerSource }) };
+  return persistReport(await persistOwned(actor, weapon, { powerSource }));
 }
 
 /**
@@ -435,7 +455,12 @@ export async function reloadBySecondCrew(gunner, weapon, crewActor, { source = '
   let reload;
   try {
     if (tracked) reload = await AmmoSystem.reloadWeapon(owner, weapon);
-    else { await clearReload(owner, weapon); reload = { success: true, reloadAmount: 0, message: `${weapon?.name ?? 'Weapon'} reloaded` }; }
+    else {
+      const cleared = await clearReload(owner, weapon);
+      reload = cleared?.outcome === 'failed'
+        ? { success: false, message: `${weapon?.name ?? 'Weapon'} could not be recorded as reloaded` }
+        : { success: true, reloadAmount: 0, message: `${weapon?.name ?? 'Weapon'} reloaded` };
+    }
   } catch (err) { reload = { success: false, message: String(err?.message ?? err) }; }
   if (reload?.success === false) { await spend.rollback(); return { ok: false, reason: 'reload-failed', message: reload.message }; }
   return { ok: true, reload, action, chargedTo: { id: crewActor.id, name: crewActor.name ?? null }, gunnerId: owner?.id ?? null };
@@ -462,7 +487,7 @@ export function reloadOptions(weapon) {
 export async function setMounted(actor, weapon, mounted) {
   // Phase 5D-I-D-B2: the tripod / mount state drives the effective wielding size, so only the owning actor can record it
   if (!weapon?.id || ownedItemById(actor, weapon.id) !== weapon) return { ok: false, reason: 'weapon-not-owned' };
-  return { ok: true, state: await persistOwned(actor, weapon, { mounted: mounted === true }) };
+  return persistReport(await persistOwned(actor, weapon, { mounted: mounted === true }));
 }
 
 /** The held-together choice a weapon offers (identical weapons held in one hand), or null. `candidates` is empty until the occupancy model can represent a shared hand (EQ-002). */
@@ -491,7 +516,7 @@ export async function setHeldTogether(actor, weapon, memberIds) {
     const g = heldGroupOf(actor, weapon, ids);
     if (!g.ok) return { ok: false, reason: g.reason ?? 'group-invalid' };
   }
-  try { return { ok: true, state: await persistOwned(actor, weapon, { heldTogetherIds: ids.length ? ids : null }, { strict: true }) }; }
+  try { return persistReport(await persistOwned(actor, weapon, { heldTogetherIds: ids.length ? ids : null }, { strict: true })); }
   catch (err) { console.warn('[SWSE] Could not persist the held-together group.', err); return { ok: false, reason: 'persist-failed' }; }
 }
 
@@ -513,7 +538,7 @@ export async function setSizeTreatment(actor, weapon, size) {
   const opt = sizeTreatmentOptions(weapon);
   if (!opt) return { ok: false, reason: 'no-size-treatment' };
   if (size !== null && sizeIndexOf(size) !== sizeIndexOf(opt.size)) return { ok: false, reason: 'size-not-allowed' };
-  try { return { ok: true, state: await persistOwned(actor, weapon, { sizeTreatment: size === null ? null : opt.size }, { strict: true }) }; }
+  try { return persistReport(await persistOwned(actor, weapon, { sizeTreatment: size === null ? null : opt.size }, { strict: true })); }
   catch (err) { console.warn('[SWSE] Could not persist the size treatment.', err); return { ok: false, reason: 'persist-failed' }; }
 }
 
@@ -531,11 +556,14 @@ export async function setConfiguration(actor, weapon, configurationId) {
   // leaving it (back to standalone) also detaches the weapon from its host.
   if (shape.mountRule?.configurationId && shape.mountRule.configurationId === configurationId) return { ok: false, reason: 'mount-requires-host' };
   if (state?.mountedHostId) return unmountFromHost(actor, weapon);
+  let spend = null;
   if (shape.configuration.transitionAction) {
-    const spend = await spendRequiredActions(actor, [{ action: shape.configuration.transitionAction, count: 1, family: 'configuration-switch', reason: `configuration:${configurationId}` }], { weaponName: weapon?.name });
+    spend = await spendRequiredActions(actor, [{ action: shape.configuration.transitionAction, count: 1, family: 'configuration-switch', reason: `configuration:${configurationId}` }], { weaponName: weapon?.name });
     if (!spend.ok) return { ok: false, reason: 'action-unavailable' };
   }
-  return { ok: true, state: await persistOwned(actor, weapon, { configurationId }) };
+  const commit = await persistOwned(actor, weapon, { configurationId });
+  if (commit.outcome === 'failed') await spend?.rollback?.();   // the configuration did not change, so the transition action is given back
+  return persistReport(commit);
 }
 
 /**
@@ -626,7 +654,7 @@ export async function mountOnHost(actor, weapon, host, { skillRoller = null, sho
     if (!check.success) return { ok: false, reason: 'check-failed', check, timeMinutes: rule.check.timeMinutes };
   }
   const patch = { mountedHostId: owned.id, ...(rule.configurationId ? { configurationId: rule.configurationId } : {}) };
-  try { return { ok: true, check, timeMinutes: rule.check?.timeMinutes ?? null, state: await persistOwned(actor, weapon, patch, { strict: true }) }; }
+  try { return persistReport(await persistOwned(actor, weapon, patch, { strict: true }), { check, timeMinutes: rule.check?.timeMinutes ?? null }); }
   catch (err) { console.warn('[SWSE] Could not persist the mount.', err); return { ok: false, reason: 'persist-failed', check }; }
 }
 
@@ -657,20 +685,20 @@ export async function unmountFromHost(actor, weapon) {
   if (!weapon?.id || ownedItemById(actor, weapon.id) !== weapon) return { ok: false, reason: 'weapon-not-owned' };
   const state = readFireState(weapon);
   if (!state?.mountedHostId) return { ok: true, state };
-  try { return { ok: true, state: await persistOwned(actor, weapon, { mountedHostId: null, configurationId: shape.configuration.defaultId ?? null }, { strict: true }) }; }
+  try { return persistReport(await persistOwned(actor, weapon, { mountedHostId: null, configurationId: shape.configuration.defaultId ?? null }, { strict: true })); }
   catch (err) { console.warn('[SWSE] Could not persist the unmount.', err); return { ok: false, reason: 'persist-failed' }; }
 }
 
 /** Canonical identity of the payload loaded into a payload-delegating launcher (validated against the launcher's accepted family by the attack stage). */
 export async function setLoadedPayload(actor, weapon, identityKey) {
-  return { ok: true, state: await persistOwned(actor, weapon, { loadedIdentityKey: identityKey ?? null }) };
+  return persistReport(await persistOwned(actor, weapon, { loadedIdentityKey: identityKey ?? null }));
 }
 
 /** Crew adjudication for the current combat round (E-Web generator regulation). With no combat there is no round to key it to: not stored. */
 export async function recordCrewRegulation(actor, weapon, value) {
   const rec = crewRegulationRecord(value, currentClock(actor));
   if (!rec) return null;
-  return persistOwned(actor, weapon, { crew: { ...(readFireState(weapon)?.crew ?? {}), regulation: rec } });
+  return persistReport(await persistOwned(actor, weapon, { crew: { ...(readFireState(weapon)?.crew ?? {}), regulation: rec } }));
 }
 export const storedCrewRegulation = (actor, weapon) => crewRegulationFor(readFireState(weapon), currentClock(actor));
 
@@ -678,7 +706,7 @@ export const storedCrewRegulation = (actor, weapon) => crewRegulationFor(readFir
 export async function resetUsage(actor, weapon, key = null) {
   const usage = { ...(readFireState(weapon)?.usage ?? {}) };
   if (key) delete usage[key]; else for (const k of Object.keys(usage)) delete usage[k];
-  return persistOwned(actor, weapon, { usage });
+  return persistReport(await persistOwned(actor, weapon, { usage }));
 }
 
 /** Non-mutating brace legality + the actions bracing costs for the selected autofire form. */

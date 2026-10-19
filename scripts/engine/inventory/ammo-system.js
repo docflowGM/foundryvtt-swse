@@ -284,7 +284,8 @@ export class AmmoSystem {
   static async #clearFireStateReload(actor, weapon) {
     try {
       const { FireStateStore } = await import("/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js");
-      await FireStateStore.clearReload(actor ?? weapon?.actor, weapon);
+      const cleared = await FireStateStore.clearReload(actor ?? weapon?.actor, weapon);
+      if (cleared?.outcome === 'failed') swseLogger.warn?.('Fire-state reload clear was not persisted (ammunition was still reloaded; the weapon still records awaiting-reload).');
     } catch (err) {
       swseLogger.warn?.('Fire-state reload clear failed (ammunition was still reloaded):', err);
     }

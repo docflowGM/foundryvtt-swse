@@ -973,6 +973,23 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 
 **Temporary handling (remains):** worn weapons are never READIED (no worn-equipment state is certified), so attacks, reactions and disarm/drop protection keyed to a ready weapon do not apply to them. The Tactical Tractor Beam is verified READIED only in its tripod configuration (owned `mounted` state, two hands, via the existing grip resolver); host-mounted operation, the generator and crew regulation are not certified. The fail-closed tests are temporary safety expectations, not assertions that the published mechanics are invalid. **Future acceptance tests (required):** `data/audits/equipment-acceptance-debt.json` items `EQ-003/combat-gloves`, `EQ-003/stunning-gauntlet`, `EQ-003/tactical-tractor-beam`.
 
+## EQ-004 — Operator authorization and crew eligibility for vehicle-mounted weapon attacks
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle / starship weapon attacks (operator and crew authorization) |
+| Feature | Whether a weapon owned by a vehicle may be fired by an actor that is not assigned to a crew station that operates it, and what evidence of installation, station assignment or crew eligibility the attack boundary must require |
+| Source | Not located for this question by this checkpoint. The existing project authority is the attack-domain router (`attack-domain-router.js`) and `resolveVehicleAttackBonus`, which require a vehicle-type actor and a non-vehicle gunner actor; the crew-assignment services (`vehicle-crew-assignment-service.js`, `vehicle-weapon-station-service.js`) store station assignments and operator-station mappings but are not consulted at attack execution |
+| Evidence | The WP5-C1 attack gate treated "a vehicle-type actor owns this very Item and the router accepted a vehicle domain" as a verified installation. That proves routing and ownership only. It does not prove physical installation, that the firing actor is assigned to the weapon's station, or crew eligibility |
+| Confirmed behavior | Existing legitimate vehicle attacks route to the vehicle domain and are not subject to hand occupancy. Combat math for the gunner path already refuses a vehicle or missing actor as the gunner |
+| Unresolved question | Whether firing a vehicle weapon requires the firing actor to be assigned to the weapon's operator station (or otherwise authorized), and which stored evidence establishes that. Requiring it would change which actors may attack; not requiring it permits any actor named as the gunner to fire |
+| Options | None supported by a located source |
+| Recommended ruling | None |
+| Implementation impact | WP5-C2 relabels the attack-gate result `vehicle-routed-weapon` with `certification: 'routing-only'`, requires the exact vehicle-owned Item (identity), a distinct non-vehicle gunner (or the vehicle itself for the explicit abstract-crew path), and adds no mount, installation or operator flag. Station-assignment or crew-eligibility enforcement is NOT implemented and is not claimed. Vehicle mounted/worn equipment certification (EQ-003) remains open |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -985,3 +1002,4 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 - **Revision 4 (2026-10-17, E4-C1 WP3-A):** appended EQ-001 (action cost of changing a drawn weapon between drawn configurations). No existing entry was changed; no recommended ruling was added.
 - **Revision 5 (2026-10-19, E4-C1 WP5):** appended EQ-002 (held-together groups of identical weapons are not representable in the occupancy model; fail-closed) and EQ-003 (worn weapons and weapons without a wielding class cannot be READIED; fail-closed). No existing entry was changed; no recommended ruling was added.
 - **Revision 6 (2026-10-19, E4-C1 WP5-C1):** appended source-verification addenda to EQ-002 and EQ-003 (published mechanics SOURCE_VERIFIED from sourcebook text extractions; model/implementation unresolved; fail-closed handling unchanged; acceptance debt tracked). EQ-001 untouched. No recommended ruling was added.
+- **Revision 7 (2026-10-19, E4-C1 WP5-C2):** appended EQ-004 (operator authorization and crew eligibility for vehicle weapon attacks are not established at the attack boundary; routing-only evidence is reported as such; no enforcement and no flag added). No existing entry was changed; no recommended ruling was added.

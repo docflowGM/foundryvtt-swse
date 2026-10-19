@@ -102,7 +102,7 @@ for (const [label, make, re] of [
 }
 {
   const a = makeActor([]); const virt = Unarmed.buildVirtualUnarmedWeapon(a);
-  assert.deepEqual(A_.checkAttackSourceReadiness(a, virt), { ok: true, path: 'virtual-unarmed' });
+  { const g = A_.checkAttackSourceReadiness(a, virt); assert.equal(g.ok, true); assert.equal(g.path, 'virtual-unarmed'); assert.equal(g.source, virt); }
   const forged = pistol('p7', { flags: { swse: { virtual: true, unarmed: true } }, posture: 'STOWED', purpose: null, appendageIds: [], wielded: null }); const fa = makeActor([forged]);
   assert.equal(A_.checkAttackSourceReadiness(fa, forged).ok, false, 'an owned Item cannot claim the virtual exception by carrying its markers');
   zero(); await A_.rollAttack(a, virt, opts);
@@ -128,9 +128,9 @@ for (const [label, make, re] of [
   }
   const veh = { id: 'veh1', type: 'vehicle', name: 'Ship', items: col([]), system: {}, flags: { swse: {} } };
   const gun = { id: 'gun1', type: 'weapon', name: 'Turbolaser', flags: { swse: {} }, system: {} }; veh.items.push(gun); gun.actor = veh;
-  assert.equal(A_.checkAttackSourceReadiness(veh, gun, { abstractCrewQuality: 'average' }).path, 'vehicle-installation', 'a verified installation keeps its existing certified path');
+  assert.equal(A_.checkAttackSourceReadiness(veh, gun, { abstractCrewQuality: 'average' }).path, 'vehicle-routed-weapon', 'a routed vehicle weapon keeps its existing vehicle attack path (routing evidence only)');
   const gunner = makeActor([]); gunner.id = 'gunner';
-  assert.equal(A_.checkAttackSourceReadiness(gunner, gun, { vehicleActor: veh }).path, 'vehicle-installation', 'crew attacking with the vehicle-owned weapon keeps the crew path');
+  assert.equal(A_.checkAttackSourceReadiness(gunner, gun, { vehicleActor: veh }).path, 'vehicle-routed-weapon', 'crew attacking with the vehicle-owned weapon keeps the crew path');
   const orphan = { id: 'gun2', type: 'weapon', name: 'Fake Turbolaser', flags: { swse: {} }, system: {} };
   assert.equal(A_.checkAttackSourceReadiness(gunner, orphan, { vehicleActor: veh }).ok, false, 'a vehicle weapon the vehicle does not own is not exempt');
   const src = (await import('node:fs')).readFileSync(new URL('../scripts/combat/rolls/attack-readiness-gate.js', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');

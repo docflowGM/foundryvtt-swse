@@ -2,7 +2,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
-import { checkAttackSourceReadiness, refuseUnreadyAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack-readiness-gate.js";
+import { checkAttackSourceReadiness, refuseUnreadyAttack, revalidateAttackSource } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack-readiness-gate.js";
 import { rollAttack as canonicalRollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { resolveAutofireArea } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
 import { askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
@@ -251,7 +251,7 @@ export class SWSERoll {
    * @param {string} [reason=""] - The reason for spending (for display)
    * @returns {Promise<number>} bonus from FP (0 if not spent)
    */
-  static async promptForcePointUse(actor, reason = '') {
+  static async promptForcePointUse(actor, reason = '', { guard = null } = {}) {
     const fp = actor.system.forcePoints;
     if (!fp || fp.value <= 0) {return 0;}
 
@@ -276,6 +276,9 @@ export class SWSERoll {
     });
 
     if (!confirmed) {return 0;}
+    // WP5-C2 R4: the Force Point is spent only after the player confirms, and the dialog above awaited. A caller whose attack source may have changed
+    // meanwhile passes `guard`; returning false refuses BEFORE the Force Point is rolled or spent (the result is null: the attack is refused).
+    if (typeof guard === 'function' && !guard()) {return null;}
 
     // Build FP context (middleware pattern)
     const fpContext = {
@@ -422,9 +425,12 @@ export class SWSERoll {
         return { cancelled: true };
       }
 
+      // WP5-C2 R4: the dialog and the pre-roll hook awaited; judge the source again before anything is spent (the Force Point included)
+      if (!revalidateAttackSource(actor, weapon, options, 'the attack dialog')) return null;
       const fpBonus = (options.skipFP || !modifiers.useForcePoint)
         ? 0
-        : await this.promptForcePointUse(actor, 'attack roll');
+        : await this.promptForcePointUse(actor, 'attack roll', { guard: () => revalidateAttackSource(actor, weapon, options, 'the Force Point prompt') });
+      if (fpBonus === null) return null;
       context.fpBonus = fpBonus;
 
       const attackResult = await canonicalRollAttack(actor, weapon, {
@@ -630,9 +636,12 @@ export class SWSERoll {
       }
 
       // Force Point before roll
+      // WP5-C2 R4: dialog, hook and Force Point prompt all await; the source is judged again before the first expenditure
+      if (!revalidateAttackSource(actor, weapon, options, 'the attack dialog')) {return null;}
       const fpBonus = (options.skipFP || !modifiers.useForcePoint)
         ? 0
-        : await this.promptForcePointUse(actor, `${options.burstFire ? 'Burst Fire' : 'Autofire'} attack`);
+        : await this.promptForcePointUse(actor, `${options.burstFire ? 'Burst Fire' : 'Autofire'} attack`, { guard: () => revalidateAttackSource(actor, weapon, options, 'the Force Point prompt') });
+      if (fpBonus === null) {return null;}
       context.fpBonus = fpBonus;
 
       // Calculate attack penalty
@@ -697,6 +706,7 @@ export class SWSERoll {
           return null;
         }
         const requiredNow = [...(comp.readiness?.requiredActions ?? []), ...braceActions];
+        if (!revalidateAttackSource(actor, weapon, options, 'the brace question and attack resolution')) {return null;}   // WP5-C2 R4: before the action spend
         autofireTemporal = requiredNow.length
           ? await FireStateStore.spendRequiredActions(actor, requiredNow, { weaponName: weapon.name })
           : { ok: true, paid: [], rollback: async () => {} };
@@ -714,6 +724,11 @@ export class SWSERoll {
       const formula = `1d20 + ${totalBonus}`;
       context.formula = formula;
 
+      // WP5-C2 R4: last check before the dice; an action payment already made is given back
+      if (!revalidateAttackSource(actor, weapon, options, 'action payment')) {
+        await autofireTemporal?.rollback?.();
+        return null;
+      }
       // Perform the roll
       const roll = await this._safeRoll(formula);
       if (!roll) {return null;}
@@ -1025,14 +1040,25 @@ export class SWSERoll {
         return { cancelled: true };
       }
 
+      // WP5-C2 R4: the FINALIZED attack list (the configuration the dialog / calculator produced, not only the overrides above) is what will actually be
+      // rolled. Every weapon in it must still be an owned, verified READIED weapon (or the genuine virtual unarmed source) before anything is spent;
+      // a single refusal refuses the whole full attack.
+      const attackSourcesReady = (boundary) => (config.attacks ?? []).every((a) => revalidateAttackSource(actor, a.weapon, options, boundary));
+      if (!attackSourcesReady('the Full Attack configuration')) {return null;}
+
       // Prompt for Force Point once for the entire full attack
-      const fpBonus = await this.promptForcePointUse(actor, 'Full Attack');
+      const fpBonus = await this.promptForcePointUse(actor, 'Full Attack', { guard: () => attackSourcesReady('the Force Point prompt') });
+      if (fpBonus === null) {return null;}
 
       // Roll each attack
       const results = [];
 
       for (const attack of config.attacks) {
         const weapon = attack.weapon;
+
+        // WP5-C2 R4: the loop awaits (dice, concealment, hooks); each attack is judged against the equipment as it is NOW. A source that stopped being
+        // ready ends the sequence: attacks already rolled stand, later ones are not rolled, and the player is told.
+        if (!revalidateAttackSource(actor, weapon, options, `attack ${attack.attackNumber ?? results.length + 1} of the Full Attack`)) {break;}
 
         // Calculate attack bonus with this attack's specific penalty
         const baseAttackBonus = computeAttackBonus(actor, weapon);
