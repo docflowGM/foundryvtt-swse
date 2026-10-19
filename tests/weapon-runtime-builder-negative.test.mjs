@@ -32,7 +32,6 @@ const ALLOWED_RUNTIME_CONSUMERS = new Set([
   'scripts/rolls/roll-config.js',
   'scripts/engine/combat/combat-stat-rules.js',
   'scripts/items/item-defaults.js',
-  'scripts/ui/weapon-config-dialog.js',
   'scripts/combat/rolls/damage.js',
   'scripts/engine/combat/canonical-special-effects.js', // 5D-E: Apply-Damage execution of the selected form's special effects
   // 5D-F attack-shape convergence: planners/executor/gates read the selected form's structured capabilities (no names)

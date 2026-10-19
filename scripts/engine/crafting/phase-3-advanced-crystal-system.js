@@ -11,8 +11,8 @@
  */
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
+import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 
 export class Phase3CrystalSystem {
   /**
@@ -55,13 +55,8 @@ export class Phase3CrystalSystem {
     if (!unstableFound) return;
 
     try {
-      // Deactivate weapon
-      await ActorEngine.updateEmbeddedDocuments(actor, "Item", [
-        {
-          _id: weapon.id,
-          "system.equippable.equipped": false
-        }
-      ]);
+      // Deactivate weapon: the blade goes out (activation authority). The weapon stays drawn -- posture is never changed here.
+      await InventoryEngine.setActivated(actor, weapon.id, false, { free: true });
 
       // Optional: Cinematic flicker before light turns off
       if (weapon.flags?.swse?.emitLight === true) {

@@ -157,7 +157,7 @@ function normalizeSynergies(value) {
   })).filter((entry) => entry.name || entry.bonus);
 }
 
-const WEAPON_EQUIPMENT_STATE_KEYS = Object.freeze(['weaponPosture', 'weaponOccupancy']);
+const WEAPON_EQUIPMENT_STATE_KEYS = Object.freeze(['weaponPosture', 'weaponOccupancy', 'equipped', 'dualWielded', 'wieldedTwoHanded']);
 
 export const BLANK_ITEM_DEFAULTS = Object.freeze({
   weapon: {
