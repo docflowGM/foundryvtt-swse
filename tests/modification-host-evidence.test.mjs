@@ -14,6 +14,8 @@ import { canonicalJson, sha256, PINNED_SCOPE_SHA256 } from '../tools/lib/modific
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
 const clone = (v) => JSON.parse(JSON.stringify(v));
+/** An ObservationSet bound to one evaluation context (the only thing resolveFact accepts). */
+const bound = (inputs, ctx) => E.bindObservationSet(E.createObservationSet(inputs), ctx);
 
 let checks = 0;
 function check(name, fn) {
@@ -203,7 +205,7 @@ check('binding: unbound, unresolvable and mismatched Items are untrusted, and a 
     const o = a.issue(registryObs({ provenance: { source: { kind: 'canonical-registry', recordRef: 'reg:1', path: 'p' }, binding: { method: result === 'unbound' ? null : 'test-binding', result } } }));
     const c = E.classifyObservation(o, ctxOf(a));
     assert.equal(c.usable, false, result); assert.equal(c.status, 'untrusted'); assert.deepEqual(reasons(c), ['HOST_FACT_UNTRUSTED']);
-    const set = E.createObservationSet({ observations: [o] }, ctxOf(a));
+    const set = bound({ observations: [o] }, ctxOf(a));
     const res = E.resolveFact(set, ASK);
     assert.equal(res.status, 'unknown'); assert.ok(!reasons(res).includes('HOST_EVIDENCE_CONTRADICTORY'));
     assert.ok(reasons(res).includes('HOST_SIZE_UNKNOWN') && reasons(res).includes('HOST_FACT_UNTRUSTED'));
@@ -272,7 +274,7 @@ check('corpus integrity is a separate proof: an unpinned registry hash is invali
 
 /* ---------------------------------- scopes, absence, fallback ---------------------------------- */
 
-const setOf = (a, observations, itemStates = []) => E.createObservationSet({ observations: observations.map((o) => a.issue(o)), itemStates: itemStates.map((s) => a.issue(s)) }, ctxOf(a));
+const setOf = (a, observations, itemStates = []) => bound({ observations: observations.map((o) => a.issue(o)), itemStates: itemStates.map((s) => a.issue(s)) }, ctxOf(a));
 const persistentObs = (value, over = {}) => obs({ value, scope: { basis: 'persistent', state: null }, provenance: { ...obs().provenance, transformation: { ruleRef: 'rule:1', installationRecordRef: 'inst:1' } }, ...over });
 
 check('scopes: base and persistent values may legitimately differ and are not contradictory', () => {
@@ -511,7 +513,7 @@ check('synthetic trusted fixtures validate under a synthetic authority and remai
   const raws = [obs(), obs({ factRef: 'host.droidStatus', value: 'nondroid' }), obs({ factRef: 'host.weightKg', value: 4.5 }), registryObs({ factRef: 'host.sizeCategory', value: 'Medium', provenance: { source: { kind: 'canonical-registry', recordRef: 'reg:9', path: 'p' }, binding: { method: 'test-binding', result: 'bound' } } })];
   for (const r of raws) assert.deepEqual(E.validateObservationShape(r), []);
   const sset = setOf(a, raws);
-  const pset = E.createObservationSet({ observations: raws.map((r) => E.PRODUCTION_AUTHORITY.issue(r)) }, ctxOf(E.PRODUCTION_AUTHORITY));
+  const pset = bound({ observations: raws.map((r) => E.PRODUCTION_AUTHORITY.issue(r)) }, ctxOf(E.PRODUCTION_AUTHORITY));
   const probes = [['host.sizeCategory', 'Medium'], ['host.droidStatus', 'nondroid'], ['host.weightKg', 4.5]];
   for (const [factRef, expected] of probes) {
     const q = { factRef, subject: { role: 'host', itemId: 'host1' }, requestedBasis: 'base', purpose: 'printed-statistics' };
@@ -551,7 +553,7 @@ check('authority identity: forged and derived authority objects can issue nothin
     assert.equal(st.usable, false); assert.equal(st.persistentChanges, null);
     const col = E.classifyCollection(real.issueCollection(snapshot([member('m1', 'pay1', { status: 'known', value: 1 })])), c);
     assert.equal(col.usable, false); assert.equal(col.productionTrusted, false); assert.deepEqual(col.physicalObjects, { status: 'unknown', value: null });
-    const set = E.createObservationSet({ observations: [real.issue(obs())] }, c);
+    const set = bound({ observations: [real.issue(obs())] }, c);
     assert.equal(E.resolveFact(set, ASK).status, 'unknown', `forgery ${i} cannot resolve a fact`);
   }
   assert.equal(E.classifyObservation(real.issue(obs()), ctxOf(real)).usable, true, 'the genuine authority still works');
@@ -575,8 +577,9 @@ check('authority identity: the public authority fields are descriptive only; a g
 check('ObservationSet: the handle is opaque and frozen; fabricated, copied and spread sets are rejected by resolveFact', () => {
   const a = synth();
   const good = setOf(a, [obs()]);
-  assert.equal(E.isObservationSet(good), true);
-  assert.deepEqual(Object.keys(good).sort(), ['entryCount', 'stateCount']);
+  assert.equal(E.isBoundObservationSet(good), true);
+  assert.equal(E.isObservationSet(good), false, 'a bound set is not an unbound set');
+  assert.deepEqual(Object.keys(good).sort(), ['bound', 'entryCount', 'stateCount']);
   assert.throws(() => { good.entries = []; });
   assert.throws(() => { good.entryCount = 5; });
   assert.throws(() => { good.extra = 1; });
@@ -584,10 +587,53 @@ check('ObservationSet: the handle is opaque and frozen; fabricated, copied and s
   const fabricated = { entries: [{ observation: obs(), result: { status: 'known', usable: true } }], states: [], ctx: ctxOf(a) };
   const legacyShape = { entries: [{ observation: a.issue(obs()), result: { usable: true, status: 'known', reasons: [] } }], states: [] };
   for (const bad of [fabricated, legacyShape, clone(good), { ...good }, Object.create(good), null, undefined, 'set', []]) {
+    assert.equal(E.isBoundObservationSet(bad), false);
     assert.equal(E.isObservationSet(bad), false);
-    assert.throws(() => E.resolveFact(bad, ASK), /not an authentic ObservationSet/);
-    assert.throws(() => E.describeObservationSet(bad), /not an authentic ObservationSet/);
+    assert.throws(() => E.bindObservationSet(bad, ctxOf(a)), /not an authentic ObservationSet/);
+    assert.throws(() => E.resolveFact(bad, ASK), /not an authentic (Bound)?ObservationSet/);
+    assert.throws(() => E.describeObservationSet(bad), /not an authentic (Bound)?ObservationSet/);
   }
+  // an UNBOUND set carries no decisions and cannot be resolved, described or re-bound as if it were bound
+  const unbound = E.createObservationSet({ observations: [a.issue(obs())] });
+  assert.equal(E.isObservationSet(unbound), true);
+  assert.throws(() => E.resolveFact(unbound, ASK), /not an authentic BoundObservationSet/);
+  assert.throws(() => E.describeObservationSet(unbound), /not an authentic BoundObservationSet/);
+  assert.throws(() => E.bindObservationSet(good, ctxOf(a)), /not an authentic ObservationSet/, 'a bound set cannot be re-bound');
+});
+
+check('freshness at binding: a set built under one Item fingerprint cannot establish facts under another context (R1)', () => {
+  const a = synth();
+  const unbound = E.createObservationSet({
+    observations: [a.issue(obs()), a.issue(obs({ factRef: 'addedItem.sizeCategory', value: 'Small', subject: { role: 'addedItem', itemId: 'add1', itemType: 'weapon' }, bindings: { contractRevision: REVISION, registryHash: null, itemFingerprint: FP.add1 } }))],
+    itemStates: [a.issue(itemState())]
+  });
+  const ask = { ...ASK, purpose: 'installation-eligibility' };
+  const askAdded = { factRef: 'addedItem.sizeCategory', subject: { role: 'addedItem', itemId: 'add1' }, requestedBasis: 'base', purpose: 'printed-statistics' };
+  const fresh = E.bindObservationSet(unbound, ctxOf(a));
+  assert.equal(E.resolveFact(fresh, ask).status, 'known');
+  assert.equal(E.resolveFact(fresh, askAdded).status, 'known');
+  // the SAME unbound set under a context that says the host (or the added Item) changed
+  const hostChanged = E.bindObservationSet(unbound, ctxOf(a, { itemFingerprints: { ...FP, host1: 'fp-host1-v2' } }));
+  const r = E.resolveFact(hostChanged, ask);
+  assert.equal(r.status, 'unknown'); assert.ok(reasons(r).includes('HOST_PROVENANCE_STALE'));
+  assert.equal(E.resolveFact(hostChanged, askAdded).status, 'known', 'an unchanged Item is unaffected');
+  const addedChanged = E.bindObservationSet(unbound, ctxOf(a, { itemFingerprints: { ...FP, add1: 'fp-add1-v2' } }));
+  assert.ok(reasons(E.resolveFact(addedChanged, askAdded)).includes('HOST_PROVENANCE_STALE'));
+  assert.equal(E.resolveFact(addedChanged, ask).status, 'known');
+  // a changed contract revision, a missing fingerprint and a different authority also make the same set stale/untrusted
+  assert.ok(reasons(E.resolveFact(E.bindObservationSet(unbound, ctxOf(a, { contractRevision: 'c'.repeat(64) })), ask)).includes('HOST_PROVENANCE_STALE'));
+  assert.ok(reasons(E.resolveFact(E.bindObservationSet(unbound, ctxOf(a, { itemFingerprints: {} })), ask)).includes('HOST_PROVENANCE_STALE'));
+  const other = synth();
+  const foreign = E.resolveFact(E.bindObservationSet(unbound, ctxOf(other)), ask);
+  assert.equal(foreign.status, 'unknown'); assert.ok(reasons(foreign).includes('HOST_FACT_UNTRUSTED'));
+  const prod = E.resolveFact(E.bindObservationSet(unbound, ctxOf(E.PRODUCTION_AUTHORITY)), ask);
+  assert.equal(prod.status, 'unknown');
+  // binding is a snapshot: later edits to the context object change nothing, and each bind is independent
+  const ctx = ctxOf(a, { itemFingerprints: { ...FP } });
+  const snap = E.bindObservationSet(unbound, ctx);
+  ctx.itemFingerprints.host1 = 'edited-later';
+  assert.equal(E.resolveFact(snap, ask).status, 'known');
+  assert.equal(E.resolveFact(E.bindObservationSet(unbound, ctx), ask).status, 'unknown');
 });
 
 check('ObservationSet: rejected evidence cannot become known or absent by mutating inputs, results, entries or the saved context', () => {
@@ -598,7 +644,7 @@ check('ObservationSet: rejected evidence cannot become known or absent by mutati
   const staleObs = a.issue(obs());
   const absentRaw = obs({ factRef: 'host.intelligenceScore', status: 'absent', value: undefined, absence: { basis: 'x' }, trust: 'derived' });
   const context = { ...ctxOf(a), itemFingerprints: fps };
-  const set = E.createObservationSet({ observations: [rejected, staleObs, absentRaw] }, context);
+  const set = bound({ observations: [rejected, staleObs, absentRaw] }, context);
   const before = JSON.stringify([E.resolveFact(set, ASK), E.resolveFact(set, intel)]);
   assert.equal(E.resolveFact(set, ASK).status, 'unknown');
   assert.equal(E.resolveFact(set, intel).status, 'unknown');
@@ -617,14 +663,14 @@ check('ObservationSet: rejected evidence cannot become known or absent by mutati
   assert.equal(E.describeObservationSet(set).entries.length, 3);
   assert.ok(E.describeObservationSet(set).entries.every((e) => e.result.usable === false));
   // a genuinely fresh construction with the corrected context is a different set and does resolve
-  assert.equal(E.resolveFact(E.createObservationSet({ observations: [staleObs] }, ctxOf(a)), ASK).status, 'known');
+  assert.equal(E.resolveFact(bound({ observations: [staleObs] }, ctxOf(a)), ASK).status, 'known');
 });
 
 check('ObservationSet: accepted decisions are a snapshot; later context edits cannot revoke or forge them, and item-state declarations are protected too', () => {
   const a = synth();
   const fps = { ...FP };
   const context = { ...ctxOf(a), itemFingerprints: fps };
-  const set = E.createObservationSet({ observations: [a.issue(obs())], itemStates: [a.issue(itemState({ persistentChanges: 'unresolved' }))] }, context);
+  const set = bound({ observations: [a.issue(obs())], itemStates: [a.issue(itemState({ persistentChanges: 'unresolved' }))] }, context);
   fps.host1 = 'changed-later';
   assert.equal(E.resolveFact(set, ASK).status, 'known');
   const elig = { ...ASK, purpose: 'installation-eligibility' };
@@ -634,7 +680,7 @@ check('ObservationSet: accepted decisions are a snapshot; later context edits ca
   assert.equal(E.resolveFact(set, elig).status, 'unknown', 'item-state classification cannot be edited');
   // an unissued (forged) item-state declaration stays untrusted, and its mutation afterwards changes nothing
   const raw = itemState({ persistentChanges: 'none' });
-  const set2 = E.createObservationSet({ observations: [a.issue(obs())], itemStates: [raw] }, ctxOf(a));
+  const set2 = bound({ observations: [a.issue(obs())], itemStates: [raw] }, ctxOf(a));
   raw.persistentChanges = 'none'; raw.trust = 'explicit';
   assert.equal(E.resolveFact(set2, elig).status, 'unknown');
   // an inconsistent set of inputs stays deterministic

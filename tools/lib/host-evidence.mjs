@@ -351,28 +351,47 @@ export function classifyItemState(decl, ctx = {}) {
 /* Observation sets and resolution                                                             */
 /* ------------------------------------------------------------------------------------------ */
 
-/** Module-private storage for ObservationSets. A set is authentic only if it is a key of this map. */
+/** Module-private storage. An ObservationSet is authentic only if it is a key of SET_STATE; a BoundObservationSet only if it is a key of BOUND_STATE. */
 const SET_STATE = new WeakMap();
+const BOUND_STATE = new WeakMap();
 
 const cloneOrNull = (v) => { try { return deepFreeze(structuredClone(v)); } catch { return null; } };
 const invalidResult = (detail) => ({ status: 'invalid', usable: false, reasons: ['HOST_PROVENANCE_INVALID'], detail: [detail], synthetic: false, productionTrusted: false });
 
 /**
- * Classifies every input once, at construction (the context is read only then and never stored), and keeps defensive frozen copies of the inputs and of
- * the classification results in private storage. The returned object is an opaque handle: it carries no evidence and nothing the
- * caller does to it, to the inputs or to the context afterwards can change a stored decision.
+ * Collects observations and Item-state declarations into an opaque, frozen, UNBOUND handle. Nothing is classified here: trust and
+ * freshness are properties of an evaluation context, so they are decided only by bindObservationSet(set, ctx) and are never carried
+ * between contexts. The handle keeps defensive frozen copies of the inputs in private storage, plus the original references that
+ * authority issuance is checked against (issued objects are frozen).
  * @param {{observations?: object[], itemStates?: object[]}} input
- * @param {object} ctx { authority, contractRevision, registryHash, itemFingerprints }
  */
-export function createObservationSet({ observations = [], itemStates = [] } = {}, ctx = {}) {
-  let entries = observations.map((o) => {
-    const copy = cloneOrNull(o);
-    return { observation: copy, result: copy === null ? invalidResult('observation is not cloneable') : classifyObservation(o, ctx) };
-  });
-  // Item type must have one representation per Item document: conflicting claims invalidate every claim about that document.
+export function createObservationSet({ observations = [], itemStates = [] } = {}) {
+  const obs = observations.map((original) => ({ original, copy: cloneOrNull(original) }));
+  const states = itemStates.map((original) => ({ original, copy: cloneOrNull(original) }));
+  const handle = Object.freeze({ entryCount: obs.length, stateCount: states.length });
+  SET_STATE.set(handle, Object.freeze({ observations: Object.freeze(obs), states: Object.freeze(states) }));
+  return handle;
+}
+
+export const isObservationSet = (v) => isObj(v) && SET_STATE.has(v);
+export const isBoundObservationSet = (v) => isObj(v) && BOUND_STATE.has(v);
+
+/**
+ * Binds a set to ONE evaluation context: every observation and declaration is classified now against that context's authority,
+ * contract revision, registry hash and current Item fingerprints, and the frozen results are kept privately. A set built when an
+ * Item had fingerprint A therefore yields stale evidence when bound under a context that says B. The context is read only here.
+ * Returns an opaque frozen BoundObservationSet, the only thing resolveFact accepts.
+ * @param {object} set  an ObservationSet from createObservationSet
+ * @param {object} ctx  { authority, contractRevision, registryHash, itemFingerprints }
+ */
+export function bindObservationSet(set, ctx = {}) {
+  const st = isObj(set) ? SET_STATE.get(set) : undefined;
+  if (!st) throw new TypeError('bindObservationSet: not an authentic ObservationSet');
+  let entries = st.observations.map((e) => ({ observation: e.copy, result: e.copy === null ? invalidResult('observation is not cloneable') : classifyObservation(e.original, ctx) }));
+  // Item type must have one representation per Item document: conflicting well-formed claims invalidate every claim about that document.
   const types = new Map();
   for (const e of entries) {
-    if (!e.observation || e.result.status === 'invalid') continue;
+    if (!e.observation || validateObservationShape(e.observation).length) continue;
     const id = e.observation.subject.itemId;
     types.set(id, new Set([...(types.get(id) ?? []), e.observation.subject.itemType]));
   }
@@ -380,21 +399,16 @@ export function createObservationSet({ observations = [], itemStates = [] } = {}
     const conflict = e.observation && e.result.status !== 'invalid' && types.get(e.observation.subject.itemId).size > 1;
     return Object.freeze({ observation: e.observation, result: deepFreeze(conflict ? invalidResult('inconsistent itemType for one Item document') : e.result) });
   });
-  const states = itemStates.map((d) => {
-    const copy = cloneOrNull(d);
-    return Object.freeze({ decl: copy, result: deepFreeze(copy === null ? invalidResult('item state is not cloneable') : classifyItemState(d, ctx)) });
-  });
-  const handle = Object.freeze({ entryCount: entries.length, stateCount: states.length });
-  SET_STATE.set(handle, Object.freeze({ entries: Object.freeze(entries), states: Object.freeze(states) }));
+  const states = st.states.map((d) => Object.freeze({ decl: d.copy, result: deepFreeze(d.copy === null ? invalidResult('item state is not cloneable') : classifyItemState(d.original, ctx)) }));
+  const handle = Object.freeze({ entryCount: entries.length, stateCount: states.length, bound: true });
+  BOUND_STATE.set(handle, Object.freeze({ entries: Object.freeze(entries), states: Object.freeze(states) }));
   return handle;
 }
 
-export const isObservationSet = (v) => isObj(v) && SET_STATE.has(v);
-
-/** A deep copy of the stored classification (for inspection and tests); throws for anything that is not an authentic set. */
-export function describeObservationSet(set) {
-  const st = isObj(set) ? SET_STATE.get(set) : undefined;
-  if (!st) throw new TypeError('not an authentic ObservationSet');
+/** A deep copy of the bound classification (for inspection and tests); throws for anything that is not an authentic bound set. */
+export function describeObservationSet(bound) {
+  const st = isObj(bound) ? BOUND_STATE.get(bound) : undefined;
+  if (!st) throw new TypeError('not an authentic BoundObservationSet');
   return structuredClone({
     entries: st.entries.map((e) => ({ factRef: e.observation?.factRef ?? null, result: e.result })),
     states: st.states.map((x) => ({ itemId: x.decl?.itemId ?? null, result: x.result }))
@@ -414,8 +428,8 @@ export function resolveFact(set, { factRef, subject, requestedBasis, purpose, st
   if (!isObj(subject) || !ROLES.includes(subject.role) || !isStr(subject.itemId)) throw new TypeError('resolveFact: subject {role,itemId[,memberRef]} required');
   if (!RESOLVABLE_BASES.includes(requestedBasis)) throw new TypeError('resolveFact: requestedBasis must be base, persistent or effective (never implicit)');
   if (!PURPOSES.includes(purpose)) throw new TypeError('resolveFact: purpose must be printed-statistics or installation-eligibility');
-  const st = isObj(set) ? SET_STATE.get(set) : undefined;
-  if (!st) throw new TypeError('resolveFact: not an authentic ObservationSet');
+  const st = isObj(set) ? BOUND_STATE.get(set) : undefined;
+  if (!st) throw new TypeError('resolveFact: not an authentic BoundObservationSet (bind a set to its evaluation context first)');
   const familyUnknown = UNKNOWN_CODE[factRef];
   const unknown = (reasons, detail) => ({ status: 'unknown', reasons: sortUnique([familyUnknown, ...reasons]), detail, evidence: [] });
 

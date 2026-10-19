@@ -7,12 +7,14 @@
 // This is not runtime legality: nothing here reads an Item, registers with G3, selects a modification or authorizes installation.
 // Nothing under scripts/ imports it. It performs no I/O.
 //
-// Trust: a report distinguishes SYNTHETIC outcomes (evidence vouched for by a test-only synthetic authority) from
-// production-authorized outcomes. No production trust method exists, so `productionAuthorized` is always false today; it can
-// become true only when every piece of evidence consulted is `productionTrusted` in the T4d-1 sense.
+// Trust: a report distinguishes SYNTHETIC outcomes (evidence vouched for by a test-only synthetic authority) from outcomes backed
+// only by production-trusted evidence, as descriptive metadata (`evidenceClass`, `synthetic`). A host-only diagnostic is NEVER
+// installation authority: every report and group fixes `selectable: false` and `installationAuthorized: false`.
+// Freshness: the ObservationSet is bound to the evaluation context here (bindObservationSet), so evidence is trusted only for the
+// context that is evaluated now - never replayed from an earlier one.
 
 import { SIZE_CATEGORIES, OPERATORS, OPERATOR_GROUPS, GROUPS, GROUP_FIELD, FACTS } from './host-requirements.mjs';
-import { DIAGNOSTIC_CODES, isVerifiedContract, getVerifiedRecord, resolveFact, classifyCollection, BASES } from './host-evidence.mjs';
+import { DIAGNOSTIC_CODES, isVerifiedContract, getVerifiedRecord, resolveFact, classifyCollection, bindObservationSet, isObservationSet, BASES } from './host-evidence.mjs';
 
 export const EVALUATION_SCHEMA_ID = 'swse.modification.host-evaluation/1';
 export const VERDICTS = Object.freeze(['legal', 'illegal', 'not_established']);
@@ -227,7 +229,8 @@ function groupReport(group, status, codes, predicates, evidence, extra = {}) {
   return {
     group, status, applicable: status !== null, codes: sortedCodes(codes), predicates, evidence: ev, evidenceClass,
     synthetic: evidenceClass === 'synthetic',
-    productionAuthorized: (status === 'legal' || status === 'illegal') && evidenceClass === 'production',
+    selectable: false,
+    installationAuthorized: false,
     ...extra
   };
 }
@@ -262,7 +265,12 @@ function evaluateGroup(group, record, env) {
     if (!env.collection) return notEstablished(group, env.collectionCodes);
     if (env.collection.members.length === 0) return notEstablished(group, ['HOST_FACT_MISSING'], env.collectionEvidence);
   }
-  return evaluatePredicates(group, preds, env);
+  const report = evaluatePredicates(group, preds, env);
+  // Typed-domain isolation: a positive conclusion is never stronger than its domain evidence. A proven failure still stands.
+  if (report.status === 'legal' && !(env.itemType.status === 'known' && env.itemType.value === record.domain)) {
+    return groupReport(group, 'not_established', env.itemType.reasons, report.predicates, [...report.evidence, ...env.itemType.evidence]);
+  }
+  return report;
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -275,7 +283,7 @@ function evaluateGroup(group, record, env) {
  * @param {string} input.typedDefinitionId
  * @param {string[]} input.groups       the requested groups: any of 'install' | 'use' | 'payload'; unrequested groups yield no verdict (case 32)
  * @param {string} input.basis          'base' | 'persistent' | 'effective' - explicit; never defaulted, never fallen back from
- * @param {object} input.observationSet an authentic ObservationSet (createObservationSet)
+ * @param {object} input.observationSet an authentic (unbound) ObservationSet (createObservationSet); it is bound to `ctx` here
  * @param {object} input.ctx            { authority, contractRevision, registryHash, itemFingerprints }
  * @param {{hostItemId: string, addedItemId?: string}} input.subjects
  * @param {object} [input.payload]      a CollectionSnapshot for the payload group
@@ -288,6 +296,7 @@ export function evaluateHostRequirements(input) {
   if (!isObj(subjects) || !isStr(subjects.hostItemId) || (subjects.addedItemId !== undefined && !isStr(subjects.addedItemId))) throw new TypeError('subjects.hostItemId is required');
   if (!isStr(typedDefinitionId) || !isObj(ctx)) throw new TypeError('typedDefinitionId and ctx are required');
 
+  if (!isObservationSet(observationSet)) throw new TypeError('evaluateHostRequirements: not an authentic ObservationSet');
   const ordered = GROUPS.filter((g) => groups.includes(g));
   const finish = (build) => {
     const reports = {};
@@ -297,8 +306,8 @@ export function evaluateHostRequirements(input) {
       schema: EVALUATION_SCHEMA_ID, typedDefinitionId, basis, requestedGroups: ordered, groups: reports,
       contractRevision: isVerifiedContract(contract) ? contract.revision : null,
       synthetic: evidenceClasses.includes('synthetic'),
-      productionAuthorized: ordered.every((g) => reports[g].status === null || reports[g].productionAuthorized)
-        && ordered.some((g) => reports[g].status !== null)
+      selectable: false,
+      installationAuthorized: false
     });
   };
 
@@ -307,7 +316,8 @@ export function evaluateHostRequirements(input) {
   const record = getVerifiedRecord(contract, typedDefinitionId);
   if (!record) return finish((g) => notEstablished(g, ['HOST_DOMAIN_MISMATCH'])); // case 4
 
-  const set = observationSet;
+  // Bind to THIS evaluation context: classification (authority, revision, registry hash, Item fingerprints) happens now.
+  const set = bindObservationSet(observationSet, ctx);
   const itemType = resolveFact(set, { factRef: 'item.type', subject: { role: 'host', itemId: subjects.hostItemId }, requestedBasis: 'base', purpose: 'printed-statistics' });
   if (itemType.status === 'known' && itemType.value !== record.domain) return finish((g) => notEstablished(g, ['HOST_DOMAIN_MISMATCH'], itemType.evidence));
 

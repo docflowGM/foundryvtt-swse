@@ -79,10 +79,10 @@ function snapshot(members, o = {}) {
 const ALL_STATES = IDS.map((i) => state(i));
 
 /** Runs the evaluator with a fresh ObservationSet built from raw observations. */
-function run(id, { obs = [], states = ALL_STATES, groups = ['install'], payload, added = false, basis = 'base', auth = authority, issue = true, ctx, contract = CONTRACT } = {}) {
-  const set = E.createObservationSet({
+function run(id, { obs = [], states = ALL_STATES, groups = ['install'], payload, added = false, basis = 'base', auth = authority, issue = true, ctx, contract = CONTRACT, set: prebuilt } = {}) {
+  const set = prebuilt ?? E.createObservationSet({
     observations: issue ? obs.map((x) => auth.issue(x)) : obs, itemStates: issue ? states.map((x) => auth.issue(x)) : states
-  }, ctxOf(auth));
+  });
   return evaluate({
     contract, typedDefinitionId: id, groups, basis, observationSet: set, ctx: ctx ?? ctxOf(auth),
     subjects: { hostItemId: 'host1', ...(added ? { addedItemId: 'add1' } : {}) },
@@ -142,7 +142,7 @@ check('contract: only an authentic VerifiedContract at the evaluated revision is
   for (const bad of [clone, { ...CONTRACT }, { schema: CONTRACT.schema, revision: REVISION, records: CONTRACT.records, ids: CONTRACT.ids }, null, {}]) {
     const r = run('sv-spring-loaded::equipment', { obs, contract: bad, groups: ['install', 'use', 'payload'] });
     for (const g of ['install', 'use', 'payload']) assert.deepEqual(verdict(r, g), ['not_established', ['HOST_CONTRACT_VERSION_UNTRUSTED']]);
-    assert.equal(r.productionAuthorized, false); assert.equal(r.contractRevision, null);
+    assert.equal(r.installationAuthorized, false); assert.equal(r.selectable, false); assert.equal(r.contractRevision, null);
   }
   const mismatch = run('sv-spring-loaded::equipment', { obs, ctx: ctxOf(authority, { contractRevision: 'e'.repeat(64) }) });
   assert.deepEqual(verdict(mismatch), ['not_established', ['HOST_CONTRACT_VERSION_UNTRUSTED']]);
@@ -157,11 +157,13 @@ check('contract: an unknown typed identity or a mismatching Item type is a domai
 });
 
 check('request validation: groups and basis are explicit; unrequested groups carry no verdict (case 32)', () => {
-  const base = { contract: CONTRACT, typedDefinitionId: 'sv-cheater::equipment', basis: 'base', observationSet: E.createObservationSet({}, ctxOf()), ctx: ctxOf(), subjects: { hostItemId: 'host1' } };
+  const base = { contract: CONTRACT, typedDefinitionId: 'sv-cheater::equipment', basis: 'base', observationSet: E.createObservationSet({}), ctx: ctxOf(), subjects: { hostItemId: 'host1' } };
   for (const bad of [{ groups: [] }, { groups: ['bogus'] }, { groups: ['install', 'install'] }, { groups: 'install' }, { groups: ['install'], basis: undefined }, { groups: ['install'], basis: 'user-entered' }, { groups: ['install'], subjects: {} }]) {
     assert.throws(() => evaluate({ ...base, ...bad }), TypeError);
   }
   assert.throws(() => evaluate({ ...base, groups: ['install'], observationSet: { entries: [] } }), /not an authentic ObservationSet/);
+  assert.throws(() => evaluate({ ...base, groups: ['install'], contract: null, observationSet: {} }), /not an authentic ObservationSet/, 'a fabricated set is rejected even when the contract is not trusted');
+  assert.throws(() => evaluate({ ...base, groups: ['install'], observationSet: E.bindObservationSet(E.createObservationSet({}), ctxOf()) }), /not an authentic ObservationSet/, 'an already-bound set cannot be replayed into an evaluation');
   const r = evaluate({ ...base, groups: ['install'] });
   assert.deepEqual(Object.keys(r.groups), ['install'], 'use and payload are not requested: no verdict, no fourth status');
   assert.deepEqual(r.requestedGroups, ['install']);
@@ -170,7 +172,7 @@ check('request validation: groups and basis are explicit; unrequested groups car
 });
 
 check('records with no requirements in a requested group yield no verdict rather than an invented status', () => {
-  const r = run('sv-cheater::equipment', { groups: ['install', 'use', 'payload'], obs: [ob('compat:canConcealCheater', true)] });
+  const r = run('sv-cheater::equipment', { groups: ['install', 'use', 'payload'], obs: [ob('item.type', 'equipment'), ob('compat:canConcealCheater', true)] });
   assert.equal(G(r, 'install').status, 'legal');
   for (const g of ['use', 'payload']) { assert.equal(G(r, g).status, null); assert.equal(G(r, g).applicable, false); assert.deepEqual(G(r, g).codes, []); }
 });
@@ -336,7 +338,7 @@ check('count.at_most: unknown quantity, unverified completeness, lower bounds an
   assert.ok(G(lowerBound, 'payload').codes.includes('HOST_FACT_MISSING') && !G(lowerBound, 'payload').codes.includes('PAYLOAD_ITEM_COUNT_EXCEEDED'));
   const unissued = run(SECRET, { obs: sized, groups: ['payload'], payload: snapshot([member('m1', 'p1', 5)]), auth: authority, issue: false });
   assert.equal(G(unissued, 'payload').status, 'not_established'); assert.ok(G(unissued, 'payload').codes.includes('HOST_FACT_UNTRUSTED'));
-  const unissuedCollection = evaluate({ contract: CONTRACT, typedDefinitionId: SECRET, groups: ['payload'], basis: 'base', observationSet: E.createObservationSet({ observations: sized.map((x) => authority.issue(x)), itemStates: ALL_STATES.map((x) => authority.issue(x)) }, ctxOf()), ctx: ctxOf(), subjects: { hostItemId: 'host1' }, payload: snapshot([member('m1', 'p1', 5)]) });
+  const unissuedCollection = evaluate({ contract: CONTRACT, typedDefinitionId: SECRET, groups: ['payload'], basis: 'base', observationSet: E.createObservationSet({ observations: sized.map((x) => authority.issue(x)), itemStates: ALL_STATES.map((x) => authority.issue(x)) }), ctx: ctxOf(), subjects: { hostItemId: 'host1' }, payload: snapshot([member('m1', 'p1', 5)]) });
   assert.deepEqual(verdict(unissuedCollection, 'payload'), ['not_established', ['HOST_FACT_UNTRUSTED']]);
   const staleHost = payloadRun(SECRET, sized, [member('m1', 'p1', 5)], { snap: { hostFingerprint: 'old' } });
   assert.deepEqual(verdict(staleHost, 'payload'), ['not_established', ['HOST_PROVENANCE_STALE']]);
@@ -469,24 +471,24 @@ check('empty install requirements (case 33): legal only with verified Item type,
 check('synthetic outcomes are flagged test-only and are never production-authorized', () => {
   const r = run(CHEATER, { obs: [ob('item.type', 'equipment'), ob('compat:canConcealCheater', true)] });
   assert.equal(G(r).status, 'legal');
-  assert.equal(G(r).evidenceClass, 'synthetic'); assert.equal(G(r).synthetic, true); assert.equal(G(r).productionAuthorized, false);
-  assert.equal(r.synthetic, true); assert.equal(r.productionAuthorized, false);
+  assert.equal(G(r).evidenceClass, 'synthetic'); assert.equal(G(r).synthetic, true); assert.equal(G(r).installationAuthorized, false);
+  assert.equal(r.synthetic, true); assert.equal(r.installationAuthorized, false);
   assert.ok(G(r).evidence.length > 0 && G(r).evidence.every((e) => e.synthetic === true && e.productionTrusted === false));
   const illegal = run(CHEATER, { obs: [ob('item.type', 'equipment'), ob('compat:canConcealCheater', false)] });
-  assert.equal(G(illegal).status, 'illegal'); assert.equal(G(illegal).productionAuthorized, false); assert.equal(G(illegal).evidenceClass, 'synthetic');
+  assert.equal(G(illegal).status, 'illegal'); assert.equal(G(illegal).installationAuthorized, false); assert.equal(G(illegal).evidenceClass, 'synthetic');
   const empty = run('sv-cloaked::equipment', { obs: [ob('item.type', 'equipment')] });
-  assert.equal(G(empty).status, 'legal'); assert.equal(G(empty).productionAuthorized, false); assert.equal(G(empty).synthetic, true);
+  assert.equal(G(empty).status, 'legal'); assert.equal(G(empty).installationAuthorized, false); assert.equal(G(empty).synthetic, true);
   const none = run(CHEATER, { obs: [] });
-  assert.equal(G(none).evidenceClass, 'none'); assert.equal(G(none).synthetic, false); assert.equal(G(none).productionAuthorized, false);
+  assert.equal(G(none).evidenceClass, 'none'); assert.equal(G(none).synthetic, false); assert.equal(G(none).installationAuthorized, false);
 });
 
 check('no caller-controlled route to trust: production authority, forged authorities and unissued evidence establish nothing', () => {
   const full = [ob('item.type', 'equipment'), ob('compat:canConcealCheater', true)];
   const prod = run(CHEATER, { obs: full, auth: E.PRODUCTION_AUTHORITY });
-  assert.equal(G(prod).status, 'not_established'); assert.ok(G(prod).codes.includes('HOST_FACT_UNTRUSTED')); assert.equal(G(prod).productionAuthorized, false);
+  assert.equal(G(prod).status, 'not_established'); assert.ok(G(prod).codes.includes('HOST_FACT_UNTRUSTED')); assert.equal(G(prod).installationAuthorized, false);
   const forged = { id: 'production', kind: 'production', synthetic: false, trustedSourceKinds: ['synthetic-fixture'], trustedBindingMethods: [], trustedEnumerators: [], registryPins: [], isIssued: () => true, issue: (x) => x, issueCollection: (x) => x };
   const f = run(CHEATER, { obs: full, auth: forged, issue: false });
-  assert.equal(G(f).status, 'not_established'); assert.equal(G(f).productionAuthorized, false);
+  assert.equal(G(f).status, 'not_established'); assert.equal(G(f).installationAuthorized, false);
   const unissued = run(CHEATER, { obs: full, issue: false });
   assert.equal(G(unissued).status, 'not_established');
   assert.deepEqual(G(unissued).codes, ['HOST_FACT_UNTRUSTED', 'HOST_PHYSICAL_FIT_UNKNOWN']);
@@ -500,7 +502,7 @@ check('group isolation: failures in one requested group never change another gro
   assert.deepEqual([verdict(r, 'install'), verdict(r, 'payload')], [['legal', []], ['illegal', ['PAYLOAD_NOT_SMALLER']]]);
   const r2 = run(id, { obs: [...secretBase(), ob('compat:canAccommodateHiddenCompartment', false), psize('m1', 'p1', 'Small')], groups: ['install', 'payload'], payload: snapshot([member('m1', 'p1', 1)]) });
   assert.deepEqual([verdict(r2, 'install'), verdict(r2, 'payload')], [['illegal', ['HOST_PHYSICAL_FIT_DISPROVEN']], ['legal', []]]);
-  assert.equal(r2.productionAuthorized, false);
+  assert.equal(r2.installationAuthorized, false);
 });
 
 check('evidence class: production only when every consulted piece is production-trusted; one synthetic piece makes the outcome synthetic', () => {
@@ -511,6 +513,108 @@ check('evidence class: production only when every consulted piece is production-
   assert.equal(V.evidenceClassOf([prod, syn]), 'synthetic');
   assert.equal(V.evidenceClassOf([syn]), 'synthetic');
   assert.equal(V.evidenceClassOf([{ productionTrusted: 'yes' }]), 'synthetic', 'only the boolean true counts');
+});
+
+/* ---------------------------------- review correction #1 ---------------------------------- */
+
+const fresh = (extra) => ctxOf(authority, extra);
+const build = (obs, states = ALL_STATES) => E.createObservationSet({ observations: obs.map((x) => authority.issue(x)), itemStates: states.map((x) => authority.issue(x)) });
+
+check('R1: a set trusted under Item fingerprint A is stale, not legal, when evaluated under fingerprint B (host, added, payload, authority)', () => {
+  const dual = build(dualBase('Medium', 'Small'));
+  const under = (set, ctx, extra = {}) => run(DUAL, { set, ctx, added: true, ...extra });
+  assert.deepEqual(verdict(under(dual, fresh())), ['legal', []], 'baseline: trusted under fingerprint A');
+  const hostB = under(dual, fresh({ itemFingerprints: { ...FP, host1: 'fp-host1-B' } }));
+  assert.equal(G(hostB).status, 'not_established'); assert.ok(G(hostB).codes.includes('HOST_PROVENANCE_STALE'));
+  const addedB = under(dual, fresh({ itemFingerprints: { ...FP, add1: 'fp-add1-B' } }));
+  assert.equal(G(addedB).status, 'not_established'); assert.ok(G(addedB).codes.includes('HOST_PROVENANCE_STALE'));
+  const noFp = under(dual, fresh({ itemFingerprints: {} }));
+  assert.equal(G(noFp).status, 'not_established');
+  const revision = under(dual, fresh({ contractRevision: 'a'.repeat(64) }));
+  assert.deepEqual(verdict(revision), ['not_established', ['HOST_CONTRACT_VERSION_UNTRUSTED']]);
+  // the same set under a different authority context is untrusted, not legal
+  const otherAuthority = E.createSyntheticEvidenceAuthority({ trustedSourceKinds: ['synthetic-fixture'] });
+  const foreign = under(dual, ctxOf(otherAuthority));
+  assert.equal(G(foreign).status, 'not_established'); assert.ok(G(foreign).codes.includes('HOST_FACT_UNTRUSTED'));
+  const production = under(dual, ctxOf(E.PRODUCTION_AUTHORITY));
+  assert.equal(G(production).status, 'not_established');
+  // payload Items: changing a member's fingerprint makes its size evidence stale
+  const secret = build([...secretBase(), psize('m1', 'p1', 'Small')]);
+  const payload = (ctx) => run(SECRET, { set: secret, ctx, groups: ['payload'], payload: snapshot([member('m1', 'p1', 1)]) });
+  assert.deepEqual(verdict(payload(fresh()), 'payload'), ['legal', []]);
+  const memberB = payload(fresh({ itemFingerprints: { ...FP, p1: 'fp-p1-B' } }));
+  assert.equal(G(memberB, 'payload').status, 'not_established'); assert.ok(G(memberB, 'payload').codes.includes('HOST_PROVENANCE_STALE'));
+  const hostForPayload = payload(fresh({ itemFingerprints: { ...FP, host1: 'fp-host1-B' } }));
+  assert.equal(G(hostForPayload, 'payload').status, 'not_established', 'the payload snapshot is bound to the host fingerprint too');
+  // the set object is not mutated by being evaluated under B: A still works afterwards
+  assert.deepEqual(verdict(under(dual, fresh())), ['legal', []]);
+});
+
+check('R1: a still-trusted independent failure remains illegal while other evidence is stale', () => {
+  const set = build([...secretBase(), psize('m1', 'p1', 'Huge'), psize('m2', 'p2', 'Small')]);
+  const r = run(SECRET, { set, ctx: fresh({ itemFingerprints: { ...FP, p2: 'fp-p2-B' } }), groups: ['payload'], payload: snapshot([member('m1', 'p1', 1), member('m2', 'p2', 1)]) });
+  assert.equal(G(r, 'payload').status, 'illegal');
+  assert.ok(G(r, 'payload').codes.includes('PAYLOAD_NOT_SMALLER') && G(r, 'payload').codes.includes('HOST_PROVENANCE_STALE'));
+});
+
+check('R2: a nonempty group is never legal without trusted typed-domain proof (all three groups); proven failures still stand', () => {
+  const WEAPON = { itemType: 'weapon' };
+  const spring = 'sv-spring-loaded::weapon';
+  const oneHanded = (v) => ob('host.oneHandedHandheld', v, WEAPON);
+  const good = ob('item.type', 'weapon', WEAPON);
+  assert.deepEqual(verdict(run(spring, { obs: [good, oneHanded(true)] })), ['legal', []], 'with the domain proven it is legal');
+  const cases = [
+    ['absent', []],
+    ['unknown', [unknownOb('item.type', WEAPON)]],
+    ['default-derived', [ob('item.type', 'weapon', { ...WEAPON, trust: 'default' })]],
+    ['untrusted', [ob('item.type', 'weapon', { ...WEAPON, trust: 'derived' })]],
+    ['attested', [ob('item.type', 'weapon', { ...WEAPON, trust: 'attested' })]],
+    ['stale', [ob('item.type', 'weapon', { ...WEAPON, fingerprint: 'old' })]]
+  ];
+  for (const [label, typeObs] of cases) {
+    const r = run(spring, { obs: [...typeObs, oneHanded(true)] });
+    assert.equal(G(r).status, 'not_established', `install/${label}`);
+    assert.ok(G(r).codes.includes('HOST_FACT_MISSING'), `install/${label}`);
+    assert.ok(!G(r).codes.includes('HOST_DOMAIN_MISMATCH'));
+    assert.equal(G(r).predicates[0].outcome, 'satisfied', 'the predicate itself is satisfied; only the positive conclusion is withheld');
+    // the use group
+    const use = run('sv-electrograpple-handle::weapon', { groups: ['use'], obs: [...typeObs, ob('use.attunedGauntletForHost', true, WEAPON)] });
+    assert.equal(G(use, 'use').status, 'not_established', `use/${label}`);
+    // the payload group
+    const pay = run('sv-secret-compartment::weapon', { groups: ['payload'], obs: [...typeObs, ob('host.sizeCategory', 'Large', WEAPON), psize('m1', 'p1', 'Small', WEAPON)], payload: snapshot([member('m1', 'p1', 1)]) });
+    assert.equal(G(pay, 'payload').status, 'not_established', `payload/${label}`);
+    // a separately proven failure is still illegal without any domain proof
+    const failing = run(spring, { obs: [...typeObs, oneHanded(false)] });
+    assert.equal(G(failing).status, 'illegal', `failure/${label}`);
+    assert.ok(G(failing).codes.includes('HOST_NOT_ONE_HANDED'));
+  }
+  // a trusted domain mismatch is a domain mismatch, never illegal and never legal
+  assert.deepEqual(verdict(run(spring, { obs: [ob('item.type', 'armor', { itemType: 'armor' }), ob('host.oneHandedHandheld', false, { itemType: 'armor' })] })), ['not_established', ['HOST_DOMAIN_MISMATCH']]);
+  // the unknown-domain legal withholding keeps the satisfied evidence for inspection
+  const withheld = run(spring, { obs: [oneHanded(true)] });
+  assert.ok(G(withheld).evidence.length > 0);
+});
+
+check('R3: host diagnostics never authorize installation or selection; there is no productionAuthorized field', () => {
+  const variants = [
+    run(CHEATER, { obs: [ob('item.type', 'equipment'), ob('compat:canConcealCheater', true)] }),
+    run(CHEATER, { obs: [ob('item.type', 'equipment'), ob('compat:canConcealCheater', false)] }),
+    run(CHEATER, { obs: [] }),
+    run(CHEATER, { obs: [ob('item.type', 'equipment'), ob('compat:canConcealCheater', true)], auth: E.PRODUCTION_AUTHORITY }),
+    run('sv-cloaked::equipment', { obs: [ob('item.type', 'equipment')], groups: ['install', 'use'] }),
+    run(CHEATER, { obs: [], contract: null })
+  ];
+  assert.deepEqual(variants.map((r) => G(r).status), ['legal', 'illegal', 'not_established', 'not_established', 'legal', 'not_established']);
+  for (const r of variants) {
+    assert.equal(r.selectable, false); assert.equal(r.installationAuthorized, false);
+    assert.ok(!('productionAuthorized' in r));
+    for (const g of Object.values(r.groups)) {
+      assert.equal(g.selectable, false); assert.equal(g.installationAuthorized, false);
+      assert.ok(!('productionAuthorized' in g));
+      assert.ok(['none', 'synthetic', 'production'].includes(g.evidenceClass));
+    }
+  }
+  assert.equal(JSON.stringify(variants).includes('productionAuthorized'), false);
 });
 
 /* ---------------------------------- determinism and corpus ---------------------------------- */
@@ -535,11 +639,11 @@ check('corpus: with no evidence all 35 definitions are not established for every
     for (const g of GROUPS) {
       const gr = G(r, g);
       assert.ok(gr.status === null || gr.status === 'not_established', `${rec.typedDefinitionId}/${g}`);
-      assert.equal(gr.productionAuthorized, false);
+      assert.equal(gr.installationAuthorized, false);
       assert.ok(gr.codes.every((c) => E.DIAGNOSTIC_CODES.includes(c)));
       assert.equal(gr.status === null, rec[GROUP_FIELD[g]].length === 0 && !(g === 'install'));
     }
-    assert.equal(r.productionAuthorized, false);
+    assert.equal(r.installationAuthorized, false);
   }
 });
 
@@ -570,9 +674,9 @@ check('corpus: with a fully-satisfying synthetic fixture every definition is leg
     for (const g of GROUPS) {
       if (rec[GROUP_FIELD[g]].length === 0 && g !== 'install') continue;
       assert.equal(G(syn, g).status, 'legal', `${rec.typedDefinitionId}/${g}: ${G(syn, g).codes}`);
-      assert.equal(G(syn, g).productionAuthorized, false);
+      assert.equal(G(syn, g).installationAuthorized, false);
       assert.equal(G(prod, g).status, 'not_established', `${rec.typedDefinitionId}/${g} under production trust`);
-      assert.equal(G(prod, g).productionAuthorized, false);
+      assert.equal(G(prod, g).installationAuthorized, false);
     }
   }
 });
