@@ -537,4 +537,17 @@ async function run(w, requestId, intent, { confirm = true, context = GM } = {}) 
   ok('22: the coordinator imports no weapon rules authority and uses no undoLast, snapshot restore, transactional mutation plan or whole-document write; costs and spends use the existing authorities');
 }
 
+{
+  // WP4 correction: without authoritative species evidence nothing that holds appendages is established; stowing needs no anatomy
+  const w = world([item('s', SABER, REC('STOWED', null, [])), item('h', SABER, REC('EQUIPPED', 'hold', ['natural-arm-1']))]);
+  w.deps.loadSpecies = async () => ({ status: 'unavailable', profile: null, reason: 'species-not-in-registry', evidence: { speciesName: 'Mystery', variantId: null } });
+  const eq = await C.planEquipmentIntent(w.actor, { type: 'equip', itemId: 's', purpose: 'hold', appendageIds: ['natural-arm-2'] }, w.deps);
+  assert.equal(eq.status, O.NOT_ESTABLISHED); assert.equal(eq.issues[0].code, 'species-evidence-unavailable'); assert.equal(eq.issues[0].details.reason, 'species-not-in-registry');
+  const ex = await C.executeEquipmentIntent(w.actor, { requestId: 'sp1', intent: { type: 'equip', itemId: 's', purpose: 'hold', appendageIds: ['natural-arm-2'] } }, { context: GM }, w.deps);
+  assert.equal(ex.status, O.NOT_ESTABLISHED); assert.equal(w.log.itemWrites.length, 0); assert.equal(w.log.journalWrites.length, 0); assert.equal(w.log.spends.length, 0);
+  const stow = await run(w, 'sp2', { type: 'stow', itemId: 'h' });
+  assert.equal(stow.out.status, O.COMMITTED);
+  ok('23: unavailable species evidence fails closed for any posture that holds appendages (no provisional default arms) while stowing still works');
+}
+
 console.log(`equipment-e4c1-wp3a-coordinator: ${n} checks ok`);
