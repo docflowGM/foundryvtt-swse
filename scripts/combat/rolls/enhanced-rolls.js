@@ -256,13 +256,7 @@ export class SWSERoll {
     const tx = await this.beginForcePointUse(actor, reason);
     if (!tx) {return 0;}
     if (!(await tx.commit())) {return 0;}   // the Force Point could not be spent; the player has been told
-    try {
-      await tx.announce();
-    } catch (err) {
-      console.error('Failed to announce Force Point:', err);
-      ui.notifications.error('Failed to spend Force Point. Please try again.');
-      return 0;
-    }
+    await tx.announce();   // never throws; the point is spent and the bonus applies even if the card or a hook failed (the player is warned)
     return tx.result;
   }
 

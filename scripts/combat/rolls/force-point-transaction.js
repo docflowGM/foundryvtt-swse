@@ -10,7 +10,13 @@
  *               authority) and the bonus point added back to the CURRENT bonus pool by entry id. It never writes an absolute snapshot, so a Force Point
  *               gained, spent or granted by anything else since the commit is preserved. Only after a successful commit, only once: a rolled-back
  *               transaction is finished (commit/rollback return false), and a rollback that fails part-way does not repeat the part that succeeded.
- *   announce()  posts the "Force Point Used" message and the POST hook, only after a commit and only once the use is final.
+ *   announce()  posts the "Force Point Used" message and the POST hook, only after a commit. It FINALIZES the use (a completed use is never refunded
+ *               afterwards), is once-only per step (a completed step is never repeated, concurrent calls share one run), and never throws: a
+ *               presentation failure returns false and is recorded (chatPosted / hookRan / announceError) without touching the spend.
+ *
+ * Concurrency (one client; Foundry has no compare-and-swap): commit() and rollback() are single-flight — simultaneous callers share one run and one
+ * outcome, and a rollback waits for an in-flight commit. state: new -> committing -> committed -> (final) | rolled-back; a commit whose spend threw
+ * AFTER the pool visibly changed is 'indeterminate': closed, never repeated, never refunded automatically.
  */
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ROLL_HOOKS } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -24,19 +30,35 @@ const bonusEntries = (pool) => {
 };
 
 export function createForcePointTransaction({ actor, result, formula, reason = '', roll = null }) {
+  let commitRun = null;
+  let rollbackRun = null;
+  let announceRun = null;
+  const poolNow = () => ({ normal: Number(actor.system?.forcePoints?.value ?? 0), bonus: bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints')).reduce((n, e) => n + e.value, 0) });
   const tx = {
     result,
     formula,
+    state: 'new',
     committed: false,
     closed: false,
+    final: false,    // the use is complete: it can no longer be refunded
     spentNormal: 0,
     gaveBonus: [],   // [{ entry, amount }] — what this spend took from each bonus entry
     shown: null,
-    async commit() {
-      if (tx.closed) {return false;}
-      if (tx.committed) {return true;}
+    chatPosted: false,
+    hookRan: false,
+    announced: false,
+    announceError: null,
+    commit() {
+      if (tx.closed) {return Promise.resolve(false);}
+      if (tx.committed) {return Promise.resolve(true);}
+      commitRun ??= tx._commit().finally(() => { commitRun = null; });
+      return commitRun;
+    },
+    async _commit() {
+      tx.state = 'committing';
       const pool = actor.system.forcePoints ?? {};
       const beforeBonus = bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints'));
+      const before = poolNow();
       tx.shown = { remaining: Math.max(0, (pool.value ?? 0) - 1), max: pool.max ?? 0 };   // (use calculated value instead of stale reference)
       let spent;
       try {
@@ -44,10 +66,19 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
         spent = await ActorEngine.spendForcePoints(actor, 1);   // PHASE 3: Route through ActorEngine
       } catch (err) {
         console.error('Failed to spend Force Point:', err);
-        ui.notifications.error('Failed to spend Force Point. Please try again.');
+        const after = poolNow();
+        if (after.normal !== before.normal || after.bonus !== before.bonus) {
+          // The spend threw after the pool visibly changed: it may or may not have fully applied. Not success, not repeatable, not auto-refunded.
+          tx.state = 'indeterminate'; tx.closed = true;
+          ui.notifications.error('A Force Point spend could not be confirmed. Check the Force Point pool before spending again.');
+        } else {
+          tx.state = 'new';
+          ui.notifications.error('Failed to spend Force Point. Please try again.');
+        }
         return false;
       }
       if (!(Number(spent?.spent) >= 1)) {   // the authority spent nothing (e.g. no Force Point left): the use is not paid for
+        tx.state = 'new';
         ui.notifications.error('No Force Point could be spent.');
         return false;
       }
@@ -58,10 +89,25 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       const bonusTaken = tx.gaveBonus.reduce((n, x) => n + x.amount, 0);
       tx.spentNormal = Math.max(0, Number.isFinite(spent?.normalSpent) ? spent.normalSpent : (Number(spent?.spent) || 0) - bonusTaken);
       tx.committed = true;
+      tx.state = 'committed';
+      return true;
+    },
+    /** Marks a committed use as complete (no later refund). announce() does this itself. */
+    finalize() {
+      if (!tx.committed || tx.closed) {return false;}
+      tx.final = true;
       return true;
     },
     async rollback() {
-      if (!tx.committed || tx.closed) {return false;}
+      if (rollbackRun) {return rollbackRun;}
+      rollbackRun = (async () => {
+        if (commitRun) {await commitRun.catch(() => false);}   // never refund while the spend is still being decided
+        if (!tx.committed || tx.closed || tx.final) {return false;}
+        return tx._rollback();
+      })().finally(() => { rollbackRun = null; });
+      return rollbackRun;
+    },
+    async _rollback() {
       try {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
         if (tx.spentNormal > 0) {
@@ -83,6 +129,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
         }
         tx.committed = false;
         tx.closed = true;
+        tx.state = 'rolled-back';
         return true;
       } catch (err) {
         console.error('Failed to restore Force Point after a refused attack:', err);
@@ -90,11 +137,20 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
         return false;
       }
     },
-    async announce() {
-      if (!tx.committed || tx.closed) {return false;}
-      await createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: `
+    announce() {
+      if (!tx.committed || tx.closed) {return Promise.resolve(false);}
+      tx.final = true;   // synchronously: from here a refund is refused
+      if (tx.announced) {return Promise.resolve(true);}
+      announceRun ??= tx._announce().finally(() => { announceRun = null; });
+      return announceRun;
+    },
+    async _announce() {
+      tx.announceError = null;
+      if (!tx.chatPosted) {
+        try {
+          const message = await createChatMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            content: `
           <div class="swse-forcepoint-roll">
             <h3>Force Point Used</h3>
             <p>Rolled: ${formula}</p>
@@ -102,9 +158,24 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
             <p>FP Remaining: ${tx.shown.remaining}/${tx.shown.max}</p>
           </div>
         `
-      });
-      Hooks.callAll(ROLL_HOOKS.POST_FORCE_POINT, actor, { roll, result, reason });   // Post-roll hook
-      return true;
+          });
+          if (message) {tx.chatPosted = true;}   // createChatMessage resolves null (it does not throw) when the message was not created
+          else {tx.announceError = new Error('chat message was not created');}
+        } catch (err) { tx.announceError = err; }
+      }
+      if (!tx.hookRan) {
+        try {
+          Hooks.callAll(ROLL_HOOKS.POST_FORCE_POINT, actor, { roll, result, reason });   // Post-roll hook
+          tx.hookRan = true;
+        } catch (err) { tx.announceError = err; }
+      }
+      if (tx.chatPosted && tx.hookRan) {
+        tx.announced = true;
+        return true;
+      }
+      console.error('Force Point announcement failed:', tx.announceError);
+      ui.notifications.warn('The Force Point was spent and applied, but its chat message or follow-up hook failed.');
+      return false;
     }
   };
   return tx;

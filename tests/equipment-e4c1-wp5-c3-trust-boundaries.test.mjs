@@ -228,7 +228,7 @@ const hookOnce = (name, fn) => { const real = globalThis.Hooks; globalThis.Hooks
       assert.equal(await tx1.commit(), true); assert.equal(await tx2.commit(), true); assert.equal(a.system.forcePoints.value, 1);
       assert.equal(await tx1.rollback(), true); assert.equal(a.system.forcePoints.value, 2, 'one point back; the other transaction\'s point stays spent');
       assert.equal(await tx2.announce(), true); assert.equal(fpChats(), 1, 'the surviving use is announced, the rolled-back one is not');
-      assert.equal(await tx2.rollback(), true); assert.equal(a.system.forcePoints.value, 3); assert.deepEqual(fpLedger.gains, [1, 1]); }
+      assert.equal(await tx2.rollback(), false, 'C3 follow-up lifecycle: an announced (completed) use is final and is not refunded'); assert.equal(a.system.forcePoints.value, 2); assert.deepEqual(fpLedger.gains, [1]); }
     // (8) damage / skill Force Point use keeps its spend-then-announce behavior
     { const a = fpActor([pistol('fp8')]); fpHarness(); const bonusFP = await SWSERoll.promptForcePointUse(a, 'damage roll'); assert.equal(bonusFP, 12); assert.equal(fpLedger.spends, 1); assert.equal(fpChats(), 1); }
   } finally { globalThis.Hooks = realHooks; AmmoSystem.preflightAmmunition = origPreflight; AmmoSystem.spendForWorkflow = origSpendWf; AmmoSystem.rollbackSpend = origRb; ActorEngine.spendForcePoints = realSpendFP; ActorEngine.gainForcePoints = realGainFP; ActorEngine.updateActor = realUpdateActor; globalThis.ChatMessage.create = realChatCreate; }
