@@ -179,6 +179,34 @@ try {
     reset(); installPresentation(); const e = mk(); const t5 = tx(e); await t5.commit(); assert.equal(t5.final, false); assert.equal(await t5.rollback(), true); assert.equal(e.system.forcePoints.value, 3); assert.equal(present.chats, 0);
     ok('C3 lifecycle: announce()/finalize() make a completed use final (even if presentation fails); a refusal before completion still refunds exactly what the spend took');
   }
+  // ------------------------------------------------------------------------------------------------ C3-R7 cross-operation interleaving
+  {
+    // rollback accepted first: while its refund write is pending, announce / finalize / commit must not claim a completed or independently committed use
+    reset(); installPresentation(); const a = mk(); const t = tx(a); assert.equal(await t.commit(), true); assert.equal(a.system.forcePoints.value, 2);
+    let release; ctl.gate = new Promise((r) => { release = r; });
+    const rb = t.rollback();   // NOT awaited
+    const [an, fin, cm] = [await t.announce(), t.finalize(), await t.commit()];
+    assert.deepEqual([an, fin, cm], [false, false, false], 'no competing caller may announce, finalize or claim a commitment once rollback was accepted');
+    assert.equal(t.final, false); assert.equal(present.chats, 0, 'no announcement for a spend that is being refunded'); assert.equal(present.hooks, 0);
+    release(); ctl.gate = null; assert.equal(await rb, true);
+    assert.equal(a.system.forcePoints.value, 3, 'the refund completed'); assert.equal(t.state, 'rolled-back'); assert.equal(t.closed, true); assert.equal(t.final, false);
+    assert.deepEqual(ctl.gains, [1], 'refunded exactly once'); assert.equal(present.chats, 0); assert.equal(present.hooks, 0); assert.equal(ctl.spends, 1, 'no second spend');
+    assert.equal(await t.announce(), false); assert.equal(await t.commit(), false); assert.equal(t.finalize(), false);
+    // a rollback that FAILS part-way still bars finalization/announcement (the spend is neither cleanly refunded nor cleanly final) and can be retried
+    reset(); installPresentation(); const b = mk(); const t2 = tx(b); await t2.commit(); ctl.failWrite = true;
+    assert.equal(await silent(() => t2.rollback()), false); ctl.failWrite = false;
+    assert.equal(await t2.announce(), false, 'an attempted-but-failed refund is not announced as a completed use'); assert.equal(t2.finalize(), false); assert.equal(await t2.commit(), false); assert.equal(present.chats, 0);
+    assert.equal(await t2.rollback(), true, 'the refund may be retried'); assert.equal(b.system.forcePoints.value, 3);
+    // rollback requested while a commit is still in flight, then announce right after the commit settles: refused
+    reset(); installPresentation(); const c = mk(); const t3 = tx(c); let rel3; ctl.gate = new Promise((r) => { rel3 = r; });
+    const c1 = t3.commit(); const rb3 = t3.rollback(); const an3 = t3.announce(); await flush(); rel3(); ctl.gate = null;
+    assert.equal(await an3, false); await c1; assert.equal(await rb3, true); assert.equal(t3.final, false); assert.equal(c.system.forcePoints.value, 3); assert.equal(present.chats, 0);
+    // reverse ordering: announce / finalize first make the use final, so a later rollback is refused
+    reset(); installPresentation(); const d = mk(); const t4 = tx(d); await t4.commit(); const an4 = t4.announce();
+    assert.equal(await t4.rollback(), false, 'rollback refused while announcement is in flight'); assert.equal(await an4, true); assert.equal(await t4.rollback(), false); assert.deepEqual(ctl.gains, []); assert.equal(d.system.forcePoints.value, 2);
+    reset(); installPresentation(); const e = mk(); const t5 = tx(e); await t5.commit(); assert.equal(t5.finalize(), true); assert.equal(await t5.rollback(), false); assert.equal(e.system.forcePoints.value, 2); assert.deepEqual(ctl.gains, []);
+    ok('C3-R7: once rollback is accepted no competing announce/finalize/commit succeeds (state, chat, hook and balance stay consistent); announce/finalize first bars a later rollback');
+  }
   // ------------------------------------------------------------------------------------------------ C3-R6 presentation failure after payment
   {
     SWSEDialogV2.prototype.render = function () { try { this.data?.buttons?.yes?.callback?.(); } catch { /* not the Force Point dialog */ } return this; };

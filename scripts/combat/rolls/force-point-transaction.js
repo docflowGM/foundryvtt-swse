@@ -14,6 +14,8 @@
  *               afterwards), is once-only per step (a completed step is never repeated, concurrent calls share one run), and never throws: a
  *               presentation failure returns false and is recorded (chatPosted / hookRan / announceError) without touching the spend.
  *
+ * Terminal-state precedence (one client): the first of rollback() / announce() / finalize() to be ACCEPTED wins, decided synchronously. An accepted
+ * rollback bars finalize/announce/commit (rollbackAccepted); a final use bars rollback. Same-operation calls share one run.
  * Concurrency (one client; Foundry has no compare-and-swap): commit() and rollback() are single-flight — simultaneous callers share one run and one
  * outcome, and a rollback waits for an in-flight commit. state: new -> committing -> committed -> (final) | rolled-back; a commit whose spend threw
  * AFTER the pool visibly changed is 'indeterminate': closed, never repeated, never refunded automatically.
@@ -41,6 +43,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     committed: false,
     closed: false,
     final: false,    // the use is complete: it can no longer be refunded
+    rollbackAccepted: false,   // a rollback was accepted for execution: nothing may finalize, announce or re-claim the commitment
     spentNormal: 0,
     gaveBonus: [],   // [{ entry, amount }] — what this spend took from each bonus entry
     shown: null,
@@ -49,7 +52,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     announced: false,
     announceError: null,
     commit() {
-      if (tx.closed) {return Promise.resolve(false);}
+      if (tx.closed || tx.rollbackAccepted) {return Promise.resolve(false);}
       if (tx.committed) {return Promise.resolve(true);}
       commitRun ??= tx._commit().finally(() => { commitRun = null; });
       return commitRun;
@@ -94,16 +97,24 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     },
     /** Marks a committed use as complete (no later refund). announce() does this itself. */
     finalize() {
-      if (!tx.committed || tx.closed) {return false;}
+      if (!tx.committed || tx.closed || tx.rollbackAccepted) {return false;}
       tx.final = true;
       return true;
     },
-    async rollback() {
+    rollback() {
       if (rollbackRun) {return rollbackRun;}
+      if (tx.closed || tx.final || !(tx.committed || commitRun)) {return Promise.resolve(false);}
+      tx.rollbackAccepted = true;   // synchronously, before the first await: from here no competing call can finalize, announce or re-claim the spend
       rollbackRun = (async () => {
-        if (commitRun) {await commitRun.catch(() => false);}   // never refund while the spend is still being decided
-        if (!tx.committed || tx.closed || tx.final) {return false;}
-        return tx._rollback();
+        try {
+          if (commitRun) {await commitRun.catch(() => false);}   // never refund while the spend is still being decided
+          if (!tx.committed || tx.closed) {return false;}
+          return await tx._rollback();
+        } finally {
+          // Nothing was spent (the commit failed): the claim lapses. Otherwise it stays — a refund that was attempted and failed part-way is never
+          // announced or finalized as a completed use; it may only be retried.
+          if (!tx.committed && !tx.closed) {tx.rollbackAccepted = false;}
+        }
       })().finally(() => { rollbackRun = null; });
       return rollbackRun;
     },
@@ -138,7 +149,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       }
     },
     announce() {
-      if (!tx.committed || tx.closed) {return Promise.resolve(false);}
+      if (!tx.committed || tx.closed || tx.rollbackAccepted) {return Promise.resolve(false);}
       tx.final = true;   // synchronously: from here a refund is refused
       if (tx.announced) {return Promise.resolve(true);}
       announceRun ??= tx._announce().finally(() => { announceRun = null; });
