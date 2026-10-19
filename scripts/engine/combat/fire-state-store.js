@@ -6,7 +6,7 @@
 // Legacy/custom weapons and canonical forms with no temporal constraint pass straight through: nothing is read or written.
 import { evaluateReadiness, stateAfterFire, stateAfterReload, evaluatePrime, statePrimed, evaluateBrace } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/fire-state.js";
 import { resolveAttackShapeFor, resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
-import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { hostEligibility } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/host-mount.js";
 import { resolveEffectiveWieldingSize, resolveHeldGroup, sizeStateOf, sizeIndexOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
 import { powerSourceStatus, powerSourceLabel, POWER_SOURCE_STATES } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/power-source.js";
@@ -140,9 +140,14 @@ export function applyOwnedSelection(actor, weapon, rollOptions = {}) {
   return rollOptions;
 }
 
-const heldDeps = { shapeOf: (w) => { try { return shapeOfWeapon(w, {}); } catch { return null; } }, proficient: (w, a) => { try { return resolveCanonicalAttackProficiency(resolveAttackWeaponRuntime(w, {}), a).proficient === true; } catch { return false; } }, equipped: (w, a) => isItemEquipped(w, a) };
+const heldDeps = { shapeOf: (w) => { try { return shapeOfWeapon(w, {}); } catch { return null; } }, proficient: (w, a) => { try { return resolveCanonicalAttackProficiency(resolveAttackWeaponRuntime(w, {}), a).proficient === true; } catch { return false; } } };
 /** The held-together group of an owned weapon as it stands NOW (proficiency, ownership, equipped, off-hand designation, other groups all re-checked). */
-export function heldGroupOf(actor, weapon, idsOverride = null) { return resolveHeldGroup(actor, weapon, heldDeps, idsOverride); }
+// E4-C1 WP5: "held" is the canonical effective posture. Only the group's PRIMARY can be established as held: the occupancy model has no representation for
+// several weapons held in ONE hand (each READIED weapon claims its own appendage), so a member can never be established and a group fails closed
+// (`member-not-equipped`) -- the sticks then count as separate weapons. Decision register EQ-002 (DEFERRED_RULES_REVIEW).
+export function heldGroupOf(actor, weapon, idsOverride = null) {
+  return resolveHeldGroup(actor, weapon, { ...heldDeps, equipped: (it, a) => it === weapon && isWeaponReadied(a, it) }, idsOverride);
+}
 const heldTogetherActive = (actor, weapon) => heldGroupOf(actor, weapon).count >= 2;
 
 /**
@@ -186,15 +191,38 @@ export function previewReadiness(actor, weapon, runtime, rollOptions = {}) {
   return { applies: true, ...r, ready: blockers.length === 0, blockers, requiredActions: [...(r.requiredActions ?? []), ...prepActions], notes: [...(r.notes ?? []), ...power.notes], powerSource: power.status, clock };
 }
 
+/** Fire-state fields the equipment-state coordinator owns (posture-relevant). No FireStateStore operation ever writes them. */
+export const COORDINATOR_OWNED_FIRE_STATE_KEYS = Object.freeze(['wielded']);
+
+/**
+ * Field-scoped update for a fire-state change: ONLY the keys that differ from the stored record, one dotted path each, never a coordinator-owned
+ * key and never the whole record. A concurrent change to another key (in particular the coordinator-owned grip choice) is therefore never overwritten.
+ */
+export function fireStateUpdateFor(previous, next) {
+  const prev = previous && typeof previous === 'object' ? previous : null;
+  const update = {};
+  for (const key of new Set([...Object.keys(prev ?? {}), ...Object.keys(next ?? {})])) {
+    if (COORDINATOR_OWNED_FIRE_STATE_KEYS.includes(key) || key === 'v') continue;
+    const before = prev?.[key]; const after = next?.[key];
+    if (JSON.stringify(before) === JSON.stringify(after)) continue;
+    if (after === undefined) update[`${FLAG_PATH}.-=${key}`] = null;
+    else update[`${FLAG_PATH}.${key}`] = after;
+  }
+  if (Object.keys(update).length && !prev) update[`${FLAG_PATH}.v`] = 1;
+  return update;
+}
+
 async function writeState(actor, weapon, state, { strict = false } = {}) {
   if (!weapon) return;
   const owner = weapon.actor ?? actor;
+  const update = fireStateUpdateFor(readFireState(weapon), state);
+  if (!Object.keys(update).length) return;
   try {
     if (owner && weapon.id) {
       const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-      await ActorEngine.updateOwnedItems(owner, [{ _id: weapon.id, [FLAG_PATH]: state }]);
+      await ActorEngine.updateOwnedItems(owner, [{ _id: weapon.id, ...update }]);
     } else if (typeof weapon.update === 'function') {
-      await weapon.update({ [FLAG_PATH]: state });
+      await weapon.update(update);
     }
   } catch (err) {
     // combat-state writes are best-effort (the attack still resolved); mount / unmount are strict and report the failure
@@ -228,13 +256,11 @@ export async function commitFired(actor, weapon, runtime, rollOptions = {}, paid
   const state = readFireState(weapon);
   const clock = currentClock(actor);
   // Phase 5D-I-B: owned-state changes this attack made true (the weapon remembers them): the persistent setting in effect, the configuration it
-  // is in, the machine position, the hands the player chose, and a recorded use of a usage-limited profile
+  // is in, the machine position, and a recorded use of a usage-limited profile. The hands are NOT recorded here: the grip choice is coordinator-owned.
   const owned = {};
   if (shape.stunSetting?.weaponHasSwitch === true && (state?.settingProfile ?? shape.stunSetting.baselineProfileId) !== shape.profileId) owned.settingProfile = shape.profileId;
   if (shape.configuration?.ids?.length && shape.configuration.id && (state?.configurationId ?? shape.configuration.defaultId) !== shape.configuration.id) owned.configurationId = shape.configuration.id;
   if (shape.machine && clock && asArrayOf(shape.machine.states).includes(shape.profileId) && currentMachineState(shape.machine, state?.machine, clock).state !== shape.profileId) owned.machine = machineAfterTransition(shape.profileId, clock);
-  const hands = rollOptions.wieldedHands === 2 || rollOptions.wieldedHands === 'two-handed' ? 'two-handed' : rollOptions.wieldedHands === 1 || rollOptions.wieldedHands === 'one-handed' ? 'one-handed' : null;
-  if (hands && state?.wielded !== hands) owned.wielded = hands;
   for (const req of asArrayOf(shape.requirements).filter((r) => r?.type === 'usage-limit')) {
     const key = usageKey(shape.profileId, req);
     owned.usage = { ...(owned.usage ?? state?.usage ?? {}), [key]: recordUsage(req, state?.usage?.[key], { worldTime: worldTimeNow() }) };
@@ -306,10 +332,26 @@ export async function setStockState(actor, weapon, stockState, { free = false } 
   return { ok: true, state: await persistOwned(actor, weapon, { stock: stockState }) };
 }
 
-/** The player's current hands choice ('one-handed' | 'two-handed'); no action is stated for it. Weapon constraints still decide legality at attack time. */
-export async function setWielding(actor, weapon, hands) {
+/**
+ * NON-WRITING plan for the player's hands choice ('one-handed' | 'two-handed'). The grip choice is posture-relevant, so only the equipment-state
+ * coordinator persists it, in the same journaled transaction as the posture change. No action is stated for the choice itself; weapon constraints
+ * still decide legality (E3 grip resolver, attack time). Returns `{ ok, patch }` where `patch` holds the exact field paths and values, or a reason.
+ */
+export function planWielding(weapon, hands) {
   if (hands !== 'one-handed' && hands !== 'two-handed') return { ok: false, reason: 'invalid-wielding' };
-  return { ok: true, state: await persistOwned(actor, weapon, { wielded: hands }) };
+  const patch = { [`${FLAG_PATH}.wielded`]: hands };
+  const stored = readFireState(weapon);
+  if (!stored || typeof stored !== 'object') patch[`${FLAG_PATH}.v`] = 1;
+  return { ok: true, patch };
+}
+
+/** The owned configuration selection that decides the weapon's SHAPE (and so its required hands); nothing else, so it cannot recurse into readiness. */
+export function ownedConfigurationSelection(weapon) {
+  const state = readFireState(weapon);
+  if (!state || typeof state.configurationId !== 'string') return {};
+  let shape;
+  try { shape = shapeOfWeapon(weapon, {}); } catch { return {}; }
+  return shape.source === 'canonical' && shape.configuration?.ids?.includes(state.configurationId) ? { configurationId: state.configurationId } : {};
 }
 
 /**
@@ -387,13 +429,13 @@ export async function setMounted(actor, weapon, mounted) {
   return { ok: true, state: await persistOwned(actor, weapon, { mounted: mounted === true }) };
 }
 
-/** The held-together choice a weapon offers (identical weapons held in one hand), or null. candidates = other owned, equipped, non-off-hand sticks of that identity. */
+/** The held-together choice a weapon offers (identical weapons held in one hand), or null. `candidates` is empty until the occupancy model can represent a shared hand (EQ-002). */
 export function heldTogetherOptions(actor, weapon) {
   let shape;
   try { shape = shapeOfWeapon(weapon, {}); } catch { return null; }
   if (shape.source !== 'canonical' || !shape.heldTogether) return null;
   const sameWeapon = (i) => { const sh = heldDeps.shapeOf(i); return !!sh && sh.source === 'canonical' && sh.identityKey === shape.identityKey; };
-  const free = (i) => i?.type === 'weapon' && i.id !== weapon.id && isItemEquipped(i, actor) && i.system?.isOffhand !== true && i.system?.slot !== 'offhand';
+  const free = () => false; // no member can currently be established as held with the primary (EQ-002): no candidate is offered
   const candidates = Array.from(actor?.items ?? []).filter((i) => free(i) && sameWeapon(i)).map((i) => ({ id: i.id, label: i.name }));
   const group = heldGroupOf(actor, weapon);
   return { candidates, max: 1 + candidates.length, current: group.count, memberIds: group.memberIds };
@@ -618,5 +660,5 @@ function configurationOptions(item) {
   } catch (_err) { return { canonical: false, states: [], defaultId: null }; }
 }
 
-export const FireStateStore = Object.freeze({ powerSourceOf, reloadOptions, setPowerSourceState, reloadBySecondCrew, configurationOptions, currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, setWielding, setMounted, sizeTreatmentOptions, setSizeTreatment, heldTogetherOptions, setHeldTogether, heldGroupOf, mountOnHost, unmountFromHost, mountHostOptions, hasMountRule, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
+export const FireStateStore = Object.freeze({ powerSourceOf, reloadOptions, setPowerSourceState, reloadBySecondCrew, configurationOptions, currentClock, readFireState, previewReadiness, applyOwnedSelection, spendRequiredActions, commitFired, clearReload, primePreparedAttack, setStockState, planWielding, ownedConfigurationSelection, setMounted, sizeTreatmentOptions, setSizeTreatment, heldTogetherOptions, setHeldTogether, heldGroupOf, mountOnHost, unmountFromHost, mountHostOptions, hasMountRule, setConfiguration, setLoadedPayload, recordCrewRegulation, storedCrewRegulation, resetUsage, previewBrace });
 export default FireStateStore;

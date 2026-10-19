@@ -19,6 +19,8 @@
  *     (an uncertain collision), never into a certified one, and the probe's own row is never used to certify it. A claim that cannot even be read
  *     (a malformed record whose appendage list is unreadable) makes the actor's occupancy `incomplete`, and then no EQUIPPED/READIED is certified.
  *     Established collisions (two valid ordinary records) remain the resolver's `blocked`; this module re-implements no conflict rule.
+ *   - A biological actor without authoritative species evidence (`deps.resolveSpeciesProfile`) never gets a positive posture from the resolver's
+ *     provisional default arms (gate `species-evidence-unavailable`).
  *   - Unresolved coordinator transactions (the transaction journal) withhold every posture of the Items they cover until FINALIZED or
  *     NOT_APPLIED; an unreadable journal withholds all positive readiness. Absent weapon records carry no claim (they are `undeclared`).
  *   - Natural and integrated weapons have no certified Item identity yet (the binding verifier is a later work package, the droid refactor is
@@ -36,7 +38,7 @@ import { resolvePhysicalOccupancy } from '/systems/foundryvtt-swse/scripts/engin
 import { resolveEquipmentGrips } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-grip-resolver.js';
 import { resolveEffectiveEquipmentPosture, EFFECTIVE_POSTURE_STATUS } from '/systems/foundryvtt-swse/scripts/engine/equipment/effective-equipment-posture.js';
 import { shapeOfWeapon } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
-import { readFireState } from '/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js';
+import { readFireState, ownedConfigurationSelection } from '/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js';
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js';
 
 /** Codes: INVALID_ACTOR, INVALID_ITEMS, INVALID_ITEM, DUPLICATE_ITEM_ID, INVALID_DEPS. */
@@ -148,7 +150,8 @@ export function readActorEquipmentState(actor, deps) {
   if (!actor || typeof actor !== 'object') throw new EquipmentStateInputError('INVALID_ACTOR', 'actor must be an Actor-like object');
   const d = readDeps(deps);
   const overlay = d.overlay;
-  const shapeFor = d.shapeOfWeapon ?? ((item) => shapeOfWeapon(item, {}));
+  // the shape is the weapon's CURRENT owned configuration (it can change the required hands), so a configuration change is re-verified on every read
+  const shapeFor = d.shapeOfWeapon ?? ((item) => shapeOfWeapon(item, ownedConfigurationSelection(item)));
   const baseFireState = d.readFireState ?? readFireState;
   const fireStateOf = (item) => {
     const own = baseFireState(item);
@@ -257,6 +260,10 @@ export function readActorEquipmentState(actor, deps) {
     return { ...base, effective, status: effective.status, effectivePosture: effective.effectivePosture, issues: [] };
   });
 
+  // a biological actor with no authoritative species evidence has no certified anatomy: the resolver's provisional default arms must never
+  // establish a held or ready posture. (Droid anatomy comes from installed components, which are certified separately and stay deferred.)
+  const speciesEvidenceMissing = !speciesProfile && actor.type !== 'droid';
+
   // ---- fail-closed gates: an unresolved transaction withholds every posture; incomplete or uncertain occupancy withholds positive readiness ----
   for (const w of weapons) {
     const positive = w.effectivePosture === 'EQUIPPED' || w.effectivePosture === 'READIED';
@@ -265,6 +272,7 @@ export function readActorEquipmentState(actor, deps) {
     if (txns) gates.push({ code: 'unresolved-equipment-transaction', details: { transactions: txns } });
     if (evaluateTxn && journal.status === JOURNAL_STATUS.INVALID && positive) gates.push({ code: 'equipment-journal-unreadable', details: { issues: journal.issues } });
     if (positive && occupancyEvidence.completeness === 'incomplete') gates.push({ code: 'occupancy-completeness-unestablished', details: { unreadableClaims: occupancyEvidence.unreadableClaims } });
+    if (positive && speciesEvidenceMissing) gates.push({ code: 'species-evidence-unavailable', details: { actorType: typeof actor.type === 'string' ? actor.type : '' } });
     const collisions = uncertainCollisions.filter((c) => c.itemId === w.itemId);
     if (positive && collisions.length) gates.push({ code: 'uncertain-occupancy-collision', details: { collisions } });
     if (!gates.length) continue;

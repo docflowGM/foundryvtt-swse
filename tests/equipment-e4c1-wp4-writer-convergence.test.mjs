@@ -56,6 +56,9 @@ const OWNED = ['system.weaponPosture', 'system.weaponOccupancy', 'flags.swse.fir
   const owners = tracked.filter((f) => f.endsWith('.js') && /weaponPosture|weaponOccupancy/.test(read(f)));
   assert.deepEqual(owners.sort(), [
     'scripts/actors/base/swse-actor-base.js',                          // guard regex only
+    'scripts/actors/derived/defense-calculator.js',                    // cache signature (reads posture/occupancy/grip as revision keys)
+    'scripts/actors/derived/derived-calculator.js',                    // cache signature
+    'scripts/engine/effects/modifiers/ModifierEngine.js',              // cache signature
     'scripts/engine/equipment/equipment-state-coordinator.js',         // the one writer
     'scripts/engine/equipment/equipment-state-reader.js',              // reader
     'scripts/engine/equipment/equipment-transaction-journal.js',       // journal docs only

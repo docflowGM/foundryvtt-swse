@@ -103,12 +103,12 @@ ok('a failed action spend leaves the weapon stowed (owned fields compensated, jo
 }
 ok('stowed saber cannot activate; drawn activates (Swift); active saber cannot stow; inactive can');
 
-{ // Draw & Ignite: unavailable until the coordinator supports the combined action; nothing is written or spent
+{ // Draw & Ignite: without the Quick Draw combined action nothing is written or spent (the supported path is covered by the WP5 suite)
   const s = saber(), a = mk([s]); spent.length = 0; writes.length = 0;
-  const r = await InventoryEngine.drawAndActivateLightsaber(a, 's1');
-  assert.equal(r.ok, false); assert.equal(r.status, 'COORDINATOR_SUPPORT_REQUIRED'); assert.equal(spent.length, 0); assert.equal(writes.length, 0);
+  const r = await InventoryEngine.drawAndActivateLightsaber(a, 's1', { appendageIds: ['natural-arm-1'], grip: 'one-handed', deps: opts.deps });
+  assert.equal(r.ok, false); assert.equal(r.status, 'REJECTED_PRECONDITION'); assert.equal(spent.length, 0); assert.equal(writes.length, 0);
 }
-ok('Draw & Ignite is unavailable (and writes and spends nothing) until the coordinator supports the combined action');
+ok('Draw & Ignite without the Quick Draw combined action is refused by the coordinator and writes and spends nothing');
 
 { // shield
   const sh = { id: 'sh', name: 'Energy Shield (SR 10)', type: 'armor', system: { equipped: true, armorType: 'shield', shieldRating: 10, currentSR: 0, activated: false, charges: { current: 5, max: 5 } } };

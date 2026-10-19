@@ -27,14 +27,22 @@ import {
 } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js';
 import { validateWeaponRecord, validateWeaponRecordTransition, WEAPON_RECORD_STATUS, WEAPON_OCCUPANCY_SCHEMA_VERSION } from '/systems/foundryvtt-swse/scripts/engine/equipment/weapon-record-invariants.js';
 import { EQUIPMENT_POSTURE } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-posture.js';
-import { readFireState } from '/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js';
+import { readFireState, planWielding } from '/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js';
 
 /** The explicit local GM execution context. A request is executed only when this exact object is supplied. */
 export const GM_LOCAL_CONTEXT = Object.freeze({ kind: 'gm-local-execution', remote: false });
-export const INTENT_TYPES = Object.freeze(['stow', 'equip', 'ready']);
+export const INTENT_TYPES = Object.freeze(['stow', 'equip', 'ready', 'ready-ignite']);
 export const GRIPS = Object.freeze(['one-handed', 'two-handed']);
 /** Field paths the coordinator may write on a weapon Item. Nothing else is ever sent. */
 export const OWNED_PATHS = Object.freeze(['system.weaponPosture', 'system.weaponOccupancy', 'flags.swse.fireState.wielded', 'flags.swse.fireState.v']);
+/**
+ * Activation fields written ONLY by the combined `ready-ignite` intent (the published single-Swift Draw & Ignite). They are included in the same
+ * journaled, verified, spend-last transaction as the posture record because igniting a drawn blade and drawing it are one action: two separately
+ * committed transactions could leave a free ignition or a double spend. They mirror exactly what InventoryEngine.setActivated writes when it ignites
+ * a lightsaber (activation flag, the legacy `active` mirror when present, and the emit-light/blade-color flags the light sync consumes).
+ */
+export const IGNITE_PATHS = Object.freeze(['system.activated', 'system.active', 'flags.foundryvtt-swse.emitLight', 'flags.foundryvtt-swse.bladeColor']);
+export const COMBINED_DRAW_IGNITE_ACTION_ID = 'drawAndIgniteLightsaber';
 
 export const OUTCOME = Object.freeze({
   COMMITTED: 'COMMITTED',
@@ -101,7 +109,7 @@ function getPath(obj, path) {
 const deletionPath = (path) => { const i = path.lastIndexOf('.'); return `${path.slice(0, i)}.-=${path.slice(i + 1)}`; };
 
 // ------------------------------------------------------------------------------------------------------------------ intent validation
-const INTENT_KEYS = { stow: ['type', 'itemId'], equip: ['type', 'itemId', 'purpose', 'appendageIds'], ready: ['type', 'itemId', 'appendageIds', 'grip'] };
+const INTENT_KEYS = { stow: ['type', 'itemId'], equip: ['type', 'itemId', 'purpose', 'appendageIds'], ready: ['type', 'itemId', 'appendageIds', 'grip'], 'ready-ignite': ['type', 'itemId', 'appendageIds', 'grip'] };
 
 /** Validate and normalize an intent. Requester identity is NOT part of an intent: any unsupported field is refused. */
 export function validateIntent(intent) {
@@ -121,7 +129,7 @@ export function validateIntent(intent) {
     if (!['hold', 'wield'].includes(intent.purpose)) throw new EquipmentIntentError('INVALID_INTENT', "intent.purpose must be 'hold' or 'wield'");
     out.purpose = intent.purpose;
   }
-  if (intent.type === 'ready' && has(intent, 'grip') && intent.grip !== undefined) {
+  if ((intent.type === 'ready' || intent.type === 'ready-ignite') && has(intent, 'grip') && intent.grip !== undefined) {
     if (!GRIPS.includes(intent.grip)) throw new EquipmentIntentError('INVALID_INTENT', `intent.grip must be one of ${GRIPS.join(', ')}`);
     out.grip = intent.grip;
   }
@@ -154,6 +162,18 @@ async function defaultSpendMarkerPresent(actor, requestId) {
   const history = ActionEconomyPersistence.getTurnState(actor, combatId)?.history;
   return Array.isArray(history) && history.some((h) => h?.metadata?.requestId === requestId);
 }
+async function defaultResolveCombinedDrawIgnite(actor, item) {
+  // the existing combined-action authority: the Quick Draw action-speed mutation's combined effect (its feat prerequisite is filtered by the
+  // authority itself) names the action and its cost. The sheet view model reads the same effect to offer the action.
+  const { resolveActionCost } = await import('/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js');
+  const mutation = resolveActionCost(actor, 'drawOrHolsterWeapon', { workflowValidated: true, weaponId: item.id, direction: 'draw' });
+  const effect = (Array.isArray(mutation?.combinedEffects) ? mutation.combinedEffects : []).find((e) => e?.actionId === COMBINED_DRAW_IGNITE_ACTION_ID);
+  return effect ? { available: true, actionType: effect.actionCost ?? null } : { available: false, actionType: null };
+}
+async function defaultResolveBladeColor(actor, item) {
+  const { WeaponVisualProfileResolver } = await import('/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js');
+  return WeaponVisualProfileResolver.resolve(item, { actor })?.bladeColor ?? null;
+}
 async function defaultIsLightsaber(item) {
   const { WeaponVisualProfileResolver } = await import('/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js');
   return WeaponVisualProfileResolver.isLightsaber(item) === true;
@@ -162,7 +182,7 @@ async function defaultIsLightsaber(item) {
 function readDeps(deps) {
   if (deps === undefined || deps === null) return {};
   if (!isPlain(deps)) throw new EquipmentIntentError('INVALID_DEPS', 'deps must be an object');
-  for (const k of ['writeItems', 'writeJournal', 'resolveActionCost', 'spendAction', 'spendMarkerPresent', 'isLightsaber', 'isGm', 'loadSpecies', 'readOwnedPaths', 'now']) {
+  for (const k of ['writeItems', 'writeJournal', 'resolveActionCost', 'spendAction', 'spendMarkerPresent', 'isLightsaber', 'resolveCombinedDrawIgnite', 'resolveBladeColor', 'isGm', 'loadSpecies', 'readOwnedPaths', 'now']) {
     if (deps[k] !== undefined && typeof deps[k] !== 'function') throw new EquipmentIntentError('INVALID_DEPS', `deps.${k} must be a function`);
   }
   if (deps.ledger !== undefined && !(deps.ledger instanceof Map)) throw new EquipmentIntentError('INVALID_DEPS', 'deps.ledger must be a Map');
@@ -217,7 +237,19 @@ async function buildPlan(actor, intent, deps, requestIntentDigest) {
   if (entry.record.status === WEAPON_RECORD_STATUS.INVALID) return reject('weapon-record-invalid', 'The weapon record is malformed. It is never silently replaced; an explicit repair is a separate, unauthorized operation.');
 
   const currentPosture = entry.record.status === WEAPON_RECORD_STATUS.VALID ? entry.record.posture : null;
-  const targetPosture = intent.type === 'stow' ? EQUIPMENT_POSTURE.STOWED : intent.type === 'equip' ? EQUIPMENT_POSTURE.EQUIPPED : EQUIPMENT_POSTURE.READIED;
+  const ignite = intent.type === 'ready-ignite';
+  const kind = ignite ? 'ready' : intent.type;
+  const targetPosture = kind === 'stow' ? EQUIPMENT_POSTURE.STOWED : kind === 'equip' ? EQUIPMENT_POSTURE.EQUIPPED : EQUIPMENT_POSTURE.READIED;
+  let combined = null;
+  if (ignite) {
+    // Draw & Ignite is a DRAW (from STOWED) plus an ignition, priced as the combined feat action. Activation stays distinct from posture:
+    // a weapon that is already drawn is ignited through the plain activation path, never through this intent.
+    if (!(await (deps.isLightsaber ?? defaultIsLightsaber)(item))) return reject('not-a-lightsaber', 'Draw & Ignite applies to lightsabers only.');
+    if (item.system?.activated === true || item.system?.active === true) return reject('already-activated', 'The lightsaber is already activated; there is nothing to ignite.');
+    if (currentPosture !== EQUIPMENT_POSTURE.STOWED) return reject('combined-action-requires-stowed-weapon', 'Draw & Ignite draws a STOWED weapon; a weapon that is already drawn is activated through the ordinary activation action.', { posture: currentPosture });
+    combined = await (deps.resolveCombinedDrawIgnite ?? defaultResolveCombinedDrawIgnite)(actor, item);
+    if (!combined?.available || !nonEmpty(combined.actionType)) return reject('combined-action-not-available', 'The combined Draw & Ignite action is not available to this actor (Quick Draw and Weapon Proficiency (Lightsabers) are required); no cost is assumed.');
+  }
   if (currentPosture === null && targetPosture !== EQUIPMENT_POSTURE.STOWED) return reject('weapon-record-absent', 'The weapon has no record. It must first be initialized explicitly with a stow intent; no posture is assumed.');
   if (currentPosture && currentPosture !== EQUIPMENT_POSTURE.STOWED && targetPosture !== EQUIPMENT_POSTURE.STOWED) {
     return planResult(OUTCOME.DEFERRED_RULES_REVIEW, { ...base, issues: [issue('equipped-readied-transition-cost-unspecified', 'blocking', `Changing a drawn weapon between EQUIPPED, READIED or other appendages has no established action cost. Decision ${DEFERRED_DECISION_ID} is deferred for rules review; nothing is written.`, { decisionId: DEFERRED_DECISION_ID, from: currentPosture, to: targetPosture })] });
@@ -229,10 +261,10 @@ async function buildPlan(actor, intent, deps, requestIntentDigest) {
   let grip = null;
   if (targetPosture === EQUIPMENT_POSTURE.STOWED) targetRecord = { weaponPosture: 'STOWED', weaponOccupancy: { schemaVersion: WEAPON_OCCUPANCY_SCHEMA_VERSION, purpose: null, appendageIds: [] } };
   else {
-    const purpose = intent.type === 'ready' ? 'wield' : intent.purpose;
+    const purpose = kind === 'ready' ? 'wield' : intent.purpose;
     if (!purpose) choices.push({ id: 'purpose', options: ['hold', 'wield'] });
     if (!intent.appendageIds) choices.push({ id: 'appendageIds', options: state.anatomy.appendages.map((a) => ({ id: a.id, functionalState: a.functionalState })) });
-    if (intent.type === 'ready') { grip = intent.grip ?? null; if (!grip) choices.push({ id: 'grip', options: [...GRIPS] }); }
+    if (kind === 'ready') { grip = intent.grip ?? null; if (!grip) choices.push({ id: 'grip', options: [...GRIPS] }); }
     if (choices.length) return planResult(OUTCOME.CHOICE_REQUIRED, { ...base, choices, issues: [issue('explicit-choice-required', 'info', 'The coordinator never selects appendages, a purpose or a grip; the caller must supply them.', { itemId: intent.itemId })] });
     targetRecord = { weaponPosture: targetPosture, weaponOccupancy: { schemaVersion: WEAPON_OCCUPANCY_SCHEMA_VERSION, purpose, appendageIds: [...intent.appendageIds] } };
   }
@@ -246,7 +278,8 @@ async function buildPlan(actor, intent, deps, requestIntentDigest) {
   const direction = currentPosture === EQUIPMENT_POSTURE.STOWED && targetPosture !== EQUIPMENT_POSTURE.STOWED ? 'draw' : currentPosture && currentPosture !== EQUIPMENT_POSTURE.STOWED && targetPosture === EQUIPMENT_POSTURE.STOWED ? 'holster' : null;
   if (direction === 'holster' && item.system?.activated === true && await (deps.isLightsaber ?? defaultIsLightsaber)(item)) return reject('deactivate-before-stowing', 'An activated lightsaber must be deactivated before it is stowed.');
   let action = { required: false, actionType: null, direction: null };
-  if (direction) {
+  if (ignite) action = { required: true, actionType: combined.actionType, direction: 'draw' };
+  else if (direction) {
     const actionType = await (deps.resolveActionCost ?? defaultResolveActionCost)(actor, item, direction);
     if (!nonEmpty(actionType)) return reject('action-cost-unavailable', 'The existing action-cost authority returned no cost; none is assumed.', { direction });
     action = { required: true, actionType, direction };
@@ -279,8 +312,17 @@ async function buildPlan(actor, intent, deps, requestIntentDigest) {
   // exact owned-field changes with their current values (journal before-values)
   const set = { 'system.weaponPosture': targetRecord.weaponPosture, 'system.weaponOccupancy': targetRecord.weaponOccupancy };
   if (grip) {
-    set['flags.swse.fireState.wielded'] = grip;
-    if (!isPlain(readFireState(item))) set['flags.swse.fireState.v'] = 1;
+    // the hands choice is a FireStateStore operating-state rule; the plan builder validates it and names the exact fields. This module writes them.
+    const wielding = planWielding(item, grip);
+    if (!wielding.ok) return reject('invalid-grip', 'FireStateStore does not accept this hands choice.', { grip });
+    Object.assign(set, wielding.patch);
+  }
+  if (ignite) {
+    set['system.activated'] = true;
+    // the legacy `active` mirror is kept in step only where the Item already carries it (same rule as InventoryEngine.setActivated)
+    if (item.system?.active !== undefined) set['system.active'] = true;
+    set['flags.foundryvtt-swse.emitLight'] = true;
+    set['flags.foundryvtt-swse.bladeColor'] = await (deps.resolveBladeColor ?? defaultResolveBladeColor)(actor, item);
   }
   const before = {}; const beforeAbsent = [];
   for (const p of Object.keys(set)) { const v = getPath(item, p); if (v === undefined) beforeAbsent.push(p); else before[p] = clone(v); }
@@ -419,7 +461,8 @@ async function runExecution(actor, request, intent, ctx, ledger, deps) {
 
   // ---- validate exact field changes ----
   const write = plan.itemWrites[0];
-  const badPaths = Object.keys(write.set).filter((p) => !OWNED_PATHS.includes(p));
+  const allowedPaths = intent.type === 'ready-ignite' ? [...OWNED_PATHS, ...IGNITE_PATHS] : OWNED_PATHS;
+  const badPaths = Object.keys(write.set).filter((p) => !allowedPaths.includes(p));
   if (badPaths.length) return finish(outcomeOf(OUTCOME.REJECTED_PRECONDITION, ctx, { issues: [issue('field-not-coordinator-owned', 'blocking', 'A planned field is not coordinator-owned.', { paths: badPaths })] }));
 
   // ---- journal PREPARED (before any Item is modified) ----
@@ -514,4 +557,4 @@ export async function inspectEquipmentTransaction(actor, requestId, deps) {
   return deepFreeze({ found: true, journalStatus: journal.status, phase: entry.phase, unresolved: isUnresolved(entry), classification: c.classification, spend: c.spend, reasons: [...c.reasons], perItem: c.perItem.map((p) => ({ ...p })) });
 }
 
-export default { planEquipmentIntent, executeEquipmentIntent, inspectEquipmentTransaction, validateIntent, GM_LOCAL_CONTEXT, OUTCOME, OWNED_PATHS, INTENT_TYPES, GRIPS, EquipmentIntentError, DEFERRED_DECISION_ID };
+export default { IGNITE_PATHS, planEquipmentIntent, executeEquipmentIntent, inspectEquipmentTransaction, validateIntent, GM_LOCAL_CONTEXT, OUTCOME, OWNED_PATHS, INTENT_TYPES, GRIPS, EquipmentIntentError, DEFERRED_DECISION_ID };

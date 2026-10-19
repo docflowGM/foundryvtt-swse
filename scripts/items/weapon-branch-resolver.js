@@ -714,6 +714,11 @@ function isIntegratedDroidWeapon(item, actor) {
 }
 
 /**
+ * @deprecated E4-C1 WP5: this legacy equipped-flag predicate is NOT a readiness authority and must not drive combat selection, effects or
+ * reactions. Weapon readiness is `isWeaponReadied()` in equipment/combat-readiness.js. It remains only for the sheet presentation importers
+ * (concept-context.js, RowTransformers.js) until WP6 migrates them; a guard test pins that allowlist.
+ */
+/**
  * Canonical "is this item currently equipped/wielded" authority. Recognizes
  * every equip-state shape live in the codebase (system.equipped,
  * system.isEquipped, system.active, system.readied,

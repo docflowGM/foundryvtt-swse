@@ -24,7 +24,9 @@ export function installCoordinatorHarness(ActorEngine, { isGm = true } = {}) {
     log.actorWrites.push(JSON.parse(JSON.stringify(data)));
     for (const [k, v] of Object.entries(data)) setPath(actor, k, v);
   };
+  const human = { status: 'resolved', profile: { name: 'Human' }, reason: null, evidence: { speciesName: 'Human', variantId: null } };
   const deps = {
+    resolveSpecies: () => human,
     loadSpecies: async () => ({ status: 'resolved', profile: { name: 'Human' }, reason: null, evidence: { speciesName: 'Human', variantId: null } }),
   };
   return { log, deps, setGm: (v) => { globalThis.game.user.isGM = v; } };

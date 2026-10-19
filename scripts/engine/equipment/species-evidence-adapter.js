@@ -22,24 +22,14 @@ function recordedSpeciesName(actor) {
 }
 const recordedVariantId = (actor) => norm(actor?.system?.speciesVariant?.id ?? actor?.flags?.swse?.speciesVariant?.id ?? null);
 
-/**
- * @param {object} actor Actor-like (read only)
- * @param {{registry?:object, applyVariant?:Function}} [deps] test seams; default to the SpeciesRegistry and applySpeciesVariantProfile
- */
-export async function loadActorSpeciesProfile(actor, deps = {}) {
-  const registry = deps.registry ?? SpeciesRegistry;
-  const apply = deps.applyVariant ?? applySpeciesVariantProfile;
+function resolveWith(actor, registry, apply) {
   const speciesName = recordedSpeciesName(actor);
   const variantId = recordedVariantId(actor);
   const evidence = { speciesName, variantId, publication: null };
   const unavailable = (reason) => Object.freeze({ status: 'unavailable', profile: null, reason, evidence: Object.freeze({ ...evidence }) });
   try {
     if (!speciesName) return unavailable('actor-species-not-recorded');
-    if (typeof registry.isInitialized === 'function' && !registry.isInitialized()) {
-      if (typeof registry.initialize !== 'function') return unavailable('species-registry-unavailable');
-      await registry.initialize();
-      if (!registry.isInitialized()) return unavailable('species-registry-unavailable');
-    }
+    if (typeof registry.isInitialized === 'function' && !registry.isInitialized()) return unavailable('species-registry-unavailable');
     const entry = registry.getByName(speciesName);
     if (!entry) return unavailable('species-not-in-registry');
     evidence.publication = getPublicationStatus(entry);
@@ -64,4 +54,29 @@ export async function loadActorSpeciesProfile(actor, deps = {}) {
   }
 }
 
-export default { loadActorSpeciesProfile };
+/**
+ * SYNCHRONOUS resolution straight from the live registry authority. Nothing is cached here: every call re-reads the registry and the actor's
+ * recorded species/variant. When the registry is not initialized the result is `unavailable` (fail closed); it is never guessed.
+ * @param {object} actor Actor-like (read only)
+ * @param {{registry?:object, applyVariant?:Function}} [deps] test seams
+ */
+export function resolveActorSpeciesProfile(actor, deps = {}) {
+  return resolveWith(actor, deps.registry ?? SpeciesRegistry, deps.applyVariant ?? applySpeciesVariantProfile);
+}
+
+/**
+ * Asynchronous form: initializes the registry once if needed (the only asynchronous step), then resolves exactly as the synchronous form.
+ * @param {object} actor Actor-like (read only)
+ * @param {{registry?:object, applyVariant?:Function}} [deps] test seams
+ */
+export async function loadActorSpeciesProfile(actor, deps = {}) {
+  const registry = deps.registry ?? SpeciesRegistry;
+  try {
+    if (typeof registry.isInitialized === 'function' && !registry.isInitialized() && typeof registry.initialize === 'function') await registry.initialize();
+  } catch {
+    // resolveWith reports the registry as unavailable
+  }
+  return resolveActorSpeciesProfile(actor, deps);
+}
+
+export default { loadActorSpeciesProfile, resolveActorSpeciesProfile };

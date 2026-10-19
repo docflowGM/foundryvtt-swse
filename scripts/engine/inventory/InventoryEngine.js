@@ -11,14 +11,12 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
-import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
-import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isEnergyShieldItem, isArmorItemEquipped, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
 import { planEquipmentIntent, executeEquipmentIntent, GM_LOCAL_CONTEXT, OUTCOME as EQUIPMENT_OUTCOME, EquipmentIntentError } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-state-coordinator.js";
-import { readActorEquipmentState } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-state-reader.js";
-import { loadActorSpeciesProfile } from "/systems/foundryvtt-swse/scripts/engine/equipment/species-evidence-adapter.js";
+import { readCombatReadiness, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
 const NON_STACKABLE_TYPES = ["weapon", "armor", "shield", "lightsaber"];
@@ -40,10 +38,9 @@ async function spendItemAction(actor, actionType, item, reason) {
 const isWeaponItem = (item) => ["weapon", "lightsaber"].includes(String(item?.type ?? "").toLowerCase());
 
 async function readWeaponEntry(actor, itemId, deps = {}) {
-  const species = await (deps.loadSpecies ?? loadActorSpeciesProfile)(actor);
-  const state = readActorEquipmentState(actor, { ...(deps.reader ?? {}), ...(species?.status === "resolved" ? { resolveSpeciesProfile: () => species.profile } : {}) });
-  const entry = state.weapons.find((w) => w.itemId === itemId) ?? null;
-  return entry ? { ...entry, speciesEvidence: species?.status ?? "unavailable" } : null;
+  const readiness = readCombatReadiness(actor, deps);
+  const entry = readiness.state?.weapons.find((w) => w.itemId === itemId) ?? null;
+  return entry ? { ...entry, speciesEvidence: readiness.speciesEvidence.status } : null;
 }
 
 function reasonOfStatus(status, plan, outcome) {
@@ -175,7 +172,7 @@ export class InventoryEngine {
     const shield = isEnergyShield(item);
 
     if (next && visualProfile.isLightsaber && !(await this.isWeaponDrawn(actor, item, { deps }))) return { ok: false, reason: "draw-before-activating" };
-    if (next && shield && !isItemEquipped(item, actor)) return { ok: false, reason: "equip-before-activating" };
+    if (next && shield && !isArmorItemEquipped(item)) return { ok: false, reason: "equip-before-activating" };
 
     if (visualProfile.isLightsaber && next) {
       update["flags.foundryvtt-swse.emitLight"] = true;
@@ -248,10 +245,8 @@ export class InventoryEngine {
 
   /** Whether a weapon is VERIFIED held (effective EQUIPPED or READIED) by the equipment-state reader. Declared posture alone is never enough. */
   static async isWeaponDrawn(actor, item, { deps = {} } = {}) {
-    const entry = await readWeaponEntry(actor, item?.id, deps);
-    // no authoritative species evidence -> no certified appendage -> not verified drawn (fail closed)
-    if (entry?.speciesEvidence !== "resolved") return false;
-    return entry?.effectivePosture === "EQUIPPED" || entry?.effectivePosture === "READIED";
+    // the shared interface fails closed without authoritative species evidence, an unresolved transaction or uncertified identity
+    return isWeaponHeld(actor, item, deps);
   }
 
   /**
@@ -287,15 +282,20 @@ export class InventoryEngine {
   }
 
   /**
-   * Draw AND ignite as ONE Swift Action (Quick Draw + Weapon Proficiency (Lightsabers)). The coordinator has no combined draw-and-activate
-   * intent yet, and this layer neither writes posture nor splits the published single action into two spends, so the operation is unavailable
-   * until the coordinator supports it. Nothing is written or spent. (E4-C1 WP4 dependency; see the WP4 checkpoint.)
+   * Draw AND ignite a lightsaber as ONE combined action (Quick Draw + Weapon Proficiency (Lightsabers), Swift). It is a single coordinator
+   * `ready-ignite` intent: one plan, one journaled transaction covering the posture record, the grip and the activation fields, one spend (spend-last),
+   * and usability only after FINALIZED. This layer chooses nothing: appendages and grip come from `options` (otherwise CHOICE_REQUIRED, nothing
+   * written). Eligibility and cost come from the existing combined-feat authority through the coordinator.
    */
-  static async drawAndActivateLightsaber(actor, itemId) {
+  static async drawAndActivateLightsaber(actor, itemId, options = {}) {
     const item = actor?.items?.get?.(itemId);
     if (!actor || !item) return { ok: false, reason: "missing-item" };
     if (!WeaponVisualProfileResolver.isLightsaber(item)) return { ok: false, reason: "not-lightsaber" };
-    return { ok: false, changed: false, status: "COORDINATOR_SUPPORT_REQUIRED", reason: "combined-draw-ignite-requires-coordinator-support", message: "Draw and ignite as one Swift Action needs coordinator support that is not available yet. Draw the weapon, then ignite it." };
+    const intent = { type: "ready-ignite", itemId, ...(options.appendageIds ? { appendageIds: options.appendageIds } : {}), ...(options.grip ? { grip: options.grip } : {}) };
+    const result = await this.requestWeaponPosture(actor, intent, { requestId: options.requestId ?? null, deps: options.deps });
+    // light sync is a consumer of the finalized state; it never decides readiness
+    if (result.ok && result.changed) await LightsaberLightSync.syncActorTokenLight(actor, item);
+    return result;
   }
 
 

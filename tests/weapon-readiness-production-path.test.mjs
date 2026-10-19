@@ -154,11 +154,13 @@ ok('Quick Draw makes Draw/Stow a Swift via the existing action-speed metadata');
 
   const s2 = saber(); const a = mkActor([s2, quickDrawFeat(), lightsaberProf()]);
   assert.equal(gearEntries(a).get('s1').weaponReadiness.canDrawAndIgnite, true);
-  r = await InventoryEngine.drawAndActivateLightsaber(a, 's1');
-  assert.equal(r.ok, false); assert.equal(r.status, 'COORDINATOR_SUPPORT_REQUIRED'); assert.deepEqual(spent, []);
+  // E4-C1 WP5: the combined action is a coordinator intent over a STOWED record. This saber has no record at all (no posture is assumed), so the plan
+  // is refused and nothing is written or spent.
+  r = await InventoryEngine.drawAndActivateLightsaber(a, 's1', opts);
+  assert.equal(r.ok, false); assert.equal(r.status, 'REJECTED_PRECONDITION'); assert.deepEqual(spent, []);
   assert.equal(s2.system.weaponPosture, undefined, 'posture untouched'); assert.equal(isItemActivated(s2), false); assert.equal(harness.log.itemWrites.length, w);
 }
-ok('Draw & Ignite: reports COORDINATOR_SUPPORT_REQUIRED and writes and spends nothing (the published single-Swift action returns with coordinator support)');
+ok('Draw & Ignite from the sheet path: a weapon with no record is refused by the coordinator and nothing is written or spent; the committed path is covered by the WP5 suite');
 
 { // 9. alternate weapons: no lightsaber activation affordance
   const sword = { id: 'ss', name: 'Sith Sword', type: 'weapon', system: { equipped: true } };
