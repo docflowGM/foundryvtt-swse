@@ -254,4 +254,27 @@ const OWNED = ['system.weaponPosture', 'system.weaponOccupancy', 'flags.swse.fir
   ok('13: the migrated inventory layer and sheet handler hold no weapon rule and fabricate no default appendage assignment');
 }
 
+{
+  // WP5 correction: setWeaponReadied(true) never reports success for a weapon that is only EQUIPPED or whose declared READIED is unverified
+  const eq = weapon('e', REC('EQUIPPED', 'hold', ['natural-arm-2']));
+  const declared = weapon('d', REC('READIED', 'wield', ['natural-arm-2']));   // no grip choice recorded: not verified
+  const real = weapon('r', REC('READIED', 'wield', ['natural-arm-1']));
+  real.flags.swse.fireState = { v: 1, wielded: 'one-handed' };
+  const a = mkActor([eq, real]); spent.length = 0; h.log.itemWrites.length = 0; h.log.actorWrites.length = 0;
+  let r = await InventoryEngine.setWeaponReadied(a, 'e', true, opts);
+  assert.equal(r.ok, false); assert.equal(r.status, 'DEFERRED_RULES_REVIEW'); assert.notEqual(r.status, 'NO_CHANGE');
+  r = await InventoryEngine.setWeaponReadied(a, 'e', true, { ...opts, appendageIds: ['natural-arm-1'], grip: 'one-handed' });
+  assert.equal(r.status, 'DEFERRED_RULES_REVIEW', 'explicit appendages do not bypass EQ-001');
+  assert.equal(eq.system.weaponPosture, 'EQUIPPED'); assert.deepEqual(spent, []); assert.equal(h.log.itemWrites.length, 0); assert.equal(h.log.actorWrites.length, 0);
+  r = await InventoryEngine.setWeaponReadied(a, 'r', true, opts);
+  assert.equal(r.ok, true); assert.equal(r.status, 'NO_CHANGE', 'a VERIFIED READIED weapon is the only no-change case');
+  const b = mkActor([declared]);
+  r = await InventoryEngine.setWeaponReadied(b, 'd', true, opts);
+  assert.equal(r.ok, false); assert.equal(r.status, 'READINESS_NOT_VERIFIED'); assert.equal(r.reason, 'declared-readied-not-verified');
+  const c = mkActor([weapon('s', REC('STOWED', null, []))]);
+  r = await InventoryEngine.setWeaponReadied(c, 's', true, opts);
+  assert.equal(r.status, 'CHOICE_REQUIRED', 'STOWED -> READIED keeps its explicit-choice path');
+  ok('14: setWeaponReadied(true) is NO_CHANGE only for verified READIED; EQUIPPED stays DEFERRED_RULES_REVIEW (no write, journal or spend) and unverified declared READIED is READINESS_NOT_VERIFIED');
+}
+
 console.log(`equipment-e4c1-wp4-writer-convergence: ${n} checks ok`);

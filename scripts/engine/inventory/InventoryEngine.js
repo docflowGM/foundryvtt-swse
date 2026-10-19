@@ -266,7 +266,13 @@ export class InventoryEngine {
     const requestOptions = { requestId: options.requestId ?? null, deps: options.deps };
     if (readied !== true) return this.requestWeaponPosture(actor, { type: "stow", itemId }, requestOptions);
     const entry = await readWeaponEntry(actor, itemId, options.deps ?? {});
-    if (entry?.record?.status === "valid" && entry.record.posture !== "STOWED") return { ok: true, changed: false, status: "NO_CHANGE", reason: "no-change", readied: true };
+    // READIED is success only when it is VERIFIED (effective). A stored EQUIPPED weapon is held, not ready; a declared READIED that the canonical
+    // resolvers do not establish is not ready either. A held weapon that still needs the transition falls through to the coordinator, which
+    // returns DEFERRED_RULES_REVIEW (EQ-001) without writing or spending; nothing is inferred here.
+    if (entry?.effectivePosture === "READIED" && !entry.pending && !(entry.gates?.length)) return { ok: true, changed: false, status: "NO_CHANGE", reason: "no-change", readied: true };
+    if (entry?.record?.status === "valid" && entry.record.posture === "READIED") {
+      return { ok: false, changed: false, status: "READINESS_NOT_VERIFIED", reason: "declared-readied-not-verified", readied: false, message: "This weapon is recorded as ready, but its appendages, grip or evidence are not verified, so it is not treated as ready.", gates: entry.gates ?? [], issues: [...(entry.effective?.issues ?? []), ...(entry.issues ?? [])].filter((i) => i.severity !== "info").map((i) => i.code) };
+    }
     const intent = { type: "ready", itemId, ...(options.appendageIds ? { appendageIds: options.appendageIds } : {}), ...(options.grip ? { grip: options.grip } : {}) };
     return this.requestWeaponPosture(actor, intent, requestOptions);
   }
