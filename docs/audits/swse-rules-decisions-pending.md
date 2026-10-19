@@ -909,6 +909,40 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Decision authority | Project owner |
 | Resolution | |
 
+## EQ-002 — Identical weapons held together in one hand (held-together groups)
+
+| Field | Content |
+|---|---|
+| Rules domain | Equipment posture / occupancy (modeling blocker) |
+| Feature | Holding several identical small weapons (e.g. sticks, as in the existing `heldGroupOf` / `heldTogetherOptions` wielding-size feature) in a single hand |
+| Source | Existing project feature in `scripts/items/weapon-runtime/wielding-size.js` and `fire-state-store.js` (`heldGroupOf`, `heldTogetherOptions`); no printed page was located for the underlying rule in this change |
+| Evidence | The legacy implementation grouped identical weapons by a stored equipped flag and an `isOffhand` marker. The clean-break occupancy model (E3-A2) assigns each weapon its own appendage ids and has no representation of several weapons sharing one appendage |
+| Confirmed behavior | None for the clean-break model. The legacy grouping depended on retired fields (equipped booleans, `isOffhand`) that WP5 forbids as authorities |
+| Unresolved question | Whether and how several identical weapons may share one appendage, and how that is recorded in `system.weaponOccupancy` (a data-shape decision with rules content: group size, which member is the attacking weapon, and the per-member posture) |
+| Options | None supported by a located source |
+| Recommended ruling | None |
+| Implementation impact | WP5 fails closed: `heldGroupOf` treats only the primary weapon as held and returns `member-not-equipped` for others; `heldTogetherOptions` offers no candidates. No grouped-hold bonus or penalty is computed from any inferred group. Held-together tests assert this documented fail-closed behavior |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## EQ-003 — Weapons with no established hand-wielding class cannot be READIED (worn weapons, vehicle-scale weapons)
+
+| Field | Content |
+|---|---|
+| Rules domain | Equipment posture / grip (modeling blocker) |
+| Feature | Worn weapons (Combat Gloves, Shockboxing Gloves, Stunning Gauntlet, wrist weapons) and weapons whose canonical size gives no hand-wielding class for the wielder (e.g. Tactical Tractor Beam) |
+| Source | Canonical weapon registry (`data/weapons/canonical-weapon-registry.json`) declarations for the named identities; no printed page was located that states how these are held, readied or kept "in hand" |
+| Evidence | The grip resolver (E3-A3) leaves these weapons `indeterminate` (`worn-weapon-configuration-uncertified`, or no size classification), so the effective-posture resolver (E3-A5) never establishes READIED. The legacy boolean treated them as simply "equipped" |
+| Confirmed behavior | Worn / unclassified weapons are never verified READIED. Mounted / worn certification was deferred by the project owner |
+| Unresolved question | How a worn weapon or a weapon without a wielding class becomes ready (and therefore which rules keyed to a "wielded" weapon apply to it): categorical disarm protection of gloves and gauntlets, control maintenance for the tractor beam, reaction and effect eligibility |
+| Options | None supported by a located source |
+| Recommended ruling | None |
+| Implementation impact | WP5 fails closed: such weapons are not ready, so effects with `application: 'equipped'`, reactions, weapon-control maintenance and disarm-protection checks keyed to a ready weapon do not apply to them. The declarations themselves (e.g. `cannotBeDisarmed`) are unchanged data. Tests assert the fail-closed behavior |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -919,3 +953,4 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 - **Revision 5 (2026-10-14, D-001 PDF verification):** D-001 resolved from the printed page 39 image (appended source-examination, **Blocker lifted** and source-resolution rows; no existing row changed). New entries D-013 (installation procedure of the 156 typed definitions the page does not demonstrably govern; `PENDING_SOURCE_VERIFICATION`, ledger scope `ALL` except the 56 governed Scum definitions) and D-014 (points the printed procedure leaves undefined; `DEFERRED_RULES_REVIEW`, no ledger scope). No recommended ruling on any entry. D-003 (equipment size) is untouched.
 - **Revision 6 (2026-10-14, PR #1043 review corrections; applied to entries this unmerged PR introduced, plus appended rows):** (a) D-013's base scope is now `ALL` and its 76 governed definitions are released by an appended evidence-bound **Partial lift** row instead of an `except=` list; the generator pins every Ledger scope row by SHA-256, so the scope cannot be altered without a reviewed code change, and a partial lift releases nothing unless it names existing parent definitions inside the scope with `source=` and `evidence=` (and `owner-ruling=` for deferred entries) citing an existing repository file. (b) D-014 now has a Ledger scope on the 76 governed definitions so its unresolved sub-flows are machine-enforced; its former item (5) moved to the new research entry **D-015** (`PENDING_SOURCE_VERIFICATION`, same scope). No recommended ruling on any entry.
 - **Revision 4 (2026-10-17, E4-C1 WP3-A):** appended EQ-001 (action cost of changing a drawn weapon between drawn configurations). No existing entry was changed; no recommended ruling was added.
+- **Revision 5 (2026-10-19, E4-C1 WP5):** appended EQ-002 (held-together groups of identical weapons are not representable in the occupancy model; fail-closed) and EQ-003 (worn weapons and weapons without a wielding class cannot be READIED; fail-closed). No existing entry was changed; no recommended ruling was added.
