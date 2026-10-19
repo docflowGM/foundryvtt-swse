@@ -1,0 +1,81 @@
+{
+  "schema": "swse.vehicle.sotg.cp20.controlled-evidence-corrections.v1",
+  "originalSourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "originalCp16LedgerBlobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557",
+  "closeoutBlobSha": "8b9307825ac6c3ce583d0a91f977ae7f3c6f97ec",
+  "originalCloseoutAliasInvalid": "sotg-acclamator-ii-class-assault-ship",
+  "actualAcclamatorSourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-ii-class-transgalactic-military-assault-ship",
+  "corrections": [
+    {
+      "id": "SOTG-CP20-C01",
+      "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-ii-class-transgalactic-military-assault-ship",
+      "cp16Index": 1,
+      "printedPage": 57,
+      "attackGroupIndex": 1,
+      "field": "hardwareCount",
+      "originalValue": "SOURCE_SILENT_CONFIRMED",
+      "sourceVerifiedValue": 2,
+      "evidenceType": "EXPLICIT_INSTALLED_HARDWARE_COUNT",
+      "auditOnly": true
+    },
+    {
+      "id": "SOTG-CP20-C02",
+      "sourceEntryKey": "sotg-slave-i",
+      "cp16Index": 30,
+      "printedPage": 85,
+      "attackGroupIndex": 1,
+      "field": "damage",
+      "originalValue": "10d10x2",
+      "sourceVerifiedValue": "8d10x2",
+      "evidenceType": "PRINTED_DAMAGE_TRANSCRIPTION",
+      "auditOnly": true
+    },
+    {
+      "id": "SOTG-CP20-C03",
+      "sourceEntryKey": "sotg-hapan-battle-dragon",
+      "cp16Index": 37,
+      "printedPage": 93,
+      "attackGroupIndex": 5,
+      "field": "hardwareCount",
+      "originalValue": "SOURCE_SILENT_CONFIRMED",
+      "sourceVerifiedValue": 4,
+      "evidenceType": "EXPLICIT_INSTALLED_HARDWARE_COUNT",
+      "auditOnly": true
+    },
+    {
+      "id": "SOTG-CP20-C04",
+      "sourceEntryKey": "sotg-nebula-class-star-destroyer",
+      "cp16Index": 60,
+      "printedPage": 119,
+      "attackGroupIndex": 2,
+      "field": "damage",
+      "originalValue": "11d10x5 ion",
+      "sourceVerifiedValue": "3d10x5 ion",
+      "evidenceType": "PRINTED_DAMAGE_TRANSCRIPTION",
+      "auditOnly": true
+    }
+  ],
+  "narrativeClassification": [
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-in-fighter",
+      "printedPage": 142,
+      "field": "hyperdrive",
+      "oldState": "SOURCE_SILENT_CONFIRMED",
+      "newEvidence": "EXPLICITLY_ABSENT_IN_NARRATIVE_BUT_STATBLOCK_KEY_NOT_PRINTED",
+      "auditOnly": true
+    }
+  ],
+  "pendingSemantics": [
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-gat-12h",
+      "printedPage": 131,
+      "field": "againstSmallerThanColossal",
+      "globalPenalty": -20,
+      "resultingAttack": -15,
+      "adjudicated": false
+    }
+  ],
+  "originalLedgerChanged": false,
+  "productionDataChanged": false,
+  "physicalOrRuntimeGrants": 0
+}
