@@ -7,7 +7,7 @@
 |---|---|---|
 | Document update | Resolves with the documents **actually changed** (an empty array when nothing changed or the target is missing) | "No exception" is not proof of persistence; confirm the intended document in the result (done for FireStateStore in WP5-C3) |
 | Compare-and-swap | **None.** Flags (`setFlag`) and `update` are last-write-wins | No contract can promise cross-client isolation; it can only *detect* conflicts after the fact or serialize on one client |
-| Multi-document atomicity | **None.** Sequential awaited writes; partial states are visible to other clients | "Atomic" may be claimed only for a **single** document update, or stated as "all-or-compensated, best effort" |
+| Multi-document atomicity | **None.** Sequential awaited writes; partial states are visible to other clients. **A single `TransactionEngine`/`ActorEngine.applyMutationPlan` plan is still sequential** (CREATE → DELETE → SET → UPDATE → ADD) | "Atomic" may be claimed only for a **single** document update, or stated as "all-or-compensated, best effort". Submitting two changes in one plan gives shared ordering, lock and audit — **not** atomicity; the writes and the recovery outcome must still be verified |
 | Client model | Every client can write what it owns; GM-only execution is a convention (`GM_LOCAL_CONTEXT`), not a lock | Per-actor FIFO queues and in-flight sets are **process-local** |
 | Increment/decrement | No atomic increment; credits and Force Points are read-modify-write | Re-read immediately before writing and verify after; never claim isolation |
 
@@ -75,7 +75,10 @@ The audit proposed `PREPARED`, `APPLIED_UNVERIFIED`, `COMMITTED_VERIFIED`, `FAIL
 3. TI-3 — progression sub-gap, follower contract, GM approvals by stable id.
 4. TI-4 — property tests per domain, static guards ("no atomic claim on non-transactional path", "commerce spend only through the commerce authority", "no `undoLast` outside the action-economy authority"), optional `classifyOutcome`.
 
-## 8. Open questions for the owner (TI-0 does not decide them)
+## 8. Owner rulings (2026-10-19, independent review of TI-0)
+**Resolved:** (1) fail closed when recovery cannot be verified — **approved (D1)**; (2) the vehicle `UpgradeService` branch — **deferred, unchanged (D3)**; (3) client-generated operation id surfaced in the UI for purchase retries — still **open**, not needed before TI-2's refusal/verification work.
+
+### Original questions as asked by TI-0 (preserved)
 1. **Fail-closed purchases without a snapshot (TX-08a):** accept refusing a purchase/customization when no recovery snapshot can be created, instead of today's silent best-effort? This changes behavior in a failure case only; it is a commerce-policy choice.
 2. **Vehicle upgrade path charges nothing** (`UpgradeService` vehicle branch). Out of scope for integrity work; flagging so it is not "fixed" as a side effect.
 3. Whether retries of the same *purchase* should be recognized by a client-generated operation id surfaced in the UI (a UX/commerce decision) or only prevented in-process.

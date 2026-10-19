@@ -24,6 +24,15 @@
 | PR #1056 `961f4bc` | **399 run, 399 passed, 0 failed**, same 5 exclusions | local final run **and** CI run 39318390232 success |
 | Delta | +18 test files | the equipment branch's added suites (E-series, WP5, C1–C3) |
 | CI guards on the equipment head | all pass (combat-math / outcome / critical / reroll / vehicle / crew guards, modification registry and runtime `--check`/`--validate`, feat-pack, feat-inventory, syntax check on 2,911 files, partials, `system.json`) | |
+**Evidence levels (used throughout this package; they must not be conflated):**
+| Level | Meaning | Examples here |
+|---|---|---|
+| **L0** | Static reading of committed source | reachability, call graphs, TX-09/10/12/13 |
+| **L1** | **Offline model test**: real production modules, but the shim's **fake `ActorEngine`** and in-memory persistence | `repro-tx01`, `tx03`, `tx05/06`, `tx08`, `tx11`; the WP5-C1…C3 unit suites |
+| **L2** | **Real `ActorEngine` method executed offline** with stubbed persistence/dice (and, where stated, stubbed executors) | `repro-tx04`, `repro-c3-…-vs-real-engine` (real `spendForcePoints`/`gainForcePoints`); `repro-tx07` (real `applyMutationPlan` control flow; executors and `restoreFromSnapshot` stubbed) |
+| **L3** | **Foundry runtime certification** (real documents, real persistence, multiple clients) | **none performed — nothing in this package is `FOUNDRY_TESTED`** |
+An L1 result demonstrates the *logic* of the code under test; it is not evidence about Foundry persistence. L2 is stronger for the engine methods it exercises but still stubs persistence. Only L3 can settle concurrency, real snapshot-restore fidelity and live document-update semantics.
+
 **Harness limitation (TI-N1):** the offline shim replaces `ActorEngine` with a fake. A green offline suite therefore says nothing about the real `spendForcePoints`, `gainForcePoints`, `applyMutationPlan`, `updateEmbeddedDocuments` or snapshot restore. TI-0 loads the real engine by file URL for the Force Point and plan repros; the WP5-C3 Force Point transaction, previously tested only against a model, was **verified against the real `spendForcePoints`/`gainForcePoints`** (4/4 scenarios correct).
 
 ## 3. Findings snapshot (details: `tx-remediation-ledger.md`)
@@ -36,7 +45,13 @@
 | `INACTIVE_LEGACY` | TX-09 (`MutationCoordinator`/`MutationPlan`) · TX-10 (`StoreTransactionEngine`, Droid/VehicleTransactionService) · `InstallRemoveEngine` install path · `ModificationIntentBuilder` · `safeMutateActor` |
 | `NOT_REPRODUCED` | TX-05b (cross-actor false **replay**) — the audit's wording did not hold; only a false conflict does |
 | `CERTIFICATION_GATE` | TX-14 (`selectable: 0`) — not bypassed |
-Sixteen reproductions pass as "defect present" and seven as "absent/corrected" (`repro/captured-output.txt`, `main` `4392c90`, equipment `961f4bc`).
+**Reading the 23 reproduction results** (`repro/captured-output.txt`; `main` `4392c90`, equipment `961f4bc`). `REPRODUCED` means *the described behavior is present in that tree*; it is **not** always a defect:
+- **16 `REPRODUCED`** =
+  - **12 demonstrated defects:** TX-01, TX-03, TX-03b, TX-04a, TX-04b, TX-08a, TX-08b, TX-08c, TX-11a, TX-11b, TX-05 (the narrow false conflict) and TX-06 (authority-unavailable shape, injected);
+  - **2 documented-by-design behaviors** (evidence of a `DESIGN_GAP`, not a coding bug): TX-07a (default non-transactional apply) and TX-07b (existing whole-actor restore);
+  - **1 caveated:** TX-01b (retry duplicate; eligibility catalog was stubbed, so it is not established);
+  - **1 intentional-policy control:** TX-06 `out-of-combat` — the established no-op policy, included only to show the coordinator cannot tell it apart from an unavailable authority. **It is not a defect.**
+- **7 `NOT REPRODUCED`** = 2 corrections confirmed on `961f4bc` (TX-03, TX-03b); 1 audit claim not borne out (TX-05b, cross-actor replay); 4 verifications that the WP5-C3 Force Point transaction is correct against the real engine methods (`C3-real-1…4`) — here "not reproduced" is the desired result.
 
 **Findings beyond the audit** (`TI-N1`…`N8`): offline harness fakes `ActorEngine`; `TransactionEngine` ignores a non-throwing failed restore and logs success; the same snapshot-continue pattern in `executeCreditAdjustment` (the most-called commerce entry); the Force Point coordinator refunds a spent *bonus* point to the normal pool; absolute credit writes and four direct credit writers; `assignAsAlly`/`unassignAlly` ignore `rollbackFailed`; the progression post-apply sync reporting a false failure; the action-economy `undoLast` remains history-last (guarded, not removed).
 
@@ -44,7 +59,7 @@ Sixteen reproductions pass as "defect present" and seven as "absent/corrected" (
 | Pkg | Scope | Branch base | Depends on | Risk |
 |---|---|---|---|---|
 | **TI-1** resources | TX-03 follow-through, TX-04 coordinator, TX-05, TX-06, harness graft promoted to a shared helper | child of PR #1056 head `961f4bc` (the fixes reuse C3 code that is not on `main`) | independent acceptance of WP5-C3 | medium (equipment-adjacent) |
-| **TI-2** commerce/upgrades | TX-01, TX-08 (+credit-adjustment twin), TI-N3 classification | main-based | owner decision D1 (fail closed without a snapshot) | high (live commerce) |
+| **TI-2** commerce/upgrades | TX-01, TX-08 (+credit-adjustment twin), TI-N3 classification. **Must** address, as separate verified requirements: (a) snapshot-creation failure ⇒ refuse; (b) non-throwing `restoreSnapshot(false)` ⇒ explicit `rollback-failed`, never "successful"; (c) unsafe whole-actor restoration of unrelated concurrent state ⇒ no extension of it; (d) **write verification and recovery outcome checking** — a single `TransactionEngine`/`ActorEngine` plan is *not* multi-document atomic (see TX-01 ledger entry). A snapshot alone is never a sufficient recovery guarantee | main-based | D1 (**approved**, below) | high (live commerce) |
 | **TI-3** progression/followers/approvals | TX-11, TI-N5, TI-N6, TX-10 live approvals | main-based | TI-2 (shared `TransactionEngine`) | medium |
 | **TI-4** contract + guards | property tests, static guards, optional `classifyOutcome` | main-based | TI-1…TI-3 accepted | low |
 Each package: fail-before reproduction → deterministic negative test → smallest change → targeted regressions → full rolling suite → CI guards → commit/push → exact-head CI → **stop for independent review**.
@@ -63,13 +78,14 @@ Each package: fail-before reproduction → deterministic negative test → small
 **Not in TI-1:** migrating the 30 inline Force Point spenders; removing `undoLast`; any cross-client lock; any rules change; modification code.
 **Acceptance:** all new tests fail at `961f4bc` and pass after; full rolling suite green; every guard green; exact-head CI green; ledger rows updated with commit SHAs; unresolved items stay `DESIGN_GAP`/`INTENTIONAL_LIMITATION` rather than being relabeled.
 
-## 6. Owner decisions requested (none are made by TI-0)
-| # | Decision | Needed before |
+## 6. Owner rulings (independent review of TI-0, 2026-10-19) — recorded, not made by TI-0
+| # | Question | Ruling |
 |---|---|---|
-| D1 | May a purchase/customization **refuse** (explicit error) when no recovery snapshot can be created, instead of today's silent continue? (TX-08a; failure-case behavior only) | TI-2 |
-| D2 | Run TI-1 as a child of PR #1056 only **after** WP5-C3's independent acceptance (recommended), or immediately on top of `961f4bc`? | TI-1 start |
-| D3 | Confirm the vehicle branch of `UpgradeService` (installs without charging) is **out of scope** for integrity work and stays as is. | TI-2 |
-| D4 | Confirm that `InstallRemoveEngine`/`CustomizationWorkflow.applyInstall`, `ModificationIntentBuilder`, `MutationCoordinator`/`MutationPlan`, `StoreTransactionEngine` and `Droid/VehicleTransactionService` (all INACTIVE) are to be left untouched now and handled in the V2 prune, not here. | TI-3/TI-4 |
+| D1 | Refuse a purchase/customization when no recovery snapshot can be created? | **APPROVED.** Purchases and customization transactions refuse with an explicit error when required recovery capability cannot be established. A snapshot being *created* is not proof that a later restore will succeed; recovery must be **verifiable**. Do not extend unsafe whole-actor restoration. |
+| D2 | TI-1 sequencing | **APPROVED:** wait for independent acceptance of WP5-C3 at `961f4bc` before beginning TI-1; then TI-1 proceeds as a focused child of PR #1056 with its own bounded review and no merges into `main`. Preserve both branches and their PR histories. |
+| D3 | `UpgradeService` vehicle branch (installs without charging) | **DEFERRED.** Leave unchanged; record for separate rules/commerce review. **This is not authorization to certify free vehicle upgrades as correct.** |
+| D4 | Inactive legacy implementations | **APPROVED deferral.** Leave untouched; removal belongs to the separately authorized V2 cleanup after dynamic-reachability and regression verification. |
+**Status:** TI-0 *conditionally accepted* pending exact-head CI on this branch and the four documentation corrections (made in the follow-up commit). **TI-0 is stopped.** Nothing else (TI-1, T4d-3, modification integration, dead-code deletion) starts before WP5-C3 is independently accepted.
 
 ## 7. Limitations of this checkpoint
 Static reachability only (no runtime trace); repros use the shim (fake `ActorEngine`; stubs named in `repro/README.md`); TX-10 concurrent approval, TX-08c concurrent credit write, TX-13 flag last-write-wins, real snapshot-restore fidelity and the live occurrence of `economy-modules-unavailable` are **Foundry-runtime-only**; the audit's TX-12 retry-duplicate claim (`tx01b`) depends on an eligibility catalog that was stubbed; `executeAssetApprovalTransaction`, `executeSaleTransaction`, `executeRollbackCorrection`, `executeAssetCustomizationTransaction` were not individually audited.
