@@ -53,8 +53,8 @@ assert B["authorityBlobs"] == {
 }
 for entry in B["authorityBlobs"].values():
     assert blob_sha(root / entry["path"]) == entry["sha"], entry["path"] + " changed"
-assert C["baseline"]["ledgerBlobSha"] == B["authorityBlobs"]["l"]["sha"]
-assert C["baseline"]["cp19CloseoutBlobSha"] == B["authorityBlobs"]["c"]["sha"]
+assert C["originalCp16LedgerBlobSha"] == B["authorityBlobs"]["l"]["sha"]
+assert C["closeoutBlobSha"] == B["authorityBlobs"]["c"]["sha"]
 assert C["originalCloseoutAliasInvalid"] == "sotg-acclamator-ii-class-assault-ship"
 assert C["actualAcclamatorSourceEntryKey"] == L["entries"][1]["sourceEntryKey"]
 assert C["originalLedgerChanged"] is False
@@ -95,12 +95,12 @@ for i, (key, page, row, field, old, new) in enumerate(canonical):
 assert len(C["narrativeClassification"]) == 1
 narr = C["narrativeClassification"][0]
 assert narr["sourceEntryKey"] == "sotg-sienar-fleet-systems-tie-in-fighter"
-assert narr["originalState"] == "SOURCE_SILENT_CONFIRMED"
+assert narr["oldState"] == "SOURCE_SILENT_CONFIRMED"
 assert narr["newEvidence"] == "EXPLICITLY_ABSENT_IN_NARRATIVE_BUT_STATBLOCK_KEY_NOT_PRINTED"
-assert narr["cp16Unchanged"] is True
+assert narr["auditOnly"] is True
 assert len(C["pendingSemantics"]) == 1
 assert C["pendingSemantics"][0]["resultingAttack"] == -15
-assert C["pendingSemantics"][0]["sizePenalty"] == -20
+assert C["pendingSemantics"][0]["globalPenalty"] == -20
 assert C["pendingSemantics"][0]["adjudicated"] is False
 
 previous = {row["sourceEntryKey"]: row for row in T["entries"]}
