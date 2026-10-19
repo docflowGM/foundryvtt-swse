@@ -943,6 +943,36 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Decision authority | Project owner |
 | Resolution | |
 
+## EQ-002 — Addendum 1 (2026-10-19, E4-C1 WP5-C1): source verification and reclassification
+
+Append-only. The original EQ-002 entry above is unchanged.
+
+| Field | Content |
+|---|---|
+| Published mechanic | `SOURCE_VERIFIED` — *Galaxy at War*, printed p. 36 (Darkstick): a character proficient with darksticks may hold several in one hand; the group counts as one weapon dealing 2d8 instead of 1d6; more than two add no damage. (Verified from the supplied sourcebook text extraction, not from a rendered PDF page.) |
+| Implemented behavior | Not certified. No group is honoured |
+| Model / design | Unresolved. The gap is a technical representation, not an absent printed rule |
+| Temporary handling | Fail-closed remains in effect: `heldGroupOf` / `heldTogetherOptions` honour no group; the grouped profile is unselectable |
+| Required model properties (not an approved schema) | A source-governed composite wielding group: explicit member Item identities; explicit chosen appendage and grouping; eligibility limited by canonical published equipment identity and proficiency; one effective weapon/attack source for the qualifying group; group-aware occupancy verification instead of arbitrary appendage sharing; no duplicate attack generation or damage/effect stacking; correct behavior when a member is dropped, thrown, transferred or removed. Not every collection of identical weapons may share a hand |
+| Future acceptance tests | Required: `data/audits/equipment-acceptance-debt.json` item `EQ-002/darkstick-group` |
+| Status | `SOURCE_VERIFIED` (mechanic) / `DEFERRED_RULES_REVIEW` → model certification pending |
+
+## EQ-003 — Addendum 1 (2026-10-19, E4-C1 WP5-C1): source reconciliation
+
+Append-only. The original EQ-003 entry above is unchanged. EQ-003 covers distinct published mechanisms, not one universal exemption.
+
+| Item | Source (printed page) | Established behavior |
+|---|---|---|
+| Combat Gloves | *Saga Edition Core Rulebook* p. 121 | Worn; +1 damage on successful unarmed attacks; cannot be disarmed or dropped |
+| Stunning Gauntlet | *Knights of the Old Republic Campaign Guide* p. 202 | Worn; converts the wearer's unarmed melee attacks to stun damage and adds +1 stun damage; cannot be disarmed or dropped |
+| Tactical Tractor Beam | *Galaxy at War* p. 42 | May be mounted on a large droid or vehicle, or operated from a tripod (treated one size smaller for wielding; a Medium character operates that configuration with two hands); requires a power generator; normally a second adjacent crewman spends a standard action regulating power, otherwise attacks take -2 |
+
+All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (not rendered PDF pages). Implemented behavior: not certified. Model: unresolved. The earlier wording "no printed page was located" is superseded by this addendum for these three identities only.
+
+**Required model distinctions (not an approved schema):** (1) ordinary handheld weapon posture; (2) verified worn equipment modifying an unarmed attack; (3) verified host-mounted equipment; (4) verified tripod-operated equipment; (5) source-specific operator, power and crew requirements. Worn-weapon protection must come from certified worn equipment state, not from the Item occupying an ordinary weapon grip. Tripod operation must evaluate its published effective-size and two-hand requirement, never receive unconditional ready status. Vehicle/droid mounting must rely on a separately established host/mount authority.
+
+**Temporary handling (remains):** worn weapons are never READIED (no worn-equipment state is certified), so attacks, reactions and disarm/drop protection keyed to a ready weapon do not apply to them. The Tactical Tractor Beam is verified READIED only in its tripod configuration (owned `mounted` state, two hands, via the existing grip resolver); host-mounted operation, the generator and crew regulation are not certified. The fail-closed tests are temporary safety expectations, not assertions that the published mechanics are invalid. **Future acceptance tests (required):** `data/audits/equipment-acceptance-debt.json` items `EQ-003/combat-gloves`, `EQ-003/stunning-gauntlet`, `EQ-003/tactical-tractor-beam`.
+
 ---
 
 ## Revision log
@@ -954,3 +984,4 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 - **Revision 6 (2026-10-14, PR #1043 review corrections; applied to entries this unmerged PR introduced, plus appended rows):** (a) D-013's base scope is now `ALL` and its 76 governed definitions are released by an appended evidence-bound **Partial lift** row instead of an `except=` list; the generator pins every Ledger scope row by SHA-256, so the scope cannot be altered without a reviewed code change, and a partial lift releases nothing unless it names existing parent definitions inside the scope with `source=` and `evidence=` (and `owner-ruling=` for deferred entries) citing an existing repository file. (b) D-014 now has a Ledger scope on the 76 governed definitions so its unresolved sub-flows are machine-enforced; its former item (5) moved to the new research entry **D-015** (`PENDING_SOURCE_VERIFICATION`, same scope). No recommended ruling on any entry.
 - **Revision 4 (2026-10-17, E4-C1 WP3-A):** appended EQ-001 (action cost of changing a drawn weapon between drawn configurations). No existing entry was changed; no recommended ruling was added.
 - **Revision 5 (2026-10-19, E4-C1 WP5):** appended EQ-002 (held-together groups of identical weapons are not representable in the occupancy model; fail-closed) and EQ-003 (worn weapons and weapons without a wielding class cannot be READIED; fail-closed). No existing entry was changed; no recommended ruling was added.
+- **Revision 6 (2026-10-19, E4-C1 WP5-C1):** appended source-verification addenda to EQ-002 and EQ-003 (published mechanics SOURCE_VERIFIED from sourcebook text extractions; model/implementation unresolved; fail-closed handling unchanged; acceptance debt tracked). EQ-001 untouched. No recommended ruling was added.

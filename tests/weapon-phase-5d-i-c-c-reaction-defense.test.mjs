@@ -23,7 +23,9 @@ const chatPosted = [];
 globalThis.ChatMessage = { getSpeaker: () => ({}), create: async (d) => { chatPosted.push(d); return {}; } };
 
 const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
 const { RollEngine } = await import('/systems/foundryvtt-swse/scripts/engine/roll-engine.js');
 const { AmmoSystem } = await import('/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js');

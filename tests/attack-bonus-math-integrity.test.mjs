@@ -68,7 +68,7 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 globalThis.window = globalThis.window || {};
 registerFoundryPathLoader();
 installFoundryShimGlobals();
-const { installReadinessEnvironment, readiedWeapon, weaponItem, REC, SABER_KEY } = await import('./helpers/ready-weapon-fixture.mjs');
+const { installReadinessEnvironment, readiedWeapon, weaponItem, REC, SABER_KEY, ownAndReady } = await import('./helpers/ready-weapon-fixture.mjs');
 await installReadinessEnvironment();
 globalThis.foundry = globalThis.foundry ?? {};
 globalThis.foundry.applications = globalThis.foundry.applications ?? {};
@@ -1123,7 +1123,9 @@ ok('multiattack dialog/roll sequence-penalty parity: step.finalPenalty now reach
 
   try {
     const baseline = makeLiveAttacker('Baseline');
-    const weapon = { id: 'w-live', name: 'Blaster Rifle', type: 'weapon', system: { weaponCategory: 'ranged', proficiency: 'rifles', proficient: true, damage: '3d8' } };
+    // E4-C1 WP5-C1: the attack gate needs an owned, verified READIED weapon; the attacker draws a canonical blaster rifle (the math under test is weapon-independent)
+    const weapon = weaponItem('w-live', { key: 'weapon-blaster-rifle', name: 'Blaster Rifle' }); weapon.system = { ...weapon.system, weaponCategory: 'ranged', proficiency: 'rifles', proficient: true, damage: '3d8' };
+    ownAndReady(baseline, weapon);
 
     const plain = await rollAttack(baseline, weapon, { suppressChat: true, targetContext: { mode: 'none' } });
     const withExtras = await rollAttack(baseline, weapon, {
@@ -1562,7 +1564,7 @@ ok('Force stacking + conditional-crystal cross-type matrix (A-H): Heart/Hurikane
   }
 
   try {
-    const weapon = { id: 'w-narration', name: 'Blaster Rifle', type: 'weapon', system: { weaponCategory: 'ranged', proficiency: 'rifles', proficient: true, damage: '3d8' } };
+    const weapon = weaponItem('w-narration', { key: 'weapon-blaster-rifle', name: 'Blaster Rifle' }); weapon.system = { ...weapon.system, weaponCategory: 'ranged', proficiency: 'rifles', proficient: true, damage: '3d8' };
 
     const cases = [
       ['plain', {}],
@@ -1575,7 +1577,7 @@ ok('Force stacking + conditional-crystal cross-type matrix (A-H): Heart/Hurikane
     ];
 
     for (const [label, extraOptions] of cases) {
-      const attacker = makeLiveAttacker(`Narration-${label}`);
+      const attacker = makeLiveAttacker(`Narration-${label}`); ownAndReady(attacker, weapon);
       const rollOptions = { suppressChat: true, targetContext: { mode: 'none' }, ...extraOptions };
 
       capturedAttackFormula = null;
@@ -1605,7 +1607,7 @@ ok('Force stacking + conditional-crystal cross-type matrix (A-H): Heart/Hurikane
     // Grapple-state attack penalty case, separately (needs an actor with a
     // grapple-state effect, not an extraOptions field).
     const grabbedEffect = { flags: { swse: { grappleState: { state: 'grabbed', sourceId: 'attacker-x' } } } };
-    const grabbedAttacker = makeLiveAttacker('Narration-Grappled', [grabbedEffect]);
+    const grabbedAttacker = makeLiveAttacker('Narration-Grappled', [grabbedEffect]); ownAndReady(grabbedAttacker, weapon);
     const grabbedRollOptions = { suppressChat: true, targetContext: { mode: 'none' } };
     capturedAttackFormula = null;
     await rollAttackAndDamageWithNarration(grabbedAttacker, weapon, grabbedRollOptions);

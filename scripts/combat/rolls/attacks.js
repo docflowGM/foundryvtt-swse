@@ -1,3 +1,4 @@
+import { checkAttackSourceReadiness, refuseUnreadyAttack, verifiedVehicleInstallation } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack-readiness-gate.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
@@ -666,17 +667,7 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
  * - Hit/damage resolution is a separate workflow (rollDamage) and is not
  *   gated by this function's cost transaction.
  */
-/** A VERIFIED vehicle / starship installation: the attack routes to a vehicle domain through a real vehicle-type actor that owns this very weapon Item. A flag in the attack options proves nothing. */
-function verifiedVehicleInstallation(actor, weapon, rollOptions = {}) {
-  try {
-    const route = resolveAttackDomain({ actor, item: weapon, vehicle: rollOptions.vehicleActor ?? null, sourceContext: { vehicleActor: rollOptions.vehicleActor ?? null, abstractCrewQuality: rollOptions.abstractCrewQuality ?? null } });
-    if (!route?.ok || route.domain === 'character') return false;
-    const vehicle = route.normalizedContext?.vehicleActor ?? null;
-    if (!vehicle || vehicle.type !== 'vehicle') return false;
-    const held = vehicle.items?.get?.(weapon?.id) ?? Array.from(vehicle.items ?? []).find((i) => i?.id === weapon?.id);
-    return !!held && held === weapon;
-  } catch { return false; }
-}
+export { checkAttackSourceReadiness };
 
 export async function rollAttack(actor, weapon, options = {}) {
   let rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null));
@@ -684,6 +675,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
+  { const gate = checkAttackSourceReadiness(actor, weapon, rollOptions); if (!gate.ok) return refuseUnreadyAttack(weapon, gate); }
 
   // Phase 5D-A: canonical weapon/profile resolution is pure -- do it BEFORE any action-option or ammunition cost so an
   // unresolvable canonical identity/selection never spends anything (and needs no rollback).
@@ -1140,6 +1132,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
+  { const gate = checkAttackSourceReadiness(actor, weapon, rollOptions); if (!gate.ok) return refuseUnreadyAttack(weapon, gate); }
 
   const targetName = _firstTargetName();
   // Math Integrity Freeze, Attack Bonus round 6: this used to call

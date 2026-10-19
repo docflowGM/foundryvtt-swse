@@ -60,3 +60,50 @@ export function readyAllDirected(actor) {
   }
   return actor;
 }
+
+/**
+ * WP5-C1 migration helper for tests that call rollAttack with a weapon they never "drew": makes the weapon an Item the actor OWNS and gives it the
+ * first valid READIED configuration the REAL resolvers establish alongside whatever the actor already holds; only if no free configuration works are
+ * the actor's other drawn weapons stowed (the player drawing this one). Nothing is faked: a weapon the resolvers cannot establish (homebrew without
+ * canonical identity, worn, no wielding class) stays not ready and the attack is correctly refused.
+ */
+export function ownAndReady(actor, weapon) {
+  if (!actor || !weapon || weapon.type !== 'weapon' || !Array.isArray(actor.items)) return weapon;
+  if (weapon.flags?.swse?.virtual === true && weapon.flags?.swse?.unarmed === true) return weapon; // the virtual unarmed source is never an owned Item
+  if (!actor.items.includes(weapon)) {
+    const dup = actor.items.findIndex((i) => i?.id === weapon.id);   // a different object with the same id: this attack source supersedes it
+    if (dup >= 0) actor.items.splice(dup, 1, weapon); else actor.items.push(weapon);
+  }
+  actor.system ??= {};
+  if (!actor.system.species) actor.system.species = 'Human';
+  if (!actor.system.size) actor.system.size = 'medium';
+  const species = resolveActorSpeciesProfile(actor);
+  const profile = species.status === 'resolved' ? species.profile : undefined;
+  delete weapon.system?.equipped;
+  const already = () => { const st = readActorEquipmentState(actor, { resolveSpeciesProfile: () => profile }); const e = st.weapons.find((x) => x.itemId === weapon.id); return e?.effectivePosture === 'READIED' && !e.pending && !e.gates.length && !st.conflicts.length; };
+  if (weapon.system?.weaponPosture === 'READIED' && already()) return weapon;   // an established configuration (e.g. a coordinator re-grip) is never overwritten
+  const configs = [[['natural-arm-1'], 'one-handed'], [['natural-arm-2'], 'one-handed'], [['natural-arm-1', 'natural-arm-2'], 'two-handed']];
+  const snapshot = { system: weapon.system, flags: weapon.flags };
+  const explicitMounted = weapon.flags?.swse?.fireState?.mounted;   // an explicit owned tripod statement (true OR false) is never overridden by the fixture
+  const explicitlyUnmounted = explicitMounted === false;
+  const attempt = (mounted = false) => {
+    if (mounted && explicitMounted !== undefined) return false;
+    for (const [ids, grip] of configs) {
+      weapon.system = { ...(weapon.system ?? {}), ...REC('READIED', 'wield', ids) };
+      const fire = { ...(weapon.flags?.swse?.fireState ?? {}), v: 1, wielded: grip };
+      if (mounted) fire.mounted = true; else if (explicitMounted === undefined) delete fire.mounted;
+      weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: fire } };
+      const st = readActorEquipmentState(actor, { resolveSpeciesProfile: () => profile });
+      const e = st.weapons.find((x) => x.itemId === weapon.id);
+      if (e?.effectivePosture === 'READIED' && !e.pending && !e.gates.length && !st.conflicts.length) return true;
+    }
+    weapon.system = { ...weapon.system, ...REC('STOWED', null, []) };
+    return false;
+  };
+  if (attempt() || attempt(true)) return weapon;   // else the verified tripod configuration (owned `mounted` state, two hands) for heavy weapons
+  for (const other of actor.items) {
+    if (other !== weapon && other.type === 'weapon' && ['READIED', 'EQUIPPED'].includes(other.system?.weaponPosture)) other.system = { ...other.system, ...REC('STOWED', null, []) };
+  }
+  if (!attempt() && !attempt(true)) { weapon.system = snapshot.system; weapon.flags = snapshot.flags; }   // nothing was established: leave the Item exactly as found
+  return weapon;
+}

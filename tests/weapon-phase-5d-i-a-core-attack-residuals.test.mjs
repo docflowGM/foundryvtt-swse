@@ -23,7 +23,9 @@ const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/i
 const { FireStateStore: FireStateStoreRef } = await import('/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
@@ -131,13 +133,12 @@ try {
   assert.equal(aoo - base, 1, 'AoO + one-handed: +1');
   assert.equal(aooTwo - base, 0, 'AoO but two-handed: no bonus');
   assert.deepEqual(asked, [], 'every fact was observed: nothing was asked');
-  // the unobserved wielding is asked ONCE (stored), then applied
-  // (5D-I-B: the weapon REMEMBERS the hands an earlier attack stated, so the unobserved case needs a weapon with no recorded state)
+  // E4-C1 WP5-C1: a READY weapon always has an established grip (readiness requires the coordinator-owned hands choice to verify), so the wielding is
+  // OBSERVED from the owned record and is never asked at attack time. The stored-prompt path remains for facts that are not equipment-state-owned.
   const duel2 = canon('lightsaber-chassis-dueling'); const A2 = makeActor({ items: [duel2] });
-  const unknownHands = await bonusOf(A2, duel2, { attackOfOpportunity: true });
-  assert.deepEqual(asked, ['conditional-0'], 'unobserved wielding -> one stored prompt');
-  assert.equal(unknownHands - base, 1, 'answered yes -> +1');
-  assert.equal(wfOf().special.answers['conditional-0'], true, 'the answer persists in the workflow context');
+  const establishedHands = await bonusOf(A2, duel2, { attackOfOpportunity: true });
+  assert.deepEqual(asked, [], 'the established one-handed grip is observed: nothing is asked');
+  assert.equal(establishedHands - base, 1, 'observed one-handed grip -> +1 automatically');
   rt.setSpecialPromptProvider(null);
   assert.equal(evaluateRegisteredCondition('attack-of-opportunity-and-wielded-one-handed', { events: ['attack-of-opportunity'], wieldedHands: 1 }), true);
   assert.equal(evaluateRegisteredCondition('attack-of-opportunity-and-wielded-one-handed', { events: [], wieldedHands: 1 }), false);
@@ -185,7 +186,7 @@ try {
   assert.equal(evaluateStructuralCondition({ fireMode: 'autofire', braced: false }, { fireMode: 'autofire' }), null, 'braced unobserved -> unknown');
   assert.equal(evaluateStructuralCondition({ fireMode: 'autofire', braced: false }, { fireMode: 'single' }), false);
   const cannon = withAmmo('weapon-rotary-blaster-cannon', 100); const C = makeActor({ items: [cannon] });
-  const autofire = async (A, w, extra = {}) => { reset(); formulas.length = 0; const r = await SWSERoll.rollAutofire(A, w, { targets: [target()], skipFP: true, ...extra }); return r ? fx(formulas[0]) : null; };
+  const autofire = async (A, w, extra = {}) => { reset(); formulas.length = 0; const r = await SWSERoll.rollAutofire(A, ownAndReady(A, w), { targets: [target()], skipFP: true, ...extra }); return r ? fx(formulas[0]) : null; };
   const unbraced = await autofire(C, cannon, { braced: false }), braced = await autofire(C, cannon, { braced: true });
   assert.equal(braced - unbraced, 8, 'braced autofire: -2 instead of -5, and no additional -5 (3 + 5)');
   const riotAuto = await autofire(R, riot, {}); const riotSingleAgain = await bonusOf(R, riot, {});
@@ -310,7 +311,7 @@ try {
   assert.deepEqual([FireStateStoreRef.previewBrace(hrb, shape, { mounted: false }).legal, FireStateStoreRef.previewBrace(hrb, shape, { mounted: false }).reason], [false, 'tripod-or-mount-required']);
   assert.equal(FireStateStoreRef.previewBrace(hrb, shape, { mounted: true }).legal, true);
   assert.equal(FireStateStoreRef.previewBrace(hrb, shape, {}).pending, 'mount-state');
-  const run = async (A, w, extra = {}) => { reset(); formulas.length = 0; return SWSERoll.rollAutofire(A, w, { targets: [target()], skipFP: true, ...extra }); };
+  const run = async (A, w, extra = {}) => { reset(); formulas.length = 0; return SWSERoll.rollAutofire(A, ownAndReady(A, w), { targets: [target()], skipFP: true, ...extra }); };
   assert.equal(await run(H, hrb, { braced: true, mounted: false }), null); assert.equal(formulas.length, 0); assert.deepEqual(spent.actions, []);
   assert.ok((await run(H, hrb, { braced: true, mounted: true }))?.success); assert.deepEqual(spent.actions, ['swift', 'swift']);
   rt.setSpecialPromptProvider(async () => false);
@@ -326,7 +327,7 @@ try {
   assert.deepEqual([resolveAutofireArea(rot, { braced: false }).widthSquares, resolveAutofireArea(rot, { braced: false }).heightSquares], [2, 2]);
   assert.deepEqual([resolveAutofireArea({}, { braced: true }).widthSquares, resolveAutofireArea({}, { braced: true }).heightSquares], [2, 2], 'a weapon with no published braced area keeps the generic 2x2');
   const cannon = withAmmo('weapon-rotary-blaster-cannon', 100); const C = makeActor({ items: [cannon] });
-  const autoAreas = async (extra) => { reset(); formulas.length = 0; const r = await SWSERoll.rollAutofire(C, cannon, { targets: [target()], skipFP: true, ...extra }); assert.ok(r?.success); return posted.map((p) => p.context?.workflowContext?.attackShape?.area).filter(Boolean); };
+  const autoAreas = async (extra) => { reset(); formulas.length = 0; const r = await SWSERoll.rollAutofire(C, ownAndReady(C, cannon), { targets: [target()], skipFP: true, ...extra }); assert.ok(r?.success); return posted.map((p) => p.context?.workflowContext?.attackShape?.area).filter(Boolean); };
   const bracedAreas = await autoAreas({ braced: true }), plainAreas = await autoAreas({ braced: false });
   assert.deepEqual(bracedAreas, [{ kind: 'autofire-area', widthSquares: 2, heightSquares: 4 }], 'braced Autofire carries the published 2x4 area into the damage workflow');
   assert.deepEqual(plainAreas, [{ kind: 'autofire-area', widthSquares: 2, heightSquares: 2 }], 'unbraced Autofire keeps the generic 2x2');
@@ -463,24 +464,19 @@ try {
   const ss = (profileId) => rt.shapeOfWeapon(gl, { profileId }).stunSetting;
   assert.deepEqual(ss('unarmed-stun'), { persistent: true, action: 'swift', weaponHasSwitch: true, baselineProfileId: null });
   assert.equal(ss('unarmed-lethal').persistent, false);
+  // E4-C1 WP5-C1 (EQ-003): Shockboxing Gloves are worn, so they are never verified READIED and the attack gate refuses every attack with them before
+  // anything is paid. The switch-cost / persistence assertions that needed a live attack are acceptance debt (EQ-003/worn-weapon-attack-execution);
+  // the structured stun-setting facts above are still asserted.
   const swiftCount = () => spent.actions.filter((a) => a === 'swift').length;
-  reset(); assert.ok(await attack(G, gl, { profileId: 'unarmed-stun' })); assert.equal(swiftCount(), 1, 'first stun attack pays the swift action');
-  assert.equal(gl.flags.swse.fireState.settingProfile, 'unarmed-stun', 'the setting persists on the owned weapon');
-  reset(); assert.ok(await attack(G, gl, { profileId: 'unarmed-stun' })); assert.equal(swiftCount(), 0, 'the setting is still stun: the next stun attack is free');
-  reset(); assert.ok(await attack(G, gl, { profileId: 'unarmed-lethal' })); assert.equal(swiftCount(), 0, 'switching back is not priced (the source states no cost)');
-  assert.equal(gl.flags.swse.fireState.settingProfile, 'unarmed-lethal');
-  reset(); assert.ok(await attack(G, gl, { profileId: 'unarmed-stun' })); assert.equal(swiftCount(), 1, 'after a lethal attack the switch to stun costs again');
+  reset(); assert.equal(await attack(G, gl, { profileId: 'unarmed-stun' }), null); assert.equal(swiftCount(), 0, 'refused before the switch action is paid'); assert.equal(spent.rolls, 0);
+  assert.notEqual(gl.flags.swse.fireState?.settingProfile, 'unarmed-stun', 'nothing persisted by a refused attack');
   reset(); const prev = await computeFinalAttackComposition(G, gl, { profileId: 'unarmed-lethal' }); assert.deepEqual(prev.readiness.requiredActions, [], 'preview is non-mutating');
-  reinstall({ econAllowed: false });
-  const gl2 = canon('unmapped::Shockboxing Gloves'); const G2 = makeActor({ items: [gl2] });
-  reset(); assert.equal(await attack(G2, gl2, { profileId: 'unarmed-stun' }), null, 'an unpayable switch refuses the attack and writes nothing'); assert.equal(spent.rolls, 0); assert.equal(gl2.flags.swse?.fireState, undefined);
-  reinstall();
-  ok('stun switch timing: Shockboxing Gloves pay the published swift action once per switch to stun; the setting persists on the item; switching back is free; unpayable switch fails closed');
+  ok('stun switch timing: the structured stun setting is intact; the worn Shockboxing Gloves are refused by the attack gate (EQ-003), paying and persisting nothing');
 
   // 23: a blaster pistol with an unpriced stun setting is untouched (no action, no state written)
   const bp = withAmmo('weapon-blaster-pistol', 50); const P = makeActor({ items: [bp] });
   assert.equal(rt.shapeOfWeapon(bp, {}).stunSetting.persistent, false);
-  reset(); assert.ok(await attack(P, bp, { damageMode: 'stun' })); assert.deepEqual(spent.actions, []); assert.equal(bp.flags.swse?.fireState, undefined);
+  reset(); assert.ok(await attack(P, bp, { damageMode: 'stun' })); assert.deepEqual(spent.actions, []); assert.deepEqual(Object.keys(bp.flags.swse?.fireState ?? {}).filter((k) => k !== 'v' && k !== 'wielded'), []);
   ok('a stun setting that costs no action is unchanged: nothing paid, nothing written');
 }
 
@@ -549,12 +545,12 @@ try {
   assert.deepEqual([lc.dice.conditionalFlat, lc.dice.conditionalDiceTerms, lc.dice.rerollWeaponDiceResults], [0, [], []]);
   assert.equal(buildDamageFormula(lc).includes('rr'), false);
   assert.equal(rt.shapeOfWeapon(L, {}).source, 'legacy');
-  reset(); assert.ok(await attack(A, L, { rangeBand: 'short', aim: false, braced: false }));
-  assert.equal(wfOf()?.special, undefined, 'a legacy weapon carries no special-mechanic state');
+  // E4-C1 WP5-C1: a legacy/homebrew weapon has no certified canonical identity, so the attack gate refuses it before anything is spent (open domain-design
+  // item: a certification route for homebrew weapons). Its damage composition above is unchanged and still asserted.
+  reset(); assert.equal(await attack(A, L, { rangeBand: 'short', aim: false, braced: false }), null); assert.equal(spent.rolls, 0);
   const hb = makeActor({ items: [legacy({ damage: '1d6', weaponCategory: 'ranged' }, 'Sniper Blaster Rifle')] });
-  reset(); assert.ok(await attack(hb, hb.items.find((i) => i.type === 'weapon'), {}), 'a homebrew weapon NAMED like a canonical one is not treated as it');
-  assert.equal(wfOf()?.special, undefined); assert.deepEqual(notes.warn, []);
-  ok('legacy / homebrew weapons are unchanged: no mechanics, no reroll, no conditional damage, no prompts -- even when named like a canonical weapon');
+  reset(); assert.equal(await attack(hb, hb.items.find((i) => i.type === 'weapon'), {}), null, 'a homebrew weapon NAMED like a canonical one is not treated as it: it stays uncertified and is refused'); assert.equal(spent.rolls, 0);
+  ok('legacy / homebrew weapons: damage composition unchanged (no mechanics, rerolls or conditional damage); their attacks are refused by the gate (uncertified identity), even when named like a canonical weapon');
 
   // 29: stock droid / NPC flat contracts keep precedence over every new damage term
   const droid = makeActor({ type: 'droid' });
@@ -569,14 +565,14 @@ try {
   reset(); assert.ok(await attack(E, ew, {})); assert.equal(ew.flags.swse.fireState.needsReload, true);
   reset(); assert.equal(await attack(E, ew, {}), null, '5D-G: awaiting reload'); assert.equal(spent.rolls, 0);
   const hab = withAmmo('weapon-heavy-assault-blaster', 50); const H = makeActor({ items: [hab] });
-  reset(); formulas.length = 0; assert.ok((await SWSERoll.rollAutofire(H, hab, { targets: [target()], skipFP: true, braced: true }))?.success); assert.deepEqual(spent.actions, ['swift', 'swift'], '5D-H brace: two swift actions');
+  reset(); formulas.length = 0; assert.ok((await SWSERoll.rollAutofire(H, ownAndReady(H, hab), { targets: [target()], skipFP: true, braced: true }))?.success); assert.deepEqual(spent.actions, ['swift', 'swift'], '5D-H brace: two swift actions');
   const ar = withAmmo('weapon-blaster-rifle', 50); const R = makeActor({ items: [ar] });
   reset(); assert.ok(await attack(R, ar, { rangeBand: 'short' }));
   ok('prior phases intact: 5D-G reload state, 5D-H autofire-only brace (two swift actions), 5D-F ordinary attack path');
 
   // 31: nothing is a blanket prohibition -- unobserved facts never refuse an attack
   const noProvider = [['weapon-sniper-blaster-rifle', {}], ['weapon-heavy-repeating-blaster', {}]];
-  for (const [k] of noProvider) { const w = withAmmo(k, 50); const A2 = makeActor({ items: [w] }); reset(); formulas.length = 0; const r = k.includes('repeating') ? await SWSERoll.rollAutofire(A2, w, { targets: [target()], skipFP: true, braced: true }) : await attack(A2, w, {}); assert.ok(r, `${k}: an unobserved fact never refuses the attack`); }
+  for (const [k] of noProvider) { const w = withAmmo(k, 50); const A2 = makeActor({ items: [w] }); reset(); formulas.length = 0; const r = k.includes('repeating') ? await SWSERoll.rollAutofire(A2, ownAndReady(A2, w), { targets: [target()], skipFP: true, braced: true }) : await attack(A2, w, {}); assert.ok(r, `${k}: an unobserved fact never refuses the attack`); }
   ok('unobserved aim / mount facts never refuse an attack (they are asked once, or surfaced and not applied)');
 
   // 32: no new weapon-name branches in the runtime (names are display only)

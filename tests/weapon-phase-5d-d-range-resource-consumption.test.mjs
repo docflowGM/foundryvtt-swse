@@ -23,7 +23,9 @@ globalThis.game.settings = { get: (_sys, key) => (key === 'trackBlasterCharges' 
 
 const { resolveAttackBonus, resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
 const { getRangePenalty } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js');
-const { computeFinalAttackComposition, rollAttack } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { computeFinalAttackComposition, rollAttack: rollAttackRaw } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { buildRollConfigModel, buildAttackFormPanel } = await import('/systems/foundryvtt-swse/scripts/rolls/roll-config.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
 const { RollEngine } = await import('/systems/foundryvtt-swse/scripts/engine/roll-engine.js');
@@ -251,11 +253,12 @@ const census = { identities: 0, forms: 0, refusedForms: [], range: {}, resource:
   assert.equal(AmmoSystem.resolveAmmoCost({ weapon: aw, options: {} }), 1, 'no canonical units: the existing rule');
   ok('autofire/burst/explicit-cost rules unchanged (canonical units apply only to ordinary attacks)');
 
-  // legacy weapon: existing behavior
+  // legacy weapon: E4-C1 WP5-C1 -- a homebrew weapon has no certified canonical identity, so no grip/occupancy can be verified and the attack gate
+  // refuses it before anything is spent (no legacy-equipped fallback). A certification route for homebrew weapons is an open domain-design item.
   const hb = legacy({}, 5); updates = 0;
-  assert.ok(await attack(A(), hb)); assert.equal(hb.system.ammunition.current, 4); assert.equal(updates, 1);
-  tracking = false; const hb2 = legacy({}, 5); updates = 0; assert.ok(await attack(A(), hb2)); assert.equal(updates, 0, 'tracking disabled: nothing spent (house rule off)'); tracking = true;
-  ok('legacy/homebrew ranged weapon spends 1 via the existing path; tracking-off spends 0');
+  assert.equal(await attack(A(), hb), null); assert.equal(hb.system.ammunition.current, 5); assert.equal(updates, 0);
+  tracking = false; const hb2 = legacy({}, 5); updates = 0; assert.equal(await attack(A(), hb2), null); assert.equal(updates, 0); tracking = true;
+  ok('legacy/homebrew ranged weapon (uncertified identity) is refused by the attack gate and spends nothing, tracking on or off');
 }
 
 // ---- PAYLOADS / AMMO-DEPENDENT DAMAGE --------------------------------------------------------------------------------------------------
@@ -266,17 +269,17 @@ const census = { identities: 0, forms: 0, refusedForms: [], range: {}, resource:
   const sources = new Set();
   for (const pid of payloads) {
     const w = wr(); updates = 0;
-    const r = await sandbox(async (calls) => {
-      const res = await rollAttack(A(), w, { profileId: 'primary', payloadId: pid, suppressChat: false });
-      return { res, card: calls.postedCards?.find((c) => c.context?.workflowContext) };
-    });
-    assert.ok(r.res, pid); assert.equal(w.system.ammunition.current, 0, `${pid}: spends exactly one from the rocket pool`); assert.equal(updates, 1);
-    assert.equal(r.card.context.workflowContext.weaponForm.payloadId, pid, 'payload survives into the retained form');
+    // E4-C1 WP5-C1 (EQ-003): the Wrist Rocket Launcher is worn; worn weapons are never verified READIED, so the attack gate refuses the attack before
+    // anything is spent. The positive payload-spend assertions are suspended as acceptance debt (data/audits/equipment-acceptance-debt.json,
+    // EQ-003/worn-weapon-attack-execution) until worn equipment is certified; payload identity and damage composition below do not need an attack.
+    const res = await rollAttack(A(), w, { profileId: 'primary', payloadId: pid, suppressChat: false });
+    assert.equal(res, null, pid); assert.equal(w.system.ammunition.current, 1, `${pid}: nothing spent by a refused attack`); assert.equal(updates, 0);
     const rtm = rt.resolveAttackWeaponRuntime(w, { profileId: 'primary', payloadId: pid });
+    assert.equal(rtm.forms?.payloadId ?? pid, pid);
     sources.add(rtm.resolved.canonicalStats.resource.source);
   }
   assert.deepEqual([...sources], ['wrist rockets'], 'canonical data defines one resource (wrist rockets) for every payload: no per-payload inventory identity exists to match');
-  ok('payload selection is validated, spends one rocket exactly once, and persists in the retained form (shared single pool documented)');
+  ok('payload selection resolves per payload from one shared rocket pool; the worn launcher is refused by the attack gate (EQ-003) and spends nothing');
 
   const dmg = (pid) => { const w = wr(); const ctx = { weaponForm: { identityKey: 'weapon-wrist-rocket-launcher', profileId: 'primary', payloadId: pid } }; return buildDamageFormula(resolveDamageComposition(A(), w, ctx)).split(' ')[0]; };
   assert.equal(dmg('antipersonnel'), '3d8'); assert.equal(dmg('antivehicle'), '3d10');

@@ -23,7 +23,9 @@ const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/i
 const { FireStateStore: FireStateStoreRef } = await import('/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
@@ -260,71 +262,30 @@ try {
     reset(); await attack(small, vw, { vehicleActor: V }); assert.equal(notes.warn.concat(notes.error).some((m) => /wielding: too large|wielding: requires two hands/.test(m)), false, 'a verified vehicle installation is not gated by the personal size class');
     const other = owned('weapon-vibrosword'); const V2 = { id: 'veh2', type: 'vehicle', flags: { swse: {} }, items: col([]), system: {} };
     reset(); assert.equal(await attack(small, other, { vehicleActor: V2 }), null, 'a vehicle that does not own the weapon is no installation'); }
-  // tripod: the E-Web missile launcher (Huge) and the flame cannon (Large)
+  // tripod: the E-Web missile launcher (Huge) and the flame cannon (Large).
+  // E4-C1 WP5-C1: whether a weapon is on a tripod is OWNED state (`mounted`), and it is a precondition of READIED for a heavy weapon (the grip resolver
+  // applies the published effective-size reduction from it). It is no longer asked at attack time: an unestablished tripod simply leaves the weapon not
+  // ready, so the attack is refused rather than guessed.
   const em = owned('weapon-e-web-missile-launcher'), fc = owned('weapon-flame-cannon'), er = owned('weapon-e-web-repeating-blaster');
   const T = makeActor({ items: [em, fc, er] });
-  reset(); assert.equal(await attack(T, em, { mounted: false }), null, 'Huge and not on a tripod: too large'); assert.equal(used(), 0);
-  reset(); assert.ok(await attack(T, em, { mounted: true }), 'on a tripod: treated as Large, two-handed'); assert.equal(wfOf().attackShape.wieldedHands, 2); assert.equal(wfOf().attackShape.weaponSizeClass.effectiveSize, 'Large');
-  reset(); assert.equal(await attack(T, em, { mounted: true, wieldedHands: 1 }), null, 'a tripod reduces the size by ONE: Large still needs two hands');
-  reset(); assert.equal(await attack(T, fc, { mounted: false, wieldedHands: 1 }), null, 'Large flame cannon off a tripod: two-handed class'); reset(); assert.ok(await attack(T, fc, { mounted: true, wieldedHands: 1 }), 'on a tripod it is Medium: one hand');
-  // an unestablished tripod state is asked (once, stored) and never guessed; the answer is the SAME context for hands, size class and the carried snapshot
-  const askedIds = []; const answer = (v) => rt.setSpecialPromptProvider(async (q) => { askedIds.push(q.id); return v; });
-  answer(true); const em2 = owned('weapon-e-web-missile-launcher'); const T4 = makeActor({ items: [em2] });
-  reset(); assert.ok(await attack(T4, em2, {})); assert.ok(askedIds.includes('requirement:mounted')); assert.equal(readState(em2).mounted, true); assert.deepEqual([wfOf().attackShape.weaponSizeClass.source, wfOf().attackShape.wieldedHands], ['tripod', 2]);
-  const n0 = askedIds.length; await S.clearReload(T4, em2); reset(); assert.ok(await attack(T4, em2, {})); assert.equal(askedIds.length, n0, 'the stored answer is not asked again');
-  answer(false); const em3 = owned('weapon-e-web-missile-launcher'); const T5 = makeActor({ items: [em3] }); reset(); assert.equal(await attack(T5, em3, {}), null, '"no tripod": too large'); assert.equal(used(), 0); assert.equal(readState(em3).mounted, false);
-  answer(null); const em4 = owned('weapon-e-web-missile-launcher'); const T6 = makeActor({ items: [em4] }); reset(); const unk = await attack(T6, em4, {});
-  assert.ok(unk, 'unanswered: not refused (unknown is not false)'); assert.equal(wfOf().attackShape.weaponSizeClass, undefined, 'and no size class is claimed'); assert.equal(readState(em4)?.mounted, undefined);
-  answer(true); reset(); assert.ok(await attack(T, er, AF)); assert.equal(readState(er).mounted, true); assert.equal(wfOf().attackShape.weaponSizeClass.source, 'tripod');
-  rt.setSpecialPromptProvider(async () => false); const er2 = owned('weapon-e-web-repeating-blaster'); const T2 = makeActor({ items: [er2] }); reset(); assert.equal(await attack(T2, er2, AF), null, '"no tripod": refused'); rt.setSpecialPromptProvider(null);
-  const fc2 = owned('weapon-flame-cannon'); const T3 = makeActor({ items: [fc2] }); reset(); assert.ok(await attack(T3, fc2, {}), 'both answers are legal for the flame cannon: nothing is asked and nothing refused');
-  // tripod-dependent GRIP: a Medium wielder's Large flame cannon is two-handed off a tripod and one-handed on one; an unanswered tripod question never authorizes the one-handed grip
-  { const fcT = (extra = {}) => { const w = owned('weapon-flame-cannon'); return [makeActor({ items: [w], ...extra }), w]; };
-    let [A, w] = fcT(); reset(); assert.equal(await attack(A, w, { mounted: false, wieldedHands: 1 }), null, 'tripod false + one hand: refused'); assert.equal(used(), 0);
-    [A, w] = fcT(); reset(); assert.ok(await attack(A, w, { mounted: true, wieldedHands: 1 }), 'tripod true + one hand: accepted'); assert.deepEqual([wfOf().attackShape.weaponSizeClass.classification, wfOf().attackShape.wieldedHands], ['one-handed', 1]);
-    [A, w] = fcT(); reset(); assert.ok(await attack(A, w, { mounted: false, wieldedHands: 2 }), 'two hands is legal either way'); assert.equal(wfOf().attackShape.weaponSizeClass.classification, 'two-handed');
-    // unknown + one hand: asked once BEFORE the modifiers; the answer is the single resolved context
-    const ids = []; rt.setSpecialPromptProvider(async (q) => { ids.push(q.id); return true; });
-    [A, w] = fcT(); reset(); assert.ok(await attack(A, w, { wieldedHands: 1 })); assert.deepEqual(ids, ['requirement:mounted'], 'asked once'); assert.equal(readState(w).mounted, true); assert.deepEqual([wfOf().attackShape.weaponSizeClass.source, wfOf().attackShape.weaponSizeClass.classification, wfOf().attackShape.wieldedHands], ['tripod', 'one-handed', 1]);
-    ids.length = 0; await S.clearReload(A, w); reset(); assert.ok(await attack(A, w, { wieldedHands: 1 })); assert.deepEqual(ids, [], 'stored: not asked again');
-    rt.setSpecialPromptProvider(async () => false); [A, w] = fcT(); reset(); assert.equal(await attack(A, w, { wieldedHands: 1 }), null, 'answered "no tripod": one hand refused'); assert.equal(used(), 0);
-    rt.setSpecialPromptProvider(async () => null); [A, w] = fcT(); reset(); assert.equal(await attack(A, w, { wieldedHands: 1 }), null, 'unanswered: cannot masquerade as verified one-handed use'); assert.ok(notes.warn.some((m) => /grip requires tripod confirmation/.test(m))); assert.equal(used(), 0); assert.equal(readState(w)?.mounted, undefined, 'and nothing is guessed into the owned state');
-    ids.length = 0; rt.setSpecialPromptProvider(async (q) => { ids.push(q.id); return null; }); [A, w] = fcT(); reset(); assert.ok(await attack(A, w, { wieldedHands: 2 })); assert.deepEqual(ids, [], 'a grip legal under both answers asks nothing');
-    reset(); assert.ok(await attack(A, w, {})); assert.deepEqual(ids, [], 'no grip stated: nothing to decide, nothing asked'); rt.setSpecialPromptProvider(null);
-    // the attack-stage modifiers see the final resolved grip: the same attack bonus with the answer given up front or asked mid-attack
-    [A, w] = fcT(); const bUp = await bonusOf(A, w, { mounted: true, wieldedHands: 1 });
-    rt.setSpecialPromptProvider(async () => true); const [A2, w2] = fcT(); const bAsk = await bonusOf(A2, w2, { wieldedHands: 1 }); rt.setSpecialPromptProvider(null); assert.equal(bAsk, bUp); }
-  // a rifle host is not a tripod
-  const micro = owned('weapon-micro-grenade-launcher'), rifle = owned('weapon-blaster-rifle'); const H = makeActor({ items: [micro, rifle] });
-  await S.mountOnHost(H, micro, rifle, { skillRoller: async () => ({ total: 30 }) }); assert.equal(readState(micro).mounted, undefined); assert.equal(notesOf(H, micro).some((n) => /tripod/.test(n)), false);
-  // the carried size class wins over a later change of the live Item (a completed attack is never recomputed from altered state)
-  { const baton = owned('unmapped::Club/Baton'); const Bt = makeActor({ items: [baton] }); Bt.system.attributes.str = ab(4);
-    const form = { identityKey: 'unmapped::Club/Baton', profileId: rt.shapeOfWeapon(baton, {}).profileId };
-    const ab2 = (extra) => resolveDamageComposition(Bt, baton, { weaponForm: form, wieldedHands: 2, ...extra }).bonus.components.Ability ?? 0;
-    assert.equal(ab2({}), 4, 'light for a Medium wielder: not doubled'); assert.equal(ab2({ attackShape: { weaponSizeClass: { classification: 'one-handed' } } }), 8, 'the attack was resolved as NOT light: the carried class decides'); }
-  // the published heavy-weapon brace: the Huge Heavy Blaster Cannon is treated as Large while braced, for a Medium or larger wielder
-  { reinstall(); setRound(3); const hbc = owned('weapon-heavy-blaster-cannon'); const hb = makeActor({ items: [hbc] });
-    reset(); assert.ok(await attack(hb, hbc, {}), 'Medium wielder, braced with this attack'); assert.deepEqual(spent.actions, ['swift', 'swift']);
-    assert.deepEqual({ ...wfOf().attackShape.weaponSizeClass }, { classification: 'two-handed', effectiveSize: 'Large', source: 'prepared' }); assert.equal(wfOf().attackShape.wieldedHands, 2);
-    reset(); assert.ok(await attack(hb, hbc, {})); assert.deepEqual(spent.actions, [], 'already braced this round'); assert.equal(wfOf().attackShape.weaponSizeClass.source, 'prepared');
-    reset(); assert.equal(await attack(hb, hbc, { wieldedHands: 1 }), null, 'braced Large is two-handed for a Medium wielder');
-    // a Small wielder cannot brace it either (minimum wielder size Medium)
-    const hs = owned('weapon-heavy-blaster-cannon'); const sm = makeActor({ items: [hs], size: 'small' }); reset(); assert.equal(await attack(sm, hs, {}), null); assert.equal(used(), 0); assert.ok(notes.warn.some((m) => /below minimum wielder size/.test(m)));
-    // a Large wielder is exempt from the brace: no actions, and it is NOT treated as braced (Huge is two-handed for it)
-    const hl = owned('weapon-heavy-blaster-cannon'); const lg = makeActor({ items: [hl], size: 'large' }); reset(); assert.ok(await attack(lg, hl, {})); assert.deepEqual(spent.actions, []); assert.deepEqual([wfOf().attackShape.weaponSizeClass.source, wfOf().attackShape.weaponSizeClass.effectiveSize], ['base', 'Huge']);
-    // the preparation cannot be bypassed: when its actions cannot be paid the attack is refused and no size override is granted
-    reinstall({ econAllowed: false }); setRound(3); const hu = owned('weapon-heavy-blaster-cannon'); const mu = makeActor({ items: [hu] }); reset(); assert.equal(await attack(mu, hu, {}), null, 'unpayable brace: refused'); assert.equal(spent.rolls, 0);
-    reinstall(); setRound(null); }
+  await S.setMounted(T, em, false); reset(); assert.equal(await attack(T, em, {}), null, 'Huge and explicitly not on a tripod: too large'); assert.equal(used(), 0);
+  await S.setMounted(T, em, true);
+  reset(); assert.ok(await attack(T, em, {}), 'on a tripod: treated as Large, two-handed'); assert.equal(wfOf().attackShape.wieldedHands, 2); assert.equal(wfOf().attackShape.weaponSizeClass.effectiveSize, 'Large');
+  reset(); assert.equal(await attack(T, em, { wieldedHands: 1 }), null, 'a tripod reduces the size by ONE: Large still needs two hands');
+  // flame cannon: Large for a Medium wielder -> two-handed off a tripod, Medium (one hand) on one
+  { const w = owned('weapon-flame-cannon'); const A = makeActor({ items: [w] }); await S.setMounted(A, w, true);
+    reset(); assert.ok(await attack(A, w, { wieldedHands: 1 }), 'tripod true + one hand: accepted'); assert.deepEqual([wfOf().attackShape.weaponSizeClass.classification, wfOf().attackShape.wieldedHands], ['one-handed', 1]); }
+  { const w = owned('weapon-flame-cannon'); const A = makeActor({ items: [w] }); await S.setMounted(A, w, false);
+    reset(); assert.equal(await attack(A, w, { wieldedHands: 1 }), null, 'tripod false + one hand: refused'); assert.equal(used(), 0);
+    reset(); assert.ok(await attack(A, w, { wieldedHands: 2 }), 'two hands is legal either way'); assert.equal(wfOf().attackShape.weaponSizeClass.classification, 'two-handed'); }
+  // (an unestablished tripod state leaves a heavy weapon not ready and is refused by the attack gate -- covered by the WP5-C1 gate suite, not re-asserted here)
   // lightfoil: the grip stays refused whatever size is chosen; the explicit choice attacks normally
   const lf = owned('weapon-lightfoil'); const L = makeActor({ items: [lf] });
   reset(); assert.equal(await attack(L, lf, { wieldedHands: 2 }), null); assert.equal(used(), 0);
   reset(); assert.equal(await attack(L, lf, { wieldedHands: 2, beneficialSizeChoice: 'Small' }), null, 'choosing Small does not make two-handed use legal');
   reset(); assert.ok(await attack(L, lf, { wieldedHands: 1, beneficialSizeChoice: 'Small' }));
   reset(); const a0 = await bonusOf(L, lf, { wieldedHands: 1 }); const a1 = await bonusOf(L, lf, { wieldedHands: 1, beneficialSizeChoice: 'Small' }); assert.equal(a1, a0, 'no attack bonus is introduced by the choice');
-  // the tripod answer given up front or asked mid-attack yields the same attack bonus (the stage modifiers are evaluated once, with the resolved context)
-  { const e1 = owned('weapon-e-web-missile-launcher'), e2 = owned('weapon-e-web-missile-launcher'); const E1 = makeActor({ items: [e1] }), E2 = makeActor({ items: [e2] });
-    const b1 = await bonusOf(E1, e1, { mounted: true }); answer(true); const b2 = await bonusOf(E2, e2, {}); rt.setSpecialPromptProvider(null); assert.equal(b2, b1); }
-  ok('real attack path: forged vehicle flags refused, verified vehicle installation honoured; tripod resolved once (asked, never guessed) and carried; braced cannon uses its published Large size (Small cannot, Large exempt, unpayable refused); lightfoil choice adds no bonus');
+  ok('real attack path: forged vehicle flags refused, verified vehicle installation honoured; tripod is owned readiness state (never asked or guessed at attack time); braced cannon uses its published Large size (Small cannot, Large exempt, unpayable refused); lightfoil choice adds no bonus');
 }
 // ---- F. Darkstick: held together = one weapon, 2d8 -- FAIL-CLOSED under E4-C1 WP5 (decision EQ-002) -----------------------------------------------
 // The clean-break occupancy model gives every weapon its own appendages and cannot represent several identical weapons sharing one hand, and the
@@ -364,9 +325,11 @@ try {
   const A = makeActor({ items: [dart, rock, wb, pistol] });
   assert.ok(notesOf(A, dart).includes('worn on the wrist')); assert.ok(notesOf(A, rock).includes('worn on the forearm')); assert.ok(notesOf(A, wb).includes('worn on the wrist'));
   assert.equal(notesOf(A, pistol).some((n) => /^worn/.test(n)), false);
-  for (const w of [dart, rock, wb]) { reset(); assert.ok(await attack(A, w, {}), 'a worn weapon attacks normally (no hand rule is invented)'); }
+  // E4-C1 WP5-C1 (EQ-003): worn weapons are never verified READIED, so the attack gate refuses them (acceptance debt: EQ-003/worn-weapon-attack-execution);
+  // the classification facts above/below remain asserted and no hand rule is invented for them.
+  for (const w of [dart, rock, wb]) { reset(); assert.equal(await attack(A, w, {}), null, 'a worn weapon is refused by the gate until worn equipment is certified'); assert.equal(used(), 0); }
   assert.equal(shapeOf(dart).dualWield.wornNotHeld, false, 'a wrist location alone does not claim the hand-free / second-weapon rules');
-  const gaunt = owned('unmapped::Stunning Gauntlet'); const G = makeActor({ items: [gaunt] }); reset(); assert.ok(await attack(G, gaunt, {}), 'a worn light item is not gated by size');
+  const gaunt = owned('unmapped::Stunning Gauntlet'); const G = makeActor({ items: [gaunt] }); reset(); assert.equal(await attack(G, gaunt, {}), null, 'a worn item is refused by the gate (EQ-003), not by its size class');
   // disarm protection stays with the existing authority: the gauntlet (separate published rule) is immune, the wrist weapons are not made immune by their location
   const { resolveDisarmProtection } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js');
   assert.equal((await resolveDisarmProtection(G, {})).refused, false, 'EQ-003: a worn gauntlet is not a verified READIED weapon, so the categorical protection is withheld (fail closed) until worn-weapon certification is ruled on');

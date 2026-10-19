@@ -195,39 +195,82 @@ export function previewReadiness(actor, weapon, runtime, rollOptions = {}) {
 export const COORDINATOR_OWNED_FIRE_STATE_KEYS = Object.freeze(['wielded']);
 
 /**
- * Field-scoped update for a fire-state change: ONLY the keys that differ from the stored record, one dotted path each, never a coordinator-owned
- * key and never the whole record. A concurrent change to another key (in particular the coordinator-owned grip choice) is therefore never overwritten.
+ * The exact FireStateStore-owned delta between a stored record and the record an operation wants: `set` holds changed keys, `unset` removed keys.
+ * Never a coordinator-owned key, never the schema marker. A key this operation did not change is absent, so applying a delta can never restore
+ * a stale value of anything else (in particular the coordinator-owned grip).
  */
-export function fireStateUpdateFor(previous, next) {
+export function fireStateDeltaFor(previous, next) {
   const prev = previous && typeof previous === 'object' ? previous : null;
-  const update = {};
+  const set = {}; const unset = [];
   for (const key of new Set([...Object.keys(prev ?? {}), ...Object.keys(next ?? {})])) {
     if (COORDINATOR_OWNED_FIRE_STATE_KEYS.includes(key) || key === 'v') continue;
     const before = prev?.[key]; const after = next?.[key];
     if (JSON.stringify(before) === JSON.stringify(after)) continue;
-    if (after === undefined) update[`${FLAG_PATH}.-=${key}`] = null;
-    else update[`${FLAG_PATH}.${key}`] = after;
+    if (after === undefined) unset.push(key); else set[key] = after;
   }
-  if (Object.keys(update).length && !prev) update[`${FLAG_PATH}.v`] = 1;
+  return { set, unset, initialize: !prev && (Object.keys(set).length > 0 || unset.length > 0) };
+}
+
+/** Field-scoped dotted-path update for a delta (one path per changed key; never the whole record, never the grip). */
+export function fireStateUpdateFor(previous, next) {
+  const delta = fireStateDeltaFor(previous, next);
+  const update = {};
+  for (const [key, value] of Object.entries(delta.set)) update[`${FLAG_PATH}.${key}`] = value;
+  for (const key of delta.unset) update[`${FLAG_PATH}.-=${key}`] = null;
+  if (delta.initialize) update[`${FLAG_PATH}.v`] = 1;
   return update;
 }
 
-async function writeState(actor, weapon, state, { strict = false } = {}) {
+/** Apply a delta to the LATEST record (read after the asynchronous boundary). Everything the delta does not name is kept exactly as found. */
+function applyDelta(latest, delta) {
+  const base = latest && typeof latest === 'object' ? { ...latest } : (delta.initialize ? { v: 1 } : {});
+  for (const [key, value] of Object.entries(delta.set)) base[key] = value;
+  for (const key of delta.unset) delete base[key];
+  return base;
+}
+
+/**
+ * Persist ONLY the FireStateStore-owned delta, then synchronize the in-memory Item by applying that same delta to the record as it is NOW. The
+ * stored record is never replaced wholesale, so a coordinator-owned grip (or any other concurrent change) written while the update was in flight
+ * survives. In-memory state is updated only when the write succeeded: a failed best-effort write never leaves the Item claiming it was stored.
+ * Returns { persisted, state } where `state` is the record now in memory (after the delta when persisted, else unchanged).
+ */
+async function commitState(actor, weapon, base, next, { strict = false } = {}) {
+  // the delta is taken against the record the operation READ (`base`), not whatever is stored by now: a field changed concurrently and not by
+  // this operation is not part of the delta and so is never reverted
+  const delta = fireStateDeltaFor(base, next);
+  const persisted = await writeDelta(actor, weapon, delta, { strict });
+  if (persisted) syncInMemory(weapon, delta);
+  return { persisted, state: readFireState(weapon) ?? next };
+}
+
+function syncInMemory(weapon, delta) {
   if (!weapon) return;
+  const merged = applyDelta(readFireState(weapon), delta);   // no await between this read and the assignment
+  try { weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: merged } }; } catch { /* frozen document: the world copy updates on the next render */ }
+}
+
+async function writeDelta(actor, weapon, delta, { strict = false } = {}) {
+  if (!weapon) return false;
+  const update = {};
+  for (const [key, value] of Object.entries(delta.set)) update[`${FLAG_PATH}.${key}`] = value;
+  for (const key of delta.unset) update[`${FLAG_PATH}.-=${key}`] = null;
+  if (delta.initialize) update[`${FLAG_PATH}.v`] = 1;
+  if (!Object.keys(update).length) return false;   // nothing to store, nothing to synchronize
   const owner = weapon.actor ?? actor;
-  const update = fireStateUpdateFor(readFireState(weapon), state);
-  if (!Object.keys(update).length) return;
   try {
     if (owner && weapon.id) {
       const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
       await ActorEngine.updateOwnedItems(owner, [{ _id: weapon.id, ...update }]);
     } else if (typeof weapon.update === 'function') {
       await weapon.update(update);
-    }
+    } else return false;
+    return true;
   } catch (err) {
     // combat-state writes are best-effort (the attack still resolved); mount / unmount are strict and report the failure
     if (strict) throw err;
     console.warn('[SWSE] Could not persist weapon fire state (the attack still resolved).', err);
+    return false;
   }
 }
 
@@ -271,10 +314,7 @@ export async function commitFired(actor, weapon, runtime, rollOptions = {}, paid
   if (shape.temporal.length && shape.temporal.every((c) => c.family === 'prepared-attack') && !state?.primed && !changed) return null;
   let next = shape.temporal.length ? stateAfterFire(shape.temporal, state, clock, context(actor, rollOptions), paid) : { ...(state ?? {}) };
   next = patchOwnedState(next, owned);
-  await writeState(actor, weapon, next);
-  // keep the in-memory Item consistent for callers that keep using the same object within this tick
-  try { weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: next } }; } catch { /* frozen document: world copy updates on the next render */ }
-  return next;
+  return (await commitState(actor, weapon, state, next)).state;
 }
 
 /** A reload action restored the weapon (called by AmmoSystem.reloadWeapon). */
@@ -282,9 +322,7 @@ export async function clearReload(actor, weapon) {
   const state = readFireState(weapon);
   if (!state?.needsReload) return null;
   const next = stateAfterReload(state);
-  await writeState(actor, weapon, next);
-  try { weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: next } }; } catch { /* see commitFired */ }
-  return next;
+  return (await commitState(actor, weapon, state, next)).state;
 }
 
 /**
@@ -300,17 +338,15 @@ export async function primePreparedAttack(actor, weapon, runtime, rollOptions = 
   if (!check.ok) return { ok: false, reason: check.reason };
   const spend = await spendRequiredActions(actor, check.requiredActions, { weaponName: weapon?.name });
   if (!spend.ok) return { ok: false, reason: 'action-unavailable' };
-  const next = statePrimed(readFireState(weapon), check.constraint, clock);
-  await writeState(actor, weapon, next);
-  try { weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: next } }; } catch { /* see commitFired */ }
-  return { ok: true, state: next };
+  const base = readFireState(weapon);
+  const next = statePrimed(base, check.constraint, clock);
+  return { ok: true, state: (await commitState(actor, weapon, base, next)).state };
 }
 
 async function persistOwned(actor, weapon, patch, { strict = false } = {}) {
-  const next = patchOwnedState(readFireState(weapon), patch);
-  await writeState(actor, weapon, next, { strict });
-  try { weapon.flags = { ...(weapon.flags ?? {}), swse: { ...(weapon.flags?.swse ?? {}), fireState: next } }; } catch { /* see commitFired */ }
-  return next;
+  const base = readFireState(weapon);
+  const next = patchOwnedState(base, patch);
+  return (await commitState(actor, weapon, base, next, { strict })).state;
 }
 
 /**

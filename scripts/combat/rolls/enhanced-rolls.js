@@ -2,6 +2,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
+import { checkAttackSourceReadiness, refuseUnreadyAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack-readiness-gate.js";
 import { rollAttack as canonicalRollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { resolveAutofireArea } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/area-shape.js";
 import { askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
@@ -382,6 +383,7 @@ export class SWSERoll {
       ui.notifications.error('Attack failed: missing actor or weapon.');
       return null;
     }
+    { const gate = checkAttackSourceReadiness(actor, weapon, options); if (!gate.ok) return refuseUnreadyAttack(weapon, gate); }   // before any dialog, cost or roll
 
     try {
       let modifiers = {
@@ -556,6 +558,7 @@ export class SWSERoll {
       ui.notifications.error('Autofire failed: missing actor or weapon.');
       return null;
     }
+    { const gate = checkAttackSourceReadiness(actor, weapon, options); if (!gate.ok) return refuseUnreadyAttack(weapon, gate); }   // before any dialog, cost or roll
 
     try {
       // Check if weapon has autofire capability. Canonical weapons: the selected form's structured fire modes; legacy: Item properties.
@@ -982,6 +985,12 @@ export class SWSERoll {
         equippedWeapons.offhand = options.offhandWeapon;
       }
 
+      // an explicit override is still an attack source: it must be an owned, verified READIED weapon (or the virtual unarmed source)
+      for (const [role, w] of [['primary', options.primaryWeapon], ['offhand', options.offhandWeapon]]) {
+        if (!w) continue;
+        const gate = checkAttackSourceReadiness(actor, w, options);
+        if (!gate.ok) { refuseUnreadyAttack(w, gate); return null; }
+      }
       if (!equippedWeapons.primary) {
         ui.notifications.warn('No ready weapon for Full Attack. Ready a weapon (verified READIED) or choose which ready weapon to use.');
         return null;

@@ -24,7 +24,9 @@ const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/i
 const { FireStateStore: FireStateStoreRef } = await import('/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
@@ -508,24 +510,12 @@ try {
   out = await CSE.applyEffectOnlyOutcome({ special: flash.special, target: blindT, attacker: FA, weapon: fw, message: mkMsg(), weaponLabel: 'Flash' });
   assert.equal(out.skipped[0].reason, 'immune', 'a Blinded creature is structurally immune (never asked)');
 
-  // Wrist Rocket flash payload: the SAME status-effect machinery; blinded for 1d4 rounds (rolled)
+  // E4-C1 WP5-C1 (EQ-003): the Wrist Rocket Launcher is worn and so never READIED; the attack gate refuses its attacks, which suspends the live flash-payload
+  // (blinded 1d4 rounds) and nerve-toxin (stored secondary-attack result) outcome assertions as acceptance debt (EQ-003/worn-weapon-attack-execution).
+  // Their DATA classification stays asserted.
   const rw = canon('weapon-wrist-rocket-launcher', { ammunition: { current: 1, max: 1 } }); const RA = makeActor({ items: [rw] });
-  const wr = await attackRecords(RA, rw, mkT({ id: 'wr1' }), { payloadId: 'flash', profileId: 'primary', areaAttack: true });
-  const wrec = wr.records.find((r) => r.kind === 'status-effect');
-  assert.deepEqual([wrec.payload.status, wrec.payload.duration, wrec.source.payloadId], ['blinded', { dice: '1d4', unit: 'rounds', owner: 'target' }, 'flash']);
-  rolls.map['1d4'] = 3; const wT = mkT({ id: 'wr1' });
-  out = await applyFx(wr.special, wT, { attacker: RA, weapon: rw, message: mkMsg() });
-  assert.equal(out.applied.length, 1); const wi = wT.effects.at(-1);
-  assert.deepEqual([wi.statuses.has('blinded'), wi.flags['foundryvtt-swse'].effectIntent.duration], [true, '3-rounds']);
-
-  // Wrist Rocket nerve toxin: a hit is followed by a secondary attack the corpus gives NO bonus for -> the result is asked once, stored, never invented
-  const rw2 = canon('weapon-wrist-rocket-launcher', { ammunition: { current: 1, max: 1 } }); const RA2 = makeActor({ items: [rw2] }); // single shot: a fresh launcher
-  const nv = await attackRecords(RA2, rw2, mkT({ id: 'wn1' }), { payloadId: 'hollow-tip-nerve-toxin', profileId: 'primary' });
-  const nrec = nv.records.find((r) => r.kind === 'ct-rider'); assert.deepEqual([nrec.fired ?? null, nrec.steps, nrec.payload.secondaryDefense], [null, 2, 'fortitude'], 'unobserved (the serialized workflow drops nulls)');
-  const askedN = ask(async (q) => (q.id === nrec.id ? true : null)); const nT = mkT({ id: 'wn1' }); const nMsg = mkMsg();
-  out = await applyFx(nv.special, nT, { attacker: RA, weapon: rw, message: nMsg }); assert.equal(out.applied.length, 1); assert.equal(delegated.ct.at(-1).step, 2);
-  await applyFx(nv.special, nT, { attacker: RA, weapon: rw, message: nMsg }); assert.deepEqual(askedN, [nrec.id], 'asked once');
-  rt.setSpecialPromptProvider(async () => null); out = await applyFx(nv.special, mkT({ id: 'wn2' }), { message: mkMsg() }); assert.equal(out.skipped[0].reason, 'unresolved'); rt.setSpecialPromptProvider(null);
+  assert.equal(await rollAttack(RA, rw, { payloadId: 'flash', profileId: 'primary', areaAttack: true, suppressChat: true }), null, 'the worn launcher is refused before anything is spent');
+  assert.equal(rw.system.ammunition.current, 1);
   assert.equal(rowOf('weapon-wrist-rocket-launcher::nerve-toxin-secondary-attack-bonus').disposition, 'DATA_COMPLETENESS');
 
   // Verpine Shattergun: the weapon-takes-damage trigger is NOT a target outcome -> BLOCKED (no weapon-object damage path), no record fabricated
@@ -668,7 +658,8 @@ try {
 {
   // 72: a legacy / homebrew weapon carries no outcome record and is untouched
   const hb = legacy({ weaponCategory: 'ranged' }); const HA = makeActor({ items: [hb] }); reset();
-  assert.ok(await attack(HA, hb, { target: mkT() })); assert.equal(recs().length, 0); assert.equal(wfOf()?.special?.thresholdAdjustment, undefined);
+  // E4-C1 WP5-C1: an uncertified homebrew weapon is refused by the attack gate (it creates no outcome record because it never attacks)
+  assert.equal(await attack(HA, hb, { target: mkT() }), null); assert.equal(recs().length, 0); assert.equal(wfOf()?.special?.thresholdAdjustment, undefined);
   // 73: an existing AUTO rider is unchanged: the 5D-E condition-track rider still executes once (Amphistaff spear) and the overwhelming-stun record shape is intact
   const aw = withAmmo('unmapped::Amphistaff', 20); const AA = makeActor({ items: [aw, ewp('Qxz Label', 'Amphistaff')] });
   const spear = await attackRecords(AA, aw, mkT({ fort: 10 }), { profileId: 'spear-melee', configurationId: 'spear' });

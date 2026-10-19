@@ -23,7 +23,9 @@ const ma = await import('/systems/foundryvtt-swse/scripts/combat/multi-attack.js
 const { DualWieldCombatShapeResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/dual-wield-combat-shape-resolver.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { resolveAutofireForm, SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { _aggregateFullAttackAmmo } = await import('/systems/foundryvtt-swse/scripts/engine/combat/full-attack-executor.js');
@@ -184,7 +186,7 @@ const sel = (weapon, ctx = {}) => rt.shapeOfWeapon(weapon, ctx);
   const stub = async (f) => { formulas.push(f); return { total: 16, formula: f, dice: [{ results: [{ result: 12 }] }] }; };
   RollEngine.safeRoll = stub; SWSERoll._safeRoll = stub; globalThis.SWSE = { ...(globalThis.SWSE ?? {}), RollEngine: { safeRoll: stub } };
   try {
-    const run = async (opts) => { consumed = null; formulas.length = 0; const r = await SWSERoll.rollAutofire(A, arc, { targets: [target()], skipFP: true, ...opts }); return { r, consumed, formulas: [...formulas] }; };
+    const run = async (opts) => { consumed = null; formulas.length = 0; const r = await SWSERoll.rollAutofire(A, ownAndReady(A, arc), { targets: [target()], skipFP: true, ...opts }); return { r, consumed, formulas: [...formulas] }; };
     const expectBonus = (await computeFinalAttackComposition(A, arc, { ...resolveAutofireForm(arc, {}).selection, autofire: true, attackMode: 'autofire', sequencePenalty: -5 })).atkBonus;
     const af = await run({});
     assert.ok(af.r?.success, 'autofire resolved'); assert.equal(af.consumed, 10, 'canonical autofire units');
@@ -198,7 +200,7 @@ const sel = (weapon, ctx = {}) => rt.shapeOfWeapon(weapon, ctx);
     // a canonical form that cannot autofire is refused, nothing consumed
     const pistol = canon('weapon-blaster-pistol', { ammunition: { current: 5, max: 5 } });
     consumed = null; notes.warn.length = 0;
-    assert.equal(await SWSERoll.rollAutofire(makeActor({ items: [pistol] }), pistol, { targets: [target()], skipFP: true }), null);
+    assert.equal(await SWSERoll.rollAutofire(makeActor({ items: [pistol] }), ownAndReady(makeActor({ items: [pistol] }), pistol), { targets: [target()], skipFP: true }), null);
     assert.equal(consumed, null); assert.ok(notes.warn.some((m) => /cannot autofire/.test(m)));
   } finally { AmmoSystem.isTrackingEnabled = origTrack; AmmoSystem.consumeAmmunition = origConsume; SWSEChat.postRoll = origPost; RollEngine.safeRoll = origRE; SWSERoll._safeRoll = origSafe; globalThis.SWSE = origSWSE; }
   // legacy/homebrew autofire keeps its own path
@@ -208,11 +210,13 @@ const sel = (weapon, ctx = {}) => rt.shapeOfWeapon(weapon, ctx);
     const o1 = SWSERoll._safeRoll, o2 = SWSEChat.postRoll, o3 = RollEngine.safeRoll, o4 = globalThis.SWSE;
     SWSERoll._safeRoll = stub2; SWSEChat.postRoll = async () => ({}); RollEngine.safeRoll = stub2; globalThis.SWSE = { ...(globalThis.SWSE ?? {}), RollEngine: { safeRoll: stub2 } };
     try {
-      const r = await SWSERoll.rollAutofire(makeActor({ items: [hb] }), hb, { targets: [target()], skipFP: true });
-      assert.ok(r?.success, 'legacy autofire still functions'); assert.match(rolls[1] ?? '', /^3d6/);
+      // E4-C1 WP5-C1: a homebrew weapon has no certified identity, so the execution gate refuses its autofire before any roll or cost.
+      const A = makeActor({ items: [hb] });
+      const r = await SWSERoll.rollAutofire(A, hb, { targets: [target()], skipFP: true });
+      assert.equal(r, null, 'uncertified legacy autofire is refused by the gate'); assert.deepEqual(rolls, [], 'no roll was made');
     } finally { SWSERoll._safeRoll = o1; SWSEChat.postRoll = o2; RollEngine.safeRoll = o3; globalThis.SWSE = o4; }
   }
-  ok('rollAutofire end to end: canonical units (10 / Burst 5), canonical attack composition (penalty counted once), canonical damage; non-autofire form refused; legacy autofire unchanged');
+  ok('rollAutofire end to end: canonical units (10 / Burst 5), canonical attack composition (penalty counted once), canonical damage; non-autofire form refused; uncertified legacy autofire is refused by the gate');
 }
 
 // ---- 12: Burst Fire needs autofire capability AND the feat -----------------------------------------------------------------------------------

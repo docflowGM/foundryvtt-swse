@@ -23,7 +23,9 @@ const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/i
 const { FireStateStore: FireStateStoreRef } = await import('/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
@@ -242,13 +244,20 @@ try {
     reset(); assert.ok(await attack(A, micro, {}), 'default (standalone) is legal');
     // recorded eligible host: allowed
     await FireStateStoreRef.mountOnHost(A, micro, rifle, { skillRoller: rolling(20) });
-    reset(); assert.ok(await attack(A, micro, opt), `${label}: recorded eligible host -> allowed`);
-    reset(); assert.ok(await attack(A, micro, {}), 'the owned mounted configuration applies by default and is legal');
+    // E4-C1 WP5-C1: a launcher mounted on a host weapon is HOST-MOUNTED equipment; mounted/worn certification is deferred, so its readiness is indeterminate
+    // and the attack gate refuses it (acceptance debt: EQ-003/host-mounted-attack-execution). The mount ARRANGEMENT legality (previewReadiness) is still asserted.
+    reset(); assert.equal(await attack(A, micro, opt), null, `${label}: recorded eligible host -> mount legality satisfied, but host-mounted attacks await certification`);
+    assert.ok(!FireStateStoreRef.previewReadiness(A, micro, rt.resolveAttackWeaponRuntime(micro, opt), opt).blockers.some((b) => /mount-host/.test(b.reason)), 'no mount blocker remains');
+    reset(); assert.equal(await attack(A, micro, {}), null, 'the owned mounted configuration is likewise refused by the gate');
     // the recorded host is removed
     A.items = col(A.items.filter((i) => i.id !== rifle.id));
     reset(); assert.equal(await attack(A, micro, opt), null, `${label}: recorded host removed -> refused`); assert.equal(spent.rolls + spent.ammo + spent.actions.length, 0);
     reset(); assert.equal(await attack(A, micro, {}), null, 'and the owned mounted state is refused too');
-    reset(); assert.ok(await attack(A, micro, { configurationId: 'standalone' }), 'standalone remains available after the host is gone');
+    // E4-C1 WP5-C1: readiness is about the weapon's OWNED configuration (a recorded host keeps it host-mounted), not an attack option; once the owner
+    // unmounts it (an owned-state change) the standalone form is legal again.
+    reset(); assert.equal(await attack(A, micro, { configurationId: 'standalone' }), null, 'a stale recorded host keeps the launcher host-mounted until it is unmounted');
+    assert.equal((await FireStateStoreRef.unmountFromHost(A, micro)).ok, true);
+    reset(); assert.ok(await attack(A, micro, { configurationId: 'standalone' }), 'standalone remains available once the launcher is unmounted');
   }
   // a recorded host that has become ineligible (forged / stale state: points at a pistol) is refused
   { const [A, micro, , pistol] = mkL(); await FireStateStoreRef.setLoadedPayload(A, micro, 'weapon-frag-grenade');
@@ -352,10 +361,12 @@ try {
   reinstall();
   const micro = owned('weapon-micro-grenade-launcher'), rifle = owned('weapon-blaster-rifle');
   const A = makeActor({ items: [micro, rifle] });
-  const before = await bonusOf(A, micro, { loadedIdentityKey: 'weapon-frag-grenade' });
+  // E4-C1 WP5-C1: compare the attack composition itself (a host-mounted launcher cannot pass the execution gate until mounted certification)
+  const compBonus = async () => (await computeFinalAttackComposition(A, micro, { loadedIdentityKey: 'weapon-frag-grenade' })).atkBonus;
+  const before = await compBonus();
   const dBefore = rt.resolveCanonicalDamage(micro, { weaponForm: { identityKey: 'weapon-micro-grenade-launcher', profileId: 'primary', loadedIdentityKey: 'weapon-frag-grenade' } }).base;
   await FireStateStoreRef.mountOnHost(A, micro, rifle, { skillRoller: rolling(20) });
-  const after = await bonusOf(A, micro, { loadedIdentityKey: 'weapon-frag-grenade' });
+  const after = await compBonus();
   const dAfter = rt.resolveCanonicalDamage(micro, { weaponForm: { identityKey: 'weapon-micro-grenade-launcher', profileId: 'primary', loadedIdentityKey: 'weapon-frag-grenade' } }).base;
   assert.equal(after, before, 'mounting changes no attack bonus'); assert.equal(dAfter, dBefore, 'nor the payload damage (the -2 dice adjustment is intact)');
   assert.ok(typeof before === 'number');

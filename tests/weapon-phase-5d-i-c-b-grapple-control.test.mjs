@@ -23,7 +23,9 @@ const chatPosted = [];
 globalThis.ChatMessage = { getSpeaker: () => ({}), create: async (d) => { chatPosted.push(d); return {}; } };
 
 const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
 const { RollEngine } = await import('/systems/foundryvtt-swse/scripts/engine/roll-engine.js');
 const { AmmoSystem } = await import('/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js');
@@ -756,14 +758,18 @@ try {
     ['object-size-unobserved', 'falling-object-size-not-in-table', 'falling-object-size-not-in-table', 'falling-object-table-uncertified']);
   ok('the falling-object authority is a pure size lookup that refuses what it cannot certify (unobserved size, missing size, malformed formula, no table)');
 
-  // 81/82 (E4-C1 WP5, decision EQ-003): the Tactical Tractor Beam's canonical size class gives no hand-wielding classification, so the shared
-  // readiness interface can never verify it READIED (grip stays indeterminate). A control whose source weapon is not verified ready ends with
-  // 'weapon-removed' (fail closed). The opposed-grapple maintenance roll is therefore unreachable for this weapon until EQ-003 is ruled on;
-  // nothing is assumed ready to keep that path alive.
+  // E4-C1 WP5-C1: the beam is verified READIED in its tripod configuration (owned `mounted` state, two hands), so maintenance behaves as published.
+  // 81: maintenance: at the START of the controller\'s turn an opposed grapple check; a lost check releases the object; only the controller\'s start; once per round
   const M = mkT({ size: 'large', grapple: 5 }); world(A, M); await applyFx(acq.special, M, { attacker: A, weapon: beam }); assert.equal(stateOf(M), 'grabbed');
-  const gone = await turnEvent('start', A, [A, M], 1);
-  assert.deepEqual(gone.ended.map((e) => e.reason), ['weapon-removed']); assert.equal(stateOf(M), null); assert.equal(GrappleStateEngine.getControlRecords(M).length, 0);
-  ok('tractor-beam control with a source weapon whose readiness cannot be verified ends fail-closed (weapon-removed); maintenance rolls are blocked pending EQ-003');
+  assert.equal((await turnEvent('start', M, [A, M], 1)).ended.length, 0); assert.equal((await turnEvent('end', A, [A, M], 1)).ended.length, 0);
+  assert.equal((await turnEvent('start', A, [A, M], 1)).ended.length, 0); assert.equal(stateOf(M), 'grabbed');
+  assert.equal((await turnEvent('start', A, [A, M], 1)).ended.length, 0);
+  ok('maintenance fires only at the controller\'s turn start, once per round; a won check keeps the object');
+
+  // 82: a lost maintenance check releases the object (reason maintenance-failed) and clears the state
+  M.__grapple = 40; const lost = await turnEvent('start', A, [A, M], 2);
+  assert.deepEqual(lost.ended.map((e) => e.reason), ['maintenance-failed']); assert.equal(stateOf(M), null); assert.equal(GrappleStateEngine.getControlRecords(M).length, 0);
+  ok('a lost maintenance check releases the object and clears the control');
 }
 
 // ======================================================================================================================================
