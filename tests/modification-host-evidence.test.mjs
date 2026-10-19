@@ -522,7 +522,151 @@ check('synthetic trusted fixtures validate under a synthetic authority and remai
     assert.equal(p.status, 'unknown', `${factRef} must not resolve in production`);
     assert.ok(p.reasons.includes('HOST_FACT_UNTRUSTED'));
   }
-  assert.ok(sset.entries.every((e) => e.result.productionTrusted === false));
+  assert.ok(E.describeObservationSet(sset).entries.every((e) => e.result.productionTrusted === false));
+});
+
+
+/* ---------------------------------- correction #1: authority impersonation ---------------------------------- */
+
+check('authority identity: forged and derived authority objects can issue nothing trusted (observations, item states, collections)', () => {
+  const real = synth();
+  const forge = (kind) => ({
+    id: 'production', kind, synthetic: kind === 'synthetic', trustedBindingMethods: ['test-binding'], trustedSourceKinds: ['synthetic-fixture', 'canonical-registry'],
+    trustedEnumerators: ['test-enum'], registryPins: [REG], isIssued: () => true, isIssuedCollection: () => true,
+    issue: (x) => x, issueCollection: (x) => x
+  });
+  const forgeries = [forge('production'), forge('synthetic'), { ...real }, Object.create(real), new Proxy(real, {}), Object.freeze(forge('production')), Object.assign({}, E.PRODUCTION_AUTHORITY)];
+  for (const [i, f] of forgeries.entries()) {
+    const c = ctxOf(f);
+    const o = f.issue ? f.issue(obs()) : obs();
+    for (const x of [o, obs(), real.issue(obs())]) {
+      const r = E.classifyObservation(x, c);
+      assert.equal(r.usable, false, `forgery ${i}`); assert.equal(r.productionTrusted, false); assert.ok(r.reasons.includes('HOST_FACT_UNTRUSTED'));
+    }
+    const rr = E.classifyObservation(real.issue(registryObs()), c);
+    assert.equal(rr.usable, false);
+    const st = E.classifyItemState(real.issue(itemState()), c);
+    assert.equal(st.usable, false); assert.equal(st.persistentChanges, null);
+    const col = E.classifyCollection(real.issueCollection(snapshot([member('m1', 'pay1', { status: 'known', value: 1 })])), c);
+    assert.equal(col.usable, false); assert.equal(col.productionTrusted, false); assert.deepEqual(col.physicalObjects, { status: 'unknown', value: null });
+    const set = E.createObservationSet({ observations: [real.issue(obs())] }, c);
+    assert.equal(E.resolveFact(set, ASK).status, 'unknown', `forgery ${i} cannot resolve a fact`);
+  }
+  assert.equal(E.classifyObservation(real.issue(obs()), ctxOf(real)).usable, true, 'the genuine authority still works');
+  assert.equal(E.classifyObservation(obs(), { ...ctxOf(real), authority: 'production' }).usable, false);
+  assert.equal(E.classifyObservation(real.issue(obs()), { ...ctxOf(real), authority: null }).usable, false, 'null falls to production, which accepts nothing');
+});
+
+check('authority identity: the public authority fields are descriptive only; a genuine production authority cannot be widened', () => {
+  const real = synth();
+  assert.ok(Object.isFrozen(real) && Object.isFrozen(real.trustedSourceKinds));
+  assert.throws(() => { real.trustedSourceKinds.push('x'); });
+  assert.throws(() => { real.kind = 'production'; });
+  assert.throws(() => { E.PRODUCTION_AUTHORITY.trustedSourceKinds.push('synthetic-fixture'); });
+  assert.equal(real.isIssued, undefined, 'no public issuance oracle');
+  assert.equal(real.isIssuedCollection, undefined);
+  assert.equal(E.classifyObservation(E.PRODUCTION_AUTHORITY.issue(obs()), ctxOf(E.PRODUCTION_AUTHORITY)).usable, false);
+});
+
+/* ---------------------------------- correction #1: ObservationSet integrity ---------------------------------- */
+
+check('ObservationSet: the handle is opaque and frozen; fabricated, copied and spread sets are rejected by resolveFact', () => {
+  const a = synth();
+  const good = setOf(a, [obs()]);
+  assert.equal(E.isObservationSet(good), true);
+  assert.deepEqual(Object.keys(good).sort(), ['entryCount', 'stateCount']);
+  assert.throws(() => { good.entries = []; });
+  assert.throws(() => { good.entryCount = 5; });
+  assert.throws(() => { good.extra = 1; });
+  assert.equal(E.resolveFact(good, ASK).status, 'known');
+  const fabricated = { entries: [{ observation: obs(), result: { status: 'known', usable: true } }], states: [], ctx: ctxOf(a) };
+  const legacyShape = { entries: [{ observation: a.issue(obs()), result: { usable: true, status: 'known', reasons: [] } }], states: [] };
+  for (const bad of [fabricated, legacyShape, clone(good), { ...good }, Object.create(good), null, undefined, 'set', []]) {
+    assert.equal(E.isObservationSet(bad), false);
+    assert.throws(() => E.resolveFact(bad, ASK), /not an authentic ObservationSet/);
+    assert.throws(() => E.describeObservationSet(bad), /not an authentic ObservationSet/);
+  }
+});
+
+check('ObservationSet: rejected evidence cannot become known or absent by mutating inputs, results, entries or the saved context', () => {
+  const a = synth();
+  const intel = { factRef: 'host.intelligenceScore', subject: { role: 'host', itemId: 'host1' }, requestedBasis: 'base', purpose: 'printed-statistics' };
+  const fps = { ...FP, host1: 'stale-fp' };
+  const rejected = obs({ trust: 'default' });
+  const staleObs = a.issue(obs());
+  const absentRaw = obs({ factRef: 'host.intelligenceScore', status: 'absent', value: undefined, absence: { basis: 'x' }, trust: 'derived' });
+  const context = { ...ctxOf(a), itemFingerprints: fps };
+  const set = E.createObservationSet({ observations: [rejected, staleObs, absentRaw] }, context);
+  const before = JSON.stringify([E.resolveFact(set, ASK), E.resolveFact(set, intel)]);
+  assert.equal(E.resolveFact(set, ASK).status, 'unknown');
+  assert.equal(E.resolveFact(set, intel).status, 'unknown');
+  // mutate the caller's inputs and context after construction
+  rejected.trust = 'explicit'; rejected.value = 'Huge'; absentRaw.trust = 'explicit';
+  rejected.factRef = 'host.weightKg';
+  assert.equal(E.describeObservationSet(set).entries[0].factRef, 'host.sizeCategory', 'the stored copy is independent of the caller object');
+  fps.host1 = FP.host1; context.itemFingerprints = FP; context.authority = null; context.contractRevision = 'zzz'; context.registryHash = REG;
+  assert.throws(() => { staleObs.value = 'Huge'; }, 'issued evidence is frozen');
+  assert.equal(JSON.stringify([E.resolveFact(set, ASK), E.resolveFact(set, intel)]), before, 'stored decisions are unaffected');
+  // mutate a described copy; the set is unaffected
+  const d = E.describeObservationSet(set);
+  d.entries.forEach((e) => { e.result.usable = true; e.result.status = 'known'; });
+  d.entries.push({ factRef: 'host.sizeCategory', result: { usable: true } });
+  assert.equal(JSON.stringify([E.resolveFact(set, ASK), E.resolveFact(set, intel)]), before);
+  assert.equal(E.describeObservationSet(set).entries.length, 3);
+  assert.ok(E.describeObservationSet(set).entries.every((e) => e.result.usable === false));
+  // a genuinely fresh construction with the corrected context is a different set and does resolve
+  assert.equal(E.resolveFact(E.createObservationSet({ observations: [staleObs] }, ctxOf(a)), ASK).status, 'known');
+});
+
+check('ObservationSet: accepted decisions are a snapshot; later context edits cannot revoke or forge them, and item-state declarations are protected too', () => {
+  const a = synth();
+  const fps = { ...FP };
+  const context = { ...ctxOf(a), itemFingerprints: fps };
+  const set = E.createObservationSet({ observations: [a.issue(obs())], itemStates: [a.issue(itemState({ persistentChanges: 'unresolved' }))] }, context);
+  fps.host1 = 'changed-later';
+  assert.equal(E.resolveFact(set, ASK).status, 'known');
+  const elig = { ...ASK, purpose: 'installation-eligibility' };
+  assert.equal(E.resolveFact(set, elig).status, 'unknown');
+  const st = E.describeObservationSet(set);
+  st.states[0].result.usable = true; st.states[0].result.persistentChanges = 'none';
+  assert.equal(E.resolveFact(set, elig).status, 'unknown', 'item-state classification cannot be edited');
+  // an unissued (forged) item-state declaration stays untrusted, and its mutation afterwards changes nothing
+  const raw = itemState({ persistentChanges: 'none' });
+  const set2 = E.createObservationSet({ observations: [a.issue(obs())], itemStates: [raw] }, ctxOf(a));
+  raw.persistentChanges = 'none'; raw.trust = 'explicit';
+  assert.equal(E.resolveFact(set2, elig).status, 'unknown');
+  // an inconsistent set of inputs stays deterministic
+  assert.deepEqual(E.resolveFact(set2, elig), E.resolveFact(set2, elig));
+});
+
+check('item type: item.type must agree with subject.itemType, and one Item document has one type across a set', () => {
+  const a = synth();
+  const typeObs = (value, itemType = 'weapon') => obs({ factRef: 'item.type', value, subject: { role: 'host', itemId: 'host1', itemType } });
+  assert.deepEqual(E.validateObservationShape(typeObs('weapon')), []);
+  assert.ok(E.validateObservationShape(typeObs('armor')).length, 'value disagrees with subject.itemType');
+  const c = E.classifyObservation(a.issue(typeObs('armor')), ctxOf(a));
+  assert.equal(c.status, 'invalid'); assert.deepEqual(reasons(c), ['HOST_PROVENANCE_INVALID']);
+  // conflicting itemType claims about the same document invalidate every claim about it
+  const conflicting = setOf(a, [obs({ value: 'Medium' }), obs({ value: 'Medium', subject: { role: 'host', itemId: 'host1', itemType: 'armor' }, provenance: { source: { kind: 'synthetic-fixture', recordRef: 'fx:2', path: 'size' }, binding: { method: null, result: 'unbound' } } })]);
+  const r = E.resolveFact(conflicting, ASK);
+  assert.equal(r.status, 'unknown'); assert.ok(reasons(r).includes('HOST_PROVENANCE_INVALID'));
+  assert.ok(E.describeObservationSet(conflicting).entries.every((e) => e.result.status === 'invalid'));
+  // a consistent type is unaffected, and other documents are not dragged in
+  const fine = setOf(a, [obs(), typeObs('weapon')]);
+  assert.equal(E.resolveFact(fine, ASK).status, 'known');
+  assert.equal(E.resolveFact(fine, { factRef: 'item.type', subject: { role: 'host', itemId: 'host1' }, requestedBasis: 'base', purpose: 'printed-statistics' }).value, 'weapon');
+});
+
+check('collections: aggregate physical quantity must remain a safe integer', () => {
+  const a = synth();
+  const cls = (members) => E.classifyCollection(a.issueCollection(snapshot(members)), ctxOf(a));
+  const MAX = Number.MAX_SAFE_INTEGER;
+  const big = cls([member('m1', 'pay1', { status: 'known', value: MAX }), member('m2', 'pay2', { status: 'known', value: 1 })]);
+  assert.equal(big.status, 'invalid'); assert.deepEqual(reasons(big), ['HOST_PROVENANCE_INVALID']);
+  assert.equal(cls([member('m1', 'pay1', { status: 'known', value: MAX }), member('m2', 'pay2', { status: 'unknown' })]).status, 'invalid', 'the lower bound is bounded too');
+  assert.equal(cls([member('m1', 'pay1', { status: 'known', value: MAX })]).physicalObjects.value, MAX);
+  assert.equal(cls([member('m1', 'pay1', { status: 'known', value: MAX - 1 }), member('m2', 'pay2', { status: 'known', value: 1 })]).physicalObjects.value, MAX);
+  assert.equal(cls([member('m1', 'pay1', { status: 'known', value: MAX + 1 })]).status, 'invalid');
 });
 
 /* ---------------------------------- scope guards ---------------------------------- */

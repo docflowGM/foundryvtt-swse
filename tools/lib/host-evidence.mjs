@@ -106,31 +106,40 @@ export const fingerprintOf = (value) => sha256(canonicalJson(value));
 /* Evidence authorities                                                                        */
 /* ------------------------------------------------------------------------------------------ */
 
-const PRODUCTION_TOKEN = Symbol('production-evidence-authority');
+/**
+ * Module-private authority identity. An authority object is trusted ONLY if it is a key of this map; its public fields (id, kind,
+ * synthetic, lists, methods) are descriptive and never consulted for a trust decision, so a look-alike object, a spread/clone
+ * or an Object.create() descendant is an unrecognized authority and fails closed.
+ */
+const AUTHORITY_STATE = new WeakMap();
 
-function makeAuthority(token, { id, kind, trustedBindingMethods, trustedSourceKinds, trustedEnumerators, registryPins }) {
-  const issuedObservations = new WeakSet();
-  const issuedCollections = new WeakSet();
-  const authority = {
-    id,
-    kind,
-    synthetic: kind === 'synthetic',
-    trustedBindingMethods: Object.freeze([...trustedBindingMethods]),
-    trustedSourceKinds: Object.freeze([...trustedSourceKinds]),
-    trustedEnumerators: Object.freeze([...trustedEnumerators]),
-    registryPins: Object.freeze([...registryPins]),
+function makeAuthority({ id, kind, trustedBindingMethods, trustedSourceKinds, trustedEnumerators, registryPins }) {
+  const state = Object.freeze({
+    kind, synthetic: kind === 'synthetic',
+    trustedBindingMethods: Object.freeze([...trustedBindingMethods]), trustedSourceKinds: Object.freeze([...trustedSourceKinds]),
+    trustedEnumerators: Object.freeze([...trustedEnumerators]), registryPins: Object.freeze([...registryPins]),
+    issuedObservations: new WeakSet(), issuedCollections: new WeakSet()
+  });
+  const authority = Object.freeze({
+    id, kind, synthetic: state.synthetic,
+    trustedBindingMethods: state.trustedBindingMethods, trustedSourceKinds: state.trustedSourceKinds,
+    trustedEnumerators: state.trustedEnumerators, registryPins: state.registryPins,
     /** Returns a frozen copy registered as issued by THIS authority. A structural copy of it (JSON, spread, clone) is not issued. */
-    issue(raw) { const copy = deepFreeze(structuredClone(raw)); issuedObservations.add(copy); return copy; },
-    issueCollection(raw) { const copy = deepFreeze(structuredClone(raw)); issuedCollections.add(copy); return copy; },
-    isIssued: (o) => isObj(o) && issuedObservations.has(o),
-    isIssuedCollection: (o) => isObj(o) && issuedCollections.has(o),
-    _token: token
-  };
-  return Object.freeze(authority);
+    issue(raw) { const copy = deepFreeze(structuredClone(raw)); state.issuedObservations.add(copy); return copy; },
+    issueCollection(raw) { const copy = deepFreeze(structuredClone(raw)); state.issuedCollections.add(copy); return copy; }
+  });
+  AUTHORITY_STATE.set(authority, state);
+  return authority;
+}
+
+/** The private state of the authority named by ctx (production when none is named); null for anything this module did not create. */
+function authorityState(ctx) {
+  const a = ctx?.authority ?? PRODUCTION_AUTHORITY;
+  return isObj(a) ? AUTHORITY_STATE.get(a) ?? null : null;
 }
 
 /** The production authority: accepts nothing, so no real Item-derived observation can be trusted. Cannot be constructed elsewhere. */
-export const PRODUCTION_AUTHORITY = makeAuthority(PRODUCTION_TOKEN, {
+export const PRODUCTION_AUTHORITY = makeAuthority({
   id: 'production', kind: 'production',
   trustedBindingMethods: TRUSTED_BINDING_METHODS, trustedSourceKinds: TRUSTED_SOURCE_KINDS, trustedEnumerators: TRUSTED_ENUMERATORS, registryPins: []
 });
@@ -144,7 +153,7 @@ const SYNTHETIC_OPTIONS = ['id', 'trustedBindingMethods', 'trustedSourceKinds', 
 export function createSyntheticEvidenceAuthority(config = {}) {
   for (const k of Object.keys(config)) if (!SYNTHETIC_OPTIONS.includes(k)) throw new TypeError(`unsupported authority option: ${k}`);
   const list = (v) => (Array.isArray(v) && v.every(isStr) ? v : []);
-  return makeAuthority(Symbol('synthetic-evidence-authority'), {
+  return makeAuthority({
     id: isStr(config.id) ? config.id : 'synthetic', kind: 'synthetic',
     trustedBindingMethods: list(config.trustedBindingMethods), trustedSourceKinds: list(config.trustedSourceKinds),
     trustedEnumerators: list(config.trustedEnumerators), registryPins: list(config.registryPins)
@@ -220,6 +229,7 @@ export function validateObservationShape(obs) {
     if (!BASES.includes(obs.scope.basis)) p.push('scope: unknown basis');
     if (obs.scope.state !== null && !isStr(obs.scope.state)) p.push('scope: state must be null or a descriptor');
   }
+  if (obs.factRef === 'item.type' && obs.status === 'known' && isObj(obs.subject) && obs.value !== obs.subject.itemType) p.push('observation: item.type value disagrees with subject.itemType');
   if (!INPUT_STATUSES.includes(obs.status)) p.push('observation: status must be known, absent or unknown');
   else p.push(...valueProblems(obs.factRef, obs.status, obs.value, obs.provenance?.zeroIsAuthored));
   if (obs.status === 'absent' ? !isObj(obs.absence) || !isStr(obs.absence.basis) || Object.keys(obs.absence).length !== 1 : hasOwn(obs, 'absence')) p.push('observation: absence evidence is required exactly when status is absent');
@@ -253,8 +263,8 @@ export function validateObservationShape(obs) {
  * Shared checks for any evidence-bearing object. `ctx`: { authority, contractRevision, registryHash, itemFingerprints }.
  * @returns {{untrusted: string[], invalid: string[], stale: string[]}}
  */
-function trustChecks({ issued, trust, basis, sourceKind, bindingMethod, bindingResult, bindings, itemId }, ctx) {
-  const authority = ctx.authority ?? PRODUCTION_AUTHORITY;
+function trustChecks({ issued, trust, basis, sourceKind, bindingMethod, bindingResult, bindings, itemId }, ctx, authority) {
+  if (!authority) return { untrusted: ['unrecognized evidence authority (fails closed)'], invalid: [], stale: [] };
   const untrusted = [];
   const invalid = [];
   const stale = [];
@@ -293,14 +303,14 @@ function verdictOf(checks, extraInvalid = []) {
  * observation. An `unknown` observation carries no evidence and is never usable.
  */
 export function classifyObservation(obs, ctx = {}) {
-  const authority = ctx.authority ?? PRODUCTION_AUTHORITY;
+  const authority = authorityState(ctx);
   const problems = validateObservationShape(obs);
   if (problems.length) return { status: 'invalid', usable: false, reasons: ['HOST_PROVENANCE_INVALID'], detail: problems, synthetic: false, productionTrusted: false };
   if (obs.status === 'unknown') return { status: 'unknown', usable: false, reasons: [], detail: [], synthetic: false, productionTrusted: false };
   const checks = trustChecks({
-    issued: authority.isIssued(obs), trust: obs.trust, basis: obs.scope.basis, sourceKind: obs.provenance.source.kind,
+    issued: authority?.issuedObservations.has(obs) === true, trust: obs.trust, basis: obs.scope.basis, sourceKind: obs.provenance.source.kind,
     bindingMethod: obs.provenance.binding.method, bindingResult: obs.provenance.binding.result, bindings: obs.bindings, itemId: obs.subject.itemId
-  }, ctx);
+  }, ctx, authority);
   const v = verdictOf(checks);
   const usable = v.status === 'trusted';
   return { status: usable ? obs.status : v.status, usable, reasons: v.reasons, detail: v.detail, synthetic: usable && authority.synthetic, productionTrusted: usable && authority.kind === 'production' };
@@ -315,7 +325,7 @@ const ITEM_STATE_KEYS = ['schema', 'itemId', 'persistentChanges', 'trust', 'prov
 
 /** Declares whether an Item carries unresolved persistent changes. Needed so a modified Item never silently falls back to base statistics. */
 export function classifyItemState(decl, ctx = {}) {
-  const authority = ctx.authority ?? PRODUCTION_AUTHORITY;
+  const authority = authorityState(ctx);
   const p = [];
   if (onlyKeys(decl, ITEM_STATE_KEYS, ITEM_STATE_KEYS, 'itemState', p)) {
     if (decl.schema !== EVIDENCE_SCHEMA_ID) p.push('itemState: wrong schema id');
@@ -330,9 +340,9 @@ export function classifyItemState(decl, ctx = {}) {
   }
   if (p.length) return { status: 'invalid', usable: false, reasons: ['HOST_PROVENANCE_INVALID'], detail: p };
   const checks = trustChecks({
-    issued: authority.isIssued(decl), trust: decl.trust, basis: 'base', sourceKind: decl.provenance.source.kind,
+    issued: authority?.issuedObservations.has(decl) === true, trust: decl.trust, basis: 'base', sourceKind: decl.provenance.source.kind,
     bindingMethod: decl.provenance.binding.method, bindingResult: decl.provenance.binding.result, bindings: { ...decl.bindings, registryHash: null }, itemId: decl.itemId
-  }, ctx);
+  }, ctx, authority);
   const v = verdictOf(checks);
   return { status: v.status, usable: v.status === 'trusted', reasons: v.reasons, detail: v.detail, persistentChanges: v.status === 'trusted' ? decl.persistentChanges : null };
 }
@@ -341,16 +351,54 @@ export function classifyItemState(decl, ctx = {}) {
 /* Observation sets and resolution                                                             */
 /* ------------------------------------------------------------------------------------------ */
 
-const keyOf = (o) => `${o.factRef}|${o.subject.role}|${o.subject.itemId}|${o.subject.memberRef ?? ''}|${o.scope.basis}|${o.scope.state ?? ''}`;
+/** Module-private storage for ObservationSets. A set is authentic only if it is a key of this map. */
+const SET_STATE = new WeakMap();
+
+const cloneOrNull = (v) => { try { return deepFreeze(structuredClone(v)); } catch { return null; } };
+const invalidResult = (detail) => ({ status: 'invalid', usable: false, reasons: ['HOST_PROVENANCE_INVALID'], detail: [detail], synthetic: false, productionTrusted: false });
 
 /**
+ * Classifies every input once, at construction (the context is read only then and never stored), and keeps defensive frozen copies of the inputs and of
+ * the classification results in private storage. The returned object is an opaque handle: it carries no evidence and nothing the
+ * caller does to it, to the inputs or to the context afterwards can change a stored decision.
  * @param {{observations?: object[], itemStates?: object[]}} input
  * @param {object} ctx { authority, contractRevision, registryHash, itemFingerprints }
  */
 export function createObservationSet({ observations = [], itemStates = [] } = {}, ctx = {}) {
-  const entries = observations.map((observation) => ({ observation, result: classifyObservation(observation, ctx) }));
-  const states = itemStates.map((decl) => ({ decl, result: classifyItemState(decl, ctx) }));
-  return Object.freeze({ entries, states, ctx });
+  let entries = observations.map((o) => {
+    const copy = cloneOrNull(o);
+    return { observation: copy, result: copy === null ? invalidResult('observation is not cloneable') : classifyObservation(o, ctx) };
+  });
+  // Item type must have one representation per Item document: conflicting claims invalidate every claim about that document.
+  const types = new Map();
+  for (const e of entries) {
+    if (!e.observation || e.result.status === 'invalid') continue;
+    const id = e.observation.subject.itemId;
+    types.set(id, new Set([...(types.get(id) ?? []), e.observation.subject.itemType]));
+  }
+  entries = entries.map((e) => {
+    const conflict = e.observation && e.result.status !== 'invalid' && types.get(e.observation.subject.itemId).size > 1;
+    return Object.freeze({ observation: e.observation, result: deepFreeze(conflict ? invalidResult('inconsistent itemType for one Item document') : e.result) });
+  });
+  const states = itemStates.map((d) => {
+    const copy = cloneOrNull(d);
+    return Object.freeze({ decl: copy, result: deepFreeze(copy === null ? invalidResult('item state is not cloneable') : classifyItemState(d, ctx)) });
+  });
+  const handle = Object.freeze({ entryCount: entries.length, stateCount: states.length });
+  SET_STATE.set(handle, Object.freeze({ entries: Object.freeze(entries), states: Object.freeze(states) }));
+  return handle;
+}
+
+export const isObservationSet = (v) => isObj(v) && SET_STATE.has(v);
+
+/** A deep copy of the stored classification (for inspection and tests); throws for anything that is not an authentic set. */
+export function describeObservationSet(set) {
+  const st = isObj(set) ? SET_STATE.get(set) : undefined;
+  if (!st) throw new TypeError('not an authentic ObservationSet');
+  return structuredClone({
+    entries: st.entries.map((e) => ({ factRef: e.observation?.factRef ?? null, result: e.result })),
+    states: st.states.map((x) => ({ itemId: x.decl?.itemId ?? null, result: x.result }))
+  });
 }
 
 const sortUnique = (a) => [...new Set(a)].sort();
@@ -366,12 +414,14 @@ export function resolveFact(set, { factRef, subject, requestedBasis, purpose, st
   if (!isObj(subject) || !ROLES.includes(subject.role) || !isStr(subject.itemId)) throw new TypeError('resolveFact: subject {role,itemId[,memberRef]} required');
   if (!RESOLVABLE_BASES.includes(requestedBasis)) throw new TypeError('resolveFact: requestedBasis must be base, persistent or effective (never implicit)');
   if (!PURPOSES.includes(purpose)) throw new TypeError('resolveFact: purpose must be printed-statistics or installation-eligibility');
+  const st = isObj(set) ? SET_STATE.get(set) : undefined;
+  if (!st) throw new TypeError('resolveFact: not an authentic ObservationSet');
   const familyUnknown = UNKNOWN_CODE[factRef];
   const unknown = (reasons, detail) => ({ status: 'unknown', reasons: sortUnique([familyUnknown, ...reasons]), detail, evidence: [] });
 
   // The applicable basis must be established for the Item itself before any base or persistent value may be used.
   if (purpose === 'installation-eligibility') {
-    const declared = set.states.filter((s) => s.decl.itemId === subject.itemId);
+    const declared = st.states.filter((s) => s.decl && s.decl.itemId === subject.itemId);
     const trusted = declared.filter((s) => s.result.usable);
     const stateValue = trusted.length === 1 ? trusted[0].result.persistentChanges : trusted.length > 1 && trusted.every((s) => s.result.persistentChanges === trusted[0].result.persistentChanges) ? trusted[0].result.persistentChanges : null;
     const need = requestedBasis === 'base' ? 'none' : requestedBasis === 'persistent' ? 'resolved' : null;
@@ -381,7 +431,7 @@ export function resolveFact(set, { factRef, subject, requestedBasis, purpose, st
     }
   }
 
-  const same = set.entries.filter((e) => e.observation.factRef === factRef && e.observation.subject.role === subject.role && e.observation.subject.itemId === subject.itemId
+  const same = st.entries.filter((e) => e.observation && e.observation.factRef === factRef && e.observation.subject.role === subject.role && e.observation.subject.itemId === subject.itemId
     && (e.observation.subject.memberRef ?? null) === (subject.memberRef ?? null) && e.observation.scope.basis === requestedBasis && (e.observation.scope.state ?? null) === state);
   const usable = same.filter((e) => e.result.usable);
   const rejected = same.filter((e) => !e.result.usable && e.result.status !== 'unknown');
@@ -420,7 +470,7 @@ export const collectionFingerprint = (snapshot) => fingerprintOf({ role: snapsho
  * claim is carried as a claim and counts for nothing.
  */
 export function classifyCollection(snapshot, ctx = {}) {
-  const authority = ctx.authority ?? PRODUCTION_AUTHORITY;
+  const authority = authorityState(ctx);
   const p = [];
   if (onlyKeys(snapshot, COLLECTION_KEYS, COLLECTION_KEYS, 'collection', p)) {
     if (snapshot.schema !== EVIDENCE_SCHEMA_ID) p.push('collection: wrong schema id');
@@ -452,16 +502,20 @@ export function classifyCollection(snapshot, ctx = {}) {
       if (!onlyKeys(snapshot.provenance.binding, BINDING_KEYS, BINDING_KEYS, 'collection.provenance.binding', p) || !BINDING_RESULTS.includes(snapshot.provenance.binding.result)) p.push('collection: binding invalid');
     }
     if (onlyKeys(snapshot.bindings, COLL_BINDING_KEYS, COLL_BINDING_KEYS, 'collection.bindings', p) && (!isStr(snapshot.bindings.contractRevision) || !isStr(snapshot.bindings.hostFingerprint))) p.push('collection: bindings incomplete');
+    if (p.length === 0) {
+      const total = snapshot.members.reduce((a, m) => a + (m.quantity.status === 'known' ? m.quantity.value : 1), 0);
+      if (!Number.isSafeInteger(total)) p.push('collection: aggregate physical quantity exceeds the safe integer range');
+    }
     if (p.length === 0 && snapshot.fingerprint !== collectionFingerprint(snapshot)) p.push('collection: fingerprint does not match its content');
   }
-  const none = { documentCount: 0, physicalObjects: { status: 'unknown', value: null }, completeness: { verified: false, claimed: null } };
+  const none = { synthetic: false, productionTrusted: false, documentCount: 0, physicalObjects: { status: 'unknown', value: null }, completeness: { verified: false, claimed: null } };
   if (p.length) return { status: 'invalid', usable: false, reasons: ['HOST_PROVENANCE_INVALID'], detail: p, members: [], ...none };
 
   const checks = trustChecks({
-    issued: authority.isIssuedCollection(snapshot), trust: snapshot.trust, basis: 'base', sourceKind: snapshot.provenance.source.kind,
+    issued: authority?.issuedCollections.has(snapshot) === true, trust: snapshot.trust, basis: 'base', sourceKind: snapshot.provenance.source.kind,
     bindingMethod: snapshot.provenance.binding.method, bindingResult: snapshot.provenance.binding.result,
     bindings: { contractRevision: snapshot.bindings.contractRevision, registryHash: null, itemFingerprint: snapshot.bindings.hostFingerprint }, itemId: snapshot.hostItemId
-  }, ctx);
+  }, ctx, authority);
   const v = verdictOf(checks);
   const claimed = snapshot.completeness.status;
   if (v.status !== 'trusted') return { status: v.status, usable: false, reasons: v.reasons, detail: v.detail, members: [], ...none, completeness: { verified: false, claimed } };
