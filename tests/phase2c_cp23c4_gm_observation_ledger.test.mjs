@@ -181,7 +181,11 @@ test('CP23-C4 is wired after ActorEngine import but never changes ActorEngine or
   assert.ok(wiz.indexOf('await VehicleImportEngine.apply') <
     wiz.indexOf('await recordCP23C4UnverifiedImport'));
   assert.match(wiz,/recordCP23C4UnverifiedImport/);
-  assert.doesNotMatch(importer,/CP23C4|cp23c4/);
+  // CP23-C4C deliberately denies canonical draft imports. ActorEngine
+  // remains the only mutation authority, and the importer never writes
+  // GM observation settings or issues any verified installation receipt.
+  assert.ok(importer.includes('assertCP23C4CNoStagedSourceImport(sourceActor)'));
+  assert.doesNotMatch(importer,/recordCP23C4UnverifiedImport|game\\.settings\\.set|issueVerifiedReceipt/);
   assert.equal(TRUSTED_STOCK_WEAPON_GROUP_COUNT,0);
   assert.match(authority,/return null/);
 });
