@@ -1,4 +1,4 @@
-name: SotG CP17-CP20 Publication Evidence and Source Fidelity Gates
+name: SotG CP17-CP22 Publication Evidence, Adjudication and Source Reference Gates
 
 on:
   push:
@@ -21,6 +21,14 @@ on:
       - tools/audits/vehicles/check_sotg_cp21_*.py
       - tools/audits/vehicles/sotg_cp21_*.py
       - docs/audits/vehicles/swse-sotg-cp21-*.md
+      - scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js
+      - scripts/domain/vehicles/vehicle-cp22-source-view.js
+      - scripts/domain/vehicles/vehicle-evidence-authority.js
+      - scripts/apps/vehicle-import-wizard.js
+      - templates/apps/vehicle-import-wizard.hbs
+      - tests/phase2c_cp22_source_view_readonly.test.mjs
+      - tools/audits/vehicles/compile_sotg_cp22_reference.mjs
+      - docs/audits/vehicles/swse-sotg-cp22-*.md
       - tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
       - docs/audits/vehicles/swse-sotg-cp20-*.md
       - tools/audits/vehicles/check_sotg_cp20_tranche*.py
@@ -122,3 +130,10 @@ jobs:
         run: python3 -m py_compile tools/audits/vehicles/sotg_cp21_effective_projection.py tools/audits/vehicles/check_sotg_cp21_approved_adjudications.py
       - name: Validate CP21 owner-approved 15 exception decisions without production authority
         run: python3 tools/audits/vehicles/check_sotg_cp21_approved_adjudications.py --repo "."
+
+      - name: Validate CP22 generated source view compiler and source provenance parity
+        run: node tools/audits/vehicles/compile_sotg_cp22_reference.mjs --check
+      - name: Verify CP22 source view, warnings and stock combat refusal
+        run: node --test tests/phase2c_cp22_source_view_readonly.test.mjs
+      - name: Verify CP9A and CP9C vehicle import and stock provenance regression
+        run: node --test tests/phase2c_cp9a_vehicle_import_boundaries.test.mjs tests/phase2c_cp9c_actor_provenance_probe.test.mjs

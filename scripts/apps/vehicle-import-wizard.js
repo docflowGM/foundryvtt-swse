@@ -1,6 +1,7 @@
 import { VehiclePackDataLoader } from "/systems/foundryvtt-swse/scripts/core/vehicle-pack-data-loader.js";
 import { VehicleImportEngine } from "/systems/foundryvtt-swse/scripts/engine/import/vehicle-import-engine.js";
 import { probeControlledVehicleImport } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-cp9c-actor-provenance-probe.js";
+import { inspectCP21LegacyPackCandidate } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-evidence-authority.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -199,7 +200,15 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
   #buildPreview(entry, document) {
     if (!entry) return null;
     const system = document?.system || entry.raw?.system || {};
+    // Advisory only: exact observed legacy pack ID/name is not certified
+    // source provenance and MUST NOT alter the imported Actor.
+    const cp21Advisory = inspectCP21LegacyPackCandidate({
+      packName: entry.packName,
+      documentId: entry.documentId,
+      name: document?.name || entry.name
+    });
     return {
+      cp21Advisory,
       name: document?.name || entry.name,
       model: system.model || entry.model || document?.name || entry.name,
       img: document?.img || entry.img,

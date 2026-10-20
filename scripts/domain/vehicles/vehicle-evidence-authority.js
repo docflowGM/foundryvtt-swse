@@ -125,3 +125,6 @@ export function validateSupplementalCensus(originalKeys, overlay) {
   if (overlay.supplementalEntries.some(e=>e.certification?.sourceComplete!==true || e.certification?.strictMechanicalCertified!==false)) return reject('UNVERIFIED_OR_MISLABELED_SUPPLEMENTAL_SOURCE');
   return {status:'APPROVED_SUPPLEMENTAL_CENSUS', historicalCount:316, amendedClaimCount:318, originalPhase1Mutated:false};
 }
+/** CP22 published-book effective rule lookup; never installed-weapon trust. */
+export {resolveCP21ApprovedPublicationReference,inspectCP21LegacyPackCandidate}
+  from './vehicle-cp22-source-view.js';

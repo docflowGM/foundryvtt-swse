@@ -64,6 +64,9 @@
           <img src="{{preview.img}}" alt="{{preview.name}}"/>
           <div class="swse-vehicle-import-preview-main">
             <h2>{{preview.name}}</h2>
+            {{#if preview.cp21Advisory}}
+              <p class="swse-vehicle-import-error" role="status">{{preview.cp21Advisory.message}}</p>
+            {{/if}}
             <div class="swse-vehicle-import-preview-grid">
               <div><span>Model</span><strong>{{preview.model}}</strong></div>
               <div><span>Pack</span><strong>{{preview.pack}}</strong></div>
@@ -108,6 +111,9 @@
         {{#if preview}}
           <p>Apply <strong>{{preview.name}}</strong> to <strong>{{actor.name}}</strong> using <strong>{{mode}}</strong> mode.</p>
           <p>This uses the Vehicle Import Engine and ActorEngine update pathway.</p>
+          {{#if preview.cp21Advisory}}
+            <p class="swse-vehicle-import-error" role="status">{{preview.cp21Advisory.message}}</p>
+          {{/if}}
         {{else}}
           <p>No vehicle selected.</p>
         {{/if}}
