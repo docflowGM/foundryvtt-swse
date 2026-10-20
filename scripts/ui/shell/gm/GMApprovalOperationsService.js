@@ -45,7 +45,7 @@ export class GMApprovalOperationsService {
   static async approveRequest(host, key, options = {}) {
     const parsed = this.parseApprovalKey(key);
     if (parsed.kind === 'droid') return this.approveDroid(host, parsed.actorId);
-    if (parsed.kind === 'custom') return this.approvePendingCustom(host, this.resolveCustomIndex(parsed));
+    if (parsed.kind === 'custom') return this.approvePendingCustom(host, this.resolveCustomIndex(parsed), { expectedId: parsed.approvalId ?? null });
     if (parsed.kind === 'game') return this.approveGameSettlement(host, parsed.sessionId, options);
     ui?.notifications?.error?.('Invalid approval request.');
     return false;
@@ -116,6 +116,18 @@ export class GMApprovalOperationsService {
   /** Whether `approval` is still in the live pending queue (strict identity, see _findApprovalIndexById). */
   static isStillPending(approval, hintIndex = -1) {
     return this._findApprovalIndexById(SettingsHelper.getArray('pendingCustomPurchases', []), approval, hintIndex) >= 0;
+  }
+
+  /**
+   * TI-3 (review TI3-R6): compare a request an approvals surface RENDERED with the live queue. 'ok' = the same request, unchanged; 'gone' = it is no longer
+   * pending; 'changed' = its id is still queued but the live record differs from what the surface showed (cost, payload or notes were edited since), so acting on
+   * the rendered copy would charge or approve something the GM did not see. Only 'ok' may be acted on.
+   */
+  static checkPending(approval, hintIndex = -1) {
+    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    const at = this._findApprovalIndexById(approvals, approval, hintIndex);
+    if (at < 0) return { status: 'gone', live: null };
+    return JSON.stringify(approvals[at]) === JSON.stringify(approval) ? { status: 'ok', live: approvals[at], index: at } : { status: 'changed', live: approvals[at], index: at };
   }
 
   /** Evidence that a draft actor has NOT been approved: the markers the store checkout writes and approval clears. */
@@ -508,6 +520,8 @@ export class GMApprovalOperationsService {
       const customIndex = this.resolveCustomIndex(parsed);
       const approval = approvals[customIndex];
       if (!approval) throw new Error('Pending approval not found (it may already have been approved, denied or removed).');
+      // TI-3 (review TI3-R6): an index cannot say WHICH id-bearing request to edit.
+      if (!parsed.approvalId && String(approval.id || '').trim()) throw new Error('This request was addressed by list position, which cannot identify it. Reload the approvals list and try again.');
 
       for (const [path, value] of Object.entries(edits.approvalUpdates)) this._setNestedValue(approval, path, value);
       for (const [path, value] of Object.entries(edits.metadataUpdates)) this._setNestedValue(approval, path, value);
@@ -529,14 +543,22 @@ export class GMApprovalOperationsService {
     return false;
   }
 
-  static async approvePendingCustom(host, index) {
+  static async approvePendingCustom(host, index, { expectedId = null } = {}) {
     const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
     if (index < 0 || index >= approvals.length) {
-      ui?.notifications?.error?.('Invalid approval index');
+      ui?.notifications?.error?.('That request is no longer pending (it may already have been approved, denied or removed).');
       return false;
     }
 
     const approval = approvals[index];
+    // TI-3 (review TI3-R6): a queue index cannot identify an id-bearing request — after another GM/tab changed the queue it names a different one. Only an
+    // id key (or a legacy record that has no id) may be approved; an id key must still match the record found.
+    if (expectedId ? String(approval?.id || '').trim() !== String(expectedId).trim() : String(approval?.id || '').trim()) {
+      ui?.notifications?.error?.(expectedId
+        ? 'That request is no longer pending. Nothing was charged.'
+        : 'This request was addressed by list position, which cannot identify it. Reload the approvals list and try again. Nothing was charged.');
+      return false;
+    }
     const ownerActor = game.actors.get(approval.ownerActorId);
     const draftActor = game.actors.get(approval.draftActorId);
 

@@ -193,7 +193,7 @@ const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-s
     queue().push(pending('pending_a', a2, 300), pending('pending_b', b2, 400));
     const realApply = ActorEngine.applyMutationPlan; let shifted = false;
     ActorEngine.applyMutationPlan = async (a, p, o) => { if (!shifted) { shifted = true; settingsStore.pendingCustomPurchases = settingsStore.pendingCustomPurchases.filter((e) => e.id !== 'pending_a'); } return realApply(a, p, o); };
-    const ok1 = await Svc.approvePendingCustom(host, 0); ActorEngine.applyMutationPlan = realApply;
+    const ok1 = await Svc.approveRequest(host, 'custom-id:pending_a'); ActorEngine.applyMutationPlan = realApply;   // (TI3-R6: the legacy index call is refused for id-bearing records; the id key exercises the same cleanup)
     assert.equal(ok1, true, 'A was approved (committed)'); assert.deepEqual(queue().map((e) => e.id), ['pending_b'], 'B was not removed by the stale index cleanup'); assert.equal(b2.system.storeAcquisition?.transactionId, undefined, 'and B was not approved');
     // (c) an id-less LEGACY record may use its index only while the entry there is still byte-identical
     const legacyA = { type: 'droid', ownerActorId: 'owner', draftActorId: 'dA', costCredits: 1, draftData: { name: 'x' } }; const legacyB = { ...legacyA, costCredits: 2 };
@@ -228,8 +228,65 @@ const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-s
     const src = (await import('node:fs')).readFileSync(new URL('../scripts/apps/gm-store-dashboard.js', import.meta.url), 'utf8');
     const denySrc = src.slice(src.indexOf('async _denyPendingCustom('), src.indexOf('async _denyPendingCustom(') + 3500);
     assert.match(denySrc, /decideDenial\(/); assert.doesNotMatch(denySrc, /draftActor\.delete\(\)/, 'the dashboard no longer deletes a draft by its rendered index');
-    assert.match(src.slice(src.indexOf('async _approvePendingCustom('), src.indexOf('async _approvePendingCustom(') + 900), /isStillPending\(/);
+    assert.match(src.slice(src.indexOf('async _approvePendingCustom('), src.indexOf('async _approvePendingCustom(') + 900), /(checkPending|isStillPending)\(/);
     ok('TI3-R2: a denial is refused for an ambiguous index, a request that left the queue, an approval in flight, or an unconfirmable draft; the dashboard uses the same guarded core');
+  }
+
+  // 3.9 TI3-R4/R5/R6: the legacy GM Store Dashboard and the legacy index-addressed approve actions
+  {
+    const dashSrc = (await import('node:fs')).readFileSync(new URL('../scripts/apps/gm-store-dashboard.js', import.meta.url), 'utf8');
+    // The dashboard class extends a Foundry Application that the offline shim cannot construct, so its (pure) methods are run on a bare object: the source of the two
+    // methods under test is evaluated with the same dependencies the module imports.
+    const methodSrc = (name) => { const a = dashSrc.indexOf(`async ${name}(`); const b = dashSrc.indexOf('\n  }\n', a) + 4; return dashSrc.slice(a, b); };
+
+    // R4: the dashboard's queue removal is strict (id or nothing), through the shared helper
+    setup(); const A = { id: 'pending_a', type: 'droid', ownerActorId: 'owner', draftActorId: 'dA', costCredits: 1, draftData: { name: 'A' } }; const B = { ...A, id: 'pending_b', draftActorId: 'dB', draftData: { name: 'B' } };
+    queue().push(B);   // A already left the queue; B slid into A's rendered slot
+    const bare = { };
+    const removeSrc = methodSrc('_removePendingApproval');
+    assert.doesNotMatch(dashSrc, /_findPendingApprovalIndex\(/, 'the dashboard no longer has its own index-fallback lookup');
+    assert.match(removeSrc, /_removeApprovalFromQueue\(/, 'dashboard removal delegates to the strict shared helper');
+    // behavior of the shared helper the dashboard now uses
+    assert.equal(await Svc._removeApprovalFromQueue(A, 0, null), false); assert.deepEqual(queue().map((e) => e.id), ['pending_b'], 'B is not removed through A\'s stale slot');
+
+    // R5: after the approval transaction committed, a failing history mirror / queue removal / hook is a warning, never "Approval failed"
+    const approveSrc = methodSrc('_approvePendingCustom');
+    const afterCommit = approveSrc.slice(approveSrc.indexOf('executeAssetApprovalTransaction'));
+    assert.match(afterCommit, /_afterCommit|afterCommit|postCommitFailures/, 'post-commit steps are isolated');
+    assert.doesNotMatch(afterCommit.slice(afterCommit.indexOf('if (!approvalResult.success)')), /Approval failed:[\s\S]*purchaseHistory/, 'sanity');
+    // executable proof: run the real method body with stubs, a throwing hook, and read what the GM is told
+    {
+      setup(); const owner = mkOwner(1000); const dA = mkDroid('dA', 'Droid A'); world.set('owner', owner); world.set('dA', dA); const rec = pending('pending_a', dA, 300); queue().push(rec);
+      const { GMApprovalOperationsService: S } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js');
+      const factory = new Function('deps', `const { TransactionEngine, ActorEngine, LedgerService, SWSEDialogV2, normalizeCredits, SWSELogger, Hooks, ui, game } = deps; return async function _approvePendingCustom(index) {${approveSrc.slice(approveSrc.indexOf('{') + 1, approveSrc.lastIndexOf('}'))}}`);
+      const { LedgerService: LS } = await import('/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js');
+      const { normalizeCredits: nc } = await import('/systems/foundryvtt-swse/scripts/utils/credit-normalization.js');
+      const { SWSELogger: LG } = await import('/systems/foundryvtt-swse/scripts/utils/logger.js');
+      const fn = factory({ TransactionEngine, ActorEngine, LedgerService: LS, SWSEDialogV2: { confirm: async () => true }, normalizeCredits: nc, SWSELogger: LG, Hooks: { ...hooksReal, callAll: (name) => { if (name === 'swseCustomPurchaseApproved') throw new Error('listener threw'); } }, ui: globalThis.ui, game: globalThis.game });
+      const ctx = { pendingApprovals: [rec], render() {}, _buildApprovalAudit: () => ({}), async _removePendingApproval(a, i) { return S._removeApprovalFromQueue(a, i, null); } };
+      notes.error.length = notes.warn.length = notes.info.length = 0;
+      await silent(() => fn.call(ctx, 0));
+      assert.equal(owner.system.credits, 700, 'the approval committed (charged once)'); assert.ok(dA.system.storeAcquisition?.transactionId, 'and the asset was acquired');
+      assert.deepEqual(notes.error.filter((m) => /Approval failed/i.test(m)), [], 'a post-commit listener failure is NOT reported as "Approval failed"'); assert.ok(notes.warn.some((m) => /do not approve it again|committed/i.test(m)), 'the GM is told it is committed');
+    }
+
+    // R6: the legacy index key can no longer approve or edit an id-bearing record (the index cannot identify it)
+    setup(); const owner = mkOwner(1000); const dX = mkDroid('dA', 'Droid A'); const dY = mkDroid('dB', 'Droid B'); world.set('owner', owner); world.set('dA', dX); world.set('dB', dY);
+    queue().push(pending('pending_b', dY, 400));   // another GM already handled A; B is now at index 0, but this GM's button still says custom:0 ("A")
+    let ar = await silent(() => Svc.approveRequest(host, 'custom:0')); assert.equal(ar, false, 'an index cannot approve an id-bearing request'); assert.equal(owner.system.credits, 1000, 'nothing charged'); assert.equal(dY.system.storeAcquisition?.transactionId, undefined, 'B was not approved in A\'s place'); assert.ok(notes.error.some((m) => /list position|reload/i.test(m)));
+    assert.equal(await silent(() => Svc.approvePendingCustom(host, 0)), false, 'a direct index call is refused the same way'); assert.equal(owner.system.credits, 1000);
+    const before = JSON.stringify(queue()); const edited = await silent(() => Svc.applyInlineApprovalEdits(host, 'custom:0', { entries: () => [['costCredits', '1']] }).then(() => 'applied', (e) => e.message)); assert.notEqual(edited, 'applied', 'an index cannot say which id-bearing request to edit'); assert.match(String(edited), /list position/i); assert.equal(JSON.stringify(queue()), before, 'the queued request was not edited');
+    const editedById = await silent(() => Svc.applyInlineApprovalEdits(host, 'custom-id:pending_b', { entries: () => [['costCredits', '123']] })); assert.equal(editedById, true); assert.equal(queue()[0].costCredits, 123, 'the id key edits the right request'); settingsStore.pendingCustomPurchases[0].costCredits = 400;
+    // an id key for the same request still works
+    assert.equal(await Svc.approveRequest(host, 'custom-id:pending_b'), true); assert.equal(owner.system.credits, 600);
+    // a legacy id-less record can still be approved by index
+    setup(); const o3 = mkOwner(1000); const dL = mkDroid('dL', 'Legacy'); world.set('owner', o3); world.set('dL', dL); queue().push({ type: 'droid', ownerActorId: 'owner', draftActorId: 'dL', costCredits: 100, draftData: { name: 'Legacy' }, metadata: {} });
+    assert.equal(await Svc.approveRequest(host, 'custom:0'), true); assert.equal(o3.system.credits, 900);
+    // the dashboard acts on the LIVE record: if its cost changed after the dashboard rendered, the stale snapshot is refused
+    const chk = Svc.checkPending ? Svc.checkPending : null; assert.ok(chk, 'checkPending exists');
+    setup(); const o4 = mkOwner(1000); const dM = mkDroid('dM', 'M'); world.set('owner', o4); world.set('dM', dM); const snap = pending('pending_m', dM, 300); queue().push({ ...snap, costCredits: 999 });
+    assert.equal(Svc.checkPending(snap, 0).status, 'changed', 'the live request differs from what the dashboard rendered'); assert.equal(Svc.checkPending({ ...snap, id: 'gone' }, 0).status, 'gone'); queue().splice(0, 1, snap); assert.equal(Svc.checkPending(snap, 0).status, 'ok');
+    ok('TI3-R4/R5/R6: the dashboard removes by strict id through the shared helper, never reports a committed approval as failed, and acts only on an unchanged live request; the legacy index key can no longer approve or edit an id-bearing request');
   }
 }
 
