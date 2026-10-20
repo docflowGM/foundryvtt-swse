@@ -11,6 +11,9 @@ on:
       - 'system.json'
       - '.github/workflows/canonical-ship-pack.yml'
   workflow_dispatch:
+concurrency:
+  group: canonical-ships-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: write
 jobs:
@@ -20,6 +23,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Synchronize source branch before build
+        run: |
+          git fetch origin feat/vehicle-canonical-census-cutover
+          git checkout feat/vehicle-canonical-census-cutover
+          git reset --hard origin/feat/vehicle-canonical-census-cutover
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
