@@ -143,7 +143,7 @@ test('reconciliation manifest regeneration is byte-for-byte reproducible and rej
     assert.match(fail.stderr,/LEGACY_PACK_SOURCE_BLOB_DRIFT/);
   }finally{rmSync(tmp,{recursive:true,force:true});}
 });
-test('CP23 wizard is observation-only, without modifying the Vehicle Import Engine or stock authority',()=>{
+test('CP23 wizard remains observation-only; canonical source import is blocked before legacy normalization',()=>{
   const wizard=readFileSync(join(repo,'scripts/apps/vehicle-import-wizard.js'),'utf8');
   const authority=readFileSync(join(repo,'scripts/domain/vehicles/vehicle-stock-attack-authority.js'),'utf8');
   const engine=readFileSync(join(repo,'scripts/engine/import/vehicle-import-engine.js'),'utf8');
@@ -152,6 +152,12 @@ test('CP23 wizard is observation-only, without modifying the Vehicle Import Engi
   assert.match(wizard,/await VehicleImportEngine\.apply/);
   assert.match(authority,/TRUSTED_STOCK_WEAPON_GROUP_COUNT = 0/);
   assert.match(authority,/return null/);
-  assert.doesNotMatch(engine,/CP23|cp23/);
+  // CP23-C4C deliberately blocks canonical stage docs before legacy
+  // normalization; the engine still never authenticates a source or grants
+  // a stock weapon from an import. This is a denial, not an authority path.
+  assert.match(engine,/assertCP23C4CNoStagedSourceImport\\(sourceActor\\)/);
+  assert.ok(engine.indexOf('assertCP23C4CNoStagedSourceImport(sourceActor)') <
+    engine.indexOf('normalizeVehicleImportData(rawSystem)'));
+  assert.doesNotMatch(engine,/setCP23Trusted|issueVerifiedReceipt|grantStockAttack/);
   assert.doesNotMatch(wizard,/setFlag\(.*(?:stock|trusted|certified)/);
 });
