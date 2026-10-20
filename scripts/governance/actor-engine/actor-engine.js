@@ -3062,15 +3062,12 @@ export const ActorEngine = {
       // so transactional mode now covers both actor-local plans (progression
       // finalization) and plans that create world actors.
       if (transactional) {
-        // TI4-C0/G06-S1: the existing SnapshotService schema-v2 in-memory capture (same representation its restore verifies against; persists nothing).
-        // A capture failure throws here, before any stage runs, so nothing has been applied.
-        const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
-        _txnSnapshot = SnapshotService.captureExactSnapshot(actor);
-        // A snapshot that cannot be restored safely is no recovery plan: refuse to begin (nothing has been applied yet).
-        const recovery = this._validateRecoverySnapshot(_txnSnapshot);
-        if (!recovery.complete) {
-          _txnSnapshot = null;
-          throw new Error(`applyMutationPlan: the transactional snapshot is unusable for recovery (${recovery.problems.join('; ')}); the plan was not started`);
+        // TI4-C0/G06-S1: the existing SnapshotService schema-v2 in-memory capture (same representation its restore verifies against; persists nothing),
+        // refused if it cannot support a safe restore. A failure throws here, before any stage runs, so nothing has been applied.
+        try {
+          _txnSnapshot = await this.captureRecoverySnapshot(actor);
+        } catch (captureErr) {
+          throw new Error(`applyMutationPlan: the transactional snapshot is unusable for recovery (${captureErr?.message ?? captureErr}); the plan was not started`);
         }
       }
 
@@ -3172,36 +3169,24 @@ export const ActorEngine = {
   },
 
   /**
-   * TI4-C0/G06 — roll back a failed transactional plan and report ONLY what was verified.
+   * TI4-C0/G11 — restore `actor` from a schema-v2 recovery snapshot and CERTIFY the result (the target leg of `_rollbackTransactionalPlan`, extracted
+   * so other rollback callers reuse the same certification instead of trusting a resolved promise).
    *
-   * Scope: the target actor (restored from the pre-plan snapshot) and any CREATE-bucket world actors (deleted). Both are attempted
-   * independently; the verdict covers both. `FAILED_COMPENSATED` requires every part to be verified; anything else is `INDETERMINATE`.
+   * Returns the structured target evidence; `verdict === 'EXACT'` is the ONLY value that establishes a verified restoration of the declared
+   * `full-actor` scope (root, system, flags, ownership, prototypeToken, Items, Effects). Never throws. See `_rollbackTransactionalPlan` for the verdicts.
+   * An incomplete snapshot is rejected BEFORE any restoration call (`INVALID_SNAPSHOT`, `attempted:false`).
    *
-   * CREATE cleanup is verified only by OBSERVED absence (world-actor registry, id by id); a returned id list or a resolved call is diagnostic, never proof.
-   *
-   * Target verdicts (from the structured SnapshotService result, never from the promise merely resolving):
-   *   EXACT      success === true && exact === true
-   *   INEXACT    success === true && exact !== true   (data may be restored but identity/content exactness is not established)
-   *   FAILED     success === false
-   *   MALFORMED  not an object with a boolean `success`
-   *   THREW      the restore call threw
-   * The in-memory snapshot is the SnapshotService schema-v2 capture (G06-S1), so a genuinely restored actor can verify exact. A legacy snapshot
-   * (no schemaVersion) still can only report `exact:false`; that is recorded (`legacySnapshot`), never worked around. The service result is not
-   * trusted blindly: an `exact:true` result is downgraded unless its own verification affirms root, Items and Effects (`=== true`), and unless the
-   * snapshot carries `items`/`effects` arrays whose documents each have a unique non-empty `_id` (identity cannot otherwise be verified). Otherwise the verdict becomes INEXACT (identity gaps add reason `snapshot-identity-incomplete`).
-   *
-   * @returns {Promise<object>} rollback evidence: { outcome, compensation, level, legacySnapshot, reasons[], target{}, created{} }
+   * @param {Actor} actor
+   * @param {object} snapshot  from `captureRecoverySnapshot`
+   * @param {string} [source]  mutation source tag passed to the restore
+   * @returns {Promise<object>} target evidence
    */
-  async _rollbackTransactionalPlan(actor, snapshot, tempIdMap = {}, source = 'ActorEngine.applyMutationPlan') {
-    const reasons = [];
-    const legacySnapshot = !snapshot?.schemaVersion;
-
+  async restoreSnapshotVerified(actor, snapshot, source = 'ActorEngine.restoreSnapshotVerified') {
     // Recovery-evidence check BEFORE any restoration: SnapshotService defaults a missing `items`/`effects` array to [] and would DELETE the
     // actor's existing embedded documents, and skips id-less ones. An incomplete snapshot is therefore never handed to the restore.
     const recovery = this._validateRecoverySnapshot(snapshot);
     const identityComplete = recovery.complete;
 
-    /* ---- target actor ---- */
     const target = { attempted: true, verdict: null, success: null, exact: null, code: null, failedStep: null, partialMutation: null,
       compensationAttempted: null, compensationSucceeded: null, requiresManualReview: null, contentVerified: null, error: null, restoreError: null };
     let result;
@@ -3211,7 +3196,7 @@ export const ActorEngine = {
       target.invalidSnapshot = recovery.problems;
     } else {
       try {
-        result = await this.restoreFromSnapshot(actor, snapshot, { source: `${source}:rollback` });
+        result = await this.restoreFromSnapshot(actor, snapshot, { source });
       } catch (restoreErr) {
         target.verdict = 'THREW';
         target.restoreError = restoreErr?.message ?? String(restoreErr);
@@ -3240,6 +3225,54 @@ export const ActorEngine = {
         }
       }
     }
+    return target;
+  },
+
+  /**
+   * TI4-C0/G11 — capture an in-memory schema-v2 recovery snapshot and refuse to proceed if it cannot support a safe restore.
+   * Reuses `SnapshotService.captureExactSnapshot` (no persistence). Throws before anything has been applied.
+   *
+   * @param {Actor} actor
+   * @returns {Promise<object>} schema-v2 snapshot
+   */
+  async captureRecoverySnapshot(actor) {
+    const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
+    const snapshot = SnapshotService.captureExactSnapshot(actor);
+    const recovery = this._validateRecoverySnapshot(snapshot);
+    if (!recovery.complete) {
+      throw new Error(`the recovery snapshot is unusable (${recovery.problems.join('; ')})`);
+    }
+    return snapshot;
+  },
+
+  /**
+   * TI4-C0/G06 — roll back a failed transactional plan and report ONLY what was verified.
+   *
+   * Scope: the target actor (restored from the pre-plan snapshot) and any CREATE-bucket world actors (deleted). Both are attempted
+   * independently; the verdict covers both. `FAILED_COMPENSATED` requires every part to be verified; anything else is `INDETERMINATE`.
+   *
+   * CREATE cleanup is verified only by OBSERVED absence (world-actor registry, id by id); a returned id list or a resolved call is diagnostic, never proof.
+   *
+   * Target verdicts (from the structured SnapshotService result, never from the promise merely resolving):
+   *   EXACT      success === true && exact === true
+   *   INEXACT    success === true && exact !== true   (data may be restored but identity/content exactness is not established)
+   *   FAILED     success === false
+   *   MALFORMED  not an object with a boolean `success`
+   *   THREW      the restore call threw
+   * The in-memory snapshot is the SnapshotService schema-v2 capture (G06-S1), so a genuinely restored actor can verify exact. A legacy snapshot
+   * (no schemaVersion) still can only report `exact:false`; that is recorded (`legacySnapshot`), never worked around. The service result is not
+   * trusted blindly: an `exact:true` result is downgraded unless its own verification affirms root, Items and Effects (`=== true`), and unless the
+   * snapshot carries `items`/`effects` arrays whose documents each have a unique non-empty `_id` (identity cannot otherwise be verified). Otherwise the verdict becomes INEXACT (identity gaps add reason `snapshot-identity-incomplete`).
+   *
+   * @returns {Promise<object>} rollback evidence: { outcome, compensation, level, legacySnapshot, reasons[], target{}, created{} }
+   */
+  async _rollbackTransactionalPlan(actor, snapshot, tempIdMap = {}, source = 'ActorEngine.applyMutationPlan') {
+    const reasons = [];
+    const legacySnapshot = !snapshot?.schemaVersion;
+
+    /* ---- target actor ---- */
+    const target = await this.restoreSnapshotVerified(actor, snapshot, `${source}:rollback`);
+    const identityComplete = target.verdict !== 'INVALID_SNAPSHOT';
     if (!identityComplete) reasons.push('snapshot-identity-incomplete');
     const targetOk = target.verdict === 'EXACT';
     if (!targetOk) reasons.push(`target-restore-${target.verdict.toLowerCase()}`);

@@ -31,8 +31,7 @@ import {
     buildFollowerLinkOwnerUpdate,
     buildFollowerUnlinkOwnerUpdate,
     buildFollowerSlotUpdate,
-    clearFollowerSlotByActorId,
-    buildFlagRestorationPatch
+    clearFollowerSlotByActorId
 } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-transaction.js";
 import {
     choiceArray,
@@ -1460,22 +1459,38 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * Update an existing follower from a mutation bundle (for level advancement).
      * Phase 3: Called by FollowerShell after progression completes.
      *
+     * Return contract (UNCHANGED): `true` on success, `false` otherwise. A plain `false` does NOT mean the follower is unchanged.
+     * Callers that must distinguish pass `options.report` (an object); it is populated with:
+     *   outcome  `COMMITTED` | `REFUSED` (nothing was attempted) | `FAILED_COMPENSATED` (the follower Actor was verifiably restored)
+     *            | `INDETERMINATE` (the rollback could not be verified; the follower may be partially updated — do not retry blindly)
+     *   error    the ORIGINAL mutation error object (failures only)
+     *   rollback verified target evidence from ActorEngine.restoreSnapshotVerified (+ level 'L1'), and `partialMutationPossible: true` when INDETERMINATE
+     *
+     * TI4-C0/G11 — rollback scope is the follower Actor (system, flags, ownership, prototypeToken, Items, Effects): the core-state write and
+     * `_applyFollowerProgressionMaterial` (feats, skills, languages, natural weapons) touch nothing else; the owner is only read. The restore is
+     * certified from the structured SnapshotService result, never from the call merely resolving. Level L1: no cross-client or durable-recovery claim.
+     *
      * @param {Actor} follower - The existing follower actor
      * @param {Object} followerMutation - Mutation bundle from FollowerSubtypeAdapter
+     * @param {{report?: object}} [options]
      * @returns {Promise<boolean>} True if successful, false otherwise
      */
-    static async updateFollowerFromMutation(follower, followerMutation) {
-        // ADDENDUM — snapshot the follower before any mutation so a failure
-        // partway through (core state committed via ActorEngine.updateActor,
-        // then _applyFollowerProgressionMaterial throwing) can be fully
-        // reverted instead of leaving the core-state write persisted with no
-        // rollback. `ActorEngine.restoreFromSnapshot` (used below) is a real,
-        // already-production SnapshotService entry point, but it
-        // deliberately does not restore `flags` (a documented limitation of
-        // the underlying restore contract), so flags are snapshotted and
-        // restored separately here.
-        const preUpdateSnapshot = follower?.toObject ? follower.toObject(true) : null;
-        const preUpdateFlags = this._clonePlain(follower?.flags || {});
+    static async updateFollowerFromMutation(follower, followerMutation, options = {}) {
+        const report = (options && typeof options.report === 'object' && options.report !== null) ? options.report : {};
+
+        // Snapshot the follower before any mutation so a failure partway through (core state committed via ActorEngine.updateActor, then
+        // _applyFollowerProgressionMaterial throwing) can be reverted. The snapshot is the SnapshotService schema-v2 in-memory capture, which
+        // includes `flags` (restored deletion-aware by SnapshotService, excluding its protected paths), so no separate flag restoration is made.
+        // If a restorable snapshot cannot be captured nothing has been applied: refuse before any write.
+        let preUpdateSnapshot;
+        try {
+            preUpdateSnapshot = await ActorEngine.captureRecoverySnapshot(follower);
+        } catch (captureErr) {
+            swseLogger.error('[FollowerCreator] Follower update refused: a restorable pre-update snapshot could not be captured; nothing was applied.', captureErr);
+            report.outcome = 'REFUSED';
+            report.error = captureErr;
+            return false;
+        }
 
         try {
             const {
@@ -1583,40 +1598,30 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 level: targetHeroicLevel ?? followerState.level
             });
 
+            report.outcome = 'COMMITTED';
             return true;
         } catch (err) {
             swseLogger.error('[FollowerCreator] Error updating follower from mutation:', err);
 
-            if (preUpdateSnapshot) {
-                try {
-                    await ActorEngine.restoreFromSnapshot(follower, preUpdateSnapshot, {
-                        source: 'FollowerCreator.updateFromMutation.rollback'
-                    });
-                    // CORRECTION — a bare `{flags: preUpdateFlags}` update
-                    // relies on Foundry's default recursive merge, which
-                    // only overwrites keys present in preUpdateFlags — it
-                    // does not remove a flag key the failed update
-                    // introduced for the first time (e.g. a follower newly
-                    // marked isDroid right before materialization threw).
-                    // buildFlagRestorationPatch computes an explicit patch
-                    // that both restores prior values and deletes
-                    // newly-introduced keys via Foundry's '-=key' deletion
-                    // syntax.
-                    const flagRestorationPatch = buildFlagRestorationPatch(preUpdateFlags, follower?.flags || {});
-                    if (Object.keys(flagRestorationPatch).length > 0) {
-                        await ActorEngine.updateActor(follower, flagRestorationPatch, {
-                            source: 'FollowerCreator.updateFromMutation.rollback.flags'
-                        });
-                    }
-                    swseLogger.warn('[FollowerCreator] Rolled back follower to its pre-update snapshot after a failed update.', {
-                        followerId: follower?.id ?? null
-                    });
-                } catch (restoreErr) {
-                    swseLogger.error('[FollowerCreator] Rollback to pre-update snapshot FAILED; follower may be in a partial state and requires manual review.', {
-                        followerId: follower?.id ?? null,
-                        restoreErr
-                    });
-                }
+            // Certified rollback (TI4-C0/G11): the verdict comes from the structured restore result, never from the calls resolving.
+            const target = await ActorEngine.restoreSnapshotVerified(follower, preUpdateSnapshot, 'FollowerCreator.updateFromMutation.rollback');
+            const verified = target?.verdict === 'EXACT';
+            report.error = err;
+            report.rollback = { level: 'L1', target };
+            if (verified) {
+                report.outcome = 'FAILED_COMPENSATED';
+                swseLogger.warn('[FollowerCreator] Rolled back follower to its pre-update snapshot after a failed update (verified exact).', {
+                    followerId: follower?.id ?? null
+                });
+            } else {
+                report.outcome = 'INDETERMINATE';
+                report.partialMutationPossible = true;
+                swseLogger.error('[FollowerCreator] Rollback of the failed follower update could NOT be verified; the follower may be partially updated and requires manual review. Do not retry until it has been checked.', {
+                    followerId: follower?.id ?? null,
+                    verdict: target?.verdict ?? null,
+                    code: target?.code ?? null,
+                    restoreError: target?.restoreError ?? null
+                });
             }
 
             return false;
@@ -1628,7 +1633,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * Called from level-up hooks to sync follower stats
      * @param {Actor} owner - The owner actor
      */
-    static async updateFollowerForOwnerLevel(owner, follower) {
+    static async updateFollowerForOwnerLevel(owner, follower, options = {}) {
         if (!owner || !follower) return false;
         if (follower.getFlag?.('foundryvtt-swse', 'dismissedAlly') === true || follower.flags?.swse?.follower?.active === false) return false;
 
@@ -1651,7 +1656,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             persistentChoices,
             followerState,
             targetHeroicLevel: ownerLevel
-        });
+        }, options);
         if (updated !== true) {
             swseLogger.warn(`FollowerCreator: Follower derivation/materialization failed for "${follower.name}" — updateFollowerFromMutation did not return true.`);
             return false;
