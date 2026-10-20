@@ -21,7 +21,7 @@ def read(name):
 
 def gitblob(path):
     payload = path.read_bytes()
-    return hashlib.sha1(b"blob " + str(len(payload)).encode() + b"\\0" + payload).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(payload)).encode() + b"\0" + payload).hexdigest()
 
 def equal(a, b, description):
     assert a == b, description
