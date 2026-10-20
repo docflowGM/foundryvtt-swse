@@ -5,6 +5,10 @@ on:
     paths:
       - 'data/canonical/vehicles/ships.json'
       - 'tools/vehicles/**'
+      - 'tests/canonical-ship-pack.test.mjs'
+      - 'scripts/engine/import/vehicle-import-engine.js'
+      - 'scripts/core/vehicle-pack-data-loader.js'
+      - 'system.json'
       - '.github/workflows/canonical-ship-pack.yml'
   workflow_dispatch:
 permissions:
@@ -25,6 +29,7 @@ jobs:
           node --check tools/vehicles/compile-canonical-native.mjs
           node tools/vehicles/build-canonical-ships.mjs --write
           node tools/vehicles/build-canonical-ships.mjs --check
+          node --test tests/canonical-ship-pack.test.mjs
           test "$(wc -l < data/canonical/vehicles/ships.json)" -eq 316
           test "$(wc -l < packs/vehicles-canonical-ships.db)" -eq 316
       - name: Install pinned official Foundry CLI
