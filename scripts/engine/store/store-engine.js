@@ -280,9 +280,11 @@ export class StoreEngine {
    *   - Grant items (if itemGrantCallback provided)
    *   - Emit audit log
    *
-   * ATOMIC: Either fully succeeds or fully fails. No partial state.
+   * NOT atomic across documents (Foundry has none): the commerce transaction establishes recovery first, restores and verifies on failure, and
+   * reports `rollbackFailed` / `indeterminate` when it cannot (TI-2). Stock is held for those unresolved outcomes.
    * OWNERSHIP ENFORCED: Only actor owner can complete purchases
-   * IDEMPOTENT: Session-level duplicate guard prevents double-grants
+   * DUPLICATES: a second CONCURRENT checkout for the same actor and context is refused by the TransactionEngine lock (process-local, one client).
+   * There is no operation id: a deliberate repeat of the same cart is a new purchase, and a retry after an uncertain outcome is not recognized.
    *
    * @param {Object} context
    * @param {Actor} context.actor - purchasing actor (required)
@@ -391,7 +393,11 @@ export class StoreEngine {
       });
 
       if (!result.success) {
-        if (inventoryConsumed?.consumed?.length) {
+        // TI-2 (TX-10): stock is given back only when the purchase is known NOT to exist (refused before any write, verified rollback, or a plain failure
+        // such as the commerce lock). An `indeterminate` outcome (the charge could not be verified) or a failed rollback means the items may have been
+        // granted: returning the stock too could double-count it, so it is held and the unresolved outcome is passed to the caller.
+        const purchaseMayExist = result.indeterminate === true || result.rollbackFailed === true;
+        if (inventoryConsumed?.consumed?.length && !purchaseMayExist) {
           await restoreInventoryPolicyQuantities(inventoryConsumed.consumed);
         }
         logger().error('StoreEngine.purchase: TransactionEngine rejected purchase', {
@@ -399,7 +405,7 @@ export class StoreEngine {
           error: result.error,
           transactionId: result.transactionId
         });
-        return result;
+        return purchaseMayExist ? { ...result, stock: inventoryConsumed, stockHeld: true } : result;
       }
 
       logger().info('StoreEngine: Purchase completed', {

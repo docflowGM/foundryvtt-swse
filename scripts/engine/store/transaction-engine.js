@@ -174,6 +174,40 @@ export class TransactionEngine {
   }
 
   /**
+   * TI-2 (TX-08): recovery must be ESTABLISHED, not assumed. A snapshot counts only when it was created AND is retrievable from the actor afterwards
+   * (createSnapshot resolving is not proof that anything was stored) AND is a full-actor v2 snapshot, the only kind the exact restore can verify.
+   * Resolves { ok:true, snapshot } or { ok:false, error }. It never mutates anything but the snapshot history (the existing SnapshotManager write).
+   */
+  static async #establishRecovery(actor, label) {
+    try {
+      const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+      const snapshot = await SnapshotManager.createSnapshot(actor, label);
+      const stored = snapshot?.timestamp !== undefined ? SnapshotManager.getSnapshot(actor, snapshot.timestamp) : null;
+      if (!stored || stored.schemaVersion !== 2 || stored.scope !== 'full-actor') {
+        return { ok: false, error: new Error('the recovery snapshot was not found in the actor after it was created') };
+      }
+      return { ok: true, snapshot };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  /**
+   * TI-2 (TX-08): a restore is reported as done ONLY when SnapshotManager.restoreSnapshot returned true (exact and identity-verified). The wrapper's
+   * documented failure is a non-throwing `false`, which callers previously ignored while logging "rollback successful". Whole-actor restore is the
+   * EXISTING mechanism and is not extended here (it can revert unrelated concurrent changes — TX-07b); this only makes its outcome honest.
+   */
+  static async #restoreVerified(actor, snapshot) {
+    try {
+      const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+      const restored = await SnapshotManager.restoreSnapshot(actor, snapshot?.timestamp ?? snapshot);
+      return restored === true ? { restored: true } : { restored: false, error: new Error('the snapshot restore reported failure (not restored, or not identity-exact)') };
+    } catch (error) {
+      return { restored: false, error };
+    }
+  }
+
+  /**
    * Execute one actor-scoped contextual mutation transaction.
    *
    * This is the required path when credits and actor/item mutation must succeed
@@ -258,6 +292,18 @@ export class TransactionEngine {
         };
       }
 
+      // TI-2: recovery is established FIRST (D1); the balance is read AFTER the (slow) snapshot, immediately before the plan is built, so the credit write
+      // is computed from the freshest balance this client can see.
+      const recovery = await this.#establishRecovery(freshActor, `${transactionContext} transaction (${normalizedCost} credits)`);
+      if (!recovery.ok) {
+        swseLogger.error('TransactionEngine: Transaction refused; recovery could not be established', { transactionId, context: transactionContext, error: recovery.error?.message });
+        return { success: false, transactionId, refused: 'recovery-unavailable', error: `Transaction refused: recovery could not be established (${recovery.error?.message ?? 'unknown'}). Nothing was changed.` };
+      }
+      snapshotId = recovery.snapshot;
+      const funds2 = LedgerService.validateFunds(freshActor, normalizedCost);
+      if (!funds2.ok) {
+        return { success: false, transactionId, error: `Insufficient credits (have ${funds2.current}, need ${funds2.required})` };
+      }
       const creditsBefore = LedgerService.getCurrentCredits(freshActor);
       const creditsAfter = normalizeCredits(creditsBefore - normalizedCost);
       const rawPlans = Array.isArray(mutationPlan) ? mutationPlan : [mutationPlan];
@@ -301,25 +347,20 @@ export class TransactionEngine {
 
       const mergedPlan = mergeMutationPlans(...plans, ...(creditPlan ? [creditPlan] : []), transactionAudit);
 
-      try {
-        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-        snapshotId = await SnapshotManager.createSnapshot(
-          freshActor,
-          `${transactionContext} transaction (${normalizedCost} credits)`
-        );
-      } catch (snapshotError) {
-        swseLogger.warn('TransactionEngine: Snapshot creation failed; continuing without rollback snapshot', {
-          transactionId,
-          context: transactionContext,
-          error: snapshotError.message
-        });
-      }
-
       await ActorEngine.applyMutationPlan(freshActor, mergedPlan, {
         validate,
         rederive,
         source: `${source}.${transactionContext}`
       });
+
+      // TI-2: success is claimed only after the charge is OBSERVED. Credits are read-modify-write with no compare-and-swap, so a concurrent writer can
+      // still win inside the write itself (INTENTIONAL_LIMITATION); what this detects is a charge that is not what was planned. It does not restore
+      // (a whole-actor restore here could revert the other writer's change): the result is `indeterminate` with evidence.
+      const observedCredits = LedgerService.getCurrentCredits(freshActor);
+      if (normalizedCost > 0 && observedCredits !== creditsAfter) {
+        swseLogger.error('TransactionEngine: Mutation transaction could not be verified', { transactionId, context: transactionContext, expected: creditsAfter, observed: observedCredits });
+        return { success: false, indeterminate: true, transactionId, error: `Transaction could not be verified: expected ${creditsAfter} credits after the charge, found ${observedCredits}. Check the actor's credits and items before retrying.`, evidence: { creditsBefore, expectedCredits: creditsAfter, observedCredits } };
+      }
 
       swseLogger.info('TransactionEngine: Mutation transaction complete', {
         transactionId,
@@ -345,22 +386,13 @@ export class TransactionEngine {
       });
 
       if (snapshotId) {
-        try {
-          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          await SnapshotManager.restoreSnapshot(freshActor, snapshotId?.timestamp ?? snapshotId);
-          swseLogger.info('TransactionEngine: Rollback successful', { transactionId, snapshotId });
-        } catch (rollbackError) {
-          swseLogger.error('TransactionEngine: Rollback failed', {
-            transactionId,
-            snapshotId,
-            error: rollbackError.message
-          });
-          return {
-            success: false,
-            transactionId,
-            error: `Transaction failed and rollback failed: ${error.message}`
-          };
+        const restore = await this.#restoreVerified(freshActor, snapshotId);
+        if (!restore.restored) {
+          swseLogger.error('TransactionEngine: Rollback failed', { transactionId, snapshotId, error: restore.error?.message });
+          return { success: false, transactionId, rollbackFailed: true, error: `Transaction failed and rollback failed: ${error.message}` };
         }
+        swseLogger.info('TransactionEngine: Rollback successful', { transactionId, snapshotId });
+        return { success: false, transactionId, rolledBack: true, error: error.message };
       }
 
       return { success: false, transactionId, error: error.message };
@@ -543,17 +575,12 @@ export class TransactionEngine {
       });
 
       if (snapshotId) {
-        try {
-          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          await SnapshotManager.restoreSnapshot(freshActor, snapshotId?.timestamp ?? snapshotId);
-          swseLogger.info('TransactionEngine: Credit adjustment rollback successful', { transactionId, snapshotId });
-        } catch (rollbackError) {
-          return {
-            success: false,
-            transactionId,
-            error: `Credit adjustment failed and rollback failed: ${error.message}`
-          };
+        const restore = await this.#restoreVerified(freshActor, snapshotId);
+        if (!restore.restored) {
+          swseLogger.error('TransactionEngine: Credit adjustment rollback failed', { transactionId, snapshotId, error: restore.error?.message });
+          return { success: false, transactionId, rollbackFailed: true, error: `Credit adjustment failed and rollback failed: ${error.message}` };
         }
+        swseLogger.info('TransactionEngine: Credit adjustment rollback successful', { transactionId, snapshotId });
       }
 
       return { success: false, transactionId, error: error.message };
@@ -698,15 +725,15 @@ export class TransactionEngine {
         });
         // Last-resort: restore both actors to their pre-transfer state so the
         // sender is not left debited when the compensating refund also failed.
-        try {
-          if (fromSnapshot || toSnapshot) {
-            const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-            if (fromSnapshot) await SnapshotManager.restoreSnapshot(fromActor, fromSnapshot.timestamp ?? fromSnapshot);
-            if (toSnapshot) await SnapshotManager.restoreSnapshot(toActor, toSnapshot.timestamp ?? toSnapshot);
+        if (fromSnapshot || toSnapshot) {
+          const restores = [];
+          if (fromSnapshot) {restores.push(await this.#restoreVerified(fromActor, fromSnapshot));}
+          if (toSnapshot) {restores.push(await this.#restoreVerified(toActor, toSnapshot));}
+          if (restores.every((r) => r.restored)) {
             swseLogger.warn('[TransactionEngine.creditTransfer] restored both actors from snapshot after refund failure', logContext);
+          } else {
+            swseLogger.error('[TransactionEngine.creditTransfer] snapshot restore FAILED after refund failure; manual reconciliation required', { ...logContext, error: restores.find((r) => !r.restored)?.error?.message });
           }
-        } catch (restoreErr) {
-          swseLogger.error('[TransactionEngine.creditTransfer] snapshot restore FAILED after refund failure; manual reconciliation required', { ...logContext, error: restoreErr.message });
         }
       } else {
         swseLogger.warn('[TransactionEngine.creditTransfer] debit refunded after credit leg failure', {
@@ -822,8 +849,8 @@ export class TransactionEngine {
     }
 
     const netCost = normalizeCredits(grossCost - grossResale);
-    const creditsBefore = LedgerService.getCurrentCredits(walletActor);
-    const creditsAfter = normalizeCredits(creditsBefore - netCost);
+    let creditsBefore = LedgerService.getCurrentCredits(walletActor);
+    let creditsAfter = normalizeCredits(creditsBefore - netCost);
     if (!Number.isFinite(creditsBefore) || creditsBefore < 0) {
       return { success: false, transactionId, error: 'Invalid wallet credit state' };
     }
@@ -844,24 +871,23 @@ export class TransactionEngine {
     let walletSnapshot = null;
     let assetSnapshot = null;
     try {
-      try {
-        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-        walletSnapshot = await SnapshotManager.createSnapshot(
-          walletActor,
-          `${transactionContext} wallet transaction (${netCost} net credits)`
-        );
-        if (targetAsset.id !== walletActor.id) {
-          assetSnapshot = await SnapshotManager.createSnapshot(
-            targetAsset,
-            `${transactionContext} asset mutation (${targetAsset.name})`
-          );
-        }
-      } catch (snapshotError) {
-        swseLogger.warn('TransactionEngine: Asset customization snapshot failed; continuing with best-effort rollback', {
-          transactionId,
-          context: transactionContext,
-          error: snapshotError.message
-        });
+      // TI-2 (D1): a customization is refused unless recovery is established for every actor it will change (wallet, and the asset when distinct).
+      const walletRecovery = await this.#establishRecovery(walletActor, `${transactionContext} wallet transaction (${netCost} net credits)`);
+      const assetRecovery = walletRecovery.ok && targetAsset.id !== walletActor.id
+        ? await this.#establishRecovery(targetAsset, `${transactionContext} asset mutation (${targetAsset.name})`)
+        : { ok: true, snapshot: null };
+      if (!walletRecovery.ok || !assetRecovery.ok) {
+        const why = (walletRecovery.error ?? assetRecovery.error)?.message ?? 'unknown';
+        swseLogger.error('TransactionEngine: Asset customization refused; recovery could not be established', { transactionId, context: transactionContext, error: why });
+        return { success: false, transactionId, refused: 'recovery-unavailable', error: `Customization refused: recovery could not be established (${why}). Nothing was changed.` };
+      }
+      walletSnapshot = walletRecovery.snapshot;
+      assetSnapshot = assetRecovery.snapshot;
+      // TI-2 (TX-08c): the balance is re-read after the (slow) snapshots, immediately before the plan is built.
+      creditsBefore = LedgerService.getCurrentCredits(walletActor);
+      creditsAfter = normalizeCredits(creditsBefore - netCost);
+      if (!Number.isFinite(creditsBefore) || creditsBefore < 0 || creditsAfter < 0) {
+        return { success: false, transactionId, error: `Insufficient credits (have ${creditsBefore}, need ${netCost})` };
       }
 
       const walletAudit = {
@@ -946,6 +972,13 @@ export class TransactionEngine {
         });
       }
 
+      // TI-2: the wallet charge is observed before success is claimed (otherwise `indeterminate`; no blind whole-actor restore that could revert another writer).
+      const observedWallet = LedgerService.getCurrentCredits(walletActor);
+      if (netCost !== 0 && observedWallet !== creditsAfter) {
+        swseLogger.error('TransactionEngine: Asset customization could not be verified', { transactionId, context: transactionContext, expected: creditsAfter, observed: observedWallet });
+        return { success: false, indeterminate: true, transactionId, error: `Customization could not be verified: expected ${creditsAfter} credits after the charge, found ${observedWallet}. Check the actor's credits and the asset before retrying.`, evidence: { creditsBefore, expectedCredits: creditsAfter, observedCredits: observedWallet } };
+      }
+
       Hooks.callAll?.('swseAssetCustomizationTransactionComplete', {
         transaction: this.#normalizeTransactionRecord(walletActor, walletAudit),
         actor: walletActor,
@@ -972,22 +1005,14 @@ export class TransactionEngine {
         error: error.message
       });
 
-      try {
-        if (walletSnapshot || assetSnapshot) {
-          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          if (assetSnapshot && targetAsset.id !== walletActor.id) {
-            await SnapshotManager.restoreSnapshot(targetAsset, assetSnapshot.timestamp ?? assetSnapshot);
-          }
-          if (walletSnapshot) {
-            await SnapshotManager.restoreSnapshot(walletActor, walletSnapshot.timestamp ?? walletSnapshot);
-          }
+      if (walletSnapshot || assetSnapshot) {
+        const restores = [];
+        if (assetSnapshot && targetAsset.id !== walletActor.id) {restores.push(await this.#restoreVerified(targetAsset, assetSnapshot));}
+        if (walletSnapshot) {restores.push(await this.#restoreVerified(walletActor, walletSnapshot));}
+        if (restores.some((r) => !r.restored)) {
+          swseLogger.error('TransactionEngine: Asset customization rollback failed', { transactionId, error: restores.find((r) => !r.restored)?.error?.message });
+          return { success: false, transactionId, rollbackFailed: true, error: `Asset customization failed and rollback failed: ${error.message}` };
         }
-      } catch (rollbackError) {
-        return {
-          success: false,
-          transactionId,
-          error: `Asset customization failed and rollback failed: ${error.message}`
-        };
       }
 
       return { success: false, transactionId, error: error.message };
@@ -1201,18 +1226,14 @@ export class TransactionEngine {
       });
 
       if (ownerSnapshot || assetSnapshot) {
-        try {
-          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          if (assetSnapshot) await SnapshotManager.restoreSnapshot(freshAsset, assetSnapshot.timestamp);
-          if (ownerSnapshot) await SnapshotManager.restoreSnapshot(ownerActor, ownerSnapshot.timestamp);
-          swseLogger.info('TransactionEngine: Asset approval rollback successful', { transactionId });
-        } catch (rollbackError) {
-          return {
-            success: false,
-            transactionId,
-            error: `Asset approval failed and rollback failed: ${error.message}`
-          };
+        const restores = [];
+        if (assetSnapshot) {restores.push(await this.#restoreVerified(freshAsset, assetSnapshot));}
+        if (ownerSnapshot) {restores.push(await this.#restoreVerified(ownerActor, ownerSnapshot));}
+        if (restores.some((r) => !r.restored)) {
+          swseLogger.error('TransactionEngine: Asset approval rollback failed', { transactionId, error: restores.find((r) => !r.restored)?.error?.message });
+          return { success: false, transactionId, rollbackFailed: true, error: `Asset approval failed and rollback failed: ${error.message}` };
         }
+        swseLogger.info('TransactionEngine: Asset approval rollback successful', { transactionId });
       }
 
       return { success: false, transactionId, error: error.message };
@@ -1375,17 +1396,12 @@ export class TransactionEngine {
       });
 
       if (snapshotId) {
-        try {
-          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          await SnapshotManager.restoreSnapshot(freshActor, snapshotId?.timestamp ?? snapshotId);
-          swseLogger.info('TransactionEngine: Sale rollback successful', { transactionId, snapshotId });
-        } catch (rollbackError) {
-          return {
-            success: false,
-            transactionId,
-            error: `Sale failed and rollback failed: ${error.message}`
-          };
+        const restore = await this.#restoreVerified(freshActor, snapshotId);
+        if (!restore.restored) {
+          swseLogger.error('TransactionEngine: Sale rollback failed', { transactionId, snapshotId, error: restore.error?.message });
+          return { success: false, transactionId, rollbackFailed: true, error: `Sale failed and rollback failed: ${error.message}` };
         }
+        swseLogger.info('TransactionEngine: Sale rollback successful', { transactionId, snapshotId });
       }
 
       return { success: false, transactionId, error: error.message };
@@ -1557,17 +1573,12 @@ export class TransactionEngine {
       });
 
       if (snapshotId) {
-        try {
-          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          await SnapshotManager.restoreSnapshot(freshActor, snapshotId?.timestamp ?? snapshotId);
-          swseLogger.info('TransactionEngine: Rollback reconciliation snapshot restore successful', { transactionId, snapshotId });
-        } catch (rollbackError) {
-          return {
-            success: false,
-            transactionId,
-            error: `Rollback reconciliation failed and snapshot restore failed: ${error.message}`
-          };
+        const restore = await this.#restoreVerified(freshActor, snapshotId);
+        if (!restore.restored) {
+          swseLogger.error('TransactionEngine: Rollback reconciliation snapshot restore failed', { transactionId, snapshotId, error: restore.error?.message });
+          return { success: false, transactionId, rollbackFailed: true, error: `Rollback reconciliation failed and snapshot restore failed: ${error.message}` };
         }
+        swseLogger.info('TransactionEngine: Rollback reconciliation snapshot restore successful', { transactionId, snapshotId });
       }
 
       return { success: false, transactionId, error: error.message };

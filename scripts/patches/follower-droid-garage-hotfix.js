@@ -1,7 +1,6 @@
 import { CustomizationBayApp } from '/systems/foundryvtt-swse/scripts/apps/customization/customization-bay-app.js';
 import { DroidCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/droid-customization-engine.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
-import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 const REGISTERED = Symbol.for('swse.followerDroidGarage.registered.v1');
@@ -50,23 +49,6 @@ function makeDroidCompatibilityProxy(actor) {
   });
 }
 
-async function createSnapshot(actor, label) {
-  if (!actor) return null;
-  try {
-    const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-    return await SnapshotManager.createSnapshot(actor, label);
-  } catch (err) {
-    swseLogger.warn('[FollowerDroidGarage] Snapshot creation failed', { actor: actor?.name, error: err?.message });
-    return null;
-  }
-}
-
-async function restoreSnapshot(actor, snapshot) {
-  if (!actor || !snapshot) return;
-  const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-  await SnapshotManager.restoreSnapshot(actor, snapshot?.timestamp ?? snapshot);
-}
-
 function patchAssetCustomizationTransaction() {
   if (TransactionEngine[TRANSACTION_PATCHED]) return;
 
@@ -83,66 +65,12 @@ function patchAssetCustomizationTransaction() {
       return original.call(this, context, options);
     }
     if (!assetActor || !walletActor) return { success: false, error: 'Customization requires both an asset and a wallet actor.' };
-    if (assetActor.isOwner === false || walletActor.isOwner === false) return { success: false, error: 'Insufficient permissions for customization.' };
 
-    const cost = Math.max(0, Number(context.cost || 0));
-    const resaleCredit = Math.max(0, Number(context.resaleCredit || 0));
-    const netDebit = cost - resaleCredit;
-    const creditsBefore = Number(walletActor.system?.credits ?? 0) || 0;
-    const creditsAfter = creditsBefore - netDebit;
-    if (creditsAfter < 0) {
-      return { success: false, error: `Insufficient credits (have ${creditsBefore}, need ${netDebit})` };
-    }
-
-    const transactionId = `asset_tx_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-    const walletSnapshot = await createSnapshot(walletActor, `Follower droid garage wallet ${transactionId}`);
-    const assetSnapshot = assetActor.id === walletActor.id ? walletSnapshot : await createSnapshot(assetActor, `Follower droid garage asset ${transactionId}`);
-
-    try {
-      await ActorEngine.applyMutationPlan(assetActor, context.assetMutationPlan || {}, {
-        validate: options.validate !== false,
-        rederive: options.rederive !== false,
-        source: options.source || 'FollowerDroidGarage.assetMutation',
-      });
-
-      const audit = {
-        id: transactionId,
-        context: context.transactionContext || 'owned-customization',
-        type: netDebit >= 0 ? 'Buy' : 'Refund',
-        status: 'Success',
-        cost,
-        resaleCredit,
-        amount: -netDebit,
-        creditsBefore,
-        creditsAfter,
-        createdAt: Date.now(),
-        actorId: walletActor.id,
-        actorName: walletActor.name,
-        assetActorId: assetActor.id,
-        assetActorName: assetActor.name,
-        userId: game.user?.id || null,
-        userName: game.user?.name || null,
-        reason: context.reason || 'Follower droid customization',
-        source: options.source || 'FollowerDroidGarage',
-        audit: context.audit || {},
-      };
-
-      await ActorEngine.updateActor(walletActor, {
-        'system.credits': creditsAfter,
-        [`flags.foundryvtt-swse.transactions.${transactionId}`]: audit,
-      }, { source: 'FollowerDroidGarage.walletMutation' });
-
-      return { success: true, transactionId, creditsBefore, creditsAfter, assetActorId: assetActor.id };
-    } catch (err) {
-      try {
-        await restoreSnapshot(assetActor, assetSnapshot);
-        if (walletActor.id !== assetActor.id) await restoreSnapshot(walletActor, walletSnapshot);
-      } catch (rollbackErr) {
-        swseLogger.error('[FollowerDroidGarage] Rollback failed', { error: rollbackErr?.message });
-        return { success: false, transactionId, error: `Customization failed and rollback failed: ${err.message}` };
-      }
-      return { success: false, transactionId, error: err?.message || String(err) };
-    }
+    // TI-2: a follower droid is paid for from its OWNER's wallet; that is the ONLY thing this patch adds. The charge, the asset change, the audit record,
+    // recovery (refused unless established), the honest restore outcome and the credit verification are the commerce authority's own — this patch
+    // used to carry a second implementation that wrote the asset first, charged an absolute balance afterwards and ignored a failed restore.
+    // executeAssetCustomizationTransaction natively supports wallet !== asset.
+    return original.call(this, { ...context, actor: walletActor, assetActor }, options);
   };
 
   Object.defineProperty(TransactionEngine, TRANSACTION_PATCHED, { value: true });
