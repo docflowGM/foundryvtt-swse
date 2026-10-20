@@ -155,7 +155,12 @@ test('normalization loss API has no capability to issue receipts or installation
   assert.equal(drift.nativeSourcePackVerified,false);
   assert.equal(drift.physicalMountCertified,false);
   const source=text('scripts/domain/vehicles/vehicle-cp23c4c-import-boundary.js');
-  assert.doesNotMatch(source,/ActorEngine\.updateActor|game\.settings\.set|createEmbeddedDocuments/);
+  // Documentation comments may name ActorEngine; executable source must not.
+  const executable=source.split('\\n').filter(line=>
+    !line.trim().startsWith('*') && !line.trim().startsWith('//')).join('\\n');
+  assert.equal(executable.includes('ActorEngine.updateActor('),false);
+  assert.equal(executable.includes('game.settings.set('),false);
+  assert.equal(executable.includes('createEmbeddedDocuments('),false);
   const importer=text('scripts/engine/import/vehicle-import-engine.js');
   assert.ok(importer.indexOf('assertCP23C4CNoStagedSourceImport(sourceActor)')<
     importer.indexOf('normalizeVehicleImportData(rawSystem,'));
