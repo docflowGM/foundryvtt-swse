@@ -1,0 +1,1392 @@
+{
+  "schema": "swse.vehicle.sotg.cp21.owner-approved-effective-adjudications.v1",
+  "decisionSet": "CP21_SOTG_15_PROBLEM_SHIPS",
+  "book": "Starships of the Galaxy",
+  "ownerApproval": "USER_APPROVED_ALL_15_RECOMMENDATIONS_2026-10-20",
+  "ownerApprovalScope": "EFFECTIVE_RULE_ADJUDICATION_AND_PROVENANCE_ONLY_NOT_PHYSICAL_MOUNT_OR_RUNTIME_TRUST",
+  "sourceBranch": "audit/sotg-strict-certification-cp17",
+  "sourceParentHead": "9df36a630df24ff7315e218220158343de79816e",
+  "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "authorityBlobs": {
+    "ledger": {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+      "sha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557"
+    },
+    "queue": {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+      "sha": "9c7df34eefa54f456721ee18c6ee684ec214dbf6"
+    },
+    "review": {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche01-primary-source-review.json",
+      "sha": "e21200f0f8604e16ff3ebbbbb63ea79c44252bf3"
+    },
+    "certificates": {
+      "path": "data/audits/vehicles/swse-sotg-cp20-tranche07-conflict-priority-source-fidelity-certificates.json",
+      "sha": "86a3ed4f98fd4a5ab15430ababdcd3834d6580f4"
+    }
+  },
+  "policyId": "SOTG-CP18-D01",
+  "decisionCount": 15,
+  "approvedDecisions": [
+    {
+      "order": 1,
+      "decisionId": "SOTG-CP21-D01",
+      "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+      "cp16Index": 3,
+      "printedName": "Advanced V-19 Torrent Starfighter",
+      "printedStartPage": 59,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Use header Initiative +12 for the stock advanced V-19; leave sample Dex 33 printed, but apply +8 Dex when generating from the base V-19.",
+      "confidence": "VERY_HIGH",
+      "cp19Disposition": "DUAL_PRINTED_VALUES_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/initiative/header",
+          "printedPage": 59,
+          "observed": "Init +12"
+        },
+        {
+          "location": "/skills/initiative",
+          "printedPage": 59,
+          "observed": "Initiative +8"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "SOURCE_CONFLICT",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "fieldOverrides": [
+        {
+          "path": "/skills/initiative",
+          "newValue": 12,
+          "reason": "Template +8 Dexterity changes the modifier by +4; stock +8 -> +12.",
+          "originalValue": 8
+        }
+      ],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "ADVANCED_TEMPLATE_GENERATOR",
+          "detail": {
+            "baseV19Dex": 24,
+            "templateDexBonusForGargantuan": 8,
+            "derivedDex": 32,
+            "printedExampleDex": 33,
+            "derivedInitiative": 12
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "DUAL_PRINTED_VALUES_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 2,
+      "decisionId": "SOTG-CP21-D02",
+      "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+      "cp16Index": 17,
+      "printedName": "Recusant-class Light Destroyer",
+      "printedStartPage": 72,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Use detailed point-defense battery attacks +14 and +12, not Ranged summary +16 and +14.",
+      "confidence": "HIGH",
+      "cp19Disposition": "DUAL_ATTACK_PROFILE_VALUES_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/ranged/pointDefenseLightLaserBattery",
+          "printedPage": 72,
+          "observed": "5 point-defense light laser cannon batteries +16"
+        },
+        {
+          "location": "/weaponTable/pointDefenseLightLaserBattery",
+          "printedPage": 72,
+          "observed": "Atk +14"
+        },
+        {
+          "location": "/ranged/pointDefenseDoubleLightLaserBattery",
+          "printedPage": 72,
+          "observed": "2 point-defense double light laser cannon batteries +14"
+        },
+        {
+          "location": "/weaponTable/pointDefenseDoubleLightLaserBattery",
+          "printedPage": 72,
+          "observed": "Atk +12"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "SOURCE_CONFLICT",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "fieldOverrides": [],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "DETAILED_WEAPON_ROW_AUTHORITY",
+          "detail": {
+            "groupIndices": [
+              3,
+              4
+            ],
+            "attackBonuses": [
+              14,
+              12
+            ],
+            "rejectedSummaryBonuses": [
+              16,
+              14
+            ],
+            "doNotInventExtraGunners": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "DUAL_ATTACK_PROFILE_VALUES_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 3,
+      "decisionId": "SOTG-CP21-D03",
+      "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+      "cp16Index": 42,
+      "printedName": "Kuat Drive Yards Pellaeon-class Star Destroyer",
+      "printedStartPage": 99,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Use effective flat-footed Reflex 14; leave printed 47 in source evidence.",
+      "confidence": "VERY_HIGH",
+      "cp19Disposition": "SELF_CONTRADICTORY_DEFENSE_LINE_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/defenses/reflex",
+          "printedPage": 99,
+          "observed": "Ref 16"
+        },
+        {
+          "location": "/defenses/flatFooted",
+          "printedPage": 99,
+          "observed": "flat-footed 47"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "SOURCE_CONFLICT",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "fieldOverrides": [
+        {
+          "path": "/defenses/flatFootedReflex",
+          "newValue": 14,
+          "reason": "10 + Dex 2 - cruiser size 10 + armor 14 - Dex 2 = 14 flat-footed.",
+          "originalValue": 47
+        }
+      ],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "VEHICLE_DEFENSE_FORMULA",
+          "detail": {
+            "printedReflex": 16,
+            "printedFlatFooted": 47,
+            "approvedFlatFooted": 14
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "SELF_CONTRADICTORY_DEFENSE_LINE_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 4,
+      "decisionId": "SOTG-CP21-D04",
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "cp16Index": 43,
+      "printedName": "Immobilizer 418 Interdictor-class Heavy Cruiser",
+      "printedStartPage": 100,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Apply official SotG Errata 1.0: Immobilizer 418 gravity-well projector area 3x3, as a non-damage special effect against Reflex 10.",
+      "confidence": "DEFINITIVE_ERRATA",
+      "cp19Disposition": "WEAPON_ROW_VS_RULE_AREA_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/weaponTable/gravityWellProjector/area",
+          "printedPage": 100,
+          "observed": "4x4 square starship-scale area attack"
+        },
+        {
+          "location": "/specialRule/gravityWellProjectors/area",
+          "printedPage": 101,
+          "observed": "3x3-square starship-scale area"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "fieldOverrides": [
+        {
+          "path": "/specialDefensesOrRules/gravityWell/statblockAreaSquares",
+          "newValue": "3x3",
+          "reason": "Official errata corrects the p100 weapon row; p101 rule already 3x3.",
+          "originalValue": "4x4"
+        }
+      ],
+      "attackGroupOverrides": [
+        {
+          "rowIndex": 1,
+          "field": "areaPrintedWeaponRow",
+          "newValue": "3x3 starship squares",
+          "reason": "Official errata replaces 4x4 in the weapon row only.",
+          "originalPresent": true,
+          "originalValue": "4x4 starship squares"
+        }
+      ],
+      "policies": [
+        {
+          "code": "OFFICIAL_ERRATA_GRAVITY_WELL",
+          "detail": {
+            "errataTitle": "Starships of the Galaxy Errata 1.0",
+            "errataPrintedPage": 100,
+            "errataUrl": "https://www.theberserker.net/berserker/sw/rule_books/SW_Saga_Starships_of_the_Galaxy.pdf",
+            "areaStarshipSquares": "3x3",
+            "attackVsReflex": 10,
+            "damageType": "special non-damaging interdiction",
+            "generators": 4,
+            "independentAttackPermissions": false
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "WEAPON_ROW_VS_RULE_AREA_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 5,
+      "decisionId": "SOTG-CP21-D05",
+      "sourceEntryKey": "sotg-junker-tye-wing",
+      "cp16Index": 47,
+      "printedName": "Junker TYE-wing",
+      "printedStartPage": 104,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Use Junker TYE-wing stock Initiative +2; apply the template's -5 Initiative penalty after Dex adjustment, not twice.",
+      "confidence": "VERY_HIGH",
+      "cp19Disposition": "DUAL_PRINTED_VALUES_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/initiative/header",
+          "printedPage": 104,
+          "observed": "Init +2"
+        },
+        {
+          "location": "/skills/initiative",
+          "printedPage": 104,
+          "observed": "Initiative +8"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "SOURCE_CONFLICT",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "SOURCE_CONFLICT",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "fieldOverrides": [
+        {
+          "path": "/skills/initiative",
+          "newValue": 2,
+          "reason": "Base TIE/In +8, Junker -2 Dex gives -1 Init, then -5 template penalty -> +2.",
+          "originalValue": 8
+        }
+      ],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "JUNKER_TEMPLATE_INITIATIVE",
+          "detail": {
+            "baseTIEInInitiative": 8,
+            "dexterityChange": -2,
+            "resultingInitiativeShift": -1,
+            "templatePenalty": -5,
+            "approvedEffectiveInitiative": 2,
+            "applyPenaltyExactlyOnce": true,
+            "systemsFailureSeparateRule": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "DUAL_PRINTED_VALUES_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 6,
+      "decisionId": "SOTG-CP21-D06",
+      "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+      "cp16Index": 48,
+      "printedName": "Koensayr Manufacturing BTL-58 K-wing",
+      "printedStartPage": 105,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Use K-wing crew Initiative +6 and a ship-specific six-round plasma/shieldbuster torpedo ammo association, with mutually exclusive ordnance choice.",
+      "confidence": "MEDIUM_INIT_HIGH_AMMO",
+      "cp19Disposition": "INITIATIVE_AND_PAYLOAD_TERMINOLOGY_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/initiative/header",
+          "printedPage": 105,
+          "observed": "Init +10"
+        },
+        {
+          "location": "/skills/initiative",
+          "printedPage": 105,
+          "observed": "Initiative +6"
+        },
+        {
+          "location": "/ranged/alternateOrdnance",
+          "printedPage": 105,
+          "observed": "shieldbuster torpedoes +7"
+        },
+        {
+          "location": "/weaponTable/alternateOrdnance",
+          "printedPage": 105,
+          "observed": "Shieldbuster torpedoes (gunner)"
+        },
+        {
+          "location": "/payload/thirdOrdnance",
+          "printedPage": 105,
+          "observed": "6 plasma torpedoes"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "SOURCE_CONFLICT",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "SOURCE_CONFLICT",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_CONFLICT",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "fieldOverrides": [
+        {
+          "path": "/initiative",
+          "newValue": 6,
+          "reason": "Approved stock crew Skills Initiative +6 supersedes Header +10.",
+          "originalValue": 10
+        }
+      ],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "K_WING_SHIELDBUSTER_ALIAS",
+          "detail": {
+            "scope": "THIS_SOURCE_ENTRY_ONLY",
+            "printedPayloadKey": "plasmaTorpedoes",
+            "printedPayloadCount": 6,
+            "attackWeaponFamily": "shieldbuster torpedoes",
+            "ammoConsumptionPerShot": 1,
+            "applyShieldbusterSrRules": true,
+            "ordnanceModes": [
+              "medium concussion missiles",
+              "proton torpedoes",
+              "shieldbuster torpedoes"
+            ],
+            "mutuallyExclusive": true,
+            "requiresInstalledLoadoutSelection": true,
+            "prototypeAndLaterVariantsSeparate": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "INITIATIVE_AND_PAYLOAD_TERMINOLOGY_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 7,
+      "decisionId": "SOTG-CP21-D07",
+      "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+      "cp16Index": 52,
+      "printedName": "Sienar Technologies Marauder Corvette",
+      "printedStartPage": 110,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Marauder's tractor beam is one attack group operated by three gunners, not proven to be a battery or three emitters.",
+      "confidence": "MEDIUM_HIGH",
+      "cp19Disposition": "TRACTOR_GROUP_LABEL_SCOPE_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/ranged/tractor",
+          "printedPage": 110,
+          "observed": "tractor beam battery +8"
+        },
+        {
+          "location": "/weaponTable/tractor",
+          "printedPage": 110,
+          "observed": "Tractor beam (3 gunners)"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "fieldOverrides": [],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "MARAUDER_TRACTOR_OPERATOR_MODEL",
+          "detail": {
+            "rowIndex": 1,
+            "interpretation": "NON_BATTERY_TRACTOR_GROUP",
+            "operatorRole": "gunner",
+            "operatorCount": 3,
+            "attackBonus": 8,
+            "grappleBonus": 47,
+            "physicalMountCount": "UNRESOLVED",
+            "firingArc": "UNRESOLVED",
+            "independentAttackActionsNotInferred": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "TRACTOR_GROUP_LABEL_SCOPE_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 8,
+      "decisionId": "SOTG-CP21-D08",
+      "sourceEntryKey": "sotg-mon-calamari-star-defender",
+      "cp16Index": 58,
+      "printedName": "Mon Calamari Star Defender",
+      "printedStartPage": 116,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Keep Colossal (station) size and printed fly-2 speed, classify as mobile warship, and leave 6,000 medium payload rounds vs heavy launcher labels unresolved.",
+      "confidence": "HIGH_MOBILITY_LOW_MISSILE",
+      "cp19Disposition": "CLASSIFICATION_AND_PAYLOAD_TERMINOLOGY_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/printedType",
+          "printedPage": 116,
+          "observed": "Colossal (station) space station"
+        },
+        {
+          "location": "/movement",
+          "printedPage": 116,
+          "observed": "Speed fly 2 squares"
+        },
+        {
+          "location": "/prose/shipType",
+          "printedPage": 116,
+          "observed": "Viscount-class Star Defender warship"
+        },
+        {
+          "location": "/payload/missiles",
+          "printedPage": 116,
+          "observed": "6,000 medium concussion missiles"
+        },
+        {
+          "location": "/weaponTable/missileBattery",
+          "printedPage": 116,
+          "observed": "Heavy concussion missile battery"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "SOURCE_CONFLICT",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_CONFLICT",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "fieldOverrides": [],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "VISCOUNT_SIZE_ROLE_SPLIT",
+          "detail": {
+            "printedSizeClass": "Colossal (station)",
+            "effectiveRole": "MOBILE_WARSHIP",
+            "starshipScaleFlySquares": 2,
+            "payload": {
+              "count": 6000,
+              "printedType": "medium concussion missiles"
+            },
+            "printedWeaponFamily": "heavy concussion missile battery",
+            "ammoTypeEquivalence": "UNRESOLVED",
+            "heavyWeaponAutoAmmoAllowed": false,
+            "tacticalFire": {
+              "action": "standard; forgo attacks",
+              "allyRadiusStarshipSquares": 3,
+              "shieldRatingBonus": 20,
+              "reflexBonus": 1
+            }
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "CLASSIFICATION_AND_PAYLOAD_TERMINOLOGY_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 9,
+      "decisionId": "SOTG-CP21-D09",
+      "sourceEntryKey": "sotg-eclipse",
+      "cp16Index": 78,
+      "printedName": "Eclipse",
+      "printedStartPage": 139,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Use Eclipse detailed superlaser +15, with -20 size penalty -> -5 vs smaller-than-Colossal-(cruiser) targets. Axial alignment required.",
+      "confidence": "VERY_HIGH",
+      "cp19Disposition": "DUAL_SUPERLASER_ATTACK_VALUES_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/ranged/superlaser",
+          "printedPage": 139,
+          "observed": "superlaser +7**"
+        },
+        {
+          "location": "/weaponTable/superlaser",
+          "printedPage": 139,
+          "observed": "Superlaser Atk +15"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "SOURCE_CONFLICT",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "fieldOverrides": [],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "ECLIPSE_AXIAL_SUPERLASER_ATTACK",
+          "detail": {
+            "rowIndex": 0,
+            "baseAttackBonus": 15,
+            "penaltyAgainstSmallerThanColossalCruiser": -20,
+            "conditionalAttackBonus": -5,
+            "printedHeaderAttackBonus": 7,
+            "alignmentRequired": true,
+            "distinctOneGroup": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "DUAL_SUPERLASER_ATTACK_VALUES_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 10,
+      "decisionId": "SOTG-CP21-D10",
+      "sourceEntryKey": "sotg-theta-class-shuttle",
+      "cp16Index": 80,
+      "printedName": "Theta-class Shuttle",
+      "printedStartPage": 141,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Use stock Theta Skills Perception +6 for checks, not Senses +5; recompute if crew changes.",
+      "confidence": "MEDIUM_HIGH",
+      "cp19Disposition": "DUAL_PERCEPTION_VALUES_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/senses/header",
+          "printedPage": 141,
+          "observed": "Senses Perception +5"
+        },
+        {
+          "location": "/skills/perception",
+          "printedPage": 141,
+          "observed": "Perception +6"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "SOURCE_CONFLICT",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "SOURCE_CONFLICT",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "fieldOverrides": [
+        {
+          "path": "/sensesPerception",
+          "newValue": 6,
+          "reason": "Approved stock crew Perception +6 matches Skills row.",
+          "originalValue": 5
+        }
+      ],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "THETA_PERCEPTION_STOCK_CREW",
+          "detail": {
+            "effectiveStockPerception": 6,
+            "sourceHeader": 5,
+            "recomputeWhenOperatorChanges": true,
+            "luxuryUpgradesNotImplicit": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "DUAL_PERCEPTION_VALUES_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 11,
+      "decisionId": "SOTG-CP21-D11",
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+      "cp16Index": 82,
+      "printedName": "Sienar Fleet Systems TIE Bomber",
+      "printedStartPage": 143,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Use TIE Bomber Skills Initiative +4; retain two forward lasers and 16-missile stock bomb-pod with separate selectable alternatives.",
+      "confidence": "MEDIUM_INIT_HIGH_LOADOUT",
+      "cp19Disposition": "DUAL_INITIATIVE_VALUES_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/initiative/header",
+          "printedPage": 143,
+          "observed": "Init +7"
+        },
+        {
+          "location": "/skills/initiative",
+          "printedPage": 143,
+          "observed": "Initiative +4"
+        },
+        {
+          "location": "/narrative/laserHardware",
+          "printedPage": 142,
+          "observed": "two forward-mounted laser cannons"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "SOURCE_CONFLICT",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "SOURCE_CONFLICT",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "fieldOverrides": [
+        {
+          "path": "/initiative",
+          "newValue": 4,
+          "reason": "Approved Skills Initiative +4 supersedes printed +7 header.",
+          "originalValue": 7
+        }
+      ],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "TIE_BOMBER_ARMAMENT_VARIANTS",
+          "detail": {
+            "stockTwoForwardLaserCannons": true,
+            "stockConcussionMissiles": 16,
+            "alternativeTorpedoes": 8,
+            "ordnanceAlternativesNotCumulative": true,
+            "physicalWeaponActionsNotGranted": true,
+            "laserAttackRowIndex": 0,
+            "missileAttackRowIndex": 1,
+            "alternativeTorpedoesNotInstalledInStock": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "DUAL_INITIATIVE_VALUES_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 12,
+      "decisionId": "SOTG-CP21-D12",
+      "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+      "cp16Index": 94,
+      "printedName": "Incom T-65XJ3 X-wing Starfighter",
+      "printedStartPage": 152,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Interpret XJ3's 12 proton torpedoes as 3 tubes x 4 HEAVY proton torpedoes, damage 10d10x2, while retaining original generic labels.",
+      "confidence": "HIGH",
+      "cp19Disposition": "TORPEDO_QUALIFIER_UNRESOLVED",
+      "printedAlternatives": [
+        {
+          "location": "/narrative/ordnance",
+          "printedPage": 152,
+          "observed": "three proton torpedo tubes; four heavy proton torpedoes apiece"
+        },
+        {
+          "location": "/payload/torpedoes",
+          "printedPage": 153,
+          "observed": "12 proton torpedoes"
+        },
+        {
+          "location": "/weaponTable/torpedoes",
+          "printedPage": 153,
+          "observed": "Proton torpedoes (pilot)"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_CONFLICT",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "fieldOverrides": [
+        {
+          "path": "/payload",
+          "newValue": "12 heavy proton torpedoes",
+          "reason": "Printed narrative p152 specifies heavy torpedoes, three tubes holding four each.",
+          "originalValue": "12 proton torpedoes"
+        }
+      ],
+      "attackGroupOverrides": [
+        {
+          "rowIndex": 1,
+          "field": "weaponLabel",
+          "newValue": "heavy proton torpedoes",
+          "reason": "Approved ship-specific weapon label from narrative p152 and 10d10x2 printed row.",
+          "originalPresent": true,
+          "originalValue": "proton torpedoes"
+        }
+      ],
+      "policies": [
+        {
+          "code": "XJ3_HEAVY_PROTON_TORPEDO_LOADOUT",
+          "detail": {
+            "torpedoType": "heavy proton torpedoes",
+            "launcherCount": 3,
+            "ammoPerLauncher": 4,
+            "totalAmmo": 12,
+            "attackBonus": 8,
+            "damage": "10d10x2",
+            "shipSpecific": true,
+            "fireLinkConditional": true,
+            "firingArcsUnresolved": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [],
+      "unresolvedCanonicalScopes": [
+        "TORPEDO_QUALIFIER_UNRESOLVED"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 13,
+      "decisionId": "SOTG-CP21-D13",
+      "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+      "cp16Index": 5,
+      "printedName": "Incom/Subpro ARC-170 Starfighter",
+      "printedStartPage": 61,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "ARC-170: retain three attack families and distinct gunner/gunner/pilot roles; supplement missing row pages only as provenance.",
+      "confidence": "HIGH",
+      "cp19Disposition": "LEGACY_MISSING_WEAPON_KEYS_AND_PAGE_PROVENANCE",
+      "printedAlternatives": [
+        {
+          "location": "/weaponTable/groups",
+          "printedPage": 61,
+          "observed": "Laser cannons (gunner), medium laser cannons (gunner), proton torpedoes (pilot)"
+        },
+        {
+          "location": "/crew",
+          "printedPage": 61,
+          "observed": "3 plus astromech droid"
+        },
+        {
+          "location": "/payload",
+          "printedPage": 61,
+          "observed": "6 proton torpedoes"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "fieldOverrides": [],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "ARC170_LEGACY_PROVENANCE",
+          "detail": {
+            "publishedPage": 61,
+            "groupRoles": [
+              "gunner",
+              "gunner",
+              "pilot"
+            ],
+            "groupLabels": [
+              "laser cannons",
+              "medium laser cannons",
+              "proton torpedoes"
+            ],
+            "missingKeysMustRemainAbsent": true,
+            "physicalCountOrArcNotInferred": true,
+            "astromechSeparate": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [
+        {
+          "rowIndex": 0,
+          "field": "sourcePage",
+          "sourcePage": 61,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 0,
+          "field": "batteryCount",
+          "sourcePage": 61,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 1,
+          "field": "sourcePage",
+          "sourcePage": 61,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 1,
+          "field": "batteryCount",
+          "sourcePage": 61,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 2,
+          "field": "sourcePage",
+          "sourcePage": 61,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 2,
+          "field": "batteryCount",
+          "sourcePage": 61,
+          "provenance": "KEY_NOT_STORED"
+        }
+      ],
+      "unresolvedCanonicalScopes": [
+        "LEGACY_MISSING_WEAPON_KEYS_AND_PAGE_PROVENANCE"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 14,
+      "decisionId": "SOTG-CP21-D14",
+      "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+      "cp16Index": 7,
+      "printedName": "Alliance A-wing Starfighter",
+      "printedStartPage": 63,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "A-wing: early lasers+jammer versus later missile-equipped stock; jammer is electronic warfare, never a third damage gun.",
+      "confidence": "HIGH",
+      "cp19Disposition": "LEGACY_MISSING_WEAPON_KEYS_AND_PAGE_PROVENANCE",
+      "printedAlternatives": [
+        {
+          "location": "/weaponTable/groups",
+          "printedPage": 63,
+          "observed": "Laser cannons (pilot), medium concussion missiles (pilot), Jammer (pilot)"
+        },
+        {
+          "location": "/narrative/earlyConfiguration",
+          "printedPage": 63,
+          "observed": "earliest A-wings armed only with lasers and jammers"
+        },
+        {
+          "location": "/narrative/laterConfiguration",
+          "printedPage": 63,
+          "observed": "missile launchers later added and standard by New Republic"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "fieldOverrides": [],
+      "attackGroupOverrides": [],
+      "policies": [
+        {
+          "code": "A_WING_VARIANTS_AND_JAMMER",
+          "detail": {
+            "publishedPage": 63,
+            "earlyConfiguration": {
+              "lasers": true,
+              "missiles": false,
+              "jammer": true
+            },
+            "laterStockConfiguration": {
+              "lasers": true,
+              "missiles": true,
+              "jammer": true,
+              "missileAmmo": 12
+            },
+            "jammer": {
+              "category": "ELECTRONIC_WARFARE",
+              "requiresActivation": true,
+              "adjacentShipsOnly": true,
+              "eligibleSizes": "Colossal or smaller",
+              "starfighterIntelligencePenalty": -5,
+              "spaceTransportIntelligencePenalty": -2,
+              "damageAttack": false
+            },
+            "missingKeysMustRemainAbsent": true
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [
+        {
+          "rowIndex": 0,
+          "field": "sourcePage",
+          "sourcePage": 63,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 0,
+          "field": "batteryCount",
+          "sourcePage": 63,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 1,
+          "field": "sourcePage",
+          "sourcePage": 63,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 1,
+          "field": "hardwareCount",
+          "sourcePage": 63,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 1,
+          "field": "batteryCount",
+          "sourcePage": 63,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 2,
+          "field": "sourcePage",
+          "sourcePage": 63,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 2,
+          "field": "firingArc",
+          "sourcePage": 63,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 2,
+          "field": "batteryCount",
+          "sourcePage": 63,
+          "provenance": "KEY_NOT_STORED"
+        }
+      ],
+      "unresolvedCanonicalScopes": [
+        "LEGACY_MISSING_WEAPON_KEYS_AND_PAGE_PROVENANCE"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "order": 15,
+      "decisionId": "SOTG-CP21-D15",
+      "sourceEntryKey": "sotg-baudo-class-star-yacht",
+      "cp16Index": 9,
+      "printedName": "Baudo-class Star Yacht",
+      "printedStartPage": 65,
+      "approvedBy": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20",
+      "approvalState": "APPROVED",
+      "effectiveProjectionState": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED",
+      "summary": "Baudo: accept one physically installed laser cannon from p65 prose, preserve printed plural attack label; crew 1 does not imply simultaneous pilot and gunner.",
+      "confidence": "HIGH_COUNT_UNRESOLVED_OPERATION",
+      "cp19Disposition": "NARRATIVE_SINGULAR_VS_TABLE_PLURAL_AND_LEGACY_KEYS",
+      "printedAlternatives": [
+        {
+          "location": "/narrative/laserCount",
+          "printedPage": 65,
+          "observed": "only a single laser cannon"
+        },
+        {
+          "location": "/weaponTable/laserFamily",
+          "printedPage": 65,
+          "observed": "Light laser cannons (gunner)"
+        }
+      ],
+      "originalFieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "fieldOverrides": [],
+      "attackGroupOverrides": [
+        {
+          "rowIndex": 0,
+          "field": "hardwareCount",
+          "newValue": 1,
+          "reason": "Printed p65 narrative unambiguously specifies one physical laser cannon; original row had no hardwareCount key.",
+          "originalPresent": false
+        }
+      ],
+      "policies": [
+        {
+          "code": "BAUDO_SINGLE_CANNON_OPERATOR_SCOPE",
+          "detail": {
+            "publishedPage": 65,
+            "installedCannonCount": 1,
+            "printedWeaponLabel": "light laser cannons (statblock plural)",
+            "attackBonus": 2,
+            "damage": "2d10x2",
+            "operatorRole": "gunner",
+            "crewCount": 1,
+            "noSecondCrewMemberInferred": true,
+            "automaticSimultaneousPilotGunnerAttacks": false,
+            "firingArc": "UNRESOLVED"
+          },
+          "runtimePermission": false
+        }
+      ],
+      "legacyMissingRowKeys": [
+        {
+          "rowIndex": 0,
+          "field": "sourcePage",
+          "sourcePage": 65,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 0,
+          "field": "hardwareCount",
+          "sourcePage": 65,
+          "provenance": "KEY_NOT_STORED"
+        },
+        {
+          "rowIndex": 0,
+          "field": "batteryCount",
+          "sourcePage": 65,
+          "provenance": "KEY_NOT_STORED"
+        }
+      ],
+      "unresolvedCanonicalScopes": [
+        "NARRATIVE_SINGULAR_VS_TABLE_PLURAL_AND_LEGACY_KEYS"
+      ],
+      "physicalMountCertificateGranted": false,
+      "foundryAutomatedAttackGranted": false,
+      "productionHydrationPermitted": false
+    }
+  ],
+  "immutableHistoricalSource": true,
+  "physicalMountCertificatesGranted": 0,
+  "stockAttackPermissionsGranted": 0,
+  "foundryProductionChanges": false
+}

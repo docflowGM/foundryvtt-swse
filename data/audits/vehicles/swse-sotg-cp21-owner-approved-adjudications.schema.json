@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "swse.vehicle.sotg.cp21.owner-approved-effective-adjudications.schema.v1",
+  "title": "CP21 SotG owner-approved effective-rule adjudications, audit-only",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "decisionSet",
+    "book",
+    "ownerApproval",
+    "ownerApprovalScope",
+    "sourceBranch",
+    "sourceParentHead",
+    "sourcePdfSha256",
+    "authorityBlobs",
+    "policyId",
+    "decisionCount",
+    "approvedDecisions",
+    "immutableHistoricalSource",
+    "physicalMountCertificatesGranted",
+    "stockAttackPermissionsGranted",
+    "foundryProductionChanges"
+  ],
+  "properties": {
+    "schema": {
+      "const": "swse.vehicle.sotg.cp21.owner-approved-effective-adjudications.v1"
+    },
+    "decisionSet": {
+      "const": "CP21_SOTG_15_PROBLEM_SHIPS"
+    },
+    "book": {
+      "const": "Starships of the Galaxy"
+    },
+    "ownerApproval": {
+      "const": "USER_APPROVED_ALL_15_RECOMMENDATIONS_2026-10-20"
+    },
+    "ownerApprovalScope": {
+      "const": "EFFECTIVE_RULE_ADJUDICATION_AND_PROVENANCE_ONLY_NOT_PHYSICAL_MOUNT_OR_RUNTIME_TRUST"
+    },
+    "sourceBranch": {
+      "const": "audit/sotg-strict-certification-cp17"
+    },
+    "sourceParentHead": {
+      "const": "9df36a630df24ff7315e218220158343de79816e"
+    },
+    "sourcePdfSha256": {
+      "const": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0"
+    },
+    "policyId": {
+      "const": "SOTG-CP18-D01"
+    },
+    "decisionCount": {
+      "const": 15
+    },
+    "immutableHistoricalSource": {
+      "const": true
+    },
+    "physicalMountCertificatesGranted": {
+      "const": 0
+    },
+    "stockAttackPermissionsGranted": {
+      "const": 0
+    },
+    "foundryProductionChanges": {
+      "const": false
+    },
+    "authorityBlobs": {
+      "type": "object",
+      "required": [
+        "ledger",
+        "queue",
+        "review",
+        "certificates"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "ledger": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "const": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+            },
+            "sha": {
+              "const": "d08ca75b0b30e8b44896588edf3c5ce1cd335557"
+            }
+          }
+        },
+        "queue": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "const": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json"
+            },
+            "sha": {
+              "const": "9c7df34eefa54f456721ee18c6ee684ec214dbf6"
+            }
+          }
+        },
+        "review": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "const": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche01-primary-source-review.json"
+            },
+            "sha": {
+              "const": "e21200f0f8604e16ff3ebbbbb63ea79c44252bf3"
+            }
+          }
+        },
+        "certificates": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "const": "data/audits/vehicles/swse-sotg-cp20-tranche07-conflict-priority-source-fidelity-certificates.json"
+            },
+            "sha": {
+              "const": "86a3ed4f98fd4a5ab15430ababdcd3834d6580f4"
+            }
+          }
+        }
+      }
+    },
+    "approvedDecisions": {
+      "type": "array",
+      "minItems": 15,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order",
+          "decisionId",
+          "sourceEntryKey",
+          "cp16Index",
+          "printedName",
+          "printedStartPage",
+          "approvedBy",
+          "approvalState",
+          "effectiveProjectionState",
+          "summary",
+          "confidence",
+          "cp19Disposition",
+          "printedAlternatives",
+          "originalFieldGroups",
+          "fieldOverrides",
+          "attackGroupOverrides",
+          "policies",
+          "legacyMissingRowKeys",
+          "unresolvedCanonicalScopes",
+          "physicalMountCertificateGranted",
+          "foundryAutomatedAttackGranted",
+          "productionHydrationPermitted"
+        ],
+        "properties": {
+          "order": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 15
+          },
+          "decisionId": {
+            "type": "string",
+            "pattern": "^SOTG-CP21-D(0[1-9]|1[0-5])$"
+          },
+          "sourceEntryKey": {
+            "type": "string"
+          },
+          "cp16Index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 103
+          },
+          "printedName": {
+            "type": "string"
+          },
+          "printedStartPage": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "approvedBy": {
+            "const": "REPOSITORY_OWNER_EXPLICIT_CHAT_APPROVAL_2026-10-20"
+          },
+          "approvalState": {
+            "const": "APPROVED"
+          },
+          "effectiveProjectionState": {
+            "const": "APPROVED_AUDIT_CONSUMABLE_NOT_RUNTIME_GRANTED"
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 20
+          },
+          "confidence": {
+            "type": "string"
+          },
+          "cp19Disposition": {
+            "type": "string"
+          },
+          "printedAlternatives": {
+            "type": "array",
+            "minItems": 2
+          },
+          "originalFieldGroups": {
+            "type": "object",
+            "minProperties": 19
+          },
+          "fieldOverrides": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "newValue",
+                "originalValue",
+                "reason"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "pattern": "^/"
+                },
+                "newValue": {},
+                "originalValue": {},
+                "reason": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "attackGroupOverrides": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "rowIndex",
+                "field",
+                "newValue",
+                "reason",
+                "originalPresent"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "rowIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "field": {
+                  "type": "string"
+                },
+                "newValue": {},
+                "reason": {
+                  "type": "string"
+                },
+                "originalPresent": {
+                  "type": "boolean"
+                },
+                "originalValue": {}
+              }
+            }
+          },
+          "policies": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "code",
+                "detail",
+                "runtimePermission"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "detail": {
+                  "type": "object"
+                },
+                "runtimePermission": {
+                  "const": false
+                }
+              }
+            }
+          },
+          "legacyMissingRowKeys": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "rowIndex",
+                "field",
+                "sourcePage",
+                "provenance"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "rowIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "field": {
+                  "enum": [
+                    "sourcePage",
+                    "hardwareCount",
+                    "firingArc",
+                    "batteryCount"
+                  ]
+                },
+                "sourcePage": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "provenance": {
+                  "const": "KEY_NOT_STORED"
+                }
+              }
+            }
+          },
+          "unresolvedCanonicalScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "physicalMountCertificateGranted": {
+            "const": false
+          },
+          "foundryAutomatedAttackGranted": {
+            "const": false
+          },
+          "productionHydrationPermitted": {
+            "const": false
+          }
+        }
+      }
+    }
+  }
+}

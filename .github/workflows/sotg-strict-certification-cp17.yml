@@ -17,6 +17,10 @@ on:
       - tools/audits/vehicles/check_sotg_phase2b_cp19_tranche*.mjs
       - docs/audits/vehicles/swse-phase2-sotg-checkpoint-19-*.md
       - data/audits/vehicles/swse-sotg-cp20-*.json
+      - data/audits/vehicles/swse-sotg-cp21-*.json
+      - tools/audits/vehicles/check_sotg_cp21_*.py
+      - tools/audits/vehicles/sotg_cp21_*.py
+      - docs/audits/vehicles/swse-sotg-cp21-*.md
       - tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
       - docs/audits/vehicles/swse-sotg-cp20-*.md
       - tools/audits/vehicles/check_sotg_cp20_tranche*.py
@@ -113,3 +117,8 @@ jobs:
         run: python3 -m py_compile tools/audits/vehicles/check_sotg_cp20_tranche07.py
       - name: Verify CP20 final 100 source-fidelity identities and no runtime grant
         run: python3 tools/audits/vehicles/check_sotg_cp20_tranche07.py --repo "."
+
+      - name: Compile CP21 approved effective adjudication projector and validator
+        run: python3 -m py_compile tools/audits/vehicles/sotg_cp21_effective_projection.py tools/audits/vehicles/check_sotg_cp21_approved_adjudications.py
+      - name: Validate CP21 owner-approved 15 exception decisions without production authority
+        run: python3 tools/audits/vehicles/check_sotg_cp21_approved_adjudications.py --repo "."
