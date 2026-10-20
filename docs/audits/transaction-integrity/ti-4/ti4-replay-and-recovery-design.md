@@ -36,9 +36,11 @@ Companion to `ti4-contract-v1-proposal.md` §5 and §7.
 
 **Durability is a certified property, not a storage location.** An actor flag is not durable evidence by virtue of being persisted: the row above shows a whole-actor restore rewrites it. A domain's receipt record is accepted as replay evidence only after a **receipt-storage certification** demonstrates (a) survival through the operation's own restore path, (b) survival of crash/reload, and (c) a retention/pruning policy (contract §5.7). Required before replay enforcement (TI4-B) and before any L3 claim.
 
-**Proposal (no recommendation of a single store without owner request, `OWNER_DECISION_REQUIRED` OD-3):** (a) keep each domain's existing record; (b) require that the record for an operation is written **before** the first mechanical write (`PREPARED`) and finalized after verification, as the equipment journal already does; (c) require that receipts are not stored only inside a scope that the operation's own compensation may restore; (d) forbid a second, parallel ledger.
+**Owner-approved policy (OD-3, `ti4-decision-register.md`): existing domain-owned receipt storage, no universal ledger, each store certified before durable replay/L3.** Design: (a) keep each domain's existing record; (b) require that the record for an operation is written **before** the first mechanical write (`PREPARED`) and finalized after verification, as the equipment journal already does; (c) require that receipts are not stored only inside a scope that the operation's own compensation may restore; (d) forbid a second, parallel ledger.
 
 ## 4. Who may reconcile, and how a GM learns what committed
+
+*Status: owner-approved OD-4 authorizes this **design** (GM-only, no UI). Production implementation needs a separate bounded authorization and negative tests.*
 
 | Action | Actor | Authority |
 |---|---|---|

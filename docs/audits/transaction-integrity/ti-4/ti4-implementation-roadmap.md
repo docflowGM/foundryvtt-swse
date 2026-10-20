@@ -24,12 +24,12 @@ Child PRs are based on the lineage tip branch (as #1059/#1061 were), never on a 
 ## 3. Packages
 
 ### TI4-A — Contract certification (docs + one static guard)
-- **Dependencies:** this design accepted; owner decisions OD-1, OD-2, OD-3.
+- **Dependencies:** this design accepted and certified; owner decisions OD-1..OD-5 and Q2 are `OWNER_APPROVED` (`ti4-decision-register.md`); **explicit bounded TI4-A authorization still required**.
 - **Scope:** finalize the vocabulary and the compliance matrix; add `tools/` guard scaffolding for the baseline ratchet (G01/G03) in **report-only** mode; reconcile Q-033 vocabulary (`PRECONDITION_SNAPSHOT_UNAVAILABLE`, `RECOVERY_INCOMPLETE`) with the TI vocabulary; resolve the `noOp` vs `committed:false` action-economy vocabulary conflict (compliance matrix §4).
 - **Files:** `docs/audits/transaction-integrity/ti-4/*`, `tools/` guard (new file), baseline JSON.
 - **Tests:** guard self-test (`B01–B06` in report-only mode).
 - **Rollback:** revert the PR; no runtime change.
-- **Level:** n/a (documentation and static analysis). **Acceptance:** owner sign-off on OD-1..OD-3; baseline recorded with counts equal to this audit.
+- **Level:** n/a (documentation and static analysis). **Acceptance:** contract certified by independent review and TI4-A authorized by the owner; baseline recorded with counts equal to this audit.
 
 ### TI4-C0 — Bounded defect corrections inside existing authorities
 - **Candidates (each independent, each with fail-before):** G06 (check restore result in `applyMutationPlan`), G11, G16, G20 (+G21), G22, G24, G26, G34, G35.
@@ -39,14 +39,14 @@ Child PRs are based on the lineage tip branch (as #1059/#1061 were), never on a 
 - **Owner policy needed:** none for G06/G11/G16/G20/G21/G22/G24/G26/G34/G35 (they correct reporting/replay defects without changing rules). G06 changes how a failed transactional rollback is reported to callers.
 
 ### TI4-B — Identity and replay enforcement (selected high-risk domains)
-- **Dependencies:** TI4-A accepted; OD-3 (receipt location); owner Q3 design checkpoint (stable client-minted ids).
+- **Dependencies:** TI4-A accepted; OD-3 approved (domain-owned receipts, per-store certification before replay enforcement); owner Q3 design checkpoint (stable client-minted ids).
 - **Scope (staged, smallest first):** (1) equipment: mint `requestId` at intent (G18, lineage A); (2) approvals: store-item acquired marker (G23, lineage B); (3) progression: session `operationId` recorded in the plan (G19, lineage B); (4) `TransactionEngine`: optional `operationId`+fingerprint intake with replay-of-receipt (G17, lineage B); (5) lockbox (G25).
 - **Tests:** `I01, I04, I06, I07, I09, I10, I11, I15` (OFFLINE). **Rollback:** each stage behind an opt-in parameter so callers that do not pass an id behave as today.
 - **Level:** L1. **Acceptance:** replay/conflict/new-operation semantics proven per contract §5; no new ledger.
 
 ### TI4-C — Mutation-boundary enforcement
-- **Dependencies:** TI4-A baseline; OD-1 (extend D1) for G07/G08/G09.
-- **Scope:** switch the guard from report-only to ratchet-enforced in CI (G01/G03); move the weapon-state guard into `ActorEngine.updateOwnedItems` (G04); shared wallet-scoped lock key across TE methods (G28, G33); recovery precondition + post-write verification for adjustment/approval/sale/rollback (G07–G09) **if OD-1 approves**; action-economy per-actor serialization and fresh-state `after` (G30); attack aggregate receipt (G38); damage re-read after dialog (G31).
+- **Dependencies:** TI4-A baseline; OD-1 approved (risk-based) — the risk matrix DI-2 must be reviewed before G07/G08/G09 changes.
+- **Scope:** switch the guard from report-only to ratchet-enforced in CI (G01/G03); move the weapon-state guard into `ActorEngine.updateOwnedItems` (G04); shared wallet-scoped lock key across TE methods (G28, G33); recovery precondition + post-write verification for adjustment/approval/sale/rollback (G07–G09) **scoped by approved OD-1 (risk-based; matrix DI-2)**; action-economy per-actor serialization and fresh-state `after` (G30); attack aggregate receipt (G38); damage re-read after dialog (G31).
 - **Tests:** `A08, A12, B01–B06, C01, C02, C05, C06, C10, C11`. **Rollback:** per sub-item.
 - **Level:** L1. **Acceptance:** ratchet baseline cannot grow; every closed gap has fail-before; existing tests unweakened.
 - **Bases:** commerce/approvals on lineage B; equipment/FP/AE/attack on lineage A.
@@ -77,7 +77,8 @@ Child PRs are based on the lineage tip branch (as #1059/#1061 were), never on a 
 | Hardening shared `TransactionEngine` changes purchase/droid/vehicle behavior (Q-033 §4 Q033-B warning) | each TE change opt-in or behind its own fail-before and an explicit scope review; no silent behavior change |
 | Over-claiming levels | every package states the level it can claim and the evidence; "same-client" appears in every user-facing and doc statement |
 | Lineage conflict in `progression-finalizer.js` | packages never touch it from both lineages; integration needs owner authorization |
-| Receipt location chosen badly (erased by restore) | OD-3 decided before B; recovery design §3(c) |
+| Receipt location chosen badly (erased by restore) | OD-3 approved; each store must pass restore/reload/retention certification before B enforces replay; recovery design §3 |
+| Lightsaber construction (G15) touched before a rules-preserving design | OD-5 approved as policy only; blocked on DI-1 (component ownership modelling); no package touches `lightsaber-construction-engine.js` mechanically |
 | Scope creep into rules | none of the packages change published mechanics; any rule question → `docs/audits/swse-rules-decisions-pending.md` |
 
 ## 6. Not in this roadmap

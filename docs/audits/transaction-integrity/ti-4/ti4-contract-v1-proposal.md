@@ -66,7 +66,7 @@ A `COMMITTED` outcome carries `postCommit: { warnings: [...], postApplyIncomplet
 
 ## 5. Replay policy
 
-1. **Mint once.** `operationId` is minted at the user's intent and stored with the pending UI action; a click handler that can fire twice must reuse it. Server-style per-call random ids (today's TE behavior) cannot detect a duplicate and are not sufficient. (`OWNER_DECISION_REQUIRED` for the *durable* replay contract — owner Q3 approved ids as a requirement and asked for a separate design checkpoint.)
+1. **Mint once.** `operationId` is minted at the user's intent and stored with the pending UI action; a click handler that can fire twice must reuse it. Server-style per-call random ids (today's TE behavior) cannot detect a duplicate and are not sufficient. (Durable replay is bounded by owner-approved OD-3; the stable client-generated id contract is owner Q3's separate design checkpoint.)
 2. **Same id, same fingerprint, recorded `COMMITTED`** → return the recorded receipt, perform no write.
 3. **Same id, same fingerprint, recorded `INDETERMINATE`/unresolved** → `REFUSED(reason:'unresolved')` with the evidence; never retry automatically.
 4. **Same id, same fingerprint, recorded `REFUSED`/`FAILED_COMPENSATED`** → may execute again.
@@ -116,14 +116,15 @@ A domain may claim a level only with the evidence listed in `ti4-cross-domain-te
 
 The contract is enforceable only where the repository can observe a violation. The proposal is (a) a CI **call-path guard** with a recorded baseline per protected field family (G01/G03), (b) authority-local checks (guard keys, markers, digests, receipts), and (c) the cross-domain tests. It deliberately does **not** revive prototype wrapping or the dead Sentinel pipeline. Rationale and limits: `ti4-implementation-roadmap.md` §4.
 
-## 10. Owner decisions required
+## 10. Owner decisions (all `OWNER_APPROVED`; record: `ti4-decision-register.md`)
 
-| ID | Question | Options (from existing evidence only) |
+| ID | Decision | Effect on this contract |
 |---|---|---|
-| OD-1 | Extend D1 (refuse without verifiable recovery) to credit adjustments, sales and rollback corrections (G07)? | yes / no / risk-matrix (owner Q1 already pending). |
-| OD-2 | Approve the contract's outcome vocabulary (4 states + `compensation` qualifier) as the single reporting vocabulary? | approve / amend. |
-| OD-3 | Durable replay: where may receipts persist (actor flag ring, world setting, existing audit flag)? | see replay design §3; **no recommendation without request.** |
-| OD-4 | Is a GM reconciliation *operation* (no UI) acceptable inside TI4-C? UI remains unauthorized. | yes / defer. |
-| OD-5 | Lightsaber construction roll-before-write ordering (G15): rules-adjacent. | `OWNER_DECISION_REQUIRED`. |
+| OD-1 | Risk-based recovery prerequisites: high-risk multi-resource transactions fail closed without adequate recovery; simple GM credit adjustments may remain with verified outcomes and explicit uncertainty reporting; the exception never covers an operation that can silently duplicate or lose resources. | §7 rule 1 applies to high-risk multi-resource operations; the risk matrix that classifies operations is `DESIGN_OPEN`. |
+| OD-2 | Adopt the four-state vocabulary with the whole-scope compensation and post-apply-incomplete qualifiers. | §4 is the approved vocabulary. |
+| OD-3 | Existing domain-owned receipt storage, no universal ledger; each store certified against compensation, reload and retention before durable replay or L3 claims. | §5.7, §8. |
+| OD-4 | Design GM-only reconciliation operations without UI; implementation needs separate authorization and negative tests. | recovery design §4 is an approved design direction only. |
+| OD-5 | Follow the printed lightsaber construction sequence; persistence failure is not a failed check; preserve the original roll and identity through recovery; component-acquisition timing is a future design item. | applies to any future construction-path correction (G15); no code change authorized. |
+| Q2 | Eventually route Sith Alchemy credit-and-Item changes through an authoritative transaction boundary after verifying rules and preserving macros. | inventory P33; no change authorized. |
 
-No rules mechanic is decided here; every item above is a transaction-integrity policy question.
+No rules mechanic is decided by this contract. OD-5 is an owner-approved rules policy recorded from owner-supplied sources.

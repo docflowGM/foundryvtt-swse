@@ -20,6 +20,7 @@ See `ti4-authority-inventory.md` §0.1 for the table. Summary: `main` = `4392c90
 | `ti4-cross-domain-test-plan.md` | 47 deterministic cases (14 atomicity, 15 idempotency, 12 concurrency, 6 boundary) with the offline/runtime/multi-client split |
 | `ti4-l2-l3-feasibility.md` | what the repo can already do, honest answers to the 9 directive questions, runtime experiments required |
 | `ti4-implementation-roadmap.md` | packages TI4-A, C0, B, C, D, E; base selection; enforcement limits |
+| `ti4-decision-register.md` | owner policy decisions OD-1..OD-5 and Q2 (`OWNER_APPROVED`), history preserved, open design items DI-1..DI-4 |
 
 ## 3. Report items required by the directive (§14)
 
@@ -59,7 +60,7 @@ See `ti4-authority-inventory.md` §0.1 for the table. Summary: `main` = `4392c90
 1. **The governance layer enforces nothing.** `MutationInterceptor` authorization is unread (`hasContext`, `_isAuthorized` have no callers); the Sentinel violation pipeline is dead (G01, G02). Every "protected" field (credits, FP, ammo, equipment, action economy) can be written directly in all modes, and 29 inline FP spenders plus ~31 absolute FP writers plus six bonus-pool writers already do. Boundary enforcement must be a CI call-path ratchet plus authority-local guards; prototype wrapping was removed once and is unsafe.
 2. **No commerce operation id exists** (G17): every `TransactionEngine` call mints a random id, so a repeated request is a second charge. The only durable replay guard is the `storeAcquisition` marker for droid/vehicle approvals.
 3. **`applyMutationPlan(transactional:true)` ignores its own rollback result** and logs "rolled back" on failure (G06). Progression finalization and lightsaber construction rely on it. The TI-3 finalizer comment overclaims.
-4. **TI-2's recovery-required rule covers only two of six `TransactionEngine` methods**; adjustment, approval, sale and rollback-correction still proceed without recovery and without post-write verification (G07–G09). Extending it needs owner decision OD-1.
+4. **TI-2's recovery-required rule covers only two of six `TransactionEngine` methods**; adjustment, approval, sale and rollback-correction still proceed without recovery and without post-write verification (G07–G09). Scope of the extension is governed by owner-approved OD-1 (risk-based, fail closed for high-risk multi-resource operations; the risk matrix is still `DESIGN_OPEN`).
 5. **Reachable replay defects:** wager `refundSession` double-refunds from `refund-failed`† (G22); `executeRollbackCorrection` can be applied twice† (G20); the legacy dashboard reverse never marks its source (G21); store-item approvals can charge twice if queue cleanup fails (G23); `rejectDroid` throws after committing (G35)†.
 6. **Absolute-value compensation overwrites concurrent changes** in ally assignment, follower link, ammo rollback and force-alchemy (G12).
 7. **Equipment readiness can be withheld indefinitely** after a loose-mode action over-spend or an unfinalized journal entry; no reconcile operation exists (G36).
@@ -75,21 +76,21 @@ See `ti4-authority-inventory.md` §0.1 for the table. Summary: `main` = `4392c90
 | X2 | Q-033 requires cross-context locking and post-write re-read; TE has per-method keys and verifies only P20/P23 | modification executor cannot meet Q-033 §2.4/§2.8 on the current TE | G28/G08 before any modification executor; modification remains gated |
 | X3 | Q-033 `RECOVERY_INCOMPLETE` + quarantine vs TI `INDETERMINATE` + "withhold readiness" | different words and different containment (quarantine per transaction/item vs per weapon) | contract §4.2 maps them; the *containment* mechanism for TE-governed assets does not exist yet |
 | X4 | Flag namespaces: equipment journal and fireState use `flags.swse.*`; TE audit and markers use `flags.foundryvtt-swse.*` | two namespaces for transaction evidence; harmless but inconsistent for a single reconcile tool | TI4-A inventory of namespaces (no migration proposed) |
-| X5 | Receipt erased by restore | TE audit flag lives inside the actor that a whole-actor restore rewrites (G17 note, recovery §3) | OD-3 |
+| X5 | Receipt erased by restore | TE audit flag lives inside the actor that a whole-actor restore rewrites (G17 note, recovery §3) | OD-3 approved: domain-owned receipts must pass restore/reload/retention certification |
 | X6 | Equipment coordinator ↔ upgrade writers | **no shared fields** (coordinator: posture/occupancy/fireState/ready-ignite; upgrades: `installedUpgrades`, `flags.*.customization`); only the actor-level lock key is shared in concern | compatible |
 
-## 7. Open owner decisions
+## 7. Owner decisions — resolved (see `ti4-decision-register.md`)
 
 | ID | Decision | Status |
 |---|---|---|
-| OD-1 | Extend D1 (refuse without verifiable recovery) to credit adjustments, sales, rollback corrections (and relation to earlier Q1 risk-matrix question) | `OWNER_DECISION_REQUIRED` |
-| OD-2 | Approve the 4-state outcome vocabulary as the reporting standard | `OWNER_DECISION_REQUIRED` |
-| OD-3 | Receipt location policy for durable replay (and Q3 operation-id design checkpoint) | `OWNER_DECISION_REQUIRED` |
-| OD-4 | Is a GM reconcile *operation* (no UI) in scope for TI4-C? | `OWNER_DECISION_REQUIRED` |
-| OD-5 | Lightsaber construction roll-before-write ordering (G15) | `OWNER_DECISION_REQUIRED` (rules-adjacent; not decided here) |
-| Q2 | Sith Alchemy routing (earlier question; DarkSidePowers/force-alchemy credit debits appear in the inventory) | still pending from earlier checkpoints |
+| OD-1 | Risk-based recovery prerequisites: fail closed for high-risk multi-resource transactions; simple GM credit adjustments allowed with verified outcomes and explicit uncertainty reporting; no exception for operations that can silently duplicate or lose resources | `OWNER_APPROVED` |
+| OD-2 | Four-state contract vocabulary with the whole-scope-compensation and post-apply-incomplete qualifiers | `OWNER_APPROVED` |
+| OD-3 | Domain-owned durable receipts, no universal ledger; storage must pass restoration, reload and retention certification | `OWNER_APPROVED` |
+| OD-4 | GM-only reconciliation operation, design authorized without UI; implementation needs a separate authorization and negative tests | `OWNER_APPROVED` (design only) |
+| OD-5 | Preserve the printed lightsaber construction sequence (Core Rulebook p. 40; Jedi Academy Training Manual p. 54, Table 3-2 — owner-supplied sources); persistence failure is not a failed check; preserve the original roll and identity through recovery; component-acquisition timing mismatch is a **future design** item | `OWNER_APPROVED` (rules policy; no code change) + `DESIGN_OPEN` |
+| Q2 | Eventual routing of Sith Alchemy credit-and-Item changes through an authoritative transaction boundary; verify rules and preserve macros first | `OWNER_APPROVED` (eventual) |
 
-No published SWSE mechanic is decided, changed or implied by this package. `docs/audits/swse-rules-decisions-pending.md` is untouched.
+All six are resolved; none authorizes implementation. TI4-A is **not** authorized; the next step is certification of the updated contract and a bounded TI4-A authorization from the owner/reviewer.
 
 ## 7a. Independent review disposition (appended after review of `796a0e3`)
 
@@ -99,16 +100,16 @@ The reviewer accepted TI-4 Phase 0 as an architectural inventory and planning ba
 2. A committed operation with mechanically incomplete post-apply synchronization stays `COMMITTED` but carries a distinct machine-readable `postApplyIncomplete` obligation with an idempotent repair path, separate from presentation `warnings` (§4.3, §4.2 mapping).
 3. A receipt is not durable merely because it is in an Actor flag; survival through the operation's own restore path, crash/reload and a retention policy must be certified before replay enforcement or L3 (§5.7, §8; recovery design §3).
 
-**Reviewer recommendations on the open owner decisions — recorded as recommendations, not approvals (decision authority remains the project owner):**
+**Reviewer recommendations on the owner decisions (history preserved; all six have since been `OWNER_APPROVED` — see §7 and `ti4-decision-register.md`):**
 
 | ID | Reviewer recommendation | Status |
 |---|---|---|
-| OD-1 | risk-based: fail closed for purchases, sales, asset approvals and other multi-resource operations; do not automatically block simple GM credit adjustments or emergency corrections solely for a missing snapshot | recommendation; **owner approval pending** (supersedes my G07 wording only once approved) |
-| OD-2 | four primary states with mandatory qualifiers for incomplete post-commit mechanical work and failed compensation | recommendation; owner approval pending (contract text already conforms) |
-| OD-3 | existing domain-owned records that survive compensation; no universal ledger; separate receipt-storage certification before replay enforcement | recommendation; owner approval pending (certification gate now in contract §5.7) |
-| OD-4 | authorize *designing* a GM-only reconcile operation without UI; implementation needs its own bounded checkpoint and negative tests | recommendation; owner approval pending |
-| OD-5 | defer lightsaber-construction changes until source rules and roll-before-write behaviour are independently verified | recommendation; owner approval pending (G15 stays `OWNER_DECISION_REQUIRED`) |
-| Q2 | eventually route reachable credit-plus-Item mutations through an authoritative transaction boundary, preserve macro compatibility, verify printed costs before modifying them | recommendation; owner approval pending |
+| OD-1 | risk-based: fail closed for purchases, sales, asset approvals and other multi-resource operations; do not automatically block simple GM credit adjustments or emergency corrections solely for a missing snapshot | recommendation — `OWNER_APPROVED` |
+| OD-2 | four primary states with mandatory qualifiers for incomplete post-commit mechanical work and failed compensation | recommendation — `OWNER_APPROVED` |
+| OD-3 | existing domain-owned records that survive compensation; no universal ledger; separate receipt-storage certification before replay enforcement | recommendation — `OWNER_APPROVED` |
+| OD-4 | authorize *designing* a GM-only reconcile operation without UI; implementation needs its own bounded checkpoint and negative tests | recommendation — `OWNER_APPROVED` |
+| OD-5 | defer lightsaber-construction changes until source rules and roll-before-write behaviour are independently verified | recommendation — `OWNER_APPROVED` |
+| Q2 | eventually route reachable credit-plus-Item mutations through an authoritative transaction boundary, preserve macro compatibility, verify printed costs before modifying them | recommendation — `OWNER_APPROVED` |
 
 Agreed order is unchanged: `TI4-A → TI4-C0 → TI4-B → TI4-C → TI4-D → TI4-E`; the reviewer names **G06** (`applyMutationPlan` ignores its rollback result) as the first bounded implementation candidate after contract acceptance. PR #1062 stays draft and unmerged; the TI-1 and TI-3 lineages are not combined; D-005 is not activated; no production enforcement starts.
 
