@@ -17,13 +17,16 @@
     "allCoreVehicleStatblockEntries": 17,
     "walkers": 2,
     "groundSpeeders": 3,
-    "airspeeders": 2
+    "airspeeders": 2,
+    "totalKnownUniversalShipAndGroundClaimsAfterThisBook": 325
   },
   "process": {
     "sourcePagesChecked": "printed pp 175-183 (physical PDF pp 176-184) for section; old ship records inherited from earlier PDF close-read",
     "groundVehiclePages": "printed pp 175-177, physical PDF pp 176-178",
     "textSearch": "Core Rulebook_djvu.txt independent 'vehicle (walker|speeder|airspeeder)' lines cross-referenced with scans",
-    "independentFullBookExhaustivenessClaim": false
+    "independentFullBookExhaustivenessClaim": false,
+    "bookWideTextDiscovery": "Complete Core Rulebook_djvu.txt keyword/type-line sweep (ground vehicle, air vehicle, walker, speeder, airspeeder, starfighter/ground walker), with discovered independent nonship statblocks checked against the scanned PDF printed pp 175-177; inherited ship statblocks are on pp 178-183.",
+    "exhaustivenessLimit": "Book-wide searchable TXT may omit visually present text; targeted PDF pages verified, no absolute assertion that OCR/text search covers all scanned content."
   },
   "groundAndAirVehicles": [
     {
@@ -363,5 +366,6 @@
   },
   "next": "Phase 1-B Starships of the Galaxy universal vehicle enumeration",
   "mechanicalStatsTranscribedInThisPhase": 0,
-  "productionPacksChanged": false
+  "productionPacksChanged": false,
+  "status": "PHASE1_A_CORE_BOOK_ENUMERATION_COMPLETE"
 }
