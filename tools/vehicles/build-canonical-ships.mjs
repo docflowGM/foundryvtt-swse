@@ -51,9 +51,10 @@ export function toActor(r){
  if(sys.characterScaleSpeed!==undefined)sys.speed='Fly '+sys.characterScaleSpeed+' squares';
  if(sys.starshipScaleSpeed!==undefined)sys.starshipSpeed='Fly '+sys.starshipScaleSpeed+' squares';
  set('crew',f.crewAsPrinted??(typeof f.crew==='string'?f.crew:f.crewAndPassengers)
-   ??(f.crew&&typeof f.crew==='object'&&num(f.crew.count)!==undefined
-     ?String(f.crew.count)+(f.crew.quality?' ('+f.crew.quality+')':''):undefined));
- set('vehicleCrewCount',num(f.crew?.count));
+   ??(f.crew&&typeof f.crew==='object'
+     ?(f.crew.printed??(num(f.crew.count??f.crew.typical)!==undefined
+       ?String(f.crew.count??f.crew.typical)+(f.crew.quality?' ('+f.crew.quality+')':''):undefined)):undefined));
+ set('vehicleCrewCount',num(f.crew?.count??f.crew?.typical));
  set('crewQuality',typeof f.crew?.quality==='string'?f.crew.quality:undefined);
  set('passengers',f.passengersAsPrinted??(typeof f.passengers==='string'||typeof f.passengers==='number'?String(f.passengers):undefined));
  set('cargo',f.cargoAsPrinted??(typeof f.cargo==='string'?f.cargo:undefined));
