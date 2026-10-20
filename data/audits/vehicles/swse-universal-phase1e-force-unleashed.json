@@ -1,0 +1,1237 @@
+{
+  "schema": "swse.vehicle.universal.phase1e.force-unleashed.v1",
+  "status": "PHASE1_E_FORCE_UNLEASHED_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Force Unleashed Campaign Guide",
+  "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+  "sourceFiles": {
+    "pdf": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+    "text": "Force Unleashed Campaign Guide_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 19,
+    "newOtherVehiclePublicationClaims": 15,
+    "allBookVehiclePublicationClaims": 34,
+    "inheritedClassifications": {
+      "starfighter": 9,
+      "capital-ship": 6,
+      "space-transport": 4
+    },
+    "newVehicleClassifications": {
+      "wheeled-groundcar": 1,
+      "landspeeder": 3,
+      "air-speeder-bike": 1,
+      "ground-speeder-bike": 2,
+      "heavy-ground-speeder": 2,
+      "wheeled-assault-vehicle": 1,
+      "walker": 2,
+      "command-speeder": 1,
+      "tracked-vehicle": 1,
+      "repulsorlift-tank": 1
+    },
+    "cumulativeKnownUniversalPublicationClaims": 374
+  },
+  "process": {
+    "discoveryMethod": "Full DJVU searchable text keyword/type-line sweep and contents-section scan, across entire book rather than only vehicles chapter. Targeted independent CL/statblock headings for ground, air, wheeled, tracked, walkers and military vehicles.",
+    "reviewedSourceSections": [
+      "Chapter VII printed pp110-113",
+      "Chapter VIII Prisoner Convoy printed p142",
+      "Chapter X Imperial Vehicles printed pp200-203"
+    ],
+    "primaryPdf": "Uploaded scanned source PDF independently SHA256 matched against prior 19-ship close-read ledger. Rendered and visually reviewed relevant original PDF pages and source statblock layouts for each new candidate. Prior published ship PDF checks inherited.",
+    "originalPublishedPrintedPageOffset": 1,
+    "candidatePhysicalPdfPages": [
+      111,
+      112,
+      113,
+      114,
+      143,
+      201,
+      202,
+      203,
+      204
+    ],
+    "exhaustivenessLimit": "Full TXT source search plus rendered candidate pages; does not claim every image-only PDF page visually scanned line by line.",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "sourceIdentityPolicies": [
+    {
+      "subject": "Armored Groundcar",
+      "printedPage": 110,
+      "status": "INCLUDE_WHEELED_DESPITE_GENERIC_PRINTED_TYPE",
+      "reason": "Printed 'Huge ground vehicle' does not explicitly say wheeled, but prose and surrounding Wheeled Vehicles section explicitly describe wheel-driven groundcar."
+    },
+    {
+      "subject": "Arrow-23 civilian model",
+      "printedPage": 110,
+      "status": "DO_NOT_SPLIT_UNPRINTED_VARIANT",
+      "reason": "Only printed paramilitary version has a full CL 2 statblock; weaponless civilian version described narratively is not a separate publication claim."
+    },
+    {
+      "subject": "Flare-S vs Zephyr-G swoops",
+      "status": "PRESERVE_DISTINCT_PRINTED_AIR_GROUND_TYPES",
+      "reason": "Flare-S explicitly Large air vehicle (speeder); Zephyr-G explicitly Large ground vehicle (speeder)."
+    },
+    {
+      "subject": "Modified SoroSuub X-34 and Aratech 74-Z",
+      "printedPage": 142,
+      "status": "INCLUDE_ADVENTURE_STATBLOCKS",
+      "reason": "Two independent fully printed statblocks in Prisoner Convoy adventure, not covered by main vehicles chapter. The 74-Z repeats Core Rulebook name but is a distinct book/statblock publication claim."
+    },
+    {
+      "subject": "Speeder trucks in convoy",
+      "printedPage": 142,
+      "status": "NO_NEW_STATBLOCK",
+      "reason": "Encounter says to use landspeeder statistics without a weapon for trucks; no independent new ship identity for unarmed trucks."
+    },
+    {
+      "subject": "A5 Juggernaut",
+      "printedPage": 200,
+      "status": "PRESERVE_10_WHEEL_CLASSIFICATION",
+      "reason": "Printed type Colossal wheeled ground vehicle; should not be filed as walker or confused with A6 Juggernaut."
+    },
+    {
+      "subject": "AT-KT versus AT-CT",
+      "printedPage": 201,
+      "status": "INDEPENDENT_PUBLISHED_VEHICLE_STATBLOCKS",
+      "reason": "Two separate walkers share AT-ST lineage but possess distinct printed statblocks."
+    },
+    {
+      "subject": "Mobile Command Base",
+      "printedPage": 202,
+      "status": "TRACKED_NOT_WALKER",
+      "reason": "Printed 'Gargantuan ground vehicle (tracked)'."
+    },
+    {
+      "subject": "TX-130T",
+      "printedPage": 203,
+      "status": "DISTINCT_BOOK_PUBLICATION_CLAIM",
+      "reason": "Complete statblock starts on printed p203, despite the table of contents pointing at p202. Preserve this book's independent statblock even though a Clone Wars counterpart exists."
+    },
+    {
+      "subject": "Junk Droids, Dark Troopers, PROXY and other droid NPCs",
+      "status": "EXCLUDE_NONVEHICLE_ACTORS",
+      "reason": "NPC/droid statblocks do not become vehicle statblocks absent an explicit vehicle-type line."
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "fucg-armored-groundcar",
+      "printedName": "Armored Groundcar",
+      "printedTypeLine": "Huge ground vehicle",
+      "classification": {
+        "primaryCategory": "wheeled-groundcar",
+        "mobilityDomains": [
+          "ground-wheeled"
+        ],
+        "printedCategory": "Huge ground vehicle",
+        "secondaryCategories": [
+          "armored-vehicle"
+        ]
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 110,
+      "pdfPhysicalPage": 111,
+      "sourceSection": "Chapter VII — Wheeled Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-arrow-23-landspeeder-paramilitary",
+      "printedName": "Arrow-23 Landspeeder (Paramilitary)",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "landspeeder",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 110,
+      "pdfPhysicalPage": 111,
+      "sourceSection": "Chapter VII — Speeders",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-flare-s-swoop",
+      "printedName": "Flare-S Swoop",
+      "printedTypeLine": "Large air vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "air-speeder-bike",
+        "mobilityDomains": [
+          "air"
+        ],
+        "printedCategory": "Large air vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 111,
+      "pdfPhysicalPage": 112,
+      "sourceSection": "Chapter VII — Speeders",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-v-35-courier",
+      "printedName": "V-35 Courier",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "landspeeder",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 112,
+      "pdfPhysicalPage": 113,
+      "sourceSection": "Chapter VII — Speeders",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-zephyr-g-swoop",
+      "printedName": "Zephyr-G Swoop",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder-bike",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 112,
+      "pdfPhysicalPage": 113,
+      "sourceSection": "Chapter VII — Speeders",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-a-a5-speeder-truck",
+      "printedName": "A-A5 Speeder Truck",
+      "printedTypeLine": "Colossal ground speeder",
+      "classification": {
+        "primaryCategory": "heavy-ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Colossal ground speeder",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 113,
+      "pdfPhysicalPage": 114,
+      "sourceSection": "Chapter VII — Heavy Speeders",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-kaac-freerunner",
+      "printedName": "KAAC Freerunner",
+      "printedTypeLine": "Gargantuan ground speeder",
+      "classification": {
+        "primaryCategory": "heavy-ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Gargantuan ground speeder",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 113,
+      "pdfPhysicalPage": 114,
+      "sourceSection": "Chapter VII — Heavy Speeders",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-modified-sorosuub-x-34-speeder-escort",
+      "printedName": "Modified SoroSuub X-34 Speeder Escort",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "landspeeder",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 142,
+      "pdfPhysicalPage": 143,
+      "sourceSection": "Chapter VIII — Adventure: Round-Up on Salliche > Prisoner Convoy",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-aratech-74-z-speeder-bike",
+      "printedName": "Aratech 74-Z Speeder Bike",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder-bike",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 142,
+      "pdfPhysicalPage": 143,
+      "sourceSection": "Chapter VIII — Adventure: Round-Up on Salliche > Prisoner Convoy",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-a5-juggernaut",
+      "printedName": "A5 Juggernaut",
+      "printedTypeLine": "Colossal wheeled ground vehicle",
+      "classification": {
+        "primaryCategory": "wheeled-assault-vehicle",
+        "mobilityDomains": [
+          "ground-wheeled"
+        ],
+        "printedCategory": "Colossal wheeled ground vehicle",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 200,
+      "pdfPhysicalPage": 201,
+      "sourceSection": "Chapter X — The Empire > Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-at-kt",
+      "printedName": "All Terrain Kashyyyk Transport (AT-KT)",
+      "printedTypeLine": "Huge ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground-walking"
+        ],
+        "printedCategory": "Huge ground vehicle (walker)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 201,
+      "pdfPhysicalPage": 202,
+      "sourceSection": "Chapter X — The Empire > Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-at-ct",
+      "printedName": "All Terrain Construction Transport (AT-CT)",
+      "printedTypeLine": "Huge ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground-walking"
+        ],
+        "printedCategory": "Huge ground vehicle (walker)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 201,
+      "pdfPhysicalPage": 202,
+      "sourceSection": "Chapter X — The Empire > Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-command-speeder",
+      "printedName": "Command Speeder",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "command-speeder",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourceSection": "Chapter X — The Empire > Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-mobile-command-base",
+      "printedName": "Mobile Command Base",
+      "printedTypeLine": "Gargantuan ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground-tracked"
+        ],
+        "printedCategory": "Gargantuan ground vehicle (tracked)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourceSection": "Chapter X — The Empire > Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "fucg-tx-130t-fighter-tank",
+      "printedName": "TX-130T Fighter Tank",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "repulsorlift-tank",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": [
+          "tank"
+        ]
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 203,
+      "pdfPhysicalPage": 204,
+      "sourceSection": "Chapter X — The Empire > Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "textSearchLayer": "Force Unleashed Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_SCANNED_PDF_REVIEW",
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "fucg-a-7-hunter-interceptor",
+      "printedName": "A-7 Hunter Interceptor",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 204,
+      "pdfPhysicalPage": 205,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          204
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            204
+          ],
+          "statblockLocation": "printed p.204",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-escort-carrier",
+      "printedName": "Escort Carrier",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 207,
+      "pdfPhysicalPage": 208,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          207,
+          208
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            207,
+            208
+          ],
+          "statblockLocation": "printed p.207",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-gladiator-class-star-destroyer",
+      "printedName": "Gladiator-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 208,
+      "pdfPhysicalPage": 209,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          208,
+          209
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            208,
+            209
+          ],
+          "statblockLocation": "printed p.208",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-guardian-class-light-cruiser",
+      "printedName": "Guardian-class Light Cruiser",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 205,
+      "pdfPhysicalPage": 206,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          205
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            205
+          ],
+          "statblockLocation": "printed p.205",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-h-60-tempest-bomber",
+      "printedName": "H-60 Tempest Bomber",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 114,
+      "pdfPhysicalPage": 115,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          114
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            114
+          ],
+          "statblockLocation": "printed p.114",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-hwk-290",
+      "printedName": "HWK-290",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 118,
+      "pdfPhysicalPage": 119,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          118
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            118
+          ],
+          "statblockLocation": "printed p.118",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-m3-a-scyk-fighter",
+      "printedName": "M3-A Scyk Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 115,
+      "pdfPhysicalPage": 116,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          115
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            115
+          ],
+          "statblockLocation": "printed p.115",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-maka-eekai-l4000-transport",
+      "printedName": "Maka-Eekai L4000 Transport",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 120,
+      "pdfPhysicalPage": 121,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          120
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            120
+          ],
+          "statblockLocation": "printed p.120",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-neutron-star-bulk-cruiser",
+      "printedName": "Neutron Star Bulk Cruiser",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 121,
+      "pdfPhysicalPage": 122,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          121
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            121
+          ],
+          "statblockLocation": "printed p.121",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-novasword-space-superiority-fighter",
+      "printedName": "NovaSword Space Superiority Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 115,
+      "pdfPhysicalPage": 116,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          115
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            115
+          ],
+          "statblockLocation": "printed p.115",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-r-41-starchaser",
+      "printedName": "R-41 Starchaser",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 116,
+      "pdfPhysicalPage": 117,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          116
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            116
+          ],
+          "statblockLocation": "printed p.116",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-rogue-shadow",
+      "printedName": "Rogue Shadow",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 206,
+      "pdfPhysicalPage": 207,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          206
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            206
+          ],
+          "statblockLocation": "printed p.206",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-sentinel-class-landing-shuttle",
+      "printedName": "Sentinel-class Landing Shuttle",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 207,
+      "pdfPhysicalPage": 208,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          207
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            207
+          ],
+          "statblockLocation": "printed p.207",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-tartan-class-patrol-cruiser",
+      "printedName": "Tartan-class Patrol Cruiser",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 209,
+      "pdfPhysicalPage": 210,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          209
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            209
+          ],
+          "statblockLocation": "printed p.209",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-tie-prototype",
+      "printedName": "TIE Prototype",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 205,
+      "pdfPhysicalPage": 206,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          205
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            205
+          ],
+          "statblockLocation": "printed p.205",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-toscan-8-q",
+      "printedName": "Toscan 8-Q",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 116,
+      "pdfPhysicalPage": 117,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          116,
+          117
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            116,
+            117
+          ],
+          "statblockLocation": "printed p.116",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-venator-class-star-destroyer",
+      "printedName": "Venator-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 210,
+      "pdfPhysicalPage": 211,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          210
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            210
+          ],
+          "statblockLocation": "printed p.210",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-victory-i-class-star-destroyer",
+      "printedName": "Victory I-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 211,
+      "pdfPhysicalPage": 212,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          211
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            211
+          ],
+          "statblockLocation": "printed p.211",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "fucg-zebra-starfighter",
+      "printedName": "Zebra Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedStatblockStartPage": 118,
+      "pdfPhysicalPage": 119,
+      "provenance": {
+        "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+        "sourceFile": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicalSourceReview": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+        "reviewedPDFPages": [
+          118
+        ],
+        "sourceEvidence": {
+          "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+          "printedPages": [
+            118
+          ],
+          "statblockLocation": "printed p.118",
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+          "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-F Scum and Villainy"
+}
