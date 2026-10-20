@@ -674,14 +674,17 @@ export class UpgradeService {
         mutationPlan: { update: { items: [{ _id: item.id, 'system.installedUpgrades': nextInstalled }] } },
         cost: upgradeCost,
         transactionContext: 'owned-customization',
-        audit: { itemId: item.id, itemName: item.name, upgradeKey: upgrade.key, upgradeName: upgrade.name, source: 'UpgradeService.applyUpgrade' }
+        audit: { itemId: item.id, itemName: item.name, upgradeKey: upgrade.key, upgradeName: upgrade.name, source: 'UpgradeService.applyUpgrade' },
+        // The Item write is verified INSIDE the transaction (review TI2-R1): if the plan resolved but the upgrade is not on the Item, the engine refunds the
+        // charge with one targeted write (or reports the outcome unresolved) instead of returning success.
+        verify: async (a) => {
+          const written = a.items.get(item.id)?.system?.installedUpgrades ?? [];
+          const landed = written.some((entry) => entry?.upgradeKey === upgrade.key) && written.length >= nextInstalled.length;
+          return landed ? { ok: true } : { ok: false, reason: `${upgrade.name} is not on the item after the update` };
+        }
       }, { source: 'UpgradeService.applyUpgrade' });
       if (!result?.success) {
         throw new Error(result?.error || `Failed to install ${upgrade.name}`);
-      }
-      const written = actor.items.get(item.id)?.system?.installedUpgrades ?? [];
-      if (!written.some((entry) => entry?.upgradeKey === upgrade.key) || written.length < nextInstalled.length) {
-        throw new Error(`${upgrade.name} could not be verified as installed after the transaction (${result.transactionId}); the credits may have been charged. Check the item and your credits before retrying.`);
       }
     } else {
       // Unreachable through actor.items (which only holds embedded Items); retained unchanged for an unowned Item.

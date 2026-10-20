@@ -318,6 +318,7 @@ export class StoreEngine {
 
     freezePricing();
     let inventoryConsumed = null;
+    let committed = null;   // set the moment TransactionEngine reports the purchase committed: nothing after that may undo it
     try {
       const freshActor = game.actors.get(actor.id);
       if (!freshActor) return { success: false, error: 'Actor no longer exists.', transactionId: null };
@@ -408,35 +409,49 @@ export class StoreEngine {
         return purchaseMayExist ? { ...result, stock: inventoryConsumed, stockHeld: true } : result;
       }
 
-      logger().info('StoreEngine: Purchase completed', {
-        transactionId: result.transactionId,
-        actor: actor.id,
-        itemCount: items.length,
-        costDeducted: totalCost,
-        context: resolvedContext
-      });
-
-      Hooks.callAll?.('swseStoreTransactionComplete', {
-        transaction: {
-          id: result.transactionId,
+      committed = result;
+      // TI-2 (review TI2-R2): everything below is post-commit PRESENTATION. A failure here must never release stock or report the purchase as failed.
+      let presentationError = null;
+      try {
+        logger().info('StoreEngine: Purchase completed', {
           transactionId: result.transactionId,
-          buyerId: freshActor.id,
-          buyerName: freshActor.name,
-          itemName: items.map(item => item.name).filter(Boolean).join(', ') || 'Store items',
+          actor: actor.id,
           itemCount: items.length,
-          price: totalCost,
-          total: totalCost,
-          timestamp: Date.now(),
-          context: resolvedContext,
-          success: true
-        },
-        buyer: freshActor,
-        seller: null,
-        success: true
-      });
+          costDeducted: totalCost,
+          context: resolvedContext
+        });
 
-      return { ...result, stock: inventoryConsumed };
+        Hooks.callAll?.('swseStoreTransactionComplete', {
+          transaction: {
+            id: result.transactionId,
+            transactionId: result.transactionId,
+            buyerId: freshActor.id,
+            buyerName: freshActor.name,
+            itemName: items.map(item => item.name).filter(Boolean).join(', ') || 'Store items',
+            itemCount: items.length,
+            price: totalCost,
+            total: totalCost,
+            timestamp: Date.now(),
+            context: resolvedContext,
+            success: true
+          },
+          buyer: freshActor,
+          seller: null,
+          success: true
+        });
+
+      } catch (postCommitError) {
+        presentationError = postCommitError?.message ?? String(postCommitError);
+        logger().error('StoreEngine.purchase: post-commit step failed; the purchase is committed and is NOT undone', { actor: actor.id, transactionId: result.transactionId, error: presentationError });
+      }
+
+      return { ...result, stock: inventoryConsumed, ...(presentationError ? { presentationError } : {}) };
     } catch (err) {
+      if (committed) {
+        // Defensive: any throw after the commit (including the lines above this guard) still reports the committed purchase, with stock kept.
+        logger().error('StoreEngine.purchase: error after the purchase committed; reporting it as committed', { actor: actor?.id, transactionId: committed.transactionId, error: err?.message });
+        return { ...committed, stock: inventoryConsumed, presentationError: err?.message ?? String(err) };
+      }
       if (inventoryConsumed?.consumed?.length) {
         try {
           await restoreInventoryPolicyQuantities(inventoryConsumed.consumed);

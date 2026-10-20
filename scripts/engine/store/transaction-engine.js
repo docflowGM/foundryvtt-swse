@@ -174,6 +174,59 @@ export class TransactionEngine {
   }
 
   /**
+   * TI-2 (review TI2-R2): completion hooks are PRESENTATION. They run only after the transaction committed, a throwing listener must never be
+   * mistaken for a failed transaction (the old inline calls sat inside the transaction's `try`, so a throwing listener triggered the rollback of a
+   * committed change). Returns null, or a short description of the listener failure for the caller to report as `presentationError`.
+   */
+  static #emitCommitted(name, build) {
+    try {
+      Hooks.callAll?.(name, build());
+      return null;
+    } catch (error) {
+      swseLogger.error(`TransactionEngine: ${name} failed after the transaction committed; the transaction is NOT undone`, { error: error?.message });
+      return `${name}: ${error?.message ?? error}`;
+    }
+  }
+
+  /** Reconciliation evidence for one leg of a multi-leg operation. */
+  static #legSummary(leg = {}) {
+    return { transactionId: leg.transactionId ?? null, success: leg.success === true, error: leg.error ?? null, rollbackFailed: leg.rollbackFailed === true, indeterminate: leg.indeterminate === true };
+  }
+
+  /**
+   * TI-2 (review TI2-R1): the caller's own proof that the change landed ran and FAILED after the charge was committed. Compensation is targeted, never a
+   * whole-actor restore: the credits are put back with ONE write only if the live balance is still exactly the post-charge value (read-compare-restore),
+   * and the audit record is marked Compensated in the same write. Anything else — the balance moved, the write failed, the write did not take — is
+   * `indeterminate` with evidence and is never retried.
+   */
+  static async #compensateUnverified(actor, { transactionId, source, normalizedCost, creditsBefore, creditsAfter, reason }) {
+    const base = { success: false, verificationFailed: true, transactionId };
+    const what = `the change could not be verified (${reason})`;
+    if (!(normalizedCost > 0)) {return { ...base, compensated: true, error: `Transaction failed: ${what}; nothing was charged.` };}
+    const observed = LedgerService.getCurrentCredits(actor);
+    const evidence = { creditsBefore, expectedCredits: creditsAfter, observedCredits: observed };
+    if (observed !== creditsAfter) {
+      swseLogger.error('TransactionEngine: unverified change could not be compensated; the balance changed after the charge', { transactionId, ...evidence });
+      return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the balance changed after the charge, so it was NOT refunded automatically. Reconcile transaction ${transactionId}.`, evidence };
+    }
+    try {
+      await ActorEngine.applyMutationPlan(actor, { set: {
+        'system.credits': creditsBefore,
+        [`flags.foundryvtt-swse.transactions.${transactionId}.status`]: 'Compensated',
+        [`flags.foundryvtt-swse.transactions.${transactionId}.compensatedReason`]: reason
+      } }, { validate: true, rederive: false, source: `${source}.compensation` });
+    } catch (error) {
+      swseLogger.error('TransactionEngine: compensation write failed', { transactionId, error: error?.message });
+      return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the refund write failed (${error?.message}). Reconcile transaction ${transactionId}.`, evidence: { ...evidence, compensationError: error?.message ?? String(error) } };
+    }
+    const afterRefund = LedgerService.getCurrentCredits(actor);
+    if (afterRefund !== creditsBefore) {
+      return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the refund could not be confirmed (balance ${afterRefund}). Reconcile transaction ${transactionId}.`, evidence: { ...evidence, observedAfterRefund: afterRefund } };
+    }
+    return { ...base, compensated: true, rolledBack: true, error: `Transaction failed: ${what}; the charge of ${normalizedCost} credits was refunded.` };
+  }
+
+  /**
    * TI-2 (TX-08): recovery must be ESTABLISHED, not assumed. A snapshot counts only when it was created AND is retrievable from the actor afterwards
    * (createSnapshot resolving is not proof that anything was stored) AND is a full-actor v2 snapshot, the only kind the exact restore can verify.
    * Resolves { ok:true, snapshot } or { ok:false, error }. It never mutates anything but the snapshot history (the existing SnapshotManager write).
@@ -229,7 +282,8 @@ export class TransactionEngine {
       mutationPlan = {},
       cost = 0,
       transactionContext = 'store-purchase',
-      audit = {}
+      audit = {},
+      verify = null
     } = context;
 
     const {
@@ -360,6 +414,16 @@ export class TransactionEngine {
       if (normalizedCost > 0 && observedCredits !== creditsAfter) {
         swseLogger.error('TransactionEngine: Mutation transaction could not be verified', { transactionId, context: transactionContext, expected: creditsAfter, observed: observedCredits });
         return { success: false, indeterminate: true, transactionId, error: `Transaction could not be verified: expected ${creditsAfter} credits after the charge, found ${observedCredits}. Check the actor's credits and items before retrying.`, evidence: { creditsBefore, expectedCredits: creditsAfter, observedCredits } };
+      }
+
+      // TI2-R1: the caller's proof that its own change landed runs INSIDE the transaction, before success is claimed.
+      if (typeof verify === 'function') {
+        let verdict;
+        try { verdict = await verify(freshActor); } catch (verifyError) { verdict = { ok: false, reason: `verification threw: ${verifyError?.message ?? verifyError}` }; }
+        if (verdict?.ok !== true) {
+          swseLogger.error('TransactionEngine: Mutation transaction failed verification', { transactionId, context: transactionContext, reason: verdict?.reason });
+          return await this.#compensateUnverified(freshActor, { transactionId, source: `${source}.${transactionContext}`, normalizedCost, creditsBefore, creditsAfter, reason: verdict?.reason ?? 'the change is not present' });
+        }
       }
 
       swseLogger.info('TransactionEngine: Mutation transaction complete', {
@@ -559,13 +623,13 @@ export class TransactionEngine {
         creditsAfter
       });
 
-      Hooks.callAll?.('swseCreditAdjustmentComplete', {
+      const presentationError = this.#emitCommitted('swseCreditAdjustmentComplete', () => ({
         transaction: this.#normalizeTransactionRecord(freshActor, transactionAudit.set[`flags.foundryvtt-swse.transactions.${transactionId}`]),
         actor: freshActor,
         success: true
-      });
+      }));
 
-      return { success: true, transactionId, error: null, creditsBefore, creditsAfter, amount: normalizedAmount };
+      return { success: true, transactionId, error: null, creditsBefore, creditsAfter, amount: normalizedAmount, ...(presentationError ? { presentationError } : {}) };
     } catch (error) {
       swseLogger.error('TransactionEngine: Credit adjustment failed', {
         transactionId,
@@ -674,7 +738,16 @@ export class TransactionEngine {
 
     if (!debit.success) {
       swseLogger.error('[TransactionEngine.creditTransfer] debit leg failed', { ...logContext, debitTransactionId: debit.transactionId, error: debit.error });
-      return { success: false, transactionId: transferId, debitTransactionId: debit.transactionId, error: debit.error };
+      // TI-2 (TI2-R3): the leg's own unresolved state is carried through (a debit whose rollback failed may have left the sender charged).
+      return {
+        success: false,
+        transactionId: transferId,
+        debitTransactionId: debit.transactionId,
+        error: debit.error,
+        ...(debit.rollbackFailed ? { rollbackFailed: true } : {}),
+        ...(debit.indeterminate ? { indeterminate: true } : {}),
+        ...(debit.rollbackFailed || debit.indeterminate ? { evidence: { debit: this.#legSummary(debit) } } : {})
+      };
     }
     swseLogger.debug('[TransactionEngine.creditTransfer] debit leg complete', { ...logContext, debitTransactionId: debit.transactionId });
 
@@ -695,6 +768,23 @@ export class TransactionEngine {
     }, { source: `${source}.credit`, validate, rederive });
 
     if (!credit.success) {
+      // TI-2 (TI2-R3): the recipient leg is itself UNRESOLVED (its own rollback failed or its outcome is unknown): the recipient may already hold the
+      // credits, so refunding the sender automatically could create credits. Report it; do not guess, retry or restore.
+      if (credit.rollbackFailed === true || credit.indeterminate === true) {
+        swseLogger.error('[TransactionEngine.creditTransfer] credit leg UNRESOLVED; the debit is NOT refunded automatically', {
+          ...logContext, debitTransactionId: debit.transactionId, failedCreditTransactionId: credit.transactionId, error: credit.error
+        });
+        return {
+          success: false,
+          transactionId: transferId,
+          debitTransactionId: debit.transactionId,
+          failedCreditTransactionId: credit.transactionId,
+          indeterminate: true,
+          ...(credit.rollbackFailed ? { rollbackFailed: true } : {}),
+          error: `Credit transfer could not be reconciled: the recipient leg is unresolved (${credit.error}). The sender was debited ${value} and was NOT refunded automatically because the recipient may already hold the credits. Reconcile transactions ${debit.transactionId} and ${credit.transactionId}.`,
+          evidence: { debit: this.#legSummary(debit), credit: this.#legSummary(credit) }
+        };
+      }
       swseLogger.error('[TransactionEngine.creditTransfer] credit leg failed; refunding debit', {
         ...logContext,
         debitTransactionId: debit.transactionId,
@@ -715,46 +805,48 @@ export class TransactionEngine {
           toActorName: toActor.name
         }
       }, { source: `${source}.refundDebit`, validate, rederive });
-      if (!refund.success) {
-        swseLogger.error('[TransactionEngine.creditTransfer] debit refund failed after credit leg failure', {
-          ...logContext,
-          debitTransactionId: debit.transactionId,
-          failedCreditTransactionId: credit.transactionId,
-          refundTransactionId: refund.transactionId,
-          error: refund.error
-        });
-        // Last-resort: restore both actors to their pre-transfer state so the
-        // sender is not left debited when the compensating refund also failed.
-        if (fromSnapshot || toSnapshot) {
-          const restores = [];
-          if (fromSnapshot) {restores.push(await this.#restoreVerified(fromActor, fromSnapshot));}
-          if (toSnapshot) {restores.push(await this.#restoreVerified(toActor, toSnapshot));}
-          if (restores.every((r) => r.restored)) {
-            swseLogger.warn('[TransactionEngine.creditTransfer] restored both actors from snapshot after refund failure', logContext);
-          } else {
-            swseLogger.error('[TransactionEngine.creditTransfer] snapshot restore FAILED after refund failure; manual reconciliation required', { ...logContext, error: restores.find((r) => !r.restored)?.error?.message });
-          }
-        }
-      } else {
-        swseLogger.warn('[TransactionEngine.creditTransfer] debit refunded after credit leg failure', {
-          ...logContext,
-          debitTransactionId: debit.transactionId,
-          failedCreditTransactionId: credit.transactionId,
-          refundTransactionId: refund.transactionId
-        });
-      }
-      return {
-        success: false,
+      const ids = {
         transactionId: transferId,
         debitTransactionId: debit.transactionId,
         failedCreditTransactionId: credit.transactionId,
-        refundTransactionId: refund.transactionId,
-        error: credit.error || 'Credit leg failed'
+        refundTransactionId: refund.transactionId
+      };
+      if (refund.success) {
+        swseLogger.warn('[TransactionEngine.creditTransfer] debit refunded after credit leg failure', { ...logContext, ...ids });
+        return { success: false, ...ids, compensated: true, error: credit.error || 'Credit leg failed' };
+      }
+      swseLogger.error('[TransactionEngine.creditTransfer] debit refund failed after credit leg failure', { ...logContext, ...ids, error: refund.error });
+      // Last-resort (EXISTING behavior, not extended): restore both actors to their pre-transfer snapshots. It is NOT attempted when the refund itself is
+      // unresolved (its outcome is unknown, so the actor's state cannot be assumed), and it only counts when every restore was observed to succeed.
+      const refundUnresolved = refund.rollbackFailed === true || refund.indeterminate === true;
+      const restores = [];
+      if (!refundUnresolved) {
+        if (fromSnapshot) {restores.push({ actor: 'sender', ...(await this.#restoreVerified(fromActor, fromSnapshot)) });}
+        if (toSnapshot) {restores.push({ actor: 'recipient', ...(await this.#restoreVerified(toActor, toSnapshot)) });}
+      }
+      if (restores.length > 0 && restores.every((r) => r.restored)) {
+        swseLogger.warn('[TransactionEngine.creditTransfer] restored both actors from snapshot after refund failure', logContext);
+        return { success: false, ...ids, compensated: true, recovery: 'snapshot-restore', error: credit.error || 'Credit leg failed' };
+      }
+      swseLogger.error('[TransactionEngine.creditTransfer] recovery FAILED after refund failure; manual reconciliation required', { ...logContext, ...ids });
+      return {
+        success: false,
+        ...ids,
+        rollbackFailed: true,
+        ...(refundUnresolved ? { indeterminate: true } : {}),
+        error: `Credit transfer could not be reconciled: the recipient leg failed (${credit.error}), the sender's refund failed (${refund.error}), and ${refundUnresolved ? 'the refund outcome is unresolved' : (restores.length ? 'the snapshot restore did not succeed' : 'no snapshot was available to restore')}. The sender may still be debited ${value}. Reconcile transactions ${ids.debitTransactionId}, ${ids.failedCreditTransactionId} and ${ids.refundTransactionId}.`,
+        evidence: {
+          debit: this.#legSummary(debit),
+          credit: this.#legSummary(credit),
+          refund: this.#legSummary(refund),
+          restores: restores.map((r) => ({ actor: r.actor, restored: r.restored, error: r.error?.message ?? null })),
+          snapshotsAvailable: !!(fromSnapshot || toSnapshot)
+        }
       };
     }
     swseLogger.debug('[TransactionEngine.creditTransfer] credit leg complete', { ...logContext, debitTransactionId: debit.transactionId, creditTransactionId: credit.transactionId });
 
-    Hooks.callAll?.('swseCreditTransferComplete', {
+    const presentationError = this.#emitCommitted('swseCreditTransferComplete', () => ({
       transaction: {
         id: transferId,
         transactionId: transferId,
@@ -771,7 +863,7 @@ export class TransactionEngine {
       fromActor,
       toActor,
       success: true
-    });
+    }));
 
     swseLogger.info('[TransactionEngine.creditTransfer] complete', {
       ...logContext,
@@ -784,7 +876,8 @@ export class TransactionEngine {
       debitTransactionId: debit.transactionId,
       creditTransactionId: credit.transactionId,
       amount: value,
-      error: null
+      error: null,
+      ...(presentationError ? { presentationError } : {})
     };
   }
 
@@ -979,6 +1072,9 @@ export class TransactionEngine {
         return { success: false, indeterminate: true, transactionId, error: `Customization could not be verified: expected ${creditsAfter} credits after the charge, found ${observedWallet}. Check the actor's credits and the asset before retrying.`, evidence: { creditsBefore, expectedCredits: creditsAfter, observedCredits: observedWallet } };
       }
 
+      // DELIBERATE EXCEPTION to #emitCommitted: tests/customization-bay-foundation-contract.test.mjs (P1-7 Correction 8) pins that a failure here — injected
+      // through this very hook — reports failure and restores BOTH actors. Whether a presentation failure should instead leave a committed asset customization
+      // standing is an open owner question (TI-2 checkpoint, Q4); until it is answered this site keeps its established, tested behavior.
       Hooks.callAll?.('swseAssetCustomizationTransactionComplete', {
         transaction: this.#normalizeTransactionRecord(walletActor, walletAudit),
         actor: walletActor,
@@ -1190,14 +1286,13 @@ export class TransactionEngine {
         source: `${source}.${transactionContext}.owner`
       });
 
-      const normalized = this.#normalizeTransactionRecord(ownerActor, transactionRecord);
-      Hooks.callAll?.('swseStoreAssetAcquired', {
-        transaction: normalized,
+      const presentationError = this.#emitCommitted('swseStoreAssetAcquired', () => ({
+        transaction: this.#normalizeTransactionRecord(ownerActor, transactionRecord),
         actor: ownerActor,
         assetActor: freshAsset,
         cost: normalizedCost,
         success: true
-      });
+      }));
 
       swseLogger.info('TransactionEngine: Asset approval transaction complete', {
         transactionId,
@@ -1214,7 +1309,8 @@ export class TransactionEngine {
         creditsBefore,
         creditsAfter,
         amount: normalizedCost > 0 ? -normalizedCost : 0,
-        assetActorId: freshAsset.id
+        assetActorId: freshAsset.id,
+        ...(presentationError ? { presentationError } : {})
       };
     } catch (error) {
       swseLogger.error('TransactionEngine: Asset approval transaction failed', {
@@ -1368,14 +1464,13 @@ export class TransactionEngine {
         source: `${source}.${transactionContext}`
       });
 
-      const normalized = this.#normalizeTransactionRecord(freshActor, saleRecord);
-      Hooks.callAll?.('swseStoreSaleComplete', {
-        transaction: normalized,
+      const presentationError = this.#emitCommitted('swseStoreSaleComplete', () => ({
+        transaction: this.#normalizeTransactionRecord(freshActor, saleRecord),
         actor: freshActor,
         itemData,
         salePrice: normalizedSalePrice,
         success: true
-      });
+      }));
 
       swseLogger.info('TransactionEngine: Sale transaction complete', {
         transactionId,
@@ -1385,7 +1480,7 @@ export class TransactionEngine {
         salePrice: normalizedSalePrice
       });
 
-      return { success: true, transactionId, error: null, creditsBefore, creditsAfter, amount: normalizedSalePrice };
+      return { success: true, transactionId, error: null, creditsBefore, creditsAfter, amount: normalizedSalePrice, ...(presentationError ? { presentationError } : {}) };
     } catch (error) {
       swseLogger.error('TransactionEngine: Sale transaction failed', {
         transactionId,
@@ -1538,14 +1633,13 @@ export class TransactionEngine {
         source: `${source}.store-rollback-reconciliation`
       });
 
-      const normalized = this.#normalizeTransactionRecord(freshActor, transactionRecord);
-      Hooks.callAll?.('swseStoreRollbackCorrectionComplete', {
-        transaction: normalized,
+      const presentationError = this.#emitCommitted('swseStoreRollbackCorrectionComplete', () => ({
+        transaction: this.#normalizeTransactionRecord(freshActor, transactionRecord),
         actor: freshActor,
         sourceTransactionId,
         removedOwnedItemIds: itemIds,
         success: true
-      });
+      }));
 
       swseLogger.info('TransactionEngine: Rollback reconciliation complete', {
         transactionId,
@@ -1562,7 +1656,8 @@ export class TransactionEngine {
         creditsBefore,
         creditsAfter,
         amount: normalizedAmount,
-        removedOwnedItemIds: itemIds
+        removedOwnedItemIds: itemIds,
+        ...(presentationError ? { presentationError } : {})
       };
     } catch (error) {
       swseLogger.error('TransactionEngine: Rollback reconciliation failed', {
