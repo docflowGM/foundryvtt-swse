@@ -49,6 +49,12 @@ on:
       - tools/audits/vehicles/build_sotg_cp23c2_*.mjs
       - tests/phase2c_cp23c2_*.test.mjs
       - docs/audits/vehicles/swse-sotg-cp23c2-*.md
+      - data/audits/vehicles/sotg-cp23c3-native-source-stage/**
+      - data/audits/vehicles/swse-sotg-cp23c3-*.json
+      - tools/audits/vehicles/build_sotg_cp23c3_*.mjs
+      - tools/audits/vehicles/verify_sotg_cp23c3_*.mjs
+      - tests/phase2c_cp23c3_*.test.mjs
+      - docs/audits/vehicles/swse-sotg-cp23c3-*.md
       - tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
       - docs/audits/vehicles/swse-sotg-cp20-*.md
       - tools/audits/vehicles/check_sotg_cp20_tranche*.py
@@ -181,3 +187,10 @@ jobs:
         run: node tools/audits/vehicles/build_sotg_cp23c2_readiness.mjs --check
       - name: Verify CP23-C2 state scope, native identity checks, and receipt refusal
         run: node --test tests/phase2c_cp23c2_install_readiness.test.mjs
+
+      - name: Validate CP23-C3 fifteen pinned unregistered native source JSON records
+        run: node tools/audits/vehicles/build_sotg_cp23c3_native_stage.mjs --check
+      - name: Verify CP23-C3 source order, registration refusal and no stock attacks
+        run: node --test tests/phase2c_cp23c3_native_source_stage.test.mjs
+      - name: Verify CP23-C3 isolated official native LevelDB source-pack round-trip
+        run: node tools/audits/vehicles/verify_sotg_cp23c3_native_roundtrip.mjs --cli-root /tmp/swse-cp23b-cli/node_modules
