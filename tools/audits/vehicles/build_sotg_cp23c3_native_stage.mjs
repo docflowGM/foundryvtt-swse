@@ -90,7 +90,7 @@ function run(){
   if(process.argv.includes('--check')){
     const folder=join(root,STAGE);
     const names=readdirSync(folder).filter(n=>n.endsWith('.json')).sort();
-    const expected=[...documents.keys()].map(basename).sort();
+    const expected=[...documents.keys()].map(file=>basename(file)).sort();
     invariant(same(names,expected),'STAGE_FOLDER_FILE_SET_CHANGED');
     for(const [file,content] of documents){
       invariant(lstatSync(join(root,file)).isFile(),'STAGE_FILE_NOT_A_REGULAR_FILE:'+file);
