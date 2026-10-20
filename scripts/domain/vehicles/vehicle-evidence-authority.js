@@ -135,3 +135,11 @@ export {resolveCP21ApprovedPublicationReference,inspectCP21LegacyPackCandidate}
  */
 export {CP23C_RECEIPT_STATE,canonicalCP23CJson,draftCP23CSnapshot,evaluateCP23CDraftParity}
   from './vehicle-cp23c-source-integrity.js';
+
+/**
+ * CP23-C2: non-authorizing config-vs-game-state parity and native-pack
+ * installation prerequisites. Unregistered CP23B draft actors cannot be
+ * authenticated as canonical world installations by these observers.
+ */
+export {CP23C2_STATUS,assessCP23C2ConfigurationParity,inspectCP23C2NativeInstallCandidate}
+  from './vehicle-cp23c2-installation-preflight.js';

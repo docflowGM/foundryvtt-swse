@@ -44,6 +44,11 @@ on:
       - scripts/domain/vehicles/vehicle-cp23c-*.js
       - tests/phase2c_cp23c_*.test.mjs
       - docs/audits/vehicles/swse-sotg-cp23c-*.md
+      - scripts/domain/vehicles/vehicle-cp23c2-*.js
+      - data/audits/vehicles/swse-sotg-cp23c2-*.json
+      - tools/audits/vehicles/build_sotg_cp23c2_*.mjs
+      - tests/phase2c_cp23c2_*.test.mjs
+      - docs/audits/vehicles/swse-sotg-cp23c2-*.md
       - tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
       - docs/audits/vehicles/swse-sotg-cp20-*.md
       - tools/audits/vehicles/check_sotg_cp20_tranche*.py
@@ -171,3 +176,8 @@ jobs:
         run: node tools/audits/vehicles/build_sotg_cp23c_integrity_anchors.mjs --check
       - name: Prove CP23-C1 conservative mutation invalidation and zero new authority
         run: node --test tests/phase2c_cp23c_source_draft_integrity.test.mjs
+
+      - name: Check CP23-C2 canonical pack registration and non-issuing install readiness
+        run: node tools/audits/vehicles/build_sotg_cp23c2_readiness.mjs --check
+      - name: Verify CP23-C2 state scope, native identity checks, and receipt refusal
+        run: node --test tests/phase2c_cp23c2_install_readiness.test.mjs
