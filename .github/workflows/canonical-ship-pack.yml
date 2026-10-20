@@ -1,0 +1,50 @@
+name: Canonical Ship Pack Build
+on:
+  push:
+    branches: [feat/vehicle-canonical-census-cutover]
+    paths:
+      - 'data/canonical/vehicles/ships.json'
+      - 'tools/vehicles/**'
+      - '.github/workflows/canonical-ship-pack.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build deterministic single-line .db
+        run: |
+          node --check tools/vehicles/build-canonical-ships.mjs
+          node --check tools/vehicles/compile-canonical-native.mjs
+          node tools/vehicles/build-canonical-ships.mjs --write
+          node tools/vehicles/build-canonical-ships.mjs --check
+          test "$(wc -l < data/canonical/vehicles/ships.json)" -eq 316
+          test "$(wc -l < packs/vehicles-canonical-ships.db)" -eq 316
+      - name: Install pinned official Foundry CLI
+        run: npm install --prefix /tmp/swse-ships-cli --no-audit --no-fund @foundryvtt/foundryvtt-cli@3.0.5
+      - name: Compile and verify native Foundry V13 Actor pack
+        run: |
+          rm -rf /tmp/swse-ships-built
+          node tools/vehicles/compile-canonical-native.mjs --cli-root /tmp/swse-ships-cli/node_modules --out /tmp/swse-ships-built
+          test -d /tmp/swse-ships-built
+      - name: Stage native pack and generated .db
+        run: |
+          mkdir -p packs/vehicles-canonical-ships
+          cp -a /tmp/swse-ships-built/. packs/vehicles-canonical-ships/
+          git add packs/vehicles-canonical-ships.db packs/vehicles-canonical-ships/
+          git status --short
+      - name: Commit verified generated compendiums
+        run: |
+          if ! git diff --cached --quiet; then
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git commit -m 'build(vehicles): native v13 canonical ship pack and one-line DB'
+            git push origin HEAD:feat/vehicle-canonical-census-cutover
+          fi
