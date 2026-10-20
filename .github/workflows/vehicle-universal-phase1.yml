@@ -1,0 +1,23 @@
+name: Universal Vehicle Enumeration QA
+on:
+  push:
+    branches:
+      - audit/universal-vehicles-phase1
+    paths:
+      - 'data/audits/vehicles/swse-universal-*.json'
+      - 'docs/audits/vehicles/universal-vehicle-phase-roadmap.md'
+      - 'tests/vehicle-universal-*.test.mjs'
+      - '.github/workflows/vehicle-universal-phase1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test publication identity and provenance
+        run: node --test tests/vehicle-universal-phase*.test.mjs
