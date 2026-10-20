@@ -147,3 +147,11 @@ export {CP23C2_STATUS,assessCP23C2ConfigurationParity,inspectCP23C2NativeInstall
 /** CP23-C4 GM-owned world observation ledger: never a stock installation receipt. */
 export {CP23C4_SCHEMA,emptyCP23C4Ledger,validateCP23C4Ledger,readCP23C4ObservationLedger}
   from './vehicle-cp23c4-gm-observation-ledger.js';
+
+/**
+ * CP23-C4B: source-document and world-Actor identity are independent.
+ * Read-time structural matching never mints a native installation receipt.
+ */
+export {CP23C4B_STATUS,CP23C4B_SOURCE_PACK,
+  inspectCP23C4BWorldInstallationCandidate,verifyCP23C4BClaimedReceipt}
+  from './vehicle-cp23c4b-world-binding.js';

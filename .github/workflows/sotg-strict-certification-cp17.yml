@@ -59,6 +59,10 @@ on:
       - scripts/domain/vehicles/vehicle-cp23c4-*.js
       - tests/phase2c_cp23c4_*.test.mjs
       - docs/audits/vehicles/swse-sotg-cp23c4-*.md
+      - scripts/domain/vehicles/vehicle-cp23c4b-*.js
+      - tools/audits/vehicles/build_sotg_cp23c4b_*.mjs
+      - tests/phase2c_cp23c4b_*.test.mjs
+      - docs/audits/vehicles/swse-sotg-cp23c4b-*.md
       - index.js
 
       - tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
@@ -203,3 +207,8 @@ jobs:
 
       - name: Verify CP23-C4 GM-owned observation ledger and durable untrusted native readback
         run: node --test tests/phase2c_cp23c4_gm_observation_ledger.test.mjs
+
+      - name: Verify CP23-C4B staged source/world identity anchor generator
+        run: node tools/audits/vehicles/build_sotg_cp23c4b_world_anchors.mjs --check
+      - name: Test CP23-C4B world-target IDs, spoofing, drift and verified-receipt refusal
+        run: node --test tests/phase2c_cp23c4b_world_identity.test.mjs
