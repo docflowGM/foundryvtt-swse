@@ -1,0 +1,239 @@
+{
+  "schema": "swse.vehicle.universal.phase1l.threats-of-the-galaxy.v1",
+  "status": "PHASE1_L_THREATS_OF_THE_GALAXY_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Threats of the Galaxy",
+  "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+  "sourceFiles": {
+    "pdf": "SAGA EDITION - Threats of the Galaxy.pdf",
+    "text": "Threats of the Galaxy_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 1,
+    "newOtherVehiclePublicationClaims": 4,
+    "allBookVehiclePublicationClaims": 5,
+    "inheritedClassifications": {
+      "space-transport": 1
+    },
+    "newVehicleClassifications": {
+      "space-transport": 1,
+      "speeder-bike": 2,
+      "swoop": 1
+    },
+    "cumulativeKnownUniversalPublicationClaims": 415
+  },
+  "process": {
+    "entirePdfPageCount": 162,
+    "discoveryMethod": "Full 15,726-line DJVU text search over 162-page original PDF (all eleven 16-page contact sheets), covering every statblock header, vehicle type line, chapter NPC entries and named personal ships. The source PDF hash matches earlier CEC-only ship closeout. Primary PDF pages 18, 81, 98, 99 and 89 directly checked for new source identity and canonical baseline.",
+    "primaryPdfPagesConfirmed": [
+      18,
+      81,
+      89,
+      98,
+      99
+    ],
+    "printedToPdfMapping": "Zero-based physical PDF page index = printed page; one-based physical PDF ordinal = printed page + 1.",
+    "sectionsSwept": [
+      "Introduction and NPC/character archetype entries",
+      "Bossk and Hound's Tooth printed p18",
+      "Darth Maul and personal Bloodfin printed p81",
+      "CEC VCX-350 freighter printed p89",
+      "Swoop Gang Leader/Member entries pp98-99",
+      "Whole 162-page visually surveyed text, encounter and equipment material"
+    ],
+    "sourceDocumentTextSemantics": "DJVU TXT is searchable discovery/navigation; primary printed PDF pages and names/types are authoritative",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "identityDecisions": [
+    {
+      "subject": "Hound's Tooth",
+      "printedPage": 18,
+      "status": "INCLUDE_INDEPENDENT_NAMED_SHIP_NOT_IN_HISTORICAL_CENSUS",
+      "reason": "Bossk NPC entry has complete printed Colossal* space transport statblock, despite starfighter-targeting exception in footnote. It is a distinct Threats of the Galaxy publication claim, not a duplicate of YV-666 source content in another book."
+    },
+    {
+      "subject": "Nashtah Pup",
+      "printedPage": 18,
+      "status": "EXCLUDE_CARRIED_CRAFT_REFERENCE_ONLY",
+      "reason": "Referenced modified Z-95 is not given independent printed vehicle block here, only cited from Starships of the Galaxy."
+    },
+    {
+      "subject": "Bloodfin Razalon FC-20 Speeder Bike",
+      "printedPage": 81,
+      "status": "INCLUDE_INDEPENDENT_CHARACTER_OWNED_VEHICLE",
+      "reason": "Full CL15 Medium ground vehicle statblock printed with Darth Maul, with pilot-influenced statistics; identity distinct from generic speeder-bike references."
+    },
+    {
+      "subject": "Modified R-2000 Raptor Speeder Bike",
+      "printedPage": 98,
+      "status": "INCLUDE_DISTINCT_MODIFIED_PERSONAL_VEHICLE",
+      "reason": "Swoop Gang Leader own modified printed CL7 Large ground vehicle (speeder) block."
+    },
+    {
+      "subject": "Nebulon-Q Swoop",
+      "printedPage": 99,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE",
+      "reason": "CL2 Large ground vehicle (swoop) block; heading text calls it Mobquet Nebulon-Q Swoop Racer."
+    },
+    {
+      "subject": "Bossk ship mechanics footnote",
+      "printedPage": 18,
+      "status": "ONE_PUBLICATION_IDENTITY_WITH_RULE_EXCEPTION",
+      "reason": "Treated as Gargantuan starfighter for targeting by capital ship weapons, dogfighting and maneuvers; do not make separate starfighter record."
+    },
+    {
+      "subject": "Character inventory vehicle mentions",
+      "status": "EXCLUDE_NARRATIVE_AND_POSSESSION_ONLY",
+      "reason": "A character possession mention without separate vehicle type and statblock is not a source vehicle claim."
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "tog-cec-vcx-350-light-freighter",
+      "printedName": "CEC VCX-350 Light Freighter",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Threats of the Galaxy",
+      "printedStatblockStartPage": 89,
+      "pdfPhysicalPage": 90,
+      "provenance": {
+        "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+        "sourceFile": "SAGA EDITION - Threats of the Galaxy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-threats-of-the-galaxy-book-source-closure-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "tog-hounds-tooth",
+      "printedName": "Hound's Tooth",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedCategory": "Colossal* space transport",
+        "secondaryCategories": [
+          "modified-YV-666-named-ship"
+        ],
+        "specialRulesClassification": "PRINTED_SHIP_TREATED_AS_GARGANTUAN_STARFIGHTER_FOR_TARGETING_DOGFIGHT_AND_MANEUVER_PURPOSES"
+      },
+      "sourceBook": "Threats of the Galaxy",
+      "printedStatblockStartPage": 18,
+      "pdfPhysicalPage": 19,
+      "provenance": {
+        "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+        "sourceFile": "SAGA EDITION - Threats of the Galaxy.pdf",
+        "textSearchLayer": "Threats of the Galaxy_djvu.txt (discovery only)",
+        "pdfVisualReviewMethod": "WHOLE_162_PAGE_PDF_CONTACT_SWEEP_AND_HIGH_RES_STATBLOCK_REVIEW",
+        "physicalPdfPage": 19,
+        "printedChallengeLevel": 12
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "tog-bloodfin-razalon-fc-20-speeder-bike",
+      "printedName": "Bloodfin Razalon FC-20 Speeder Bike",
+      "printedTypeLine": "Medium ground vehicle",
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Medium ground vehicle",
+        "secondaryCategories": [
+          "Darth-Maul-personal-speeder"
+        ]
+      },
+      "sourceBook": "Threats of the Galaxy",
+      "printedStatblockStartPage": 81,
+      "pdfPhysicalPage": 82,
+      "provenance": {
+        "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+        "sourceFile": "SAGA EDITION - Threats of the Galaxy.pdf",
+        "textSearchLayer": "Threats of the Galaxy_djvu.txt (discovery only)",
+        "pdfVisualReviewMethod": "WHOLE_162_PAGE_PDF_CONTACT_SWEEP_AND_HIGH_RES_STATBLOCK_REVIEW",
+        "physicalPdfPage": 82,
+        "printedChallengeLevel": 15
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "tog-modified-r-2000-raptor-speeder-bike",
+      "printedName": "Modified R-2000 Raptor Speeder Bike",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": [
+          "Swoop-Gang-Leader-personal-variant"
+        ]
+      },
+      "sourceBook": "Threats of the Galaxy",
+      "printedStatblockStartPage": 98,
+      "pdfPhysicalPage": 99,
+      "provenance": {
+        "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+        "sourceFile": "SAGA EDITION - Threats of the Galaxy.pdf",
+        "textSearchLayer": "Threats of the Galaxy_djvu.txt (discovery only)",
+        "pdfVisualReviewMethod": "WHOLE_162_PAGE_PDF_CONTACT_SWEEP_AND_HIGH_RES_STATBLOCK_REVIEW",
+        "physicalPdfPage": 99,
+        "printedChallengeLevel": 7
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "tog-nebulon-q-swoop",
+      "printedName": "Nebulon-Q Swoop",
+      "printedTypeLine": "Large ground vehicle (swoop)",
+      "classification": {
+        "primaryCategory": "swoop",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large ground vehicle (swoop)",
+        "secondaryCategories": [
+          "Mobquet-Nebulon-Q-stock"
+        ]
+      },
+      "sourceBook": "Threats of the Galaxy",
+      "printedStatblockStartPage": 99,
+      "pdfPhysicalPage": 100,
+      "provenance": {
+        "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+        "sourceFile": "SAGA EDITION - Threats of the Galaxy.pdf",
+        "textSearchLayer": "Threats of the Galaxy_djvu.txt (discovery only)",
+        "pdfVisualReviewMethod": "WHOLE_162_PAGE_PDF_CONTACT_SWEEP_AND_HIGH_RES_STATBLOCK_REVIEW",
+        "physicalPdfPage": 100,
+        "printedChallengeLevel": 2
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-M Unknown Regions"
+}
