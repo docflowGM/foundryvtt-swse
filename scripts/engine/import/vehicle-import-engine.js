@@ -42,6 +42,27 @@ export class VehicleImportEngine {
     assertCP23C4CNoStagedSourceImport(sourceActor);
     const mode = options.mode || 'replace';
     const preserve = options.preserve || {};
+    const isCanonicalPack = sourceActor.pack === 'foundryvtt-swse.vehicles-canonical-ships';
+    if (isCanonicalPack) {
+      // Canonical publication Actors bypass the legacy normalizer entirely.
+      // Unknown values remain absent; no invented SR, Initiative or cargo.
+      // Flags are a read-only evidence snapshot, never stock attack trust.
+      const evidence = sourceActor.flags?.swse?.canonicalPublication;
+      if (!evidence?.sourceEntryKey || evidence.foundryStockAttackTrusted !== false ||
+          !/^swse\d{12}$/.test(sourceActor.id ?? sourceActor._id ?? '') ||
+          !Array.isArray(sourceActor.system?.weapons) || sourceActor.system.weapons.length !== 0) {
+        throw new Error('CANONICAL_SHIP_SOURCE_INVALID_OR_UNTRUSTED');
+      }
+      const update = {};
+      if (!preserve.name) update.name = sourceActor.name;
+      if (!preserve.image) update.img = sourceActor.img;
+      if (mode === 'replace') update.system = duplicate(sourceActor.system);
+      else for (const [key, value] of Object.entries(duplicate(sourceActor.system))) {
+        update[`system.${key}`] = value;
+      }
+      update['flags.swse.canonicalPublication'] = duplicate(evidence);
+      return update;
+    }
     const rawSystem = duplicate(sourceActor.system);
     const normalized = normalizeVehicleImportData(rawSystem, { sourceName: sourceActor.name }) ?? {};
     // The normalizer produces a runtime-shape projection, NOT a complete
