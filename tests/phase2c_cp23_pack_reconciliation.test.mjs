@@ -157,7 +157,7 @@ test('CP23 wizard remains observation-only; canonical source import is blocked b
   // a stock weapon from an import. This is a denial, not an authority path.
   assert.ok(engine.includes('assertCP23C4CNoStagedSourceImport(sourceActor)'));
   assert.ok(engine.indexOf('assertCP23C4CNoStagedSourceImport(sourceActor)') <
-    engine.indexOf('normalizeVehicleImportData(rawSystem)'));
+    engine.indexOf('normalizeVehicleImportData(rawSystem,'));
   assert.doesNotMatch(engine,/setCP23Trusted|issueVerifiedReceipt|grantStockAttack/);
   assert.doesNotMatch(wizard,/setFlag\(.*(?:stock|trusted|certified)/);
 });
