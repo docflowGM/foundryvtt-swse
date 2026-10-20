@@ -103,3 +103,8 @@ jobs:
         run: python3 -m py_compile tools/audits/vehicles/check_sotg_cp20_tranche05.py
       - name: Verify CP20 tranche 05 source provenance and zero runtime authority
         run: python3 tools/audits/vehicles/check_sotg_cp20_tranche05.py --repo "."
+
+      - name: Compile CP20 tranche 06 source-fidelity validator
+        run: python3 -m py_compile tools/audits/vehicles/check_sotg_cp20_tranche06.py
+      - name: Validate CP20 tranche 06 ten publication certificates
+        run: python3 tools/audits/vehicles/check_sotg_cp20_tranche06.py --repo "."
