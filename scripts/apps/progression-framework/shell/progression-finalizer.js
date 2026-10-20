@@ -421,14 +421,14 @@ export class ProgressionFinalizer {
       });
 
       // ONLY NOW: Apply mutations through ActorEngine.
-      // ActorEngine.applyMutationPlan runs transactionally (see _applyMutationPlan):
-      // on failure it rolls the actor back to its pre-plan snapshot and deletes any
-      // CREATE-bucket actors, so a failed finalize should leave the actor unchanged.
-      // Only if that rollback itself fails is error.partialMutationPossible set.
+      // ActorEngine.applyMutationPlan runs transactionally (see _applyMutationPlan): on failure it attempts to roll the actor back to its
+      // pre-plan snapshot and to delete any CREATE-bucket actors, and it REPORTS whether that rollback was verified (TI4-C0/G06). A failed
+      // finalize is only known to have left the actor unchanged when result.rollbackOutcome === 'FAILED_COMPENSATED'; when the rollback
+      // could not be verified the result is `indeterminate: true` with `partialMutationPossible: true` and the actor may be partially changed.
       const result = await this._applyMutationPlan(actor, finalMutationPlan);
 
       if (!result.success) {
-        // ActorEngine failed and (best-effort) rolled back — surface the error.
+        // ActorEngine failed; the result says whether the rollback was verified (rollbackOutcome) or is indeterminate — surface it as is.
         swseLogger.error('[ProgressionFinalizer] ActorEngine failed during finalization', {
           error: result.error,
           actorId: actor.id,
@@ -3695,8 +3695,8 @@ export class ProgressionFinalizer {
   }
 
   static async _applyMutationPlan(actor, mutationPlan) {
-    // TI-3 (TX-09 sub-gap): two different outcomes used to share one `catch`. A throw from the plan itself means the transactional apply failed (and was
-    // restored by ActorEngine). A throw from the post-apply bookkeeping AFTER a successful plan means the plan IS applied and is NOT rolled back; reporting
+    // TI-3 (TX-09 sub-gap): two different outcomes used to share one `catch`. A throw from the plan itself means the transactional apply failed (and ActorEngine
+    // attempted a rollback whose verification it reports — see the catch below). A throw from the post-apply bookkeeping AFTER a successful plan means the plan IS applied and is NOT rolled back; reporting
     // that as `{ success:false }` invites the player to finalize again.
     try {
       const engine = this._resolveActorEngine();
@@ -3714,7 +3714,18 @@ export class ProgressionFinalizer {
       });
     } catch (error) {
       swseLogger.error('[ProgressionFinalizer] Mutation plan application failed', error);
-      return { success: false, error: error.message };
+      // TI4-C0/G06: ActorEngine attaches machine-readable rollback evidence to a transactional failure. A rollback it could NOT verify is not an
+      // ordinary retryable failure: keep the evidence and say so in the message the existing UI already shows. No sync runs and nothing is retried.
+      const rollback = error?.rollback ?? null;
+      if (!rollback) return { success: false, error: error.message };
+      const base = { success: false, error: error.message, rollbackOutcome: rollback.outcome, rollback };
+      if (rollback.outcome === 'FAILED_COMPENSATED') return base;
+      return {
+        ...base,
+        indeterminate: true,
+        partialMutationPossible: true,
+        error: `${error.message} — the rollback could not be verified, so the character may be partially modified. Do not finalize again until the character has been checked.`,
+      };
     }
 
     // The plan is committed from here on.
