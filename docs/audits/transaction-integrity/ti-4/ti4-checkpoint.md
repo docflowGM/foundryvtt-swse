@@ -91,6 +91,27 @@ See `ti4-authority-inventory.md` §0.1 for the table. Summary: `main` = `4392c90
 
 No published SWSE mechanic is decided, changed or implied by this package. `docs/audits/swse-rules-decisions-pending.md` is untouched.
 
+## 7a. Independent review disposition (appended after review of `796a0e3`)
+
+The reviewer accepted TI-4 Phase 0 as an architectural inventory and planning baseline — **not** as certification of the proposed contract and **not** as authorization for production enforcement. TI4-A implementation is not authorized. Three contract clarifications were required and are now in `ti4-contract-v1-proposal.md`:
+
+1. `FAILED_COMPENSATED` requires verified restoration of the operation's **entire** affected mechanical scope; partial restoration is `INDETERMINATE (compensation:'PARTIAL')` unless remaining effects are explicitly classified and reconciled (§4.1, §7 rule 6).
+2. A committed operation with mechanically incomplete post-apply synchronization stays `COMMITTED` but carries a distinct machine-readable `postApplyIncomplete` obligation with an idempotent repair path, separate from presentation `warnings` (§4.3, §4.2 mapping).
+3. A receipt is not durable merely because it is in an Actor flag; survival through the operation's own restore path, crash/reload and a retention policy must be certified before replay enforcement or L3 (§5.7, §8; recovery design §3).
+
+**Reviewer recommendations on the open owner decisions — recorded as recommendations, not approvals (decision authority remains the project owner):**
+
+| ID | Reviewer recommendation | Status |
+|---|---|---|
+| OD-1 | risk-based: fail closed for purchases, sales, asset approvals and other multi-resource operations; do not automatically block simple GM credit adjustments or emergency corrections solely for a missing snapshot | recommendation; **owner approval pending** (supersedes my G07 wording only once approved) |
+| OD-2 | four primary states with mandatory qualifiers for incomplete post-commit mechanical work and failed compensation | recommendation; owner approval pending (contract text already conforms) |
+| OD-3 | existing domain-owned records that survive compensation; no universal ledger; separate receipt-storage certification before replay enforcement | recommendation; owner approval pending (certification gate now in contract §5.7) |
+| OD-4 | authorize *designing* a GM-only reconcile operation without UI; implementation needs its own bounded checkpoint and negative tests | recommendation; owner approval pending |
+| OD-5 | defer lightsaber-construction changes until source rules and roll-before-write behaviour are independently verified | recommendation; owner approval pending (G15 stays `OWNER_DECISION_REQUIRED`) |
+| Q2 | eventually route reachable credit-plus-Item mutations through an authoritative transaction boundary, preserve macro compatibility, verify printed costs before modifying them | recommendation; owner approval pending |
+
+Agreed order is unchanged: `TI4-A → TI4-C0 → TI4-B → TI4-C → TI4-D → TI4-E`; the reviewer names **G06** (`applyMutationPlan` ignores its rollback result) as the first bounded implementation candidate after contract acceptance. PR #1062 stays draft and unmerged; the TI-1 and TI-3 lineages are not combined; D-005 is not activated; no production enforcement starts.
+
 ## 8. What was not done (by directive)
 
 No production enforcement; no L2/L3 work; no reconciliation UI; no equipment WP6–WP9; no D-005 T4d-4; no modification runtime integration; no dead-code cleanup; no branch reconciliation; no merges; no history rewrite; no test rewritten or weakened; D-005 artifacts untouched.

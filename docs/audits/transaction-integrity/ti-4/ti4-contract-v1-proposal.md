@@ -39,7 +39,7 @@ Single-document writes are **not automatically low risk**: a one-field absolute 
 |---|---|---|
 | `REFUSED` | Rejected before any mechanical write (validation, permission, funds, stale, duplicate-in-flight, recovery unavailable, request-id conflict). | Yes, after fixing the cause. |
 | `COMMITTED` | The mechanical effect was applied **and verified** at the declared level. May carry `postCommit` warnings (see §4.3). | No (replay returns the same receipt). |
-| `FAILED_COMPENSATED` | A write failed (or verification failed), compensation ran and was **verified**; observable mechanical state equals pre-state for the operation's scope. | Yes (new attempt, same `operationId` permitted). |
+| `FAILED_COMPENSATED` | A write failed (or verification failed), compensation ran and **verified restoration of the operation's entire affected mechanical scope** (every document and field the operation's declared scope covers — credits, Items, ownership, markers, resources); observable mechanical state equals pre-state for that whole scope. Restoring one part (e.g. refunding credits) while any other part remains changed or unverified is **not** this state: it is `INDETERMINATE` (`compensation:'PARTIAL'`) unless each remaining effect is explicitly classified and reconciled under the recovery design (§4 there). | Yes (new attempt, same `operationId` permitted). |
 | `INDETERMINATE` | A write may have landed and the state cannot be shown either way (thrown-after-write, verification unavailable, restore failed or inexact, lost acknowledgement). Includes today's `rollbackFailed`. | **No automatic retry.** Manual reconcile only. |
 
 ### 4.2 Mapping from the vocabulary already in the codebase
@@ -53,12 +53,16 @@ Single-document writes are **not automatically low risk**: a one-field absolute 
 | `rollbackFailed` (TE, ally service) | `INDETERMINATE` with `compensation:'FAILED'` |
 | Q-033 `PRECONDITION_SNAPSHOT_UNAVAILABLE` | `REFUSED(reason:'recovery-unavailable')` — already the TI-2 name `refused:'recovery-unavailable'` |
 | Q-033 `RECOVERY_INCOMPLETE` | `INDETERMINATE` with `compensation:'FAILED'|'INEXACT'` |
-| `presentationError`, `postApplyIncomplete`, `postApplyWarnings` | qualifier on `COMMITTED`, never a state change |
+| `presentationError`, `postApplyWarnings` | `postCommit.warnings` qualifier on `COMMITTED`, never a state change |
+| `postApplyIncomplete` / `postApplyRepair` (progression, TI-3) | `postCommit.postApplyIncomplete` obligation on `COMMITTED` (§4.3): never a state change, **not** an ordinary warning; requires an idempotent repair operation |
 | equipment journal `PREPARED/APPLIED/PARTIAL/INDETERMINATE/NOT_APPLIED/FINALIZED` | domain-internal phases; map by outcome table in the compliance matrix |
 
 ### 4.3 Committed effects vs bookkeeping (`postCommit`)
 
-A `COMMITTED` outcome carries `postCommit: { incomplete: [...], warnings: [...] }`. Bookkeeping that follows the authoritative write (chat cards, hooks, history mirrors, queue cleanup, notifications, repaint, post-apply sync) **cannot** change the outcome and must be isolated from the mechanical failure handler (the TI-2/TI-3 `#emitCommitted` / `_afterCommit` pattern; owner ruling Q4: completion hooks are non-transactional). A failing bookkeeping step is a warning that tells the user *not to repeat the operation*.
+A `COMMITTED` outcome carries `postCommit: { warnings: [...], postApplyIncomplete: [...] }`. The two lists are **different obligations**:
+
+- **`warnings` — presentation/bookkeeping** (chat cards, hooks, history mirrors, notifications, repaint, queue cleanup that does not change a mechanical value). They **cannot** change the outcome and must be isolated from the mechanical failure handler (the TI-2/TI-3 `#emitCommitted` / `_afterCommit` pattern; owner ruling Q4: completion hooks are non-transactional). A failing step is a warning that tells the user *not to repeat the operation*.
+- **`postApplyIncomplete` — mechanically incomplete post-apply synchronization** (derived/engine state that the primary commit requires to be consistent, e.g. the progression maneuver-suite sync that `_syncPostApplyState` performs). The primary operation stays `COMMITTED` and must **never** be rolled back, replayed or re-run because of it, but this is **not** an ordinary warning. It is a machine-readable obligation: each entry records `{ kind, scope, reason, repair }`, where `repair` names an **idempotent** repair operation (own operation id and receipt; safe to run any number of times; never replays the primary operation). Until repaired, the affected scope is reported as incomplete wherever its state is consumed. A domain with a mechanically required post-apply step but no idempotent repair path does not meet the contract (today only progression has one: `resyncPostApplyState`; no production consumer invokes it, G37).
 
 ## 5. Replay policy
 
@@ -68,7 +72,11 @@ A `COMMITTED` outcome carries `postCommit: { incomplete: [...], warnings: [...] 
 4. **Same id, same fingerprint, recorded `REFUSED`/`FAILED_COMPENSATED`** → may execute again.
 5. **Same id, different fingerprint** → `REFUSED(reason:'request-id-conflict')`.
 6. **Different ids** → independent operations (a legitimate second purchase of the same item is a new id).
-7. **Where receipts live** is the domain's existing record (§6). A receipt that is rolled back together with the actor snapshot cannot prove a replay (TE audit flag today, G17); receipts must be written in a way a compensation does not erase, or the replay guard must live on a document the compensation does not touch (the `storeAcquisition` marker is the working example).
+7. **Where receipts live** is the domain's existing record (§6). **Storage in an Actor flag does not make a receipt durable.** A receipt is *durable for replay purposes* only when each of the following has been demonstrated for that domain's record:
+   a. it **survives the operation's own restore/compensation path** (a whole-actor snapshot restore rewrites actor flags — the TE audit flag is erased by it today, G17; receipts must be excluded from that scope, written afterwards, or live on a document the compensation does not touch, as the `storeAcquisition` marker does);
+   b. it **survives crash and reload** (persisted before the first mechanical write as `PREPARED`, finalized after verification);
+   c. it has a **retention policy** (bounded ring; unresolved entries never evicted; a full ring refuses new work in that scope rather than dropping evidence) and an expiry/pruning rule for resolved entries.
+   Until a *receipt-storage certification* for the domain demonstrates a–c (offline for the restore path, runtime for reload), the receipt is **not** accepted as replay-protection evidence and the domain may not claim L3.
 8. Receipts are bounded (ring/cap with unresolved entries never evicted — the equipment journal rule).
 
 ## 6. Execution authorities (retain; do not add an orchestrator)
@@ -92,6 +100,7 @@ A `COMMITTED` outcome carries `postCommit: { incomplete: [...], warnings: [...] 
 3. Prefer **field-scoped conditional compensation** (restore a field only if it still holds the value this operation wrote). Whole-actor restores revert concurrent edits and are a last resort that must say so.
 4. Compensation of a resource (FP, credits) uses a **relative or conditional** write; an absolute restore of a previously read value is allowed only inside the same single-flight section and must be flagged `INTENTIONAL_LIMITATION` (L1).
 5. A failed or inexact compensation yields `INDETERMINATE` and **blocks** further automatic mutation of the affected scope until reconciled.
+6. **Whole-scope rule.** Compensation is judged against the operation's *entire* declared scope (§3). A verified refund with an Item still changed, or a restored Item with credits still moved, is `INDETERMINATE (compensation:'PARTIAL')`, never `FAILED_COMPENSATED`, unless every remaining effect is explicitly classified and reconciled.
 
 ## 8. Concurrency obligations by level
 
@@ -99,7 +108,7 @@ A `COMMITTED` outcome carries `postCommit: { incomplete: [...], warnings: [...] 
 |---|---|---|
 | L1 | Single-flight per (actor × resource family); re-validate under the guard; no check-then-act across an `await` without re-reading; guard key shared across every method touching the same resource. | partial; per-method keys (G28). |
 | L2 | A verified authoritative coordination mechanism across clients (single-writer GM route, versioned state). | none |
-| L3 | Durable receipts + deterministic reconciliation after reload/disconnect. | partial (equipment journal, snapshots, markers) |
+| L3 | Durable receipts **certified per §5.7 (a–c: survive own restore, crash/reload, retention)** + deterministic reconciliation after reload/disconnect. | partial (equipment journal, snapshots, markers); **no domain has a receipt-storage certification** |
 
 A domain may claim a level only with the evidence listed in `ti4-cross-domain-test-plan.md` §6.
 
