@@ -52,9 +52,9 @@ test('all 34 vehicle publication records unique and source located',()=>{
 });
 test('full book sweep includes 7 chapter vehicles, 2 adventure stats and 6 imperial statblocks',()=>{
  const rows=current.newVehicleEntries;
- assert.equal(rows.filter(x=>x.sourceSection.startsWith('Chapter VII')).length,7);
- assert.equal(rows.filter(x=>x.sourceSection.startsWith('Chapter VIII')).length,2);
- assert.equal(rows.filter(x=>x.sourceSection.startsWith('Chapter X')).length,6);
+ assert.equal(rows.filter(x=>x.sourceSection.startsWith('Chapter VII —')).length,7);
+ assert.equal(rows.filter(x=>x.sourceSection.startsWith('Chapter VIII —')).length,2);
+ assert.equal(rows.filter(x=>x.sourceSection.startsWith('Chapter X —')).length,6);
  assert.deepEqual(rows.map(x=>x.printedStatblockStartPage),[110,110,111,112,112,113,113,142,142,200,201,201,202,202,203]);
  const x34=rows.find(x=>x.sourceEntryKey==='fucg-modified-sorosuub-x-34-speeder-escort');
  const bike=rows.find(x=>x.sourceEntryKey==='fucg-aratech-74-z-speeder-bike');
