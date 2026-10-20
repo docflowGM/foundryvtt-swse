@@ -44,6 +44,9 @@ import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine
 
 export class TransactionEngine {
   static _mutationLocks = new Set();
+  // TI-2 (review TI2-R4): actor ids whose credits are being RECONCILED right now (a compensation is reading, comparing and writing). While an id is in this set,
+  // every TransactionEngine credit operation for that actor is refused instead of interleaving with the compensation. Same client only (L1).
+  static _creditReconciliations = new Set();
 
   static _allowedMutationContexts = new Set([
     'owned-customization',
@@ -199,31 +202,45 @@ export class TransactionEngine {
    * and the audit record is marked Compensated in the same write. Anything else — the balance moved, the write failed, the write did not take — is
    * `indeterminate` with evidence and is never retried.
    */
-  static async #compensateUnverified(actor, { transactionId, source, normalizedCost, creditsBefore, creditsAfter, reason }) {
+  static async #compensateUnverified(actor, { transactionId, source, normalizedCost, creditsBefore, creditsAfter, reason, ownLockKey }) {
     const base = { success: false, verificationFailed: true, transactionId };
     const what = `the change could not be verified (${reason})`;
     if (!(normalizedCost > 0)) {return { ...base, compensated: true, error: `Transaction failed: ${what}; nothing was charged.` };}
-    const observed = LedgerService.getCurrentCredits(actor);
-    const evidence = { creditsBefore, expectedCredits: creditsAfter, observedCredits: observed };
-    if (observed !== creditsAfter) {
-      swseLogger.error('TransactionEngine: unverified change could not be compensated; the balance changed after the charge', { transactionId, ...evidence });
-      return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the balance changed after the charge, so it was NOT refunded automatically. Reconcile transaction ${transactionId}.`, evidence };
+    // TI2-R4: the read, the comparison and the write below are one decision. Another TransactionEngine operation for this actor that is ALREADY running may be
+    // mid-write, so the refund is not attempted (unresolved, with evidence); one that STARTS meanwhile is refused by the reconciliation guard. Writers outside
+    // the commerce authority (a sheet edit, a talent) cannot be coordinated here: the final balance is verified instead, and a mismatch is unresolved.
+    const inFlight = [...this._mutationLocks].filter((key) => key.startsWith(`${actor.id}:`) && key !== ownLockKey);
+    const evidence = { creditsBefore, expectedCredits: creditsAfter, observedCredits: LedgerService.getCurrentCredits(actor), inFlight };
+    if (inFlight.length > 0) {
+      swseLogger.error('TransactionEngine: unverified change not compensated; another operation on this actor is in flight', { transactionId, ...evidence });
+      return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and another credit operation for this actor is in flight, so the refund was NOT attempted. Reconcile transaction ${transactionId}.`, evidence };
     }
+    this._creditReconciliations.add(actor.id);
     try {
-      await ActorEngine.applyMutationPlan(actor, { set: {
-        'system.credits': creditsBefore,
-        [`flags.foundryvtt-swse.transactions.${transactionId}.status`]: 'Compensated',
-        [`flags.foundryvtt-swse.transactions.${transactionId}.compensatedReason`]: reason
-      } }, { validate: true, rederive: false, source: `${source}.compensation` });
-    } catch (error) {
-      swseLogger.error('TransactionEngine: compensation write failed', { transactionId, error: error?.message });
-      return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the refund write failed (${error?.message}). Reconcile transaction ${transactionId}.`, evidence: { ...evidence, compensationError: error?.message ?? String(error) } };
+      const observed = LedgerService.getCurrentCredits(actor);
+      evidence.observedCredits = observed;
+      if (observed !== creditsAfter) {
+        swseLogger.error('TransactionEngine: unverified change could not be compensated; the balance changed after the charge', { transactionId, ...evidence });
+        return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the balance changed after the charge, so it was NOT refunded automatically. Reconcile transaction ${transactionId}.`, evidence };
+      }
+      try {
+        await ActorEngine.applyMutationPlan(actor, { set: {
+          'system.credits': creditsBefore,
+          [`flags.foundryvtt-swse.transactions.${transactionId}.status`]: 'Compensated',
+          [`flags.foundryvtt-swse.transactions.${transactionId}.compensatedReason`]: reason
+        } }, { validate: true, rederive: false, source: `${source}.compensation` });
+      } catch (error) {
+        swseLogger.error('TransactionEngine: compensation write failed', { transactionId, error: error?.message });
+        return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the refund write failed (${error?.message}). Reconcile transaction ${transactionId}.`, evidence: { ...evidence, compensationError: error?.message ?? String(error) } };
+      }
+      const afterRefund = LedgerService.getCurrentCredits(actor);
+      if (afterRefund !== creditsBefore) {
+        return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the refund could not be confirmed (balance ${afterRefund}). Reconcile transaction ${transactionId}.`, evidence: { ...evidence, observedAfterRefund: afterRefund } };
+      }
+      return { ...base, compensated: true, rolledBack: true, error: `Transaction failed: ${what}; the charge of ${normalizedCost} credits was refunded.` };
+    } finally {
+      this._creditReconciliations.delete(actor.id);
     }
-    const afterRefund = LedgerService.getCurrentCredits(actor);
-    if (afterRefund !== creditsBefore) {
-      return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the refund could not be confirmed (balance ${afterRefund}). Reconcile transaction ${transactionId}.`, evidence: { ...evidence, observedAfterRefund: afterRefund } };
-    }
-    return { ...base, compensated: true, rolledBack: true, error: `Transaction failed: ${what}; the charge of ${normalizedCost} credits was refunded.` };
   }
 
   /**
@@ -329,6 +346,9 @@ export class TransactionEngine {
     }
 
     const lockKey = `${freshActor.id}:${transactionContext}`;
+    if (this._creditReconciliations.has(freshActor.id)) {
+      return { success: false, transactionId, error: 'Credits for this actor are being reconciled; try again in a moment.' };
+    }
     if (this._mutationLocks.has(lockKey)) {
       return { success: false, transactionId, error: 'Transaction already in progress' };
     }
@@ -422,7 +442,7 @@ export class TransactionEngine {
         try { verdict = await verify(freshActor); } catch (verifyError) { verdict = { ok: false, reason: `verification threw: ${verifyError?.message ?? verifyError}` }; }
         if (verdict?.ok !== true) {
           swseLogger.error('TransactionEngine: Mutation transaction failed verification', { transactionId, context: transactionContext, reason: verdict?.reason });
-          return await this.#compensateUnverified(freshActor, { transactionId, source: `${source}.${transactionContext}`, normalizedCost, creditsBefore, creditsAfter, reason: verdict?.reason ?? 'the change is not present' });
+          return await this.#compensateUnverified(freshActor, { transactionId, source: `${source}.${transactionContext}`, normalizedCost, creditsBefore, creditsAfter, reason: verdict?.reason ?? 'the change is not present', ownLockKey: lockKey });
         }
       }
 
@@ -547,6 +567,9 @@ export class TransactionEngine {
     }
 
     const lockKey = `${freshActor.id}:${transactionContext}:credit-adjustment`;
+    if (this._creditReconciliations.has(freshActor.id)) {
+      return { success: false, transactionId, error: 'Credits for this actor are being reconciled; try again in a moment.' };
+    }
     if (this._mutationLocks.has(lockKey)) {
       return { success: false, transactionId, error: 'Credit adjustment already in progress' };
     }
@@ -956,6 +979,9 @@ export class TransactionEngine {
     }
 
     const lockKey = `${walletActor.id}:${targetAsset.id}:${transactionContext}`;
+    if (this._creditReconciliations.has(walletActor.id)) {
+      return { success: false, transactionId, error: 'Credits for this actor are being reconciled; try again in a moment.' };
+    }
     if (this._mutationLocks.has(lockKey)) {
       return { success: false, transactionId, error: 'Asset customization already in progress' };
     }
@@ -1072,15 +1098,14 @@ export class TransactionEngine {
         return { success: false, indeterminate: true, transactionId, error: `Customization could not be verified: expected ${creditsAfter} credits after the charge, found ${observedWallet}. Check the actor's credits and the asset before retrying.`, evidence: { creditsBefore, expectedCredits: creditsAfter, observedCredits: observedWallet } };
       }
 
-      // DELIBERATE EXCEPTION to #emitCommitted: tests/customization-bay-foundation-contract.test.mjs (P1-7 Correction 8) pins that a failure here — injected
-      // through this very hook — reports failure and restores BOTH actors. Whether a presentation failure should instead leave a committed asset customization
-      // standing is an open owner question (TI-2 checkpoint, Q4); until it is answered this site keeps its established, tested behavior.
-      Hooks.callAll?.('swseAssetCustomizationTransactionComplete', {
+      // Owner ruling Q4 (TI-2): completion hooks are non-transactional. Once the customization is mechanically committed and verified, a failing listener
+      // is reported as `presentationError` and never reverses it (no snapshot restore). Mechanical / persistence failures above still roll back both actors.
+      const presentationError = this.#emitCommitted('swseAssetCustomizationTransactionComplete', () => ({
         transaction: this.#normalizeTransactionRecord(walletActor, walletAudit),
         actor: walletActor,
         assetActor: targetAsset,
         success: true
-      });
+      }));
 
       return {
         success: true,
@@ -1090,7 +1115,8 @@ export class TransactionEngine {
         creditsAfter,
         grossCost,
         resaleCredit: grossResale,
-        netCost
+        netCost,
+        ...(presentationError ? { presentationError } : {})
       };
     } catch (error) {
       swseLogger.error('TransactionEngine: Asset customization failed', {
@@ -1165,6 +1191,9 @@ export class TransactionEngine {
     }
 
     const lockKey = `${ownerActor.id}:${freshAsset.id}:${transactionContext}:asset-approval`;
+    if (this._creditReconciliations.has(ownerActor.id)) {
+      return { success: false, transactionId, error: 'Credits for this actor are being reconciled; try again in a moment.' };
+    }
     if (this._mutationLocks.has(lockKey)) {
       return { success: false, transactionId, error: 'Asset approval transaction already in progress' };
     }
@@ -1385,6 +1414,9 @@ export class TransactionEngine {
     }
 
     const lockKey = `${freshActor.id}:${transactionContext}:sale:${ownedItemId}`;
+    if (this._creditReconciliations.has(freshActor.id)) {
+      return { success: false, transactionId, error: 'Credits for this actor are being reconciled; try again in a moment.' };
+    }
     if (this._mutationLocks.has(lockKey)) {
       return { success: false, transactionId, error: 'Sale transaction already in progress' };
     }
@@ -1548,6 +1580,9 @@ export class TransactionEngine {
     }
 
     const lockKey = `${freshActor.id}:store-rollback-reconciliation`;
+    if (this._creditReconciliations.has(freshActor.id)) {
+      return { success: false, transactionId, error: 'Credits for this actor are being reconciled; try again in a moment.' };
+    }
     if (this._mutationLocks.has(lockKey)) {
       return { success: false, transactionId, error: 'Rollback correction already in progress' };
     }

@@ -452,6 +452,8 @@ export class DroidCustomizationEngine {
           netCost: preview.preview.netCost,
           newCredits: preview.preview.newCredits
         }
+      ,
+        ...(txn.presentationError ? { presentationError: txn.presentationError } : {})
       };
     } catch (err) {
       SWSELogger.error('Droid customization apply failed:', err);

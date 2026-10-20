@@ -299,7 +299,8 @@ export class VehicleCustomizationEngine {
           systemsRemoved: preview.preview.systemsRemoved,
           netCost: preview.preview.netCost,
           newCredits: preview.preview.newCredits
-        }
+        },
+        ...(txn.presentationError ? { presentationError: txn.presentationError } : {})
       };
     } catch (err) {
       SWSELogger.error('Vehicle customization apply failed:', err);

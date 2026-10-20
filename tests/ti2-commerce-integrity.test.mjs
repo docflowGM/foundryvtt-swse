@@ -316,9 +316,44 @@ const worldFor = (...as) => { const m = new Map(as.map((x) => [x.id, x])); globa
   assert.equal(r.success, true, 'a committed adjustment is not rolled back because a hook threw'); assert.equal(actor.system.credits, 950); assert.equal(snapMode.restores, 0); assert.match(r.presentationError ?? '', /swseCreditAdjustmentComplete/);
   const src = (await import('node:fs')).readFileSync(new URL('../scripts/engine/store/transaction-engine.js', import.meta.url), 'utf8');
   const raw = [...src.matchAll(/Hooks\.callAll\?\./g)].length;
-  assert.equal(raw, 2, 'every completion hook goes through the single post-commit-safe emitter, except the ONE documented exception (asset customization, pinned by the P1-7 Correction 8 test; owner question Q4)');
-  assert.match(src, /DELIBERATE EXCEPTION to #emitCommitted/, 'and the exception is documented at its site');
-  ok('TI-2 post-commit: a throwing completion hook does not roll back a committed credit adjustment; every engine completion hook except the one documented, test-pinned exception uses the safe emitter');
+  assert.equal(raw, 1, 'every completion hook in the engine goes through the single post-commit-safe emitter (the only raw Hooks.callAll is inside it); owner ruling Q4 removed the former asset-customization exception');
+  ok('TI-2 post-commit: a throwing completion hook does not roll back a committed credit adjustment; every engine completion hook, asset customization included (owner ruling Q4), uses the safe emitter');
+}
+
+// ------------------------------------------------------------------------------------------------ 2.9 TI2-R4: the compensation decision and write are not exposed to another commerce operation
+{
+  const verifyFails = async () => ({ ok: false, reason: 'missing' });
+  const runCharge = () => TransactionEngine.executeMutationTransaction({ actor, mutationPlan: plan(), cost: 100, transactionContext: 'owned-customization', verify: verifyFails }, { source: 'ti2', rederive: false });
+  // (A) another TransactionEngine credit operation lands inside the compensation window (after the balance was read and compared, before the refund is applied)
+  reset(); worldFor(actor); model.dropItem = true; let intruder = null; let inCompensation = false; const realApplyA = ActorEngine.applyMutationPlan;
+  ActorEngine.applyMutationPlan = async (a, p, o) => {
+    if (p.set?.['flags.foundryvtt-swse.transactions.' + ledgerOf(a)[0]?.id + '.status'] === 'Compensated' && !inCompensation) {   // this is the compensation write
+      inCompensation = true;
+      intruder = await TransactionEngine.executeCreditAdjustment({ actor: a, amount: 50, reason: 'ti2 concurrent grant', transactionContext: 'gm-credit-adjustment' }, { source: 'ti2', rederive: false });
+    }
+    return realApplyA(a, p, o);
+  };
+  let r = await silent(runCharge); ActorEngine.applyMutationPlan = realApplyA;
+  assert.ok(intruder, 'the interleaving happened');
+  const finalA = actor.system.credits; const granted = intruder.success ? 50 : 0;
+  assert.equal(finalA, 1000 + granted, 'the final balance equals the original plus exactly the operations that REPORTED success: no lost update');
+  assert.equal(intruder.success, false, 'the concurrent credit operation is refused while the actor\'s credits are being reconciled (L1: same client)'); assert.match(intruder.error, /reconcil/i);
+  assert.equal(r.success, false); assert.equal(r.compensated, true); assert.equal(actor.system.credits, 1000);
+  // the guard is released: the same operation now succeeds
+  const after = await TransactionEngine.executeCreditAdjustment({ actor, amount: 50, reason: 'ti2 later grant', transactionContext: 'gm-credit-adjustment' }, { source: 'ti2', rederive: false }); assert.equal(after.success, true); assert.equal(actor.system.credits, 1050);
+  // (B) another operation on this actor is ALREADY in flight when the compensation is about to run: nothing is written, the outcome is unresolved
+  reset(); worldFor(actor); model.dropItem = true; let released = false;
+  r = await silent(() => TransactionEngine.executeMutationTransaction({ actor, mutationPlan: plan(), cost: 100, transactionContext: 'owned-customization', verify: async () => { TransactionEngine._mutationLocks.add(`${actor.id}:gm-credit-adjustment:credit-adjustment`); return { ok: false, reason: 'missing' }; } }, { source: 'ti2', rederive: false }));
+  TransactionEngine._mutationLocks.delete(`${actor.id}:gm-credit-adjustment:credit-adjustment`);
+  assert.equal(r.success, false); assert.equal(r.indeterminate, true, 'cannot be safely compensated -> unresolved'); assert.equal(model.applyCalls, 1, 'no compensation write while another operation may be mid-write'); assert.equal(actor.system.credits, 900); assert.match(r.error, /in flight|in progress|another/i); assert.ok(r.evidence);
+  // (C) the refund write "succeeds" but the final balance is not the expected one: verified against the actual final state, reported unresolved
+  reset(); worldFor(actor); model.dropItem = true; const realApplyC = ActorEngine.applyMutationPlan;
+  ActorEngine.applyMutationPlan = async (a, p, o) => { await realApplyC(a, p, o); if (model.applyCalls === 2) a.system.credits = 777; };
+  r = await silent(runCharge); ActorEngine.applyMutationPlan = realApplyC; assert.equal(r.indeterminate, true); assert.equal(r.evidence.observedAfterRefund, 777); assert.notEqual(r.compensated, true);
+  // (D) the guard is also released when the compensation throws
+  reset(); worldFor(actor); model.dropItem = true; model.failNth = 2; r = await silent(runCharge); assert.equal(r.indeterminate, true); model.failNth = null;
+  const again = await TransactionEngine.executeCreditAdjustment({ actor, amount: 10, reason: 'ti2', transactionContext: 'gm-credit-adjustment' }, { source: 'ti2', rederive: false }); assert.equal(again.success, true);
+  ok('TI2-R4: the compensation decision and write run while the actor is marked as being reconciled (other TransactionEngine credit operations are refused, never interleaved and lost), are skipped as unresolved when another operation is already in flight, are verified against the final balance, and always release the guard');
 }
 
 console.log(`\nTI-2 commerce integrity: ${n} checks passed.`);

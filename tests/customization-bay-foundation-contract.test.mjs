@@ -248,27 +248,27 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
 // ---------------------------------------------------------------------------
 // Correction 8 (PR #946 review) — Case D only proved a PREFLIGHT rejection
 // (insufficient funds, before any mutation starts). This forces a failure
-// AFTER BOTH legs of the transaction have genuinely succeeded — the wallet
-// leg (debiting the OWNER) and the asset leg (installing the system on the
-// DROID) both complete for real, and only then does something downstream
-// throw — proving TransactionEngine's real two-actor snapshot/rollback
-// restores BOTH actors from an actual prior mutation, not merely that a
-// still-pending mutation never ran. (An earlier version of this test forced
-// the failure on the asset leg's own ActorEngine.applyMutationPlan call
-// itself — that throws INSTEAD OF mutating, so the asset was never actually
-// changed and "installedSystems stays {}" was true regardless of whether
-// asset-side rollback worked at all; verified empirically by disabling the
-// asset SnapshotManager.restoreSnapshot call and observing the old test
-// still passed. Failing via Hooks.callAll — which TransactionEngine invokes
-// only after both ActorEngine.applyMutationPlan calls have already resolved
-// — closes that gap.)
+// AFTER BOTH legs of the transaction have genuinely mutated — the wallet leg
+// (debiting the OWNER) and the asset leg (installing the system on the
+// DROID) both apply for real, and only then does the PERSISTENCE layer fail —
+// proving TransactionEngine's real two-actor snapshot/rollback restores BOTH
+// actors from an actual prior mutation, not merely that a still-pending
+// mutation never ran. (An earlier version forced the failure on the asset
+// leg's own ActorEngine.applyMutationPlan call before it mutated anything, so
+// "installedSystems stays {}" was true regardless of whether asset-side
+// rollback worked at all.)
+//
+// TI-2 / owner ruling Q4: the injection point is now a MECHANICAL failure (the
+// asset-leg write applies and then the persistence call throws), because a
+// completion hook is presentation and no longer a transactional failure — see
+// the next block, which pins that a throwing hook leaves the committed
+// customization intact. Mechanical rollback coverage is unchanged in strength:
+// the test asserts the asset really was mutated before the failure.
 //
 // Does not reimplement rollback: this exercises
 // TransactionEngine.executeAssetCustomizationTransaction's own production
 // catch block end to end, through the real SnapshotManager/SnapshotService
-// chain — only Hooks.callAll is monkeypatched, and only to inject the
-// forced failure after both legs commit; every ActorEngine method (used
-// internally by the real snapshot create/restore path) is untouched.
+// chain.
 // ---------------------------------------------------------------------------
 {
   resetFakeActorEngine();
@@ -277,10 +277,59 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
   asGM([owner, droid]);
 
   const expectedCost = computeDroidPartCost(droid, { id: TRANSLATOR_A });
+  const { ActorEngine: SharedActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  const realApply = SharedActorEngine.applyMutationPlan;
+  let assetMutatedBeforeFailure = false;
+  SharedActorEngine.applyMutationPlan = async function persistenceFailsAfterAssetWrite(target, plan, options) {
+    const out = await realApply.call(this, target, plan, options);
+    if (target.id === droid.id && plan?.set?.['system.installedSystems']) {
+      assetMutatedBeforeFailure = Object.keys(droid.system.installedSystems ?? {}).length > 0;
+      throw new Error('Simulated persistence failure after both legs were applied (Correction 8 two-actor rollback regression test)');
+    }
+    return out;
+  };
+
+  let result;
+  try {
+    result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+  } finally {
+    SharedActorEngine.applyMutationPlan = realApply;
+  }
+
+  assert.equal(assetMutatedBeforeFailure, true, 'the asset leg genuinely applied before the failure (so rollback is restoring real mutation)');
+  assert.equal(result.success, false, 'apply must report failure when persistence fails after both legs already applied');
+  assert.equal(
+    owner.system.credits,
+    5000,
+    `wallet credits must roll back to the pre-transaction value (5000) even though the wallet leg had already debited ${expectedCost}`
+  );
+  assert.deepEqual(
+    droid.system.installedSystems,
+    {},
+    'the asset must roll back to its pre-transaction state even though the system was genuinely installed before the forced failure'
+  );
+}
+
+// ---------------------------------------------------------------------------
+// TI-2 owner ruling Q4 — completion hooks are NON-TRANSACTIONAL. After the
+// asset customization is mechanically committed and verified, a throwing
+// swseAssetCustomizationTransactionComplete listener must not undo it: the
+// payment and the installed system stay, the result is a success, and the
+// listener failure is reported separately as presentationError. (The previous
+// version of the block above injected its failure through this very hook and
+// pinned the opposite; that was an explicit, now-reversed decision.)
+// ---------------------------------------------------------------------------
+{
+  resetFakeActorEngine();
+  const owner = makeFakeOwner('owner-q4', 5000);
+  const droid = makeFakeDroid('droid-q4', 0);
+  asGM([owner, droid]);
+
+  const expectedCost = computeDroidPartCost(droid, { id: TRANSLATOR_A });
   const originalCallAll = globalThis.Hooks.callAll;
-  globalThis.Hooks.callAll = function forcedPostCommitFailure(hookName, ...args) {
+  globalThis.Hooks.callAll = function throwingCompletionListener(hookName, ...args) {
     if (hookName === 'swseAssetCustomizationTransactionComplete') {
-      throw new Error('Simulated post-commit failure after both legs succeeded (Correction 8 two-actor rollback regression test)');
+      throw new Error('Simulated completion-listener failure after the customization committed (Q4 regression test)');
     }
     return originalCallAll.call(this, hookName, ...args);
   };
@@ -292,17 +341,10 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
     globalThis.Hooks.callAll = originalCallAll;
   }
 
-  assert.equal(result.success, false, 'apply must report failure when a post-commit step throws after both legs already applied');
-  assert.equal(
-    owner.system.credits,
-    5000,
-    `wallet credits must roll back to the pre-transaction value (5000) even though the wallet leg had already debited ${expectedCost}`
-  );
-  assert.deepEqual(
-    droid.system.installedSystems,
-    {},
-    'the asset must roll back to its pre-transaction state even though the system was genuinely installed before the forced failure'
-  );
+  assert.equal(result.success, true, 'a throwing completion listener must not turn a committed customization into a failure');
+  assert.match(result.presentationError ?? '', /swseAssetCustomizationTransactionComplete/, 'the listener failure is reported separately');
+  assert.equal(owner.system.credits, 5000 - expectedCost, 'the payment stays committed');
+  assert.ok(Object.keys(droid.system.installedSystems).length > 0, 'the installed system stays committed (no snapshot restore for a presentation failure)');
 }
 
 // ---------------------------------------------------------------------------
