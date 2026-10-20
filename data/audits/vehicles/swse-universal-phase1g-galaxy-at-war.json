@@ -1,0 +1,501 @@
+{
+  "schema": "swse.vehicle.universal.phase1g.galaxy-at-war.v1",
+  "status": "PHASE1_G_GALAXY_AT_WAR_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Galaxy at War",
+  "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+  "sourceFiles": {
+    "pdf": "SW_Saga_Galaxy_at_War.pdf",
+    "text": "Galaxy At War_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 5,
+    "newOtherVehiclePublicationClaims": 6,
+    "allBookVehiclePublicationClaims": 11,
+    "inheritedClassifications": {
+      "capital-ship": 1,
+      "space-transport": 4
+    },
+    "newVehicleClassifications": {
+      "speeder-bike": 1,
+      "medical-airspeeder": 1,
+      "repulsorlift-tank": 2,
+      "drop-pod": 1,
+      "wheeled-utility-vehicle": 1
+    },
+    "cumulativeKnownUniversalPublicationClaims": 381
+  },
+  "process": {
+    "discoveryMethod": "Searchable DJVU TXT swept from introduction through index for ground/air/space vehicle type lines, statblock headers and vehicle keywords; entire scanned 225-page PDF rendered to twelve labeled contact sheets for a book-wide layout survey, then original PDF vehicle statblocks on printed pp62-64, 179 and 216 inspected at high resolution. Five prior ship primary-PDF reviews preserved.",
+    "bookSectionsSwept": [
+      "Introduction and Chapter I: Military Heroes",
+      "Chapter II: Hardware, including droids, creatures and all vehicle types",
+      "Chapter III: Military Campaigns",
+      "Chapter IV: Military Units",
+      "Chapter V: Bases and Battlestations",
+      "Chapter VI: Military Encounters (including Akkalo Station)",
+      "Chapter VII: Operation: First Breach (including GAT Ambush)",
+      "Index"
+    ],
+    "primaryPdfPagesConfirmed": [
+      62,
+      63,
+      64,
+      179,
+      216
+    ],
+    "physicalPdfPageRule": "Zero-based PDF page index equals printed book page on the reviewed vehicle pages; one-based physical page ordinal equals printed page +1.",
+    "exhaustivenessCaveat": "Book-wide TXT/type-line sweep and 225-page thumbnail survey with individual high-resolution new statblock verification; visually obscured or unusually formatted material remains possible for future corrective amendment.",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "identityDecisions": [
+    {
+      "subject": "Freeco Speeder",
+      "printedPage": 62,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed complete CL 6 Huge ground vehicle (speeder), continuing onto p63."
+    },
+    {
+      "subject": "Medical Airspeeder versus Shelter Speeder",
+      "printedPage": 63,
+      "status": "USE_PRINTED_STATBLOCK_NAME",
+      "reason": "Section name describes role. Printed complete CL 4 vehicle statblock title is Shelter Speeder."
+    },
+    {
+      "subject": "WLO-5 Speeder Tank pirate modifications",
+      "printedPage": 63,
+      "status": "EXCLUDE_NONSTATBLOCK_CONFIGURATION",
+      "reason": "Narrative mentions Hondo Ohnaka's extra cannons, but printed CL 6 stats expressly describe stock tank. No additional publication identity."
+    },
+    {
+      "subject": "Drop Pod",
+      "printedPage": 64,
+      "status": "INCLUDE_PRINTED_AIR_VEHICLE",
+      "reason": "Listed under Space Transports but type line explicitly Gargantuan air vehicle. Separate from carried vehicle and distinct from existing ships."
+    },
+    {
+      "subject": "T8 Loading Vehicle",
+      "printedPage": 179,
+      "status": "INCLUDE_ADVENTURE_VEHICLE_STATBLOCK",
+      "reason": "Complete CL 1 Large wheeled ground vehicle in later mini-adventure."
+    },
+    {
+      "subject": "Ground Armored Tank (GAT) x4 encounter",
+      "printedPage": 216,
+      "status": "COUNT_ONE_PUBLICATION_STATBLOCK",
+      "reason": "One printed CL 10 tank statblock controls four encounter instances; do not multiply census entries."
+    },
+    {
+      "subject": "Bases and Battlestations chapter",
+      "status": "EXCLUDE_DESIGN_AND_INSTALLATION_RULES",
+      "reason": "Battlestation construction, hazards and facility rooms are not automatically complete named vehicle statblocks."
+    },
+    {
+      "subject": "Chaff gun, glowing defoliator and vehicle fire effects",
+      "printedPages": [
+        67,
+        68
+      ],
+      "status": "EXCLUDE_WEAPONS_AND_RULES",
+      "reason": "Vehicle weapon upgrades and effects do not constitute independent vehicle identities."
+    },
+    {
+      "subject": "Droid enemies, mounted creatures, combat squads and adventure scenery",
+      "status": "EXCLUDE_NONVEHICLE_ACTORS",
+      "reason": "NPC/droid/creature/object statistics lack independent printed vehicle type lines; vehicle-type droid-brain controllers remain within their actual vehicle identities."
+    },
+    {
+      "subject": "AT-ST, fighter tanks and other cross-book references",
+      "status": "EXCLUDE_NARRATIVE_OR_EXTERNAL_STATBLOCK",
+      "reason": "Mentions, encounter vehicles with external book references and carried-vehicle lists do not create additional book-specific printed statblocks."
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "gaw-corona-class-armed-transport",
+      "printedName": "Corona-class Armed Transport",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 67,
+      "pdfPhysicalPage": 68,
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-at-war-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy at War",
+          "sourcePDF": "SW_Saga_Galaxy_at_War.pdf",
+          "printedPages": [
+            67
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; one-based physical PDF page=printed page+1",
+          "phase1PrintedPage": 67,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+          "navigationOnlyTxtFile": "Galaxy At War_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "gaw-imperial-landing-craft",
+      "printedName": "Imperial Landing Craft",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 64,
+      "pdfPhysicalPage": 65,
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-at-war-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy at War",
+          "sourcePDF": "SW_Saga_Galaxy_at_War.pdf",
+          "printedPages": [
+            64
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; one-based physical PDF page=printed page+1",
+          "phase1PrintedPage": 64,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+          "navigationOnlyTxtFile": "Galaxy At War_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+      "printedName": "Koensayr ILH-KK Citadel-class Cruiser",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 192,
+      "pdfPhysicalPage": 193,
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-at-war-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy at War",
+          "sourcePDF": "SW_Saga_Galaxy_at_War.pdf",
+          "printedPages": [
+            192
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; one-based physical PDF page=printed page+1",
+          "phase1PrintedPage": 192,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+          "navigationOnlyTxtFile": "Galaxy At War_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
+      "printedName": "Penumbra-class Attack Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 65,
+      "pdfPhysicalPage": 66,
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-at-war-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy at War",
+          "sourcePDF": "SW_Saga_Galaxy_at_War.pdf",
+          "printedPages": [
+            65
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; one-based physical PDF page=printed page+1",
+          "phase1PrintedPage": 65,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+          "navigationOnlyTxtFile": "Galaxy At War_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "printedName": "YU-410 Light Freighter",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 65,
+      "pdfPhysicalPage": 66,
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-at-war-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy at War",
+          "sourcePDF": "SW_Saga_Galaxy_at_War.pdf",
+          "printedPages": [
+            65
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; one-based physical PDF page=printed page+1",
+          "phase1PrintedPage": 65,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+          "navigationOnlyTxtFile": "Galaxy At War_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "gaw-freeco-speeder",
+      "printedName": "Freeco Speeder",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": [
+          "enclosed",
+          "cold-environment"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 62,
+      "pdfPhysicalPage": 63,
+      "sourceSection": "Chapter II: Hardware > Vehicles and Starships > Ground Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "textSearchLayer": "Galaxy At War_djvu.txt (discovery/navigation only)",
+        "pdfReviewMethod": "WHOLE_BOOK_TEXT_SWEEP_AND_PDF_CONTACT_SHEETS_WITH_HIGH_RESOLUTION_SOURCE_PAGE_CONFIRMATION",
+        "physicalPdfPage": 63,
+        "printedHeading": "Freeco Speeder",
+        "printedChallengeLevel": 6,
+        "sourceNote": "Printed Freeco Speeder heading and independent vehicle CL 6 statistics; statblock begins on printed p62 and continues p63."
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "gaw-shelter-speeder",
+      "printedName": "Shelter Speeder",
+      "printedTypeLine": "Huge air vehicle",
+      "classification": {
+        "primaryCategory": "medical-airspeeder",
+        "mobilityDomains": [
+          "air"
+        ],
+        "printedCategory": "Huge air vehicle",
+        "secondaryCategories": [
+          "medical",
+          "sealed-environment"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 63,
+      "pdfPhysicalPage": 64,
+      "sourceSection": "Chapter II: Hardware > Vehicles and Starships > Ground Vehicles > Medical Airspeeder",
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "textSearchLayer": "Galaxy At War_djvu.txt (discovery/navigation only)",
+        "pdfReviewMethod": "WHOLE_BOOK_TEXT_SWEEP_AND_PDF_CONTACT_SHEETS_WITH_HIGH_RESOLUTION_SOURCE_PAGE_CONFIRMATION",
+        "physicalPdfPage": 64,
+        "printedHeading": "Shelter Speeder",
+        "printedChallengeLevel": 4,
+        "sourceNote": "Narrative calls it SoroSuub S-130 Shelter and Medical Airspeeder; the distinct printed CL 4 statblock is titled Shelter Speeder."
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "gaw-wlo-5-speeder-tank",
+      "printedName": "WLO-5 Speeder Tank",
+      "printedTypeLine": "Gargantuan ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "repulsorlift-tank",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Gargantuan ground vehicle (speeder)",
+        "secondaryCategories": [
+          "tank"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 63,
+      "pdfPhysicalPage": 64,
+      "sourceSection": "Chapter II: Hardware > Vehicles and Starships > Ground Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "textSearchLayer": "Galaxy At War_djvu.txt (discovery/navigation only)",
+        "pdfReviewMethod": "WHOLE_BOOK_TEXT_SWEEP_AND_PDF_CONTACT_SHEETS_WITH_HIGH_RESOLUTION_SOURCE_PAGE_CONFIRMATION",
+        "physicalPdfPage": 64,
+        "printedHeading": "WLO-5 Speeder Tank",
+        "printedChallengeLevel": 6,
+        "sourceNote": "Use clear primary-PDF WLO-5 spelling, not OCR WLO-S5. Hondo's modified cannons are described but not separately statted; the CL 6 block is stock."
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "gaw-drop-pod",
+      "printedName": "Drop Pod",
+      "printedTypeLine": "Gargantuan air vehicle",
+      "classification": {
+        "primaryCategory": "drop-pod",
+        "mobilityDomains": [
+          "air",
+          "orbital-descent"
+        ],
+        "printedCategory": "Gargantuan air vehicle",
+        "secondaryCategories": [
+          "carried-vehicle-deployment",
+          "expendable"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 64,
+      "pdfPhysicalPage": 65,
+      "sourceSection": "Chapter II: Hardware > Vehicles and Starships > Space Transports",
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "textSearchLayer": "Galaxy At War_djvu.txt (discovery/navigation only)",
+        "pdfReviewMethod": "WHOLE_BOOK_TEXT_SWEEP_AND_PDF_CONTACT_SHEETS_WITH_HIGH_RESOLUTION_SOURCE_PAGE_CONFIRMATION",
+        "physicalPdfPage": 65,
+        "printedHeading": "Drop Pod",
+        "printedChallengeLevel": 2,
+        "sourceNote": "Printed in Space Transports subsection but its actual vehicle type is Gargantuan air vehicle. Independent CL 2 statblock and droid-brain crew."
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "gaw-t8-loading-vehicle",
+      "printedName": "T8 Loading Vehicle",
+      "printedTypeLine": "Large ground vehicle (wheeled)",
+      "classification": {
+        "primaryCategory": "wheeled-utility-vehicle",
+        "mobilityDomains": [
+          "ground",
+          "ground-wheeled"
+        ],
+        "printedCategory": "Large ground vehicle (wheeled)",
+        "secondaryCategories": [
+          "cargo-handling",
+          "unarmed"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 179,
+      "pdfPhysicalPage": 180,
+      "sourceSection": "Chapter VI: Military Encounters > Mini-Adventure #3: Remember the Akkalo > The Last Stand",
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "textSearchLayer": "Galaxy At War_djvu.txt (discovery/navigation only)",
+        "pdfReviewMethod": "WHOLE_BOOK_TEXT_SWEEP_AND_PDF_CONTACT_SHEETS_WITH_HIGH_RESOLUTION_SOURCE_PAGE_CONFIRMATION",
+        "physicalPdfPage": 180,
+        "printedHeading": "T8 Loading Vehicle",
+        "printedChallengeLevel": 1,
+        "sourceNote": "Adventure-only complete CL 1 vehicle statblock on printed p179, not merely equipment or a map marker."
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "gaw-ground-armored-tank",
+      "printedName": "Ground Armored Tank",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "repulsorlift-tank",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": [
+          "tank",
+          "droid-brain-controlled"
+        ]
+      },
+      "sourceBook": "Galaxy at War",
+      "printedStatblockStartPage": 216,
+      "pdfPhysicalPage": 217,
+      "sourceSection": "Chapter VII: Operation: First Breach > Encounter: GAT Ambush",
+      "provenance": {
+        "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceFile": "SW_Saga_Galaxy_at_War.pdf",
+        "textSearchLayer": "Galaxy At War_djvu.txt (discovery/navigation only)",
+        "pdfReviewMethod": "WHOLE_BOOK_TEXT_SWEEP_AND_PDF_CONTACT_SHEETS_WITH_HIGH_RESOLUTION_SOURCE_PAGE_CONFIRMATION",
+        "physicalPdfPage": 217,
+        "printedHeading": "Ground Armored Tank",
+        "printedChallengeLevel": 10,
+        "sourceNote": "Encounter prints one distinct CL 10 Ground Armored Tank statblock for four GATs. Four encountered tanks are not four publication identities."
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-H Galaxy of Intrigue"
+}
