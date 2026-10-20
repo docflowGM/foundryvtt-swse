@@ -158,6 +158,6 @@ test('normalization loss API has no capability to issue receipts or installation
   assert.doesNotMatch(source,/ActorEngine\.updateActor|game\.settings\.set|createEmbeddedDocuments/);
   const importer=text('scripts/engine/import/vehicle-import-engine.js');
   assert.ok(importer.indexOf('assertCP23C4CNoStagedSourceImport(sourceActor)')<
-    importer.indexOf('normalizeVehicleImportData(rawSystem'));
+    importer.indexOf('normalizeVehicleImportData(rawSystem,'));
   assert.ok(importer.includes('return { actor: targetActor, update };'));
 });
