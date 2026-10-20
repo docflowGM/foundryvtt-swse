@@ -2984,9 +2984,15 @@ export const ActorEngine = {
    * Apply a MutationPlan to the actor.
    *
    * Contract:
-   * - Input is a validated MutationPlan: { set?, add?, delete? }
-   * - Operations apply in strict order: DELETE → SET → ADD
-   * - All operations complete or none do (atomic)
+   * - Input is a validated MutationPlan: { create?, set?, update?, add?, delete? }
+   * - Operations apply in strict order: CREATE → DELETE → SET → UPDATE → ADD
+   * - NOT atomic by default: a failure part-way leaves the earlier operations applied.
+   * - `transactional: true` attempts a rollback on failure and REPORTS WHAT IT COULD VERIFY (TI4-C0/G06):
+   *   the thrown error carries `rollback` (machine-readable evidence), `rollbackOutcome`
+   *   (`FAILED_COMPENSATED` only when the target actor AND any CREATE-bucket world actors were verifiably restored;
+   *   otherwise `INDETERMINATE`) and, when not verified, `partialMutationPossible === true`. A restore that resolved
+   *   without `{success:true, exact:true}` is NOT a verified rollback. The in-memory snapshot is a legacy snapshot
+   *   (no schemaVersion), so SnapshotService cannot report it exact — see `_rollbackTransactionalPlan`.
    * - Derived data recalculates once after all mutations
    * - Errors throw MutationApplicationError
    *
@@ -3103,50 +3109,124 @@ export const ActorEngine = {
         error: error.message
       });
 
-      // Transactional rollback: restore the target actor to its pre-plan state.
-      // If the restore itself fails, flag the error so callers know the actor
-      // may be in a partial state.
+      // Transactional rollback (TI4-C0/G06): restore the target actor AND remove the CREATE-bucket world actors, then report only what was
+      // VERIFIED. A restore call that merely resolved is not a rollback: the structured result must say `success:true, exact:true`, and a
+      // delete call that merely resolved is not a cleanup: the world-actor registry is checked afterwards. Anything else is INDETERMINATE.
       if (_txnSnapshot) {
-        try {
-          await this.restoreFromSnapshot(actor, _txnSnapshot, { source: `${source}:rollback` });
-          SWSELogger.warn('ActorEngine.applyMutationPlan: rolled back to pre-plan snapshot after failure', {
-            actor: actor?.id,
-            source
-          });
-        } catch (restoreErr) {
-          error.partialMutationPossible = true;
-          SWSELogger.error('ActorEngine.applyMutationPlan: rollback FAILED; actor may be in a partial state', {
-            actor: actor?.id,
-            source,
-            restoreError: restoreErr?.message
-          });
-        }
-
-        // CREATE-bucket rollback (audit R5): delete any world actors created by
-        // this plan so a mid-plan failure does not orphan them. Only runs in
-        // transactional mode; best-effort, and any failure downgrades the
-        // transactional guarantee via partialMutationPossible rather than masking it.
-        const createdActorIds = Object.values(tempIdMap).filter(Boolean);
-        if (createdActorIds.length > 0) {
-          try {
-            await Actor.deleteDocuments(createdActorIds);
-            SWSELogger.warn('ActorEngine.applyMutationPlan: deleted CREATE-bucket actors during rollback', {
-              source,
-              deletedActorIds: createdActorIds
-            });
-          } catch (createRollbackErr) {
-            error.partialMutationPossible = true;
-            SWSELogger.error('ActorEngine.applyMutationPlan: CREATE-bucket rollback FAILED; created actors may be orphaned', {
-              source,
-              createdActorIds,
-              createRollbackError: createRollbackErr?.message
-            });
-          }
-        }
+        const rollback = await this._rollbackTransactionalPlan(actor, _txnSnapshot, tempIdMap, source);
+        // Evidence is attached to the ORIGINAL error object (identity preserved); only a non-object throw (e.g. a string) is wrapped.
+        const carrier = (error !== null && typeof error === 'object')
+          ? error
+          : Object.assign(new Error(String(error)), { cause: error });
+        carrier.rollback = rollback;
+        carrier.rollbackOutcome = rollback.outcome;
+        if (rollback.outcome !== 'FAILED_COMPENSATED') carrier.partialMutationPossible = true;
+        throw carrier;
       }
 
       throw error;
     }
+  },
+
+  /**
+   * TI4-C0/G06 — roll back a failed transactional plan and report ONLY what was verified.
+   *
+   * Scope: the target actor (restored from the pre-plan snapshot) and any CREATE-bucket world actors (deleted). Both are attempted
+   * independently; the verdict covers both. `FAILED_COMPENSATED` requires every part to be verified; anything else is `INDETERMINATE`.
+   *
+   * Target verdicts (from the structured SnapshotService result, never from the promise merely resolving):
+   *   EXACT      success === true && exact === true
+   *   INEXACT    success === true && exact !== true   (data may be restored but identity/content exactness is not established)
+   *   FAILED     success === false
+   *   MALFORMED  not an object with a boolean `success`
+   *   THREW      the restore call threw
+   * The in-memory snapshot is `actor.toObject(true)` with no `schemaVersion`, so SnapshotService treats it as LEGACY and can only ever
+   * report `exact:false`. That is recorded (`legacySnapshot`), not worked around: exactness is never manufactured. A schema-v2 snapshot is a
+   * separate dependency.
+   *
+   * @returns {Promise<object>} rollback evidence: { outcome, compensation, level, legacySnapshot, reasons[], target{}, created{} }
+   */
+  async _rollbackTransactionalPlan(actor, snapshot, tempIdMap = {}, source = 'ActorEngine.applyMutationPlan') {
+    const reasons = [];
+    const legacySnapshot = !snapshot?.schemaVersion;
+
+    /* ---- target actor ---- */
+    const target = { attempted: true, verdict: null, success: null, exact: null, code: null, failedStep: null, partialMutation: null,
+      compensationAttempted: null, compensationSucceeded: null, requiresManualReview: null, contentVerified: null, error: null, restoreError: null };
+    let result;
+    try {
+      result = await this.restoreFromSnapshot(actor, snapshot, { source: `${source}:rollback` });
+    } catch (restoreErr) {
+      target.verdict = 'THREW';
+      target.restoreError = restoreErr?.message ?? String(restoreErr);
+    }
+    if (target.verdict === null) {
+      if (result === null || typeof result !== 'object' || Array.isArray(result) || typeof result.success !== 'boolean') {
+        target.verdict = 'MALFORMED';
+      } else {
+        target.success = result.success;
+        target.exact = result.exact === true;
+        target.code = result.code ?? null;
+        target.failedStep = result.failedStep ?? null;
+        target.partialMutation = result.partialMutation ?? null;
+        target.compensationAttempted = result.compensationAttempted ?? null;
+        target.compensationSucceeded = result.compensationSucceeded ?? null;
+        target.requiresManualReview = result.requiresManualReview ?? null;
+        target.error = result.error ?? null;
+        const v = result.verification;
+        target.contentVerified = (v && typeof v === 'object' && 'rootMatched' in v) ? (v.rootMatched === true && v.itemsMatched === true && v.effectsMatched === true) : null;
+        target.verdict = result.success !== true ? 'FAILED' : (result.exact === true ? 'EXACT' : 'INEXACT');
+      }
+    }
+    const targetOk = target.verdict === 'EXACT';
+    if (!targetOk) reasons.push(`target-restore-${target.verdict.toLowerCase()}`);
+
+    /* ---- CREATE-bucket world actors ---- */
+    const ids = [...new Set(Object.values(tempIdMap).filter(Boolean))];
+    const created = { ids, attempted: ids.length > 0, deleteCallReturned: null, returnedIds: null, verifiedAbsent: null, stillPresent: [], unverifiable: [], error: null };
+    if (ids.length) {
+      try {
+        const deleted = await Actor.deleteDocuments(ids);
+        created.deleteCallReturned = true;
+        created.returnedIds = Array.isArray(deleted) ? deleted.map((d) => d?.id ?? d?._id).filter(Boolean) : null;
+      } catch (createRollbackErr) {
+        created.deleteCallReturned = false;
+        created.error = createRollbackErr?.message ?? String(createRollbackErr);
+      }
+      // Verify by observed state wherever the state can be observed; a resolved (or thrown) call is not the evidence.
+      const registry = globalThis.game?.actors;
+      if (registry && typeof registry.get === 'function') {
+        created.stillPresent = ids.filter((id) => !!registry.get(id));
+        created.verifiedAbsent = created.stillPresent.length === 0;
+      } else {
+        created.unverifiable = [...ids];
+        created.verifiedAbsent = created.deleteCallReturned === true && created.returnedIds !== null && ids.every((id) => created.returnedIds.includes(id));
+      }
+      if (created.verifiedAbsent !== true) reasons.push(created.error ? 'created-cleanup-failed' : 'created-cleanup-unverified');
+    }
+    const createdOk = ids.length === 0 || created.verifiedAbsent === true;
+
+    /* ---- verdict over the WHOLE scope ---- */
+    const outcome = (targetOk && createdOk) ? 'FAILED_COMPENSATED' : 'INDETERMINATE';
+    let compensation;
+    if (outcome === 'FAILED_COMPENSATED') compensation = 'EXACT';
+    else if (reasons.length === 1 && reasons[0] === 'target-restore-inexact' && ids.length === 0) compensation = 'INEXACT';
+    else if ((targetOk && !createdOk) || (!targetOk && ids.length > 0 && createdOk) || target.verdict === 'INEXACT') compensation = 'PARTIAL';
+    else compensation = 'FAILED';
+
+    const rollback = { outcome, compensation, level: 'L1', legacySnapshot, reasons, target, created };
+
+    if (outcome === 'FAILED_COMPENSATED') {
+      SWSELogger.warn('ActorEngine.applyMutationPlan: rolled back to pre-plan snapshot after failure (verified exact; created actors verified removed)', {
+        actor: actor?.id, source, createdActorIds: ids
+      });
+    } else {
+      SWSELogger.error('ActorEngine.applyMutationPlan: rollback NOT verified — outcome INDETERMINATE; the actor and/or created actors may be partially changed', {
+        actor: actor?.id, source, compensation, reasons, targetVerdict: target.verdict, targetCode: target.code, legacySnapshot,
+        createdActorIds: ids, createdStillPresent: created.stillPresent
+      });
+    }
+    return rollback;
   },
 
   /**
