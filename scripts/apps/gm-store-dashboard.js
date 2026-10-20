@@ -565,6 +565,14 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     const approval = this.pendingApprovals[index];
     if (!approval) return;
 
+    // TI-3: the rendered index may be stale; act only on a request that is still in the live queue (strict identity).
+    const { GMApprovalOperationsService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js');
+    if (!GMApprovalOperationsService.isStillPending(approval, index)) {
+      ui.notifications.error('That request is no longer pending (it may already have been approved, denied or removed).');
+      this.render();
+      return;
+    }
+
     const ownerActor = game.actors.get(approval.ownerActorId);
     const draftActor = game.actors.get(approval.draftActorId);
     if (!ownerActor) {
@@ -683,23 +691,35 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     if (!confirmed) return;
 
     try {
-      // Delete draft actor
-      const draftActor = game.actors.get(approval.draftActorId);
-      if (draftActor) {
-        await draftActor.delete();
+      // TI-3 (review TI3-R2): this dashboard used to delete the draft actor addressed by its rendered `data-index`. The destructive decision is now the shared,
+      // lock-protected, identity-checked core: a stale index, an approved asset, or an unconfirmable draft never deletes an actor.
+      const { GMApprovalOperationsService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js');
+      const decision = await GMApprovalOperationsService.decideDenial({ approvalId: approval.id || null, index });
+      if (decision.outcome !== 'denied') {
+        const reasons = {
+          missing: 'That request is no longer pending. Nothing was deleted.',
+          ambiguous: 'This request cannot be identified by list position. Reload and try again. Nothing was deleted.',
+          busy: 'An approval for this asset is in progress. Nothing was deleted.',
+          uncertain: 'The draft could not be confirmed as unapproved, so it was NOT deleted and the request was left in the queue.',
+          'stale-approved': 'That asset was already approved; the stale request was removed and the asset was kept.'
+        };
+        ui.notifications.warn(reasons[decision.outcome] ?? 'Denial was not applied.');
+        this.render();
+        return;
       }
 
-      // Remove from pending queue. Denial never touches the ledger or deducts credits.
-      await this._removePendingApproval(approval, index);
-
-      // Emit Holonet denial hook
+      // Emit Holonet denial hook (presentation: a throwing listener must not report a completed denial as failed)
       if (ownerActor) {
-        Hooks.callAll?.('swseCustomPurchaseDenied', {
-          approval,
-          actor: ownerActor,
-          decidedBy: game.user?.name ?? 'GM',
-          noCreditsChanged: true
-        });
+        try {
+          Hooks.callAll?.('swseCustomPurchaseDenied', {
+            approval,
+            actor: ownerActor,
+            decidedBy: game.user?.name ?? 'GM',
+            noCreditsChanged: true
+          });
+        } catch (hookError) {
+          SWSELogger.warn('SWSE Store | swseCustomPurchaseDenied listener failed; the denial itself is complete', hookError);
+        }
       }
 
       ui.notifications.info(`Denied: ${approval.draftData.name}`);

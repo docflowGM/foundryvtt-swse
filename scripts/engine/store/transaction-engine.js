@@ -1151,6 +1151,22 @@ export class TransactionEngine {
    * the credit deduction, owner actor linkage, TransactionEngine audit, and
    * draft actor ownership transfer are coordinated from one commerce boundary.
    */
+  /** The lock that serializes every DECISION about one (owner, draft asset) pair: the approval transaction and a denial take the same key. */
+  static #assetApprovalLockKey(ownerActorId, assetActorId, transactionContext = 'store-custom-approval') {
+    return `${ownerActorId}:${assetActorId}:${transactionContext}:asset-approval`;
+  }
+
+  /**
+   * TI-3 (review TI3-R2): acquire the decision lock for an (owner, draft asset) pair. Returns a release function, or null when an approval (or another
+   * decision) for that pair is already running. Same client only (L1); it makes a denial's check-and-delete exclusive with an approval of the same asset.
+   */
+  static acquireAssetDecisionLock(ownerActorId, assetActorId, transactionContext = 'store-custom-approval') {
+    const key = this.#assetApprovalLockKey(ownerActorId, assetActorId, transactionContext);
+    if (this._mutationLocks.has(key)) return null;
+    this._mutationLocks.add(key);
+    return () => { this._mutationLocks.delete(key); };
+  }
+
   static async executeAssetApprovalTransaction(context = {}, options = {}) {
     const {
       actor,
@@ -1191,7 +1207,7 @@ export class TransactionEngine {
       return { success: false, transactionId, error: 'Invalid approval cost' };
     }
 
-    const lockKey = `${ownerActor.id}:${freshAsset.id}:${transactionContext}:asset-approval`;
+    const lockKey = this.#assetApprovalLockKey(ownerActor.id, freshAsset.id, transactionContext);
     if (this._creditReconciliations.has(ownerActor.id)) {
       return { success: false, transactionId, error: 'Credits for this actor are being reconciled; try again in a moment.' };
     }

@@ -80,7 +80,7 @@ const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-s
 {
   const world = new Map(); const settingsStore = { pendingCustomPurchases: [] }; const deleted = [];
   const mkOwner = (credits = 1000) => { const a = { id: 'owner', name: 'Owner', type: 'character', isOwner: true, system: { credits, ownedActors: [] }, flags: {}, items: [], ownership: {}, getFlag(sc, k) { return this.flags?.[sc]?.[k]; }, toObject() { return JSON.parse(JSON.stringify({ system: this.system, flags: this.flags })); } }; return a; };
-  const mkDroid = (id, name, extra = {}) => { const a = { id, name, type: 'droid', isOwner: true, uuid: `Actor.${id}`, system: { credits: 0, droidSystems: { stateMode: 'PENDING', ownerActorId: 'owner', credits: { spent: 300 } }, ...(extra.system || {}) }, flags: { 'foundryvtt-swse': {} }, items: [], ownership: {}, getFlag(sc, k) { return this.flags?.[sc]?.[k]; }, toObject() { return JSON.parse(JSON.stringify({ system: this.system, flags: this.flags, name: this.name, type: this.type })); }, async delete() { deleted.push(this.id); world.delete(this.id); } }; return a; };
+  const mkDroid = (id, name, extra = {}) => { const a = { id, name, type: 'droid', isOwner: true, uuid: `Actor.${id}`, system: { credits: 0, droidSystems: { stateMode: 'PENDING', ownerActorId: 'owner', credits: { spent: 300 } }, storeAcquisition: { pendingApproval: true }, ...(extra.system || {}) }, flags: { 'foundryvtt-swse': { pendingApproval: true, draftOnly: true } }, items: [], ownership: {}, getFlag(sc, k) { return this.flags?.[sc]?.[k]; }, toObject() { return JSON.parse(JSON.stringify({ system: this.system, flags: this.flags, name: this.name, type: this.type })); }, async delete() { deleted.push(this.id); world.delete(this.id); } }; return a; };
   const modelApply = async (a, plan) => { for (const [k, v] of Object.entries(plan.set ?? {})) setPath(a, k, v); for (const [k, v] of Object.entries(plan.update ?? {})) { if (k !== 'items') setPath(a, k, v); } };
   ActorEngine.applyMutationPlan = modelApply;
   ActorEngine.updateActor = async (a, data) => { for (const [k, v] of Object.entries(data)) setPath(a, k, v); return a; };
@@ -120,7 +120,7 @@ const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-s
     // another GM approves A first; this GM's stale button still says "request A"
     assert.equal(await Svc.approveRequest(host, 'custom-id:pending_a'), true); assert.equal(owner.system.credits, 700); assert.deepEqual(queue().map((e) => e.id), ['pending_b']);
     const stale = await Svc.approveRequest(host, 'custom-id:pending_a');
-    assert.equal(stale, false, 'the stale id no longer names any pending request'); assert.equal(owner.system.credits, 700, 'and B (now at index 0) was NOT approved in its place'); assert.deepEqual(queue().map((e) => e.id), ['pending_b']); assert.equal(dB.system.storeAcquisition, undefined);
+    assert.equal(stale, false, 'the stale id no longer names any pending request'); assert.equal(owner.system.credits, 700, 'and B (now at index 0) was NOT approved in its place'); assert.deepEqual(queue().map((e) => e.id), ['pending_b']); assert.equal(dB.system.storeAcquisition?.transactionId, undefined, 'B was not approved (no acquisition record)');
     // B approves normally by its own id
     assert.equal(await Svc.approveRequest(host, 'custom-id:pending_b'), true); assert.equal(owner.system.credits, 300);
     ok('TI-3.4a (TX-10): custom approvals are addressed by custom-id:<id>; a stale id never approves whatever record now occupies its old queue slot');
@@ -179,6 +179,58 @@ const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-s
     const again = await silent(() => Svc.approveDroid(host, 'dr9')); assert.equal(again, false); assert.equal(owner.system.credits, 700);
     ok('TI-3.4d (TX-10): after a committed custom or droid approval, a throwing hook, a failing history mirror or a failing queue removal are warnings — never "Failed to approve" — and a retry cannot charge twice');
   }
+
+  // ---- review corrections (TI3-R1 / TI3-R2) ------------------------------------------------------------------------------------------------------
+  // 3.6 TI3-R1: queue removal never falls back to an old index for a record that has an id
+  {
+    setup(); const owner = mkOwner(1000); const dA = mkDroid('dA', 'Droid A'); const dB = mkDroid('dB', 'Droid B'); world.set('owner', owner); world.set('dA', dA); world.set('dB', dB);
+    const A = pending('pending_a', dA, 300); const B = pending('pending_b', dB, 400);
+    // (a) A was removed by another operation and B moved into A's old slot: removing "A" by its stale index must not remove B
+    queue().push(B); let removed = await Svc._removeApprovalFromQueue(A, 0, null);
+    assert.equal(removed, false, 'an id that is no longer in the queue removes nothing'); assert.deepEqual(queue().map((e) => e.id), ['pending_b'], 'B (now at the old index) is NOT removed');
+    // (b) end to end: while A's approval transaction runs, another GM removes A; B shifts into index 0; the cleanup after the commit must leave B alone
+    setup(); const o2 = mkOwner(1000); const a2 = mkDroid('dA', 'Droid A'); const b2 = mkDroid('dB', 'Droid B'); world.set('owner', o2); world.set('dA', a2); world.set('dB', b2);
+    queue().push(pending('pending_a', a2, 300), pending('pending_b', b2, 400));
+    const realApply = ActorEngine.applyMutationPlan; let shifted = false;
+    ActorEngine.applyMutationPlan = async (a, p, o) => { if (!shifted) { shifted = true; settingsStore.pendingCustomPurchases = settingsStore.pendingCustomPurchases.filter((e) => e.id !== 'pending_a'); } return realApply(a, p, o); };
+    const ok1 = await Svc.approvePendingCustom(host, 0); ActorEngine.applyMutationPlan = realApply;
+    assert.equal(ok1, true, 'A was approved (committed)'); assert.deepEqual(queue().map((e) => e.id), ['pending_b'], 'B was not removed by the stale index cleanup'); assert.equal(b2.system.storeAcquisition?.transactionId, undefined, 'and B was not approved');
+    // (c) an id-less LEGACY record may use its index only while the entry there is still byte-identical
+    const legacyA = { type: 'droid', ownerActorId: 'owner', draftActorId: 'dA', costCredits: 1, draftData: { name: 'x' } }; const legacyB = { ...legacyA, costCredits: 2 };
+    settingsStore.pendingCustomPurchases = [legacyA, legacyB]; assert.equal(await Svc._removeApprovalFromQueue(legacyB, 1, null), true); assert.deepEqual(queue(), [legacyA]);
+    settingsStore.pendingCustomPurchases = [legacyA, { ...legacyA, costCredits: 99 }]; assert.equal(await Svc._removeApprovalFromQueue(legacyB, 1, null), false, 'a different record in that slot is not removed'); assert.equal(queue().length, 2);
+    ok('TI3-R1: queue removal for a record with an id matches that id or refuses (never the old index); an id-less legacy record may use its index only while the entry there is identical');
+  }
+
+  // 3.7 TI3-R2: the destructive denial revalidates identity, pending state and acquisition under the decision lock
+  {
+    // (a) a legacy index key cannot identify an id-bearing record: refused, nothing deleted
+    setup(); let owner = mkOwner(1000); let dA = mkDroid('dA', 'Droid A'); world.set('owner', owner); world.set('dA', dA); queue().push(pending('pending_a', dA, 300));
+    let r = await silent(() => Svc.denyRequest(host, 'custom:0', 'stale index')); assert.equal(r, false); assert.deepEqual(deleted, [], 'no actor deleted for an ambiguous index'); assert.equal(queue().length, 1); assert.ok(notes.error.some((m) => /list position|reload/i.test(m)));
+    // (b) the queue changed between the first read and the lock: the request is gone -> nothing deleted (and a different request in its slot is not touched)
+    setup(); owner = mkOwner(1000); dA = mkDroid('dA', 'Droid A'); const dB = mkDroid('dB', 'Droid B'); world.set('owner', owner); world.set('dA', dA); world.set('dB', dB);
+    queue().push(pending('pending_a', dA, 300), pending('pending_b', dB, 400));
+    const realAcquire = TransactionEngine.acquireAssetDecisionLock;
+    TransactionEngine.acquireAssetDecisionLock = (...a) => { settingsStore.pendingCustomPurchases = settingsStore.pendingCustomPurchases.filter((e) => e.id !== 'pending_a'); return realAcquire.apply(TransactionEngine, a); };
+    r = await silent(() => Svc.denyRequest(host, 'custom-id:pending_a', 'x')); TransactionEngine.acquireAssetDecisionLock = realAcquire;
+    assert.equal(r, false); assert.deepEqual(deleted, [], 'A was removed by someone else first: its draft is not deleted by this stale denial'); assert.deepEqual(queue().map((e) => e.id), ['pending_b'], 'B untouched');
+    // (c) an approval of this very asset is in flight: the denial refuses (busy) and keeps everything; once it commits, a later denial only drops the stale entry
+    setup(); owner = mkOwner(1000); dA = mkDroid('dA', 'Droid A'); world.set('owner', owner); world.set('dA', dA); queue().push(pending('pending_a', dA, 300));
+    let release; const gate = new Promise((res) => { release = res; }); const realApply = ActorEngine.applyMutationPlan; let started = false;
+    ActorEngine.applyMutationPlan = async (a, p, o) => { started = true; await gate; return realApply(a, p, o); };
+    const approving = Svc.approveRequest(host, 'custom-id:pending_a'); for (let k = 0; k < 500 && !started; k += 1) await new Promise((res) => setTimeout(res, 1));
+    r = await silent(() => Svc.denyRequest(host, 'custom-id:pending_a', 'race')); assert.equal(r, false, 'denial refused while the approval of the same asset is running'); assert.deepEqual(deleted, []); assert.ok(world.get('dA')); assert.ok(notes.warn.some((m) => /in progress/i.test(m)));
+    release(); assert.equal(await approving, true); ActorEngine.applyMutationPlan = realApply; assert.equal(owner.system.credits, 700);
+    // (d) a draft that can be neither confirmed as pending nor as acquired is never deleted
+    setup(); owner = mkOwner(1000); dA = mkDroid('dA', 'Droid A'); dA.flags['foundryvtt-swse'] = {}; dA.system.storeAcquisition = {}; world.set('owner', owner); world.set('dA', dA); queue().push(pending('pending_a', dA, 300));
+    r = await silent(() => Svc.denyRequest(host, 'custom-id:pending_a', 'x')); assert.equal(r, false); assert.deepEqual(deleted, [], 'uncertain pending state: nothing deleted'); assert.equal(queue().length, 1, 'and the request stays queued for manual review'); assert.ok(notes.warn.some((m) => /could not be confirmed|NOT deleted/i.test(m)));
+    // (e) the legacy GM Store Dashboard deletes through the SAME guarded core and checks identity before approving
+    const src = (await import('node:fs')).readFileSync(new URL('../scripts/apps/gm-store-dashboard.js', import.meta.url), 'utf8');
+    const denySrc = src.slice(src.indexOf('async _denyPendingCustom('), src.indexOf('async _denyPendingCustom(') + 3500);
+    assert.match(denySrc, /decideDenial\(/); assert.doesNotMatch(denySrc, /draftActor\.delete\(\)/, 'the dashboard no longer deletes a draft by its rendered index');
+    assert.match(src.slice(src.indexOf('async _approvePendingCustom('), src.indexOf('async _approvePendingCustom(') + 900), /isStillPending\(/);
+    ok('TI3-R2: a denial is refused for an ambiguous index, a request that left the queue, an approval in flight, or an unconfirmable draft; the dashboard uses the same guarded core');
+  }
 }
 
 // ------------------------------------------------------------------------------------------------ 3.5 TX-09 sub-gap / TI-N6: progression post-apply
@@ -203,6 +255,30 @@ const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-s
     // the healthy path is unchanged
     globalThis.SWSE = { ActorEngine: engine(async () => ({})) }; calls.apply = calls.update = 0; r = await ProgressionFinalizer._applyMutationPlan(mkActor(), plan);
     assert.equal(r.success, true); assert.equal(r.postApplyWarnings, undefined); assert.equal(calls.update, 1);
+    // review TI3-R3: committed-but-incomplete is machine readable, and ONLY the suite can be repaired, idempotently, without replaying the level-up
+    {
+      const live = mkActor(); calls.apply = calls.update = 0; const writes = [];
+      const failingOnce = { fail: true };
+      globalThis.SWSE = { ActorEngine: { applyMutationPlan: async () => { calls.apply += 1; }, updateActor: async (a, data) => { calls.update += 1; writes.push(Object.keys(data)); if (failingOnce.fail) throw new Error('maneuver suite write failed'); for (const [k2, v2] of Object.entries(data)) setPath(a, k2, v2); return a; } } };
+      let r2 = await silent(() => ProgressionFinalizer._applyMutationPlan(live, plan));
+      assert.equal(r2.success, true); assert.equal(r2.committed, true); assert.equal(r2.postApplyIncomplete, true, 'distinguished from a clean finalization'); assert.equal(r2.postApplyWarnings[0].field, 'system.starshipManeuverSuite'); assert.deepEqual(r2.postApplyRepair.starshipManeuverNames, ['Evasive Action']);
+      assert.equal(calls.apply, 1, 'the plan ran once'); assert.deepEqual(live.system.starshipManeuverSuite.maneuvers, [], 'and the suite really is still incomplete');
+      // repair: no plan replay, exactly one write, only the two suite fields
+      failingOnce.fail = false; calls.apply = calls.update = 0; writes.length = 0;
+      const fix = await ProgressionFinalizer.resyncPostApplyState(live, r2.postApplyRepair);
+      assert.deepEqual(fix, { success: true, changed: true }); assert.equal(calls.apply, 0, 'the mutation plan is NOT re-applied: no feat, talent, attribute or HP grant is replayed'); assert.equal(calls.update, 1); assert.deepEqual(writes[0].sort(), ['system.starshipManeuverSuite.maneuvers', 'system.starshipManeuverSuite.max'].sort());
+      assert.deepEqual(live.system.starshipManeuverSuite.maneuvers, ['m1']);
+      // a second (and third) resync changes nothing and writes nothing: no duplicate maneuver
+      calls.update = 0; const again = await ProgressionFinalizer.resyncPostApplyState(live, r2.postApplyRepair); const third = await ProgressionFinalizer.resyncPostApplyState(live, r2.postApplyRepair);
+      assert.deepEqual(again, { success: true, changed: false }); assert.deepEqual(third, { success: true, changed: false }); assert.equal(calls.update, 0); assert.deepEqual(live.system.starshipManeuverSuite.maneuvers, ['m1'], 'no duplicate');
+      // removal ids are idempotent too
+      live.system.starshipManeuverSuite = { maneuvers: ['m1', 'm9'], max: 2 }; calls.update = 0;
+      assert.deepEqual(await ProgressionFinalizer.resyncPostApplyState(live, { starshipManeuverRemoveItemIds: ['m9'] }), { success: true, changed: true }); assert.deepEqual(live.system.starshipManeuverSuite.maneuvers, ['m1']);
+      assert.deepEqual(await ProgressionFinalizer.resyncPostApplyState(live, { starshipManeuverRemoveItemIds: ['m9'] }), { success: true, changed: false });
+      // a repair that fails reports it (never throws) and a clean finalization carries no incomplete flag
+      failingOnce.fail = true; live.system.starshipManeuverSuite = { maneuvers: [], max: 0 }; const bad = await silent(() => ProgressionFinalizer.resyncPostApplyState(live, r2.postApplyRepair)); assert.equal(bad.success, false); assert.match(bad.error, /write failed/);
+      globalThis.SWSE = { ActorEngine: engine(async () => ({})) }; const clean = await ProgressionFinalizer._applyMutationPlan(mkActor(), plan); assert.equal(clean.postApplyIncomplete, undefined); assert.equal(clean.committed, true);
+    }
     ok('TI-3.5 (TX-09 sub-gap / TI-N6): a post-apply sync failure after a COMMITTED progression plan is success + postApplyWarnings (and a "do not finalize again" notice), a failed plan is still a failure that skips the sync');
   } finally { globalThis.SWSE = saved; }
 }

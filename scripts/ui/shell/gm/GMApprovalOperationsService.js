@@ -73,7 +73,7 @@ export class GMApprovalOperationsService {
   static async denyRequest(host, key, reason = '') {
     const parsed = this.parseApprovalKey(key);
     if (parsed.kind === 'droid') return this.rejectDroid(host, parsed.actorId, reason);
-    if (parsed.kind === 'custom') return this.denyPendingCustom(host, this.resolveCustomIndex(parsed), reason);
+    if (parsed.kind === 'custom') return this.denyPendingCustom(host, this.resolveCustomIndex(parsed), reason, { expectedId: parsed.approvalId ?? null });
     if (parsed.kind === 'game') return this.denyGameSettlement(host, parsed.sessionId, reason);
     ui?.notifications?.error?.('Invalid approval request.');
     return false;
@@ -101,13 +101,69 @@ export class GMApprovalOperationsService {
 
 
 
+  /**
+   * The CURRENT queue index of `approval`. TI-3 (review TI3-R1): a record with an id is found by that id or NOT AT ALL — it never falls back to the old index,
+   * which after another operation removed it names a different request. An id-less legacy record may use the old index only if the entry there is
+   * still byte-identical to the record (the one way its identity can be established); otherwise -1.
+   */
   static _findApprovalIndexById(approvals = [], approval = {}, fallbackIndex = -1) {
     const id = String(approval?.id || '').trim();
-    if (id) {
-      const byId = approvals.findIndex((entry) => String(entry?.id || '').trim() === id);
-      if (byId >= 0) return byId;
+    if (id) return approvals.findIndex((entry) => String(entry?.id || '').trim() === id);
+    if (fallbackIndex >= 0 && fallbackIndex < approvals.length && JSON.stringify(approvals[fallbackIndex]) === JSON.stringify(approval)) return fallbackIndex;
+    return -1;
+  }
+
+  /** Whether `approval` is still in the live pending queue (strict identity, see _findApprovalIndexById). */
+  static isStillPending(approval, hintIndex = -1) {
+    return this._findApprovalIndexById(SettingsHelper.getArray('pendingCustomPurchases', []), approval, hintIndex) >= 0;
+  }
+
+  /** Evidence that a draft actor has NOT been approved: the markers the store checkout writes and approval clears. */
+  static _looksLikePendingDraft(draft) {
+    const sw = draft?.flags?.['foundryvtt-swse'] ?? {};
+    return sw.draftOnly === true || sw.pendingApproval === true || draft?.system?.storeAcquisition?.pendingApproval === true;
+  }
+
+  static _acquiredTransactionId(draft) {
+    return draft?.system?.storeAcquisition?.transactionId ?? draft?.flags?.['foundryvtt-swse']?.storeAcquisition?.transactionId ?? null;
+  }
+
+  /**
+   * The destructive half of a denial, shared by every approvals surface. TI-3 (review TI3-R2): identity, queue membership, acquisition state and pending
+   * state are all re-read UNDER the (owner, draft) decision lock — the same lock an approval of that asset takes — immediately before the delete; anything
+   * ambiguous refuses to delete an actor. Resolves { outcome, ... }:
+   *   denied | stale-approved (asset kept, stale entry removed) | missing (no longer pending) | ambiguous (an index cannot identify an id-bearing record)
+   *   | busy (an approval of this asset is running) | uncertain (cannot confirm it is still an unapproved draft: nothing deleted).
+   * Same client only (L1): another client, or a direct document write, is not coordinated.
+   */
+  static async decideDenial({ approvalId = null, index = -1, host = null } = {}) {
+    let approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    const at = approvalId ? approvals.findIndex((entry) => String(entry?.id || '').trim() === String(approvalId).trim()) : index;
+    const denial = approvals[at];
+    if (!denial) return { outcome: 'missing' };
+    if (!approvalId && String(denial.id || '').trim()) return { outcome: 'ambiguous', denial };
+
+    const release = TransactionEngine.acquireAssetDecisionLock(denial.ownerActorId, denial.draftActorId);
+    if (!release) return { outcome: 'busy', denial };
+    try {
+      approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+      const now = this._findApprovalIndexById(approvals, denial, at);
+      if (now < 0) return { outcome: 'missing', denial };
+      const draft = game.actors.get(denial.draftActorId) ?? null;
+      if (draft) {
+        const acquired = this._acquiredTransactionId(draft);
+        if (acquired) {
+          await this._removeApprovalFromQueue(denial, now, host);
+          return { outcome: 'stale-approved', denial, draft, transactionId: acquired };
+        }
+        if (!this._looksLikePendingDraft(draft)) return { outcome: 'uncertain', denial, draft };
+        await draft.delete();
+      }
+      await this._removeApprovalFromQueue(denial, now, host);
+      return { outcome: 'denied', denial, deleted: !!draft };
+    } finally {
+      release();
     }
-    return fallbackIndex >= 0 && fallbackIndex < approvals.length ? fallbackIndex : -1;
   }
 
   static _approvalModSummary(approval = {}) {
@@ -570,44 +626,47 @@ export class GMApprovalOperationsService {
     }
   }
 
-  static async denyPendingCustom(host, index, reason = '') {
-    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
-    if (index < 0 || index >= approvals.length) {
-      ui?.notifications?.error?.('Invalid approval index');
-      return false;
-    }
-
+  static async denyPendingCustom(host, index, reason = '', { expectedId = null } = {}) {
     try {
-      const denial = approvals[index];
-      const ownerActor = game.actors.get(denial.ownerActorId);
-      const draftActor = game.actors.get(denial.draftActorId);
-
-      // TI-3 (TX-10): a draft that already carries a store-acquisition record has been APPROVED and paid for — it is an owned asset now, not a draft. A stale
-      // queue entry for it must never delete it; only the stale entry is removed.
-      const alreadyApproved = draftActor?.system?.storeAcquisition?.transactionId
-        ?? draftActor?.flags?.['foundryvtt-swse']?.storeAcquisition?.transactionId
-        ?? null;
-      if (alreadyApproved) {
-        await this._removeApprovalFromQueue(denial, index, host);
-        await this._resetApprovalState(host);
-        ui?.notifications?.warn?.(`${draftActor.name} was already approved (transaction ${alreadyApproved}); the stale request was removed and the asset was kept.`);
-        return false;
+      // The destructive decision (identity, pending state, delete) is the shared core; this wrapper only reports it.
+      const result = await this.decideDenial({ approvalId: expectedId, index, host });
+      const denial = result.denial ?? null;
+      const name = denial?.draftData?.name ?? 'Custom asset';
+      switch (result.outcome) {
+        case 'missing':
+          ui?.notifications?.error?.('That request is no longer pending (it may already have been approved, denied or removed). Nothing was deleted.');
+          return false;
+        case 'ambiguous':
+          ui?.notifications?.error?.('This request was addressed by list position, which cannot identify it. Reload the approvals list and try again. Nothing was deleted.');
+          return false;
+        case 'busy':
+          ui?.notifications?.warn?.(`An approval for ${name} is in progress; try again in a moment. Nothing was deleted.`);
+          return false;
+        case 'uncertain':
+          ui?.notifications?.warn?.(`${result.draft?.name ?? name} could not be confirmed as an unapproved draft, so it was NOT deleted and the request was left in the queue. Review it manually.`);
+          return false;
+        case 'stale-approved':
+          await this._afterCommit([], 'refresh', () => this._resetApprovalState(host));
+          ui?.notifications?.warn?.(`${result.draft.name} was already approved (transaction ${result.transactionId}); the stale request was removed and the asset was kept.`);
+          return false;
+        case 'denied': {
+          const failures = [];
+          await this._afterCommit(failures, 'denied hook', async () => {
+            Hooks.callAll?.('swseCustomPurchaseDenied', {
+              approval: denial,
+              actor: game.actors.get(denial.ownerActorId),
+              decidedBy: game.user?.name ?? 'GM',
+              reason,
+              noCreditsChanged: true
+            });
+          });
+          await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host));
+          this._reportCommitted(failures, `Denied: ${name}${reason ? ` — ${reason}` : ''}`);
+          return true;
+        }
+        default:
+          return false;
       }
-
-      if (draftActor) await draftActor.delete();
-      await this._removeApprovalFromQueue(denial, index, host);
-
-      Hooks.callAll?.('swseCustomPurchaseDenied', {
-        approval: denial,
-        actor: ownerActor,
-        decidedBy: game.user?.name ?? 'GM',
-        reason,
-        noCreditsChanged: true
-      });
-
-      await this._resetApprovalState(host);
-      ui?.notifications?.info?.(`Denied: ${denial.draftData?.name ?? 'Custom asset'}${reason ? ` — ${reason}` : ''}`);
-      return true;
     } catch (err) {
       SWSELogger.error('[GMApprovalOperationsService] Error denying custom purchase:', err);
       ui?.notifications?.error?.(`Failed to deny: ${err.message}`);
