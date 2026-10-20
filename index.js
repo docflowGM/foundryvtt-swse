@@ -19,6 +19,7 @@ import { SWSEItemBase } from "./scripts/items/base/swse-item-base.js";
 import { SWSECombatDocument } from "./scripts/combat/swse-combat.js";
 import { SWSECombatant } from "./scripts/combat/swse-combatant.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
+import { registerCP23C4ObservationSetting } from "./scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js";
 import { registerForceTraditionHouseRuleSettings } from "./scripts/settings/force-tradition-house-rules.js";
 import { registerCustomContentApprovalSettings } from "./scripts/settings/custom-content-approval.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
@@ -172,6 +173,7 @@ Hooks.once("init", async () => {
   registerForceTraditionHouseRuleSettings();
   registerCustomContentApprovalSettings();
   await registerSystemSettings();
+  registerCP23C4ObservationSetting(); // Unverified audit observations only; no trust or receipt issuer
 
   registerInitHooks();
   // NOTE: store-sheet header hook is registered by registerInitHooks() via ui-hooks.js (single owner).

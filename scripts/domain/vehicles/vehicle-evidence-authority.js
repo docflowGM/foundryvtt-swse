@@ -143,3 +143,7 @@ export {CP23C_RECEIPT_STATE,canonicalCP23CJson,draftCP23CSnapshot,evaluateCP23CD
  */
 export {CP23C2_STATUS,assessCP23C2ConfigurationParity,inspectCP23C2NativeInstallCandidate}
   from './vehicle-cp23c2-installation-preflight.js';
+
+/** CP23-C4 GM-owned world observation ledger: never a stock installation receipt. */
+export {CP23C4_SCHEMA,emptyCP23C4Ledger,validateCP23C4Ledger,readCP23C4ObservationLedger}
+  from './vehicle-cp23c4-gm-observation-ledger.js';

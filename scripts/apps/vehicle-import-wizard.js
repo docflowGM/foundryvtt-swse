@@ -2,6 +2,7 @@ import { VehiclePackDataLoader } from "/systems/foundryvtt-swse/scripts/core/veh
 import { VehicleImportEngine } from "/systems/foundryvtt-swse/scripts/engine/import/vehicle-import-engine.js";
 import { probeControlledVehicleImport } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-cp9c-actor-provenance-probe.js";
 import { inspectCP21LegacyPackCandidate } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-evidence-authority.js";
+import { recordCP23C4UnverifiedImport } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js";
 import { observeCP23ImportedVehicle } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-cp23-pack-provenance-probe.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -313,6 +314,22 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
         }
       } catch (error) {
         console.warn('[SWSE][CP23] Diagnostic failed closed:', error);
+      }
+      // CP23-C4: optional GM WORLD log of a genuinely-read legacy document.
+      // Never an authenticated stock receipt; failure must not grant trust
+      // or roll back an otherwise completed legacy import.
+      try {
+        const observation = await recordCP23C4UnverifiedImport({
+          actor: this.actor,
+          sourceDocument: this.state.selectedDocument,
+          packName: this.state.selectedEntry?.packName,
+          mode: this.state.mode
+        });
+        if (observation.status === 'UNVERIFIED_OBSERVATION_RECORDED') {
+          console.info('[SWSE][CP23-C4] Logged unverified legacy import; stock attacks remain blocked:', observation);
+        }
+      } catch (error) {
+        console.warn('[SWSE][CP23-C4] GM audit logging unavailable; no source authority granted:', error);
       }
       ui.notifications.info(`Imported ${this.state.selectedDocument.name} into ${this.actor.name}.`);
       this.callback?.();
