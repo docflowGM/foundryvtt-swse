@@ -91,11 +91,12 @@ export class RollCore {
         // The Force Point (if any) was already spent to pay for forcePointBonus
         // above; since this roll never happened, refund it rather than leaving
         // the actor short a point for a bonus they never received.
-        let forcePointRefundFailed = false;
+        let forcePointRefundFailed = false; let forcePointRefundIndeterminate = false;
         if (forcePointDetails?.success && forcePointDetails.spent > 0) {
-          forcePointRefundFailed = !(await this._refundForcePoints(actor, forcePointDetails.spent, 'main-roll-execution-failed', forcePointDetails)).ok;
+          const given = await this._refundForcePoints(actor, forcePointDetails.spent, 'main-roll-execution-failed', forcePointDetails);
+          forcePointRefundFailed = !given.ok; forcePointRefundIndeterminate = given.indeterminate === true;
         }
-        return { success: false, error: `Roll execution failed: ${err.message}`, domain, breakdown: {}, ...(forcePointRefundFailed ? { forcePointRefundFailed: true } : {}) };
+        return { success: false, error: `Roll execution failed: ${err.message}`, domain, breakdown: {}, ...(forcePointRefundFailed ? { forcePointRefundFailed: true } : {}), ...(forcePointRefundIndeterminate ? { forcePointRefundIndeterminate: true } : {}) };
       }
 
       const baseRollResult = this._extractBaseRoll(roll, baseDice);
@@ -217,7 +218,10 @@ export class RollCore {
         after: receipt.after,
         reason: receipt.reason,
         rolledBack: receipt.rolledBack === true,
-        refundFailed: receipt.refundFailed === true   // the point is still spent: the caller must say so
+        refundFailed: receipt.refundFailed === true,   // the point is still spent: the caller must say so
+        refundIndeterminate: receipt.refundIndeterminate === true,
+        spendIndeterminate: receipt.spendIndeterminate === true,   // the spend threw after the pools changed: unresolved, not "nothing spent"
+        evidence: receipt.evidence ?? null
       };
     }
 

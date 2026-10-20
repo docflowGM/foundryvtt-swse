@@ -39,7 +39,7 @@ assert.match(coordinator, /rolling back spend/);
 // 4. The receipt must never claim `spent` beyond what was actually deducted;
 //    a failure receipt reports spent: 0, not the requested amount.
 // (TI-1: `spent` defaults to 0 and is non-zero only when a refund FAILED, i.e. exactly what is still deducted)
-assert.match(coordinator, /spent = 0 \}\) \{\s*\n\s*return \{\s*\n\s*success: false,\s*\n\s*requested,\s*\n\s*spent,/);
+assert.match(coordinator, /spent = 0(?:, [\w =]+)* \}\) \{\s*\n\s*return \{\s*\n\s*success: false,\s*\n\s*requested,\s*\n\s*spent,/);
 
 // 5. ForcePointsService remains the pure rules/calculation authority — no
 //    mutation methods live there.

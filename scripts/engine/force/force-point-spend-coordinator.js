@@ -17,7 +17,7 @@
  */
 
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
-import { snapshotBonusEntries, receiptFromSpend, giveBack } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-receipt.js";
+import { snapshotBonusEntries, receiptFromSpend, giveBack, observePools, poolsChanged } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-receipt.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ROLL_CONTRIBUTION_KIND, ROLL_TRANSFORM_OPERATION, makeRollContribution } from "/systems/foundryvtt-swse/scripts/engine/roll/expression/roll-contribution-types.js";
 import { applyRollTransforms } from "/systems/foundryvtt-swse/scripts/engine/roll/expression/roll-transform-resolver.js";
@@ -116,10 +116,22 @@ export class ForcePointSpendCoordinator {
     // formula, never a silently-degraded fallback.
     let spendReceipt;
     const beforeBonus = snapshotBonusEntries(actor);   // so a refund can give back exactly what this spend took (bonus points as bonus points)
+    const observedBefore = observePools(actor);
     try {
       spendReceipt = await ActorEngine.spendForcePoints(actor, requested);
     } catch (err) {
       swseLogger.error('[ForcePointSpendCoordinator] ActorEngine.spendForcePoints threw', err);
+      const observedAfter = observePools(actor);
+      if (poolsChanged(observedBefore, observedAfter)) {
+        // The spend threw AFTER the observable pools changed: it may have applied fully or partly. "Nothing was spent" would be a guess, and an automatic
+        // compensation would be a second guess — so neither: report an unresolved outcome with the evidence and let a person reconcile it.
+        const deducted = Math.max(0, (observedBefore.normal - observedAfter.normal) + (observedBefore.bonus.reduce((n, e) => n + e[1], 0) - observedAfter.bonus.reduce((n, e) => n + e[1], 0)));
+        return this._failure({
+          requested, before, after: observedAfter.normal,
+          reason: `Force Point spend could NOT be confirmed (${err.message}); the pools changed, so it may have been charged. Check the Force Point pool before spending again.`,
+          domain, spent: deducted, spendIndeterminate: true, evidence: { before: observedBefore, after: observedAfter, error: err.message }
+        });
+      }
       return this._failure({ requested, before, after: before, reason: `Force Point spend failed: ${err.message}`, domain });
     }
 
@@ -138,6 +150,8 @@ export class ForcePointSpendCoordinator {
         domain,
         rolledBack: actuallySpent > 0 && refund.ok,
         refundFailed: !refund.ok,
+        refundIndeterminate: refund.indeterminate === true,
+        evidence: refund.evidence ?? null,
         spent: refund.ok ? 0 : actuallySpent
       });
     }
@@ -153,10 +167,12 @@ export class ForcePointSpendCoordinator {
         requested,
         before,
         after: refund.ok ? before : Math.max(0, before - actuallySpent),
-        reason: `Force die roll failed: ${err.message}${refund.ok ? '' : '; the Force Point could NOT be refunded automatically'}`,
+        reason: `Force die roll failed: ${err.message}${refund.ok ? '' : (refund.indeterminate ? '; the refund could NOT be confirmed — check the Force Point pool before spending again' : '; the Force Point could NOT be refunded automatically')}`,
         domain,
         rolledBack: refund.ok,
         refundFailed: !refund.ok,
+        refundIndeterminate: refund.indeterminate === true,
+        evidence: refund.evidence ?? null,
         spent: refund.ok ? 0 : actuallySpent
       });
     }
@@ -209,7 +225,7 @@ export class ForcePointSpendCoordinator {
     return given;
   }
 
-  static _failure({ requested, before, after, reason, domain, rolledBack = false, refundFailed = false, spent = 0 }) {
+  static _failure({ requested, before, after, reason, domain, rolledBack = false, refundFailed = false, spent = 0, spendIndeterminate = false, refundIndeterminate = false, evidence = null }) {
     return {
       success: false,
       requested,
@@ -221,7 +237,10 @@ export class ForcePointSpendCoordinator {
       bonus: 0,
       roll: null,
       rolledBack,
-      refundFailed
+      refundFailed,
+      spendIndeterminate,
+      refundIndeterminate,
+      evidence
     };
   }
 }

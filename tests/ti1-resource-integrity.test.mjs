@@ -57,6 +57,94 @@ const silent = async (fn) => { const e = console.error; const w = console.warn; 
   } finally { restore(); globalThis.Roll = undefined; }
 }
 
+// ------------------------------------------------------------------------------------------------ TI1-R1 / TI1-R2 receipt concurrency, uncertain writes, uncertain spend
+{
+  const ctl = { gate: null, mode: 'ok', gains: [], bonusWrites: 0, spendMode: 'ok' };   // mode: ok | fail (throws, nothing applied) | applyThenThrow
+  const writer = async (actor, data) => {
+    const isBonus = 'flags.swse.bonusForcePoints' in data; if (isBonus) ctl.bonusWrites += 1;
+    if (ctl.spendMode === 'applyThenThrow' && !ctl.refunding) { for (const [k, v] of Object.entries(data)) setPath(actor, k, v); throw new Error('spend applied but the call threw'); }
+    if (ctl.spendMode === 'fail' && !ctl.refunding) throw new Error('spend rejected');
+    if (ctl.refunding) {
+      if (ctl.gate) await ctl.gate;
+      if (ctl.mode === 'fail') throw new Error('refund rejected');
+      if (ctl.mode === 'failBonus' && isBonus) throw new Error('bonus refund rejected');
+      if (ctl.mode === 'applyThenThrow') { for (const [k, v] of Object.entries(data)) setPath(actor, k, v); throw new Error('refund applied but the call threw'); }
+    }
+    for (const [k, v] of Object.entries(data)) setPath(actor, k, v); return actor;
+  };
+  const { fake: engine, restore } = await graftRealForcePointMethods(writer);
+  const realGain = engine.gainForcePoints; engine.gainForcePoints = async (a, x) => { ctl.gains.push(x); return realGain.call(engine, a, x); };
+  const { ForcePointSpendCoordinator: C } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-coordinator.js');
+  const R = await import('/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-receipt.js');
+  const mk = ({ normal = 3, bonus = null } = {}) => { const a = { id: 'fp9', name: 'FP Tester', type: 'character', system: { forcePoints: { value: normal, max: 5 }, level: 5, heroicLevel: 5, attributes: {} }, flags: { swse: bonus ? { bonusForcePoints: bonus } : {} } }; a.getFlag = (s, k) => a.flags?.[s]?.[k]; return a; };
+  const bonusOf = (a) => Object.fromEntries((a.flags.swse.bonusForcePoints?.entries ?? []).map((e) => [e.id, e.value]));
+  const reset = () => { Object.assign(ctl, { gate: null, mode: 'ok', gains: [], bonusWrites: 0, spendMode: 'ok', refunding: false }); };
+  const until = async (cond) => { for (let i = 0; i < 5000 && !cond(); i += 1) { await new Promise((r) => setTimeout(r, 1)); } assert.ok(cond(), 'awaited condition reached'); };
+  // a receipt for a spend that took 1 normal point (pool 3 -> 2) / 1 bonus point (bonus 1 -> 0) / both (a 2-point spend)
+  const spendFor = async (a, amount) => { const before = R.snapshotBonusEntries(a); const res = await engine.spendForcePoints(a, amount); return { res, receipt: R.receiptFromSpend(before, a, res) }; };
+  try {
+    // --- R1a: two simultaneous refunds of one receipt give back ONCE and share one truthful result (normal)
+    reset(); { const a = mk({ normal: 3 }); const { receipt } = await spendFor(a, 1); assert.equal(a.system.forcePoints.value, 2);
+      let release; ctl.gate = new Promise((r) => { release = r; }); ctl.refunding = true;
+      const p1 = R.giveBack(engine, a, receipt); const p2 = R.giveBack(engine, a, receipt); await until(() => ctl.gains.length >= 1); release(); const [x, y] = await Promise.all([p1, p2]);
+      assert.deepEqual([x.ok, y.ok], [true, true]); assert.deepEqual(ctl.gains, [1], 'the normal point is refunded ONCE'); assert.equal(a.system.forcePoints.value, 3);
+      const z = await R.giveBack(engine, a, receipt); assert.equal(z.ok, true, 'a later call reports the same settled outcome'); assert.deepEqual(ctl.gains, [1]); assert.equal(a.system.forcePoints.value, 3); }
+    // --- R1a: bonus and mixed pools
+    reset(); { const bonus = { entries: [{ id: 'b1', source: 'Granted', value: 1, max: 1 }], value: 1, max: 1 }; const a = mk({ normal: 3, bonus }); const { receipt } = await spendFor(a, 2);   // bonus first, then one normal
+      assert.deepEqual(bonusOf(a), {}); assert.equal(a.system.forcePoints.value, 2);   // a depleted bonus entry is removed by the authority
+      ctl.refunding = true; const [x, y] = await Promise.all([R.giveBack(engine, a, receipt), R.giveBack(engine, a, receipt)]);
+      assert.deepEqual([x.ok, y.ok], [true, true]); assert.deepEqual(bonusOf(a), { b1: 1 }, 'the bonus point returned to the BONUS pool, once'); assert.equal(a.system.forcePoints.value, 3, 'the normal point returned to the normal pool, once'); assert.deepEqual(ctl.gains, [1]); assert.equal(ctl.bonusWrites >= 1 && ctl.bonusWrites <= 2, true); }
+    // --- R1a: a concurrent unrelated change survives the refund
+    reset(); { const a = mk({ normal: 3 }); const { receipt } = await spendFor(a, 1); a.system.forcePoints.value += 1;   // gained elsewhere
+      ctl.refunding = true; await R.giveBack(engine, a, receipt); assert.equal(a.system.forcePoints.value, 4, 'relative refund preserves the unrelated change'); }
+    // --- R1b: partial progress is kept: normal refunded, bonus write fails cleanly -> retry repeats ONLY the bonus part
+    reset(); { const bonus = { entries: [{ id: 'b1', source: 'Granted', value: 1, max: 1 }], value: 1, max: 1 }; const a = mk({ normal: 3, bonus }); const { receipt } = await spendFor(a, 2);
+      ctl.refunding = true; ctl.mode = 'failBonus'; const first = await silent(() => R.giveBack(engine, a, receipt));
+      assert.equal(first.ok, false); assert.notEqual(first.indeterminate, true, 'nothing changed on the failed bonus write: a clean, retryable failure'); assert.equal(a.system.forcePoints.value, 3, 'the normal part completed'); assert.deepEqual(bonusOf(a), {});
+      ctl.mode = 'ok'; const second = await R.giveBack(engine, a, receipt); assert.equal(second.ok, true); assert.deepEqual(ctl.gains, [1], 'the normal part is NOT repeated'); assert.deepEqual(bonusOf(a), { b1: 1 }); assert.equal(a.system.forcePoints.value, 3); }
+    // --- R1b: a refund write that APPLIED and then threw is indeterminate: no automatic retry, no second refund
+    reset(); { const a = mk({ normal: 3 }); const { receipt } = await spendFor(a, 1); ctl.refunding = true; ctl.mode = 'applyThenThrow';
+      const first = await silent(() => R.giveBack(engine, a, receipt)); assert.equal(first.ok, false); assert.equal(first.indeterminate, true, 'an uncertain write is reported as indeterminate'); assert.ok(first.evidence, 'with evidence for reconciliation'); assert.equal(a.system.forcePoints.value, 3, 'the refund is observable');
+      ctl.mode = 'ok'; const again = await R.giveBack(engine, a, receipt); assert.equal(again.ok, false); assert.equal(again.indeterminate, true, 'a retry does not repeat or "fix" an unconfirmed refund'); assert.deepEqual(ctl.gains, [1], 'gainForcePoints was called exactly once'); assert.equal(a.system.forcePoints.value, 3, 'no double refund'); }
+    // --- R1b through the coordinator and RollCore consumers
+    reset(); { globalThis.Roll = class { async evaluate() { throw new Error('simulated roll failure'); } };
+      const a = mk({ normal: 3 }); ctl.mode = 'applyThenThrow'; const origEval = globalThis.Roll;
+      // the refund runs after the failed roll; make only the refund phase ambiguous
+      const realSpend = engine.spendForcePoints; engine.spendForcePoints = async (...x) => { const r = await realSpend.apply(engine, x); ctl.refunding = true; return r; };
+      const r = await silent(() => C.rollAndSpend(a, { amount: 1, reason: 'ti1', domain: 'skill.test' })); engine.spendForcePoints = realSpend; globalThis.Roll = undefined;
+      assert.equal(r.success, false); assert.equal(r.rolledBack, false); assert.equal(r.refundFailed, true); assert.equal(r.refundIndeterminate, true, 'the coordinator reports an unconfirmed refund distinctly'); assert.equal(origEval === origEval, true); }
+    // --- R1a through the coordinator's refundSpend(): simultaneous callers
+    reset(); { const a = mk({ normal: 3 }); globalThis.Roll = class { constructor() { this.total = 4; } async evaluate() { return this; } };
+      const r = await C.rollAndSpend(a, { amount: 1, reason: 'ti1', domain: 'skill.test' }); globalThis.Roll = undefined; assert.equal(r.success, true); assert.equal(typeof r.refundSpend, 'function');
+      ctl.refunding = true; const [x, y] = await Promise.all([r.refundSpend('t'), r.refundSpend('t')]); assert.deepEqual([x.ok, y.ok], [true, true]); assert.deepEqual(ctl.gains, [1]); assert.equal(a.system.forcePoints.value, 3); }
+    ok('TI1-R1: a receipt refunds once under simultaneous callers (normal / bonus / mixed), keeps partial progress, preserves unrelated changes, and treats an applied-then-threw write as indeterminate (no retry, no second refund)');
+
+    // --- R2: ActorEngine.spendForcePoints applied the mutation and THEN threw: unresolved, never "nothing was spent", never auto-compensated
+    reset(); { const a = mk({ normal: 3 }); ctl.spendMode = 'applyThenThrow'; globalThis.Roll = class { constructor() { this.total = 4; } async evaluate() { return this; } };
+      const r = await silent(() => C.rollAndSpend(a, { amount: 1, reason: 'ti1', domain: 'skill.test' })); globalThis.Roll = undefined;
+      assert.equal(r.success, false); assert.equal(r.spendIndeterminate, true, 'a distinct unresolved outcome'); assert.equal(a.system.forcePoints.value, 2, 'the deduction is observable');
+      assert.equal(r.spent, 1, 'the receipt does not claim that nothing was spent'); assert.ok(r.evidence && r.evidence.before !== undefined && r.evidence.after !== undefined, 'evidence is preserved for reconciliation'); assert.equal(r.rolledBack, false);
+      assert.deepEqual(ctl.gains, [], 'an unconfirmed expenditure is not automatically compensated'); assert.equal(typeof r.refundSpend, 'undefined', 'and no automatic refund handle is offered'); }
+    // a clean spend failure (nothing changed) is still a plain failure
+    reset(); { const a = mk({ normal: 3 }); ctl.spendMode = 'fail'; const r = await silent(() => C.rollAndSpend(a, { amount: 1, reason: 'ti1', domain: 'skill.test' }));
+      assert.equal(r.success, false); assert.notEqual(r.spendIndeterminate, true); assert.equal(r.spent, 0); assert.equal(a.system.forcePoints.value, 3); }
+    // a bonus-pool deduction that threw is also detected
+    reset(); { const bonus = { entries: [{ id: 'b1', source: 'Granted', value: 1, max: 1 }], value: 1, max: 1 }; const a = mk({ normal: 3, bonus }); ctl.spendMode = 'applyThenThrow';
+      const r = await silent(() => C.rollAndSpend(a, { amount: 1, reason: 'ti1', domain: 'skill.test' })); assert.equal(r.spendIndeterminate, true); assert.deepEqual(bonusOf(a), {}); assert.equal(r.spent, 1); }
+    // --- R1 through the attack transaction: a refund write that applied and then threw closes the transaction as refund-indeterminate (no retry, one gain call)
+    reset(); { const { createForcePointTransaction } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/force-point-transaction.js');
+      const a = mk({ normal: 3 }); const t = createForcePointTransaction({ actor: a, result: 7, formula: '1d6', reason: 'ti1', roll: { total: 7 } }); assert.equal(await t.commit(), true);
+      ctl.refunding = true; ctl.mode = 'applyThenThrow'; assert.equal(await silent(() => t.rollback()), false); assert.equal(t.state, 'refund-indeterminate'); assert.equal(t.closed, true); assert.ok(t.refundEvidence);
+      ctl.mode = 'ok'; assert.equal(await t.rollback(), false, 'closed: no automatic retry'); assert.equal(await t.announce(), false); assert.deepEqual(ctl.gains, [1]); assert.equal(a.system.forcePoints.value, 3, 'no second refund'); }
+    // --- RollCore: an unconfirmed refund after the main roll failed is reported distinctly
+    reset(); { const { RollCore } = await import('/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js'); const a = mk({ normal: 3 }); let calls = 0;
+      globalThis.Roll = class { constructor() { this.total = 6; this.terms = []; } async evaluate() { calls += 1; if (calls === 2) { ctl.refunding = true; ctl.mode = 'applyThenThrow'; throw new Error('main roll failed'); } return this; } };
+      const r = await silent(() => RollCore.execute({ actor: a, domain: 'skill.test', baseDice: '1d20', baseBonus: 0, rollOptions: { useForce: true }, context: {} })); globalThis.Roll = undefined;
+      assert.equal(r.success, false); assert.equal(r.forcePointRefundFailed, true); assert.equal(r.forcePointRefundIndeterminate, true); assert.deepEqual(ctl.gains, [1]); }
+    ok('TI1-R2: a spend that applied and then threw is an explicit unresolved outcome with evidence (no "nothing spent" claim, no automatic compensation); a clean failure is unchanged');
+  } finally { restore(); globalThis.Roll = undefined; }
+}
+
 // ------------------------------------------------------------------------------------------------ 1.1b RollCore refund after the MAIN roll fails (second refund path)
 {
   const ctl = { failRefund: false, gains: [] };

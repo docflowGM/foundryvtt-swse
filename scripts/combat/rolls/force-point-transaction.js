@@ -22,13 +22,12 @@
  */
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ROLL_HOOKS } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
-import { snapshotBonusEntries, receiptFromSpend, giveBack, bonusEntries } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-receipt.js";
+import { snapshotBonusEntries, receiptFromSpend, giveBack, observePools, poolsChanged } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-receipt.js";
 
 export function createForcePointTransaction({ actor, result, formula, reason = '', roll = null }) {
   let commitRun = null;
   let rollbackRun = null;
   let announceRun = null;
-  const poolNow = () => ({ normal: Number(actor.system?.forcePoints?.value ?? 0), bonus: bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints')).reduce((n, e) => n + e.value, 0) });
   const tx = {
     result,
     formula,
@@ -54,7 +53,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       tx.state = 'committing';
       const pool = actor.system.forcePoints ?? {};
       const beforeBonus = snapshotBonusEntries(actor);
-      const before = poolNow();
+      const before = observePools(actor);
       tx.shown = { remaining: Math.max(0, (pool.value ?? 0) - 1), max: pool.max ?? 0 };   // (use calculated value instead of stale reference)
       let spent;
       try {
@@ -62,8 +61,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
         spent = await ActorEngine.spendForcePoints(actor, 1);   // PHASE 3: Route through ActorEngine
       } catch (err) {
         console.error('Failed to spend Force Point:', err);
-        const after = poolNow();
-        if (after.normal !== before.normal || after.bonus !== before.bonus) {
+        if (poolsChanged(before, observePools(actor))) {
           // The spend threw after the pool visibly changed: it may or may not have fully applied. Not success, not repeatable, not auto-refunded.
           tx.state = 'indeterminate'; tx.closed = true;
           ui.notifications.error('A Force Point spend could not be confirmed. Check the Force Point pool before spending again.');
@@ -111,6 +109,12 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       const given = await giveBack(ActorEngine, actor, tx);   // the shared receipt logic; tx carries { spentNormal, gaveBonus }
       if (!given.ok) {
         console.error('Failed to restore Force Point after a refused attack:', given.error);
+        if (given.indeterminate) {
+          // The refund write threw after the pools changed: it may have applied. Close the transaction — nothing here retries or compensates it.
+          tx.state = 'refund-indeterminate'; tx.closed = true; tx.refundEvidence = given.evidence ?? null;
+          ui.notifications.error('A Force Point refund for an attack that did not happen could not be confirmed. Check the Force Point pool before spending again.');
+          return false;
+        }
         ui.notifications.error('A Force Point was spent for an attack that did not happen and could not be restored automatically. Please correct it by hand.');
         return false;
       }

@@ -5,9 +5,9 @@
  *
  *   snapshotBonusEntries(actor)               the bonus pool, normalized the way ActorEngine.spendForcePoints reads it
  *   receiptFromSpend(before, actor, spendRes) what THIS spend took: the normal point(s) and, per bonus entry id, the bonus point(s)
- *   giveBack(ActorEngine, actor, receipt)     returns exactly that, relative to the CURRENT pools (never an absolute snapshot); idempotent per part
- *                                             (a part that succeeded is not repeated by a retry). Resolves { ok, error? } — ok only when every part
- *                                             was actually written; it never throws.
+ *   giveBack(ActorEngine, actor, receipt)     returns exactly that, relative to the CURRENT pools (never an absolute snapshot); single-flight per receipt
+ *                                             and idempotent per part. Resolves { ok, indeterminate?, error?, evidence? } — ok only when every part was
+ *                                             actually written; an uncertain write is 'indeterminate' and never retried automatically; never throws.
  */
 
 /** Bonus Force Points normalized the way ActorEngine.spendForcePoints reads them, so the entries a spend consumed can be given back by id. */
@@ -31,14 +31,53 @@ export function receiptFromSpend(beforeBonus, actor, spendResult) {
   return { spentNormal, gaveBonus };
 }
 
-/** Mutates `receipt` as parts complete, so a retry after a part-way failure repeats only what is left. */
-export async function giveBack(ActorEngine, actor, receipt) {
-  try {
-    if (receipt.spentNormal > 0) {
-      await ActorEngine.gainForcePoints(actor, receipt.spentNormal);
-      receipt.spentNormal = 0;
+/** What a client can observe of the actor's Force Point pools right now (normal value + every bonus entry), as a comparable signature plus the raw evidence. */
+export function observePools(actor) {
+  const bonus = snapshotBonusEntries(actor).map((e) => [e.id, e.value]);
+  return { normal: Number(actor.system?.forcePoints?.value ?? 0), bonus, signature: JSON.stringify([Number(actor.system?.forcePoints?.value ?? 0), bonus]) };
+}
+export const poolsChanged = (before, after) => before.signature !== after.signature;
+
+/**
+ * Refund lifecycle, per receipt (single client; Foundry has no compare-and-swap). Kept off the receipt object so it is never serialized:
+ *   idle -> refunding -> refunded | failed (clean: nothing observable changed, retryable, completed parts are kept) | indeterminate (terminal)
+ * Concurrent giveBack() callers on one receipt share ONE run and ONE result. A write that threw after the observable pools changed is
+ * 'indeterminate': it might have fully, partly or not applied, so it is NEVER retried or compensated automatically — the evidence is returned for
+ * reconciliation. A write that threw with the pools unchanged is a clean failure and may be retried (only the parts still outstanding).
+ */
+const lifecycle = new WeakMap();
+
+/** Mutates `receipt` as parts complete, so a retry after a clean part-way failure repeats only what is left. Resolves { ok, indeterminate?, error?, evidence? }; never throws. */
+export function giveBack(ActorEngine, actor, receipt) {
+  const state = lifecycle.get(receipt) ?? { status: 'idle', run: null, result: null };
+  lifecycle.set(receipt, state);
+  if (state.run) {return state.run;}                                     // a refund is in flight: share it
+  if (state.status === 'indeterminate' || state.status === 'refunded') {return Promise.resolve(state.result);}   // settled: report it, change nothing
+  state.status = 'refunding';
+  state.run = writeParts(ActorEngine, actor, receipt).then((result) => {
+    state.status = result.ok ? 'refunded' : (result.indeterminate ? 'indeterminate' : 'failed');
+    state.result = result; state.run = null;
+    return result;
+  });
+  return state.run;
+}
+
+async function writeParts(ActorEngine, actor, receipt) {
+  const guarded = async (write) => {
+    const before = observePools(actor);
+    try { await write(); return { ok: true }; } catch (error) {
+      const after = observePools(actor);
+      if (poolsChanged(before, after)) {return { ok: false, indeterminate: true, error, evidence: { before, after, note: 'the refund write threw after the observable Force Point pools changed; whether it fully applied is unknown' } };}
+      return { ok: false, error };
     }
-    if (receipt.gaveBonus.length) {
+  };
+  if (receipt.spentNormal > 0) {
+    const r = await guarded(() => ActorEngine.gainForcePoints(actor, receipt.spentNormal));
+    if (!r.ok) {return r;}
+    receipt.spentNormal = 0;
+  }
+  if (receipt.gaveBonus.length) {
+    const r = await guarded(async () => {
       const poolNow = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
       const entries = bonusEntries(poolNow);
       for (const { entry, amount } of receipt.gaveBonus) {
@@ -49,10 +88,9 @@ export async function giveBack(ActorEngine, actor, receipt) {
       const value = entries.reduce((n, e) => n + e.value, 0);
       const max = entries.reduce((n, e) => n + Math.max(0, Number(e.max ?? e.value) || 0), 0);
       await ActorEngine.updateActor(actor, { 'flags.swse.bonusForcePoints': { ...poolNow, value, max: Math.max(value, max), sources: [...new Set(entries.map((e) => e.source).filter(Boolean))], entries } });
-      receipt.gaveBonus = [];
-    }
-    return { ok: true };
-  } catch (error) {
-    return { ok: false, error };
+    });
+    if (!r.ok) {return r;}
+    receipt.gaveBonus = [];
   }
+  return { ok: true };
 }
