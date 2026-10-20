@@ -25,9 +25,10 @@ Include only actual published vehicle statblocks. Narrative-only mentions, vehic
 - **1-E Force Unleashed Campaign Guide — COMPLETE:** 34 publication entries (19 inherited spacecraft and 15 new vehicles). Main vehicle chapter pp110–113: seven; adventure Prisoner Convoy p142: two; Imperial vehicles pp200–203: six. Ledger: `swse-universal-phase1e-force-unleashed.json`.
 - **1-F Scum and Villainy — COMPLETE:** 13 publication records (11 inherited spacecraft, one previously approved Hornet-class Interceptor amendment, and one newly found StarForge Station CL 20 statblock on printed p130). No new ground/air vehicle statblocks found in full PDF sweep. Ledger: `swse-universal-phase1f-scum-and-villainy.json`.
 - **1-G Galaxy at War — COMPLETE:** 11 publication entries (five inherited spacecraft; six additional full vehicle statblocks on printed pp62–64, 179 and 216). Includes Drop Pod air vehicle and two adventure-only vehicles. Ledger: `swse-universal-phase1g-galaxy-at-war.json`.
-- **1-H Galaxy of Intrigue — NEXT.**
-- Current known provisional publication total across all books: **381** (318 amended spacecraft baseline + seven Core nonship entries + one SotG Escape Pod + 26 Clone Wars other vehicles + seven KOTOR vehicles + 15 Force Unleashed vehicles + one Scum and Villainy space station + six Galaxy at War nonship vehicles). This is not final exhaustiveness and **not** the number of generated compendium Actors.
-- 1-A through 1-G do not modify ship JSON, existing generated .db files, the native packs or gameplay systems.
+- **1-H Galaxy of Intrigue — COMPLETE:** 8 publication records (six inherited spacecraft, plus Corona Limited Luxury Groundspeeder CL4 and SoroSuub JG-8 Luxury Landspeeder CL2, both printed p71). Ledger: `swse-universal-phase1h-galaxy-of-intrigue.json`.
+- **1-I Jedi Academy Training Manual — NEXT.**
+- Current known provisional publication total across all books: **383** (318 amended spacecraft baseline + seven Core nonship entries + one SotG Escape Pod + 26 Clone Wars other vehicles + seven KOTOR vehicles + 15 Force Unleashed vehicles + one Scum and Villainy space station + six Galaxy at War nonship vehicles + two Galaxy of Intrigue groundspeeders). This is not final exhaustiveness and **not** the number of generated compendium Actors.
+- 1-A through 1-H do not modify ship JSON, existing generated .db files, the native packs or gameplay systems.
 
 ## Phase 1 — Enumeration + provenance only
 
@@ -44,7 +45,7 @@ Do NOT copy mechanical statistics yet. Record ambiguous identity/type, not specu
 | 1-E | Force Unleashed Campaign Guide | 19 | 15 additional ground, repulsorlift, wheeled, tracked and walker statblocks; ledger complete |
 | 1-F | Scum and Villainy | 11 + Hornet amendment | 1 newly discovered StarForge Station statblock, printed p130; ledger complete |
 | 1-G | Galaxy at War | 5 | Six independently printed new statblocks; ledger complete |
-| 1-H | Galaxy of Intrigue | 6 | Independent nonship search |
+| 1-H | Galaxy of Intrigue | 6 | Two printed groundspeeders on p71; ledger complete |
 | 1-I | Jedi Academy Training Manual | 1 | Independent nonship search |
 | 1-J | Legacy Era Campaign Guide | 39 | Independent nonship search |
 | 1-K | Rebellion Era Campaign Guide | 35 | Independent nonship search |
