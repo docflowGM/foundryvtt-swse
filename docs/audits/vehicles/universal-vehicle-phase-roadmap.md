@@ -16,6 +16,14 @@ Include only actual published vehicle statblocks. Narrative-only mentions, vehic
 - The first ship census expressly excluded ground/air vehicle universal coverage and was not an independently exhaustive discovery of the whole book. Reuse verified ship provenance, but independently sweep every book for remaining vehicle types and overlooked craft.
 - Retain the current ship source and native pack unchanged until the Phase 4 replacement/cutover. No rewrites of stock ship mechanics during Phase 1.
 
+## Current Phase 1 status (book checkpoints)
+
+- **1-A Core Rulebook — COMPLETE:** 17 publication entries (10 inherited spacecraft; seven new ground/air vehicles). Provenance ledger: `swse-universal-phase1a-core-rulebook.json`.
+- **1-B Starships of the Galaxy — COMPLETE:** 105 publication entries (104 inherited spacecraft; new `Escape Pod`, printed p50/PDF p51). Four printed station-class vessels and one starfighter/walker hybrid remain single identities. Provenance ledger: `swse-universal-phase1b-starships-of-the-galaxy.json`.
+- **1-C Clone Wars Campaign Guide — NEXT.**
+- Current known provisional publication total across all books: **326** (318 amended spacecraft baseline + seven Core nonship entries + one SotG Escape Pod). This is not final exhaustiveness and **not** the number of generated compendium Actors.
+- 1-A and 1-B do not modify ship JSON, existing generated .db files, the native packs or gameplay systems.
+
 ## Phase 1 — Enumeration + provenance only
 
 Each subphase owns one book. Search the TXT across the **whole book**, cross-check every vehicle entry (including page breaks, sidebars and nonship subsections) against printed PDF pages, and emit a compact per-book ledger. Required fields: exact printed vehicle name, stable publication source key, exact book, printed statblock-start page, physical PDF page(s), printed type line, normalized primary category, mobility domains, provenance hash, source-review state, and status of any legacy ship match.
@@ -25,7 +33,7 @@ Do NOT copy mechanical statistics yet. Record ambiguous identity/type, not specu
 | Subphase | Sourcebook | Reviewed historical ships | Other vehicles |
 |---|---|---:|---|
 | 1-A | Core Rulebook | 10 | Inventory 7 ground/air entries on pp 175–177 |
-| 1-B | Starships of the Galaxy | 104 | Independent nonship search |
+| 1-B | Starships of the Galaxy | 104 | 1 new independently printed Escape Pod statblock on p50; ledger complete |
 | 1-C | Clone Wars Campaign Guide | 41 | Independent nonship search |
 | 1-D | Knights of the Old Republic Campaign Guide | 32 | Independent nonship search |
 | 1-E | Force Unleashed Campaign Guide | 19 | Independent nonship search |
