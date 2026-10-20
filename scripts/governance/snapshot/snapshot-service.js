@@ -307,6 +307,21 @@ function verifyRestoration(actor, {
 
 export class SnapshotService {
   /**
+   * TI4-C0/G06-S1 — capture an IN-MEMORY, schema-v2, full-actor snapshot of `actor`.
+   *
+   * A thin public delegate to the same `captureSafetySnapshot()` this service already uses for its own pre-restore safety snapshot, so a
+   * transactional caller gets a snapshot in exactly the representation `restoreFromSnapshot()` restores from and verifies against
+   * (`actorId`, `schemaVersion`, `scope`, name/img/system/flags/ownership/prototypeToken, and Items/Effects carrying their `_id`s).
+   * It writes nothing: no flag, no snapshot-history entry (contrast SnapshotManager.createSnapshot, which persists). It relaxes no check.
+   *
+   * @param {Actor} actor
+   * @returns {object} schema-v2 snapshot
+   */
+  static captureExactSnapshot(actor) {
+    return captureSafetySnapshot(actor);
+  }
+
+  /**
    * restoreFromSnapshot() — exact, failure-aware Actor snapshot
    * restoration. See the module doc comment above for the full contract.
    *
