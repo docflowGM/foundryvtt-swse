@@ -22,9 +22,10 @@ Include only actual published vehicle statblocks. Narrative-only mentions, vehic
 - **1-B Starships of the Galaxy — COMPLETE:** 105 publication entries (104 inherited spacecraft; new `Escape Pod`, printed p50/PDF p51). Four printed station-class vessels and one starfighter/walker hybrid remain single identities. Provenance ledger: `swse-universal-phase1b-starships-of-the-galaxy.json`.
 - **1-C Clone Wars Campaign Guide — COMPLETE:** 67 publication entries (41 inherited spacecraft; 26 additional air/ground/water vehicles). Distinct cases include SPHA configurable armaments counted once, two separately printed Tsmeu-6 wheel bikes, Manta water vehicle, DC0052 airspeeder on p138, and Kashyyyk vehicles pp219–220. Ledger: `swse-universal-phase1c-clone-wars.json`.
 - **1-D Knights of the Old Republic Campaign Guide — COMPLETE:** 39 publication entries (32 inherited spacecraft; seven added vehicles). Six civilian speeders/airspeeders on printed pp92–95; Basilisk War Droid on printed p203, classified as an air vehicle (droid) with spaceflight. Ledger: `swse-universal-phase1d-knights-of-the-old-republic.json`.
-- **1-E Force Unleashed Campaign Guide — NEXT.**
-- Current known provisional publication total across all books: **359** (318 amended spacecraft baseline + seven Core nonship entries + one SotG Escape Pod + 26 Clone Wars other vehicles + seven KOTOR vehicles). This is not final exhaustiveness and **not** the number of generated compendium Actors.
-- 1-A through 1-D do not modify ship JSON, existing generated .db files, the native packs or gameplay systems.
+- **1-E Force Unleashed Campaign Guide — COMPLETE:** 34 publication entries (19 inherited spacecraft and 15 new vehicles). Main vehicle chapter pp110–113: seven; adventure Prisoner Convoy p142: two; Imperial vehicles pp200–203: six. Ledger: `swse-universal-phase1e-force-unleashed.json`.
+- **1-F Scum and Villainy — NEXT.**
+- Current known provisional publication total across all books: **374** (318 amended spacecraft baseline + seven Core nonship entries + one SotG Escape Pod + 26 Clone Wars other vehicles + seven KOTOR vehicles + 15 Force Unleashed vehicles). This is not final exhaustiveness and **not** the number of generated compendium Actors.
+- 1-A through 1-E do not modify ship JSON, existing generated .db files, the native packs or gameplay systems.
 
 ## Phase 1 — Enumeration + provenance only
 
@@ -38,7 +39,7 @@ Do NOT copy mechanical statistics yet. Record ambiguous identity/type, not specu
 | 1-B | Starships of the Galaxy | 104 | 1 new independently printed Escape Pod statblock on p50; ledger complete |
 | 1-C | Clone Wars Campaign Guide | 41 | 26 newly located ground, air and water vehicle statblocks; ledger complete |
 | 1-D | Knights of the Old Republic Campaign Guide | 32 | 7 vehicles verified on pp92–95, 203; ledger complete |
-| 1-E | Force Unleashed Campaign Guide | 19 | Independent nonship search |
+| 1-E | Force Unleashed Campaign Guide | 19 | 15 additional ground, repulsorlift, wheeled, tracked and walker statblocks; ledger complete |
 | 1-F | Scum and Villainy | 11 + Hornet amendment | Independent nonship search |
 | 1-G | Galaxy at War | 5 | Independent nonship search |
 | 1-H | Galaxy of Intrigue | 6 | Independent nonship search |
