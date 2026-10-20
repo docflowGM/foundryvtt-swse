@@ -6,7 +6,7 @@
  */
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-import {CP22_SOTG_REFERENCE_CATALOG as catalog} from '../../scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js';
+import {CP22_SOTG_REFERENCE_CATALOG as catalog} from '../../../scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js';
 
 const expectedCatalogBlob="44952f95d2101ca6f683885d07167c1ad65289c2";
 const expectedPacks=[
