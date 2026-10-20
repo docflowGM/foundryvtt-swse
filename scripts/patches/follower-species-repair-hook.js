@@ -46,26 +46,45 @@ function buildRepairMutation(actor) {
   };
 }
 
-async function repairExistingFollowers() {
+export async function repairExistingFollowers() {
   if (!game.user?.isGM) return;
   await SpeciesRegistry.initialize?.();
   const followers = Array.from(game.actors || []).filter(isFollowerNpc);
+  // TI4-C0/G11: a repair pass reports per-follower outcomes. `false` is a failed repair, never a silent success; no repair is retried.
+  const tally = { repaired: 0, failed: 0, indeterminate: 0 };
+  const uncertain = [];
   for (const follower of followers) {
     const mutation = buildRepairMutation(follower);
     if (!mutation.speciesName || !mutation.templateType) continue;
+    const report = {};
+    let updated = false;
     try {
-      await FollowerCreator.updateFollowerFromMutation(follower, mutation);
+      updated = await FollowerCreator.updateFollowerFromMutation(follower, mutation, { report });
     } catch (error) {
-      swseLogger.warn('[FollowerSpeciesRepair] Existing follower repair failed', {
-        follower: follower.name,
-        species: mutation.speciesName,
-        error,
-      });
+      report.error ??= error;
     }
+    if (updated === true) {
+      tally.repaired += 1;
+      continue;
+    }
+    tally.failed += 1;
+    const indeterminate = report.outcome === 'INDETERMINATE';
+    if (indeterminate) { tally.indeterminate += 1; uncertain.push(follower.name); }
+    swseLogger.error('[FollowerSpeciesRepair] Existing follower repair FAILED', {
+      follower: follower.name,
+      species: mutation.speciesName,
+      outcome: report.outcome ?? 'FAILED',
+      partialMutationPossible: indeterminate ? true : undefined,
+      error: report.error ?? null,
+    });
+  }
+  if (uncertain.length) {
+    ui?.notifications?.warn?.(`Follower repair could not verify its rollback for: ${uncertain.join(', ')}. These followers may be partially modified; please inspect them.`);
   }
   if (followers.length) {
     swseLogger.log('[FollowerSpeciesRepair] Existing follower repair pass complete', {
       followers: followers.length,
+      ...tally,
     });
   }
 }
