@@ -68,11 +68,14 @@ Applies codes: **A** every authoritative mechanical transaction (AMT), **C** com
 
 | ID | Requirement | Check | Evid. | Applies |
 |---|---|---|---|---|
-| D1 | Matching before/after field values are **observations**; COMMITTED / not-applied is concluded only from trusted causal evidence (E-marker; or trusted receipt phase plus no-other-writer evidence) | negative tests N19–N26 (same value from an unrelated op; ABA with and without a marker; missing/untrusted receipt) | OFFLINE | A |
+| D1 | Matching before/after field values are **observations**; COMMITTED / not-applied is concluded only from trusted causal evidence **per leg** | negative tests N19–N26 (same value from an unrelated op; ABA with and without a marker; missing/untrusted receipt) | OFFLINE | A |
 | D2 | Without established causality the target stays `INDETERMINATE`; no automatic completion, compensation, replay or retry | N19, N21, N22, N26 | OFFLINE | A |
-| D3 | An operation id is an identity, **not** a lock; reconcile is serialized by a **target-receipt-scoped** guard that excludes any other reconcile id | N27, N28 | OFFLINE (L1) | A |
+| D3 | An operation id is an identity, **not** a lock; reconcile is serialized by a **target-receipt-scoped** guard that excludes any other reconcile id (L1, process-local) | N27, N28 | OFFLINE (L1) | A |
 | D4 | A persisted claim is detection, not exclusion; a competing claim stops the operation with `INDETERMINATE (PARTIAL)` | N29, N29b | OFFLINE | A |
-| D5 | L2 is claimed only with a verified cross-client mechanism; otherwise unsupported concurrency fails closed (`coordination-uncertified`) and is reported as L1 | N30–N32 | MULTI / RUNTIME | A |
+| D5 | **Write-capable reconciliation requires an independently verified exclusive writer** (certified L2 mechanism or a separately documented mechanism meeting the §3.5 guarantees); an active-GM-user count, a process-local guard or a persisted claim never enables a write; otherwise **read-only diagnosis only** and `REFUSED('coordination-uncertified')` | N30, N32, N34, N35 (OFFLINE); N31, N33 (MULTI/RUNTIME) | OFFLINE + MULTI | A |
+| D6 | **Per-leg verification:** each mechanical leg records intended before/after, trusted causal evidence bound to that leg, current observation and `VERIFIED`/`UNVERIFIED`/`INCONSISTENT`; operation `COMMITTED` requires **every required leg** independently `VERIFIED`; a marker proves only the leg it was written with; matching values never substitute for missing evidence | N36–N43 | OFFLINE | A |
+| D7 | A write acts only on a `VERIFIED` leg, only inside an available write phase; an `UNVERIFIED`/`INCONSISTENT` leg is never written | N40, N43 | OFFLINE | A |
+| D8 | A GM attestation is an audit record only; it never establishes causality, never substitutes for concurrency protection, and never by itself unblocks a scope (OD-4b unresolved) | review | REVIEW | A |
 
 ## 6. Concurrency (contract §8)
 
