@@ -9,7 +9,7 @@ Evidence level: **L1** (offline, single client, real modules, Foundry shim). No 
 |---|---|
 | `scripts/governance/snapshot/snapshot-service.js` | New `static captureExactSnapshot(actor)` that **delegates to the existing `captureSafetySnapshot()`** (the schema-v2 capture the service already uses for its own pre-restore safety snapshot). No check in `restoreFromSnapshot` is relaxed or altered. No persistence. |
 | `scripts/governance/actor-engine/actor-engine.js` | `applyMutationPlan({transactional:true})` captures with `SnapshotService.captureExactSnapshot(actor)` instead of `actor.toObject(true)`. `_rollbackTransactionalPlan` adds an **identity certification** and a **contradiction downgrade** (§4). Docblocks corrected. |
-| `tests/ti4c0-g06s1-exact-snapshot.test.mjs` | New: 43 real-module checks (§5). |
+| `tests/ti4c0-g06s1-exact-snapshot.test.mjs` | New: 50 real-module checks (§5). |
 | `tests/ti4c0-g06-rollback-verification.test.mjs` | One justified change (§6). |
 
 No new snapshot service, ledger, receipt or persisted state. `SnapshotManager` (which persists a ≤10-entry ring in `flags.foundryvtt-swse.snapshots`) is not used.
@@ -34,6 +34,8 @@ Test 2 damages root name/img, `system` (changed, added, deleted fields), `flags`
 
 It also requires **positive** verification: an `exact:true` result is certified only if its `verification` object affirms `rootMatched`, `itemsMatched` and `effectsMatched` each `=== true`; an absent, malformed, empty or partial verification object is not verification (`exactDowngraded`). Both rules only ever move toward `INDETERMINATE`; `SnapshotService` is unchanged by this correction.
 
+*Review correction 2 (R4):* the identity check above originally only downgraded the verdict after `restoreFromSnapshot` had already run, which for a missing array means the service had already deleted the Actor's embedded documents. `_validateRecoverySnapshot()` (pure) now runs (a) immediately after capture — an unusable fresh snapshot fails the plan before any stage runs, nothing applied — and (b) at the start of `_rollbackTransactionalPlan` — an incomplete snapshot is never handed to the restore: target verdict `INVALID_SNAPSHOT` (`target.attempted:false`, `target.invalidSnapshot[]` lists the problems), outcome `INDETERMINATE`, original error preserved, and CREATE-bucket cleanup is still attempted and verified independently (compensation `PARTIAL` when it succeeds). Tests that previously let the service "succeed" on a malformed snapshot now assert no restoration call and an untouched Actor — a safety correction, not a weakened assertion. Fail-before on `93aa7f074`: 34/50 passed, 16 failed (7 R1 + 3 identity cases that previously asserted the destructive restore, 6 new R4). Mutation checks: disabling the pre-restore skip → 16 failures; disabling the capture-time check → 4 failures.
+
 *Review correction 1 (R1–R3):* R1 and R2 above were tightened after independent review of `ddfa150fa` (the first version accepted an `id` alias and absent arrays, and downgraded only on a reported contradiction); R3 corrected the level terminology in §8. Fail-before for the correction: 36/43 (7 failed: missing `items`, missing `effects`, two `id`-alias cases, three absent/malformed/empty verification cases).
 
 `requireExact:true` is **not** used: on an inexact result the service runs compensation that restores its pre-restore safety snapshot, i.e. it would revert the rollback attempt to the failed post-plan state — destructive and unnecessary, because the helper already reads the structured `exact` verdict.
@@ -41,7 +43,7 @@ It also requires **positive** verification: an `exact:true` result is certified 
 ## 5. Tests (real `ActorEngine`, real `SnapshotService`; only plan stages and the shim's document mutators are injected)
 
 Fail-before on the accepted G06 head (24 checks existed at that run): **14 passed, 10 failed** — failures: 2, 2b, 2c, 6 (×3), 8, 8b, 11, 12 (all because the captured snapshot was legacy or identity was not certified). Output kept at `/tmp/s1-fail-before.out` (not committed). Checks 6b and 14a–14c were added afterwards and have no separate fail-before run.
-After: 43/43 (28 original + 15 review-correction checks). Mutation checks (each reverted): restoring `actor.toObject(true)` → 8 failures; removing the identity check → 3 failures; removing the contradiction downgrade → 1 failure; after correction 1: accepting absence-of-contradiction as verification → 2 failures; accepting an `id` alias → 2 failures; making the arrays optional → 2 failures.
+After: 50/50 (28 original + 15 correction-1 + 7 correction-2 checks). Mutation checks (each reverted): restoring `actor.toObject(true)` → 8 failures; removing the identity check → 3 failures; removing the contradiction downgrade → 1 failure; after correction 1: accepting absence-of-contradiction as verification → 2 failures; accepting an `id` alias → 2 failures; making the arrays optional → 2 failures.
 
 Coverage of the requested cases: 1 legacy restores content but `exact:false`; 2 v2 → `FAILED_COMPENSATED`/exact; 3, 3b wrong/missing actor identity rejected before mutation (no mutator called, actor untouched); 4, 4b unsupported schema/scope; 5, 5b, 5c root, embedded-content and id-preservation differences detected; 6 id-less Item/Effect and duplicate ids not certified; 7, 7b interrupted restoration (incl. failed service compensation) never compensated; 8, 8b CREATE-bucket actors remain part of the whole-scope verdict; 9 original error object retained; 10, 10b success and nontransactional paths unchanged (no capture, no `toObject`); 11 no persisted write; 12 each stage runs once, one `Actor.deleteDocuments`, no re-apply; 13 capture failure aborts before any stage; 14a–c callers (`ProgressionFinalizer`, `LightsaberConstructionEngine`) with the real restore: exact → ordinary failure with `FAILED_COMPENSATED`; inexact → indeterminate warning + original roll preserved. The 40 G06 tests are retained (§6).
 
@@ -51,7 +53,7 @@ Coverage of the requested cases: 1 legacy restores content but `exact:false`; 2 
 
 ## 7. Verification
 
-- New: 43/43. G06: 40/40. Rolling suite: `Result: 385 passed, 0 failed (of 385 run; 5 excluded as documented pre-existing failures)`.
+- New: 50/50. G06: 40/40. Rolling suite: `Result: 385 passed, 0 failed (of 385 run; 5 excluded as documented pre-existing failures)`.
 - Guards (27 commands): 26 pass locally. `node tools/migrate-phase-5c-weapon-references.mjs --check` crashes **only in this worktree** with `ENOTDIR … .git/index` (worktree `.git` is a file); it is **not** reported as locally passing and is verified in exact-head CI. `validate-partials`, `system.json` parse, and the rolling syntax check (2878 files) pass. `git diff --check` clean.
 
 ## 8. Remaining limitations (do not read as certified)

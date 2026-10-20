@@ -278,10 +278,16 @@ for (const [label, build] of [
   await check(`6. snapshot with ${label} cannot be certified exact, even if the service reports exact`, async () => {
     const actor = mkActor();
     install();
+    const before = view(actor);
     const rollback = await ActorEngine._rollbackTransactionalPlan(actor, build(actor), {}, 's1.test');
     assert.equal(rollback.outcome, 'INDETERMINATE');
     assert.notEqual(rollback.target.verdict, 'EXACT');
     assert.ok(rollback.reasons.includes('snapshot-identity-incomplete'), `reasons=${rollback.reasons}`);
+    // R4 (safety correction, not a weakened assertion): a malformed snapshot is rejected BEFORE restoration, so nothing is mutated.
+    assert.equal(rollback.target.attempted, false);
+    assert.equal(rollback.target.verdict, 'INVALID_SNAPSHOT');
+    assert.equal(noMutationCalls().length, 0, 'no restoration call was made');
+    assert.deepEqual(view(actor), before, 'the Actor was not touched');
   });
 }
 
@@ -299,15 +305,17 @@ for (const [label, build, expectDeletion] of [
   await check(`R1. schema-v2 snapshot with ${label} can never be FAILED_COMPENSATED`, async () => {
     const actor = mkActor();
     install();
+    const before = view(actor);
     const rollback = await ActorEngine._rollbackTransactionalPlan(actor, build(actor), {}, 's1.test');
     assert.equal(rollback.outcome, 'INDETERMINATE');
     assert.notEqual(rollback.target.verdict, 'EXACT');
     assert.ok(rollback.reasons.includes('snapshot-identity-incomplete'), `reasons=${rollback.reasons}`);
-    if (expectDeletion) {
-      // Documents the hazard being closed: the service defaults a missing array to [] and so deletes the actor's existing embedded documents.
-      // That restore is not certified.
-      assert.equal(rollback.target.success, true);
-    }
+    // R4 (safety correction, not a weakened assertion): this used to assert the service "succeeded" (and, for a missing array, deleted the
+    // Actor's existing Items/Effects while doing so). The rollback now rejects the malformed snapshot BEFORE restoration.
+    assert.equal(rollback.target.attempted, false);
+    assert.equal(rollback.target.verdict, 'INVALID_SNAPSHOT');
+    assert.equal(noMutationCalls().length, 0, `no restoration call was made (expectDeletion=${expectDeletion})`);
+    assert.deepEqual(view(actor), before, 'existing Items/Effects were not deleted');
   });
 }
 
@@ -335,6 +343,70 @@ for (const [label, verification, expected] of [
     } finally { ActorEngine.restoreFromSnapshot = orig; }
   });
 }
+
+/* ---- R4: invalid recovery snapshot is rejected before restoration ---- */
+await check('R4. invalid snapshot + CREATE-bucket actors: target restore is skipped, created actors are STILL cleaned up, outcome INDETERMINATE (PARTIAL)', async () => {
+  const actor = mkActor(); const before = view(actor);
+  const s = install({ created: ['c1', 'c2'] });
+  const rollback = await ActorEngine._rollbackTransactionalPlan(actor, omit(v2(actor), 'items'), { tmp1: 'c1', tmp2: 'c2' }, 's1.test');
+  assert.equal(rollback.outcome, 'INDETERMINATE');
+  assert.equal(rollback.compensation, 'PARTIAL');
+  assert.equal(rollback.target.verdict, 'INVALID_SNAPSHOT');
+  assert.equal(noMutationCalls().length, 0);
+  assert.deepEqual(view(actor), before);
+  assert.equal(s.calls.del, 1, 'CREATE-bucket cleanup was still attempted');
+  assert.equal(rollback.created.verifiedAbsent, true);
+});
+
+await check('R4. end to end: a snapshot corrupted after capture → original error object preserved, INDETERMINATE, no destructive restore call', async () => {
+  const actor = mkActor(); const before = view(actor);
+  const realCapture = SnapshotService.captureExactSnapshot;
+  let snap = null;
+  SnapshotService.captureExactSnapshot = (a) => (snap = realCapture.call(SnapshotService, a));
+  const s = install({ mutate: () => { snap.items = null; }, created: ['c1'] });
+  try {
+    const err = await runPlan(actor, { transactional: true });
+    assert.equal(err, s.injected, 'the SAME original error object is propagated');
+    assert.equal(err.message, 'set stage failed');
+    assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+    assert.equal(err.partialMutationPossible, true);
+    assert.equal(err.rollback.target.verdict, 'INVALID_SNAPSHOT');
+    assert.equal(noMutationCalls().length, 0);
+    assert.deepEqual(view(actor), before);
+    assert.equal(s.calls.del, 1);
+  } finally { SnapshotService.captureExactSnapshot = realCapture; }
+});
+
+for (const [label, bad] of [
+  ['missing `items`', (snap) => { delete snap.items; }],
+  ['missing `effects`', (snap) => { delete snap.effects; }],
+  ['an Item with no `_id`', (snap) => { delete snap.items[0]._id; }],
+  ['duplicate identities', (snap) => { snap.items[1]._id = snap.items[0]._id; }]
+]) {
+  await check(`R4. a freshly captured snapshot with ${label} fails the plan BEFORE any stage runs (nothing applied)`, async () => {
+    const actor = mkActor(); const before = view(actor);
+    const realCapture = SnapshotService.captureExactSnapshot;
+    SnapshotService.captureExactSnapshot = (a) => { const snap = realCapture.call(SnapshotService, a); bad(snap); return snap; };
+    const s = install({ mutate: damage(actor) });
+    try {
+      const err = await runPlan(actor, { transactional: true });
+      assert.ok(err instanceof Error);
+      assert.match(err.message, /snapshot/i);
+      assert.equal(s.calls.create, 0); assert.equal(s.calls.set, 0);
+      assert.equal(noMutationCalls().length, 0);
+      assert.deepEqual(view(actor), before);
+    } finally { SnapshotService.captureExactSnapshot = realCapture; }
+  });
+}
+
+await check('R4. a valid schema-v2 snapshot still restores and certifies (restoration is attempted)', async () => {
+  const actor = mkActor();
+  install({ mutate: damage(actor) });
+  const err = await runPlan(actor, { transactional: true });
+  assert.equal(err.rollbackOutcome, 'FAILED_COMPENSATED');
+  assert.equal(err.rollback.target.attempted, true);
+  assert.ok(noMutationCalls().length > 0);
+});
 
 await check('6b. defensive: a restore result claiming exact:true while its own verification says content mismatched is NOT certified (stubbed service result)', async () => {
   const actor = mkActor();

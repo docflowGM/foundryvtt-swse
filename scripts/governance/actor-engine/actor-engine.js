@@ -3066,6 +3066,12 @@ export const ActorEngine = {
         // A capture failure throws here, before any stage runs, so nothing has been applied.
         const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
         _txnSnapshot = SnapshotService.captureExactSnapshot(actor);
+        // A snapshot that cannot be restored safely is no recovery plan: refuse to begin (nothing has been applied yet).
+        const recovery = this._validateRecoverySnapshot(_txnSnapshot);
+        if (!recovery.complete) {
+          _txnSnapshot = null;
+          throw new Error(`applyMutationPlan: the transactional snapshot is unusable for recovery (${recovery.problems.join('; ')}); the plan was not started`);
+        }
       }
 
       // Phase 2: Apply operations in strict order
@@ -3141,6 +3147,31 @@ export const ActorEngine = {
   },
 
   /**
+   * TI4-C0/G06-S1 — is this snapshot complete enough to restore from SAFELY? (pure)
+   *
+   * Requires the `items` / `effects` ARRAYS its scope needs (default scope `full-actor`: both; `embedded-items`: items; `system-and-flags`: neither),
+   * each document carrying a unique, non-empty string `_id` (an `id` alias is not accepted — the service never matches on it).
+   * Used before capture-time commit and before restoration, because SnapshotService treats a missing array as [] (and so deletes existing documents).
+   *
+   * @returns {{complete: boolean, problems: string[]}}
+   */
+  _validateRecoverySnapshot(snapshot) {
+    const problems = [];
+    if (snapshot === null || typeof snapshot !== 'object') return { complete: false, problems: ['snapshot is not an object'] };
+    const scope = snapshot.scope ?? 'full-actor';
+    const needs = { items: scope !== 'system-and-flags', effects: scope === 'full-actor' || scope === 'transaction-rollback' };
+    for (const key of ['items', 'effects']) {
+      const docs = snapshot[key];
+      if (docs === undefined && !needs[key]) continue;
+      if (!Array.isArray(docs)) { problems.push(`${key} is ${docs === undefined ? 'missing' : 'not an array'}`); continue; }
+      const ids = docs.map((d) => d?._id);
+      if (!ids.every((id) => typeof id === 'string' && id !== '')) problems.push(`${key} has a document without a valid _id`);
+      else if (new Set(ids).size !== ids.length) problems.push(`${key} has duplicate _id values`);
+    }
+    return { complete: problems.length === 0, problems };
+  },
+
+  /**
    * TI4-C0/G06 — roll back a failed transactional plan and report ONLY what was verified.
    *
    * Scope: the target actor (restored from the pre-plan snapshot) and any CREATE-bucket world actors (deleted). Both are attempted
@@ -3165,30 +3196,26 @@ export const ActorEngine = {
     const reasons = [];
     const legacySnapshot = !snapshot?.schemaVersion;
 
-    // Identity certification: exactness is only meaningful if the snapshot carries COMPLETE embedded-document identity evidence. SnapshotService
-    // matches embedded documents by `_id`, silently skips id-less ones, and defaults a missing array to [] (which deletes the actor's existing
-    // documents). So a schema-v2 snapshot must carry `items` / `effects` ARRAYS (as its scope requires), each document with a unique non-empty
-    // string `_id`; an `id` alias is not accepted (the service never matches on it).
-    const scope = snapshot?.scope ?? 'full-actor';
-    const needsItems = scope !== 'system-and-flags';
-    const needsEffects = scope === 'full-actor' || scope === 'transaction-rollback';
-    const identityOk = (docs, required) => {
-      if (docs === undefined && !required) return true;
-      if (!Array.isArray(docs)) return false;
-      const ids = docs.map((d) => d?._id);
-      return ids.every((id) => typeof id === 'string' && id !== '') && new Set(ids).size === ids.length;
-    };
-    const identityComplete = identityOk(snapshot?.items, needsItems) && identityOk(snapshot?.effects, needsEffects);
+    // Recovery-evidence check BEFORE any restoration: SnapshotService defaults a missing `items`/`effects` array to [] and would DELETE the
+    // actor's existing embedded documents, and skips id-less ones. An incomplete snapshot is therefore never handed to the restore.
+    const recovery = this._validateRecoverySnapshot(snapshot);
+    const identityComplete = recovery.complete;
 
     /* ---- target actor ---- */
     const target = { attempted: true, verdict: null, success: null, exact: null, code: null, failedStep: null, partialMutation: null,
       compensationAttempted: null, compensationSucceeded: null, requiresManualReview: null, contentVerified: null, error: null, restoreError: null };
     let result;
-    try {
-      result = await this.restoreFromSnapshot(actor, snapshot, { source: `${source}:rollback` });
-    } catch (restoreErr) {
-      target.verdict = 'THREW';
-      target.restoreError = restoreErr?.message ?? String(restoreErr);
+    if (!recovery.complete) {
+      target.attempted = false;
+      target.verdict = 'INVALID_SNAPSHOT';
+      target.invalidSnapshot = recovery.problems;
+    } else {
+      try {
+        result = await this.restoreFromSnapshot(actor, snapshot, { source: `${source}:rollback` });
+      } catch (restoreErr) {
+        target.verdict = 'THREW';
+        target.restoreError = restoreErr?.message ?? String(restoreErr);
+      }
     }
     if (target.verdict === null) {
       if (result === null || typeof result !== 'object' || Array.isArray(result) || typeof result.success !== 'boolean') {
