@@ -88,3 +88,13 @@ jobs:
         run: python3 -m py_compile tools/audits/vehicles/check_sotg_cp20_tranche02.py
       - name: Verify CP20 tranche 02 publication certificates and strict runtime boundaries
         run: python3 tools/audits/vehicles/check_sotg_cp20_tranche02.py --repo "."
+
+      - name: Compile CP20 tranche 03 independent source-fidelity validator
+        run: python3 -m py_compile tools/audits/vehicles/check_sotg_cp20_tranche03.py
+      - name: Verify CP20 tranche 03 publication certificates and strict runtime boundaries
+        run: python3 tools/audits/vehicles/check_sotg_cp20_tranche03.py --repo "."
+
+      - name: Compile CP20 tranche 04 independent source-fidelity validator
+        run: python3 -m py_compile tools/audits/vehicles/check_sotg_cp20_tranche04.py
+      - name: Verify CP20 tranche 04 publication certificates and strict runtime boundaries
+        run: python3 tools/audits/vehicles/check_sotg_cp20_tranche04.py --repo "."

@@ -1,0 +1,3603 @@
+{
+  "schema": "swse.vehicle.sotg.cp20.source-fidelity-batch03.v1",
+  "book": "Starships of the Galaxy",
+  "sha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "policyId": "SOTG-CP18-D01",
+  "branch": "audit/sotg-strict-certification-cp17",
+  "authorityBlobs": {
+    "l": {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+      "sha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557"
+    },
+    "q": {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+      "sha": "9c7df34eefa54f456721ee18c6ee684ec214dbf6"
+    },
+    "o": {
+      "path": "data/audits/vehicles/swse-phase2c-sotg-cp18-evidence-observation-overlay.json",
+      "sha": "18b5df47516543e0646377b9eef71e4ef272026d"
+    },
+    "t": {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche04-primary-source-review.json",
+      "sha": "c73fcd8e6477fe0488c9a08588bd8d10656fbf3e"
+    },
+    "c": {
+      "path": "data/audits/vehicles/swse-sotg-cp20-controlled-source-corrections.json",
+      "sha": "eba65c4857d6fb79c5dc49a780dd2280dd59d89b"
+    },
+    "prior": {
+      "path": "data/audits/vehicles/swse-sotg-cp20-tranche02-source-fidelity-certificates.json",
+      "sha": "a5d0260aa09bc2d3f427467702faecdf331fcc95"
+    },
+    "s": {
+      "path": "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche02.schema.json",
+      "sha": "36d85723a24b6b12b30684d4c6cdca6f08c6dfce"
+    }
+  },
+  "correctionPath": "data/audits/vehicles/swse-sotg-cp20-controlled-source-corrections.json",
+  "tranche": {
+    "queueFrom": 46,
+    "queueTo": 60,
+    "count": 15
+  },
+  "counts": {
+    "newSourceFidelityCertificates": 15,
+    "remainingSourceFidelityUncertified": 55,
+    "unchangedStrictMechanicalBacklog": 100,
+    "unchangedPriorPhysicalStrictCertificates": 4,
+    "brandNewPhysicalMountCertificates": 0,
+    "newAutomatedStockAttackPermissions": 0,
+    "provenanceRestoredWithoutMutatingOldLedger": 0
+  },
+  "certificates": [
+    {
+      "certificateId": "SOTG-SF-CP20-T03-001",
+      "queuePosition": 46,
+      "cp16Index": 38,
+      "sourceEntryKey": "sotg-hapes-nova-cruiser",
+      "printedName": "Hapes Nova Cruiser",
+      "printedStartPage": 94,
+      "reviewedSourcePages": [
+        94
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal (frigate) capital ship",
+        "cl": 17,
+        "initiative": 1,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 18,
+          "flatFootedReflex": 13,
+          "fortitude": 52,
+          "armorBonus": 13,
+          "damageReduction": 20,
+          "shieldRating": 100,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 1000,
+          "threshold": 152
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 4
+          }
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "2x2",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 64,
+          "ranged": "5 turbolaser batteries +13; 2 point-defense laser cannon batteries +13; 2 ion cannon batteries +13",
+          "attackOptions": [
+            "autofire (laser batteries)"
+          ]
+        },
+        "abilities": {
+          "str": 94,
+          "dex": 20,
+          "con": "—",
+          "int": 16
+        },
+        "skills": {
+          "initiative": 1,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 1,
+          "useComputer": 6
+        },
+        "crew": {
+          "count": 1790,
+          "quality": "skilled"
+        },
+        "passengers": "600 troops and support crew",
+        "cargo": {
+          "number": 600,
+          "unit": "tons"
+        },
+        "consumables": "1 month",
+        "carriedCraft": "24 fighters, 6 assault bombers, various support vehicles",
+        "hyperspace": {
+          "hyperdrive": "x1.5",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": "not available for sale",
+          "blackMarketUsedCredits": 20000000
+        },
+        "specialDefensesOrRules": {
+          "tacticalFire": {
+            "action": "standard, forgo attacks",
+            "radiusSquares": 2,
+            "trigger": "successful attack vs enemy starfighter in area deals damage >= threshold",
+            "effect": "additional -1 condition track step"
+          }
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 13,
+          "damage": "7d10x5",
+          "sourcePage": 94,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -7
+        },
+        {
+          "weaponLabel": "point-defense laser cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 13,
+          "damage": "5d10x2",
+          "sourcePage": 94,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2,
+          "autofireBonus": 8
+        },
+        {
+          "weaponLabel": "ion cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 13,
+          "damage": "5d10x5 ion",
+          "sourcePage": 94,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 13,
+          "damage": "7d10x5",
+          "sourcePage": 94,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -7
+        },
+        {
+          "weaponLabel": "point-defense laser cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 13,
+          "damage": "5d10x2",
+          "sourcePage": 94,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2,
+          "autofireBonus": 8
+        },
+        {
+          "weaponLabel": "ion cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 13,
+          "damage": "5d10x5 ion",
+          "sourcePage": 94,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "NOVA_TACTICAL_DAMAGE_THRESHOLD",
+          "status": "PDF_VERIFIED",
+          "finding": "Tactical Fire: enemy starfighter within 2 squares, successful allied attack dealing >= target damage threshold makes it move one extra CT step beyond the normal damage effect; no direct automatic damage.",
+          "sourcePrintedPage": 94
+        },
+        {
+          "type": "NOVA_HISTORICAL_REFIT_NOT_BASE",
+          "status": "PDF_VERIFIED",
+          "finding": "Later refits upgrade turbolaser firing rate, enlarge consumables to 1 year, permit +10 SR when recharge-shields action is taken; fighter complement falls to 12; refitted version CL19. Stock statblock is CL17 and carries 24 fighters.",
+          "sourcePrintedPage": 94
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          94
+        ],
+        "statblockLocation": "printed p.94",
+        "reviewScope": "Whole printed statblock, all weapons subrows, adjacent narrative, capabilities and relevant rules callouts visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-hapes-nova-cruiser",
+        "reviewDisposition": "STOCK_VS_REFIT_AND_TACTICAL_THRESHOLD",
+        "verifiedPdfPages": [
+          94
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 94,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 94,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 2,
+          "originalRowPageStored": true,
+          "sourcePage": 94,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-002",
+      "queuePosition": 47,
+      "cp16Index": 39,
+      "sourceEntryKey": "sotg-telgorn-corp-gamma-class-assault-shuttle",
+      "printedName": "Telgorn Corp Gamma-class Assault Shuttle",
+      "printedStartPage": 95,
+      "reviewedSourcePages": [
+        95
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal space transport",
+        "cl": 15,
+        "initiative": 0,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 17,
+          "flatFootedReflex": 13,
+          "fortitude": 28,
+          "armorBonus": 13,
+          "damageReduction": 15,
+          "shieldRating": 230,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 360,
+          "threshold": 78
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 4
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 16
+          },
+          "maxVelocityKmH": 1050
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "15x15 character scale; 1 starship square",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 54,
+          "ranged": "4 turbolasers +6 and tractor beam +6 OR 4 turbolasers +6 and medium concussion missiles +6",
+          "attackOptions": [
+            "autofire (turbolasers)"
+          ]
+        },
+        "abilities": {
+          "str": 74,
+          "dex": 18,
+          "con": "—",
+          "int": 18
+        },
+        "skills": {
+          "initiative": 0,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 0,
+          "useComputer": 6
+        },
+        "crew": {
+          "count": 5,
+          "quality": "skilled",
+          "allocation": "pilot, copilot/navigator, three gunners"
+        },
+        "passengers": "40 troops",
+        "cargo": {
+          "number": 5,
+          "unit": "tons"
+        },
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "hyperspace": {
+          "hyperdrive": "x2",
+          "backup": "x18",
+          "navcomputer": "limited 3-jump memory"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": 850000,
+          "usedCredits": 340000
+        },
+        "payload": {
+          "count": 15,
+          "type": "medium concussion missiles"
+        },
+        "specialDefensesOrRules": {
+          "shields": {
+            "printedSR": 230,
+            "loseSRPerSuccessfulAttack": 5,
+            "zeroSRIfDamageGreaterThanCurrentSR": true
+          }
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "turbolasers",
+          "station": "two gunners operate four weapons",
+          "attackBonus": 6,
+          "damage": "2d10x5",
+          "sourcePage": 95,
+          "hardwareCount": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 1,
+          "againstSmallerThanColossal": -14
+        },
+        {
+          "weaponLabel": "tractor beam",
+          "station": "third gunner, shared with missiles",
+          "attackBonus": 6,
+          "damage": "— (grapple +54)",
+          "sourcePage": 95,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "againstSmallerThanColossal": -14
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "third gunner, shared with tractor",
+          "attackBonus": 6,
+          "damage": "8d10x2",
+          "sourcePage": 95,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "payloadCount": 15,
+          "splash": "4-square"
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "turbolasers",
+          "station": "two gunners operate four weapons",
+          "attackBonus": 6,
+          "damage": "2d10x5",
+          "sourcePage": 95,
+          "hardwareCount": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 1,
+          "againstSmallerThanColossal": -14
+        },
+        {
+          "weaponLabel": "tractor beam",
+          "station": "third gunner, shared with missiles",
+          "attackBonus": 6,
+          "damage": "— (grapple +54)",
+          "sourcePage": 95,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "againstSmallerThanColossal": -14
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "third gunner, shared with tractor",
+          "attackBonus": 6,
+          "damage": "8d10x2",
+          "sourcePage": 95,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "payloadCount": 15,
+          "splash": "4-square"
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "GAMMA_NONSTANDARD_SHIELD_DEPLETION",
+          "status": "PDF_VERIFIED",
+          "finding": "Any successful attack costs 5 SR even if no penetration; if damage > current SR, all SR immediately becomes zero. Does not behave as an ordinary shield-only-on-damage rule.",
+          "sourcePrintedPage": 95
+        },
+        {
+          "type": "GAMMA_GUNNER_OWNERSHIP",
+          "status": "PDF_VERIFIED",
+          "finding": "Exactly 5 crew: pilot/copilot and three gunners. Two operate four turbolasers, third operates missile launcher AND tractor. Attack grouping is not extra crew.",
+          "sourcePrintedPage": 95
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          95
+        ],
+        "statblockLocation": "printed p.95",
+        "reviewScope": "Whole printed statblock, all weapons subrows, adjacent narrative, capabilities and relevant rules callouts visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-telgorn-corp-gamma-class-assault-shuttle",
+        "reviewDisposition": "NONSTANDARD_SHIELD_DEPLETION_AND_SHARED_GUNNER",
+        "verifiedPdfPages": [
+          95
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 95,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "firingArc",
+            "batteryCount"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 95,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        },
+        {
+          "rowIndex": 2,
+          "originalRowPageStored": true,
+          "sourcePage": 95,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-003",
+      "queuePosition": 48,
+      "cp16Index": 40,
+      "sourceEntryKey": "sotg-kuat-drive-yards-imperial-ii-class-star-destroyer",
+      "printedName": "Kuat Drive Yards Imperial II-class Star Destroyer",
+      "printedStartPage": 96,
+      "reviewedSourcePages": [
+        96,
+        97
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 20,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 18,
+          "flatFootedReflex": 16,
+          "fortitude": 56,
+          "armorBonus": 16,
+          "damageReduction": 20,
+          "shieldRating": 125,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 2100,
+          "threshold": 256
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 3
+          }
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "2x2",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 68,
+          "ranged": "5 heavy turbolaser batteries +15; 5 turbolaser batteries +15; 4 heavy ion cannon batteries +15; 2 tractor beam batteries +15"
+        },
+        "abilities": {
+          "str": 103,
+          "dex": 14,
+          "con": "—",
+          "int": 20
+        },
+        "skills": {
+          "initiative": -2,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -2,
+          "useComputer": 6
+        },
+        "crew": {
+          "count": 37085,
+          "quality": "skilled"
+        },
+        "passengers": 9700,
+        "cargo": {
+          "number": 36000,
+          "unit": "tons"
+        },
+        "consumables": "6 years",
+        "carriedCraft": "72 TIE fighters of any variant, 8 Lambda shuttles, 20 AT-ATs, 20 AT-STs, support vehicles",
+        "hyperspace": {
+          "hyperdrive": "x2",
+          "backup": "x8",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": "not available for sale"
+        },
+        "specialDefensesOrRules": {
+          "tacticalFire": {
+            "action": "standard, forgo attacks",
+            "radiusSquares": 2,
+            "effect": "allies attacking targets within area gain +2 on attack rolls"
+          }
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "heavy turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 15,
+          "damage": "11d10x5",
+          "sourcePage": 96,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -5
+        },
+        {
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 15,
+          "damage": "8d10x5",
+          "sourcePage": 96,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5
+        },
+        {
+          "weaponLabel": "heavy ion cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 15,
+          "damage": "3d10x5 ion",
+          "sourcePage": 96,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 15,
+          "damage": "— (grapple +68)",
+          "sourcePage": 96,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "heavy turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 15,
+          "damage": "11d10x5",
+          "sourcePage": 96,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -5
+        },
+        {
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 15,
+          "damage": "8d10x5",
+          "sourcePage": 96,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5
+        },
+        {
+          "weaponLabel": "heavy ion cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 15,
+          "damage": "3d10x5 ion",
+          "sourcePage": 96,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 15,
+          "damage": "— (grapple +68)",
+          "sourcePage": 96,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "IMPERIAL_II_BATTERY_AND_GENERATOR_COUNTS",
+          "status": "PDF_VERIFIED",
+          "finding": "p97 narrative refers to twenty turbolaser batteries and ten tractor beam generators, while p96 statblock aggregates to five heavy + five standard turbolaser firing batteries and two tractor beam firing groups. Preserve both statements; grouping may differ. No unsupported barrel mapping.",
+          "sourcePrintedPage": 97
+        },
+        {
+          "type": "IMPERIAL_II_TACTICAL_ATTACK_AID",
+          "status": "PDF_VERIFIED",
+          "finding": "Forfeit attacks as standard action; allied starships gain +2 to attacks against targets within 2-square radius of destroyer.",
+          "sourcePrintedPage": 97
+        },
+        {
+          "type": "IMPERIAL_II_ORBITAL_BOMBARDMENT",
+          "status": "PDF_VERIFIED",
+          "finding": "Narrative discusses orbital bombardment; no separate attack statblock here, do not fabricate bombardment data.",
+          "sourcePrintedPage": 97
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          96,
+          97
+        ],
+        "statblockLocation": "printed p.96",
+        "reviewScope": "Whole printed statblock, all weapons subrows, adjacent narrative, capabilities and relevant rules callouts visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-kuat-drive-yards-imperial-ii-class-star-destroyer",
+        "reviewDisposition": "NARRATIVE_BATTERY_AND_GENERATOR_SCOPE_PENDING",
+        "verifiedPdfPages": [
+          96,
+          97
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 96,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 96,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 2,
+          "originalRowPageStored": true,
+          "sourcePage": 96,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 3,
+          "originalRowPageStored": true,
+          "sourcePage": 96,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [
+        {
+          "status": "REPRESENTATION_SCOPE_UNRESOLVED",
+          "issue": "Imperial II: printed grouped attacks (5 heavy turbolaser batteries, 5 turbolaser batteries, 4 heavy ion cannon batteries and 2 tractor batteries) do not establish a physical correspondence to the adjacent narrative's twenty turbolaser batteries and ten tractor generators.",
+          "sourcePrintedPages": [
+            96,
+            97
+          ],
+          "runtimeDisposition": "NO_PHYSICAL_MOUNT_OR_STOCK_ATTACK_AUTHORITY"
+        }
+      ],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-004",
+      "queuePosition": 49,
+      "cp16Index": 41,
+      "sourceEntryKey": "sotg-rendili-stardrive-victory-ii-class-star-destroyer",
+      "printedName": "Rendili StarDrive Victory II-class Star Destroyer",
+      "printedStartPage": 98,
+      "reviewedSourcePages": [
+        98
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 18,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 12,
+          "fortitude": 51,
+          "armorBonus": 12,
+          "damageReduction": 20,
+          "shieldRating": 150,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 1380,
+          "threshold": 251
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 2
+          }
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "2x2",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 63,
+          "ranged": "4 heavy turbolaser batteries +14; 4 double turbolaser batteries +14; 2 heavy ion cannon batteries +14; 2 tractor beam batteries +14"
+        },
+        "abilities": {
+          "str": 92,
+          "dex": 14,
+          "con": "—",
+          "int": 18
+        },
+        "skills": {
+          "initiative": -2,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -2,
+          "useComputer": 6
+        },
+        "crew": {
+          "count": 5200,
+          "quality": "skilled"
+        },
+        "passengers": "2040 troops",
+        "cargo": {
+          "number": 6107,
+          "unit": "tons"
+        },
+        "consumables": "4 years",
+        "carriedCraft": "24 TIE fighters, 5 Lambda shuttles, 10 AT-ATs, 15 AT-STs, 10 Juggernauts, support vehicles",
+        "hyperspace": {
+          "hyperdrive": "x1",
+          "backup": "x15",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": "not available for sale"
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "heavy turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "7d10x5",
+          "sourcePage": 98,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4,
+          "againstSmallerThanColossal": -6
+        },
+        {
+          "weaponLabel": "double turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x5",
+          "sourcePage": 98,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4
+        },
+        {
+          "weaponLabel": "heavy ion cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x5 ion",
+          "sourcePage": 98,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "— (grapple +63)",
+          "sourcePage": 98,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "heavy turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "7d10x5",
+          "sourcePage": 98,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4,
+          "againstSmallerThanColossal": -6
+        },
+        {
+          "weaponLabel": "double turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x5",
+          "sourcePage": 98,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4
+        },
+        {
+          "weaponLabel": "heavy ion cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x5 ion",
+          "sourcePage": 98,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "— (grapple +63)",
+          "sourcePage": 98,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 2
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "VICTORY_II_NO_MISSILE_ARMAMENT",
+          "status": "PDF_VERIFIED",
+          "finding": "Victory II statblock contains no proton torpedo or concussion missile groups; capabilities explicitly distinguish it from predecessor Victory I, which uses limited-resource ordnance.",
+          "sourcePrintedPage": 98
+        },
+        {
+          "type": "VICTORY_II_INTERDICTION_IS_MISSION_NOT_GRAVITY_WELL",
+          "status": "PDF_VERIFIED",
+          "finding": "Described as deep-space interception/patrol and capturing vessels via ion cannons and tractor beams; no gravity-well generator is printed for this class.",
+          "sourcePrintedPage": 98
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          98
+        ],
+        "statblockLocation": "printed p.98",
+        "reviewScope": "Whole printed statblock, all weapons subrows, adjacent narrative, capabilities and relevant rules callouts visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-rendili-stardrive-victory-ii-class-star-destroyer",
+        "reviewDisposition": "VICTORY_II_ORIGINAL_ARMAMENT_NOT_VICTORY_I",
+        "verifiedPdfPages": [
+          98
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 98,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 98,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 2,
+          "originalRowPageStored": true,
+          "sourcePage": 98,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 3,
+          "originalRowPageStored": true,
+          "sourcePage": 98,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-005",
+      "queuePosition": 50,
+      "cp16Index": 44,
+      "sourceEntryKey": "sotg-vindicator-class-heavy-cruiser",
+      "printedName": "Vindicator-class Heavy Cruiser",
+      "printedStartPage": 101,
+      "reviewedSourcePages": [
+        101
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 18,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 17,
+          "flatFootedReflex": 15,
+          "fortitude": 54,
+          "armorBonus": 15,
+          "damageReduction": 20,
+          "shieldRating": 150,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 1800,
+          "threshold": 254
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 2
+          }
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "2x2",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 66,
+          "ranged": "5 light quad turbolaser batteries +12; 5 light turbolaser batteries +14; 4 point-defense laser cannon batteries +14; 4 point-defense light ion cannon batteries +14; tractor beam battery +16"
+        },
+        "abilities": {
+          "str": 98,
+          "dex": 14,
+          "con": "—",
+          "int": 18
+        },
+        "skills": {
+          "initiative": -2,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -2,
+          "useComputer": 6
+        },
+        "crew": {
+          "count": 2551,
+          "quality": "skilled"
+        },
+        "passengers": "400 troops",
+        "cargo": {
+          "number": 8000,
+          "unit": "tons"
+        },
+        "consumables": "1.5 years",
+        "carriedCraft": "24 starfighters",
+        "hyperspace": {
+          "hyperdrive": "x2",
+          "backup": "x8",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": "not available for sale",
+          "blackMarketUsedCredits": 43000000
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "light quad turbolaser battery",
+          "station": "battery (4 gunners)",
+          "attackBonus": 12,
+          "damage": "4d10x5",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -8
+        },
+        {
+          "weaponLabel": "light turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x5",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -6
+        },
+        {
+          "weaponLabel": "point-defense laser cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x2",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4
+        },
+        {
+          "weaponLabel": "point-defense ion cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x2 ion",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 16,
+          "damage": "— (grapple +66)",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 1,
+          "againstSmallerThanColossal": -4
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "light quad turbolaser battery",
+          "station": "battery (4 gunners)",
+          "attackBonus": 12,
+          "damage": "4d10x5",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -8
+        },
+        {
+          "weaponLabel": "light turbolaser battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x5",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -6
+        },
+        {
+          "weaponLabel": "point-defense laser cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x2",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4
+        },
+        {
+          "weaponLabel": "point-defense ion cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 14,
+          "damage": "4d10x2 ion",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 16,
+          "damage": "— (grapple +66)",
+          "sourcePage": 101,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 1,
+          "againstSmallerThanColossal": -4
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "VINDICATOR_DISTINCT_ORIGINAL_CONFIGURATION",
+          "status": "PDF_VERIFIED",
+          "finding": "This is the original Vindicator-class heavy cruiser. Not all were converted to Immobilizer 418: do not inherit gravity-well weapons, loss of original weapons, or renamed craft.",
+          "sourcePrintedPage": 101
+        },
+        {
+          "type": "VINDICATOR_ONE_TRACTOR_GROUP",
+          "status": "PDF_VERIFIED",
+          "finding": "Statblock lists singular tractor beam battery (six gunners), not six distinct tractor beam batteries.",
+          "sourcePrintedPage": 101
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          101
+        ],
+        "statblockLocation": "printed p.101",
+        "reviewScope": "Whole printed statblock, all weapons subrows, adjacent narrative, capabilities and relevant rules callouts visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-vindicator-class-heavy-cruiser",
+        "reviewDisposition": "VINDICATOR_NOT_INTERDICTOR_RECONFIGURATION",
+        "verifiedPdfPages": [
+          101
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 101,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 101,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 2,
+          "originalRowPageStored": true,
+          "sourcePage": 101,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 3,
+          "originalRowPageStored": true,
+          "sourcePage": 101,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 4,
+          "originalRowPageStored": true,
+          "sourcePage": 101,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-006",
+      "queuePosition": 51,
+      "cp16Index": 46,
+      "sourceEntryKey": "sotg-j-type-star-skiff",
+      "printedName": "J-Type Star Skiff",
+      "printedStartPage": 103,
+      "reviewedSourcePages": [
+        103
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal* space transport",
+        "cl": 14,
+        "initiative": 8,
+        "sensesPerception": 12,
+        "defenses": {
+          "reflex": 20,
+          "flatFootedReflex": 14,
+          "fortitude": 29,
+          "armorBonus": 14,
+          "damageReduction": 15,
+          "shieldRating": 50,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 200,
+          "threshold": 79
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 4
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 16
+          },
+          "maxVelocityKmH": 1050
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "12x12 character scale; 1 starship square",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 10,
+          "grappleBonus": 49,
+          "ranged": "laser cannons +14",
+          "attackOptions": [
+            "autofire (laser cannons)"
+          ]
+        },
+        "abilities": {
+          "str": 48,
+          "dex": 22,
+          "con": "—",
+          "int": 18
+        },
+        "skills": {
+          "initiative": 8,
+          "mechanics": 12,
+          "perception": 12,
+          "pilot": 8,
+          "useComputer": 12
+        },
+        "crew": {
+          "count": 3,
+          "quality": "ace"
+        },
+        "passengers": 3,
+        "cargo": {
+          "number": 10,
+          "unit": "tons"
+        },
+        "consumables": "1 month",
+        "carriedCraft": "none",
+        "hyperspace": {
+          "hyperdrive": "x.5",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Restricted",
+          "newCredits": "not available for sale",
+          "blackMarketUsedCredits": 5000000
+        },
+        "specialDefensesOrRules": {
+          "effectiveSizeForCapitalShipTargetingDogfightingAndManeuvers": "Gargantuan starfighter"
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "gunner",
+          "attackBonus": 14,
+          "damage": "7d10x2",
+          "sourcePage": 103,
+          "hardwareCount": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "hardwareCountBasis": "p103 narrative: modest pair of linked lasers",
+          "autofireBonus": 9,
+          "fireLink": "narrative says linked"
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "gunner",
+          "attackBonus": 14,
+          "damage": "7d10x2",
+          "sourcePage": 103,
+          "hardwareCount": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "hardwareCountBasis": "p103 narrative: modest pair of linked lasers",
+          "autofireBonus": 9,
+          "fireLink": "narrative says linked"
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "J_TYPE_CONTEXTUAL_SIZE_ONLY",
+          "status": "PDF_VERIFIED",
+          "finding": "Despite Colossal space transport classification, treated as Gargantuan starfighter only when targeted by capital-ship weapons, dogfighting or using starship maneuvers.",
+          "sourcePrintedPage": 103
+        },
+        {
+          "type": "J_TYPE_TWIN_LINKED_LASERS",
+          "status": "PDF_VERIFIED",
+          "finding": "Source narrative states armed with modest PAIR of linked lasers and gunner console; physical pair documented but no separate exact arc.",
+          "sourcePrintedPage": 103
+        },
+        {
+          "type": "J_TYPE_HYPERDRIVE_DECIMAL",
+          "status": "PDF_VERIFIED",
+          "finding": "Printed hyperdrive x.5 and ship specifically not a mass-produced standard transport.",
+          "sourcePrintedPage": 103
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          103
+        ],
+        "statblockLocation": "printed p.103",
+        "reviewScope": "Whole printed statblock, all weapons subrows, adjacent narrative, capabilities and relevant rules callouts visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-j-type-star-skiff",
+        "reviewDisposition": "J_TYPE_PAIR_LINKED_LASERS_AND_CONTEXT_SIZE",
+        "verifiedPdfPages": [
+          103
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 103,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "firingArc",
+            "batteryCount"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-007",
+      "queuePosition": 52,
+      "cp16Index": 49,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-lambda-class-shuttle",
+      "printedName": "Sienar Fleet Systems Lambda-class Shuttle",
+      "printedStartPage": 106,
+      "reviewedSourcePages": [
+        106,
+        107
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal space transport",
+        "cl": 12,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 12,
+          "fortitude": 26,
+          "armorBonus": 12,
+          "damageReduction": 10,
+          "shieldRating": 25,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 120,
+          "threshold": 76
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 4
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 12
+          },
+          "maxVelocityKmH": 850
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "1",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 38,
+          "ranged": "blaster cannon battery +6 AND blaster cannon +4 AND twin laser cannons +6",
+          "attackOptions": [
+            "autofire (blaster cannons, twin laser cannons)"
+          ]
+        },
+        "abilities": {
+          "str": 42,
+          "dex": 14,
+          "con": "—",
+          "int": 14
+        },
+        "skills": {
+          "initiative": -2,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -2,
+          "useComputer": 6
+        },
+        "crew": {
+          "count": 6,
+          "quality": "skilled"
+        },
+        "passengers": 20,
+        "cargo": {
+          "number": 80,
+          "unit": "tons"
+        },
+        "consumables": "2 months",
+        "carriedCraft": "none",
+        "hyperspace": {
+          "hyperdrive": "x1",
+          "backup": "x10",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": "not available for sale; likely value 240,000"
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "blaster cannon battery",
+          "station": "2 gunners",
+          "attackBonus": 6,
+          "damage": "5d10x2",
+          "sourcePage": 106,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 1,
+          "autofireBonus": 1
+        },
+        {
+          "weaponLabel": "blaster cannon",
+          "station": "copilot",
+          "attackBonus": 4,
+          "damage": "5d10x2",
+          "sourcePage": 106,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": -1
+        },
+        {
+          "weaponLabel": "twin laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "2d10x2",
+          "sourcePage": 106,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 1
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "blaster cannon battery",
+          "station": "2 gunners",
+          "attackBonus": 6,
+          "damage": "5d10x2",
+          "sourcePage": 106,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 1,
+          "autofireBonus": 1
+        },
+        {
+          "weaponLabel": "blaster cannon",
+          "station": "copilot",
+          "attackBonus": 4,
+          "damage": "5d10x2",
+          "sourcePage": 106,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": -1
+        },
+        {
+          "weaponLabel": "twin laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "2d10x2",
+          "sourcePage": 106,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 1
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "LAMBDA_DECKPLAN_GUNNERY_STATIONS_NOT_EXTERNAL_ARCS",
+          "status": "PDF_VERIFIED",
+          "finding": "p107 deckplan identifies 1 gunnery station, pilot and copilot but publishes no numeric firing arcs. Crew is six, and cockpit can be operated by one with difficulties.",
+          "sourcePrintedPage": 107
+        },
+        {
+          "type": "LAMBDA_HEAVILY_ARMED_VARIANT_SEPARATE",
+          "status": "PDF_VERIFIED",
+          "finding": "Ten-laser-cannon militarized Cygnus version is distinct from printed Sienar stock craft; do not auto-add its ten cannon.",
+          "sourcePrintedPage": 106
+        },
+        {
+          "type": "LAMBDA_CARGO_TROOP_MODE",
+          "status": "PDF_VERIFIED",
+          "finding": "Bench-seat troop mode vs luxurious passenger mode and possible cargo conversion; do not combine all capacities as simultaneously available.",
+          "sourcePrintedPage": 106
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          106,
+          107
+        ],
+        "statblockLocation": "printed p.106",
+        "reviewScope": "Whole published statblock, weapon subrows, and relevant adjacent narrative/capabilities visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-sienar-fleet-systems-lambda-class-shuttle",
+        "reviewDisposition": "LAMBDA_SHARED_OPERATORS_AND_OPTIONAL_MILITARY_VARIANT",
+        "verifiedPdfPages": [
+          106,
+          107
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 106,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 106,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        },
+        {
+          "rowIndex": 2,
+          "originalRowPageStored": true,
+          "sourcePage": 106,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-008",
+      "queuePosition": 53,
+      "cp16Index": 50,
+      "sourceEntryKey": "sotg-kuat-drive-yards-lancer-class-frigate",
+      "printedName": "Kuat Drive Yards Lancer-class Frigate",
+      "printedStartPage": 108,
+      "reviewedSourcePages": [
+        108
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal (frigate) capital ship",
+        "cl": 14,
+        "initiative": -3,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 12,
+          "fortitude": 38,
+          "armorBonus": 12,
+          "damageReduction": 15,
+          "shieldRating": 125
+        },
+        "durability": {
+          "hitPoints": 800,
+          "threshold": 138
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 3
+          }
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "1",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 0,
+          "grappleBonus": 48,
+          "ranged": "4 point-defense quad laser cannon batteries +12",
+          "attackOptions": [
+            "autofire (quad laser cannons)"
+          ]
+        },
+        "abilities": {
+          "str": 66,
+          "dex": 14,
+          "con": "—",
+          "int": 18
+        },
+        "skills": {
+          "initiative": -3,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": -3,
+          "useComputer": 5
+        },
+        "crew": {
+          "count": 850,
+          "quality": "normal"
+        },
+        "passengers": "40 troops",
+        "cargo": {
+          "number": 300,
+          "unit": "tons"
+        },
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "hyperspace": {
+          "hyperdrive": "x2",
+          "backup": "x15",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": "not available for sale"
+        },
+        "specialDefensesOrRules": {
+          "tacticalFire": {
+            "action": "standard, forgo all attacks",
+            "area": "all adjacent starship-scale squares",
+            "targets": "enemy starships Gargantuan or smaller",
+            "effect": "halve shield rating while inside the area"
+          }
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "point-defense quad laser cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 12,
+          "damage": "4d10x2",
+          "sourcePage": 108,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4,
+          "autofireBonus": 7
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "point-defense quad laser cannon battery",
+          "station": "battery (5 gunners)",
+          "attackBonus": 12,
+          "damage": "4d10x2",
+          "sourcePage": 108,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4,
+          "autofireBonus": 7
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "LANCER_TACTICAL_SR_HALVING",
+          "status": "PDF_VERIFIED",
+          "finding": "Standard action forfeiting attacks: enemy starships of Gargantuan size and smaller have SR halved while in adjacent squares. Not a permanent shield damage or universal target debuff.",
+          "sourcePrintedPage": 108
+        },
+        {
+          "type": "LANCER_BATTERY_VS_GUNNER",
+          "status": "PDF_VERIFIED",
+          "finding": "Four point-defense battery attacks, each five gunners, does not establish twenty actual mounts or arcs.",
+          "sourcePrintedPage": 108
+        },
+        {
+          "type": "LANCER_FOWLER_REFIT",
+          "status": "PDF_VERIFIED",
+          "finding": "The Rebel-captured Fowler refitted its hyperdrive. Do not import that named-ship change into stock Lancer.",
+          "sourcePrintedPage": 108
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          108
+        ],
+        "statblockLocation": "printed p.108",
+        "reviewScope": "Whole published statblock, weapon subrows, and relevant adjacent narrative/capabilities visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-kuat-drive-yards-lancer-class-frigate",
+        "reviewDisposition": "LANCER_TACTICAL_SHIELD_HALVING_CONTEXT",
+        "verifiedPdfPages": [
+          108
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 108,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-009",
+      "queuePosition": 54,
+      "cp16Index": 51,
+      "sourceEntryKey": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+      "printedName": "Feethan Ottraw Scalable Industries Mankvim-814 Light Interceptor",
+      "printedStartPage": 109,
+      "reviewedSourcePages": [
+        109
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 5,
+        "initiative": 3,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 11,
+          "fortitude": 21,
+          "armorBonus": 6,
+          "damageReduction": 10,
+          "shieldRating": 15
+        },
+        "durability": {
+          "hitPoints": 50,
+          "threshold": 41
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 6
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 16
+          },
+          "maxVelocityKmH": 1450
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "1",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 0,
+          "grappleBonus": 26,
+          "ranged": "light laser cannons +4",
+          "attackOptions": [
+            "autofire (light laser cannons)"
+          ]
+        },
+        "abilities": {
+          "str": 32,
+          "dex": 17,
+          "con": "—",
+          "int": 14
+        },
+        "skills": {
+          "initiative": 3,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": 3,
+          "useComputer": 5
+        },
+        "crew": {
+          "count": 1,
+          "kind": "droid",
+          "quality": "normal"
+        },
+        "passengers": "none",
+        "cargo": "none",
+        "consumables": "2 hours",
+        "carriedCraft": "none",
+        "hyperspace": {
+          "hyperdrive": "absent per capabilities"
+        },
+        "economics": {
+          "availability": "Licensed",
+          "newCredits": 15000,
+          "usedCredits": 6000
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "light laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "2d10x2",
+          "sourcePage": 109,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": -1
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "light laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "2d10x2",
+          "sourcePage": 109,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": -1
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "MANKVIM_DROID_CREW_NOT_UNMANNED",
+          "status": "PDF_VERIFIED",
+          "finding": "Crew listed as one droid pilot. Narrative says living pilot can take cockpit controls, unlike no-cockpit droid starfighters.",
+          "sourcePrintedPage": 109
+        },
+        {
+          "type": "MANKVIM_NO_HYPERDRIVE",
+          "status": "PDF_VERIFIED",
+          "finding": "Capabilities explicitly confirm no hyperdrive; operations within one star system, quick courier configurations possible.",
+          "sourcePrintedPage": 109
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          109
+        ],
+        "statblockLocation": "printed p.109",
+        "reviewScope": "Whole published statblock, weapon subrows, and relevant adjacent narrative/capabilities visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+        "reviewDisposition": "MANKVIM_DROID_PILOT_NOT_UNMANNED_HARDWARE",
+        "verifiedPdfPages": [
+          109
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 109,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-010",
+      "queuePosition": 55,
+      "cp16Index": 53,
+      "sourceEntryKey": "sotg-gallofree-gr-75-medium-transport",
+      "printedName": "Gallofree GR-75 Medium Transport",
+      "printedStartPage": 111,
+      "reviewedSourcePages": [
+        111
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal (frigate) capital ship",
+        "cl": 8,
+        "initiative": -5,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 14,
+          "fortitude": 34,
+          "armorBonus": 14,
+          "damageReduction": 15,
+          "shieldRating": 45
+        },
+        "durability": {
+          "hitPoints": 400,
+          "threshold": 134
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 2
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 12
+          },
+          "maxVelocityKmH": 650
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "1",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 0,
+          "grappleBonus": 44,
+          "ranged": "4 point-defense double laser cannons +1",
+          "attackOptions": [
+            "autofire (double laser cannons)"
+          ]
+        },
+        "abilities": {
+          "str": 58,
+          "dex": 10,
+          "con": "—",
+          "int": 12
+        },
+        "skills": {
+          "initiative": -5,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": -5,
+          "useComputer": 5
+        },
+        "crew": {
+          "count": 6,
+          "quality": "normal"
+        },
+        "passengers": 40,
+        "cargo": {
+          "number": 19000,
+          "unit": "tons"
+        },
+        "consumables": "6 months",
+        "carriedCraft": "none",
+        "hyperspace": {
+          "hyperdrive": "x4",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Licensed",
+          "newCredits": 350000,
+          "usedCredits": 125000
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "point-defense double laser cannons",
+          "station": "gunner",
+          "attackBonus": 1,
+          "damage": "4d10x2",
+          "sourcePage": 111,
+          "hardwareCount": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": -4,
+          "physicalCountEvidence": "Ranged 4 point-defense double laser cannons"
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "point-defense double laser cannons",
+          "station": "gunner",
+          "attackBonus": 1,
+          "damage": "4d10x2",
+          "sourcePage": 111,
+          "hardwareCount": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": -4,
+          "physicalCountEvidence": "Ranged 4 point-defense double laser cannons"
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "GR75_FOUR_INDEPENDENT_CANNONS",
+          "status": "PDF_VERIFIED",
+          "finding": "Ranged text explicitly says four point-defense double laser cannons but subrow uses singular gunner. Exact gunner allocation and arcs unprinted.",
+          "sourcePrintedPage": 111
+        },
+        {
+          "type": "GR75_MODIFIED_ALLIANCE_TRANSPORTS",
+          "status": "PDF_VERIFIED",
+          "finding": "Some Rebel transports carry better weapons, shields and engines, or serve as hospital/salvage/landing craft. Those are configurations distinct from stock.",
+          "sourcePrintedPage": 111
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          111
+        ],
+        "statblockLocation": "printed p.111",
+        "reviewScope": "Whole published statblock, weapon subrows, and relevant adjacent narrative/capabilities visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-gallofree-gr-75-medium-transport",
+        "reviewDisposition": "GR75_FOUR_POINT_DEFENSE_GUNS_AND_OPTIONAL_UPGRADES",
+        "verifiedPdfPages": [
+          111
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 111,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "firingArc",
+            "batteryCount"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-011",
+      "queuePosition": 56,
+      "cp16Index": 54,
+      "sourceEntryKey": "sotg-olanji-charubah-miy-til-fighter",
+      "printedName": "Olanji/Charubah Miy'til Fighter",
+      "printedStartPage": 112,
+      "reviewedSourcePages": [
+        112
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Huge starfighter",
+        "cl": 9,
+        "initiative": 10,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 17,
+          "flatFootedReflex": 11,
+          "fortitude": 24,
+          "armorBonus": 3,
+          "damageReduction": 10,
+          "shieldRating": 20,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 90,
+          "threshold": 34
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 4
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 16
+          },
+          "maxVelocityKmH": 1150
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "1",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 26,
+          "ranged": "laser cannons +7 OR medium concussion missiles +7",
+          "attackOptions": [
+            "autofire (laser cannons)"
+          ]
+        },
+        "abilities": {
+          "str": 38,
+          "dex": 22,
+          "con": "—",
+          "int": 16
+        },
+        "skills": {
+          "initiative": 10,
+          "mechanics": 6,
+          "mechanicsWithAstromech": 13,
+          "perception": 6,
+          "pilot": 10,
+          "useComputer": 6,
+          "useComputerWithAstromech": 13
+        },
+        "crew": {
+          "count": 1,
+          "plusAstromechDroid": true,
+          "quality": "skilled"
+        },
+        "passengers": "none",
+        "cargo": {
+          "number": 25,
+          "unit": "kg"
+        },
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "hyperspace": {
+          "hyperdrive": "x1.5",
+          "backup": "x12",
+          "navMemory": "5 jumps (astromech droid)"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": 210000,
+          "usedCredits": 85000
+        },
+        "payload": {
+          "count": 6,
+          "type": "medium concussion missiles"
+        },
+        "specialDefensesOrRules": {
+          "astromechCover": "+5 or total (droid); pilot total",
+          "variant": "original external socket vs later enclosed socket"
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "5d10x2",
+          "sourcePage": 112,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 2
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "8d10x2",
+          "sourcePage": 112,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "splash": "4-square",
+          "payload": 6
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "5d10x2",
+          "sourcePage": 112,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 2
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "8d10x2",
+          "sourcePage": 112,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "splash": "4-square",
+          "payload": 6
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "MIYTIL_ASTROMECH_CONDITIONAL_SKILLS",
+          "status": "PDF_VERIFIED",
+          "finding": "Use Computer/Mechanics default +6; with astromech droid +13. Pilot, astro cover and five-jump memory must not be auto-granted absent the relevant configuration.",
+          "sourcePrintedPage": 112
+        },
+        {
+          "type": "MIYTIL_COMMAND_FIGHTER_NOT_BASE",
+          "status": "PDF_VERIFIED",
+          "finding": "Special command fighters add third laser cannon, two ion cannons, and second missile launcher; not standard Fighter inventory.",
+          "sourcePrintedPage": 112
+        },
+        {
+          "type": "MIYTIL_ORIGINAL_LATER_ASTROMECH_SOCKET",
+          "status": "PDF_VERIFIED",
+          "finding": "Original external R2 socket vs later enclosed droid compartment; distinguish cover variants.",
+          "sourcePrintedPage": 112
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          112
+        ],
+        "statblockLocation": "printed p.112",
+        "reviewScope": "Whole published statblock, weapon subrows, and relevant adjacent narrative/capabilities visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-olanji-charubah-miy-til-fighter",
+        "reviewDisposition": "MIYTIL_FIGHTER_VS_COMMAND_AND_R2_COCKPIT_VARIANTS",
+        "verifiedPdfPages": [
+          112
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 112,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 112,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-012",
+      "queuePosition": 57,
+      "cp16Index": 55,
+      "sourceEntryKey": "sotg-olanji-charubah-miy-til-assault-bomber",
+      "printedName": "Olanji/Charubah Miy'til Assault Bomber",
+      "printedStartPage": 113,
+      "reviewedSourcePages": [
+        113
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 11,
+        "initiative": 5,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 17,
+          "flatFootedReflex": 11,
+          "fortitude": 27,
+          "armorBonus": 8,
+          "damageReduction": 10,
+          "shieldRating": 30,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 120,
+          "threshold": 47
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 4
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 16
+          },
+          "maxVelocityKmH": 1000
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "1",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 34,
+          "ranged": "laser cannons +7 AND medium concussion missiles +7",
+          "attackOptions": [
+            "autofire (laser cannons)"
+          ]
+        },
+        "abilities": {
+          "str": 44,
+          "dex": 18,
+          "con": "—",
+          "int": 16
+        },
+        "skills": {
+          "initiative": 5,
+          "mechanics": 6,
+          "mechanicsWithAstromech": 13,
+          "perception": 6,
+          "pilot": 5,
+          "useComputer": 6,
+          "useComputerWithAstromech": 13
+        },
+        "crew": {
+          "count": 2,
+          "plusAstromechDroid": true,
+          "quality": "skilled"
+        },
+        "passengers": "none",
+        "cargo": {
+          "number": 400,
+          "unit": "kg"
+        },
+        "consumables": "2 days",
+        "carriedCraft": "none",
+        "hyperspace": {
+          "hyperdrive": "x2",
+          "backup": "x12",
+          "navMemory": "5 jumps (astromech droid)"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": "not available for sale",
+          "blackMarketValueCredits": 150000
+        },
+        "payload": {
+          "count": 32,
+          "type": "medium concussion missiles"
+        },
+        "specialDefensesOrRules": {
+          "astromechCover": "+5 astromech droid cover; crew total",
+          "mission": "heavy assault and carried to battlefield"
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "5d10x2",
+          "sourcePage": 113,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 2
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 7,
+          "damage": "9d10x2",
+          "sourcePage": 113,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "payload": 32,
+          "splash": "4-square"
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "5d10x2",
+          "sourcePage": 113,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 2
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 7,
+          "damage": "9d10x2",
+          "sourcePage": 113,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "payload": 32,
+          "splash": "4-square"
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "MIYTIL_BOMBER_DISTINCT",
+          "status": "PDF_VERIFIED",
+          "finding": "Bomber is distinct from p112 light fighter: two crew plus astromech, 32-missile payload, laser and missile simultaneous, different hyperdrive.",
+          "sourcePrintedPage": 113
+        },
+        {
+          "type": "MIYTIL_BOMBER_SKILLS_ASTROMECH",
+          "status": "PDF_VERIFIED",
+          "finding": "Conditional +13 Mechanics/Use Computer depends on astromech; pilot and gunner operate separate systems.",
+          "sourcePrintedPage": 113
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          113
+        ],
+        "statblockLocation": "printed p.113",
+        "reviewScope": "Whole published statblock, weapon subrows, and relevant adjacent narrative/capabilities visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-olanji-charubah-miy-til-assault-bomber",
+        "reviewDisposition": "MIYTIL_BOMBER_DISTINCT_CREW_AND_FIRE",
+        "verifiedPdfPages": [
+          113
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 113,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 113,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-013",
+      "queuePosition": 58,
+      "cp16Index": 56,
+      "sourceEntryKey": "sotg-mon-calamari-mc80-star-cruiser",
+      "printedName": "Mon Calamari MC80 Star Cruiser",
+      "printedStartPage": 114,
+      "reviewedSourcePages": [
+        114,
+        115
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 19,
+        "initiative": -1,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 13,
+          "fortitude": 54,
+          "armorBonus": 13,
+          "damageReduction": 20,
+          "shieldRating": 150,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 1800,
+          "threshold": 254
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 3
+          }
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "2x2",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 66,
+          "ranged": "4 turbolaser batteries +15* AND 5 heavy ion cannon batteries +11* AND tractor beam battery +15*"
+        },
+        "abilities": {
+          "str": 98,
+          "dex": 16,
+          "con": "—",
+          "int": 16
+        },
+        "skills": {
+          "initiative": -1,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -1,
+          "useComputer": 6
+        },
+        "crew": {
+          "count": 5402,
+          "quality": "skilled"
+        },
+        "passengers": "1200 troops",
+        "cargo": {
+          "number": 20000,
+          "unit": "tons"
+        },
+        "consumables": "2 years",
+        "carriedCraft": "36 A/B/X/Y-wing fighters; 2 stock light freighters",
+        "hyperspace": {
+          "hyperdrive": "x1",
+          "backup": "x9",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": "not available for sale"
+        },
+        "specialDefensesOrRules": {
+          "shieldRecharge": {
+            "swiftActions": 3,
+            "regainSR": 10,
+            "ordinary": 5
+          },
+          "tacticalFire": {
+            "action": "standard forgo all attacks",
+            "radiusSquares": 2,
+            "effect": "allied starships +10 SR while cruiser SR > 0"
+          }
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "5d10x5",
+          "sourcePage": 114,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4,
+          "againstSmallerThanColossal": -5
+        },
+        {
+          "weaponLabel": "heavy ion cannon battery",
+          "station": "battery (4 gunners)",
+          "attackBonus": 11,
+          "damage": "3d10x5 ion",
+          "sourcePage": 114,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -9
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "— (grapple +66)",
+          "sourcePage": 114,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 1,
+          "againstSmallerThanColossal": -5
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "5d10x5",
+          "sourcePage": 114,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 4,
+          "againstSmallerThanColossal": -5
+        },
+        {
+          "weaponLabel": "heavy ion cannon battery",
+          "station": "battery (4 gunners)",
+          "attackBonus": 11,
+          "damage": "3d10x5 ion",
+          "sourcePage": 114,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 5,
+          "againstSmallerThanColossal": -9
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "— (grapple +66)",
+          "sourcePage": 114,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 1,
+          "againstSmallerThanColossal": -5
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "MC80_SHIELDS_DUAL_RATE",
+          "status": "PDF_VERIFIED",
+          "finding": "Three swift actions recover 10 shield points, not normal 5; ability is MC80-class defensive capacity.",
+          "sourcePrintedPage": 115
+        },
+        {
+          "type": "MC80_TACTICAL_SR_AURA",
+          "status": "PDF_VERIFIED",
+          "finding": "Standard action forgo attacks, allied ships within two starship squares +10 SR only while own MC80 SR >0; cannot treat as unconditional stacking permanent SR.",
+          "sourcePrintedPage": 115
+        },
+        {
+          "type": "MC80_BESPOKE_INTERIORS",
+          "status": "PDF_VERIFIED",
+          "finding": "MC80 ships share stats but differ dramatically in physical exterior/interior; not grounds to invent mechanical loadouts.",
+          "sourcePrintedPage": 114
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          114,
+          115
+        ],
+        "statblockLocation": "printed p.114",
+        "reviewScope": "Whole published statblock, weapon subrows, and relevant adjacent narrative/capabilities visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-mon-calamari-mc80-star-cruiser",
+        "reviewDisposition": "MC80_CLASS_SHIELD_RECHARGE_AND_CONDITIONAL_AURA",
+        "verifiedPdfPages": [
+          114,
+          115
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 114,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 114,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 2,
+          "originalRowPageStored": true,
+          "sourcePage": 114,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-014",
+      "queuePosition": 59,
+      "cp16Index": 57,
+      "sourceEntryKey": "sotg-home-one",
+      "printedName": "Home One",
+      "printedStartPage": 115,
+      "reviewedSourcePages": [
+        115
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 19,
+        "initiative": -1,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 13,
+          "fortitude": 54,
+          "armorBonus": 13,
+          "damageReduction": 20,
+          "shieldRating": 150,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 1950,
+          "threshold": 254
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 3
+          }
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "2x2",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 66,
+          "ranged": "6 turbolaser batteries +15* AND 6 heavy ion cannon batteries +15* AND tractor beam battery +15*"
+        },
+        "abilities": {
+          "str": 98,
+          "dex": 16,
+          "con": "—",
+          "int": 16
+        },
+        "skills": {
+          "initiative": -1,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -1,
+          "useComputer": 6
+        },
+        "crew": {
+          "count": 5402,
+          "quality": "skilled"
+        },
+        "passengers": "1200 troops",
+        "cargo": {
+          "number": 20000,
+          "unit": "tons"
+        },
+        "consumables": "2 years",
+        "carriedCraft": "120 A/B/X/Y-wing fighters",
+        "hyperspace": {
+          "hyperdrive": "x1",
+          "backup": "x9",
+          "navcomputer": "printed"
+        },
+        "economics": {
+          "availability": "Military",
+          "newCredits": "not available for sale"
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "5d10x5",
+          "sourcePage": 115,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 6,
+          "againstSmallerThanColossal": -5
+        },
+        {
+          "weaponLabel": "heavy ion cannon battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "3d10x5 ion",
+          "sourcePage": 115,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 6,
+          "againstSmallerThanColossal": -5
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "— (grapple +66)",
+          "sourcePage": 115,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 1,
+          "againstSmallerThanColossal": -5
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "turbolaser battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "5d10x5",
+          "sourcePage": 115,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 6,
+          "againstSmallerThanColossal": -5
+        },
+        {
+          "weaponLabel": "heavy ion cannon battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "3d10x5 ion",
+          "sourcePage": 115,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 6,
+          "againstSmallerThanColossal": -5
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "battery (6 gunners)",
+          "attackBonus": 15,
+          "damage": "— (grapple +66)",
+          "sourcePage": 115,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": 1,
+          "againstSmallerThanColossal": -5
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "HOME_ONE_MC80_SUBCLASS",
+          "status": "PDF_VERIFIED",
+          "finding": "p115 explicitly Home One design is a subclass of MC80 and not a separate ship class. Keep separate published statblock identity and variant relationship.",
+          "sourcePrintedPage": 115
+        },
+        {
+          "type": "HOME_ONE_MORE_FIGHTERS_MORE_BATTERIES",
+          "status": "PDF_VERIFIED",
+          "finding": "Home One has 120 carried fighters and 6/6 weapons groups vs stock MC80 36 fighters and 4/5; cannot simply inherit stock inventory.",
+          "sourcePrintedPage": 115
+        },
+        {
+          "type": "HOME_ONE_MC80_GENERAL_ABILITIES_REVIEW",
+          "status": "PDF_VERIFIED",
+          "finding": "MC80 class discussion immediately preceding Home One says backup shields and Tactical Fire for MC80 class; resolve applicability explicitly in schema rather than silently inheriting unpublished Home One footnotes.",
+          "sourcePrintedPage": 115
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy scanned PDF",
+        "printedPages": [
+          115
+        ],
+        "statblockLocation": "printed p.115",
+        "reviewScope": "Whole published statblock, weapon subrows, and relevant adjacent narrative/capabilities visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-home-one",
+        "reviewDisposition": "HOME_ONE_NAMED_MC80_SUBCLASS_SCOPE_PENDING",
+        "verifiedPdfPages": [
+          115
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 115,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 115,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        },
+        {
+          "rowIndex": 2,
+          "originalRowPageStored": true,
+          "sourcePage": 115,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [
+        {
+          "status": "REPRESENTATION_SCOPE_UNRESOLVED",
+          "issue": "Home One is identified as a distinct MC80 subclass with different printed ship statistics. Applicability of general MC80 special shield-recharge and tactical SR aura rules remains scoped and unresolved; neither automatic inheritance nor denial is certified.",
+          "sourcePrintedPages": [
+            114,
+            115
+          ],
+          "runtimeDisposition": "NO_AUTOMATIC_CLASS_RULE_INHERITANCE_OR_STOCK_ATTACK_AUTHORITY"
+        }
+      ],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    },
+    {
+      "certificateId": "SOTG-SF-CP20-T03-015",
+      "queuePosition": 60,
+      "cp16Index": 59,
+      "sourceEntryKey": "sotg-theed-palace-space-vessel-engineering-corps-n-1-royal-starfighter",
+      "printedName": "Theed Palace Space Vessel Engineering Corps N-1 Royal Starfighter",
+      "printedStartPage": 118,
+      "reviewedSourcePages": [
+        118
+      ],
+      "originalFieldStates": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "PDF_VERIFIED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "publishedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 8,
+        "initiative": 5,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 15,
+          "flatFootedReflex": 11,
+          "fortitude": 22,
+          "armorBonus": 6,
+          "damageReduction": 10,
+          "shieldRating": 15,
+          "vehicularCombat": "printed"
+        },
+        "durability": {
+          "hitPoints": 60,
+          "threshold": 42
+        },
+        "movement": {
+          "starshipScale": {
+            "mode": "fly",
+            "squares": 4
+          },
+          "characterScale": {
+            "mode": "fly",
+            "squares": 16
+          },
+          "maxVelocityKmH": 1100
+        },
+        "fightingSpace": {
+          "starshipScaleSquares": "1",
+          "cover": "total"
+        },
+        "combat": {
+          "baseAttackBonus": 2,
+          "grappleBonus": 29,
+          "ranged": "laser cannons +6 OR proton torpedoes +6",
+          "attackOptions": [
+            "autofire (laser cannons)",
+            "fire-link (proton torpedoes)"
+          ]
+        },
+        "abilities": {
+          "str": 34,
+          "dex": 18,
+          "con": "-",
+          "int": 14
+        },
+        "skills": {
+          "initiative": 5,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 5,
+          "useComputer": 6,
+          "mechanicsWithAstromech": 13,
+          "useComputerWithAstromech": 13
+        },
+        "crew": {
+          "count": 1,
+          "plusAstromechDroid": true,
+          "quality": "skilled"
+        },
+        "passengers": "none",
+        "cargo": {
+          "number": 65,
+          "unit": "kg"
+        },
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "hyperspace": {
+          "hyperdrive": "x1",
+          "navMemory": "10 jumps (astromech droid)"
+        },
+        "economics": {
+          "availability": "Restricted",
+          "newCredits": "not available for sale"
+        },
+        "payload": {
+          "count": 10,
+          "type": "proton torpedoes"
+        }
+      },
+      "originalAttackGroupObservations": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "5d10x2",
+          "sourcePage": 118,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 1
+        },
+        {
+          "weaponLabel": "proton torpedoes",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "10d10x2",
+          "sourcePage": 118,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "payloadCount": 10,
+          "splash": "4-square",
+          "fireLink": "attack option"
+        }
+      ],
+      "certifiedAttackGroupObservations": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "5d10x2",
+          "sourcePage": 118,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "autofireBonus": 1
+        },
+        {
+          "weaponLabel": "proton torpedoes",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "10d10x2",
+          "sourcePage": 118,
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryCount": "SOURCE_SILENT_CONFIRMED",
+          "payloadCount": 10,
+          "splash": "4-square",
+          "fireLink": "attack option"
+        }
+      ],
+      "configurationRuleEvidence": [
+        {
+          "type": "N1_CONDITIONAL_ASTROMECH_SKILLS",
+          "status": "PDF_VERIFIED",
+          "finding": "Mechanics and Use Computer are +6 by default; +13 with astromech droid, which also supplies 10-jump memory and has +5 cover. Pilot retains total cover.",
+          "sourcePrintedPage": 118
+        },
+        {
+          "type": "N1_PROTON_FIRE_LINK_OPTION",
+          "status": "PDF_VERIFIED",
+          "finding": "Ten carried torpedoes are ammunition, not ten installed launchers; fire-link is permitted as printed.",
+          "sourcePrintedPage": 118
+        }
+      ],
+      "discrepancyEvidence": {
+        "source": "Starships of the Galaxy original scanned PDF",
+        "printedPages": [
+          118
+        ],
+        "statblockLocation": "printed p.118",
+        "reviewScope": "Entire printed statblock, weapons subrows and adjacent capability/narrative text visually read."
+      },
+      "cp19ReviewPointer": {
+        "sourceEntryKey": "sotg-theed-palace-space-vessel-engineering-corps-n-1-royal-starfighter",
+        "reviewDisposition": "N1_ASTROMECH_CONDITIONAL_SKILLS_AND_FIRE_LINK",
+        "verifiedPdfPages": [
+          118
+        ]
+      },
+      "sourceSilenceRowScope": [
+        {
+          "rowIndex": 0,
+          "originalRowPageStored": true,
+          "sourcePage": 118,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        },
+        {
+          "rowIndex": 1,
+          "originalRowPageStored": true,
+          "sourcePage": 118,
+          "supplementalSourcePageEvidence": false,
+          "sourceSilent": [
+            "hardwareCount",
+            "firingArc",
+            "batteryCount"
+          ]
+        }
+      ],
+      "auditCorrectionIds": [],
+      "unresolvedRuleScopeEvidence": [],
+      "certificationState": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY",
+      "physicalMountCertified": false,
+      "foundryStockAttackTrusted": false,
+      "productionHydrationPermitted": false
+    }
+  ],
+  "auditOnly": true,
+  "rawSourceLedgerImmutable": true,
+  "v06SchemaFrozen": false,
+  "productionChangesMade": false
+}
