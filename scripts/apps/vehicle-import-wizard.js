@@ -2,6 +2,7 @@ import { VehiclePackDataLoader } from "/systems/foundryvtt-swse/scripts/core/veh
 import { VehicleImportEngine } from "/systems/foundryvtt-swse/scripts/engine/import/vehicle-import-engine.js";
 import { probeControlledVehicleImport } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-cp9c-actor-provenance-probe.js";
 import { inspectCP21LegacyPackCandidate } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-evidence-authority.js";
+import { observeCP23ImportedVehicle } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-cp23-pack-provenance-probe.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -296,6 +297,22 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
         else console.info('[SWSE][CP9C] Vehicle source snapshot matched; attack authorization remains blocked:', proof);
       } catch (proofError) {
         console.warn('[SWSE][CP9C] Import provenance diagnostic could not complete; stock unbound:', proofError);
+      }
+      // CP23: an authentic native PACK READ is observable, but these legacy
+      // records do not have canonical SotG source binding or mount authority.
+      // Diagnostics never write trust flags or change Actor import plans.
+      try {
+        const observed = await observeCP23ImportedVehicle({
+          actor: this.actor, sourceDocument: this.state.selectedDocument,
+          packName: this.state.selectedEntry?.packName, mode: this.state.mode
+        });
+        if (observed.observedLegacyPack) {
+          console.info('[SWSE][CP23] Native legacy pack snapshot observed; stock attacks remain blocked:', observed);
+        } else if (observed.reason !== 'UNKNOWN_LEGACY_PACK_DOCUMENT') {
+          console.info('[SWSE][CP23] No authenticated canonical SotG source binding:', observed.reason);
+        }
+      } catch (error) {
+        console.warn('[SWSE][CP23] Diagnostic failed closed:', error);
       }
       ui.notifications.info(`Imported ${this.state.selectedDocument.name} into ${this.actor.name}.`);
       this.callback?.();
