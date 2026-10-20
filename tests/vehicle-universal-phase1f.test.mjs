@@ -74,8 +74,8 @@ test('all thirteen source entries are unique; narrative points and droid NPCs ex
   assert.ok(x.classification?.mobilityDomains?.length>0);
   assert.equal(x.provenance.sourcePdfSha256,historic.sourcePdfSha256);
  }
- assert.ok(current.sourceIdentityPolicies.some(x=>x.subject==='Point Nadir'&&x.status==='EXCLUDE_NONSTATBLOCK'));
- assert.ok(current.sourceIdentityPolicies.some(x=>x.status==='EXCLUDE_DROID_NPC_STATBLOCKS'));
- assert.ok(current.sourceIdentityPolicies.some(x=>x.subject==='StarForge Station versus Rakatan Star Forge'&&x.status==='DISTINCT_PUBLICATION_IDENTITY'));
+ assert.ok(current.identityDecisions.some(x=>x.subject==='Point Nadir'&&x.status==='EXCLUDE_NONSTATBLOCK'));
+ assert.ok(current.identityDecisions.some(x=>x.status==='EXCLUDE_DROID_NPC_STATBLOCKS'));
+ assert.ok(current.identityDecisions.some(x=>x.subject==='StarForge Station versus Rakatan Star Forge'&&x.status==='DISTINCT_PUBLICATION_IDENTITY'));
  assert.ok(current.process.discoveryMethod.includes('225 physical pages'));
 });
