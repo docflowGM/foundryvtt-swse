@@ -1,4 +1,5 @@
 const VEHICLE_PACK_NAMES = [
+  'vehicles-canonical-ships',
   'vehicles-speeders',
   'vehicles-airspeeders',
   'vehicles-tracked',
@@ -57,7 +58,7 @@ function normalizeIndexEntry(doc, packName) {
     hyperdrive: system.vehicleHyperdriveLabel || system.hyperdrive_class || system.hyperdrive || '',
     consumables: system.vehicleConsumablesLabel || system.consumables || '',
     astrogation: system.vehicleAstrogationSupportLabel || system.vehicleAstrogationSupportStatus || '',
-    sr: system.shields?.max ?? system.shieldRating ?? 0,
+    sr: system.shields?.max ?? system.shieldRating ?? (packName === 'vehicles-canonical-ships' ? null : 0),
     cl: system.challengeLevel ?? system.cl ?? '',
     cost: system.cost || '',
     searchText: lower(`${doc.name} ${system.category} ${system.type} ${system.size} ${system.crew} ${system.cargo}`),
