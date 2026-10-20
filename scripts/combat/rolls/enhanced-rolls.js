@@ -1868,7 +1868,13 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
         } else {
           const fp = actor.system.forcePoints?.value || 0;
           if (fp > 0) {
-            await ActorEngine.spendForcePoints(actor, 1);
+            // TI-1: a Force Secret is applied only when the authority CONFIRMS a point was spent (a throw or spent < 1 means it was not paid for)
+            let paid = false;
+            try { paid = Number((await ActorEngine.spendForcePoints(actor, 1))?.spent) >= 1; } catch (err) { console.error('Failed to spend Force Point for a Force Secret:', err); }
+            if (!paid) {
+              ui.notifications.warn(`${secret.name} was not applied: the Force Point could not be spent.`);
+              continue;
+            }
           }
         }
 

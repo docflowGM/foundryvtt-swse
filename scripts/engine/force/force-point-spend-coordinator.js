@@ -17,6 +17,7 @@
  */
 
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { snapshotBonusEntries, receiptFromSpend, giveBack, observePools, poolsChanged } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-receipt.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ROLL_CONTRIBUTION_KIND, ROLL_TRANSFORM_OPERATION, makeRollContribution } from "/systems/foundryvtt-swse/scripts/engine/roll/expression/roll-contribution-types.js";
 import { applyRollTransforms } from "/systems/foundryvtt-swse/scripts/engine/roll/expression/roll-transform-resolver.js";
@@ -114,10 +115,23 @@ export class ForcePointSpendCoordinator {
     // validated -- spending can only be followed by executing that same
     // formula, never a silently-degraded fallback.
     let spendReceipt;
+    const beforeBonus = snapshotBonusEntries(actor);   // so a refund can give back exactly what this spend took (bonus points as bonus points)
+    const observedBefore = observePools(actor);
     try {
       spendReceipt = await ActorEngine.spendForcePoints(actor, requested);
     } catch (err) {
       swseLogger.error('[ForcePointSpendCoordinator] ActorEngine.spendForcePoints threw', err);
+      const observedAfter = observePools(actor);
+      if (poolsChanged(observedBefore, observedAfter)) {
+        // The spend threw AFTER the observable pools changed: it may have applied fully or partly. "Nothing was spent" would be a guess, and an automatic
+        // compensation would be a second guess — so neither: report an unresolved outcome with the evidence and let a person reconcile it.
+        const deducted = Math.max(0, (observedBefore.normal - observedAfter.normal) + (observedBefore.bonus.reduce((n, e) => n + e[1], 0) - observedAfter.bonus.reduce((n, e) => n + e[1], 0)));
+        return this._failure({
+          requested, before, after: observedAfter.normal,
+          reason: `Force Point spend could NOT be confirmed (${err.message}); the pools changed, so it may have been charged. Check the Force Point pool before spending again.`,
+          domain, spent: deducted, spendIndeterminate: true, evidence: { before: observedBefore, after: observedAfter, error: err.message }
+        });
+      }
       return this._failure({ requested, before, after: before, reason: `Force Point spend failed: ${err.message}`, domain });
     }
 
@@ -125,15 +139,20 @@ export class ForcePointSpendCoordinator {
     if (actuallySpent < requested) {
       // Partial spend (e.g. a race against another caller): refund whatever
       // was taken and fail closed rather than granting a partially-paid bonus.
-      if (actuallySpent > 0) {
-        await this._safeRefund(ActorEngine, actor, actuallySpent, 'partial-spend-rejected');
-      }
+      const refund = actuallySpent > 0
+        ? await this._safeRefund(ActorEngine, actor, receiptFromSpend(beforeBonus, actor, spendReceipt), 'partial-spend-rejected')
+        : { ok: true };
       return this._failure({
         requested,
         before,
-        after: before,
-        reason: `Force Point spend incomplete (needed ${requested}, spent ${actuallySpent})`,
-        domain
+        after: refund.ok ? before : Math.max(0, before - actuallySpent),
+        reason: `Force Point spend incomplete (needed ${requested}, spent ${actuallySpent})${refund.ok ? '' : '; the partial spend could NOT be refunded automatically'}`,
+        domain,
+        rolledBack: actuallySpent > 0 && refund.ok,
+        refundFailed: !refund.ok,
+        refundIndeterminate: refund.indeterminate === true,
+        evidence: refund.evidence ?? null,
+        spent: refund.ok ? 0 : actuallySpent
       });
     }
 
@@ -143,14 +162,18 @@ export class ForcePointSpendCoordinator {
       await fpRoll.evaluate();
     } catch (err) {
       swseLogger.error(`[ForcePointSpendCoordinator] Force Point roll failed for die "${forceDice}"; rolling back spend.`, err);
-      await this._safeRefund(ActorEngine, actor, actuallySpent, 'roll-execution-failed');
+      const refund = await this._safeRefund(ActorEngine, actor, receiptFromSpend(beforeBonus, actor, spendReceipt), 'roll-execution-failed');
       return this._failure({
         requested,
         before,
-        after: before,
-        reason: `Force die roll failed: ${err.message}`,
+        after: refund.ok ? before : Math.max(0, before - actuallySpent),
+        reason: `Force die roll failed: ${err.message}${refund.ok ? '' : (refund.indeterminate ? '; the refund could NOT be confirmed — check the Force Point pool before spending again' : '; the Force Point could NOT be refunded automatically')}`,
         domain,
-        rolledBack: true
+        rolledBack: refund.ok,
+        refundFailed: !refund.ok,
+        refundIndeterminate: refund.indeterminate === true,
+        evidence: refund.evidence ?? null,
+        spent: refund.ok ? 0 : actuallySpent
       });
     }
 
@@ -161,7 +184,8 @@ export class ForcePointSpendCoordinator {
 
     const after = Number.isFinite(Number(spendReceipt?.remaining)) ? Number(spendReceipt.remaining) : Math.max(0, before - actuallySpent);
 
-    return {
+    const spendRecord = receiptFromSpend(beforeBonus, actor, spendReceipt);
+    const success = {
       success: true,
       requested,
       spent: actuallySpent,
@@ -177,30 +201,46 @@ export class ForcePointSpendCoordinator {
       dieSize: finalDieSize,
       dieUpgradeSteps,
       dieUpgradeSource,
-      rolledBack: false
+      rolledBack: false,
+      refundFailed: false
     };
+    // A LATER failure of the caller's own roll (RollCore) gives this spend back through the same receipt logic. Non-enumerable so the receipt stays
+    // plain data (never serialized into chat flags); idempotent: a part already given back is not given back twice.
+    Object.defineProperty(success, 'refundSpend', {
+      value: (refundReason = 'caller-roll-failed') => this._safeRefund(ActorEngine, actor, spendRecord, refundReason),
+      enumerable: false
+    });
+    return success;
   }
 
-  static async _safeRefund(ActorEngine, actor, amount, refundReason) {
-    try {
-      await ActorEngine.gainForcePoints(actor, amount);
-    } catch (err) {
-      swseLogger.error(`[ForcePointSpendCoordinator] Rollback refund of ${amount} FP failed (${refundReason}); actor may be short Force Points.`, err);
+  /**
+   * Gives back exactly what this spend took (shared receipt logic: bonus points as bonus points, the normal point as a relative gain). Resolves
+   * { ok }: ok is true ONLY when every part was actually written. A failed refund is logged and reported to the caller, never swallowed.
+   */
+  static async _safeRefund(ActorEngine, actor, receipt, refundReason) {
+    const given = await giveBack(ActorEngine, actor, receipt);
+    if (!given.ok) {
+      swseLogger.error(`[ForcePointSpendCoordinator] Rollback refund failed (${refundReason}); the actor may be short Force Points.`, given.error);
     }
+    return given;
   }
 
-  static _failure({ requested, before, after, reason, domain, rolledBack = false }) {
+  static _failure({ requested, before, after, reason, domain, rolledBack = false, refundFailed = false, spent = 0, spendIndeterminate = false, refundIndeterminate = false, evidence = null }) {
     return {
       success: false,
       requested,
-      spent: 0,
+      spent,   // what is STILL deducted from the actor (non-zero only when a refund failed)
       before,
       after,
       reason,
       domain,
       bonus: 0,
       roll: null,
-      rolledBack
+      rolledBack,
+      refundFailed,
+      spendIndeterminate,
+      refundIndeterminate,
+      evidence
     };
   }
 }

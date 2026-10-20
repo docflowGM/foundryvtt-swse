@@ -151,6 +151,8 @@ async function defaultResolveActionCost(actor, item, direction) {
   // Draw/holster is a Move Action (Core Rulebook); a feat mutation (Quick Draw: Swift) overrides it. Same default the former InventoryEngine path used.
   return mutation?.mutatedActionCost ?? mutation?.baseActionCost ?? 'move';
 }
+/** The ONLY reasons for which ActionEconomyConsumption reports an allowed non-expenditure as policy (nothing is tracked): not in combat, or a free/passive action. */
+const POLICY_NO_OP_REASONS = new Set(['out-of-combat', 'free', 'passive']);
 async function defaultSpendAction(actor, actionType, metadata) {
   const { ActionEconomyConsumption } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js');
   return ActionEconomyConsumption.spend(actor, actionType, metadata, { notify: true });
@@ -356,8 +358,10 @@ function enqueue(actorId, task) {
 
 const defaultLedger = new Map();
 const LEDGER_MAX = 256;
-function remember(ledger, requestId, intentDigest, outcome) {
-  ledger.set(requestId, { intentDigest, outcome });
+/** The process-local ledger is scoped by (actor, request id): another actor reusing an id is a different operation, not a conflict or a replay. */
+const ledgerKey = (actor, requestId) => `${actor?.id ?? ''}\u0000${requestId}`;
+function remember(ledger, actor, requestId, intentDigest, outcome) {
+  ledger.set(ledgerKey(actor, requestId), { intentDigest, outcome });
   while (ledger.size > LEDGER_MAX) ledger.delete(ledger.keys().next().value);
 }
 
@@ -444,13 +448,13 @@ async function runExecution(actor, request, intent, ctx, ledger, deps) {
     const classification = classifyTransaction(journaled, await observe(actor, journaled, deps), { spendMarkerPresent: await markerPresent(actor, ctx.requestId, deps) });
     return outcomeOf(OUTCOME.DUPLICATE_UNRESOLVED, ctx, { planDigest: journaled.planDigest, phase: journaled.phase, classification: classification.classification, spend: classification.spend, reasons: [...classification.reasons], issues: [issue('duplicate-request-unresolved', 'blocking', 'This request id is journaled and not finalized. It is never replayed automatically.', { phase: journaled.phase })] });
   }
-  const seen = ledger.get(ctx.requestId);
+  const seen = ledger.get(ledgerKey(actor, ctx.requestId));
   if (seen) {
     if (seen.intentDigest !== ctx.intentDigest) return outcomeOf(OUTCOME.REQUEST_ID_CONFLICT, ctx, { issues: [issue('request-id-reused-with-different-intent', 'blocking', 'This request id was already used for a different intent.')] });
     return outcomeOf(OUTCOME.DUPLICATE_REPLAYED, ctx, { planDigest: seen.outcome.planDigest, replayedStatus: seen.outcome.status, verified: seen.outcome.verified, finalized: seen.outcome.finalized, replayedFrom: 'ledger' });
   }
 
-  const finish = (outcome) => { remember(ledger, ctx.requestId, ctx.intentDigest, outcome); return outcome; };
+  const finish = (outcome) => { remember(ledger, actor, ctx.requestId, ctx.intentDigest, outcome); return outcome; };
 
   // ---- read, resolve, plan, confirm, re-plan under serialization ----
   const plan = await buildPlan(actor, intent, deps, ctx.intentDigest);
@@ -501,13 +505,15 @@ async function runExecution(actor, request, intent, ctx, ledger, deps) {
   }
   let spendState = 'not-required';
   if (spendRequired) {
-    let spendOk = false; let ambiguous = false; let spendError = null;
+    let spendOk = false; let ambiguous = false; let spendError = null; let spendReason = null;
     try {
       if (await (deps.spendMarkerPresent ?? defaultSpendMarkerPresent)(actor, ctx.requestId)) { spendOk = true; spendState = 'committed'; }
       else {
         const result = await (deps.spendAction ?? defaultSpendAction)(actor, plan.action.actionType, { source: 'equipment-coordinator', requestId: ctx.requestId, itemId: write.id, direction: plan.action.direction });
         if (result?.allowed === false || result?.permitted === false) spendOk = false;
-        else { spendOk = true; spendState = result?.committed === true ? 'committed' : 'not-required'; }
+        else if (result?.committed === true) { spendOk = true; spendState = 'committed'; }
+        else if (result?.noOp === true && POLICY_NO_OP_REASONS.has(result.reason)) { spendOk = true; spendState = 'not-required'; }   // the authority's established policy: nothing is tracked here
+        else { ambiguous = true; spendReason = result?.reason ?? 'unrecognized-spend-result'; }   // e.g. economy-modules-unavailable: no action was paid, and that is NOT a policy no-op
       }
     } catch (err) {
       spendError = err;
@@ -516,7 +522,7 @@ async function runExecution(actor, request, intent, ctx, ledger, deps) {
     }
     if (ambiguous) {
       await phaseTo(TXN_PHASE.INDETERMINATE, { spend: { state: 'unknown', actionType: plan.action.actionType }, notes: ['the action spend could not be established'] });
-      return finish(outcomeOf(OUTCOME.INDETERMINATE, ctx, { verified: true, issues: [issue('action-spend-indeterminate', 'blocking', 'The action spend threw and its marker could not be read. The Items stay applied but unfinalized; readiness is withheld and nothing is replayed.', { error: spendError?.message ?? null })] }));
+      return finish(outcomeOf(OUTCOME.INDETERMINATE, ctx, { verified: true, issues: [issue('action-spend-indeterminate', 'blocking', spendError ? 'The action spend threw and its marker could not be read. The Items stay applied but unfinalized; readiness is withheld and nothing is replayed.' : 'The action authority neither paid the action nor reported an established no-op. The Items stay applied but unfinalized; readiness is withheld and nothing is replayed.', { error: spendError?.message ?? null, reason: spendReason })] }));
     }
     if (!spendOk) return finish(await failWithCompensation(actor, ctx, current(), deps, phaseTo, 'action-spend-failed', spendError));
   }

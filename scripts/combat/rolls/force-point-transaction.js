@@ -22,20 +22,12 @@
  */
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ROLL_HOOKS } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
-
-/** Bonus Force Points normalized the way ActorEngine.spendForcePoints reads them, so the entries a spend consumed can be given back by id. */
-const bonusEntries = (pool) => {
-  if (!pool || typeof pool !== 'object') {return [];}
-  if (Array.isArray(pool.entries) && pool.entries.length) {return pool.entries.map((e, i) => ({ ...e, id: String(e?.id ?? `bonus-${i}`), value: Math.max(0, Number(e?.value ?? 0) || 0) }));}
-  const v = Math.max(0, Number(pool.value ?? 0) || 0);
-  return v > 0 ? [{ id: 'legacy-bonus-force-points', source: 'Bonus Force Point', value: v, max: v }] : [];
-};
+import { snapshotBonusEntries, receiptFromSpend, giveBack, observePools, poolsChanged } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-receipt.js";
 
 export function createForcePointTransaction({ actor, result, formula, reason = '', roll = null }) {
   let commitRun = null;
   let rollbackRun = null;
   let announceRun = null;
-  const poolNow = () => ({ normal: Number(actor.system?.forcePoints?.value ?? 0), bonus: bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints')).reduce((n, e) => n + e.value, 0) });
   const tx = {
     result,
     formula,
@@ -60,8 +52,8 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     async _commit() {
       tx.state = 'committing';
       const pool = actor.system.forcePoints ?? {};
-      const beforeBonus = bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints'));
-      const before = poolNow();
+      const beforeBonus = snapshotBonusEntries(actor);
+      const before = observePools(actor);
       tx.shown = { remaining: Math.max(0, (pool.value ?? 0) - 1), max: pool.max ?? 0 };   // (use calculated value instead of stale reference)
       let spent;
       try {
@@ -69,8 +61,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
         spent = await ActorEngine.spendForcePoints(actor, 1);   // PHASE 3: Route through ActorEngine
       } catch (err) {
         console.error('Failed to spend Force Point:', err);
-        const after = poolNow();
-        if (after.normal !== before.normal || after.bonus !== before.bonus) {
+        if (poolsChanged(before, observePools(actor))) {
           // The spend threw after the pool visibly changed: it may or may not have fully applied. Not success, not repeatable, not auto-refunded.
           tx.state = 'indeterminate'; tx.closed = true;
           ui.notifications.error('A Force Point spend could not be confirmed. Check the Force Point pool before spending again.');
@@ -85,12 +76,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
         ui.notifications.error('No Force Point could be spent.');
         return false;
       }
-      const afterBonus = bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints'));
-      tx.gaveBonus = beforeBonus
-        .map((e) => ({ entry: e, amount: e.value - (afterBonus.find((x) => x.id === e.id)?.value ?? 0) }))
-        .filter((x) => x.amount > 0);
-      const bonusTaken = tx.gaveBonus.reduce((n, x) => n + x.amount, 0);
-      tx.spentNormal = Math.max(0, Number.isFinite(spent?.normalSpent) ? spent.normalSpent : (Number(spent?.spent) || 0) - bonusTaken);
+      ({ spentNormal: tx.spentNormal, gaveBonus: tx.gaveBonus } = receiptFromSpend(beforeBonus, actor, spent));
       tx.committed = true;
       tx.state = 'committed';
       return true;
@@ -119,34 +105,23 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       return rollbackRun;
     },
     async _rollback() {
-      try {
-        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        if (tx.spentNormal > 0) {
-          await ActorEngine.gainForcePoints(actor, tx.spentNormal);
-          tx.spentNormal = 0;   // done: a retry after a later failure must not give it back twice
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      const given = await giveBack(ActorEngine, actor, tx);   // the shared receipt logic; tx carries { spentNormal, gaveBonus }
+      if (!given.ok) {
+        console.error('Failed to restore Force Point after a refused attack:', given.error);
+        if (given.indeterminate) {
+          // The refund write threw after the pools changed: it may have applied. Close the transaction — nothing here retries or compensates it.
+          tx.state = 'refund-indeterminate'; tx.closed = true; tx.refundEvidence = given.evidence ?? null;
+          ui.notifications.error('A Force Point refund for an attack that did not happen could not be confirmed. Check the Force Point pool before spending again.');
+          return false;
         }
-        if (tx.gaveBonus.length) {
-          const poolNow = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
-          const entries = bonusEntries(poolNow);
-          for (const { entry, amount } of tx.gaveBonus) {
-            const here = entries.find((e) => e.id === entry.id);
-            if (here) {here.value += amount;}
-            else {entries.push({ ...entry, value: amount });}
-          }
-          const value = entries.reduce((n, e) => n + e.value, 0);
-          const max = entries.reduce((n, e) => n + Math.max(0, Number(e.max ?? e.value) || 0), 0);
-          await ActorEngine.updateActor(actor, { 'flags.swse.bonusForcePoints': { ...poolNow, value, max: Math.max(value, max), sources: [...new Set(entries.map((e) => e.source).filter(Boolean))], entries } });
-          tx.gaveBonus = [];
-        }
-        tx.committed = false;
-        tx.closed = true;
-        tx.state = 'rolled-back';
-        return true;
-      } catch (err) {
-        console.error('Failed to restore Force Point after a refused attack:', err);
         ui.notifications.error('A Force Point was spent for an attack that did not happen and could not be restored automatically. Please correct it by hand.');
         return false;
       }
+      tx.committed = false;
+      tx.closed = true;
+      tx.state = 'rolled-back';
+      return true;
     },
     announce() {
       if (!tx.committed || tx.closed || tx.rollbackAccepted) {return Promise.resolve(false);}

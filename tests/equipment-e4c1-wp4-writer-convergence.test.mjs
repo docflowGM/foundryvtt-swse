@@ -27,7 +27,7 @@ const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
 const tracked = execFileSync('git', ['ls-files', 'scripts', 'templates', 'index.js'], { cwd: new URL('..', import.meta.url).pathname }).toString().split('\n').filter(Boolean);
 
 const spent = []; let allow = true;
-ActionEconomyConsumption.spend = async (_a, type) => { if (!allow) return { allowed: false }; spent.push(type); return { allowed: true }; };
+ActionEconomyConsumption.spend = async (_a, type) => { if (!allow) return { allowed: false }; spent.push(type); return { allowed: true, committed: true }; };
 const h = installCoordinatorHarness(ActorEngine);
 const opts = { deps: h.deps };
 const mkActor = (items, extra = {}) => { items.get = (id) => items.find((i) => i.id === id); const a = { id: 'a', type: 'character', items, system: { size: 'Medium' }, flags: {}, ...extra }; for (const i of items) i.actor = a; return a; };

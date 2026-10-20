@@ -41,7 +41,7 @@ const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
 const tracked = execFileSync('git', ['ls-files', 'scripts'], { cwd: root }).toString().split('\n').filter((f) => f.endsWith('.js'));
 
 const spent = []; let allowSpend = true;
-ActionEconomyConsumption.spend = async (_a, type, meta) => { if (!allowSpend) return { allowed: false }; spent.push({ type, meta }); return { allowed: true, committed: false }; };
+ActionEconomyConsumption.spend = async (_a, type, meta) => { if (!allowSpend) return { allowed: false }; spent.push({ type, meta }); return { allowed: true, committed: true }; };
 const h = installCoordinatorHarness(ActorEngine);
 const opts = { deps: h.deps };
 const PISTOL = F.PISTOL_KEY, SABER = F.SABER_KEY;
