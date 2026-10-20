@@ -273,3 +273,68 @@ export const PHASE0_CENSUS = Object.freeze({
     'scripts/apps/store/store-checkout.js'
   ]
 });
+
+/**
+ * Known-unobserved writers: writers the lexical analyzer is KNOWN not to record (false negatives) that the audit has verified by reading source.
+ * Each entry is self-verifying: `evidence` items are searched in the scanned tree and the artifact reports whether each is present, with the
+ * matching lines. An entry exists so that no future ratchet or certification can describe its family as completely inventoried while a
+ * known writer is invisible to the analyzer. This is data, not suppression and not enforcement; it grants no authority.
+ *
+ * Fields: id; family; kind (`constant-key-flag-write` | `unrecognized-field` | `adapter-indirection`); description; evidence[{file, pattern}]
+ * (file is root-relative; pattern is a regular-expression source matched per line); reason (why the analyzer cannot see it);
+ * certificationEffect (what the family may not claim while the entry is present).
+ */
+export const KNOWN_UNOBSERVED = Object.freeze([
+  {
+    id: 'KU-AE-1',
+    family: 'actionEconomy',
+    kind: 'constant-key-flag-write',
+    description: 'ActionEconomyPersistence writes (setFlag) and clears (unsetFlag) the action-economy flag through class constants, not a literal key.',
+    evidence: [{ file: 'scripts/engine/combat/action/action-economy-persistence.js', pattern: '\\b(?:set|unset)Flag\\(\\s*this\\.SCOPE\\s*,\\s*this\\.FLAG_KEY' }],
+    reason: 'The flag key is `this.FLAG_KEY`; lexical analysis does not resolve constants (limitation L1).',
+    certificationEffect: 'The action-economy family has zero recognized direct writers while its authority writes the flag; the family must not be described as completely inventoried.'
+  },
+  {
+    id: 'KU-EQ-1',
+    family: 'equipmentState',
+    kind: 'unrecognized-field',
+    description: 'InventoryEngine writes weapon/shield activation fields (system.activated, system.active, emitLight and bladeColor flags) outside the configured equipment patterns, and the equipment coordinator\'s ready-ignite path owns the same fields.',
+    evidence: [
+      { file: 'scripts/engine/inventory/InventoryEngine.js', pattern: '["\']system\\.(?:activated|active)["\']' },
+      { file: 'scripts/engine/equipment/equipment-state-coordinator.js', pattern: 'IGNITE_PATHS\\s*=' }
+    ],
+    reason: 'The equipmentState family is configured for posture, occupancy and the journal only (limitation L10).',
+    certificationEffect: 'Equipment readiness/activation is not fully inventoried; the family must not be described as completely inventoried.'
+  },
+  {
+    id: 'KU-EQ-2',
+    family: 'equipmentState',
+    kind: 'unrecognized-field',
+    description: 'InventoryEngine writes system.equipped for equip/unequip of armor and equipment.',
+    evidence: [{ file: 'scripts/engine/inventory/InventoryEngine.js', pattern: '["\']system\\.equipped["\']' }],
+    reason: '`system.equipped` is not a configured protected path (limitation L10).',
+    certificationEffect: 'Non-weapon equip state is not inventoried.'
+  },
+  {
+    id: 'KU-EQ-3',
+    family: 'equipmentState',
+    kind: 'unrecognized-field',
+    description: 'InventoryEngine activation spends shield resources (system.currentSR, system.charges.current) as an absolute value derived from an in-memory read.',
+    evidence: [{ file: 'scripts/engine/inventory/InventoryEngine.js', pattern: '["\']system\\.(?:currentSR|charges\\.current)["\']' }],
+    reason: 'These resource fields are not configured protected paths (limitation L10).',
+    certificationEffect: 'Shield activation resources are not inventoried; they are a resource write, not only a state write.'
+  },
+  {
+    id: 'KU-FP-1',
+    family: 'forcePoints',
+    kind: 'adapter-indirection',
+    description: 'Force Points are written through SchemaAdapters.setForcePointsUpdate, which returns the payload; the callers pass it to ActorEngine.updateActor. The analyzer reports the adapter, not the callers.',
+    evidence: [
+      { file: 'scripts/utils/schema-adapters.js', pattern: 'static\\s+setForcePointsUpdate' },
+      { file: 'scripts/engine/talent/consular-talent-actions.js', pattern: 'SchemaAdapters\\.setForcePointsUpdate' },
+      { file: 'scripts/engine/force/force-engine.js', pattern: 'SchemaAdapters\\.setForcePointsUpdate' }
+    ],
+    reason: 'The write payload is built in another function; no data-flow analysis (limitation L5/L7).',
+    certificationEffect: 'The Force Point direct-writer list is a lower bound; callers via the adapter are invisible by caller.'
+  }
+]);

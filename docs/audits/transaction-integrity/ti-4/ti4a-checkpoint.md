@@ -15,6 +15,15 @@
 
 Exact source head used for each architectural claim is stated where the claim is made: lineage A `abb81d9191a1852709c96c8b89be65a7ba9a09b1` (equipment, Force Points, action economy, ammunition, coordinator); lineage B `4e51a15654adddae27da7e8a9ca1dda735771dd4` (`TransactionEngine`, approvals, followers, progression); `main` `4392c90dc324a0474e9ca470c514f4ec1a8fcc37` (the TI4-A branch's `scripts/` is byte-identical to `main`); Q-033 text from `c46bf6c87` read with `git show`.
 
+## 1b. Independent review correction 1 (PR #1063 reviewed at `590a5b362`) — applied
+
+| Item | Correction | Where |
+|---|---|---|
+| **R1** reconciliation causality | matching before/after values are observations; causal evidence classes defined (E-marker, E-receipt, E-version, E-value); without established causality the target stays `INDETERMINATE` and no completion, compensation or replay is allowed; roll-up table replaced; negative tests N19–N26 added (unrelated operation producing the same value; ABA with and without a marker; missing and untrusted receipts) | `ti4a-gm-reconciliation-design-and-negative-tests.md` §4, §7.2; erratum to the accepted Phase 0 `ti4-replay-and-recovery-design.md` §4 (not edited) |
+| **R2** reconciliation concurrency | the claim that the reconcile id serializes was removed; L1 serialization is by a target-receipt-scoped guard that excludes any reconcile id; a different id cannot start a competing write against an unresolved target; the persisted claim is detection only; L2 requires verified cross-client authority; unsupported concurrency fails closed; tests N27–N32, N29b | same file §3, §7.3; checklist D1–D5 |
+| **R3** known-unobserved writers | machine-readable, self-verifying `knownUnobserved` inventory (KU-AE-1, KU-EQ-1/2/3, KU-FP-1) and per-family `coverage` in every artifact; `actionEconomy`, `equipmentState`, `forcePoints` are `KNOWN_GAPS`; no family is ever `inventoryComplete`; an overstated claim is a **malformed** artifact (CI-visible), a reported gap never is; baselines regenerated (record sets identical; only `coverage`/`knownUnobserved` added); 3 new tests | analyzer + config; coverage doc §2b; baseline doc §5b; checklist E7–E8 |
+| **R4** OD-1 exception provenance | a caller-supplied `transactionContext` string is explicitly **not** sufficient; eligibility requires engine-verified GM authority and engine-derived operation provenance (dedicated entry point or engine-internal token); all P21 exceptions remain **inactive** until DI-2 is independently accepted and the provenance is defined and tested | risk matrix §3–§4; checklist K2 |
+
 ## 2. Deliverables (directive §9)
 
 | # | Required | File |
@@ -31,7 +40,7 @@ Exact source head used for each architectural claim is stated where the claim is
 | 10 | Stable operation-ID interface proposal (Q3) | `ti4a-operation-id-interface-proposal.md` |
 | 11 | Checkpoint and evidence report | this file |
 
-Tooling and tests added (only these): `tools/ti4-authority-inventory.mjs`, `tools/lib/ti4-authority-inventory.mjs`, `tools/lib/ti4-authority-config.mjs`, `tests/ti4a-authority-inventory.test.mjs`, `tests/fixtures/ti4a/scripts/**` (4 synthetic files: authority, documented-exception, unreviewed writer, unreviewed caller). **Plus** (separate commit) one appended section in `docs/audits/swse-rules-decisions-pending.md`.
+Tooling and tests added (only these, as corrected): `tools/ti4-authority-inventory.mjs`, `tools/lib/ti4-authority-inventory.mjs`, `tools/lib/ti4-authority-config.mjs`, `tests/ti4a-authority-inventory.test.mjs`, `tests/fixtures/ti4a/scripts/**` (4 synthetic files: authority, documented-exception, unreviewed writer, unreviewed caller). **Plus** (separate commit) one appended section in `docs/audits/swse-rules-decisions-pending.md`.
 
 ## 3. Report-only analyzer
 
@@ -66,7 +75,7 @@ Report-only is enforced by construction and by test: the analyzer has no Foundry
 
 **Reconciliation with Phase 0** (every difference investigated, nothing forced): the 29 inline Force Point spenders reproduce exactly on lineage A (30 on `main`/B, the extra is the attack-path spend TI-1 later moved into `force-point-transaction.js`); the ~31 absolute Force Point writers reproduce in the same 10 files and counts (`weapons-engine.js` has two paths for one logical write); the 6 bonus-pool writers and 4 direct action-economy persistence callers reproduce. **One Phase 0 statement is corrected** (not in the accepted files; recorded in the baseline doc): `follower-repeatable-entitlement-hotfix.js` writes `followerSlots` with a direct `actor.setFlag` (`:170`), not through `ActorEngine`.
 
-**Analyzer defects found and fixed during calibration (so the baseline can be trusted):** full-path strings classified as embedded fragments; optional-call callee lost; local bindings counted as field writes (30 false positives). Mutation testing: five injected defects each fail a test.
+**Analyzer defects found and fixed during calibration (so the baseline can be trusted):** full-path strings classified as embedded fragments; optional-call callee lost; local bindings counted as field writes (30 false positives). Mutation testing: eight injected defects each fail a test.
 
 ## 5. Specifications completed
 
@@ -76,7 +85,7 @@ Report-only is enforced by construction and by test: the analyzer has no Foundry
 | **X2/X3 Q-033** | Contract's four states cover every Q-033 outcome; the equipment journal provides Q-033's containment **for equipment scope only**; TE-governed scopes have none. Hazard status H1–H9 vs current heads is tabulated; **H7 (`Number(cost) \|\| 0`, `transaction-engine.js:344`) is still open and was not previously registered**; H2 (unchecked restore) is closed in every `TransactionEngine` path and open in `ActorEngine.applyMutationPlan` (G06). 12 gaps (M1–M12) must close before any modification executor can be activated. |
 | **DI-2 risk matrix** | Each of the 10 methods/paths (P20–P29) classified by rubric F1–F6. Only candidate for the OD-1 exception: `executeCreditAdjustment` under a closed list of GM-only manual contexts, conditional on five prerequisites (replay guard, post-write verification, explicit `INDETERMINATE` reporting, GM authority in the engine, no second resource). **No row is authorized**; every exception cell reads "No operation qualifies" until independent review. |
 | **DI-3 receipt certification** | 28 test rows in six series (restoration, reload, retention, unresolved preservation, loss-of-acknowledgement, replay); predictions: audit flag fails R1/R2, FP receipt fails L1, `storeAcquisition` marker passes R5. Nothing certified. |
-| **DI-4 GM reconcile** | GM-in-engine authorization; reconcile has its own id/receipt; read-only classification (`AT_AFTER`/`AT_BEFORE`/`DIVERGED`/`UNAVAILABLE`) then a digest-bound write phase; 11 refusal conditions; 18 negative tests (N1–N18; N17–N18 runtime). No implementation, no UI. |
+| **DI-4 GM reconcile** | GM-in-engine authorization; value equality is an **observation, never proof** — COMMITTED / not-applied only from trusted causal evidence (E-marker, trusted receipt phase + no-other-writer evidence), otherwise `INDETERMINATE` with no automatic completion/compensation/replay; an operation id is an identity, **not a lock** — serialization is by a **target-receipt-scoped** guard (L1, process-local), a persisted claim gives detection not exclusion, L2 needs a verified cross-client mechanism and unsupported concurrency **fails closed** (`coordination-uncertified`); 16 refusal conditions; 32 negative tests (N1–N32, N29b; N12 retired into N23; N17–N18 and N30–N32 runtime/multi-client). No implementation, no UI. |
 | **Q3 operation id** | Optional `OperationEnvelope` (id minted at intent, server-recomputed fingerprint); duplicate delivery vs genuine second action vs same-id/different-payload decisions defined; receipts stay domain-owned; back-compat by omission; not wired anywhere. |
 | **Conformance checklist** | Normative, with evidence levels and an audit procedure; sections O, P, R, K, C, E, X1 and Q (Q-033/modification) plus level-claim gates H1–H3. |
 
@@ -92,7 +101,7 @@ Status recorded: the printed construction sequence and the persistence-failure p
 
 | Check | Result |
 |---|---|
-| New analyzer tests (`tests/ti4a-authority-inventory.test.mjs`) | **19 / 19 pass**; mutation-checked (5 injected defects each caught) |
+| New analyzer tests (`tests/ti4a-authority-inventory.test.mjs`) | **22 / 22 pass**; mutation-checked (8 injected defects each caught) |
 | Fail-before | n/a for tooling (no production defect corrected); the tests were shown to fail against injected analyzer defects |
 | Rolling suite (`node tools/run-rolling-tests.mjs`) | **382 passed, 0 failed** (5 documented exclusions); includes the new test |
 | Repo guards (the 27 CI commands + partials + `system.json` + syntax sweep) | **26 pass locally**; syntax sweep 2,882 files pass; partials OK; `system.json` valid |

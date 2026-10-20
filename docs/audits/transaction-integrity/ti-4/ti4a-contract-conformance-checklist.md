@@ -58,11 +58,21 @@ Applies codes: **A** every authoritative mechanical transaction (AMT), **C** com
 | ID | Requirement | Check | Evid. | Applies |
 |---|---|---|---|---|
 | K1 | **High-risk / multi-resource / unsafe-to-repeat** operations establish adequate, retrievable recovery **before the first authoritative write** or return `REFUSED('recovery-unavailable')` | fault-injection: snapshot import/write/retrieve/second-actor failure ⇒ no gameplay write (Q-033 T01–T04) | OFFLINE | A except K2 |
-| K2 | The simple-GM-credit-adjustment exception applies **only** to contexts accepted by the reviewed DI-2 matrix, and only when verification, replay guard, GM authority and `INDETERMINATE` reporting are all present. **Until DI-2 is accepted, no operation qualifies.** | review: the context is on the accepted list; tests for each prerequisite | REVIEW + OFFLINE | C |
+| K2 | The simple-GM-credit-adjustment exception applies **only** to an operation whose GM authority and standalone (non-saga) provenance are **verified by the engine itself**, accepted by the reviewed DI-2 matrix, with verification, replay guard and `INDETERMINATE` reporting present. **A caller-supplied `transactionContext` string is never sufficient. Until DI-2 is accepted, no operation qualifies.** | review: provenance is engine-derived; negative tests: a spoofed context string, a non-GM user, and a saga leg claiming a manual context are all refused (still under `REQ`) | REVIEW + OFFLINE | C |
 | K3 | The restore verdict is exactly "`success` and `exact`" (`restoreSnapshot` true or `restoreSnapshotExact({requireExact:true})`), plus an independent post-restore check of the resource; a truthy return/non-throw is **not** a verdict | test: restore returns `{success:false}` / `{success:true,exact:false}` / throws ⇒ `INDETERMINATE` | OFFLINE | A |
 | K4 | Compensation is field-scoped and conditional where possible; a whole-actor restore is a documented last resort that states what it reverts | review | REVIEW | A |
 | K5 | Resource compensation uses a relative/conditional write; an absolute restore is `INTENTIONAL_LIMITATION`-labelled and single-flight | review | REVIEW | A |
 | K6 | The cost/amount input is validated explicitly; `undefined`, `NaN`, non-numeric, `Infinity` are refused, never coerced to 0 (Q-033-H7) | test: each invalid cost ⇒ `REFUSED('invalid-cost')`, no write | OFFLINE | C, M |
+
+### 5b. Reconciliation (DI-4; applies when a reconcile operation is implemented)
+
+| ID | Requirement | Check | Evid. | Applies |
+|---|---|---|---|---|
+| D1 | Matching before/after field values are **observations**; COMMITTED / not-applied is concluded only from trusted causal evidence (E-marker; or trusted receipt phase plus no-other-writer evidence) | negative tests N19–N26 (same value from an unrelated op; ABA with and without a marker; missing/untrusted receipt) | OFFLINE | A |
+| D2 | Without established causality the target stays `INDETERMINATE`; no automatic completion, compensation, replay or retry | N19, N21, N22, N26 | OFFLINE | A |
+| D3 | An operation id is an identity, **not** a lock; reconcile is serialized by a **target-receipt-scoped** guard that excludes any other reconcile id | N27, N28 | OFFLINE (L1) | A |
+| D4 | A persisted claim is detection, not exclusion; a competing claim stops the operation with `INDETERMINATE (PARTIAL)` | N29, N29b | OFFLINE | A |
+| D5 | L2 is claimed only with a verified cross-client mechanism; otherwise unsupported concurrency fails closed (`coordination-uncertified`) and is reported as L1 | N30–N32 | MULTI / RUNTIME | A |
 
 ## 6. Concurrency (contract §8)
 
@@ -83,6 +93,8 @@ Applies codes: **A** every authoritative mechanical transaction (AMT), **C** com
 | E4 | The analyzer remains **report-only** (no blocking exit code for a reported writer) until an independently authorized ratchet checkpoint | `tests/ti4a-authority-inventory.test.mjs` | OFFLINE | tooling |
 | E5 | No runtime interception, prototype patching, or revival of dormant Sentinel enforcement | review | REVIEW | A |
 | E6 | The limitations (`ti4a-static-analysis-coverage-and-limitations.md`) are cited whenever "no other writer exists" would be claimed — it must not be | review | REVIEW | A |
+| E7 | No family with `ratchetCoverage: KNOWN_GAPS` (today `actionEconomy`, `equipmentState`, `forcePoints`) is described as completely inventoried or as fully covered by a ratchet; no family is ever `inventoryComplete` | read `coverage` in the artifact; `--check-artifact` rejects an overstated claim | STATIC | A |
+| E8 | Every known-unobserved entry is either recognized by a reviewed config change or remains listed with its certification effect | diff `knownUnobserved` between baselines | STATIC | A |
 
 ## 8. Equipment / action economy (X1)
 

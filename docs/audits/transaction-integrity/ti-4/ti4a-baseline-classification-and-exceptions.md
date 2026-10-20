@@ -98,6 +98,16 @@ Counts: NEW_REAL 7 records (minion-creator 1, attribute-step 1, orphan-transfer 
 | — plan builders, false positive, adapter | 14 |
 | Additional indirect Force Point writers found by investigation (via `SchemaAdapters.setForcePointsUpdate`) | 4 sites, not recorded by the analyzer |
 
+## 5b. Known-unobserved writers and certification limits (independent review correction 1, R3)
+
+The baseline does not treat `actionEconomy`, `equipmentState` or the Force Point writer list as fully inventoried. The artifacts record the following audit-verified blind spots as machine-readable, self-verified entries (`knownUnobserved`) and set the three families to `KNOWN_GAPS`:
+
+- **KU-AE-1** — the real action-economy flag write (`ActionEconomyPersistence`, `this.FLAG_KEY`, lines 152 and 180) is invisible to the analyzer; the family shows **0 direct writers** although its authority writes the flag.
+- **KU-EQ-1/2/3** — equipment readiness/activation and equip state (`system.activated`, `system.active`, `system.equipped`, shield `currentSR`/`charges.current`) are outside the configured equipment patterns.
+- **KU-FP-1** — four Force Point writers go through `SchemaAdapters.setForcePointsUpdate` (formerly noted only in prose in §5 row 13).
+
+Certification limits: no family may be called completely inventoried; a future ratchet may claim only "no new recognized-form writer relative to this baseline"; an artifact claiming completeness is malformed. Full detail: `ti4a-static-analysis-coverage-and-limitations.md` §2b. The unclassified-writer counts in §1 and §5 are unchanged by this correction (record sets are identical; only `coverage` and `knownUnobserved` were added to the artifacts).
+
 ## 6. Unresolved uses
 
 69 on lineage A (54 on main/B). They are surfaced, not judged. Seventeen files outside the census carry an unresolved use (listed in each baseline `.md`). Representative classes: field-path lists and schema/validation tables (`progression-finalizer.js:82`, `form.js:253`, `npc-sheet-helpers.js:1120,1146`, `resource-editor.js:147`), log or deprecation messages containing the path, and `unknown-callee` argument forms. None was converted into a writer or dismissed.

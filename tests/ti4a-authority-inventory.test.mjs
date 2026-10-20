@@ -12,8 +12,9 @@ import os from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
-  analyzeSource, analyzeTree, validateArtifact, lex, classify, SCHEMA_ID, LIMITATIONS, CLASSIFICATIONS
+  analyzeSource, analyzeTree, validateArtifact, lex, classify, evaluateKnownUnobserved, SCHEMA_ID, LIMITATIONS, CLASSIFICATIONS, COVERAGE_STATEMENT
 } from '../tools/lib/ti4-authority-inventory.mjs';
+import { FAMILIES, KNOWN_UNOBSERVED } from '../tools/lib/ti4-authority-config.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(here, '..');
@@ -234,6 +235,56 @@ check('live tree: the analyzer runs on this checkout and emits a well-formed, de
   assert.ok(a.scanned.fileCount > 100);
 });
 
+check('R3: a known blind spot (constant-key flag write) is invisible to the recognizers but is surfaced by the machine-readable known-unobserved inventory, which marks the family KNOWN_GAPS', () => {
+  const src = fs.readFileSync(path.join(FIXTURE_ROOT, 'scripts/engine/combat/action/action-economy-persistence.js'), 'utf8');
+  const r = analyzeSource('scripts/engine/combat/action/action-economy-persistence.js', src);
+  assert.deepEqual(r.records.filter((x) => x.family === 'actionEconomy'), [], 'the analyzer does NOT recognize the constant-key write (documented false negative)');
+  const art = analyzeTree(FIXTURE_ROOT, { sourceRef: 'fixture' });
+  assert.deepEqual(validateArtifact(art), []);
+  const ku = art.knownUnobserved.find((k) => k.id === 'KU-AE-1');
+  assert.equal(ku.presentInTree, true, 'self-verified against the tree');
+  assert.deepEqual(ku.matches.map((m) => m.line), [6, 9], 'the two constant-key writes are located');
+  assert.equal(art.coverage.families.actionEconomy.ratchetCoverage, 'KNOWN_GAPS');
+  assert.deepEqual(art.coverage.families.actionEconomy.knownUnobservedIds, ['KU-AE-1']);
+  assert.equal(art.coverage.families.credits.ratchetCoverage, 'LOWER_BOUND');
+  assert.ok(Object.values(art.coverage.families).every((f) => f.inventoryComplete === false), 'no family is ever complete');
+  assert.equal(art.coverage.statement, COVERAGE_STATEMENT);
+  assert.equal(runCli('--root', FIXTURE_ROOT, '--source-ref', 'fixture', '--quiet').status, 0, 'known-unobserved entries never change the exit code');
+});
+
+check('R3: entries are self-verifying — absent from a tree that lacks the evidence; stale entries are reported not-present; config entries are well-formed', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ti4a-'));
+  fs.mkdirSync(path.join(tmp, 'scripts'), { recursive: true });
+  fs.writeFileSync(path.join(tmp, 'scripts', 'lone.js'), 'export const x = 1;\n');
+  const art = analyzeTree(tmp, { sourceRef: 'empty' });
+  assert.ok(art.knownUnobserved.every((k) => k.presentInTree === false && k.matches.length === 0));
+  assert.ok(Object.values(art.coverage.families).every((f) => f.ratchetCoverage === 'LOWER_BOUND' && f.knownUnobservedIds.length === 0));
+  assert.deepEqual(validateArtifact(art), []);
+  fs.rmSync(tmp, { recursive: true, force: true });
+  const ids = KNOWN_UNOBSERVED.map((k) => k.id);
+  assert.equal(new Set(ids).size, ids.length, 'unique ids');
+  for (const k of KNOWN_UNOBSERVED) {
+    assert.ok(FAMILIES[k.family], `${k.id}: known family`);
+    assert.ok(k.evidence.length >= 1 && k.evidence.every((e) => e.file && e.pattern), `${k.id}: evidence`);
+    assert.ok(k.reason && k.certificationEffect && k.description, `${k.id}: states why and what it limits`);
+  }
+  assert.equal(evaluateKnownUnobserved(FIXTURE_ROOT).length, KNOWN_UNOBSERVED.length);
+});
+
+check('R3: a coverage claim that overstates completeness is a MALFORMED artifact (CI-visible), while a reported gap is not', () => {
+  const art = analyzeTree(FIXTURE_ROOT, { sourceRef: 'fixture' });
+  const clone = () => JSON.parse(JSON.stringify(art));
+  const a1 = clone(); a1.coverage.families.credits.inventoryComplete = true;
+  const a2 = clone(); a2.coverage.families.actionEconomy.ratchetCoverage = 'LOWER_BOUND';
+  const a3 = clone(); a3.coverage.families.credits.knownUnobservedIds = ['KU-AE-1'];
+  const a4 = clone(); delete a4.coverage;
+  const a5 = clone(); a5.coverage.statement = 'complete';
+  for (const [name, bad] of [['complete claim', a1], ['ratchet mismatch', a2], ['wrong id list', a3], ['missing coverage', a4], ['rewritten statement', a5]]) {
+    assert.notDeepEqual(validateArtifact(bad), [], `${name} must be malformed`);
+  }
+  assert.deepEqual(validateArtifact(art), [], 'the honest artifact with a known gap is well-formed');
+});
+
 check('committed baseline artifacts (if present) are well-formed, report-only and carry a source ref; their contents are NOT compared to the live tree', () => {
   const dir = path.join(ROOT, 'docs', 'audits', 'transaction-integrity', 'ti-4', 'baseline');
   if (!fs.existsSync(dir)) return;
@@ -243,6 +294,7 @@ check('committed baseline artifacts (if present) are well-formed, report-only an
     const art = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
     assert.deepEqual(validateArtifact(art), [], `${f} must validate`);
     assert.match(art.sourceRef, /[0-9a-f]{7,}/, `${f} records the exact source head`);
+    assert.ok(art.coverage && art.coverage.families.actionEconomy.ratchetCoverage === 'KNOWN_GAPS', `${f} carries explicit known-gap coverage limits`);
   }
 });
 

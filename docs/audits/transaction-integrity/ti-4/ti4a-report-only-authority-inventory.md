@@ -9,7 +9,7 @@
 | Analyzer library | `tools/lib/ti4-authority-inventory.mjs` | lexer + classifier; pure functions; never writes files |
 | Configuration (data) | `tools/lib/ti4-authority-config.mjs` | protected field families, authority files, documented exceptions, Phase 0 census file lists |
 | CLI | `tools/ti4-authority-inventory.mjs` | runs the analyzer on a checkout; writes JSON + Markdown artifacts; validates artifacts |
-| Offline tests | `tests/ti4a-authority-inventory.test.mjs` (19 checks) + `tests/fixtures/ti4a/scripts/**` (synthetic) | proves behavior; included automatically in the rolling suite |
+| Offline tests | `tests/ti4a-authority-inventory.test.mjs` (22 checks) + `tests/fixtures/ti4a/scripts/**` (synthetic) | proves behavior; included automatically in the rolling suite |
 | Baseline artifacts | `docs/audits/transaction-integrity/ti-4/baseline/ti4a-inventory-*.{json,md}` | the inventory at three exact source heads |
 
 ```
@@ -44,6 +44,10 @@ Read-only references (property reads, `getFlag`, `getProperty`, comparisons) are
 
 `UNCLASSIFIED` **direct writers** are the explicit "unclassified writers" list. `UNCLASSIFIED` **delegated calls** (a caller outside the census calling an authority) are reported as informational callers, not as writers. `PHASE0_INVENTORIED` means "named by the audit", not "approved" or "correct".
 
+### 2b. Coverage and known-unobserved fields in every artifact
+
+Each artifact also carries `coverage` (per family: `inventoryComplete` — always `false` — and `ratchetCoverage` = `KNOWN_GAPS`/`LOWER_BOUND`) and `knownUnobserved` (audit-verified writers the analyzer cannot see, each self-verified against the scanned tree). See `ti4a-static-analysis-coverage-and-limitations.md` §2b. At all three baseline heads `actionEconomy`, `equipmentState` and `forcePoints` are `KNOWN_GAPS`.
+
 ## 3. Protected field families (configuration)
 
 | Family | Protected fields (patterns) | Authority API reported as delegated |
@@ -76,4 +80,4 @@ Per-family tables and the full unclassified lists are in the `.md` beside each `
 
 - **Used for:** producing a reproducible inventory; diffing two heads; showing a reviewer exactly which direct writers exist and which are not yet classified; seeding a future ratchet baseline.
 - **Not used for:** blocking, gating merges, failing CI on a reported writer, runtime interception, or authorizing any writer.
-- **CI behavior:** the new offline test runs in the rolling suite. It fails only if the analyzer itself is broken, the committed baseline artifacts are malformed, or the live-tree analysis cannot produce a well-formed deterministic artifact. It never compares the live tree to the baseline, so adding a writer does not fail CI.
+- **CI behavior:** the new offline test runs in the rolling suite. It fails only if the analyzer itself is broken, the committed baseline artifacts are malformed (including an overstated coverage claim), or the live-tree analysis cannot produce a well-formed deterministic artifact. It never compares the live tree to the baseline, so adding a writer does not fail CI.

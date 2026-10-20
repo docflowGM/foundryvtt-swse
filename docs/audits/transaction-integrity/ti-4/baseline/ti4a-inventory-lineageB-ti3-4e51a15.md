@@ -52,6 +52,28 @@ Totals: **374** records — 156 direct writers, 164 delegated calls, 54 unresolv
 - `scripts/ui/shell/AlliesSurfaceService.js` — ownershipFollowersAssignments
 - `scripts/utils/schema-adapters.js` — forcePoints
 
+## Coverage limits (machine-readable in the artifact)
+
+This inventory is a LOWER BOUND of recognized write forms. No protected family may be described as completely inventoried; families with a present known-unobserved entry have KNOWN_GAPS.
+
+| Family | ratchet coverage | known-unobserved entries present |
+|---|---|---|
+| credits | LOWER_BOUND | — |
+| forcePoints | KNOWN_GAPS | KU-FP-1 |
+| ammunitionFireState | LOWER_BOUND | — |
+| actionEconomy | KNOWN_GAPS | KU-AE-1 |
+| equipmentState | KNOWN_GAPS | KU-EQ-1, KU-EQ-2, KU-EQ-3 |
+| upgradeModificationState | LOWER_BOUND | — |
+| progressionEntitlements | LOWER_BOUND | — |
+| ownershipFollowersAssignments | LOWER_BOUND | — |
+| gmApprovalState | LOWER_BOUND | — |
+
+- **KU-AE-1** (actionEconomy, constant-key-flag-write): ActionEconomyPersistence writes (setFlag) and clears (unsetFlag) the action-economy flag through class constants, not a literal key. — The action-economy family has zero recognized direct writers while its authority writes the flag; the family must not be described as completely inventoried. Evidence: `scripts/engine/combat/action/action-economy-persistence.js:152`, `scripts/engine/combat/action/action-economy-persistence.js:180`
+- **KU-EQ-1** (equipmentState, unrecognized-field): InventoryEngine writes weapon/shield activation fields (system.activated, system.active, emitLight and bladeColor flags) outside the configured equipment patterns, and the equipment coordinator's ready-ignite path owns the same fields. — Equipment readiness/activation is not fully inventoried; the family must not be described as completely inventoried. Evidence: `scripts/engine/inventory/InventoryEngine.js:50`, `scripts/engine/inventory/InventoryEngine.js:160`, `scripts/engine/inventory/InventoryEngine.js:162`, `scripts/engine/inventory/InventoryEngine.js:258`
+- **KU-EQ-2** (equipmentState, unrecognized-field): InventoryEngine writes system.equipped for equip/unequip of armor and equipment. — Non-weapon equip state is not inventoried. Evidence: `scripts/engine/inventory/InventoryEngine.js:40`, `scripts/engine/inventory/InventoryEngine.js:103`, `scripts/engine/inventory/InventoryEngine.js:113`
+- **KU-EQ-3** (equipmentState, unrecognized-field): InventoryEngine activation spends shield resources (system.currentSR, system.charges.current) as an absolute value derived from an in-memory read. — Shield activation resources are not inventoried; they are a resource write, not only a state write. Evidence: `scripts/engine/inventory/InventoryEngine.js:187`, `scripts/engine/inventory/InventoryEngine.js:188`, `scripts/engine/inventory/InventoryEngine.js:190`
+- **KU-FP-1** (forcePoints, adapter-indirection): Force Points are written through SchemaAdapters.setForcePointsUpdate, which returns the payload; the callers pass it to ActorEngine.updateActor. The analyzer reports the adapter, not the callers. — The Force Point direct-writer list is a lower bound; callers via the adapter are invisible by caller. Evidence: `scripts/utils/schema-adapters.js:294`, `scripts/engine/talent/consular-talent-actions.js:206`, `scripts/engine/talent/consular-talent-actions.js:213`, `scripts/engine/force/force-engine.js:33`
+
 ## Limitations
 
 - Lexical analysis, not a JavaScript parser: no scope, type, or data-flow analysis.
@@ -62,6 +84,7 @@ Totals: **374** records — 156 direct writers, 164 delegated calls, 54 unresolv
 - A payload key (`"system.credits": v`) is treated as write-intent even if the object is never passed to an update call (possible false positive).
 - A delegated call is reported at the call site; whether the callee behaves correctly is NOT assessed.
 - Comments are excluded; string contents are kept (so a protected path inside a log message appears as unresolved-use).
+- Known false negatives that the audit has verified are listed in the artifact's `knownUnobserved` inventory with per-family `coverage`; a family with a present entry is KNOWN_GAPS, and no family is ever `inventoryComplete`.
 - A bare identifier with a protected name (a local variable, parameter, or destructured binding) is treated as a local binding, not a field write; a write through a destructured or aliased object reference is a false negative.
 - A payload-key lookalike (for example a type-coercion map `{ "system.credits": "number" }`) is reported as a payload-key write: lexical analysis cannot distinguish it (known false positive).
 - Regex-literal and template-literal detection is heuristic; a lexing failure degrades to unresolved findings, never to silence.

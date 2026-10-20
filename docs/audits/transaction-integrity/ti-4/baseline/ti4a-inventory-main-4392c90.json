@@ -23,6 +23,7 @@
   "A payload key (`\"system.credits\": v`) is treated as write-intent even if the object is never passed to an update call (possible false positive).",
   "A delegated call is reported at the call site; whether the callee behaves correctly is NOT assessed.",
   "Comments are excluded; string contents are kept (so a protected path inside a log message appears as unresolved-use).",
+  "Known false negatives that the audit has verified are listed in the artifact's `knownUnobserved` inventory with per-family `coverage`; a family with a present entry is KNOWN_GAPS, and no family is ever `inventoryComplete`.",
   "A bare identifier with a protected name (a local variable, parameter, or destructured binding) is treated as a local binding, not a field write; a write through a destructured or aliased object reference is a false negative.",
   "A payload-key lookalike (for example a type-coercion map `{ \"system.credits\": \"number\" }`) is reported as a payload-key write: lexical analysis cannot distinguish it (known false positive).",
   "Regex-literal and template-literal detection is heuristic; a lexing failure degrades to unresolved findings, never to silence."
@@ -547,6 +548,263 @@
    "forcePoints"
   ]
  },
+ "coverage": {
+  "statement": "This inventory is a LOWER BOUND of recognized write forms. No protected family may be described as completely inventoried; families with a present known-unobserved entry have KNOWN_GAPS.",
+  "families": {
+   "credits": {
+    "inventoryComplete": false,
+    "ratchetCoverage": "LOWER_BOUND",
+    "knownUnobservedIds": []
+   },
+   "forcePoints": {
+    "inventoryComplete": false,
+    "ratchetCoverage": "KNOWN_GAPS",
+    "knownUnobservedIds": [
+     "KU-FP-1"
+    ]
+   },
+   "ammunitionFireState": {
+    "inventoryComplete": false,
+    "ratchetCoverage": "LOWER_BOUND",
+    "knownUnobservedIds": []
+   },
+   "actionEconomy": {
+    "inventoryComplete": false,
+    "ratchetCoverage": "KNOWN_GAPS",
+    "knownUnobservedIds": [
+     "KU-AE-1"
+    ]
+   },
+   "equipmentState": {
+    "inventoryComplete": false,
+    "ratchetCoverage": "KNOWN_GAPS",
+    "knownUnobservedIds": [
+     "KU-EQ-1",
+     "KU-EQ-2",
+     "KU-EQ-3"
+    ]
+   },
+   "upgradeModificationState": {
+    "inventoryComplete": false,
+    "ratchetCoverage": "LOWER_BOUND",
+    "knownUnobservedIds": []
+   },
+   "progressionEntitlements": {
+    "inventoryComplete": false,
+    "ratchetCoverage": "LOWER_BOUND",
+    "knownUnobservedIds": []
+   },
+   "ownershipFollowersAssignments": {
+    "inventoryComplete": false,
+    "ratchetCoverage": "LOWER_BOUND",
+    "knownUnobservedIds": []
+   },
+   "gmApprovalState": {
+    "inventoryComplete": false,
+    "ratchetCoverage": "LOWER_BOUND",
+    "knownUnobservedIds": []
+   }
+  }
+ },
+ "knownUnobserved": [
+  {
+   "id": "KU-AE-1",
+   "family": "actionEconomy",
+   "kind": "constant-key-flag-write",
+   "description": "ActionEconomyPersistence writes (setFlag) and clears (unsetFlag) the action-economy flag through class constants, not a literal key.",
+   "reason": "The flag key is `this.FLAG_KEY`; lexical analysis does not resolve constants (limitation L1).",
+   "certificationEffect": "The action-economy family has zero recognized direct writers while its authority writes the flag; the family must not be described as completely inventoried.",
+   "evidence": [
+    {
+     "file": "scripts/engine/combat/action/action-economy-persistence.js",
+     "pattern": "\\b(?:set|unset)Flag\\(\\s*this\\.SCOPE\\s*,\\s*this\\.FLAG_KEY"
+    }
+   ],
+   "presentInTree": true,
+   "matches": [
+    {
+     "file": "scripts/engine/combat/action/action-economy-persistence.js",
+     "line": 152,
+     "expression": "await actor.setFlag(this.SCOPE, this.FLAG_KEY, {"
+    },
+    {
+     "file": "scripts/engine/combat/action/action-economy-persistence.js",
+     "line": 180,
+     "expression": "actor.unsetFlag(this.SCOPE, this.FLAG_KEY)"
+    }
+   ]
+  },
+  {
+   "id": "KU-EQ-1",
+   "family": "equipmentState",
+   "kind": "unrecognized-field",
+   "description": "InventoryEngine writes weapon/shield activation fields (system.activated, system.active, emitLight and bladeColor flags) outside the configured equipment patterns, and the equipment coordinator's ready-ignite path owns the same fields.",
+   "reason": "The equipmentState family is configured for posture, occupancy and the journal only (limitation L10).",
+   "certificationEffect": "Equipment readiness/activation is not fully inventoried; the family must not be described as completely inventoried.",
+   "evidence": [
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "pattern": "[\"']system\\.(?:activated|active)[\"']"
+    },
+    {
+     "file": "scripts/engine/equipment/equipment-state-coordinator.js",
+     "pattern": "IGNITE_PATHS\\s*="
+    }
+   ],
+   "presentInTree": true,
+   "matches": [
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 50,
+     "expression": "if (system.active !== undefined) update[\"system.active\"] = false;"
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 160,
+     "expression": "const update = { _id: itemId, \"system.activated\": next };"
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 162,
+     "expression": "if (item.system?.active !== undefined) update[\"system.active\"] = next;"
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 258,
+     "expression": "const update = equipMirrors(item, { _id: item.id, \"system.activated\": true, ...(item.system?.active !== undefined ? { \"system.active\": true "
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 289,
+     "expression": "update[\"system.active\"] = false;"
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 315,
+     "expression": "if (!next) update[\"system.active\"] = false;"
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 337,
+     "expression": "\"system.active\": next"
+    }
+   ]
+  },
+  {
+   "id": "KU-EQ-2",
+   "family": "equipmentState",
+   "kind": "unrecognized-field",
+   "description": "InventoryEngine writes system.equipped for equip/unequip of armor and equipment.",
+   "reason": "`system.equipped` is not a configured protected path (limitation L10).",
+   "certificationEffect": "Non-weapon equip state is not inventoried.",
+   "evidence": [
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "pattern": "[\"']system\\.equipped[\"']"
+    }
+   ],
+   "presentInTree": true,
+   "matches": [
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 40,
+     "expression": "update[\"system.equipped\"] = next;"
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 103,
+     "expression": "\"system.equipped\": false"
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 113,
+     "expression": "\"system.equipped\": newValue"
+    }
+   ]
+  },
+  {
+   "id": "KU-EQ-3",
+   "family": "equipmentState",
+   "kind": "unrecognized-field",
+   "description": "InventoryEngine activation spends shield resources (system.currentSR, system.charges.current) as an absolute value derived from an in-memory read.",
+   "reason": "These resource fields are not configured protected paths (limitation L10).",
+   "certificationEffect": "Shield activation resources are not inventoried; they are a resource write, not only a state write.",
+   "evidence": [
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "pattern": "[\"']system\\.(?:currentSR|charges\\.current)[\"']"
+    }
+   ],
+   "presentInTree": true,
+   "matches": [
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 187,
+     "expression": "update[\"system.currentSR\"] = shieldRating;"
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 188,
+     "expression": "update[\"system.charges.current\"] = Math.max(0, currentCharges - 1);"
+    },
+    {
+     "file": "scripts/engine/inventory/InventoryEngine.js",
+     "line": 190,
+     "expression": "update[\"system.currentSR\"] = 0;"
+    }
+   ]
+  },
+  {
+   "id": "KU-FP-1",
+   "family": "forcePoints",
+   "kind": "adapter-indirection",
+   "description": "Force Points are written through SchemaAdapters.setForcePointsUpdate, which returns the payload; the callers pass it to ActorEngine.updateActor. The analyzer reports the adapter, not the callers.",
+   "reason": "The write payload is built in another function; no data-flow analysis (limitation L5/L7).",
+   "certificationEffect": "The Force Point direct-writer list is a lower bound; callers via the adapter are invisible by caller.",
+   "evidence": [
+    {
+     "file": "scripts/utils/schema-adapters.js",
+     "pattern": "static\\s+setForcePointsUpdate"
+    },
+    {
+     "file": "scripts/engine/talent/consular-talent-actions.js",
+     "pattern": "SchemaAdapters\\.setForcePointsUpdate"
+    },
+    {
+     "file": "scripts/engine/force/force-engine.js",
+     "pattern": "SchemaAdapters\\.setForcePointsUpdate"
+    }
+   ],
+   "presentInTree": true,
+   "matches": [
+    {
+     "file": "scripts/utils/schema-adapters.js",
+     "line": 294,
+     "expression": "static setForcePointsUpdate(newValue) {"
+    },
+    {
+     "file": "scripts/engine/talent/consular-talent-actions.js",
+     "line": 206,
+     "expression": "await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(Math.max(0, current - 1)), { source });"
+    },
+    {
+     "file": "scripts/engine/talent/consular-talent-actions.js",
+     "line": 213,
+     "expression": "await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(current + amount), { source });"
+    },
+    {
+     "file": "scripts/engine/force/force-engine.js",
+     "line": 33,
+     "expression": "...SchemaAdapters.setForcePointsUpdate(newFp)"
+    },
+    {
+     "file": "scripts/engine/force/force-engine.js",
+     "line": 53,
+     "expression": "await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(newFp));"
+    }
+   ]
+  }
+ ],
  "readFailures": [],
  "records": [
   {

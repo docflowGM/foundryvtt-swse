@@ -20,10 +20,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   CONFIG_VERSION, SCAN_ROOTS, SCAN_EXTENSIONS, FAMILIES, EXCEPTIONS, PHASE0_CENSUS,
-  READ_CALLEES, FLAG_WRITE_CALLEES, SETTING_WRITE_CALLEES
+  READ_CALLEES, FLAG_WRITE_CALLEES, SETTING_WRITE_CALLEES, KNOWN_UNOBSERVED
 } from './ti4-authority-config.mjs';
 
 export const SCHEMA_ID = 'ti4a-authority-inventory/1';
+export const COVERAGE_STATEMENT = 'This inventory is a LOWER BOUND of recognized write forms. No protected family may be described as completely inventoried; families with a present known-unobserved entry have KNOWN_GAPS.';
 export const CLASSIFICATIONS = Object.freeze(['AUTHORITY_INTERNAL', 'DOCUMENTED_EXCEPTION', 'PHASE0_INVENTORIED', 'UNCLASSIFIED']);
 export const KINDS = Object.freeze(['direct-writer', 'delegated-call', 'unresolved-use']);
 
@@ -36,6 +37,7 @@ export const LIMITATIONS = Object.freeze([
   'A payload key (`"system.credits": v`) is treated as write-intent even if the object is never passed to an update call (possible false positive).',
   'A delegated call is reported at the call site; whether the callee behaves correctly is NOT assessed.',
   'Comments are excluded; string contents are kept (so a protected path inside a log message appears as unresolved-use).',
+  'Known false negatives that the audit has verified are listed in the artifact\'s `knownUnobserved` inventory with per-family `coverage`; a family with a present entry is KNOWN_GAPS, and no family is ever `inventoryComplete`.',
   'A bare identifier with a protected name (a local variable, parameter, or destructured binding) is treated as a local binding, not a field write; a write through a destructured or aliased object reference is a false negative.',
   'A payload-key lookalike (for example a type-coercion map `{ "system.credits": "number" }`) is reported as a payload-key write: lexical analysis cannot distinguish it (known false positive).',
   'Regex-literal and template-literal detection is heuristic; a lexing failure degrades to unresolved findings, never to silence.'
@@ -353,10 +355,34 @@ export function analyzeTree(root, { sourceRef = 'unspecified' } = {}) {
     for (const [k, v] of Object.entries(r.reads)) reads[k] += v;
   }
   records.sort(compareRecords);
-  return buildArtifact({ records, reads, scannedFiles: files.length, sourceRef, failures });
+  const knownUnobserved = evaluateKnownUnobserved(root);
+  return buildArtifact({ records, reads, scannedFiles: files.length, sourceRef, failures, knownUnobserved });
 }
 
-export function buildArtifact({ records, reads, scannedFiles, sourceRef, failures = [] }) {
+/** Self-verifies each known-unobserved entry against the tree: present only when at least one evidence item matches in an existing file. */
+export function evaluateKnownUnobserved(root) {
+  const out = [];
+  for (const e of KNOWN_UNOBSERVED) {
+    const matches = [];
+    for (const ev of e.evidence) {
+      let text = null;
+      try { text = fs.readFileSync(path.join(root, ev.file), 'utf8'); } catch { text = null; }
+      if (text === null) continue;
+      const re = new RegExp(ev.pattern);
+      const lines = text.split('\n');
+      for (let i = 0; i < lines.length; i++) if (re.test(lines[i])) matches.push({ file: ev.file, line: i + 1, expression: lines[i].trim().slice(0, 140) });
+    }
+    out.push({
+      id: e.id, family: e.family, kind: e.kind, description: e.description, reason: e.reason, certificationEffect: e.certificationEffect,
+      evidence: e.evidence.map((x) => ({ file: x.file, pattern: x.pattern })),
+      presentInTree: matches.length > 0,
+      matches
+    });
+  }
+  return out.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+}
+
+export function buildArtifact({ records, reads, scannedFiles, sourceRef, failures = [], knownUnobserved = [] }) {
   const byFamily = {};
   for (const fam of Object.keys(FAMILIES)) {
     const row = { description: FAMILIES[fam].description, readReferences: reads[fam] ?? 0 };
@@ -377,6 +403,15 @@ export function buildArtifact({ records, reads, scannedFiles, sourceRef, failure
   for (const r of records) if (r.classification === 'UNCLASSIFIED' && r.kind === 'direct-writer') (unclassifiedFiles[r.file] ??= new Set()).add(r.family);
   const unresolvedFiles = {};
   for (const r of records) if (r.kind === 'unresolved-use' && r.classification === 'UNCLASSIFIED') (unresolvedFiles[r.file] ??= new Set()).add(r.family);
+  const coverage = { statement: COVERAGE_STATEMENT, families: {} };
+  for (const fam of Object.keys(FAMILIES)) {
+    const ids = knownUnobserved.filter((k) => k.family === fam && k.presentInTree).map((k) => k.id);
+    coverage.families[fam] = {
+      inventoryComplete: false,
+      ratchetCoverage: ids.length ? 'KNOWN_GAPS' : 'LOWER_BOUND',
+      knownUnobservedIds: ids
+    };
+  }
   return {
     schema: SCHEMA_ID,
     configVersion: CONFIG_VERSION,
@@ -396,6 +431,8 @@ export function buildArtifact({ records, reads, scannedFiles, sourceRef, failure
     unclassifiedWriters: unclassified,
     unclassifiedFiles: Object.fromEntries(Object.keys(unclassifiedFiles).sort().map((f) => [f, [...unclassifiedFiles[f]].sort()])),
     unresolvedUseFilesOutsideCensus: Object.fromEntries(Object.keys(unresolvedFiles).sort().map((f) => [f, [...unresolvedFiles[f]].sort()])),
+    coverage,
+    knownUnobserved,
     readFailures: failures,
     records
   };
@@ -429,6 +466,21 @@ export function validateArtifact(a) {
     if (ids.has(r.id)) bad(`duplicate record id ${r.id}`); ids.add(r.id);
     if (prev && compareRecords(prev, r) > 0) bad(`records not sorted at ${r.id}`);
     prev = r;
+  }
+  if (!a.coverage || typeof a.coverage !== 'object' || !a.coverage.families) bad('coverage missing');
+  else {
+    if (a.coverage.statement !== COVERAGE_STATEMENT) bad('coverage.statement must state the lower-bound limitation');
+    const ku = Array.isArray(a.knownUnobserved) ? a.knownUnobserved : null;
+    if (!ku) bad('knownUnobserved must be an array');
+    for (const fam of Object.keys(FAMILIES)) {
+      const c = a.coverage.families[fam];
+      if (!c) { bad(`coverage.families.${fam} missing`); continue; }
+      if (c.inventoryComplete !== false) bad(`coverage.families.${fam}.inventoryComplete must be false (a lexical inventory is never complete)`);
+      const present = ku ? ku.filter((k) => k.family === fam && k.presentInTree).map((k) => k.id).sort() : [];
+      const listed = [...(c.knownUnobservedIds ?? [])].sort();
+      if (JSON.stringify(present) !== JSON.stringify(listed)) bad(`coverage.families.${fam}.knownUnobservedIds does not match the present known-unobserved entries`);
+      if ((present.length ? 'KNOWN_GAPS' : 'LOWER_BOUND') !== c.ratchetCoverage) bad(`coverage.families.${fam}.ratchetCoverage inconsistent with known-unobserved entries`);
+    }
   }
   const direct = a.records.filter((r) => r.kind === 'direct-writer').length;
   if (a.totals.records !== a.records.length) bad('totals.records does not match records.length');
@@ -469,6 +521,16 @@ export function renderSummary(a) {
   const uu = Object.entries(a.unresolvedUseFilesOutsideCensus);
   if (!uu.length) L.push('None.');
   else for (const [f, fams] of uu) L.push(`- \`${f}\` — ${fams.join(', ')}`);
+  L.push('');
+  L.push('## Coverage limits (machine-readable in the artifact)');
+  L.push('');
+  L.push(a.coverage.statement);
+  L.push('');
+  L.push('| Family | ratchet coverage | known-unobserved entries present |');
+  L.push('|---|---|---|');
+  for (const [fam, c] of Object.entries(a.coverage.families)) L.push(`| ${fam} | ${c.ratchetCoverage} | ${c.knownUnobservedIds.join(', ') || '—'} |`);
+  L.push('');
+  for (const k of a.knownUnobserved.filter((x) => x.presentInTree)) L.push(`- **${k.id}** (${k.family}, ${k.kind}): ${k.description} — ${k.certificationEffect} Evidence: ${k.matches.slice(0, 4).map((m) => `\`${m.file}:${m.line}\``).join(', ')}`);
   L.push('');
   L.push('## Limitations');
   L.push('');
