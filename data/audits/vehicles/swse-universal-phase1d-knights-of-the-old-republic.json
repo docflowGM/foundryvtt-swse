@@ -1,0 +1,1547 @@
+{
+  "schema": "swse.vehicle.universal.phase1d.knights-of-the-old-republic.v1",
+  "status": "PHASE1_D_KOTOR_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Knights of the Old Republic Campaign Guide",
+  "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+  "sourceFiles": {
+    "pdf": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+    "text": "Knights of the Old Republic Campaign Guide_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 32,
+    "newOtherVehiclePublicationClaims": 7,
+    "allBookVehiclePublicationClaims": 39,
+    "inheritedClassifications": {
+      "space-transport": 14,
+      "starfighter": 7,
+      "capital-ship": 11
+    },
+    "newVehicleClassifications": {
+      "ground-speeder-bike": 2,
+      "air-speeder-bike": 1,
+      "landspeeder": 2,
+      "airspeeder": 1,
+      "vehicle-droid": 1
+    },
+    "cumulativeKnownUniversalPublicationClaims": 359
+  },
+  "process": {
+    "discoveryMethod": "Searched full 23,363-line TXT for standalone 'ground vehicle', 'air vehicle', 'water vehicle', specific speeder/airspeeder/walker type lines, and other vehicle-like CL-statblocks. Found six civilian vehicles pp92–95 plus Basilisk war droid printed p203 in Mandalorian droid section.",
+    "primaryPdf": "Verified the seven complete published statblocks directly in supplied scanned PDF by rendering physical pp93–96 and p204; source SHA-256 matches historical PDF ledger. Reused prior PDF-provenance reviews of all 32 ships.",
+    "nonShipPrintedPages": [
+      92,
+      93,
+      93,
+      94,
+      94,
+      95,
+      203
+    ],
+    "physicalPdfPageRule": "For new claims, 1-based physical PDF page = printed page + 1. Inherited pages copy historical verified physical-page fields, not inferred.",
+    "historicalShipNamesUntouched": true,
+    "initialSourceScope": "32 previously reviewed spacecraft; do not implicitly promote 7 new vehicle records into existing compendium pack",
+    "exhaustivenessCaveat": "Full-text search and focused rendered source pages locate known standalone vehicle statblocks; text recognition can omit graphic-only text elsewhere, so no unsupported claim every scanned PDF page was independently visually checked."
+  },
+  "sourceIdentityPolicies": [
+    {
+      "subject": "Basilisk War Droid",
+      "printedPage": 203,
+      "status": "INCLUDE_AS_VEHICLE",
+      "reason": "Published under Mandalorian droids but printed type is 'Huge air vehicle (droid)' and statblock includes both atmospheric and starship-scale flight. Single vehicle-droid publication identity, not an ordinary Droid Actor duplicating the entry."
+    },
+    {
+      "subject": "Aratech Urban Navigator Speeder Bike",
+      "printedPage": 93,
+      "status": "AIR_VEHICLE_CLASSIFICATION",
+      "reason": "Section says speeder bike, but printed statblock explicitly 'Large air vehicle (speeder)' with fly movement; keep primary air-speeder-bike classification and printed type."
+    },
+    {
+      "subject": "Lhosan Industries Swoop Racer",
+      "printedPage": 93,
+      "status": "ONE_PUBLISHED_CONFIGURATION",
+      "reason": "Separate full CL 2 speeder statblock; do not split racing and civilian narrative descriptions into variants."
+    },
+    {
+      "subject": "SoroSuub Twin-228 cargo pod",
+      "printedPage": 95,
+      "status": "NOT_ADDITIONAL_VEHICLE",
+      "reason": "Equipment/cargo-pod configuration of one printed Twin-228 statblock; do not enumerate separately."
+    },
+    {
+      "subject": "Duwani Juggernaut War Droid, Czerka Mark I Assault Droid and other combat droids",
+      "status": "EXCLUDE_NONVEHICLE_NPC_DROID_BLOCKS",
+      "reason": "Independent droid creature/NPC statblocks are not printed vehicle statblocks. Basilisk is the explicit exception supported by its vehicle type line."
+    },
+    {
+      "subject": "Star Forge orbital factory",
+      "status": "EXCLUDE_NARRATIVE_ONLY",
+      "reason": "Orbital structure and encounter setting without a separate complete vehicle-statblock identity in this source census."
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "kotor-lhosan-industries-aerochaser-speeder-bike",
+      "printedName": "Lhosan Industries AeroChaser Speeder Bike",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder-bike",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 92,
+      "pdfPhysicalPage": 93,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Ground Vehicles > Speeder Bikes",
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "textSearchLayer": "Knights of the Old Republic Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_PDF_VISUAL_CHECK",
+        "renderedPhysicalPdfPage": 93,
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "kotor-lhosan-industries-swoop-racer",
+      "printedName": "Lhosan Industries Swoop Racer",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder-bike",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 93,
+      "pdfPhysicalPage": 94,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Ground Vehicles > Speeder Bikes",
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "textSearchLayer": "Knights of the Old Republic Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_PDF_VISUAL_CHECK",
+        "renderedPhysicalPdfPage": 94,
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "kotor-aratech-urban-navigator-speeder-bike",
+      "printedName": "Aratech Urban Navigator Speeder Bike",
+      "printedTypeLine": "Large air vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "air-speeder-bike",
+        "mobilityDomains": [
+          "air"
+        ],
+        "printedCategory": "Large air vehicle (speeder)",
+        "secondaryCategories": [
+          "speeder-bike"
+        ]
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 93,
+      "pdfPhysicalPage": 94,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Ground Vehicles > Speeder Bikes",
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "textSearchLayer": "Knights of the Old Republic Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_PDF_VISUAL_CHECK",
+        "renderedPhysicalPdfPage": 94,
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "kotor-sorosuub-tt-6-landspeeder",
+      "printedName": "SoroSuub TT-6 Landspeeder",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "landspeeder",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 94,
+      "pdfPhysicalPage": 95,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Speeders",
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "textSearchLayer": "Knights of the Old Republic Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_PDF_VISUAL_CHECK",
+        "renderedPhysicalPdfPage": 95,
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "kotor-ubrikkian-pl-90-luxury-speeder",
+      "printedName": "Ubrikkian Repulsorlift Manufacturing PL-90 Luxury Speeder",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "landspeeder",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 94,
+      "pdfPhysicalPage": 95,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Speeders",
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "textSearchLayer": "Knights of the Old Republic Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_PDF_VISUAL_CHECK",
+        "renderedPhysicalPdfPage": 95,
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "kotor-sorosuub-twin-228-airspeeder",
+      "printedName": "SoroSuub Twin-228 Airspeeder",
+      "printedTypeLine": "Huge air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air"
+        ],
+        "printedCategory": "Huge air vehicle (airspeeder)",
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 95,
+      "pdfPhysicalPage": 96,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Airspeeders",
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "textSearchLayer": "Knights of the Old Republic Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_PDF_VISUAL_CHECK",
+        "renderedPhysicalPdfPage": 96,
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "kotor-basilisk-war-droid",
+      "printedName": "Basilisk War Droid",
+      "printedTypeLine": "Huge air vehicle (droid)",
+      "classification": {
+        "primaryCategory": "vehicle-droid",
+        "mobilityDomains": [
+          "air",
+          "space"
+        ],
+        "printedCategory": "Huge air vehicle (droid)",
+        "secondaryCategories": [
+          "droid",
+          "ridden-war-mount"
+        ]
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 203,
+      "pdfPhysicalPage": 204,
+      "sourceSection": "Chapter XII: The Mandalorians > Droids",
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "textSearchLayer": "Knights of the Old Republic Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "DIRECT_RENDERED_PDF_VISUAL_CHECK",
+        "renderedPhysicalPdfPage": 204,
+        "originalPrintedTypePreserved": true
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "kotor-amalgamated-hyperdyne-578-r-space-transport",
+      "printedName": "Amalgamated Hyperdyne 578-R Space Transport",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 98,
+      "pdfPhysicalPage": 99,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          98
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            98
+          ],
+          "statblockLocation": "printed p.98",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-arakyd-industries-lethisk-class-armed-freighter",
+      "printedName": "Arakyd Industries Lethisk-class Armed Freighter",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 99,
+      "pdfPhysicalPage": 100,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          99
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            99
+          ],
+          "statblockLocation": "printed p.99",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-corellia-stardrive-quartermaster-class-supply-carrier",
+      "printedName": "Corellia StarDrive Quartermaster-class Supply Carrier",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 100,
+      "pdfPhysicalPage": 101,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          100
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            100
+          ],
+          "statblockLocation": "printed p.100",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-corellian-engineering-corporation-s-100-stinger-class-starfighter",
+      "printedName": "Corellian Engineering Corporation S-100 Stinger-class Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 95,
+      "pdfPhysicalPage": 96,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          95,
+          96
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            95,
+            96
+          ],
+          "statblockLocation": "printed p.96",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": true
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-corellian-engineering-corporation-s-250-chela-class-starfighter",
+      "printedName": "Corellian Engineering Corporation S-250 Chela-class Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 181,
+      "pdfPhysicalPage": 182,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          181
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            181
+          ],
+          "statblockLocation": "printed p.181",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-davaab-type-starfighter",
+      "printedName": "Davaab-type Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 204,
+      "pdfPhysicalPage": 205,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          204
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            204
+          ],
+          "statblockLocation": "printed p.204",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-ebon-hawk",
+      "printedName": "Ebon Hawk",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 220,
+      "pdfPhysicalPage": 221,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          220
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            220
+          ],
+          "statblockLocation": "printed p.220",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-eleaor-propulsion-baronial-class-yacht",
+      "printedName": "Eleaor Propulsion Baronial-class Yacht",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 143,
+      "pdfPhysicalPage": 144,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          143
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            143
+          ],
+          "statblockLocation": "printed p.143",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-eleaor-propulsion-starscape-class-yacht",
+      "printedName": "Eleaor Propulsion Starscape-class Yacht",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 222,
+      "pdfPhysicalPage": 223,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          221,
+          222
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            221,
+            222
+          ],
+          "statblockLocation": "printed p.222",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-hoersch-kessel-drive-g-type-light-shuttle",
+      "printedName": "Hoersch-Kessel Drive G-Type Light Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 98,
+      "pdfPhysicalPage": 99,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          98,
+          99
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            98,
+            99
+          ],
+          "statblockLocation": "printed p.98",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-jehavey-ir-type-assault-ship",
+      "printedName": "Jehavey'ir-type Assault Ship",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 206,
+      "pdfPhysicalPage": 207,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          205,
+          206
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            205,
+            206
+          ],
+          "statblockLocation": "printed p.206",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-kandosii-type-dreadnaught",
+      "printedName": "Kandosii-type Dreadnaught",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 207,
+      "pdfPhysicalPage": 208,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          206,
+          207
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            206,
+            207
+          ],
+          "statblockLocation": "printed p.207",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-koros-spaceworks-cx-133-chaos-fighter",
+      "printedName": "Koros Spaceworks CX-133 Chaos Fighter",
+      "printedTypeLine": "Huge* starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 220,
+      "pdfPhysicalPage": 221,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          220
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            220
+          ],
+          "statblockLocation": "printed p.220",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-koros-spaceworks-supremacy-class-attack-ship",
+      "printedName": "Koros Spaceworks Supremacy-class Attack Ship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 221,
+      "pdfPhysicalPage": 222,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          221
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            221
+          ],
+          "statblockLocation": "printed p.221",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-kyramud-type-battleship",
+      "printedName": "Kyramud-type Battleship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 206,
+      "pdfPhysicalPage": 207,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          206
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            206
+          ],
+          "statblockLocation": "printed p.206",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-pelagia-duplex-command-assault-gunship",
+      "printedName": "Pelagia Duplex Command Assault Gunship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 100,
+      "pdfPhysicalPage": 101,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          100
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            100
+          ],
+          "statblockLocation": "printed p.100",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-rendili-hyperworks-hammerhead-class-cruiser",
+      "printedName": "Rendili Hyperworks Hammerhead-class Cruiser",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 184,
+      "pdfPhysicalPage": 185,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          184
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            184
+          ],
+          "statblockLocation": "printed p.184",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-rendili-hyperworks-inexpugnable-class-tactical-command-vessel",
+      "printedName": "Rendili Hyperworks Inexpugnable-class Tactical Command Vessel",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 185,
+      "pdfPhysicalPage": 186,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          184,
+          185
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            184,
+            185
+          ],
+          "statblockLocation": "printed p.185",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-rendili-hyperworks-praetorian-class-frigate",
+      "printedName": "Rendili Hyperworks Praetorian-class Frigate",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 101,
+      "pdfPhysicalPage": 102,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          101
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            101
+          ],
+          "statblockLocation": "printed p.101",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-aurek-tactical-strikefighter",
+      "printedName": "Republic Fleet Systems Aurek Tactical Strikefighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 181,
+      "pdfPhysicalPage": 182,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          180,
+          181
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            180,
+            181
+          ],
+          "statblockLocation": "printed p.181",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-conductor-class-short-haul-landing-craft",
+      "printedName": "Republic Fleet Systems Conductor-class Short-haul Landing Craft",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 182,
+      "pdfPhysicalPage": 183,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          181,
+          182
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            181,
+            182
+          ],
+          "statblockLocation": "printed p.182",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-foray-class-blockade-runner",
+      "printedName": "Republic Fleet Systems Foray-class Blockade Runner",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 183,
+      "pdfPhysicalPage": 184,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          183
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            183
+          ],
+          "statblockLocation": "printed p.183",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-kt-400-military-droid-carrier",
+      "printedName": "Republic Fleet Systems KT-400 Military Droid Carrier",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 183,
+      "pdfPhysicalPage": 184,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          183
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            183
+          ],
+          "statblockLocation": "printed p.183",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-republic-fleet-systems-star-saber-xc-01-starfighter",
+      "printedName": "Republic Fleet Systems Star Saber XC-01 Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 96,
+      "pdfPhysicalPage": 97,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          96
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            96
+          ],
+          "statblockLocation": "printed p.96",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-shaadlar-type-troopship",
+      "printedName": "Shaadlar-type Troopship",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 205,
+      "pdfPhysicalPage": 206,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          204,
+          205
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            204,
+            205
+          ],
+          "statblockLocation": "printed p.205",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-centurion-class-battlecruiser",
+      "printedName": "Star Forge Manufacture Centurion-class Battlecruiser",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 163,
+      "pdfPhysicalPage": 164,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          162,
+          163
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            162,
+            163
+          ],
+          "statblockLocation": "printed p.163",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-derriphan-class-battleship",
+      "printedName": "Star Forge Manufacture Derriphan-class Battleship",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 163,
+      "pdfPhysicalPage": 164,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          163
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            163
+          ],
+          "statblockLocation": "printed p.163",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-herald-class-shuttle",
+      "printedName": "Star Forge Manufacture Herald-class Shuttle",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 164,
+      "pdfPhysicalPage": 165,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          164
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            164
+          ],
+          "statblockLocation": "printed p.164",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-interdictor-class-warship",
+      "printedName": "Star Forge Manufacture Interdictor-class Warship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 161,
+      "pdfPhysicalPage": 162,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          161
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            161
+          ],
+          "statblockLocation": "printed p.161",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Rendered PDF close-read; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-star-forge-manufacture-sith-interceptor",
+      "printedName": "Star Forge Manufacture Sith Interceptor",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 164,
+      "pdfPhysicalPage": 165,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          164
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            164
+          ],
+          "statblockLocation": "printed p.164",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-teroch-type-fast-attack-gunship",
+      "printedName": "Teroch-type Fast Attack Gunship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 205,
+      "pdfPhysicalPage": 206,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          205
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            205
+          ],
+          "statblockLocation": "printed p.205",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical ordinal equals printed page + 1",
+          "reviewScope": "Rendered original scanned PDF manual statblock and adjacent narrative close-read; DJVU text used only to navigate",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "kotor-zentine-dynamics-ministry-class-orbital-shuttle",
+      "printedName": "Zentine Dynamics Ministry-class Orbital Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": []
+      },
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedStatblockStartPage": 182,
+      "pdfPhysicalPage": 183,
+      "provenance": {
+        "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+        "sourceFile": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "historicalReview": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "pdfReviewState": "INHERITED_PHASE2B_PDF_VERIFIED",
+        "reviewedPDFPages": [
+          182
+        ],
+        "sourceEvidence": {
+          "source": "Knights of the Old Republic Campaign Guide original scanned PDF",
+          "printedPages": [
+            182
+          ],
+          "statblockLocation": "printed p.182",
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed page; physical page ordinal equals printed page + 1",
+          "reviewScope": "Direct rendered PDF close-read of printed statblock and relevant adjacent narrative; DJVU TXT navigation only",
+          "phase1PageMappingDiscrepancy": false
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-E Force Unleashed Campaign Guide"
+}
