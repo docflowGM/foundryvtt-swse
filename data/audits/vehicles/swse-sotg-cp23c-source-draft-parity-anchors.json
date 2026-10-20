@@ -1,0 +1,272 @@
+{
+  "schema": "swse.vehicle.sotg.cp23c.source-draft-parity-anchor.v1",
+  "phase": "CP23-C1-PROVENANCE-INTEGRITY-PREFLIGHT",
+  "inputCp23bPath": "data/audits/vehicles/swse-sotg-cp23b-isolated-source-actor-proposals.json",
+  "inputCp23bBlob": "a9170481f9c0bb34fe31741b7194ac54e2933501",
+  "hashPurpose": "DETERMINISTIC_UTF16_FNV64_DRIFT_DETECTION_NOT_AUTHENTICATION",
+  "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "sourceCount": 15,
+  "authenticatedInstallations": 0,
+  "durableWorldReceiptsIssued": 0,
+  "physicalMountCertificatesAdded": 0,
+  "foundryStockAttackGrants": 0,
+  "liveFoundryV13ActorInstallations": 0,
+  "registeredProposalPack": false,
+  "entries": [
+    {
+      "queuePosition": 1,
+      "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+      "decisionId": "SOTG-CP21-D01",
+      "isolationId": "sotgcp23b0000001",
+      "canonicalDraftFingerprintFnv64": "743c1283d898ea22",
+      "sourceGroupCount": 2,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 2,
+      "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+      "decisionId": "SOTG-CP21-D02",
+      "isolationId": "sotgcp23b0000002",
+      "canonicalDraftFingerprintFnv64": "0d660e8e8547dad1",
+      "sourceGroupCount": 5,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 3,
+      "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+      "decisionId": "SOTG-CP21-D03",
+      "isolationId": "sotgcp23b0000003",
+      "canonicalDraftFingerprintFnv64": "78b66ba41bc03139",
+      "sourceGroupCount": 5,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 4,
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "decisionId": "SOTG-CP21-D04",
+      "isolationId": "sotgcp23b0000004",
+      "canonicalDraftFingerprintFnv64": "b4cd5b7fbfe22603",
+      "sourceGroupCount": 2,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 5,
+      "sourceEntryKey": "sotg-junker-tye-wing",
+      "decisionId": "SOTG-CP21-D05",
+      "isolationId": "sotgcp23b0000005",
+      "canonicalDraftFingerprintFnv64": "439c4d7f168f9fca",
+      "sourceGroupCount": 1,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 6,
+      "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+      "decisionId": "SOTG-CP21-D06",
+      "isolationId": "sotgcp23b0000006",
+      "canonicalDraftFingerprintFnv64": "70b5f2fea84768ce",
+      "sourceGroupCount": 5,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 7,
+      "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+      "decisionId": "SOTG-CP21-D07",
+      "isolationId": "sotgcp23b0000007",
+      "canonicalDraftFingerprintFnv64": "0cc8b3468eeda81f",
+      "sourceGroupCount": 2,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 8,
+      "sourceEntryKey": "sotg-mon-calamari-star-defender",
+      "decisionId": "SOTG-CP21-D08",
+      "isolationId": "sotgcp23b0000008",
+      "canonicalDraftFingerprintFnv64": "eb9e05c99b9a1cfb",
+      "sourceGroupCount": 6,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 9,
+      "sourceEntryKey": "sotg-eclipse",
+      "decisionId": "SOTG-CP21-D09",
+      "isolationId": "sotgcp23b0000009",
+      "canonicalDraftFingerprintFnv64": "b14f5a1023a44822",
+      "sourceGroupCount": 6,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 10,
+      "sourceEntryKey": "sotg-theta-class-shuttle",
+      "decisionId": "SOTG-CP21-D10",
+      "isolationId": "sotgcp23b0000010",
+      "canonicalDraftFingerprintFnv64": "903fb0735a0a92dc",
+      "sourceGroupCount": 2,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 11,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+      "decisionId": "SOTG-CP21-D11",
+      "isolationId": "sotgcp23b0000011",
+      "canonicalDraftFingerprintFnv64": "07ce9a194a3166f4",
+      "sourceGroupCount": 2,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 12,
+      "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+      "decisionId": "SOTG-CP21-D12",
+      "isolationId": "sotgcp23b0000012",
+      "canonicalDraftFingerprintFnv64": "d869c82a4a28cabd",
+      "sourceGroupCount": 2,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 13,
+      "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+      "decisionId": "SOTG-CP21-D13",
+      "isolationId": "sotgcp23b0000013",
+      "canonicalDraftFingerprintFnv64": "1ffda9c8e43a0a80",
+      "sourceGroupCount": 3,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 14,
+      "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+      "decisionId": "SOTG-CP21-D14",
+      "isolationId": "sotgcp23b0000014",
+      "canonicalDraftFingerprintFnv64": "a5b7a18aab123af4",
+      "sourceGroupCount": 3,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    },
+    {
+      "queuePosition": 15,
+      "sourceEntryKey": "sotg-baudo-class-star-yacht",
+      "decisionId": "SOTG-CP21-D15",
+      "isolationId": "sotgcp23b0000015",
+      "canonicalDraftFingerprintFnv64": "3b25eb365e891bb5",
+      "sourceGroupCount": 1,
+      "installedWeaponCount": 0,
+      "receiptIssueAllowed": false,
+      "expectedState": "UNARMED_DRAFT_PARITY_ONLY",
+      "unresolvedBlockers": [
+        "NOT_IN_REGISTERED_CANONICAL_FOUNDRY_PACK",
+        "NO_VERIFIED_INSTALL_TRANSACTION",
+        "NO_MECHANICAL_MOUNT_CERTIFICATE",
+        "MUTATION_LIFECYCLE_E2E_NOT_VERIFIED"
+      ]
+    }
+  ]
+}

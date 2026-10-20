@@ -128,3 +128,10 @@ export function validateSupplementalCensus(originalKeys, overlay) {
 /** CP22 published-book effective rule lookup; never installed-weapon trust. */
 export {resolveCP21ApprovedPublicationReference,inspectCP21LegacyPackCandidate}
   from './vehicle-cp22-source-view.js';
+
+/**
+ * CP23-C1 conservative source-draft integrity reading. These exports never
+ * authenticate Foundry pack installation or permit an automated stock attack.
+ */
+export {CP23C_RECEIPT_STATE,canonicalCP23CJson,draftCP23CSnapshot,evaluateCP23CDraftParity}
+  from './vehicle-cp23c-source-integrity.js';

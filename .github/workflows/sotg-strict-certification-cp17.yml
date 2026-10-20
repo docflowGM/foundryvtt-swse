@@ -39,6 +39,11 @@ on:
       - tools/audits/vehicles/verify_sotg_cp23b_*.mjs
       - tests/phase2c_cp23b_*.test.mjs
       - docs/audits/vehicles/swse-sotg-cp23b-*.md
+      - data/audits/vehicles/swse-sotg-cp23c-*.json
+      - tools/audits/vehicles/build_sotg_cp23c_*.mjs
+      - scripts/domain/vehicles/vehicle-cp23c-*.js
+      - tests/phase2c_cp23c_*.test.mjs
+      - docs/audits/vehicles/swse-sotg-cp23c-*.md
       - tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
       - docs/audits/vehicles/swse-sotg-cp20-*.md
       - tools/audits/vehicles/check_sotg_cp20_tranche*.py
@@ -161,3 +166,8 @@ jobs:
         run: npm install --prefix /tmp/swse-cp23b-cli --no-audit --no-fund @foundryvtt/foundryvtt-cli@3.0.5
       - name: Verify CP23-B 15 draft Actor native LevelDB round-trip, without deployment
         run: node tools/audits/vehicles/verify_sotg_cp23b_native_roundtrip.mjs --cli-root /tmp/swse-cp23b-cli/node_modules
+
+      - name: Reproduce CP23-C1 15 immutable draft source parity anchors
+        run: node tools/audits/vehicles/build_sotg_cp23c_integrity_anchors.mjs --check
+      - name: Prove CP23-C1 conservative mutation invalidation and zero new authority
+        run: node --test tests/phase2c_cp23c_source_draft_integrity.test.mjs
