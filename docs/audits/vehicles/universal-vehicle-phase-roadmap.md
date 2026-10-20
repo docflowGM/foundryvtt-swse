@@ -28,9 +28,10 @@ Include only actual published vehicle statblocks. Narrative-only mentions, vehic
 - **1-H Galaxy of Intrigue — COMPLETE:** 8 publication records (six inherited spacecraft, plus Corona Limited Luxury Groundspeeder CL4 and SoroSuub JG-8 Luxury Landspeeder CL2, both printed p71). Ledger: `swse-universal-phase1h-galaxy-of-intrigue.json`.
 - **1-I Jedi Academy Training Manual — COMPLETE:** One inherited spacecraft, Chu'unthor (printed p151), and no additional independently printed vehicle statblocks in a full 161-page PDF survey. Ledger: `swse-universal-phase1i-jedi-academy-training-manual.json`.
 - **1-J Legacy Era Campaign Guide — COMPLETE:** 49 source publication records (39 inherited spacecraft + ten independently statted vehicles: three speeder bikes, two airspeeders, two ground walkers, and three space stations including The Wheel). Ledger: `swse-universal-phase1j-legacy-era-campaign-guide.json`.
-- **1-K Rebellion Era Campaign Guide — NEXT.**
-- Current known provisional publication total across all books: **393** (318 amended spacecraft baseline + seven Core nonship entries + one SotG Escape Pod + 26 Clone Wars other vehicles + seven KOTOR vehicles + 15 Force Unleashed vehicles + one Scum and Villainy space station + six Galaxy at War nonship vehicles + two Galaxy of Intrigue groundspeeders + ten Legacy Era nonship vehicles). This is not final exhaustiveness and **not** the number of generated compendium Actors.
-- 1-A through 1-J do not modify ship JSON, existing generated .db files, the native packs or gameplay systems.
+- **1-K Rebellion Era Campaign Guide — COMPLETE:** 53 publication identities (35 inherited spacecraft + 18 independent nonspacecraft, including five civilian speeders/cloud cars, six Rebel vehicles, five Imperial ground/air vehicles, and two Zann Consortium vehicles). Ledger: `swse-universal-phase1k-rebellion-era-campaign-guide.json`.
+- **1-L Threats of the Galaxy — NEXT.**
+- Current known provisional publication total across all books: **411** (318 amended spacecraft baseline + seven Core nonship entries + one SotG Escape Pod + 26 Clone Wars other vehicles + seven KOTOR vehicles + 15 Force Unleashed vehicles + one Scum and Villainy space station + six Galaxy at War nonship vehicles + two Galaxy of Intrigue groundspeeders + ten Legacy Era nonship vehicles + 18 Rebellion Era nonship vehicles). This is not final exhaustiveness and **not** the number of generated compendium Actors.
+- 1-A through 1-K do not modify ship JSON, existing generated .db files, the native packs or gameplay systems.
 
 ## Phase 1 — Enumeration + provenance only
 
@@ -50,7 +51,7 @@ Do NOT copy mechanical statistics yet. Record ambiguous identity/type, not specu
 | 1-H | Galaxy of Intrigue | 6 | Two printed groundspeeders on p71; ledger complete |
 | 1-I | Jedi Academy Training Manual | 1 | No new vehicles; 161-page book surveyed; ledger complete |
 | 1-J | Legacy Era Campaign Guide | 39 | Ten nonship records (three stations, three bikes, two airspeeders, two walkers); ledger complete |
-| 1-K | Rebellion Era Campaign Guide | 35 | Independent nonship search |
+| 1-K | Rebellion Era Campaign Guide | 35 | 18 additional ground/air vehicles; ledger complete |
 | 1-L | Threats of the Galaxy | 1 | Independent nonship search |
 | 1-M | Unknown Regions | 12 + Deep-X amendment | Independent nonship search |
 | 1-N | Scavenger's Guide to Droids | 0 | Search independently, do not assume empty |
