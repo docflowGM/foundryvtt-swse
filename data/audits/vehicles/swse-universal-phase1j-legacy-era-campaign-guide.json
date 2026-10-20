@@ -1,0 +1,1805 @@
+{
+  "schema": "swse.vehicle.universal.phase1j.legacy-era-campaign-guide.v1",
+  "status": "PHASE1_J_LEGACY_ERA_CAMPAIGN_GUIDE_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Legacy Era Campaign Guide",
+  "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+  "sourceFiles": {
+    "pdf": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+    "text": "Legacy Era Campaign Guide_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 39,
+    "newOtherVehiclePublicationClaims": 10,
+    "allBookVehiclePublicationClaims": 49,
+    "inheritedClassifications": {
+      "starfighter": 13,
+      "space-transport": 16,
+      "capital-ship": 10
+    },
+    "newVehicleClassifications": {
+      "speeder-bike": 3,
+      "airspeeder": 2,
+      "walker": 2,
+      "space-station": 3
+    },
+    "cumulativeKnownUniversalPublicationClaims": 393
+  },
+  "process": {
+    "discoveryMethod": "Searched all 793,776 bytes of the DJVU text layer for vehicle-type headers, CL statblocks, vehicles and station references, ship subtype lines, and the vehicle statblock index. Classified the 47 standalone type header matches, reconciled the 39 inherited canonical spacecraft including two historically catalogued named ship variants; 10 other standalone vehicle/statblock claims were visually verified in source-page renders. Independently rendered all 225 original PDF pages into twelve numbered 20-page contact sheets to scan for unusual layouts or vehicle blocks absent from OCR.",
+    "entirePdfPageCount": 225,
+    "primaryPdfPagesConfirmed": [
+      80,
+      81,
+      82,
+      152,
+      153,
+      184,
+      185,
+      205
+    ],
+    "textLayerCaveat": "Original 225-page PDF is scanned without selectable text; the original raster page renders control printed names, types, CL and page. DJVU TXT is discovery/navigation only.",
+    "printedToPdfMapping": "Zero-based original PDF page index equals the printed page; one-based physical PDF page number equals printed page + 1.",
+    "sectionsSwept": [
+      "Front matter, species, heroic traits, and organizations",
+      "Player equipment, items, and droids",
+      "Chapter VI: Vehicles and Starships, pp80-92",
+      "Refitted and antiquated vehicle templates, pp101-102",
+      "Galactic Alliance starships and special installations, pp141-153",
+      "Galactic Empire vehicles and spacecraft, pp184-191",
+      "The Fringe: The Wheel, p205, and Fringe starships, pp218-220",
+      "Appendix and full vehicle-statblock index"
+    ],
+    "exhaustivenessCaveat": "Two-tier scan: full searchable DjVu text plus full PDF contact sheets, with high-resolution original PDF confirmation of all ten nonship candidates. Text recognition defects are possible; no unsupported entries were invented.",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "identityDecisions": [
+    {
+      "subject": "Model 67 Shrieker Speeder Bike",
+      "printedPage": 80,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Independently published ground/air vehicle statblock absent from historical spacecraft-only registry."
+    },
+    {
+      "subject": "QuickFire Speeder Bike",
+      "printedPage": 81,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Independently published ground/air vehicle statblock absent from historical spacecraft-only registry."
+    },
+    {
+      "subject": "GPE-3300 Airspeeder",
+      "printedPage": 81,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Independently published ground/air vehicle statblock absent from historical spacecraft-only registry."
+    },
+    {
+      "subject": "Veltiss-2 Airspeeder",
+      "printedPage": 82,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Independently published ground/air vehicle statblock absent from historical spacecraft-only registry."
+    },
+    {
+      "subject": "Golan VIII Space Defense Platform",
+      "printedPage": 152,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed complete independent vehicle-scale 'Colossal (station) space station' statistics; absent from existing ship registry."
+    },
+    {
+      "subject": "Rendili Star Drive Mobile Spacedock 220",
+      "printedPage": 153,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed complete independent vehicle-scale 'Colossal (station) space station' statistics; absent from existing ship registry."
+    },
+    {
+      "subject": "Kybuck Speeder Bike",
+      "printedPage": 184,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Independently published ground/air vehicle statblock absent from historical spacecraft-only registry."
+    },
+    {
+      "subject": "All Terrain Riot Control Transport (AT-RCT)",
+      "printedPage": 184,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Independently published ground/air vehicle statblock absent from historical spacecraft-only registry."
+    },
+    {
+      "subject": "All Terrain Armored Heavy Transport (AT-AHT)",
+      "printedPage": 185,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Independently published ground/air vehicle statblock absent from historical spacecraft-only registry."
+    },
+    {
+      "subject": "The Wheel",
+      "printedPage": 205,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed complete independent vehicle-scale 'Colossal (station) space station' statistics; absent from existing ship registry."
+    },
+    {
+      "subject": "The Wheel",
+      "printedPage": 205,
+      "status": "PRESERVE_NONMOBILE_STATION_AS_VEHICLE_RECORD",
+      "reason": "Printed stationary speed fly 0 on starship scale but complete independent station combat statblock; not a generic location-only site."
+    },
+    {
+      "subject": "Golan VIII and Rendili Star Drive Mobile Spacedock 220",
+      "printedPages": [
+        152,
+        153
+      ],
+      "status": "PRESERVE_MOBILE_STATIONS_AS_STATIONS",
+      "reason": "Both statblocks explicitly print 'Colossal (station) space station'; hyperdrives and extremely slow flight do not reclassify them as capital ships or collapse them into inherited ships."
+    },
+    {
+      "subject": "Carried speeders, walkers, work pods, starfighters, and shuttles",
+      "printedPages": [
+        152,
+        153,
+        185,
+        205
+      ],
+      "status": "EXCLUDE_UNSTATTED_CARRIED_CRAFT",
+      "reason": "Generic carried-craft quantities and class names do not create separate independent source statblock identities."
+    },
+    {
+      "subject": "The Raider, other named appearances of ship classes, and modified narrative vessels",
+      "status": "EXCLUDE_REFERENCES_WITHOUT_INDEPENDENT_STATBLOCK",
+      "reason": "Flavor uses and owner names of existing spacecraft are not independently printed statblocks; the source's 39 historical identity claims are retained without duplicated references."
+    },
+    {
+      "subject": "Legacy refitted and antiquated vehicle templates",
+      "printedPages": [
+        101,
+        102
+      ],
+      "status": "EXCLUDE_TEMPLATES_NOT_INDEPENDENT_MODELS",
+      "reason": "General templates modify existing vehicles; no specific additional vehicle-model statblocks provided by those rules."
+    },
+    {
+      "subject": "Yuuzhan Vong living vehicle rules and dovin basal weapon options",
+      "printedPages": [
+        75,
+        76
+      ],
+      "status": "EXCLUDE_VEHICLE_BUILD_RULES_NOT_STATBLOCKS",
+      "reason": "Vehicle ecology/equipment rules do not provide an independently named statblock publication identity."
+    },
+    {
+      "subject": "Vehicle illustrations and military narrative",
+      "status": "EXCLUDE_IMAGE_OR_NARRATIVE_ONLY",
+      "reason": "Artwork, deployment narrative, encounter mentions and product names without an accompanying full printed vehicle statblock are not publication claims."
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "le-besh-type-personal-starfighter",
+      "printedName": "Besh-Type Personal Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 83,
+      "pdfPhysicalPage": 84,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            83
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 83,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-phoebos-class-starfighter",
+      "printedName": "Phoebos-class Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 84,
+      "pdfPhysicalPage": 85,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            84
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 84,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-r-28-starfighter",
+      "printedName": "R-28 Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 85,
+      "pdfPhysicalPage": 86,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            85
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 85,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-x-83-twintail-starfighter",
+      "printedName": "X-83 TwinTail Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 86,
+      "pdfPhysicalPage": 87,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            86
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 86,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-gladius-class-light-freighter",
+      "printedName": "Gladius-class Light Freighter",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 87,
+      "pdfPhysicalPage": 88,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            87
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 87,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-gpe-7300-space-transport",
+      "printedName": "GPE-7300 Space Transport",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 87,
+      "pdfPhysicalPage": 88,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            87
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 87,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-helot-class-medium-transport",
+      "printedName": "Helot-class Medium Transport",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 88,
+      "pdfPhysicalPage": 89,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            88
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 88,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-j-1-shuttle",
+      "printedName": "J-1 Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 89,
+      "pdfPhysicalPage": 90,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            89
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 89,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-mc-24a-light-shuttle",
+      "printedName": "MC-24a Light Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 89,
+      "pdfPhysicalPage": 90,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            89
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 89,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-yx-1980-space-transport",
+      "printedName": "YX-1980 Space Transport",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 91,
+      "pdfPhysicalPage": 92,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            91
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 91,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-yz-2500-heavy-transport",
+      "printedName": "YZ-2500 Heavy Transport",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 91,
+      "pdfPhysicalPage": 92,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            91
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 91,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-bb-2-starfire-fighter-bomber",
+      "printedName": "BB-2 Starfire Fighter/Bomber",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 142,
+      "pdfPhysicalPage": 143,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            142
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 142,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-cf9-crossfire-starfighter",
+      "printedName": "CF9 Crossfire Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 143,
+      "pdfPhysicalPage": 144,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            143
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 143,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-i4-ionizer-starfighter",
+      "printedName": "I4 Ionizer Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 143,
+      "pdfPhysicalPage": 144,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            143
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 143,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-jumpstar-hpf-starfighter",
+      "printedName": "Jumpstar HPF Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 144,
+      "pdfPhysicalPage": 145,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            144
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 144,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-rc-2-twilight-scoutship",
+      "printedName": "RC-2 Twilight Scoutship",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 145,
+      "pdfPhysicalPage": 146,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            145
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 145,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-crix-class-assault-shuttle",
+      "printedName": "Crix-class Assault Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 146,
+      "pdfPhysicalPage": 147,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            146
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 146,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-crix-class-diplomatic-courier-shuttle",
+      "printedName": "Crix-class Diplomatic Courier Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 146,
+      "pdfPhysicalPage": 147,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            146
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 146,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-mt-dropship",
+      "printedName": "MT Dropship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 147,
+      "pdfPhysicalPage": 148,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            147
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 147,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-scarlet-star-modified-yt-2400-transport",
+      "printedName": "Scarlet Star (Modified YT-2400 Transport)",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 147,
+      "pdfPhysicalPage": 148,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            147
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 147,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-sabertooth-class-assault-rescue-vessel",
+      "printedName": "Sabertooth-class Assault & Rescue Vessel",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 148,
+      "pdfPhysicalPage": 149,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            148
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 148,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-shashore-class-frigate",
+      "printedName": "ShaShore-class Frigate",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 148,
+      "pdfPhysicalPage": 149,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            148
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 148,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-indomitable-scythe-class-battle-cruiser",
+      "printedName": "Indomitable (Scythe-class Battle Cruiser)",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (cruiser) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 150,
+      "pdfPhysicalPage": 151,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            150
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 150,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-scythe-class-battle-cruiser",
+      "printedName": "Scythe-class Battle Cruiser",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (cruiser) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 150,
+      "pdfPhysicalPage": 151,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            150
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 150,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-tri-scythe-class-frigate",
+      "printedName": "Tri-Scythe-class Frigate",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 151,
+      "pdfPhysicalPage": 152,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            151
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 151,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-spinward-class-tender",
+      "printedName": "Spinward-class Tender",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 152,
+      "pdfPhysicalPage": 153,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            152
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 152,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-fury-class-starfighter",
+      "printedName": "Fury-class Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 186,
+      "pdfPhysicalPage": 187,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            186
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 186,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-predator-class-starfighter",
+      "printedName": "Predator-class Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 186,
+      "pdfPhysicalPage": 187,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            186
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 186,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-neutralizer-class-bomber",
+      "printedName": "Neutralizer-class Bomber",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 187,
+      "pdfPhysicalPage": 188,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            187
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 187,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-nune-class-imperial-shuttle",
+      "printedName": "Nune-class Imperial Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 188,
+      "pdfPhysicalPage": 189,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            188
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 188,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-sigma-class-long-range-shuttle",
+      "printedName": "Sigma-class Long-Range Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 188,
+      "pdfPhysicalPage": 189,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            188
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 188,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-ardent-class-fast-frigate",
+      "printedName": "Ardent-class Fast Frigate",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 189,
+      "pdfPhysicalPage": 190,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            189
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 189,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-pellaeon-class-star-destroyer",
+      "printedName": "Pellaeon-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (cruiser) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 190,
+      "pdfPhysicalPage": 191,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            190
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 190,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-imperious-class-star-destroyer",
+      "printedName": "Imperious-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (cruiser) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 191,
+      "pdfPhysicalPage": 192,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            191
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 191,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-crimson-axe",
+      "printedName": "Crimson Axe",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 200,
+      "pdfPhysicalPage": 201,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            200
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 200,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-a519-invader-close-support-starfighter",
+      "printedName": "A519 Invader Close Support Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 218,
+      "pdfPhysicalPage": 219,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            218
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 218,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-nemesis-class-patrol-ship",
+      "printedName": "Nemesis-class Patrol Ship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 218,
+      "pdfPhysicalPage": 219,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            218
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 218,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-the-grinning-liar",
+      "printedName": "The Grinning Liar",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal* space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 219,
+      "pdfPhysicalPage": 220,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            219
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 219,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "le-the-mynock",
+      "printedName": "The Mynock",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal* space transport"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 220,
+      "pdfPhysicalPage": 221,
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Legacy Era Campaign Guide",
+          "printedPages": [
+            220
+          ],
+          "sourcePDF": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+          "originalHistoricalPdfVisualCloseRead": true,
+          "pdfIndexZeroBased": 220,
+          "textDiscoveryLayer": "Legacy Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "le-model-67-shrieker-speeder-bike",
+      "printedName": "Model 67 Shrieker Speeder Bike",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 80,
+      "pdfPhysicalPage": 81,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Speeder Bikes",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 81,
+        "printedHeading": "Model 67 Shrieker Speeder Bike",
+        "printedChallengeLevel": 6
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "le-quickfire-speeder-bike",
+      "printedName": "QuickFire Speeder Bike",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 81,
+      "pdfPhysicalPage": 82,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Speeder Bikes",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 82,
+        "printedHeading": "QuickFire Speeder Bike",
+        "printedChallengeLevel": 7
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "le-gpe-3300-airspeeder",
+      "printedName": "GPE-3300 Airspeeder",
+      "printedTypeLine": "Huge air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "repulsorlift"
+        ],
+        "printedCategory": "Huge air vehicle (airspeeder)"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 81,
+      "pdfPhysicalPage": 82,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Airspeeders",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 82,
+        "printedHeading": "GPE-3300 Airspeeder",
+        "printedChallengeLevel": 6
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "le-veltiss-2-airspeeder",
+      "printedName": "Veltiss-2 Airspeeder",
+      "printedTypeLine": "Large air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large air vehicle (airspeeder)"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 82,
+      "pdfPhysicalPage": 83,
+      "sourceSection": "Chapter VI: Vehicles and Starships > Airspeeders",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 83,
+        "printedHeading": "Veltiss-2 Airspeeder",
+        "printedChallengeLevel": 6
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "le-golan-viii-space-defense-platform",
+      "printedName": "Golan VIII Space Defense Platform",
+      "printedTypeLine": "Colossal (station) space station",
+      "classification": {
+        "primaryCategory": "space-station",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (station) space station",
+        "stationMobility": "limited powered spaceflight and hyperdrive"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 152,
+      "pdfPhysicalPage": 153,
+      "sourceSection": "Chapter IX: The Galactic Alliance > Golan VIII Space Defense Platform",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 153,
+        "printedHeading": "Golan VIII Space Defense Platform",
+        "printedChallengeLevel": 25,
+        "printedMovementObservation": "Fly 1 square (starship scale); station loses shields and attacks when moving"
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "le-rendili-star-drive-mobile-spacedock-220",
+      "printedName": "Rendili Star Drive Mobile Spacedock 220",
+      "printedTypeLine": "Colossal (station) space station",
+      "classification": {
+        "primaryCategory": "space-station",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (station) space station",
+        "stationMobility": "limited powered spaceflight and hyperdrive"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 153,
+      "pdfPhysicalPage": 154,
+      "sourceSection": "Chapter IX: The Galactic Alliance > Mobile Spacedock 220",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 154,
+        "printedHeading": "Rendili Star Drive Mobile Spacedock 220",
+        "printedChallengeLevel": 20,
+        "printedMovementObservation": "Fly 1 square (starship scale); cannot move with docked ship"
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "le-kybuck-speeder-bike",
+      "printedName": "Kybuck Speeder Bike",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 184,
+      "pdfPhysicalPage": 185,
+      "sourceSection": "Chapter X: The Galactic Empire > Imperial Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 185,
+        "printedHeading": "Kybuck Speeder Bike",
+        "printedChallengeLevel": 5
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "le-all-terrain-riot-control-transport-at-rct",
+      "printedName": "All Terrain Riot Control Transport (AT-RCT)",
+      "printedTypeLine": "Huge ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (walker)"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 184,
+      "pdfPhysicalPage": 185,
+      "sourceSection": "Chapter X: The Galactic Empire > Imperial Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 185,
+        "printedHeading": "All Terrain Riot Control Transport (AT-RCT)",
+        "printedChallengeLevel": 8
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "le-all-terrain-armored-heavy-transport-at-aht",
+      "printedName": "All Terrain Armored Heavy Transport (AT-AHT)",
+      "printedTypeLine": "Colossal ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Colossal ground vehicle (walker)"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 185,
+      "pdfPhysicalPage": 186,
+      "sourceSection": "Chapter X: The Galactic Empire > Imperial Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 186,
+        "printedHeading": "All Terrain Armored Heavy Transport (AT-AHT)",
+        "printedChallengeLevel": 14
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "le-the-wheel",
+      "printedName": "The Wheel",
+      "printedTypeLine": "Colossal (station) space station",
+      "classification": {
+        "primaryCategory": "space-station",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (station) space station",
+        "stationMobility": "stationary"
+      },
+      "sourceBook": "Legacy Era Campaign Guide",
+      "printedStatblockStartPage": 205,
+      "pdfPhysicalPage": 206,
+      "sourceSection": "Chapter XI: The Fringe > The Wheel",
+      "provenance": {
+        "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+        "sourceFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+        "textSearchLayer": "Legacy Era Campaign Guide_djvu.txt (discovery only; scanned PDF is primary authority)",
+        "scannedPhysicalPdfPages": 225,
+        "pdfVisualReviewMethod": "225_PAGE_WHOLE_BOOK_CONTACT_SHEETS_PLUS_HIGH_RES_PRINTED_STATBLOCK_PAGE",
+        "physicalPdfPage": 206,
+        "printedHeading": "The Wheel",
+        "printedChallengeLevel": 19,
+        "printedMovementObservation": "Fly 0 squares (starship scale)"
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-K Rebellion Era Campaign Guide"
+}
