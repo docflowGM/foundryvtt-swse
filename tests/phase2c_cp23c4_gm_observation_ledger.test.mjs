@@ -185,7 +185,9 @@ test('CP23-C4 is wired after ActorEngine import but never changes ActorEngine or
   // remains the only mutation authority, and the importer never writes
   // GM observation settings or issues any verified installation receipt.
   assert.ok(importer.includes('assertCP23C4CNoStagedSourceImport(sourceActor)'));
-  assert.doesNotMatch(importer,/recordCP23C4UnverifiedImport|game\\.settings\\.set|issueVerifiedReceipt/);
+  assert.equal(importer.includes('recordCP23C4UnverifiedImport'),false);
+  assert.equal(importer.includes('game.settings.set'),false);
+  assert.equal(importer.includes('issueVerifiedReceipt'),false);
   assert.equal(TRUSTED_STOCK_WEAPON_GROUP_COUNT,0);
   assert.match(authority,/return null/);
 });
