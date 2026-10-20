@@ -1,4 +1,4 @@
-name: SotG CP17-CP22 Publication Evidence, Adjudication and Source Reference Gates
+name: SotG CP17-CP23 Source Evidence, Draft Proposals and Provenance Gates
 
 on:
   push:
@@ -34,6 +34,11 @@ on:
       - scripts/domain/vehicles/vehicle-cp23-*.js
       - tests/phase2c_cp23_*.test.mjs
       - docs/audits/vehicles/swse-sotg-cp23-*.md
+      - data/audits/vehicles/swse-sotg-cp23b-*.json
+      - tools/audits/vehicles/build_sotg_cp23b_*.mjs
+      - tools/audits/vehicles/verify_sotg_cp23b_*.mjs
+      - tests/phase2c_cp23b_*.test.mjs
+      - docs/audits/vehicles/swse-sotg-cp23b-*.md
       - tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
       - docs/audits/vehicles/swse-sotg-cp20-*.md
       - tools/audits/vehicles/check_sotg_cp20_tranche*.py
@@ -147,3 +152,12 @@ jobs:
         run: node tools/audits/vehicles/build_sotg_cp23_reconciliation.mjs --check
       - name: Validate CP23 15-source legacy pack comparison and native pack diagnostic
         run: node --test tests/phase2c_cp23_pack_reconciliation.test.mjs
+
+      - name: Check CP23-B 15 source-backed isolated draft Actors
+        run: node tools/audits/vehicles/build_sotg_cp23b_proposals.mjs --check
+      - name: Test CP23-B source projections and no stock attack promotion
+        run: node --test tests/phase2c_cp23b_isolated_proposals.test.mjs
+      - name: Install pinned official Foundry CLI for isolated CP23-B round-trip
+        run: npm install --prefix /tmp/swse-cp23b-cli --no-audit --no-fund @foundryvtt/foundryvtt-cli@3.0.5
+      - name: Verify CP23-B 15 draft Actor native LevelDB round-trip, without deployment
+        run: node tools/audits/vehicles/verify_sotg_cp23b_native_roundtrip.mjs --cli-root /tmp/swse-cp23b-cli/node_modules
