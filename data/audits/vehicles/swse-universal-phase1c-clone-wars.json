@@ -1,0 +1,2344 @@
+{
+  "schema": "swse.vehicle.universal.phase1c.clone-wars.v1",
+  "status": "PHASE1_C_CLONE_WARS_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Clone Wars Campaign Guide",
+  "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+  "sourceFiles": {
+    "pdf": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+    "text": "Clone Wars Campaign Guide_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 41,
+    "newOtherVehiclePublicationClaims": 26,
+    "allBookVehiclePublicationClaims": 67,
+    "newOtherVehicleTypes": {
+      "airspeeder": 5,
+      "walker": 7,
+      "speeder-bike": 1,
+      "ground-speeder": 3,
+      "repulsorlift-tank": 3,
+      "wheeled-tank": 1,
+      "water-speeder": 2,
+      "tracked-vehicle": 1,
+      "wheel-bike": 2,
+      "ornithopter": 1
+    },
+    "cumulativeKnownUniversalPublicationClaims": 352
+  },
+  "process": {
+    "discoveryMethod": "Whole-book OCR/TXT type-line scan, plus section discovery across Jedi pp137-139, Republic pp162-170, Confederacy pp197-203 and Kashyyyk pp219-221. Focus on separately headed complete vehicle statblocks rather than mentions, options or droid NPCs.",
+    "sourceVerification": "Source SHA256 independently matched uploaded scanned PDF to repository historical Clone Wars ledger. Rendered printed vehicle-statblock pages and examined page layouts and printed headings, including p138, p163-170, p198-203, p219-220.",
+    "pdfPhysicalPageMethod": "New claims verified with printed page +1 physical PDF page; inherited ship page/scan corrections preserved, especially inverted pp209/210.",
+    "notRehydrating": true,
+    "exhaustivenessLimit": "Text discovery can miss OCR-invisible material; rendered candidate pages verified, but not a claim of visual line-by-line inspection of all 225 physical PDF pages."
+  },
+  "sourceIdentityPolicies": [
+    {
+      "subject": "Sheathipede-class Shuttle / Punworcca 116-class Sloop",
+      "policy": "Preserve Phase1 identities and recorded printed-page swap; primary PDF pages around 209-210 scanned out of printed order. Do not blanket-recompute original physical page assignment from printed-page-plus-one."
+    },
+    {
+      "subject": "SPHA variants",
+      "policy": "One published vehicle statblock with alternative SPHA-T, -I, -V, -C and -M primary armaments. Count once; represent variant configurations in Phase 2 without inventing five additional published identities."
+    },
+    {
+      "subject": "Grievous's Wheel Bike",
+      "policy": "Independent named modified vehicle statblock on p203. Count separately from baseline Tsmeu-6 vehicle despite shared chassis."
+    },
+    {
+      "subject": "Manta Droid Subfighter",
+      "policy": "Printed as 'Huge water vehicle (speeder)'; do not infer spaceflight from 'subfighter' name."
+    },
+    {
+      "subject": "Oevvaor Jet Catamaran",
+      "policy": "Printed as 'Gargantuan vehicle (speeder)' and described for over-water use; preserve printed type and tag water primary."
+    },
+    {
+      "subject": "Droid entries",
+      "policy": "Do not include large droids with NPC/droid statblocks unless the printed block explicitly defines a vehicle. Examples excluded: Ultra Droideka and Octuptarra Combat Tri-Droid."
+    },
+    {
+      "subject": "DC0052 airspeeder",
+      "policy": "Stand-alone Jedi vehicle on p138 amid Jedi starship profiles; included despite being outside major military-vehicle chapters."
+    },
+    {
+      "subject": "AT-TE and BARC",
+      "policy": "Printed type line and separate statblock for each on p165; do not conflate adjacent entries."
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "cw-daystar-dc0052-intergalactic-speeder",
+      "printedName": "DC0052 \"Intergalactic\" Speeder",
+      "printedTypeLine": "Large airspeeder",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "air"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 138,
+      "pdfPhysicalPage": 139,
+      "sourceSection": "Jedi Vehicles and Starships",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-all-terrain-attack-pod-at-ap",
+      "printedName": "All-Terrain Attack Pod (AT-AP)",
+      "printedTypeLine": "Gargantuan ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 163,
+      "pdfPhysicalPage": 164,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-all-terrain-experimental-transport-at-xt",
+      "printedName": "All-Terrain Experimental Transport (AT-XT)",
+      "printedTypeLine": "Large ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 163,
+      "pdfPhysicalPage": 164,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-all-terrain-recon-transport-at-rt",
+      "printedName": "All-Terrain Recon Transport (AT-RT)",
+      "printedTypeLine": "Large ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 164,
+      "pdfPhysicalPage": 165,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-all-terrain-tactical-enforcer-at-te",
+      "printedName": "All-Terrain Tactical Enforcer (AT-TE)",
+      "printedTypeLine": "Gargantuan ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 165,
+      "pdfPhysicalPage": 166,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-barc-speeder",
+      "printedName": "BARC Speeder",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 165,
+      "pdfPhysicalPage": 166,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-infantry-support-speeder-platform",
+      "printedName": "Infantry Support Speeder Platform",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 166,
+      "pdfPhysicalPage": 167,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-laat-c-carrier",
+      "printedName": "LAAT/c Carrier",
+      "printedTypeLine": "Colossal air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "air"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 167,
+      "pdfPhysicalPage": 168,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-medlifter-troop-transport",
+      "printedName": "Medlifter Troop Transport",
+      "printedTypeLine": "Huge air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "air"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 167,
+      "pdfPhysicalPage": 168,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-republic-troop-transport",
+      "printedName": "Republic Troop Transport",
+      "printedTypeLine": "Colossal air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "air"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 168,
+      "pdfPhysicalPage": 169,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-self-propelled-heavy-artillery",
+      "printedName": "Self-Propelled Heavy Artillery (SPHA)",
+      "printedTypeLine": "Colossal ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 168,
+      "pdfPhysicalPage": 169,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-tx-130t-saber-class-fighter-tank",
+      "printedName": "TX-130T Saber-class Fighter Tank",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "repulsorlift-tank",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [
+          "tank"
+        ],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 169,
+      "pdfPhysicalPage": 170,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-unstable-terrain-artillery-transport-ut-at",
+      "printedName": "Unstable Terrain Artillery Transport (UT-AT)",
+      "printedTypeLine": "Colossal ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "repulsorlift-tank",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [
+          "tank"
+        ],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 170,
+      "pdfPhysicalPage": 171,
+      "sourceSection": "Republic Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-ground-armored-tank",
+      "printedName": "Ground Armored Tank (GAT)",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "repulsorlift-tank",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [
+          "tank"
+        ],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 198,
+      "pdfPhysicalPage": 199,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-ig-227-hailfire-class-droid-tank",
+      "printedName": "IG-227 Hailfire-class Droid Tank",
+      "printedTypeLine": "Huge ground vehicle (wheeled)",
+      "classification": {
+        "primaryCategory": "wheeled-tank",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 199,
+      "pdfPhysicalPage": 200,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-manta-droid-subfighter",
+      "printedName": "Manta Droid Subfighter",
+      "printedTypeLine": "Huge water vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "water-speeder",
+        "mobilityDomains": [
+          "water"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "water"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 200,
+      "pdfPhysicalPage": 201,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-multi-troop-transport",
+      "printedName": "Multi-Troop Transport (MTT)",
+      "printedTypeLine": "Colossal ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 200,
+      "pdfPhysicalPage": 201,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-og-9-homing-spider-droid",
+      "printedName": "OG-9 Homing Spider Droid",
+      "printedTypeLine": "Huge ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 201,
+      "pdfPhysicalPage": 202,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-persuader-class-droid-enforcer",
+      "printedName": "Persuader-class Droid Enforcer",
+      "printedTypeLine": "Huge ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 201,
+      "pdfPhysicalPage": 202,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-single-trooper-aerial-platform",
+      "printedName": "Single Trooper Aerial Platform (STAP)",
+      "printedTypeLine": "Large airspeeder",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "air"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-trade-federation-troop-carrier",
+      "printedName": "Trade Federation Troop Carrier",
+      "printedTypeLine": "Colossal ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-tri-droid",
+      "printedName": "Tri-Droid",
+      "printedTypeLine": "Gargantuan ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-tsmeu-6-personal-wheel-bike",
+      "printedName": "Tsmeu-6 Personal Wheel Bike",
+      "printedTypeLine": "Large ground vehicle (wheeled/walking)",
+      "classification": {
+        "primaryCategory": "wheel-bike",
+        "mobilityDomains": [
+          "ground-wheeled",
+          "ground-walking"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 203,
+      "pdfPhysicalPage": 204,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-grievous-wheel-bike-modified-tsmeu-6",
+      "printedName": "Grievous's Wheel Bike (Modified Tsmeu-6)",
+      "printedTypeLine": "Large ground vehicle (wheeled/walking)",
+      "classification": {
+        "primaryCategory": "wheel-bike",
+        "mobilityDomains": [
+          "ground-wheeled",
+          "ground-walking"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "ground"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 203,
+      "pdfPhysicalPage": 204,
+      "sourceSection": "Confederacy Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-oevvaor-jet-catamaran",
+      "printedName": "Oevvaor Jet Catamaran",
+      "printedTypeLine": "Gargantuan vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "water-speeder",
+        "mobilityDomains": [
+          "water"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "water"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 219,
+      "pdfPhysicalPage": 220,
+      "sourceSection": "Kashyyyk Vehicles and Starships",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "cw-raddaugh-gnasp-fluttercraft",
+      "printedName": "Raddaugh Gnasp Fluttercraft",
+      "printedTypeLine": "Huge air vehicle (ornithopter)",
+      "classification": {
+        "primaryCategory": "ornithopter",
+        "mobilityDomains": [
+          "air"
+        ],
+        "roleTags": [],
+        "printedVehicleDomain": "air"
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 220,
+      "pdfPhysicalPage": 221,
+      "sourceSection": "Kashyyyk Vehicles and Starships",
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "sourceFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+        "textSearchLayer": "Clone Wars Campaign Guide_djvu.txt",
+        "pdfReviewMethod": "PAGE_RENDER_VISUAL_CONFIRMATION",
+        "pageOffsetChecked": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "cw-azure-angel",
+      "printedName": "Azure Angel",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 138,
+      "originalPhase1StoredPage": 138,
+      "pdfPhysicalPage": 139,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          138
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            138
+          ],
+          "statblockLocation": "printed p.138",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All statblock fields, variant descriptive prose, conditional modifiers, and listed weapon rows visually reviewed; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-barloz-class-freighter",
+      "printedName": "Barloz-class Freighter",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 76,
+      "originalPhase1StoredPage": 76,
+      "pdfPhysicalPage": 77,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          75,
+          76,
+          77
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            75,
+            76,
+            77
+          ],
+          "statblockLocation": "printed p.76",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-bc-714-luxury-transport",
+      "printedName": "BC-714 Luxury Transport",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 203,
+      "originalPhase1StoredPage": 203,
+      "pdfPhysicalPage": 204,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          203
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            203
+          ],
+          "statblockLocation": "printed p.203",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-belbullab-heavy-starfighter",
+      "printedName": "Belbullab Heavy Starfighter",
+      "printedTypeLine": "Gargantuan starfighter (shared Belbullab-22/23/24 source block)",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 204,
+      "originalPhase1StoredPage": 204,
+      "pdfPhysicalPage": 205,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          204
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            204
+          ],
+          "statblockLocation": "printed p.204",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-c-9979-landing-craft",
+      "printedName": "C-9979 Landing Craft",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 205,
+      "originalPhase1StoredPage": 205,
+      "pdfPhysicalPage": 206,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          205
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            205
+          ],
+          "statblockLocation": "printed p.205",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-cis-advanced-starfighter",
+      "printedName": "CIS-Advanced Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 206,
+      "originalPhase1StoredPage": 206,
+      "pdfPhysicalPage": 207,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          206
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            206
+          ],
+          "statblockLocation": "printed p.206",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only.",
+          "adjacentNarrativePages": [
+            205
+          ]
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-consular-class-cruiser-charger-c70-retrofit",
+      "printedName": "Consular-class Cruiser (Charger c70 Retrofit)",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 170,
+      "originalPhase1StoredPage": 170,
+      "pdfPhysicalPage": 171,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          170
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            170
+          ],
+          "statblockLocation": "printed p.170",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, weapons, station assignments and adjacent narrative mechanics visually read; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-cr-20-troop-carrier",
+      "printedName": "CR-20 Troop Carrier",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 166,
+      "originalPhase1StoredPage": 166,
+      "pdfPhysicalPage": 167,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          166
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            166
+          ],
+          "statblockLocation": "printed p.166",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, weapons, station assignments and adjacent narrative mechanics visually read; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-dagger-class-starfighter",
+      "printedName": "Dagger-class Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 81,
+      "originalPhase1StoredPage": 81,
+      "pdfPhysicalPage": 82,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          81
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            81
+          ],
+          "statblockLocation": "printed p.81",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-delta-7-aethersprite-interceptor-high-maneuver-variant",
+      "printedName": "Delta-7 Aethersprite Interceptor (High-Maneuver Variant)",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 137,
+      "originalPhase1StoredPage": 137,
+      "pdfPhysicalPage": 138,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          137
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            137
+          ],
+          "statblockLocation": "printed p.137",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All statblock fields, variant descriptive prose, conditional modifiers, and listed weapon rows visually reviewed; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-delta-7-aethersprite-interceptor-high-speed-variant",
+      "printedName": "Delta-7 Aethersprite Interceptor (High-Speed Variant)",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 137,
+      "originalPhase1StoredPage": 137,
+      "pdfPhysicalPage": 138,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          137
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            137
+          ],
+          "statblockLocation": "printed p.137",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All statblock fields, variant descriptive prose, conditional modifiers, and listed weapon rows visually reviewed; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-diamond-class-cruiser",
+      "printedName": "Diamond-class Cruiser",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 206,
+      "originalPhase1StoredPage": 206,
+      "pdfPhysicalPage": 207,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          206
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            206
+          ],
+          "statblockLocation": "printed p.206",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-dianoga-class-assault-starfighter",
+      "printedName": "Dianoga-class Assault Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 82,
+      "originalPhase1StoredPage": 82,
+      "pdfPhysicalPage": 83,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          82
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            82
+          ],
+          "statblockLocation": "printed p.82",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-droch-class-boarding-ship",
+      "printedName": "Droch-class Boarding Ship",
+      "printedTypeLine": "Huge starfighter (boarding ship)",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 207,
+      "originalPhase1StoredPage": 207,
+      "pdfPhysicalPage": 208,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          207
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            207
+          ],
+          "statblockLocation": "printed p.207",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-eta-2-actis-interceptor-heavy-defenses-variant",
+      "printedName": "Eta-2 Actis Interceptor (Heavy-Defenses Variant)",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 139,
+      "originalPhase1StoredPage": 139,
+      "pdfPhysicalPage": 140,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          139
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            139
+          ],
+          "statblockLocation": "printed p.139",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All statblock fields, variant descriptive prose, conditional modifiers, and listed weapon rows visually reviewed; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-eta-2-actis-interceptor-high-maneuver-variant",
+      "printedName": "Eta-2 Actis Interceptor (High-Maneuver Variant)",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 139,
+      "originalPhase1StoredPage": 139,
+      "pdfPhysicalPage": 140,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          139
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            139
+          ],
+          "statblockLocation": "printed p.139",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All statblock fields, variant descriptive prose, conditional modifiers, and listed weapon rows visually reviewed; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-freefall-class-starfighter",
+      "printedName": "Freefall-class Starfighter",
+      "printedTypeLine": "Colossal starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 82,
+      "originalPhase1StoredPage": 82,
+      "pdfPhysicalPage": 83,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          82
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            82
+          ],
+          "statblockLocation": "printed p.82",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-g9-rigger",
+      "printedName": "G9 Rigger",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 76,
+      "originalPhase1StoredPage": 76,
+      "pdfPhysicalPage": 77,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          76
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            76
+          ],
+          "statblockLocation": "printed p.76",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-gs-100-salvage-ship",
+      "printedName": "GS-100 Salvage Ship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 78,
+      "originalPhase1StoredPage": 78,
+      "pdfPhysicalPage": 79,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          78
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            78
+          ],
+          "statblockLocation": "printed p.78",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-hardcell-class-transport",
+      "printedName": "Hardcell-class Transport",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 207,
+      "originalPhase1StoredPage": 207,
+      "pdfPhysicalPage": 208,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          207
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            207
+          ],
+          "statblockLocation": "printed p.207",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-hyena-class-bomber",
+      "printedName": "Hyena-class Bomber",
+      "printedTypeLine": "Huge starfighter (droid vehicle)",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 208,
+      "originalPhase1StoredPage": 208,
+      "pdfPhysicalPage": 209,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          208
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            208
+          ],
+          "statblockLocation": "printed p.208",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-invisible-hand",
+      "printedName": "Invisible Hand",
+      "printedTypeLine": "Colossal (cruiser) capital ship (named flagship)",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 210,
+      "originalPhase1StoredPage": 210,
+      "pdfPhysicalPage": 211,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          209
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            209
+          ],
+          "statblockLocation": "printed p.209",
+          "pdfPageIndexSemantics": "zero-based PDF index equals printed page except indices 209/210 inverted in scan",
+          "pdfPageIndices": [
+            210
+          ],
+          "reviewScope": "Original scanned statblock, gray weapon tables, conditional notes and adjacent descriptive mechanics visually close-read; OCR only for navigation.",
+          "adjacentNarrativePages": [
+            208
+          ],
+          "phase1PrintedPageDiscrepancy": {
+            "storedPhase1PrintedPage": 210,
+            "actualPrintedPage": 209,
+            "pdfIndex": 210,
+            "disposition": "PRESERVE_IDENTITY_AND_DOCUMENT_PROVENANCE_CORRECTION_PENDING"
+          }
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-kappa-class-shuttle",
+      "printedName": "Kappa-class Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 171,
+      "originalPhase1StoredPage": 171,
+      "pdfPhysicalPage": 172,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          171
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            171
+          ],
+          "statblockLocation": "printed p.171",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, weapons, station assignments and adjacent narrative mechanics visually read; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-koensayr-btl-s1-y-wing",
+      "printedName": "Koensayr BTL-S1 Y-wing",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 173,
+      "originalPhase1StoredPage": 173,
+      "pdfPhysicalPage": 174,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          173
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            173
+          ],
+          "statblockLocation": "printed p.173",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, weapons, station assignments and adjacent narrative mechanics visually read; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-kr-tb-doomtreader",
+      "printedName": "KR-TB Doomtreader",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 79,
+      "originalPhase1StoredPage": 79,
+      "pdfPhysicalPage": 80,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          78,
+          79
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            78,
+            79
+          ],
+          "statblockLocation": "printed p.79",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-medstar-class-frigate",
+      "printedName": "MedStar-class Frigate",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 171,
+      "originalPhase1StoredPage": 171,
+      "pdfPhysicalPage": 172,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          171
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            171
+          ],
+          "statblockLocation": "printed p.171",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, weapons, station assignments and adjacent narrative mechanics visually read; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-morningstar-a-assault-starfighter",
+      "printedName": "MorningStar-A Assault Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 83,
+      "originalPhase1StoredPage": 83,
+      "pdfPhysicalPage": 84,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          83
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            83
+          ],
+          "statblockLocation": "printed p.83",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-nu-class-attack-shuttle",
+      "printedName": "Nu-class Attack Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 172,
+      "originalPhase1StoredPage": 172,
+      "pdfPhysicalPage": 173,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          172
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            172
+          ],
+          "statblockLocation": "printed p.172",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, weapons, station assignments and adjacent narrative mechanics visually read; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-pelta-class-medical-frigate",
+      "printedName": "Pelta-class Medical Frigate",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 172,
+      "originalPhase1StoredPage": 172,
+      "pdfPhysicalPage": 173,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          172,
+          173
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            172,
+            173
+          ],
+          "statblockLocation": "printed p.172 continuing onto p.173",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, weapons, station assignments and adjacent narrative mechanics visually read; OCR/TXT navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-providence-class-destroyer",
+      "printedName": "Providence-class Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 210,
+      "originalPhase1StoredPage": 210,
+      "pdfPhysicalPage": 211,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          208,
+          209
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            208,
+            209
+          ],
+          "statblockLocation": "printed p.209",
+          "pdfPageIndexSemantics": "zero-based PDF index equals printed page except indices 209/210 inverted in scan",
+          "pdfPageIndices": [
+            208,
+            210
+          ],
+          "reviewScope": "Original scanned statblock, gray weapon tables, conditional notes and adjacent descriptive mechanics visually close-read; OCR only for navigation.",
+          "adjacentNarrativePages": [
+            208
+          ],
+          "phase1PrintedPageDiscrepancy": {
+            "storedPhase1PrintedPage": 210,
+            "actualPrintedPage": 209,
+            "pdfIndex": 208,
+            "disposition": "PRESERVE_IDENTITY_AND_DOCUMENT_PROVENANCE_CORRECTION_PENDING"
+          }
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-punworcca-116-class-sloop",
+      "printedName": "Punworcca 116-class Sloop",
+      "printedTypeLine": "Gargantuan space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 209,
+      "originalPhase1StoredPage": 209,
+      "pdfPhysicalPage": 210,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          210
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            210
+          ],
+          "statblockLocation": "printed p.210",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only.",
+          "pdfPageIndices": [
+            209
+          ],
+          "adjacentNarrativePages": [
+            198
+          ],
+          "printedPageMismatch": {
+            "phase1PrintedStartPage": 209,
+            "observedPrintedStartPage": 210,
+            "zeroBasedPdfPageIndex": 209,
+            "adjacentSwappedPage": {
+              "zeroBasedPdfIndex": 210,
+              "observedPrintedPage": 209
+            },
+            "disposition": "PRESERVE_PHASE1_RECORD_KEY_AND_FLAG_PROVENANCE_CORRECTION_REQUIRED"
+          }
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-pursuer-class-enforcement-ship",
+      "printedName": "Pursuer-class Enforcement Ship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 80,
+      "originalPhase1StoredPage": 80,
+      "pdfPhysicalPage": 81,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          79,
+          80
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            79,
+            80
+          ],
+          "statblockLocation": "printed p.80",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-s40k-phoenix-hawk-class-light-pinnace",
+      "printedName": "S40K Phoenix Hawk-class Light Pinnace",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 84,
+      "originalPhase1StoredPage": 84,
+      "pdfPhysicalPage": 85,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          84
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            84
+          ],
+          "statblockLocation": "printed p.84",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-sabaoth-destroyer",
+      "printedName": "Sabaoth Destroyer",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 220,
+      "originalPhase1StoredPage": 220,
+      "pdfPhysicalPage": 221,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          220
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            220
+          ],
+          "statblockLocation": "printed p.220",
+          "pdfPageIndexSemantics": "zero-based PDF index equals printed page except indices 209/210 inverted in scan",
+          "pdfPageIndices": [
+            220
+          ],
+          "reviewScope": "Original scanned statblock, gray weapon tables, conditional notes and adjacent descriptive mechanics visually close-read; OCR only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-sabaoth-starfighter",
+      "printedName": "Sabaoth Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 221,
+      "originalPhase1StoredPage": 221,
+      "pdfPhysicalPage": 222,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          221
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            221
+          ],
+          "statblockLocation": "printed p.221",
+          "pdfPageIndexSemantics": "zero-based PDF index equals printed page except indices 209/210 inverted in scan",
+          "pdfPageIndices": [
+            221
+          ],
+          "reviewScope": "Original scanned statblock, gray weapon tables, conditional notes and adjacent descriptive mechanics visually close-read; OCR only for navigation.",
+          "adjacentNarrativePages": [
+            220
+          ]
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-scurrg-h-6-prototype-bomber",
+      "printedName": "Scurrg H-6 Prototype Bomber",
+      "printedTypeLine": "Colossal starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 85,
+      "originalPhase1StoredPage": 85,
+      "pdfPhysicalPage": 86,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          85
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            85
+          ],
+          "statblockLocation": "printed p.85",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-sheathipede-class-shuttle",
+      "printedName": "Sheathipede-class Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 209,
+      "originalPhase1StoredPage": 209,
+      "pdfPhysicalPage": 210,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          210
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            210
+          ],
+          "statblockLocation": "printed p.210",
+          "pdfPageIndexSemantics": "zero-based PDF index equals printed page except indices 209/210 inverted in scan",
+          "pdfPageIndices": [
+            209
+          ],
+          "reviewScope": "Original scanned statblock, gray weapon tables, conditional notes and adjacent descriptive mechanics visually close-read; OCR only for navigation.",
+          "adjacentNarrativePages": [
+            210
+          ],
+          "phase1PrintedPageDiscrepancy": {
+            "storedPhase1PrintedPage": 209,
+            "actualPrintedPage": 210,
+            "pdfIndex": 209,
+            "disposition": "PRESERVE_IDENTITY_AND_DOCUMENT_PROVENANCE_CORRECTION_PENDING"
+          }
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-soulless-one-modified-belbullab-22",
+      "printedName": "Soulless One (Modified Belbullab-22)",
+      "printedTypeLine": "Gargantuan starfighter (named modified Belbullab-22)",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 204,
+      "originalPhase1StoredPage": 204,
+      "pdfPhysicalPage": 205,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          204
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            204
+          ],
+          "statblockLocation": "printed p.204",
+          "pdfPageIndexSemantics": "normally zero-based index equals printed page; exception documented for p209/210",
+          "reviewScope": "Visually checked original scan including statblock, weapon tables, adjacent narrative and conditional mechanics; OCR as navigation only."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-subjugator-class-heavy-cruiser",
+      "printedName": "Subjugator-class Heavy Cruiser",
+      "printedTypeLine": "Colossal capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 211,
+      "originalPhase1StoredPage": 211,
+      "pdfPhysicalPage": 212,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          210,
+          211
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            210,
+            211
+          ],
+          "statblockLocation": "printed p.211",
+          "pdfPageIndexSemantics": "zero-based PDF index equals printed page except indices 209/210 inverted in scan",
+          "pdfPageIndices": [
+            210,
+            211
+          ],
+          "reviewScope": "Original scanned statblock, gray weapon tables, conditional notes and adjacent descriptive mechanics visually close-read; OCR only for navigation.",
+          "adjacentNarrativePages": [
+            210,
+            211
+          ]
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-ubrikkian-seltiss-2-caravel",
+      "printedName": "Ubrikkian Seltiss-2 Caravel",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 80,
+      "originalPhase1StoredPage": 80,
+      "pdfPhysicalPage": 81,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          80
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            80
+          ],
+          "statblockLocation": "printed p.80",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "cw-ubrikkian-seltiss-2-caravel-cabin",
+      "printedName": "Ubrikkian Seltiss-2 Caravel Cabin",
+      "printedTypeLine": "Huge space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedStatblockStartPage": 81,
+      "originalPhase1StoredPage": 81,
+      "pdfPhysicalPage": 82,
+      "provenance": {
+        "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json",
+        "originalCloseRead": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+        "reviewedPdfPages": [
+          80,
+          81
+        ],
+        "sourceEvidence": {
+          "source": "Clone Wars Campaign Guide original scanned PDF",
+          "printedPages": [
+            80,
+            81
+          ],
+          "statblockLocation": "printed p.81",
+          "pdfPageIndexSemantics": "zero-based index equals printed page",
+          "reviewScope": "All printed statblock lines, nearby narrative and distinct weapon rows visually reviewed; text/OCR used only for navigation."
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-D Knights of the Old Republic Campaign Guide"
+}
