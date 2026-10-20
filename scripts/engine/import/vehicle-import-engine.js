@@ -1,5 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { normalizeVehicleImportData } from "/systems/foundryvtt-swse/scripts/engine/import/vehicle-import-normalizer.js";
+import { assertCP23C4CNoStagedSourceImport } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-cp23c4c-import-boundary.js";
 
 function duplicate(value) {
   return foundry.utils.deepClone(value ?? {});
@@ -35,6 +36,10 @@ export class VehicleImportEngine {
 
   static buildImportPlan(targetActor, sourceActor, options = {}) {
     if (!targetActor || !sourceActor) return null;
+    // CP23-C4C: forbid staged canonical SotG source documents before the
+    // legacy normalizer fabricates defaults or strips approved Initiative.
+    // ActorEngine is never entered for a forbidden source.
+    assertCP23C4CNoStagedSourceImport(sourceActor);
     const mode = options.mode || 'replace';
     const preserve = options.preserve || {};
     const rawSystem = duplicate(sourceActor.system);

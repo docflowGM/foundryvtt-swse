@@ -63,6 +63,10 @@ on:
       - tools/audits/vehicles/build_sotg_cp23c4b_*.mjs
       - tests/phase2c_cp23c4b_*.test.mjs
       - docs/audits/vehicles/swse-sotg-cp23c4b-*.md
+      - scripts/domain/vehicles/vehicle-cp23c4c-*.js
+      - scripts/engine/import/vehicle-import-engine.js
+      - tests/phase2c_cp23c4c_*.test.mjs
+      - docs/audits/vehicles/swse-sotg-cp23c4c-*.md
       - index.js
 
       - tools/audits/vehicles/check_sotg_cp20_source_fidelity.py
@@ -212,3 +216,6 @@ jobs:
         run: node tools/audits/vehicles/build_sotg_cp23c4b_world_anchors.mjs --check
       - name: Test CP23-C4B world-target IDs, spoofing, drift and verified-receipt refusal
         run: node --test tests/phase2c_cp23c4b_world_identity.test.mjs
+
+      - name: Verify CP23-C4C all 15 approved SotG records fail closed before legacy normalization
+        run: node --test tests/phase2c_cp23c4c_import_boundary.test.mjs

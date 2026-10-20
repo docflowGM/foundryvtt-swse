@@ -155,3 +155,8 @@ export {CP23C4_SCHEMA,emptyCP23C4Ledger,validateCP23C4Ledger,readCP23C4Observati
 export {CP23C4B_STATUS,CP23C4B_SOURCE_PACK,
   inspectCP23C4BWorldInstallationCandidate,verifyCP23C4BClaimedReceipt}
   from './vehicle-cp23c4b-world-binding.js';
+
+/** CP23-C4C fail-closed canonical source import boundary and read-only loss diagnostic. */
+export {CP23C4C_BLOCKED_SOURCE_PACKS,classifyCP23C4CSourceImport,
+  assertCP23C4CNoStagedSourceImport,inspectCP23C4CNormalizationLoss}
+  from './vehicle-cp23c4c-import-boundary.js';
