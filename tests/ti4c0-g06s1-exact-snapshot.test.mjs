@@ -285,6 +285,57 @@ for (const [label, build] of [
   });
 }
 
+/* ---- review correction 1 / R1: complete embedded-document identity evidence ---- */
+const omit = (obj, key) => { const c = { ...obj }; delete c[key]; return c; };
+for (const [label, build, expectDeletion] of [
+  ['no `items` array', (a) => omit(v2(a), 'items'), true],
+  ['no `effects` array', (a) => omit(v2(a), 'effects'), true],
+  ['`items` that is not an array', (a) => v2(a, { items: null }), true],
+  ['an Item identified only by an `id` alias (no `_id`)', (a) => v2(a, { items: v2(a).items.map((i, n) => (n === 0 ? (({ _id, ...r }) => ({ ...r, id: _id }))(i) : i)) }), false],
+  ['an Effect identified only by an `id` alias (no `_id`)', (a) => v2(a, { effects: v2(a).effects.map((e) => (({ _id, ...r }) => ({ ...r, id: _id }))(e)) }), false],
+  ['an empty-string `_id`', (a) => v2(a, { items: v2(a).items.map((i, n) => (n === 0 ? { ...i, _id: '' } : i)) }), false],
+  ['a non-string `_id`', (a) => v2(a, { effects: v2(a).effects.map((e) => ({ ...e, _id: 42 })) }), false]
+]) {
+  await check(`R1. schema-v2 snapshot with ${label} can never be FAILED_COMPENSATED`, async () => {
+    const actor = mkActor();
+    install();
+    const rollback = await ActorEngine._rollbackTransactionalPlan(actor, build(actor), {}, 's1.test');
+    assert.equal(rollback.outcome, 'INDETERMINATE');
+    assert.notEqual(rollback.target.verdict, 'EXACT');
+    assert.ok(rollback.reasons.includes('snapshot-identity-incomplete'), `reasons=${rollback.reasons}`);
+    if (expectDeletion) {
+      // Documents the hazard being closed: the service defaults a missing array to [] and so deletes the actor's existing embedded documents.
+      // That restore is not certified.
+      assert.equal(rollback.target.success, true);
+    }
+  });
+}
+
+/* ---- R2: positive verification evidence ---- */
+for (const [label, verification, expected] of [
+  ['absent', undefined, 'INEXACT'],
+  ['malformed (a string)', 'verified', 'INEXACT'],
+  ['an empty object', {}, 'INEXACT'],
+  ['incomplete (effectsMatched missing)', { rootMatched: true, itemsMatched: true }, 'INEXACT'],
+  ['incomplete (itemsMatched missing)', { rootMatched: true, effectsMatched: true }, 'INEXACT'],
+  ['non-boolean affirmations', { rootMatched: 'yes', itemsMatched: 1, effectsMatched: true }, 'INEXACT'],
+  ['contradicting', { rootMatched: true, itemsMatched: false, effectsMatched: true }, 'INEXACT'],
+  ['fully affirmed', { rootMatched: true, itemsMatched: true, effectsMatched: true }, 'EXACT']
+]) {
+  await check(`R2. exact:true with verification ${label} → ${expected}`, async () => {
+    const actor = mkActor();
+    install();
+    const orig = ActorEngine.restoreFromSnapshot;
+    ActorEngine.restoreFromSnapshot = async () => ({ success: true, exact: true, ...(verification === undefined ? {} : { verification }) });
+    try {
+      const rollback = await ActorEngine._rollbackTransactionalPlan(actor, v2(actor), {}, 's1.test');
+      assert.equal(rollback.target.verdict, expected);
+      assert.equal(rollback.outcome, expected === 'EXACT' ? 'FAILED_COMPENSATED' : 'INDETERMINATE');
+      if (expected !== 'EXACT') assert.ok(rollback.reasons.includes('target-restore-inexact'));
+    } finally { ActorEngine.restoreFromSnapshot = orig; }
+  });
+}
+
 await check('6b. defensive: a restore result claiming exact:true while its own verification says content mismatched is NOT certified (stubbed service result)', async () => {
   const actor = mkActor();
   install();
