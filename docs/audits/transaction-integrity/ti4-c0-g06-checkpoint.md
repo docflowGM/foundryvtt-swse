@@ -24,7 +24,7 @@
 
 ## 3. Fail-before evidence
 
-`tests/ti4c0-g06-rollback-verification.test.mjs` (31 checks; a recording runner so each case's result is visible).
+`tests/ti4c0-g06-rollback-verification.test.mjs` (now 40 checks, 31 at first submission; a recording runner so each case's result is visible).
 
 | Run | Result |
 |---|---|
@@ -56,12 +56,23 @@ In every thrown case the **original error object is propagated** (identity prese
 
 1. On a transactional failure that occurred **after** the snapshot was taken, it calls a new internal `ActorEngine._rollbackTransactionalPlan(...)` and attaches the result to the thrown error as `rollback` (machine-readable), `rollbackOutcome`, and — unless the outcome is `FAILED_COMPENSATED` — `partialMutationPossible: true`.
 2. **Target restore** is judged from the structured result, never from the promise: `EXACT` = `success===true && exact===true`; `INEXACT` = success without exact; `FAILED`; `MALFORMED` (not an object with a boolean `success`); `THREW`.
-3. **CREATE-bucket cleanup** is judged by **observed state**: after `Actor.deleteDocuments`, each id is checked in `game.actors`; a resolved call with the actor still present is unverified; a thrown call with the actor verifiably gone is effective (the error is still recorded). If the registry cannot be observed, the returned document ids are the (weaker) evidence.
+3. **CREATE-bucket cleanup** is judged by **observed state only** (corrected in review, §5a): after `Actor.deleteDocuments`, each id is looked up in `game.actors`; a resolved call with the actor still present is unverified; a thrown call with the actor verifiably gone is effective (the error is still recorded). **If the registry cannot be observed, the cleanup is UNVERIFIED** — the ids the delete call returned are kept as diagnostic evidence only.
 4. The **verdict covers the whole scope**: `FAILED_COMPENSATED` only when the target is `EXACT` **and** every created actor is verified absent; otherwise `INDETERMINATE` with `compensation` one of `EXACT` / `INEXACT` / `PARTIAL` / `FAILED` and `reasons[]`.
 5. "Rolled back" is logged only for `FAILED_COMPENSATED`; otherwise an error line says the rollback was **not verified**.
 6. Nothing is replayed: each stage, the restore and the delete run once (asserted). `level: 'L1'` is the only level the evidence states.
 
 Not changed: the snapshot format, `SnapshotService`, ordering of plan stages, `recalcAll`, validation, the non-transactional path, or any other caller.
+
+## 5a. Independent review correction 1 (PR #1064 reviewed at `8b8ca4ed4`; CI 39465182871 success) — applied
+
+Two edge cases in `_rollbackTransactionalPlan` undermined the verification guarantee:
+
+- **R1 — fallback treated returned ids as proof.** When `game.actors.get` was unavailable the helper marked cleanup verified if `Actor.deleteDocuments` returned every requested id; with an exact target restore that could yield `FAILED_COMPENSATED` without observed cleanup. **Corrected:** with no readable registry the created actors are `unverifiable`, `verifiedAbsent` is `false`, the outcome is `INDETERMINATE` (`compensation: PARTIAL`, reason `created-cleanup-unverified`), and `created.returnedIds` is kept as **diagnostic evidence only**. A registry with a non-callable `get` is the same case.
+- **R2 — an unguarded registry read could replace the original error.** **Corrected:** every `registry.get(id)` is guarded individually and so is reading `game.actors` itself; a failure is recorded in `created.registryErrors` (`{id, error}`) and the id becomes `unverifiable` while the other ids are still observed (`created.absentIds`, `stillPresent`). The outcome is `INDETERMINATE`, `partialMutationPossible` is `true`, nothing verified-rollback is logged, and the **original mutation error object is the propagated error** (identity asserted). As a defense in depth the call to the helper in `applyMutationPlan` is itself guarded: if verification fails unexpectedly the error still propagates with `INDETERMINATE` evidence (`reasons: ['rollback-verification-threw']`, `verificationError` kept). Nothing is re-run: the failed stage, the restore and the delete each execute once.
+
+Evidence added to `created`: `registryAvailable`, `absentIds`, `stillPresent`, `unverifiable`, `registryErrors`, `returnedIds` (diagnostic). Normal successful verification (registry readable, all absent, exact target) is **unchanged** (`FAILED_COMPENSATED`).
+
+Fail-before on the reviewed head `8b8ca4ed4`: **8 of the 9 new checks fail** (the ninth — registry unavailable and the delete call throws — already ended `INDETERMINATE` and is a regression guard); the other 32 pass. After: **40 / 40**. Five injected defects in the new logic (trust returned ids; ignore unverifiable lookups; let a helper failure replace the error; let a lookup error escape; let a registry-access error escape) are each caught.
 
 ## 6. Remaining limitation — the transactional snapshot is legacy (needs a separate decision)
 
@@ -98,7 +109,7 @@ No existing test was edited or weakened (§9 records the rolling-suite result).
 
 | Check | Result |
 |---|---|
-| G06 test file | **31 / 31** (fail-before 5 / 30 on the base; §3) |
+| G06 test file | **40 / 40** (first submission 31 / 31 with fail-before 5 / 30 on the base, §3; correction 1: fail-before 8 of 9 new checks fail on `8b8ca4ed4`, §5a) |
 | Rolling suite (`node tools/run-rolling-tests.mjs`) | **384 passed, 0 failed** (5 documented exclusions); lineage B's accepted suite was 383, plus this file; no existing test edited |
 | Affected suites inside it | the TI-3 progression/approvals/follower tests, the progression and customization-bay tests and the equipment/crafting tests all pass unchanged |
 | Repo guards (27 CI commands + partials + `system.json` + syntax sweep) | **26 pass locally**; syntax sweep 2,877 files pass |

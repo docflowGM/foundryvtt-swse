@@ -30,7 +30,7 @@ const { SWSELogger } = await import('/systems/foundryvtt-swse/scripts/core/logge
 /* ------------------------------------------------------------------------------------------ */
 /* Harness                                                                                     */
 /* ------------------------------------------------------------------------------------------ */
-const STAGES = ['_applyCreateOps', '_applyDeleteOps', '_applySetOps', '_applyUpdateOps', '_applyAddOps', 'recalcAll', 'restoreFromSnapshot', '_validateMutationPlan'];
+const STAGES = ['_applyCreateOps', '_applyDeleteOps', '_applySetOps', '_applyUpdateOps', '_applyAddOps', 'recalcAll', 'restoreFromSnapshot', '_validateMutationPlan', '_rollbackTransactionalPlan'];
 const savedStages = Object.fromEntries(STAGES.map((k) => [k, ActorEngine[k]]));
 const savedActor = globalThis.Actor;
 const savedGame = globalThis.game;
@@ -210,6 +210,109 @@ await check('both parts fail: INDETERMINATE with compensation FAILED', async () 
   const err = await runPlan(mkActor(), { transactional: true });
   assert.equal(err.rollbackOutcome, 'INDETERMINATE');
   assert.equal(err.rollback.compensation, 'FAILED');
+});
+
+/* ---- review correction 1: R1 (CREATE cleanup needs OBSERVED absence) and R2 (registry read failures cannot mask the original error) ---- */
+await check('R1: registry UNAVAILABLE, the delete call returns every requested id: cleanup is UNVERIFIED, the outcome is INDETERMINATE (never FAILED_COMPENSATED), the returned ids are kept as diagnostics', async () => {
+  const s = install({ created: ['w1', 'w2'], restore: async () => exactOk() });
+  globalThis.game = { ...(savedGame ?? {}) }; delete globalThis.game.actors;   // no world-actor registry to observe
+  const err = await runPlan(mkActor(), { transactional: true });
+  assert.equal(err, s.injected);
+  assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+  assert.equal(err.partialMutationPossible, true);
+  assert.equal(err.rollback.created.verifiedAbsent, false);
+  assert.deepEqual(err.rollback.created.unverifiable, ['w1', 'w2']);
+  assert.deepEqual(err.rollback.created.returnedIds, ['w1', 'w2'], 'the API-returned ids are retained as DIAGNOSTIC evidence only');
+  assert.equal(err.rollback.created.registryAvailable, false);
+  assert.ok(err.rollback.reasons.includes('created-cleanup-unverified'));
+  assert.equal(err.rollback.compensation, 'PARTIAL');
+  assert.equal(rolledBackClaims().length, 0);
+});
+
+await check('R1: registry present but its `get` is not callable: same — unverified, INDETERMINATE', async () => {
+  install({ created: ['w1'], restore: async () => exactOk() });
+  globalThis.game = { ...(savedGame ?? {}), actors: {} };
+  const err = await runPlan(mkActor(), { transactional: true });
+  assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+  assert.equal(err.rollback.created.verifiedAbsent, false);
+  assert.equal(err.rollback.created.registryAvailable, false);
+});
+
+await check('R1: registry UNAVAILABLE and the delete call THROWS: INDETERMINATE, the delete error is recorded', async () => {
+  install({ created: ['w1'], restore: async () => exactOk(), deleteDocs: async () => { throw new Error('delete refused'); } });
+  globalThis.game = { ...(savedGame ?? {}) }; delete globalThis.game.actors;
+  const err = await runPlan(mkActor(), { transactional: true });
+  assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+  assert.equal(err.rollback.created.error, 'delete refused');
+  assert.equal(err.rollback.created.verifiedAbsent, false);
+  assert.ok(err.rollback.reasons.includes('created-cleanup-failed'));
+});
+
+await check('R1: registry AVAILABLE and every created actor observed absent: FAILED_COMPENSATED (accepted behavior unchanged); absent ids are listed', async () => {
+  install({ created: ['w1', 'w2'], restore: async () => exactOk() });
+  const err = await runPlan(mkActor(), { transactional: true });
+  assert.equal(err.rollbackOutcome, 'FAILED_COMPENSATED');
+  assert.deepEqual(err.rollback.created.absentIds, ['w1', 'w2']);
+  assert.equal(err.rollback.created.registryAvailable, true);
+  assert.deepEqual(err.rollback.created.registryErrors, []);
+});
+
+await check('R1: registry AVAILABLE and at least one created actor remains: INDETERMINATE, the remaining actor is named', async () => {
+  install({ created: ['w1', 'w2'], restore: async () => exactOk(), registryKeep: ['w2'] });
+  const err = await runPlan(mkActor(), { transactional: true });
+  assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+  assert.deepEqual(err.rollback.created.stillPresent, ['w2']);
+  assert.deepEqual(err.rollback.created.absentIds, ['w1']);
+});
+
+await check('R2: game.actors.get THROWS for the first id: the ORIGINAL error is still the propagated error; the registry failure is secondary evidence; INDETERMINATE; no verified-rollback log; nothing re-run', async () => {
+  const s = install({ created: ['w1', 'w2'], restore: async () => exactOk() });
+  globalThis.game = { ...(savedGame ?? {}), actors: { get: (id) => { if (id === 'w1') throw new Error('registry read failed'); return undefined; } } };
+  const err = await runPlan(mkActor(), { transactional: true });
+  assert.equal(err, s.injected, 'identity of the original mutation error is preserved');
+  assert.equal(err.message, 'set stage failed');
+  assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+  assert.equal(err.partialMutationPossible, true);
+  assert.deepEqual(err.rollback.created.registryErrors, [{ id: 'w1', error: 'registry read failed' }]);
+  assert.ok(err.rollback.created.unverifiable.includes('w1'));
+  assert.equal(err.rollback.created.verifiedAbsent, false);
+  assert.equal(rolledBackClaims().length, 0);
+  assert.equal(s.calls.set, 1); assert.equal(s.calls.restore, 1); assert.equal(s.calls.del, 1);
+});
+
+await check('R2: a LATER lookup throws after an earlier id was observed absent: the earlier observation is kept, the failed one is unverifiable, INDETERMINATE, the original error propagates', async () => {
+  const s = install({ created: ['w1', 'w2'], restore: async () => exactOk() });
+  globalThis.game = { ...(savedGame ?? {}), actors: { get: (id) => { if (id === 'w2') throw new Error('second lookup failed'); return undefined; } } };
+  const err = await runPlan(mkActor(), { transactional: true });
+  assert.equal(err, s.injected);
+  assert.deepEqual(err.rollback.created.absentIds, ['w1']);
+  assert.deepEqual(err.rollback.created.unverifiable, ['w2']);
+  assert.deepEqual(err.rollback.created.registryErrors, [{ id: 'w2', error: 'second lookup failed' }]);
+  assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+  assert.equal(err.partialMutationPossible, true);
+});
+
+await check('R2: reading game.actors ITSELF throws: treated as an unavailable registry, the original error still propagates', async () => {
+  const s = install({ created: ['w1'], restore: async () => exactOk() });
+  const g = { ...(savedGame ?? {}) }; Object.defineProperty(g, 'actors', { get() { throw new Error('game.actors getter failed'); } });
+  globalThis.game = g;
+  const err = await runPlan(mkActor(), { transactional: true });
+  assert.equal(err, s.injected);
+  assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+  assert.equal(err.rollback.created.registryAvailable, false);
+  assert.ok(/game\.actors getter failed/.test(JSON.stringify(err.rollback.created.registryErrors)));
+});
+
+await check('R2: even an UNEXPECTED failure inside the rollback helper cannot replace the original error: the error propagates with INDETERMINATE evidence', async () => {
+  const s = install({ restore: async () => exactOk() });
+  ActorEngine._rollbackTransactionalPlan = async () => { throw new Error('helper blew up'); };
+  const err = await runPlan(mkActor(), { transactional: true });
+  assert.equal(err, s.injected);
+  assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+  assert.equal(err.partialMutationPossible, true);
+  assert.ok(err.rollback.reasons.includes('rollback-verification-threw'));
+  assert.match(JSON.stringify(err.rollback), /helper blew up/);
+  assert.equal(rolledBackClaims().length, 0);
 });
 
 /* ---- unchanged paths ---- */

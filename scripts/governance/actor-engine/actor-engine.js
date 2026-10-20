@@ -3113,7 +3113,16 @@ export const ActorEngine = {
       // VERIFIED. A restore call that merely resolved is not a rollback: the structured result must say `success:true, exact:true`, and a
       // delete call that merely resolved is not a cleanup: the world-actor registry is checked afterwards. Anything else is INDETERMINATE.
       if (_txnSnapshot) {
-        const rollback = await this._rollbackTransactionalPlan(actor, _txnSnapshot, tempIdMap, source);
+        let rollback;
+        try {
+          rollback = await this._rollbackTransactionalPlan(actor, _txnSnapshot, tempIdMap, source);
+        } catch (verificationErr) {
+          // Defensive: the helper guards its own reads, but if verification itself fails unexpectedly it must NEVER replace the original error.
+          rollback = { outcome: 'INDETERMINATE', compensation: 'FAILED', level: 'L1', legacySnapshot: !_txnSnapshot?.schemaVersion,
+            reasons: ['rollback-verification-threw'], target: { attempted: null, verdict: null }, created: { ids: Object.values(tempIdMap).filter(Boolean) },
+            verificationError: verificationErr?.message ?? String(verificationErr) };
+          SWSELogger.error('ActorEngine.applyMutationPlan: rollback verification itself failed; outcome INDETERMINATE', { actor: actor?.id, source, verificationError: rollback.verificationError });
+        }
         // Evidence is attached to the ORIGINAL error object (identity preserved); only a non-object throw (e.g. a string) is wrapped.
         const carrier = (error !== null && typeof error === 'object')
           ? error
@@ -3133,6 +3142,8 @@ export const ActorEngine = {
    *
    * Scope: the target actor (restored from the pre-plan snapshot) and any CREATE-bucket world actors (deleted). Both are attempted
    * independently; the verdict covers both. `FAILED_COMPENSATED` requires every part to be verified; anything else is `INDETERMINATE`.
+   *
+   * CREATE cleanup is verified only by OBSERVED absence (world-actor registry, id by id); a returned id list or a resolved call is diagnostic, never proof.
    *
    * Target verdicts (from the structured SnapshotService result, never from the promise merely resolving):
    *   EXACT      success === true && exact === true
@@ -3183,25 +3194,42 @@ export const ActorEngine = {
 
     /* ---- CREATE-bucket world actors ---- */
     const ids = [...new Set(Object.values(tempIdMap).filter(Boolean))];
-    const created = { ids, attempted: ids.length > 0, deleteCallReturned: null, returnedIds: null, verifiedAbsent: null, stillPresent: [], unverifiable: [], error: null };
+    const created = { ids, attempted: ids.length > 0, deleteCallReturned: null, returnedIds: null, registryAvailable: null,
+      absentIds: [], stillPresent: [], unverifiable: [], registryErrors: [], verifiedAbsent: null, error: null };
     if (ids.length) {
       try {
         const deleted = await Actor.deleteDocuments(ids);
         created.deleteCallReturned = true;
+        // DIAGNOSTIC evidence only: the ids the delete API returned are NOT proof that the actors are gone.
         created.returnedIds = Array.isArray(deleted) ? deleted.map((d) => d?.id ?? d?._id).filter(Boolean) : null;
       } catch (createRollbackErr) {
         created.deleteCallReturned = false;
         created.error = createRollbackErr?.message ?? String(createRollbackErr);
       }
-      // Verify by observed state wherever the state can be observed; a resolved (or thrown) call is not the evidence.
-      const registry = globalThis.game?.actors;
-      if (registry && typeof registry.get === 'function') {
-        created.stillPresent = ids.filter((id) => !!registry.get(id));
-        created.verifiedAbsent = created.stillPresent.length === 0;
-      } else {
-        created.unverifiable = [...ids];
-        created.verifiedAbsent = created.deleteCallReturned === true && created.returnedIds !== null && ids.every((id) => created.returnedIds.includes(id));
+      // Verification requires an OBSERVATION of the world after the delete, id by id. Neither the resolved call nor the ids it returned
+      // establishes absence. No readable registry ⇒ the cleanup is unverified. A failing registry read is recorded as secondary evidence and
+      // never replaces the original mutation error (each lookup is guarded; nothing is re-run).
+      let getActor = null;
+      try {
+        const registry = globalThis.game?.actors;
+        if (registry && typeof registry.get === 'function') getActor = (id) => registry.get(id);
+      } catch (registryAccessErr) {
+        created.registryErrors.push({ id: null, error: registryAccessErr?.message ?? String(registryAccessErr) });
       }
+      created.registryAvailable = getActor !== null;
+      if (getActor === null) {
+        created.unverifiable = [...ids];
+      } else {
+        for (const id of ids) {
+          try {
+            if (getActor(id)) created.stillPresent.push(id); else created.absentIds.push(id);
+          } catch (lookupErr) {
+            created.unverifiable.push(id);
+            created.registryErrors.push({ id, error: lookupErr?.message ?? String(lookupErr) });
+          }
+        }
+      }
+      created.verifiedAbsent = created.registryAvailable === true && created.stillPresent.length === 0 && created.unverifiable.length === 0;
       if (created.verifiedAbsent !== true) reasons.push(created.error ? 'created-cleanup-failed' : 'created-cleanup-unverified');
     }
     const createdOk = ids.length === 0 || created.verifiedAbsent === true;
@@ -3223,7 +3251,7 @@ export const ActorEngine = {
     } else {
       SWSELogger.error('ActorEngine.applyMutationPlan: rollback NOT verified — outcome INDETERMINATE; the actor and/or created actors may be partially changed', {
         actor: actor?.id, source, compensation, reasons, targetVerdict: target.verdict, targetCode: target.code, legacySnapshot,
-        createdActorIds: ids, createdStillPresent: created.stillPresent
+        createdActorIds: ids, createdStillPresent: created.stillPresent, createdUnverifiable: created.unverifiable, registryErrors: created.registryErrors
       });
     }
     return rollback;
