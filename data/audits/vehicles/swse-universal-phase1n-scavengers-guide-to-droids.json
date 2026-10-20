@@ -1,0 +1,95 @@
+{
+  "schema": "swse.vehicle.universal.phase1n.scavengers-guide-to-droids.v1",
+  "status": "PHASE1_N_SCAVENGERS_GUIDE_TO_DROIDS_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Scavenger's Guide to Droids",
+  "sourcePdfSha256": "bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361",
+  "sourceFiles": {
+    "pdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+    "text": "Scavenger's Guide to Droids_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 0,
+    "newOtherVehiclePublicationClaims": 1,
+    "allBookVehiclePublicationClaims": 1,
+    "newVehicleClassifications": {
+      "hybrid-vehicle-droid": 1
+    },
+    "cumulativeKnownUniversalPublicationClaims": 429
+  },
+  "process": {
+    "entirePdfPageCount": 162,
+    "discoveryMethod": "Searched all 16,582 lines of supplied DJVU text for typed space, water, air, ground, speeder, tracked and starfighter vehicle headers, including special droid hybrids. Independently rendered all 162 original scanned PDF pages in eleven numbered contact sheets, plus high-resolution visual close read of printed p82 (one-based physical p83) to confirm the DP-2 chassis's vehicle-type line, CL, single identity, and neighboring droid action format. Other droid and customization sections surveyed for full independent vehicle-type blocks.",
+    "primaryPdfPagesConfirmed": [
+      82
+    ],
+    "printedToPdfMapping": "PDF zero-based index equals printed page; physical one-based ordinal equals printed +1",
+    "sourceDocumentTextSemantics": "Printed original PDF page authoritative; DJVU text discovery only.",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "identityDecisions": [
+    {
+      "subject": "DP-2 Probe Droid",
+      "printedPage": 82,
+      "status": "INCLUDE_SINGLE_DROID_STARFIGHTER_GROUND_VEHICLE",
+      "reason": "An independent complete CL6 printed vehicle block: Large starfighter/ground vehicle (speeder). One hybrid identity spans space and ground."
+    },
+    {
+      "subject": "DP-2 Probe Droid Large droid (2nd-degree) action block",
+      "printedPage": 82,
+      "status": "DO_NOT_DOUBLE_COUNT_DROID_ACTION_BLOCK",
+      "reason": "Adjacent action-format block describes the same named droid's droid-mode mechanics, not a second independently published vehicle."
+    },
+    {
+      "subject": "Annihilator droid ship scrapper/space sentry modifications",
+      "printedPage": 75,
+      "status": "EXCLUDE_MODIFICATIONS_NOT_INDEPENDENT_VEHICLE_STATBLOCKS",
+      "reason": "Pure modification prose to a droid, no separate typed vehicle statblock printed."
+    },
+    {
+      "subject": "Other droid chassis and ordinary flying/combat droids",
+      "status": "EXCLUDE_DROID_CHARACTER_ONLY_AND_NARRATIVE",
+      "reason": "An ordinary droid block or personal flight module alone does not create a vehicle publication claim."
+    }
+  ],
+  "existingSpacecraft": [],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "sgtd-dp-2-probe-droid",
+      "printedName": "DP-2 Probe Droid",
+      "printedTypeLine": "Large starfighter/ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "hybrid-vehicle-droid",
+        "mobilityDomains": [
+          "space",
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large starfighter/ground vehicle (speeder)",
+        "secondaryCategories": [
+          "starfighter",
+          "ground-speeder",
+          "second-degree-droid"
+        ],
+        "onePublicationIdentityWithMultipleMobilityDomains": true
+      },
+      "sourceBook": "Scavenger's Guide to Droids",
+      "printedStatblockStartPage": 82,
+      "pdfPhysicalPage": 83,
+      "provenance": {
+        "sourcePdfSha256": "bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361",
+        "sourceFile": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+        "textSearchLayer": "Scavenger's Guide to Droids_djvu.txt (discovery only)",
+        "pdfVisualReviewMethod": "ALL_162_PAGES_VISUALLY_SURVEYED_PLUS_PRINTED_PAGE82_PDF_SOURCE_CLOSE_READ",
+        "printedChallengeLevel": 6,
+        "physicalPdfPage": 83,
+        "printedCrewNote": "Crew 0 (normal); adjacent Large droid (2nd-degree) action-format block is the same publication identity"
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "GLOBAL_PHASE1_ALL_BOOKS_CLOSEOUT"
+}
