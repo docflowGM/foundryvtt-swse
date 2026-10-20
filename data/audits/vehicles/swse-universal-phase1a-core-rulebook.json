@@ -1,0 +1,367 @@
+{
+  "schema": "swse.vehicle.universal.phase1a.core-provenance.v1",
+  "purpose": "All published vehicle statblock identities across Core Rulebook, existing starships inherited without rewriting facts",
+  "sourceBook": "Core Rulebook",
+  "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+  "sourceFiles": {
+    "pdf": "Star Wars Saga Edition.pdf",
+    "text": "Core Rulebook_djvu.txt"
+  },
+  "scope": {
+    "included": "independent published vehicle statblocks (ships, hybrids, walkers, speeders, airspeeders, tanks)",
+    "excluded": "equipment, weapon upgrades, descriptive mentions without a standalone vehicle statblock; examples without vehicle identities"
+  },
+  "counts": {
+    "existingShipPublicationEntries": 10,
+    "newGroundOrAirVehicleEntries": 7,
+    "allCoreVehicleStatblockEntries": 17,
+    "walkers": 2,
+    "groundSpeeders": 3,
+    "airspeeders": 2
+  },
+  "process": {
+    "sourcePagesChecked": "printed pp 175-183 (physical PDF pp 176-184) for section; old ship records inherited from earlier PDF close-read",
+    "groundVehiclePages": "printed pp 175-177, physical PDF pp 176-178",
+    "textSearch": "Core Rulebook_djvu.txt independent 'vehicle (walker|speeder|airspeeder)' lines cross-referenced with scans",
+    "independentFullBookExhaustivenessClaim": false
+  },
+  "groundAndAirVehicles": [
+    {
+      "sourceEntryKey": "core-at-at",
+      "printedName": "All-Terrain Armored Transport (AT-AT)",
+      "printedTypeLine": "Colossal ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomain": "ground"
+      },
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 175,
+      "pdfPhysicalPage": 176,
+      "pdfVisualStatus": "VISUALLY_VERIFIED",
+      "navigationAnchor": "AT-AT",
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "sourceFile": "Star Wars Saga Edition.pdf",
+        "textSearchLayer": "Core Rulebook_djvu.txt"
+      },
+      "hydrationStatus": "PHASE2_NOT_STARTED",
+      "existingCanonicalShip": false
+    },
+    {
+      "sourceEntryKey": "core-at-st",
+      "printedName": "All-Terrain Scout Transport (AT-ST)",
+      "printedTypeLine": "Huge ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomain": "ground"
+      },
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 175,
+      "pdfPhysicalPage": 176,
+      "pdfVisualStatus": "VISUALLY_VERIFIED",
+      "navigationAnchor": "AT-ST",
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "sourceFile": "Star Wars Saga Edition.pdf",
+        "textSearchLayer": "Core Rulebook_djvu.txt"
+      },
+      "hydrationStatus": "PHASE2_NOT_STARTED",
+      "existingCanonicalShip": false
+    },
+    {
+      "sourceEntryKey": "core-sorosuub-x-34-landspeeder",
+      "printedName": "SoroSuub X-34 Landspeeder",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "speeder",
+        "mobilityDomain": "ground"
+      },
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 176,
+      "pdfPhysicalPage": 177,
+      "pdfVisualStatus": "VISUALLY_VERIFIED",
+      "navigationAnchor": "X-34",
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "sourceFile": "Star Wars Saga Edition.pdf",
+        "textSearchLayer": "Core Rulebook_djvu.txt"
+      },
+      "hydrationStatus": "PHASE2_NOT_STARTED",
+      "existingCanonicalShip": false
+    },
+    {
+      "sourceEntryKey": "core-aratech-74-z-speeder-bike",
+      "printedName": "Aratech 74-Z Speeder Bike",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomain": "ground"
+      },
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 176,
+      "pdfPhysicalPage": 177,
+      "pdfVisualStatus": "VISUALLY_VERIFIED",
+      "navigationAnchor": "74-Z",
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "sourceFile": "Star Wars Saga Edition.pdf",
+        "textSearchLayer": "Core Rulebook_djvu.txt"
+      },
+      "hydrationStatus": "PHASE2_NOT_STARTED",
+      "existingCanonicalShip": false
+    },
+    {
+      "sourceEntryKey": "core-aat-1",
+      "printedName": "AAT-1",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "repulsorlift-tank",
+        "mobilityDomain": "ground"
+      },
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 176,
+      "pdfPhysicalPage": 177,
+      "pdfVisualStatus": "VISUALLY_VERIFIED",
+      "navigationAnchor": "AAT-1",
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "sourceFile": "Star Wars Saga Edition.pdf",
+        "textSearchLayer": "Core Rulebook_djvu.txt"
+      },
+      "hydrationStatus": "PHASE2_NOT_STARTED",
+      "existingCanonicalShip": false
+    },
+    {
+      "sourceEntryKey": "core-modified-incom-t-47-airspeeder",
+      "printedName": "Modified Incom T-47 Airspeeder",
+      "printedTypeLine": "air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomain": "air"
+      },
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 177,
+      "pdfPhysicalPage": 178,
+      "pdfVisualStatus": "VISUALLY_VERIFIED",
+      "navigationAnchor": "T-47",
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "sourceFile": "Star Wars Saga Edition.pdf",
+        "textSearchLayer": "Core Rulebook_djvu.txt"
+      },
+      "hydrationStatus": "PHASE2_NOT_STARTED",
+      "existingCanonicalShip": false
+    },
+    {
+      "sourceEntryKey": "core-laat-i-gunship",
+      "printedName": "LAAT/i Gunship",
+      "printedTypeLine": "Colossal air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomain": "air"
+      },
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 177,
+      "pdfPhysicalPage": 178,
+      "pdfVisualStatus": "VISUALLY_VERIFIED",
+      "navigationAnchor": "LAAT/i",
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "sourceFile": "Star Wars Saga Edition.pdf",
+        "textSearchLayer": "Core Rulebook_djvu.txt"
+      },
+      "hydrationStatus": "PHASE2_NOT_STARTED",
+      "existingCanonicalShip": false
+    }
+  ],
+  "existingStarships": [
+    {
+      "sourceEntryKey": "core-arc-170-starfighter",
+      "printedName": "ARC-170 Starfighter",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 180,
+      "pdfPhysicalPage": 181,
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomain": "space"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "core-corellian-yt-1300-transport",
+      "printedName": "Corellian YT-1300 Transport",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 182,
+      "pdfPhysicalPage": 183,
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomain": "space"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "core-droid-tri-fighter",
+      "printedName": "Droid Tri-Fighter",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 181,
+      "pdfPhysicalPage": 182,
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomain": "space"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "core-eta-2-actis-interceptor",
+      "printedName": "Eta-2 Actis Interceptor",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 180,
+      "pdfPhysicalPage": 181,
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomain": "space"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "core-imperial-i-class-star-destroyer",
+      "printedName": "Imperial I-class Star Destroyer",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 183,
+      "pdfPhysicalPage": 184,
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomain": "space"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "core-incom-t-65b-x-wing-starfighter",
+      "printedName": "Incom T-65B X-wing Starfighter",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 178,
+      "pdfPhysicalPage": 179,
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomain": "space"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "core-koensayr-y-wing-starfighter",
+      "printedName": "Koensayr Y-wing Starfighter",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 178,
+      "pdfPhysicalPage": 179,
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomain": "space"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "core-tie-fighter",
+      "printedName": "TIE Fighter",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 179,
+      "pdfPhysicalPage": 180,
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomain": "space"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "core-tie-interceptor",
+      "printedName": "TIE Interceptor",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 179,
+      "pdfPhysicalPage": 180,
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomain": "space"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "core-vulture-class-droid-starfighter",
+      "printedName": "Vulture-class Droid Starfighter",
+      "sourceBook": "Core Rulebook",
+      "printedStatblockStartPage": 180,
+      "pdfPhysicalPage": 181,
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomain": "space-and-ground-walker"
+      },
+      "provenance": {
+        "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+        "existingCanonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "identityPolicy": {
+    "key": "sourceBook + sourceEntryKey",
+    "variantHandling": "separate statblocks separate records",
+    "hybridHandling": "Vulture-class Droid Starfighter retains one identity (starfighter and walker), not duplicated"
+  },
+  "next": "Phase 1-B Starships of the Galaxy universal vehicle enumeration",
+  "mechanicalStatsTranscribedInThisPhase": 0,
+  "productionPacksChanged": false
+}
