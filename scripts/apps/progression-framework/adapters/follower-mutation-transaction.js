@@ -33,6 +33,15 @@
  */
 
 /**
+ * TI-3 (TX-11) step-result contract: a `commit` or `rollback` outcome counts as FAILED when it throws, returns the boolean `false`, or returns an object
+ * with `ok === false` or `success === false`. Anything else (undefined, a document, a plain object, `true`) is success. No existing step returns a failure
+ * value, so this only closes the gap for steps that report failure instead of throwing.
+ */
+function reportsFailure(result) {
+  return result === false || (result !== null && typeof result === 'object' && (result.ok === false || result.success === false));
+}
+
+/**
  * Run an ordered sequence of governed mutation steps with reverse-order
  * compensating rollback on failure.
  *
@@ -71,6 +80,12 @@ export async function runFollowerMutationTransaction(steps = [], options = {}) {
     if (!step || typeof step.commit !== 'function') continue;
     try {
       const result = await step.commit(context);
+      // TI-3 (TX-11): a step that REPORTS failure by value is a failed step, exactly like one that throws.
+      if (reportsFailure(result)) {
+        const reported = new Error(`Follower mutation step "${step.name || 'unnamed'}" reported failure`);
+        reported.stepResult = result;
+        throw reported;
+      }
       completed.push({ step, result });
       if (step.name) context[step.name] = result;
     } catch (error) {
@@ -97,7 +112,12 @@ async function _rollbackCompletedSteps(completed) {
     const { step, result } = completed[i];
     if (typeof step.rollback !== 'function') continue;
     try {
-      await step.rollback(result);
+      const rolledBack = await step.rollback(result);
+      // TI-3 (TX-11): a rollback that REPORTS it could not restore is a failed rollback, not a clean one.
+      if (reportsFailure(rolledBack)) {
+        rollbackFailed = true;
+        rollbackErrors.push({ step: step.name || null, error: Object.assign(new Error(`Rollback of follower mutation step "${step.name || 'unnamed'}" reported failure`), { stepResult: rolledBack }) });
+      }
     } catch (rollbackError) {
       rollbackFailed = true;
       rollbackErrors.push({ step: step.name || null, error: rollbackError });

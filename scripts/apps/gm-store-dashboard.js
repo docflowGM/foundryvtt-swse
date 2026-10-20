@@ -73,23 +73,13 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     this.pendingApprovals = [];
   }
 
-  _findPendingApprovalIndex(approval = {}, fallbackIndex = -1) {
-    const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
-    const id = String(approval?.id || '').trim();
-    if (id) {
-      const byId = pendingPurchases.findIndex((entry) => String(entry?.id || '').trim() === id);
-      if (byId >= 0) return { index: byId, queue: pendingPurchases };
-    }
-    if (fallbackIndex >= 0 && fallbackIndex < pendingPurchases.length) return { index: fallbackIndex, queue: pendingPurchases };
-    return { index: -1, queue: pendingPurchases };
-  }
-
+  /**
+   * TI-3 (review TI3-R4): queue removal goes through the shared, strict helper — a request with an id is removed by that id or not at all. This dashboard used to
+   * fall back to the rendered index, which after another GM changed the queue removed an UNRELATED request.
+   */
   async _removePendingApproval(approval = {}, fallbackIndex = -1) {
-    const { index, queue } = this._findPendingApprovalIndex(approval, fallbackIndex);
-    if (index < 0) return false;
-    queue.splice(index, 1);
-    await HouseRuleService.set('pendingCustomPurchases', queue);
-    return true;
+    const { GMApprovalOperationsService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js');
+    return GMApprovalOperationsService._removeApprovalFromQueue(approval, fallbackIndex, null);
   }
 
   _approvalModSummary(approval = {}) {
@@ -565,6 +555,17 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     const approval = this.pendingApprovals[index];
     if (!approval) return;
 
+    // TI-3: the rendered index may be stale; act only on a request that is still in the live queue (strict identity).
+    const { GMApprovalOperationsService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js');
+    const pending = GMApprovalOperationsService.checkPending(approval, index);
+    if (pending.status !== 'ok') {
+      ui.notifications.error(pending.status === 'changed'
+        ? 'That request was changed after this list was loaded. Reload and review it again before approving. Nothing was charged.'
+        : 'That request is no longer pending (it may already have been approved, denied or removed).');
+      this.render();
+      return;
+    }
+
     const ownerActor = game.actors.get(approval.ownerActorId);
     const draftActor = game.actors.get(approval.draftActorId);
     if (!ownerActor) {
@@ -615,46 +616,57 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
 
       if (!approvalResult.success) throw new Error(approvalResult.error || 'Asset approval transaction failed');
 
-      const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
-      const purchase = {
-        timestamp: Date.now(),
-        items: [],
-        droids: draftActor.type === 'droid' ? [{
-          id: draftActor.id,
-          name: assetName,
-          cost: normalizedCost
-        }] : [],
-        vehicles: draftActor.type === 'vehicle' ? [{
-          id: draftActor.id,
-          name: assetName,
-          cost: normalizedCost
-        }] : [],
-        total: normalizedCost,
-        transactionId: approvalResult.transactionId ?? null,
-        source: 'Store - Custom ' + (draftActor.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval',
-        compatibilityMirror: true
+      // TI-3 (review TI3-R5): the approval is COMMITTED here (the owner was charged and the asset acquired). Everything below is bookkeeping; a failure in it is a
+      // warning, never "Approval failed" (which invites a second attempt).
+      const postCommitFailures = [];
+      const afterCommit = async (label, step) => {
+        try { await step(); } catch (stepError) {
+          SWSELogger.warn(`SWSE Store | Post-commit step "${label}" failed; the approval itself is committed`, stepError);
+          postCommitFailures.push(`${label}: ${stepError?.message ?? stepError}`);
+        }
       };
-      history.push(purchase);
-      await ActorEngine.updateActor(ownerActor, {
-        'flags.foundryvtt-swse.purchaseHistory': history
-      }, {
-        source: 'GMStoreDashboard._approvePendingCustom.purchaseHistoryMirror',
-        skipValidation: true
+      await afterCommit('purchase-history mirror', async () => {
+        const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
+        history.push({
+          timestamp: Date.now(),
+          items: [],
+          droids: draftActor.type === 'droid' ? [{ id: draftActor.id, name: assetName, cost: normalizedCost }] : [],
+          vehicles: draftActor.type === 'vehicle' ? [{ id: draftActor.id, name: assetName, cost: normalizedCost }] : [],
+          total: normalizedCost,
+          transactionId: approvalResult.transactionId ?? null,
+          source: 'Store - Custom ' + (draftActor.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval',
+          compatibilityMirror: true
+        });
+        await ActorEngine.updateActor(ownerActor, {
+          'flags.foundryvtt-swse.purchaseHistory': history
+        }, {
+          source: 'GMStoreDashboard._approvePendingCustom.purchaseHistoryMirror',
+          skipValidation: true
+        });
+      });
+      await afterCommit('queue removal', () => this._removePendingApproval(approval, index));
+      await afterCommit('approved hook', async () => {
+        Hooks.callAll?.('swseCustomPurchaseApproved', {
+          approval,
+          actor: ownerActor,
+          draftActor,
+          transactionId: approvalResult.transactionId,
+          decidedBy: game.user?.name ?? 'GM'
+        });
       });
 
-      await this._removePendingApproval(approval, index);
-
-      Hooks.callAll?.('swseCustomPurchaseApproved', {
-        approval,
-        actor: ownerActor,
-        draftActor,
-        transactionId: approvalResult.transactionId,
-        decidedBy: game.user?.name ?? 'GM'
+      // Presentation (notice, log, repaint) is post-commit too (TI-3 final boundary): none of it may reach the catch below.
+      await afterCommit('notification', async () => {
+        if (postCommitFailures.length) {
+          ui.notifications.warn(`Approved: ${assetName} for ${ownerActor.name} — but some follow-up steps failed (${postCommitFailures.join('; ')}). The approval itself is committed; do not approve it again.`);
+        } else {
+          ui.notifications.info(`Approved: ${assetName} for ${ownerActor.name}`);
+        }
       });
-
-      ui.notifications.info(`Approved: ${assetName} for ${ownerActor.name}`);
-      SWSELogger.log('SWSE Store | Custom purchase approved:', { approval, transactionId: approvalResult.transactionId });
-      this.render();
+      await afterCommit('log', async () => {
+        SWSELogger.log('SWSE Store | Custom purchase approved:', { approval, transactionId: approvalResult.transactionId });
+      });
+      await afterCommit('render', async () => { this.render(); });
     } catch (err) {
       SWSELogger.error('Failed to approve custom purchase:', err);
       ui.notifications.error(`Approval failed: ${err.message}`);
@@ -683,23 +695,35 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     if (!confirmed) return;
 
     try {
-      // Delete draft actor
-      const draftActor = game.actors.get(approval.draftActorId);
-      if (draftActor) {
-        await draftActor.delete();
+      // TI-3 (review TI3-R2): this dashboard used to delete the draft actor addressed by its rendered `data-index`. The destructive decision is now the shared,
+      // lock-protected, identity-checked core: a stale index, an approved asset, or an unconfirmable draft never deletes an actor.
+      const { GMApprovalOperationsService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js');
+      const decision = await GMApprovalOperationsService.decideDenial({ approvalId: approval.id || null, index });
+      if (decision.outcome !== 'denied') {
+        const reasons = {
+          missing: 'That request is no longer pending. Nothing was deleted.',
+          ambiguous: 'This request cannot be identified by list position. Reload and try again. Nothing was deleted.',
+          busy: 'An approval for this asset is in progress. Nothing was deleted.',
+          uncertain: 'The draft could not be confirmed as unapproved, so it was NOT deleted and the request was left in the queue.',
+          'stale-approved': 'That asset was already approved; the stale request was removed and the asset was kept.'
+        };
+        ui.notifications.warn(reasons[decision.outcome] ?? 'Denial was not applied.');
+        this.render();
+        return;
       }
 
-      // Remove from pending queue. Denial never touches the ledger or deducts credits.
-      await this._removePendingApproval(approval, index);
-
-      // Emit Holonet denial hook
+      // Emit Holonet denial hook (presentation: a throwing listener must not report a completed denial as failed)
       if (ownerActor) {
-        Hooks.callAll?.('swseCustomPurchaseDenied', {
-          approval,
-          actor: ownerActor,
-          decidedBy: game.user?.name ?? 'GM',
-          noCreditsChanged: true
-        });
+        try {
+          Hooks.callAll?.('swseCustomPurchaseDenied', {
+            approval,
+            actor: ownerActor,
+            decidedBy: game.user?.name ?? 'GM',
+            noCreditsChanged: true
+          });
+        } catch (hookError) {
+          SWSELogger.warn('SWSE Store | swseCustomPurchaseDenied listener failed; the denial itself is complete', hookError);
+        }
       }
 
       ui.notifications.info(`Denied: ${approval.draftData.name}`);

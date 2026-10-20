@@ -19,7 +19,7 @@
  * │  StoreEngine (THIS FILE)            │
  * │  - getInventory()                   │
  * │  - canPurchase()                    │
- * │  - purchase() [ATOMIC]              │
+ * │  - purchase() [VERIFIED, NOT ATOMIC]│
  * └──────────────┬──────────────────────┘
  *                │
  *      ┌─────────┼─────────┐
@@ -29,7 +29,8 @@
  *
  * Design Principles (Phase 4 Consolidation):
  * 1. Single Authority: StoreEngine is the ONLY public store API
- * 2. Atomic Transactions: purchase() uses snapshot rollback for all-or-nothing
+ * 2. Verified Transactions: purchase() delegates to TransactionEngine, which establishes recovery first, restores and VERIFIES on failure, and reports
+ *    rollbackFailed / indeterminate when it cannot (Foundry has no multi-document atomicity)
  * 3. Pre-Validation: All plans validated BEFORE any credit deduction
  * 4. Price Caching: Prices frozen at transaction start
  * 5. No Concurrent Purchases: Per-actor locking prevents race conditions
@@ -42,7 +43,7 @@
  * Public API:
  *   - getInventory(options)       : Load from compendiums + apply pricing
  *   - canPurchase(context)        : Validate actor eligibility
- *   - purchase(context)           : Execute atomic transaction [CONSOLIDATED]
+ *   - purchase(context)           : Execute a verified commerce transaction [CONSOLIDATED]
  */
 
 import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/index.js";
@@ -274,7 +275,7 @@ export class StoreEngine {
   }
 
   /**
-   * Execute atomic purchase transaction
+   * Execute a verified purchase transaction (not multi-document atomic — see below)
    * Changes:
    *   - Deduct credits from actor
    *   - Grant items (if itemGrantCallback provided)

@@ -702,7 +702,11 @@ export class GMApprovalsSurfaceService {
       .filter((session) => session?.escrow?.credits?.status === 'pending-gm-settlement')
       .map((session) => buildGameSettlementRequest(session));
     const factionRequests = FactionRegistryService.getPendingSuggestions().map((row) => buildFactionSuggestionRequest(row));
-    const approvalRequests = [...gameRequests, ...droidRequests, ...storeRequests, ...factionRequests];
+    // TI-3 (TX-10): every mutation button carries `actionKey`: the record's own persistent id when it has one (custom-id:<id>), otherwise the existing key.
+    // A bare `custom:<index>` names whatever record occupies that slot WHEN THE BUTTON IS CLICKED, which after another GM/tab changed the queue is a
+    // different request (this surface's DOM is not re-rendered by another client's change).
+    const approvalRequests = [...gameRequests, ...droidRequests, ...storeRequests, ...factionRequests]
+      .map((request) => ({ ...request, actionKey: request.stableKey || request.key }));
 
     // Phase 6 CORRECTION 9 — a selection may arrive as either the legacy
     // index-based `key` (this surface's own row clicks) or the stable
@@ -710,9 +714,8 @@ export class GMApprovalsSurfaceService {
     // GMCampaignContextService.attentionItems()/Home's exact navigation so
     // a target survives another request being added/removed/reordered
     // before the GM clicks through). Accept both; mutation buttons still
-    // read selectedApproval.key fresh from the current render below, so
-    // they always carry the correct up-to-date index regardless of which
-    // form the incoming selection took.
+    // read selectedApproval.actionKey (TI-3: the stable id when the record has
+    // one) from the current render below.
     const matchesSelection = (request) => request.key === host.selectedApprovalKey || (request.stableKey && request.stableKey === host.selectedApprovalKey);
     if (!approvalRequests.some(matchesSelection)) {
       host.selectedApprovalKey = approvalRequests[0]?.key ?? null;

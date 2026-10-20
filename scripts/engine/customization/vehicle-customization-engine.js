@@ -265,7 +265,9 @@ export class VehicleCustomizationEngine {
       }
 
       // Route credit movement + asset mutation through TransactionEngine so the
-      // customization is atomic AND recorded in the credit audit trail.
+      // customization is one verified commerce transaction (recovery established,
+      // restore outcome observed — not multi-document atomic) AND recorded in the
+      // credit audit trail.
       // walletActor (defaults to the vehicle itself for backward compatibility)
       // pays/receives credits; assetActor (always the vehicle) receives the
       // system mutation — TransactionEngine already supports wallet !== asset.
