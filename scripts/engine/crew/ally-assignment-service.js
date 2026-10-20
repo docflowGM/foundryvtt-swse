@@ -8,7 +8,8 @@
  *                           stats, does not consume a follower slot, is not
  *                           level-synced, and is not converted into follower
  *                           progression. Reversible via unassignAlly().
- *   - convertToFollower()  — a genuinely mechanical, atomic migration.
+ *   - convertToFollower()  — a genuinely mechanical migration run as ONE ordered transaction
+ *                           (reverse-order compensating rollback; NOT multi-document atomic).
  *                           Consumes one open follower slot from the SAME
  *                           canonical flags.foundryvtt-swse.followerSlots
  *                           array FollowerSlotService/talent grants already
@@ -24,7 +25,7 @@
  * mechanical migration. The two must never be conflated, and an Actor must
  * never simultaneously appear as both an assigned ally/beast AND a
  * mechanical follower — convertToFollower() removes any prior assignment
- * projection as part of the SAME atomic transaction that adds the follower
+ * projection as part of the SAME ordered transaction that adds the follower
  * projection.
  *
  * GM permission (`game.user.isGM === true`) is enforced HERE, independently
@@ -59,6 +60,18 @@ function randomId() {
   return (typeof foundry !== 'undefined' ? foundry?.utils?.randomID?.() : null)
     ?? globalThis.crypto?.randomUUID?.()
     ?? Math.random().toString(36).slice(2);
+}
+
+/**
+ * TI-3 (TX-11 / TI-N5): the error thrown for a failed follower/ally transaction carries what the transaction learned about its OWN rollback, so a caller
+ * (and the GM) can tell a clean rollback from an incomplete one. The original error and its message are unchanged.
+ */
+function attachRollbackOutcome(transaction) {
+  const error = transaction.error instanceof Error ? transaction.error : new Error(String(transaction.error ?? 'Follower transaction failed'));
+  error.failedStep = transaction.failedStep ?? null;
+  error.rollbackFailed = transaction.rollbackFailed === true;
+  if (transaction.rollbackErrors?.length) error.rollbackErrors = transaction.rollbackErrors;
+  return error;
 }
 
 export const ASSIGNMENT_MODE = Object.freeze({ ALLY: 'ally' });
@@ -964,8 +977,13 @@ export class AllyAssignmentService {
     const transaction = await runFollowerMutationTransaction(steps);
 
     if (!transaction.ok) {
-      swseLogger.warn('[AllyAssignmentService] assignAsAlly failed and was rolled back', { owner: ownerActor.name, target: targetActor.name, error: transaction.error });
-      throw transaction.error;
+      const error = attachRollbackOutcome(transaction);
+      if (error.rollbackFailed) {
+        swseLogger.error('[AllyAssignmentService] assignAsAlly failed — rollback INCOMPLETE, manual review required', { owner: ownerActor.name, target: targetActor.name, error, failedStep: error.failedStep, rollbackErrors: error.rollbackErrors });
+      } else {
+        swseLogger.warn('[AllyAssignmentService] assignAsAlly failed and was rolled back', { owner: ownerActor.name, target: targetActor.name, error });
+      }
+      throw error;
     }
 
     swseLogger.log('[AllyAssignmentService] Assigned ally', { owner: ownerActor.name, target: targetActor.name, kind: detectedKind });
@@ -1029,8 +1047,13 @@ export class AllyAssignmentService {
     ]);
 
     if (!transaction.ok) {
-      swseLogger.warn('[AllyAssignmentService] unassignAlly failed and was rolled back', { owner: ownerActor.name, target: targetActor.name, error: transaction.error });
-      throw transaction.error;
+      const error = attachRollbackOutcome(transaction);
+      if (error.rollbackFailed) {
+        swseLogger.error('[AllyAssignmentService] unassignAlly failed — rollback INCOMPLETE, manual review required', { owner: ownerActor.name, target: targetActor.name, error, failedStep: error.failedStep, rollbackErrors: error.rollbackErrors });
+      } else {
+        swseLogger.warn('[AllyAssignmentService] unassignAlly failed and was rolled back', { owner: ownerActor.name, target: targetActor.name, error });
+      }
+      throw error;
     }
 
     swseLogger.log('[AllyAssignmentService] Unassigned ally', { owner: ownerActor.name, target: targetActor.name });
@@ -1041,7 +1064,9 @@ export class AllyAssignmentService {
    * Convert an existing world NPC Actor into a real follower, consuming one
    * open follower slot from the owner's canonical followerSlots array.
    *
-   * Genuinely mechanical and atomic: follower derivation/materialization
+   * Genuinely mechanical, run as one ordered transaction (compensating rollback,
+   * best effort — Foundry has no multi-document atomicity; an incomplete rollback is
+   * reported on the thrown error as `rollbackFailed`): follower derivation/materialization
    * (`applyFollowerDerivation`, defaulting to the existing
    * FollowerCreator.updateFollowerForOwnerLevel pipeline) is a REQUIRED
    * transaction step, not a best-effort afterthought. If it fails, the
@@ -1479,7 +1504,7 @@ export class AllyAssignmentService {
           reservationCleanupFailed: !cleanupResult.success, reservationCleanup: cleanupResult
         });
       }
-      throw transaction.error;
+      throw attachRollbackOutcome(transaction);
     }
 
     // The conversion fully succeeded (including an optional ownership

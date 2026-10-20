@@ -447,6 +447,8 @@ export class ProgressionFinalizer {
           });
           return {
             success: false,
+            // TI-3: the plan above was APPLIED (and is not rolled back); only the post-apply audit disagrees. Callers must not treat this as "nothing happened".
+            committed: true,
             error: `Level-up finalization audit failed: ${postAudit.errors.join('; ')}`,
             audit: postAudit,
           };
@@ -467,7 +469,7 @@ export class ProgressionFinalizer {
 
       this._emitLevelUpComplete(actor, sessionState, options);
 
-      return { success: true, result: { actorId: actor.id } };
+      return { success: true, result: { actorId: actor.id }, ...(result.postApplyWarnings ? { postApplyWarnings: result.postApplyWarnings } : {}) };
     } catch (error) {
       swseLogger.error('[ProgressionFinalizer] Finalization aborted (no mutations applied)', error);
       return {
@@ -560,6 +562,7 @@ export class ProgressionFinalizer {
 
       return {
         success: true,
+        ...(result.postApplyWarnings ? { postApplyWarnings: result.postApplyWarnings } : {}),
         result: { actorId: actor.id, domain, stepId },
         message: this._singleStepSuccessMessage(domain, mutationPlan),
         sheetAnchor: this.singleStepSheetAnchorForDomain(domain),
@@ -3664,6 +3667,9 @@ export class ProgressionFinalizer {
   }
 
   static async _applyMutationPlan(actor, mutationPlan) {
+    // TI-3 (TX-09 sub-gap): two different outcomes used to share one `catch`. A throw from the plan itself means the transactional apply failed (and was
+    // restored by ActorEngine). A throw from the post-apply bookkeeping AFTER a successful plan means the plan IS applied and is NOT rolled back; reporting
+    // that as `{ success:false }` invites the player to finalize again.
     try {
       const engine = this._resolveActorEngine();
       if (!engine?.applyMutationPlan) {
@@ -3678,12 +3684,21 @@ export class ProgressionFinalizer {
         // never leave a half-applied character.
         transactional: true,
       });
-      await this._syncPostApplyState(actor, mutationPlan);
-      return { success: true, result: { actorId: actor.id } };
     } catch (error) {
       swseLogger.error('[ProgressionFinalizer] Mutation plan application failed', error);
       return { success: false, error: error.message };
     }
+
+    // The plan is committed from here on.
+    const postApplyWarnings = [];
+    try {
+      await this._syncPostApplyState(actor, mutationPlan);
+    } catch (syncError) {
+      swseLogger.error('[ProgressionFinalizer] Post-apply state sync failed AFTER the mutation plan was applied; the plan is committed and NOT rolled back', syncError);
+      postApplyWarnings.push({ step: 'post-apply-sync', error: syncError?.message ?? String(syncError) });
+      ui?.notifications?.warn?.('Your changes were applied, but a follow-up update (starship maneuver suite) failed. Do not finalize again; check the maneuver suite on the sheet.');
+    }
+    return { success: true, result: { actorId: actor.id }, ...(postApplyWarnings.length ? { postApplyWarnings } : {}) };
   }
 
 }

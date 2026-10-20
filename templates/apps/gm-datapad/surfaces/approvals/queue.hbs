@@ -24,7 +24,7 @@
           </div>
         </aside>
 
-        <form class="gm-approval-review-form" data-approval-review-form data-approval-key="{{selectedApproval.key}}">
+        <form class="gm-approval-review-form" data-approval-review-form data-approval-key="{{selectedApproval.actionKey}}">
           <section class="gm-approval-summary-packet swse-ui-panel">
             <div class="gm-approval-packet-header">
               <div>
@@ -123,33 +123,33 @@
                 <textarea name="denialReason" rows="5" placeholder="Tell the player why this request was denied."></textarea>
               </label>
               <div class="gm-approval-action-stack">
-                <button type="button" class="swse-ui-button deny" data-action="approval-confirm-deny" data-approval-key="{{selectedApproval.key}}">Confirm Denial</button>
-                <button type="button" class="swse-ui-button secondary" data-action="approval-cancel-deny" data-approval-key="{{selectedApproval.key}}">Cancel Denial</button>
+                <button type="button" class="swse-ui-button deny" data-action="approval-confirm-deny" data-approval-key="{{selectedApproval.actionKey}}">Confirm Denial</button>
+                <button type="button" class="swse-ui-button secondary" data-action="approval-cancel-deny" data-approval-key="{{selectedApproval.actionKey}}">Cancel Denial</button>
               </div>
             </div>
             {{else}}
             <div class="gm-approval-rail-section gm-approval-decision-panel">
               {{#if approvalEditMode}}
               <div class="gm-approval-action-stack">
-                <button type="button" class="swse-ui-button approve" data-action="approval-finalize-edits" data-approval-key="{{selectedApproval.key}}">
+                <button type="button" class="swse-ui-button approve" data-action="approval-finalize-edits" data-approval-key="{{selectedApproval.actionKey}}">
                   <i class="fa-solid fa-check"></i> Finalize Approval
                 </button>
-                <button type="button" class="swse-ui-button secondary" data-action="approval-cancel-edit" data-approval-key="{{selectedApproval.key}}">
+                <button type="button" class="swse-ui-button secondary" data-action="approval-cancel-edit" data-approval-key="{{selectedApproval.actionKey}}">
                   Cancel Edits
                 </button>
-                <button type="button" class="swse-ui-button deny" data-action="approval-deny" data-approval-key="{{selectedApproval.key}}">
+                <button type="button" class="swse-ui-button deny" data-action="approval-deny" data-approval-key="{{selectedApproval.actionKey}}">
                   Deny Instead
                 </button>
               </div>
               {{else}}
               <div class="gm-approval-action-stack">
-                <button type="button" class="swse-ui-button approve" data-action="approval-approve" data-approval-key="{{selectedApproval.key}}">
+                <button type="button" class="swse-ui-button approve" data-action="approval-approve" data-approval-key="{{selectedApproval.actionKey}}">
                   <i class="fa-solid fa-check"></i> Approve
                 </button>
-                <button type="button" class="swse-ui-button" data-action="approval-enter-edit" data-approval-key="{{selectedApproval.key}}">
+                <button type="button" class="swse-ui-button" data-action="approval-enter-edit" data-approval-key="{{selectedApproval.actionKey}}">
                   <i class="fa-solid fa-pen-to-square"></i> Approve with Edits
                 </button>
-                <button type="button" class="swse-ui-button deny" data-action="approval-deny" data-approval-key="{{selectedApproval.key}}">
+                <button type="button" class="swse-ui-button deny" data-action="approval-deny" data-approval-key="{{selectedApproval.actionKey}}">
                   <i class="fa-solid fa-xmark"></i> Deny
                 </button>
               </div>

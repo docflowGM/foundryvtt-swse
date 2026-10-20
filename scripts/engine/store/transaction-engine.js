@@ -1,5 +1,5 @@
 /**
- * TransactionEngine — Legacy Atomic Coordinator
+ * TransactionEngine — Commerce Transaction Coordinator (NOT multi-document atomic)
  *
  * PHASE 4 CONSOLIDATION NOTE:
  * As of Phase 4 consolidation, StoreEngine is the single authority for store operations.
@@ -16,20 +16,21 @@
  * - Compile credit plans
  * - Compile placement plans (Phase 6)
  * - Merge all plans
- * - Apply atomically via ActorEngine
+ * - Apply through ActorEngine (sequentially, in bucket order — see "Guarantee" below)
  *
- * Atomic Coordinator Pattern:
+ * Coordinator Pattern:
  * 1️⃣  Validate all inputs (read-only)
  * 2️⃣  Compile factory plans (no mutations)
  * 3️⃣  Compile credit plan (no mutations)
  * 4️⃣  Compile placement plans (no mutations, Phase 6)
  * 5️⃣  Merge all plans (detect conflicts)
- * 6️⃣  Apply once via ActorEngine (atomic by construction)
+ * 6️⃣  Apply once via ActorEngine (one plan, applied SEQUENTIALLY: CREATE, DELETE, SET, UPDATE, ADD)
  *
- * If ANY step fails: NOTHING is applied
- *
- * NOTE: StoreEngine achieves atomicity via SnapshotManager.
- * Future refactor can consolidate both approaches.
+ * Guarantee (TI-2/TI-3 — what this does and does NOT promise): Foundry has no multi-document transaction, so a failed plan CAN leave earlier writes applied.
+ * Recovery is therefore ESTABLISHED first (a purchase/customization is refused without a retrievable snapshot), the restore outcome is OBSERVED (a restore
+ * that did not happen is `rollbackFailed`, never "rolled back"), the charge is VERIFIED after the write (otherwise `indeterminate`), and a post-commit
+ * presentation failure never undoes a committed change. Same client only (L1): another client, or a writer outside this engine, is not coordinated.
+ * Whole-actor snapshot restore is the existing recovery mechanism; it can revert unrelated concurrent changes in the failure window.
  */
 
 import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
@@ -1203,6 +1204,17 @@ export class TransactionEngine {
     let ownerSnapshot = null;
     let assetSnapshot = null;
     try {
+      // TI-3 (TX-10): the asset-state check is part of the transaction, inside the lock and before any write. An asset that already carries a store-acquisition
+      // record has been approved: a second approval (a stale queue entry, a double click on another client, a retry after an unrelated post-commit failure)
+      // would charge the owner again and re-link the asset. Refused with nothing changed.
+      const acquired = freshAsset.system?.storeAcquisition?.transactionId
+        ?? freshAsset.flags?.['foundryvtt-swse']?.storeAcquisition?.transactionId
+        ?? freshAsset.getFlag?.('foundryvtt-swse', 'storeAcquisition')?.transactionId
+        ?? null;
+      if (acquired) {
+        return { success: false, transactionId, refused: 'already-acquired', acquiredTransactionId: acquired, error: `${freshAsset.name} has already been approved (transaction ${acquired}); nothing was charged.` };
+      }
+
       const funds = LedgerService.validateFunds(ownerActor, normalizedCost);
       if (!funds.ok) {
         return {
