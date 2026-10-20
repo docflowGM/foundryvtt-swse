@@ -83,7 +83,7 @@ A `COMMITTED` outcome carries `postCommit: { warnings: [...], postApplyIncomplet
 
 | Domain | Authority | Contract obligations to add (proposal) |
 |---|---|---|
-| Credits/commerce | `TransactionEngine` + `LedgerService` | `operationId`+fingerprint intake; one wallet-scoped lock key across methods; recovery precondition and post-write verification on all methods (owner decision for extending D1). |
+| Credits/commerce | `TransactionEngine` + `LedgerService` | `operationId`+fingerprint intake; one wallet-scoped lock key across methods; post-write verification on all methods; recovery precondition per §7 rule 1 (risk-based, OD-1; matrix DI-2 pending). |
 | Force Points | `ActorEngine.spendForcePoints/gainForcePoints` + receipt/coordinator | bring inline spenders under a single call shape; persist receipt evidence (L3 prerequisite). |
 | Action economy | `ActionEconomyConsumption`/`Persistence` | per-actor serialization; compute `after` inside one synchronous section. |
 | Equipment state | `EquipmentStateCoordinator` + journal | production `requestId` minted at intent; GM reconcile operation for unresolved entries. |
@@ -95,7 +95,11 @@ A `COMMITTED` outcome carries `postCommit: { warnings: [...], postApplyIncomplet
 
 ## 7. Compensation rules
 
-1. Recovery must be **established before the first mechanical write**, or the operation is `REFUSED('recovery-unavailable')` (TI-2 rule; Q-033 §2.5).
+1. **Recovery prerequisite (risk-based; owner-approved OD-1).**
+   a. A **high-risk, multi-resource, or otherwise unsafe-to-repeat** transaction must establish adequate, retrievable recovery **before its first authoritative write**, or it is `REFUSED('recovery-unavailable')` (TI-2 rule; Q-033 §2.5). This is the default for every operation.
+   b. **Exception — simple single-resource GM credit adjustment.** Such an operation may proceed without a full snapshot **only if all of the following hold**: (i) the separately reviewed risk matrix (DI-2) classifies it as eligible; (ii) the resulting state is verified after the write (balance observation); (iii) uncertainty is reported explicitly as `INDETERMINATE` (never as success or a clean failure); and (iv) the operation cannot silently duplicate or lose resources.
+   c. **Until DI-2 is accepted, no operation qualifies for the exception.** A newly classified or unclassified operation is treated under (a).
+   d. The exception never relaxes §4.1: `FAILED_COMPENSATED` still means verified compensation of the **entire** affected scope (rule 6); absent recovery, a failed or uncertain write is `INDETERMINATE`.
 2. Restore verdict is **only** `restoreSnapshotExact(...,{requireExact:true})` with both `success` and `exact` checked, plus an independent post-restore check of the resource (Q-033 §2.9). A truthy return or a non-throwing call is not a verdict.
 3. Prefer **field-scoped conditional compensation** (restore a field only if it still holds the value this operation wrote). Whole-actor restores revert concurrent edits and are a last resort that must say so.
 4. Compensation of a resource (FP, credits) uses a **relative or conditional** write; an absolute restore of a previously read value is allowed only inside the same single-flight section and must be flagged `INTENTIONAL_LIMITATION` (L1).
@@ -120,7 +124,7 @@ The contract is enforceable only where the repository can observe a violation. T
 
 | ID | Decision | Effect on this contract |
 |---|---|---|
-| OD-1 | Risk-based recovery prerequisites: high-risk multi-resource transactions fail closed without adequate recovery; simple GM credit adjustments may remain with verified outcomes and explicit uncertainty reporting; the exception never covers an operation that can silently duplicate or lose resources. | §7 rule 1 applies to high-risk multi-resource operations; the risk matrix that classifies operations is `DESIGN_OPEN`. |
+| OD-1 | Risk-based recovery prerequisites: high-risk multi-resource transactions fail closed without adequate recovery; simple GM credit adjustments may remain with verified outcomes and explicit uncertainty reporting; the exception never covers an operation that can silently duplicate or lose resources. | §7 rule 1 (a–d) states the rule and the narrow exception; no operation qualifies for the exception until the risk matrix (DI-2) is accepted. |
 | OD-2 | Adopt the four-state vocabulary with the whole-scope compensation and post-apply-incomplete qualifiers. | §4 is the approved vocabulary. |
 | OD-3 | Existing domain-owned receipt storage, no universal ledger; each store certified against compensation, reload and retention before durable replay or L3 claims. | §5.7, §8. |
 | OD-4 | Design GM-only reconciliation operations without UI; implementation needs separate authorization and negative tests. | recovery design §4 is an approved design direction only. |
