@@ -366,14 +366,16 @@ await check('the evidence is machine-readable and claims no L2/L3 guarantee', as
   assert.doesNotThrow(() => JSON.parse(text));
 });
 
-await check('the transactional snapshot is a LEGACY snapshot (no schemaVersion), so a restore from it cannot verify exact — recorded honestly, never manufactured', async () => {
+// G06-S1: applyMutationPlan no longer CAPTURES a legacy snapshot (it captures the SnapshotService schema-v2 snapshot; see tests/ti4c0-g06s1-exact-snapshot.test.mjs).
+// The rule this case guards is unchanged: a LEGACY snapshot (no schemaVersion) handed to the rollback helper can never be certified exact. It is now exercised directly.
+await check('a LEGACY snapshot (no schemaVersion) handed to the rollback helper cannot verify exact — recorded honestly, never manufactured', async () => {
   const s = install({ restore: async () => ({ success: true, exact: false }) });
-  const actor = mkActor();
-  const err = await runPlan(actor, { transactional: true });
-  const snap = s.calls.restoreArgs?.[1];
-  assert.ok(snap && snap.schemaVersion === undefined, 'documented limitation: actor.toObject(true) carries no schemaVersion');
-  assert.equal(err.rollback.legacySnapshot, true);
-  assert.equal(err.rollbackOutcome, 'INDETERMINATE');
+  const legacy = mkActor().toObject();
+  assert.equal(legacy.schemaVersion, undefined, 'a legacy snapshot carries no schemaVersion');
+  const rollback = await ActorEngine._rollbackTransactionalPlan(mkActor(), legacy, {}, 'g06.test');
+  assert.equal(s.calls.restoreArgs?.[1], legacy);
+  assert.equal(rollback.legacySnapshot, true);
+  assert.equal(rollback.outcome, 'INDETERMINATE');
 });
 
 /* ---- callers ---- */

@@ -2991,8 +2991,8 @@ export const ActorEngine = {
    *   the thrown error carries `rollback` (machine-readable evidence), `rollbackOutcome`
    *   (`FAILED_COMPENSATED` only when the target actor AND any CREATE-bucket world actors were verifiably restored;
    *   otherwise `INDETERMINATE`) and, when not verified, `partialMutationPossible === true`. A restore that resolved
-   *   without `{success:true, exact:true}` is NOT a verified rollback. The in-memory snapshot is a legacy snapshot
-   *   (no schemaVersion), so SnapshotService cannot report it exact — see `_rollbackTransactionalPlan`.
+   *   without `{success:true, exact:true}` is NOT a verified rollback. The in-memory snapshot is the SnapshotService schema-v2
+   *   capture (G06-S1), so a genuine restore can verify exact — see `_rollbackTransactionalPlan`.
    * - Derived data recalculates once after all mutations
    * - Errors throw MutationApplicationError
    *
@@ -3062,7 +3062,10 @@ export const ActorEngine = {
       // so transactional mode now covers both actor-local plans (progression
       // finalization) and plans that create world actors.
       if (transactional) {
-        _txnSnapshot = actor.toObject(true);
+        // TI4-C0/G06-S1: the existing SnapshotService schema-v2 in-memory capture (same representation its restore verifies against; persists nothing).
+        // A capture failure throws here, before any stage runs, so nothing has been applied.
+        const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
+        _txnSnapshot = SnapshotService.captureExactSnapshot(actor);
       }
 
       // Phase 2: Apply operations in strict order
@@ -3151,15 +3154,25 @@ export const ActorEngine = {
    *   FAILED     success === false
    *   MALFORMED  not an object with a boolean `success`
    *   THREW      the restore call threw
-   * The in-memory snapshot is `actor.toObject(true)` with no `schemaVersion`, so SnapshotService treats it as LEGACY and can only ever
-   * report `exact:false`. That is recorded (`legacySnapshot`), not worked around: exactness is never manufactured. A schema-v2 snapshot is a
-   * separate dependency.
+   * The in-memory snapshot is the SnapshotService schema-v2 capture (G06-S1), so a genuinely restored actor can verify exact. A legacy snapshot
+   * (no schemaVersion) still can only report `exact:false`; that is recorded (`legacySnapshot`), never worked around. The service result is not
+   * trusted blindly: an `exact:true` result whose own verification says content mismatched, or whose snapshot has Items/Effects without a unique
+   * `_id` (identity cannot be verified), is downgraded to INEXACT (reason `snapshot-identity-incomplete`).
    *
    * @returns {Promise<object>} rollback evidence: { outcome, compensation, level, legacySnapshot, reasons[], target{}, created{} }
    */
   async _rollbackTransactionalPlan(actor, snapshot, tempIdMap = {}, source = 'ActorEngine.applyMutationPlan') {
     const reasons = [];
     const legacySnapshot = !snapshot?.schemaVersion;
+
+    // Identity certification: exactness is only meaningful if every snapshot Item/Effect carries a unique non-empty _id. SnapshotService matches
+    // embedded documents by id and silently skips id-less ones, so such a snapshot could verify "exact" while losing a document.
+    const identityIds = (docs) => (Array.isArray(docs) ? docs.map((d) => d?._id ?? d?.id) : []);
+    const identityComplete = [snapshot?.items, snapshot?.effects].every((docs) => {
+      if (docs === undefined) return true;
+      const ids = identityIds(docs);
+      return Array.isArray(docs) && ids.every((id) => typeof id === 'string' && id !== '') && new Set(ids).size === ids.length;
+    });
 
     /* ---- target actor ---- */
     const target = { attempted: true, verdict: null, success: null, exact: null, code: null, failedStep: null, partialMutation: null,
@@ -3187,8 +3200,13 @@ export const ActorEngine = {
         const v = result.verification;
         target.contentVerified = (v && typeof v === 'object' && 'rootMatched' in v) ? (v.rootMatched === true && v.itemsMatched === true && v.effectsMatched === true) : null;
         target.verdict = result.success !== true ? 'FAILED' : (result.exact === true ? 'EXACT' : 'INEXACT');
+        if (target.verdict === 'EXACT' && (target.contentVerified === false || !identityComplete)) {
+          target.verdict = 'INEXACT';
+          target.exactDowngraded = true;
+        }
       }
     }
+    if (!identityComplete) reasons.push('snapshot-identity-incomplete');
     const targetOk = target.verdict === 'EXACT';
     if (!targetOk) reasons.push(`target-restore-${target.verdict.toLowerCase()}`);
 
