@@ -270,6 +270,31 @@ const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-s
       assert.deepEqual(notes.error.filter((m) => /Approval failed/i.test(m)), [], 'a post-commit listener failure is NOT reported as "Approval failed"'); assert.ok(notes.warn.some((m) => /do not approve it again|committed/i.test(m)), 'the GM is told it is committed');
     }
 
+    // Final boundary (review of 5e3f4f6): notification, logger and repaint are post-commit too; a throw in any of them must never surface as "Approval failed"
+    for (const which of ['notification', 'logger', 'render', 'all']) {
+      setup(); const owner = mkOwner(1000); const dA = mkDroid('dA', 'Droid A'); world.set('owner', owner); world.set('dA', dA); const rec = pending('pending_a', dA, 300); queue().push(rec);
+      const { GMApprovalOperationsService: S } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js');
+      const { LedgerService: LS } = await import('/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js');
+      const { normalizeCredits: nc } = await import('/systems/foundryvtt-swse/scripts/utils/credit-normalization.js');
+      const { SWSELogger: LG } = await import('/systems/foundryvtt-swse/scripts/utils/logger.js');
+      const boom = (m) => () => { throw new Error(`${m} threw`); };
+      const failNotice = which === 'notification' || which === 'all', failLog = which === 'logger' || which === 'all', failRender = which === 'render' || which === 'all';
+      const seen = { error: [], warn: [], info: [] };
+      const uiStub = { notifications: { error: (m) => seen.error.push(m), warn: failNotice ? boom('warn') : (m) => seen.warn.push(m), info: failNotice ? boom('info') : (m) => seen.info.push(m) } };
+      const logStub = { ...LG, log: failLog ? boom('log') : LG.log?.bind(LG), warn: () => {}, error: (...a) => seen.error.push(`LOG:${a[0]}`) };
+      const approveSrc2 = methodSrc('_approvePendingCustom');
+      const factory2 = new Function('deps', `const { TransactionEngine, ActorEngine, LedgerService, SWSEDialogV2, normalizeCredits, SWSELogger, Hooks, ui, game } = deps; return async function _approvePendingCustom(index) {${approveSrc2.slice(approveSrc2.indexOf('{') + 1, approveSrc2.lastIndexOf('}'))}}`);
+      const fn2 = factory2({ TransactionEngine, ActorEngine, LedgerService: LS, SWSEDialogV2: { confirm: async () => true }, normalizeCredits: nc, SWSELogger: logStub, Hooks: { ...hooksReal, callAll: () => {} }, ui: uiStub, game: globalThis.game });
+      let rendered = 0;
+      const ctx2 = { pendingApprovals: [rec], render: failRender ? boom('render') : () => { rendered++; }, _buildApprovalAudit: () => ({}), async _removePendingApproval(a, i) { return S._removeApprovalFromQueue(a, i, null); } };
+      await silent(() => fn2.call(ctx2, 0));
+      assert.equal(owner.system.credits, 700, `${which}: the approval committed once and stays committed`); assert.ok(dA.system.storeAcquisition?.transactionId, `${which}: the asset stays acquired, transaction id preserved`);
+      assert.deepEqual(seen.error.filter((m) => /Approval failed/i.test(m)), [], `${which}: a post-commit presentation failure is never reported as "Approval failed"`);
+      assert.deepEqual(queue().map((e) => e.id), [], `${which}: the committed request left the queue`);
+      if (!failRender) assert.equal(rendered, 1, `${which}: the repaint still ran`);
+      assert.equal(owner.system.credits, 700, `${which}: nothing was retried, refunded or reversed`);
+    }
+
     // R6: the legacy index key can no longer approve or edit an id-bearing record (the index cannot identify it)
     setup(); const owner = mkOwner(1000); const dX = mkDroid('dA', 'Droid A'); const dY = mkDroid('dB', 'Droid B'); world.set('owner', owner); world.set('dA', dX); world.set('dB', dY);
     queue().push(pending('pending_b', dY, 400));   // another GM already handled A; B is now at index 0, but this GM's button still says custom:0 ("A")

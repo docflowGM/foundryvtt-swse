@@ -655,13 +655,18 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
         });
       });
 
-      if (postCommitFailures.length) {
-        ui.notifications.warn(`Approved: ${assetName} for ${ownerActor.name} — but some follow-up steps failed (${postCommitFailures.join('; ')}). The approval itself is committed; do not approve it again.`);
-      } else {
-        ui.notifications.info(`Approved: ${assetName} for ${ownerActor.name}`);
-      }
-      SWSELogger.log('SWSE Store | Custom purchase approved:', { approval, transactionId: approvalResult.transactionId });
-      this.render();
+      // Presentation (notice, log, repaint) is post-commit too (TI-3 final boundary): none of it may reach the catch below.
+      await afterCommit('notification', async () => {
+        if (postCommitFailures.length) {
+          ui.notifications.warn(`Approved: ${assetName} for ${ownerActor.name} — but some follow-up steps failed (${postCommitFailures.join('; ')}). The approval itself is committed; do not approve it again.`);
+        } else {
+          ui.notifications.info(`Approved: ${assetName} for ${ownerActor.name}`);
+        }
+      });
+      await afterCommit('log', async () => {
+        SWSELogger.log('SWSE Store | Custom purchase approved:', { approval, transactionId: approvalResult.transactionId });
+      });
+      await afterCommit('render', async () => { this.render(); });
     } catch (err) {
       SWSELogger.error('Failed to approve custom purchase:', err);
       ui.notifications.error(`Approval failed: ${err.message}`);
