@@ -36,11 +36,25 @@ export function toActor(r){
  if(sr!==undefined){sys.shields={value:sr,max:sr};sys.shieldRating=sr;sys.currentSR=sr;sys.vehicleHasShields=sr>0}
  const attrs={};for(const [short,long] of [['str','strength'],['dex','dexterity'],['int','intelligence']]){const n=num(choose(a[long],a[short]));if(n!==undefined)attrs[short]={base:n,racial:0,temp:0}}
  if(Object.keys(attrs).length)sys.attributes=attrs;
- const mv=f.movement??{};set('characterScaleSpeed',num(mv.characterScaleFlySquares));set('starshipScaleSpeed',num(mv.starshipScaleFlySquares));
+ const mv=f.movement??{};
+ const movementText=f.speedAsPrinted??mv.printed??f.speedAsText??'';
+ const starshipFromText=choose(
+   match(movementText,/fly\s+(\d+)\s+squares?\s*\(starship[ -]scale\)/i),
+   match(movementText,/starship[ -]scale\s+fly\s+(\d+)\s+squares?/i),
+   match(movementText,/fly\s+(\d+)\s+starship[ -]scale\s+squares?/i));
+ const characterFromText=match(movementText,/fly\s+(\d+)\s+squares?\s*\((?:max|maximum)/i)
+   ??(starshipFromText!==undefined?match(movementText,/fly\s+(\d+)\s+squares?/i):undefined);
+ set('characterScaleSpeed',choose(num(mv.characterScaleFlySquares),num(mv.characterScale?.squares),characterFromText));
+ set('starshipScaleSpeed',choose(num(mv.starshipScaleFlySquares),num(mv.starshipScale?.squares),starshipFromText));
+ set('maxVelocityKmh',choose(num(mv.maxVelocityKmH),num(mv.maximumVelocityKmH),match(movementText,/([\d,]+)\s*km\/h/i)));
  const raw=f.speedAsPrinted??mv.printed;if(raw)sys.vehicleMovementRaw=raw;
  if(sys.characterScaleSpeed!==undefined)sys.speed='Fly '+sys.characterScaleSpeed+' squares';
  if(sys.starshipScaleSpeed!==undefined)sys.starshipSpeed='Fly '+sys.starshipScaleSpeed+' squares';
- set('crew',f.crewAsPrinted??(typeof f.crew==='string'?f.crew:f.crewAndPassengers));
+ set('crew',f.crewAsPrinted??(typeof f.crew==='string'?f.crew:f.crewAndPassengers)
+   ??(f.crew&&typeof f.crew==='object'&&num(f.crew.count)!==undefined
+     ?String(f.crew.count)+(f.crew.quality?' ('+f.crew.quality+')':''):undefined));
+ set('vehicleCrewCount',num(f.crew?.count));
+ set('crewQuality',typeof f.crew?.quality==='string'?f.crew.quality:undefined);
  set('passengers',f.passengersAsPrinted??(typeof f.passengers==='string'||typeof f.passengers==='number'?String(f.passengers):undefined));
  set('cargo',f.cargoAsPrinted??(typeof f.cargo==='string'?f.cargo:undefined));
  set('consumables',f.consumablesAsPrinted??f.consumables);
