@@ -54,7 +54,7 @@ const { isItemActivated } = await import('/systems/foundryvtt-swse/scripts/engin
 
 const { installCoordinatorHarness, REC } = await import('./helpers/equipment-coordinator-harness.mjs');
 const spent = []; let allow = true;
-ActionEconomyConsumption.spend = async (_a, type) => { if (!allow) return { allowed: false }; spent.push(type); return { allowed: true }; };
+ActionEconomyConsumption.spend = async (_a, type) => { if (!allow) return { allowed: false }; spent.push(type); return { allowed: true, committed: true }; };
 const harness = installCoordinatorHarness(ActorEngine);
 const writes = harness.log.itemWrites;
 const opts = { deps: harness.deps };

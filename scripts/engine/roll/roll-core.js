@@ -91,10 +91,11 @@ export class RollCore {
         // The Force Point (if any) was already spent to pay for forcePointBonus
         // above; since this roll never happened, refund it rather than leaving
         // the actor short a point for a bonus they never received.
+        let forcePointRefundFailed = false;
         if (forcePointDetails?.success && forcePointDetails.spent > 0) {
-          await this._refundForcePoints(actor, forcePointDetails.spent, 'main-roll-execution-failed');
+          forcePointRefundFailed = !(await this._refundForcePoints(actor, forcePointDetails.spent, 'main-roll-execution-failed', forcePointDetails)).ok;
         }
-        return { success: false, error: `Roll execution failed: ${err.message}`, domain, breakdown: {} };
+        return { success: false, error: `Roll execution failed: ${err.message}`, domain, breakdown: {}, ...(forcePointRefundFailed ? { forcePointRefundFailed: true } : {}) };
       }
 
       const baseRollResult = this._extractBaseRoll(roll, baseDice);
@@ -214,11 +215,13 @@ export class RollCore {
         requested: receipt.requested,
         before: receipt.before,
         after: receipt.after,
-        reason: receipt.reason
+        reason: receipt.reason,
+        rolledBack: receipt.rolledBack === true,
+        refundFailed: receipt.refundFailed === true   // the point is still spent: the caller must say so
       };
     }
 
-    return {
+    const adapted = {
       success: true,
       bonus: receipt.bonus,
       spent: receipt.spent,
@@ -232,16 +235,23 @@ export class RollCore {
       dieUpgradeSource: receipt.dieUpgradeSource,
       roll: receipt.roll
     };
+    Object.defineProperty(adapted, 'refundSpend', { value: receipt.refundSpend, enumerable: false });
+    return adapted;
   }
 
-  /** Refund Force Points already spent when a roll they paid for never completed. */
-  static async _refundForcePoints(actor, amount, refundReason) {
-    try {
-      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-      await ActorEngine.gainForcePoints(actor, amount);
-    } catch (err) {
-      swseLogger.error(`[RollCore] Failed to refund ${amount} Force Point(s) after ${refundReason}; actor may be short a point.`, err);
+  /**
+   * Refund Force Points already spent when a roll they paid for never completed. Gives back what the Force die spend TOOK through the coordinator's
+   * receipt logic (`details.refundSpend`): bonus points as bonus points, the normal point as a relative gain. Resolves { ok }; a failed refund is
+   * logged and reported, never swallowed.
+   */
+  static async _refundForcePoints(actor, amount, refundReason, details = null) {
+    if (typeof details?.refundSpend !== 'function') {
+      swseLogger.error(`[RollCore] No spend receipt to refund ${amount} Force Point(s) after ${refundReason}; the actor may be short a Force Point.`);
+      return { ok: false };
     }
+    const given = await details.refundSpend(refundReason);
+    if (!given.ok) {swseLogger.error(`[RollCore] Failed to refund the Force Point after ${refundReason}; the actor is short a point.`, given.error);}
+    return given;
   }
 
   static _constructFormula(baseDice, baseBonus, modifierTotal, forcePointBonus) {

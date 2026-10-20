@@ -97,7 +97,8 @@ const installPresentation = () => {
   globalThis.Hooks = { ...realHooks, callAll: (name, ...rest) => { if (name === ROLL_HOOKS.POST_FORCE_POINT) { present.hooks += 1; if (present.hookMode === 'throw') throw new Error('post hook listener threw'); } return realHooks.callAll?.(name, ...rest); } };
 };
 const uninstallPresentation = () => { globalThis.ChatMessage.create = realCreate; globalThis.Hooks = realHooks; };
-const flush = () => new Promise((r) => setTimeout(r, 0));
+// Deterministic wait: the first step of commit()/rollback() is a dynamic import, whose duration varies under load, so a single timer tick is not enough.
+const until = async (cond) => { for (let i = 0; i < 5000 && !cond(); i += 1) { await new Promise((r) => setTimeout(r, 1)); } assert.ok(cond(), 'the awaited persistence write was reached'); };
 const silent = async (fn) => { const e = console.error; const w = console.warn; console.error = () => {}; console.warn = () => {}; try { return await fn(); } finally { console.error = e; console.warn = w; } };
 
 try {
@@ -136,7 +137,7 @@ try {
   // ------------------------------------------------------------------------------------------------ C3-R5 concurrent invocation
   {
     reset(); const a = mk(); const t = tx(a); let release; ctl.gate = new Promise((r) => { release = r; });
-    const p1 = t.commit(); const p2 = t.commit(); await flush();
+    const p1 = t.commit(); const p2 = t.commit(); await until(() => ctl.writes >= 1);
     assert.equal(ctl.spends, 1, 'two simultaneous commit() calls reach the spend authority ONCE'); release(); const [r1, r2] = await Promise.all([p1, p2]); ctl.gate = null;
     assert.deepEqual([r1, r2], [true, true], 'both callers get the same truthful outcome'); assert.equal(ctl.spends, 1); assert.equal(a.system.forcePoints.value, 2); assert.equal(t.committed, true);
     // failed concurrent commit: both false, no fabricated success, a later clean retry is possible
@@ -153,12 +154,12 @@ try {
   }
   {
     reset(); const a = mk(); const t = tx(a); await t.commit(); let release; ctl.gate = new Promise((r) => { release = r; });
-    const r1 = t.rollback(); const r2 = t.rollback(); await flush(); release(); const [x, y] = await Promise.all([r1, r2]); ctl.gate = null;
+    const w0 = ctl.writes; const r1 = t.rollback(); const r2 = t.rollback(); await until(() => ctl.writes > w0); release(); const [x, y] = await Promise.all([r1, r2]); ctl.gate = null;
     assert.deepEqual([x, y], [true, true], 'concurrent rollbacks share one outcome'); assert.deepEqual(ctl.gains, [1], 'the point is given back ONCE'); assert.equal(a.system.forcePoints.value, 3);
     assert.equal(await t.rollback(), false, 'a later rollback does nothing'); assert.deepEqual(ctl.gains, [1]);
     // rollback requested while the commit is still in flight waits for it, then refunds exactly once
     reset(); const b = mk(); const t2 = tx(b); let rel2; ctl.gate = new Promise((r) => { rel2 = r; });
-    const c1 = t2.commit(); const rb = t2.rollback(); await flush(); assert.equal(ctl.gains.length, 0, 'nothing is refunded before the commit settles'); rel2(); ctl.gate = null;
+    const c1 = t2.commit(); const rb = t2.rollback(); await until(() => ctl.writes >= 1); assert.equal(ctl.gains.length, 0, 'nothing is refunded before the commit settles'); rel2(); ctl.gate = null;
     const [cr, rr] = await Promise.all([c1, rb]); assert.equal(cr, true); assert.equal(rr, true); assert.equal(b.system.forcePoints.value, 3); assert.deepEqual(ctl.gains, [1]);
     assert.equal(await t2.commit(), false, 'a rolled-back transaction cannot be committed again'); assert.equal(ctl.spends, 1);
     ok('C3-R5: concurrent rollbacks refund once; a rollback requested during an in-flight commit waits for it; a rolled-back transaction is finished');
@@ -199,7 +200,7 @@ try {
     assert.equal(await t2.rollback(), true, 'the refund may be retried'); assert.equal(b.system.forcePoints.value, 3);
     // rollback requested while a commit is still in flight, then announce right after the commit settles: refused
     reset(); installPresentation(); const c = mk(); const t3 = tx(c); let rel3; ctl.gate = new Promise((r) => { rel3 = r; });
-    const c1 = t3.commit(); const rb3 = t3.rollback(); const an3 = t3.announce(); await flush(); rel3(); ctl.gate = null;
+    const c1 = t3.commit(); const rb3 = t3.rollback(); const an3 = t3.announce(); await until(() => ctl.writes >= 1); rel3(); ctl.gate = null;
     assert.equal(await an3, false); await c1; assert.equal(await rb3, true); assert.equal(t3.final, false); assert.equal(c.system.forcePoints.value, 3); assert.equal(present.chats, 0);
     // reverse ordering: announce / finalize first make the use final, so a later rollback is refused
     reset(); installPresentation(); const d = mk(); const t4 = tx(d); await t4.commit(); const an4 = t4.announce();

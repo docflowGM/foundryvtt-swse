@@ -10,6 +10,7 @@ import { readFile } from 'node:fs/promises';
 
 const rollCore = await readFile(new URL('../scripts/engine/roll/roll-core.js', import.meta.url), 'utf8');
 const coordinator = await readFile(new URL('../scripts/engine/force/force-point-spend-coordinator.js', import.meta.url), 'utf8');
+const spendReceipt = await readFile(new URL('../scripts/engine/force/force-point-spend-receipt.js', import.meta.url), 'utf8');
 const forcePointsService = await readFile(new URL('../scripts/engine/force/force-points-service.js', import.meta.url), 'utf8');
 const swseInitiative = await readFile(new URL('../scripts/engine/combat/SWSEInitiative.js', import.meta.url), 'utf8');
 const forceExecutor = await readFile(new URL('../scripts/engine/force/force-executor.js', import.meta.url), 'utf8');
@@ -23,19 +24,22 @@ assert.doesNotMatch(rollCore, /ForcePointsService\.canSpend/, 'RollCore must not
 // 2. RollCore must refund a Force Point already spent if the main check roll
 //    (not just the Force die) subsequently fails to execute.
 assert.match(rollCore, /forcePointDetails\?\.success && forcePointDetails\.spent > 0/);
-assert.match(rollCore, /_refundForcePoints\(actor, forcePointDetails\.spent, 'main-roll-execution-failed'\)/);
+assert.match(rollCore, /_refundForcePoints\(actor, forcePointDetails\.spent, 'main-roll-execution-failed'(, forcePointDetails)?\)/);
 
 // 3. The coordinator must validate before spending, spend through
 //    ActorEngine (the sole mutation authority), roll after paying, and roll
 //    back via ActorEngine.gainForcePoints if the die roll fails.
 assert.match(coordinator, /ForcePointsService\.validateSpend\(/);
 assert.match(coordinator, /ActorEngine\.spendForcePoints\(actor, requested\)/);
-assert.match(coordinator, /ActorEngine\.gainForcePoints\(actor, amount\)/);
+// (TI-1: the refund moved into the shared spend-receipt module the coordinator calls via _safeRefund -> giveBack; still ActorEngine, still relative)
+assert.match(coordinator, /giveBack\(ActorEngine, actor, receipt\)/);
+assert.match(spendReceipt, /ActorEngine\.gainForcePoints\(actor, receipt\.spentNormal\)/);
 assert.match(coordinator, /rolling back spend/);
 
 // 4. The receipt must never claim `spent` beyond what was actually deducted;
 //    a failure receipt reports spent: 0, not the requested amount.
-assert.match(coordinator, /spent:\s*0,\s*\n\s*before,\s*\n\s*after,/);
+// (TI-1: `spent` defaults to 0 and is non-zero only when a refund FAILED, i.e. exactly what is still deducted)
+assert.match(coordinator, /spent = 0 \}\) \{\s*\n\s*return \{\s*\n\s*success: false,\s*\n\s*requested,\s*\n\s*spent,/);
 
 // 5. ForcePointsService remains the pure rules/calculation authority — no
 //    mutation methods live there.
