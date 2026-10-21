@@ -1566,6 +1566,49 @@ export class TransactionEngine {
   }
 
   /**
+   * TI4-C0/G20 — inspect the CURRENT, authoritative state of a rollback's source transaction on the live actor.
+   * Returns null when the rollback may proceed, otherwise a refusal `{ code, error, ... }`. Never throws. Reads the actor's flags (the stored record),
+   * never a caller-supplied transaction object or UI flag such as `canRollback`.
+   *
+   * - empty/absent `sourceTransactionId`: nothing to check (legitimate source-less correction).
+   * - id that is not a plain string, or that contains '.', or is a prototype property: `SOURCE_TRANSACTION_ID_INVALID`
+   *   (the id becomes part of a flag path; a '.' would nest it and a missing record would be silently materialised as a stub).
+   * - no record / non-object record: `SOURCE_TRANSACTION_NOT_FOUND` / `SOURCE_TRANSACTION_MALFORMED` (fail closed: the engine would otherwise create a
+   *   stub source record when marking it).
+   * - record already `Rolled Back`: `SOURCE_TRANSACTION_ALREADY_ROLLED_BACK` (its first rollback's id is reported, never overwritten).
+   * Same-client only; this is not compare-and-swap.
+   */
+  static #sourceRollbackRefusal(actor, sourceTransactionId) {
+    if (sourceTransactionId === undefined || sourceTransactionId === null || sourceTransactionId === '') return null;
+    if (typeof sourceTransactionId !== 'string' || !sourceTransactionId.trim() || sourceTransactionId.includes('.') || sourceTransactionId !== sourceTransactionId.trim()
+      || ['__proto__', 'constructor', 'prototype'].includes(sourceTransactionId)) {
+      return { code: 'SOURCE_TRANSACTION_ID_INVALID', error: 'Rollback refused: the source transaction id is not valid.' };
+    }
+    let records;
+    try {
+      records = actor.getFlag?.('foundryvtt-swse', 'transactions') || actor.flags?.['foundryvtt-swse']?.transactions || {};
+    } catch (_err) {
+      records = actor.flags?.['foundryvtt-swse']?.transactions || {};
+    }
+    if (!records || typeof records !== 'object' || !Object.prototype.hasOwnProperty.call(records, sourceTransactionId)) {
+      return { code: 'SOURCE_TRANSACTION_NOT_FOUND', error: `Rollback refused: source transaction ${sourceTransactionId} was not found on this actor.` };
+    }
+    const record = records[sourceTransactionId];
+    if (!record || typeof record !== 'object' || Array.isArray(record)) {
+      return { code: 'SOURCE_TRANSACTION_MALFORMED', error: `Rollback refused: source transaction ${sourceTransactionId} has a malformed record.` };
+    }
+    if (String(record.status ?? '').trim().toLowerCase() === 'rolled back') {
+      return {
+        code: 'SOURCE_TRANSACTION_ALREADY_ROLLED_BACK',
+        alreadyRolledBack: true,
+        rolledBackByTransactionId: record.rolledBackByTransactionId ?? null,
+        error: `Rollback refused: source transaction ${sourceTransactionId} was already rolled back${record.rolledBackByTransactionId ? ` by ${record.rolledBackByTransactionId}` : ''}.`
+      };
+    }
+    return null;
+  }
+
+  /**
    * Execute a GM rollback/reconciliation through the TransactionEngine.
    *
    * This is the canonical rollback path for store credit movement. It can also
@@ -1619,6 +1662,13 @@ export class TransactionEngine {
 
     let snapshotId = null;
     try {
+      // TI4-C0/G20: the source transaction's authoritative state is checked INSIDE the lock, before any snapshot or mutation.
+      const sourceRefusal = this.#sourceRollbackRefusal(freshActor, sourceTransactionId);
+      if (sourceRefusal) {
+        swseLogger.warn('TransactionEngine: Rollback reconciliation refused', { transactionId, sourceTransactionId, code: sourceRefusal.code });
+        return { success: false, transactionId, ...sourceRefusal };
+      }
+
       const creditsBefore = LedgerService.getCurrentCredits(freshActor);
       const creditsAfter = normalizeCredits(creditsBefore + normalizedAmount);
       if (creditsAfter < 0) {
@@ -1688,6 +1738,14 @@ export class TransactionEngine {
           sourceTransactionId,
           error: snapshotError.message
         });
+      }
+
+      // TI4-C0/G20: the snapshot above was awaited; re-read the live source record so a rollback that landed meanwhile is not replayed.
+      // (Same-client protection only — not compare-and-swap; another client can still race this.)
+      const lateRefusal = this.#sourceRollbackRefusal(freshActor, sourceTransactionId);
+      if (lateRefusal) {
+        swseLogger.warn('TransactionEngine: Rollback reconciliation refused before applying (source changed during preparation)', { transactionId, sourceTransactionId, code: lateRefusal.code });
+        return { success: false, transactionId, ...lateRefusal };
       }
 
       await ActorEngine.applyMutationPlan(freshActor, mutationPlan, {
