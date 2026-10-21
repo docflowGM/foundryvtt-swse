@@ -222,6 +222,94 @@ export class GMStoreOperationsService {
    * removal is folded into the same actor mutation plan. Inventory quantity
    * restoration happens only after the TransactionEngine rollback succeeds.
    */
+  /**
+   * TI4-C0/G21 — can this AUTHORITATIVE ledger record (as returned by TransactionEngine.getActorTransactions) be rolled back from a GM interface?
+   * Pure. Mirrors the datapad's row rule (a rollback/correction record, an already-rolled-back source and a zero-credit-impact record are not
+   * reversible) and additionally requires a stable transaction id. G20's engine guard remains the final replay defence.
+   *
+   * @param {object} tx - a normalized TransactionEngine ledger record
+   * @returns {{canRollback: boolean, reason: string|null}}
+   */
+  static rollbackability(tx = {}) {
+    const id = String(tx?.transactionId ?? tx?.id ?? '').trim();
+    if (!id) return { canRollback: false, reason: 'no-transaction-id' };
+    const context = String(tx?.context || '');
+    if (context.includes('rollback') || context.includes('correction') || tx?.rollbackOf) return { canRollback: false, reason: 'rollback-record' };
+    if (String(tx?.status ?? '').trim().toLowerCase() === 'rolled back' || tx?.rolledBackByTransactionId) return { canRollback: false, reason: 'already-rolled-back' };
+    if (!Number.isFinite(Number(tx?.amount)) || Number(tx.amount) === 0) return { canRollback: false, reason: 'no-credit-impact' };
+    return { canRollback: true, reason: null };
+  }
+
+  /**
+   * TI4-C0/G21 — stable-id entry point to the canonical rollback (used by the legacy GM Store Dashboard, whose rows are addressed by transaction id
+   * and actor id, never by a rendered array index). Resolves the intended transaction from the CURRENT TransactionEngine ledger of the named actor,
+   * fails closed on a missing, ambiguous, mismatched or non-reversible record, and then runs the unchanged canonical `rollbackTransaction` (its
+   * confirmation/reconciliation preview, Item reconciliation, inventory-policy restore and the G20-guarded engine call).
+   *
+   * `canRollback` on the row handed to the canonical service is DERIVED from the authoritative record by `rollbackability()` — never taken from a
+   * caller or a rendered row.
+   *
+   * @param {string} transactionId
+   * @param {string} actorId
+   * @param {{render?: Function}} [context]
+   */
+  static async rollbackTransactionById(transactionId, actorId, context = {}) {
+    if (!game.user?.isGM) {
+      ui?.notifications?.error?.('Only a GM can roll back store transactions.');
+      return { success: false, error: 'gm-required' };
+    }
+    const id = typeof transactionId === 'string' ? transactionId.trim() : '';
+    const aid = typeof actorId === 'string' ? actorId.trim() : '';
+    if (!id || !aid) {
+      ui?.notifications?.error?.('Cannot roll back: the transaction identity is missing or invalid.');
+      return { success: false, error: 'invalid-transaction-identity' };
+    }
+    const actor = game.actors.get(aid);
+    if (!actor) {
+      ui?.notifications?.error?.('Actor not found');
+      return { success: false, error: 'actor-not-found' };
+    }
+    const matches = TransactionEngine.getActorTransactions(actor, { includeZeroCost: true })
+      .filter(tx => String(tx.transactionId ?? tx.id ?? '').trim() === id);
+    if (matches.length === 0) {
+      ui?.notifications?.error?.('That transaction is no longer in this actor\'s ledger; refresh the dashboard.');
+      return { success: false, error: 'transaction-not-found' };
+    }
+    if (matches.length > 1) {
+      ui?.notifications?.error?.('That transaction id is ambiguous in the ledger; it cannot be rolled back automatically.');
+      return { success: false, error: 'transaction-ambiguous' };
+    }
+    const tx = matches[0];
+    if (tx.actorId && tx.actorId !== actor.id) {
+      ui?.notifications?.error?.('That transaction belongs to a different actor; refresh the dashboard.');
+      return { success: false, error: 'transaction-actor-mismatch' };
+    }
+    const { canRollback, reason } = this.rollbackability(tx);
+    if (!canRollback) {
+      const text = reason === 'already-rolled-back'
+        ? `This transaction was already rolled back${tx.rolledBackByTransactionId ? ` (by ${tx.rolledBackByTransactionId})` : ''}.`
+        : (reason === 'rollback-record' ? 'A rollback/correction record cannot itself be rolled back.'
+          : (reason === 'no-credit-impact' ? 'This transaction has no credit impact to roll back.' : 'This transaction cannot be rolled back.'));
+      ui?.notifications?.warn?.(text);
+      return { success: false, error: reason };
+    }
+    const row = {
+      transactionId: id,
+      timestamp: tx.timestamp,
+      actor: tx.actorName,
+      actorId: actor.id,
+      type: tx.type,
+      item: tx.itemName,
+      amount: tx.amount,
+      context: tx.context,
+      audit: tx.audit || {},
+      status: tx.status,
+      canRollback: true,
+      canReverse: true
+    };
+    return this.rollbackTransaction(0, { ...context, transactions: [row] });
+  }
+
   static async rollbackTransaction(index, context = {}) {
     const transactions = Array.isArray(context.transactions) ? context.transactions : [];
 

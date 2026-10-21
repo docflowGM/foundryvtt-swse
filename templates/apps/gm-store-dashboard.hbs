@@ -67,10 +67,14 @@
               </td>
               <td><span class="source-badge">{{this.source}}</span></td>
               <td>
-                <button class="action-btn swse-ui-button" data-action="reverse-transaction" data-index="{{@index}}"
-                        title="Adjust credits for this transaction. This is a ledger correction only — inventory items are not affected. Use to fix credit mistakes.">
-                  Adjust Credits
+                {{#if this.canRollback}}
+                <button class="action-btn swse-ui-button" data-action="reverse-transaction" data-transaction-id="{{this.transactionId}}" data-actor-id="{{this.actorId}}"
+                        title="Roll back this transaction through the GM store rollback. You will see a preview first: it adjusts the actor's credits and can also remove the owned Items the transaction granted. A transaction can only be rolled back once.">
+                  Roll Back
                 </button>
+                {{else}}
+                <span class="source-badge">{{#if this.rolledBackByTransactionId}}Rolled Back{{else}}{{#if (eq this.status "Rolled Back")}}Rolled Back{{else}}—{{/if}}{{/if}}</span>
+                {{/if}}
               </td>
             </tr>
           {{/each}}
