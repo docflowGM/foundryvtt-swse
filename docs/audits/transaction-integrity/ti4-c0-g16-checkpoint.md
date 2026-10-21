@@ -27,7 +27,7 @@ Evidence level: **L1** (offline, single client, real holonet functions over reco
 - `messenger-maintenance-service`: records with an `indeterminate` credit transfer (or request entry) are not prune candidates.
 - Not changed: `TransactionEngine`, rules, UI templates, GM dashboards, the trade saga.
 
-## 4. Tests — `tests/ti4c0-g16-holonet-credit-evidence.test.mjs` (15 checks)
+## 4. Tests — `tests/ti4c0-g16-holonet-credit-evidence.test.mjs` (21 checks after correction 1; 15 at the first submission)
 
 Real `HolonetMessengerService` functions; `TransactionEngine.executeCreditTransfer/executeCreditAdjustment` return the exact shapes `transaction-engine.js` produces (plain, compensated, rollbackFailed with restore evidence, unresolved recipient leg, indeterminate debit, grant rollbackFailed); `HolonetStorage` and publish helpers are recorded stubs.
 
@@ -36,9 +36,19 @@ Coverage: request × {rollbackFailed, unresolved credit, indeterminate debit}; d
 
 Mutation checks (each reverted): terminal guard without `indeterminate` → 1 failure; request status written as `failed` → 4; evidence not stored on the entry → 5; `rollbackFailed` not classified INDETERMINATE → 4; label shown as "Failed" → 1; direct transfer status written as `failed` → 5; maintenance protection removed → 1.
 
+## 4a. Review correction 1 — later actions on an unresolved request entry
+
+Independent review of `d598d6ba1` found that `decline-credit-request` only checked that the entry existed, so a stale or hostile decline could rewrite an `indeterminate` entry to `declined`, defeating the maintenance protection and the evidence retention; `cancel-credit-request` could likewise present a request with an unresolved entry as `cancelled`.
+
+- **Backend (not UI) enforcement** in `_gmResolveCreditRequest`: `decline-credit-request` is refused unless the targeted entry is still `pendingRecipient`; `pay-credit-request` already refused every non-pending entry (now pinned by a test over `indeterminate/failed/complete/declined/cancelled`); `cancel-credit-request` is refused while any entry is `indeterminate` (fail closed — the request cannot be made to look resolved). A refused action returns `false` and does not save the record, publish any message or call the engine; the entry's status, `failureReason`, `transferEvidence` and ids stay intact.
+- View model: `canCancel` is false while any entry is `indeterminate`.
+- Unchanged: a still-pending entry can be declined (including the other payer's pending entry on a request that has an indeterminate entry), an ordinary request can be cancelled, payments and compensated/plain-failure behaviour. One behaviour change to note: a `failed` entry could previously be re-labelled `declined`; it is now final like the other non-pending statuses (the directive requires "refuse unless `pendingRecipient`").
+- Tests: 6 added (21 total). **Fail-before** on `d598d6ba1`: 17/21 passed (decline rewrote the indeterminate entry and the pruner then no longer protected it; cancel concealed it; the view model offered cancel). **After:** 21/21. Mutation checks (each reverted): decline allowed for any existing entry → 2 failures; cancel allowed with an unresolved entry → 1; view model ignores unresolved → 1.
+- Not changed: `TransactionEngine`, storage architecture, other maintenance rules, the trade saga. No reconciliation operation exists; an `indeterminate` entry stays unresolved until a separately authorized process establishes its outcome.
+
 ## 5. Verification
 
-G16 15/15; `ti2-commerce-integrity` passes; rolling suite `Result: 388 passed, 0 failed (of 388 run; 5 excluded as documented pre-existing failures)`; guards 26 of 27 pass locally; `validate-partials`, `system.json` parse and the rolling syntax check (2881 files) pass; `git diff --check` clean. The guard `node tools/migrate-phase-5c-weapon-references.mjs --check` crashes only in a local git worktree (`ENOTDIR … .git/index`) and is verified in exact-head CI, not reported as locally passing.
+G16 21/21; `ti2-commerce-integrity` passes; rolling suite `Result: 388 passed, 0 failed (of 388 run; 5 excluded as documented pre-existing failures)`; guards 26 of 27 pass locally; `validate-partials`, `system.json` parse and the rolling syntax check (2881 files) pass; `git diff --check` clean. The guard `node tools/migrate-phase-5c-weapon-references.mjs --check` crashes only in a local git worktree (`ENOTDIR … .git/index`) and is verified in exact-head CI, not reported as locally passing.
 
 ## 6. Remaining limitations (not certified)
 

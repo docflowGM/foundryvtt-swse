@@ -2016,7 +2016,7 @@ export class HolonetMessengerService {
         remainingLabel: formatCredits(Math.max(0, amount - paid)),
         canPay: Boolean(ownEntry && ownEntry.status === 'pendingRecipient' && !isGm),
         canDeclineRequest: Boolean(ownEntry && ownEntry.status === 'pendingRecipient' && !isGm),
-        canCancel: Boolean((transfer.requesterRecipientId === participantId || isGm) && !complete),
+        canCancel: Boolean((transfer.requesterRecipientId === participantId || isGm) && !complete && !entries.some(entry => entry.status === 'indeterminate')),
         isResolved: complete
       };
     }
@@ -4138,7 +4138,9 @@ export class HolonetMessengerService {
     const entry = safeArray(transfer.entries).find(e => e.recipientId === currentId || (actor?.id && e.actorId === actor.id));
     if (!entry && !requesterIsGm) return false;
     if (action === 'decline-credit-request') {
-      if (!entry) return false;
+      // TI4-C0/G16: only a still-pending entry can be declined. An 'indeterminate' (unresolved credit movement), 'failed', 'complete' or already
+      // resolved entry is final here — declining it would rewrite the status and defeat the unresolved-evidence protection.
+      if (!entry || entry.status !== 'pendingRecipient') return false;
       entry.status = 'declined';
       entry.resolvedAt = nowIso();
       entry.resolvedBy = currentId;
@@ -4148,6 +4150,8 @@ export class HolonetMessengerService {
     }
     if (action === 'cancel-credit-request') {
       if (!requesterIsGm && currentId !== transfer.requesterRecipientId) return false;
+      // TI4-C0/G16: fail closed — a request with an unresolved (indeterminate) entry cannot be cancelled; cancelling would present it as resolved.
+      if (safeArray(transfer.entries).some(item => item?.status === 'indeterminate')) return false;
       transfer.status = 'cancelled';
       for (const item of safeArray(transfer.entries)) {
         if (item.status === 'pendingRecipient') item.status = 'cancelled';

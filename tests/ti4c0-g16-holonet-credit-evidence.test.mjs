@@ -217,6 +217,99 @@ await check('display: a plain failed transfer is still labelled Failed', async (
 });
 
 /* ---------------------------------------------------------------------------------------------- */
+/* review correction 1 (R1): an INDETERMINATE request entry is protected from later actions             */
+/* ---------------------------------------------------------------------------------------------- */
+const declineRequest = () => Svc._gmResolveCreditRequest({ thread, recordId: 'msg1', action: 'decline-credit-request', actorId: 'payer', senderRecipientId: 'r-payer' });
+const cancelRequest = () => Svc._gmResolveCreditRequest({ thread, recordId: 'msg1', action: 'cancel-credit-request', actorId: 'payer', senderRecipientId: 'r-payer' });
+/** Two-entry request: payer 1 becomes indeterminate (rollbackFailed); payer 2 stays pendingRecipient. */
+async function indeterminateRequest() {
+  install(SHAPES.rollbackFailed); requestMessage();
+  out.message.metadata.creditTransfer.entries.push({ id: 'e2', recipientId: 'r-other', actorId: 'other', label: 'Other', amount: 50, status: 'pendingRecipient' });
+  await payRequest();
+  out.message = clone(out.saved.at(-1));
+  assert.equal(out.message.metadata.creditTransfer.entries[0].status, 'indeterminate', 'precondition');
+  out.saved.length = 0; out.system.length = 0;
+  return clone(out.message.metadata.creditTransfer.entries[0]);
+}
+
+await check('R1: decline-credit-request on an INDETERMINATE entry is refused; entry, evidence and record stay untouched; no event, no engine call', async () => {
+  const before = await indeterminateRequest();
+  const calls = out.calls.transfer + out.calls.adjust;
+  const ok = await declineRequest();
+  assert.equal(ok, false);
+  assert.deepEqual(out.message.metadata.creditTransfer.entries[0], before, 'entry (status, failureReason, full transferEvidence) unchanged');
+  assert.equal(out.saved.length, 0, 'the record was not saved again');
+  assert.equal(out.system.length, 0, 'no decline (or other) system message');
+  assert.equal(out.calls.transfer + out.calls.adjust, calls, 'no engine call');
+});
+
+await check('R1: pay-credit-request still refuses every non-pending entry (indeterminate, failed, complete, declined)', async () => {
+  for (const status of ['indeterminate', 'failed', 'complete', 'declined', 'cancelled']) {
+    install(SHAPES.plain); requestMessage(); out.message.metadata.creditTransfer.entries[0].status = status;
+    const ok = await payRequest();
+    assert.equal(ok, false, status);
+    assert.equal(out.calls.transfer, 0, `${status}: no engine call`);
+    assert.equal(out.saved.length, 0, `${status}: nothing saved`);
+  }
+});
+
+await check('R1: the pruner still protects the record after a rejected decline', async () => {
+  await indeterminateRequest();
+  await declineRequest();
+  const { MessengerMaintenanceService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/messenger-maintenance-service.js');
+  const mk = (n, extra = {}) => ({ id: `m${n}`, type: 'message', sourceFamily: 'messenger', createdAt: new Date(2024, 0, 1, 0, n).toISOString(), metadata: { threadId: 'th1', ...extra } });
+  const records = [mk(0, { creditTransfer: out.message.metadata.creditTransfer }), ...Array.from({ length: 27 }, (_, i) => mk(i + 1))];
+  const th = { id: 'th1', messageIds: records.map((r) => r.id), metadata: {} };
+  const realThreads = HolonetStorage.getAllThreads; const realRecords = HolonetStorage.getAllRecords;
+  HolonetStorage.getAllThreads = async () => [th]; HolonetStorage.getAllRecords = async () => records;
+  try {
+    const res = await MessengerMaintenanceService.pruneThreadMessages({ keepPerThread: 25, dryRun: true });
+    assert.ok(!(res.candidates ?? []).flatMap((c) => c.removeIds).includes('m0'), 'record with an indeterminate entry is retained');
+  } finally { HolonetStorage.getAllThreads = realThreads; HolonetStorage.getAllRecords = realRecords; }
+});
+
+await check('R1: cancel-credit-request is refused while any entry is INDETERMINATE (cannot conceal the unresolved state)', async () => {
+  const before = await indeterminateRequest();
+  const snapshot = clone(out.message.metadata.creditTransfer);
+  const ok = await cancelRequest();
+  assert.equal(ok, false);
+  assert.deepEqual(out.message.metadata.creditTransfer, snapshot, 'transfer status and every entry unchanged');
+  assert.equal(out.message.metadata.creditTransfer.entries[0].status, 'indeterminate');
+  assert.equal(out.saved.length, 0);
+  assert.equal(out.system.length, 0, 'no "cancelled" announcement');
+});
+
+await check('R1: the view model offers no cancel (or pay/decline on the unresolved entry) while an entry is INDETERMINATE', async () => {
+  await indeterminateRequest();
+  const tr = out.message.metadata.creditTransfer;
+  const vmGm = Svc._creditTransferVm({ id: 'msg1' }, tr, { id: 'payer' }, 'r-payer');
+  assert.equal(vmGm.hasUnresolved, true);
+  assert.equal(vmGm.canCancel, false, 'no ordinary cancellation of an unresolved request');
+  assert.equal(vmGm.canPay, false);
+  assert.equal(vmGm.canDeclineRequest, false);
+  assert.match(vmGm.statusLabel, /unresolved|review/i);
+});
+
+await check('R1: unrelated, still-pending entries behave as before (a pending entry can be declined; a request with no unresolved entry can be cancelled)', async () => {
+  // the OTHER payer's pending entry on a request that also has an indeterminate entry can still be declined
+  await indeterminateRequest();
+  const okDecline = await Svc._gmResolveCreditRequest({ thread, recordId: 'msg1', action: 'decline-credit-request', actorId: 'other', senderRecipientId: 'r-other' });
+  assert.equal(okDecline, true);
+  const entries = out.saved.at(-1).metadata.creditTransfer.entries;
+  assert.equal(entries[0].status, 'indeterminate', 'the unresolved entry is untouched');
+  assert.equal(entries[1].status, 'declined');
+  // an ordinary pending request: decline works, and cancel works
+  install(SHAPES.plain); requestMessage();
+  assert.equal(await declineRequest(), true);
+  assert.equal(lastEntry().status, 'declined');
+  install(SHAPES.plain); requestMessage();
+  assert.equal(await cancelRequest(), true);
+  assert.equal(out.saved.at(-1).metadata.creditTransfer.status, 'cancelled');
+  const vm = Svc._creditTransferVm({ id: 'msg1' }, out.message.metadata.creditTransfer, { id: 'payer' }, 'r-payer');
+  assert.equal(vm.hasUnresolved, false);
+});
+
+/* ---------------------------------------------------------------------------------------------- */
 /* retention: unresolved credit records (the only copy of the reconciliation evidence) are not pruned    */
 /* ---------------------------------------------------------------------------------------------- */
 await check('maintenance: an INDETERMINATE credit transfer / request record is never a prune candidate (a plain failed one still is)', async () => {
