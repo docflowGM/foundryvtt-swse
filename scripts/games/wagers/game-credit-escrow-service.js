@@ -165,16 +165,27 @@ function deriveRefundStates(credits = {}) {
   const history = Array.isArray(credits.refunds) ? credits.refunds : [];
   const ledger = credits.refundLedger && typeof credits.refundLedger === 'object' ? credits.refundLedger : {};
   const keyCounts = new Map();
-  for (const entry of entries) keyCounts.set(refundEntryKey(entry), (keyCounts.get(refundEntryKey(entry)) || 0) + 1);
+  const seatCounts = new Map();
+  const debitIds = new Set();
+  for (const entry of entries) {
+    keyCounts.set(refundEntryKey(entry), (keyCounts.get(refundEntryKey(entry)) || 0) + 1);
+    seatCounts.set(entry.seatId, (seatCounts.get(entry.seatId) || 0) + 1);
+    if (entry.transactionId) debitIds.add(String(entry.transactionId));
+  }
 
   return entries.map(entry => {
     const key = refundEntryKey(entry);
-    const base = { key, entry, seatId: entry.seatId, actorId: entry.actorId ?? null, amount: safeAmount(entry.amount), debitTransactionId: entry.transactionId ?? null };
+    const amount = safeAmount(entry.amount);
+    const base = { key, entry, seatId: entry.seatId, actorId: entry.actorId ?? null, amount, debitTransactionId: entry.transactionId ?? null };
     if (keyCounts.get(key) > 1) return { ...base, status: 'review', reason: 'ambiguous-entry-identity' };
 
     const led = ledger[key];
     if (led) {
-      if (led.seatId !== entry.seatId || (led.actorId && entry.actorId && led.actorId !== entry.actorId)) return { ...base, status: 'review', reason: 'ledger-identity-mismatch', ledger: led };
+      // A ledger record is evidence only for the debit it names: debit id, seat, actor and amount must all agree with the entry.
+      if (led.seatId !== entry.seatId
+        || (led.actorId && entry.actorId && led.actorId !== entry.actorId)
+        || (led.debitTransactionId ?? null) !== (entry.transactionId ?? null)
+        || safeAmount(led.amount) !== amount) return { ...base, status: 'review', reason: 'ledger-identity-mismatch', ledger: led };
       if (led.status === 'refunded') return led.refundTransactionId ? { ...base, status: 'refunded', refundTransactionId: led.refundTransactionId, ledger: led } : { ...base, status: 'review', reason: 'refunded-without-transaction-id', ledger: led };
       if (led.status === 'failed') return { ...base, status: 'failed', ledger: led };
       if (led.status === 'indeterminate') return { ...base, status: 'indeterminate', reason: 'unresolved-refund-outcome', ledger: led };
@@ -182,14 +193,38 @@ function deriveRefundStates(credits = {}) {
       return { ...base, status: 'review', reason: 'unknown-ledger-status', ledger: led };
     }
 
-    const records = history.filter(record => record && typeof record === 'object' && record.seatId === entry.seatId
-      && (!record.actorId || !entry.actorId || record.actorId === entry.actorId));
-    const classes = records.map(classifyRefundRecord);
-    const successes = records.filter((_record, index) => classes[index] === 'refunded');
+    // Legacy history (no ledger). A seat is NOT an identity: a record counts for this debit only if it can be attributed to it unambiguously.
+    //   - a record naming a debit id: it belongs to the entry with that id (a foreign id that matches no entry is unattributable evidence: review);
+    //   - a record without one: attributable only when the seat has exactly one escrow entry AND actor and amount agree with it.
+    // Any record on this seat that is in conflict (or unattributable) sends the entry to review — it is never ignored as "no refund attempted".
+    const attributed = [];
+    let conflict = null;
+    for (const record of history) {
+      if (!record || typeof record !== 'object') continue;
+      const named = record.debitTransactionId ? String(record.debitTransactionId) : null;
+      if (named) {
+        if (entry.transactionId && named === String(entry.transactionId)) {
+          if (record.seatId !== entry.seatId
+            || (record.actorId && entry.actorId && record.actorId !== entry.actorId)
+            || (record.amount !== undefined && record.amount !== null && safeAmount(record.amount) !== amount)) conflict ??= 'refund-evidence-identity-conflict';
+          else attributed.push(record);
+        } else if (!debitIds.has(named) && record.seatId === entry.seatId) {
+          conflict ??= 'refund-evidence-for-unknown-debit';
+        }
+        continue;                                    // names another existing entry's debit: it is that entry's evidence
+      }
+      if (record.seatId !== entry.seatId) continue;
+      if (seatCounts.get(entry.seatId) !== 1) { conflict ??= 'refund-evidence-not-attributable-to-one-debit'; continue; }
+      if ((record.actorId && entry.actorId && record.actorId !== entry.actorId) || (record.amount !== undefined && record.amount !== null && safeAmount(record.amount) !== amount)) { conflict ??= 'refund-evidence-identity-conflict'; continue; }
+      attributed.push(record);
+    }
+    if (conflict) return { ...base, status: 'review', reason: conflict };
+    const classes = attributed.map(classifyRefundRecord);
+    const successes = attributed.filter((_record, index) => classes[index] === 'refunded');
     if (successes.length) return { ...base, status: 'refunded', refundTransactionId: successes[0].transactionId, duplicateRefunds: successes.length > 1 ? successes.length : 0 };
     if (classes.includes('indeterminate')) return { ...base, status: 'indeterminate', reason: 'unresolved-refund-outcome' };
     if (classes.includes('review')) return { ...base, status: 'review', reason: 'missing-or-malformed-refund-evidence' };
-    if (records.length) return { ...base, status: 'failed' };
+    if (attributed.length) return { ...base, status: 'failed' };
     return { ...base, status: 'pending' };
   });
 }
@@ -204,10 +239,24 @@ function payoutRefundBlockers(credits = {}) {
   }
   const payouts = Array.isArray(credits.payouts) ? credits.payouts : [];
   const rollbacks = Array.isArray(credits.payoutRollbacks) ? credits.payoutRollbacks : [];
+  // A payout counts as reversed only by a SUCCESSFUL rollback that can be matched to THAT payout, each rollback used once:
+  //   - a rollback that names the payout it reverses (`rollbackOfTransactionId`) matches only that payout;
+  //   - an older rollback without it matches only when seat, actor and amount (-approvedPayout) all agree.
+  // A reversal of another payout on the same seat is not proof; anything unmatched blocks the refund.
+  const available = rollbacks.filter(rollback => rollback && rollback.success === true);
+  const paid = payouts.filter(entry => entry?.success === true);
+  const unmatched = [];
+  const take = (predicate) => { const index = available.findIndex(predicate); if (index < 0) return false; available.splice(index, 1); return true; };
+  const pending = paid.filter(entry => !take(rollback => rollback.rollbackOfTransactionId && entry.transactionId && String(rollback.rollbackOfTransactionId) === String(entry.transactionId) && rollback.seatId === entry.seatId));
+  for (const entry of pending) {
+    const expected = safeAmount(entry.approvedPayout ?? entry.amount);
+    const matched = take(rollback => !rollback.rollbackOfTransactionId && rollback.seatId === entry.seatId
+      && (!rollback.actorId || !entry.actorId || rollback.actorId === entry.actorId) && expected > 0 && Number(rollback.amount) === -expected);
+    if (!matched) unmatched.push(entry);
+  }
+  for (const entry of unmatched) blockers.push(`the payout to ${entry.seatId} is not recorded as rolled back`);
   for (const entry of payouts) {
-    if (entry?.success === true) {
-      if (!rollbacks.some(rollback => rollback && rollback.success === true && rollback.seatId === entry.seatId)) blockers.push(`the payout to ${entry.seatId} is not recorded as rolled back`);
-    } else if (entry?.rollbackFailed === true || entry?.indeterminate === true) blockers.push(`the payout to ${entry?.seatId ?? 'a seat'} is unresolved`);
+    if (entry?.success !== true && (entry?.rollbackFailed === true || entry?.indeterminate === true)) blockers.push(`the payout to ${entry?.seatId ?? 'a seat'} is unresolved`);
   }
   if (rollbacks.some(rollback => rollback && rollback.success !== true)) blockers.push('a payout rollback failed');
   return blockers;
@@ -290,7 +339,7 @@ async function rollbackAppliedCreditPayouts(session = {}, payouts = [], reason =
         })
       }
     }, { source });
-    rollbacks.push({ ...rollback, actorId: actor.id, actorName: actor.name, seatId: payout.seatId, amount: -amount });
+    rollbacks.push({ ...rollback, actorId: actor.id, actorName: actor.name, seatId: payout.seatId, amount: -amount, rollbackOfTransactionId: payout.transactionId ?? null });
   }
   return rollbacks;
 }
@@ -1018,11 +1067,14 @@ export class GameCreditEscrowService {
    * `session.escrow.credits.refunds`. L1 only: single client, no exactly-once or durable-receipt guarantee.
    */
   static async refundSession(session = {}, reason = 'Game cancelled') {
-    const profile = getCreditProfile(session);
-    if (!profile.enabled) return { ok: true, skipped: true, session };
     const sessionId = String(session?.id || '');
+    // The CURRENT stored session decides whether this is a credit wager at all; the caller's copy is consulted only when nothing is stored.
     const current0 = sessionId ? GameSessionStore.getSession(sessionId) : null;
-    if (!current0) return { ok: false, error: 'This game session is not in the session store; the refund was refused.', session };
+    if (!current0) {
+      if (!getCreditProfile(session).enabled) return { ok: true, skipped: true, session };   // a genuine non-credit game: nothing to refund
+      return { ok: false, error: 'This game session is not in the session store; the refund was refused.', session };
+    }
+    if (!getCreditProfile(current0).enabled) return { ok: true, skipped: true, session: current0 };
     if (refundsInFlight.has(sessionId)) return { ok: false, error: 'A refund for this game session is already in progress.', session: current0 };
     refundsInFlight.add(sessionId);
     try {

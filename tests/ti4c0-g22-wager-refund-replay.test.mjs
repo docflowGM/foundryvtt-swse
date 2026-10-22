@@ -318,7 +318,7 @@ await check('16. payout-failed with UNRESOLVED payout activity is not refunded (
     assert.equal(stored().escrow.credits.status, 'payout-failed', 'the unresolved payout state is preserved');
   }
   // a payout that WAS rolled back successfully leaves the buy-in refundable
-  const ok = install({ status: 'payout-failed', escrowExtra: { payouts: [{ success: true, transactionId: 'p1', seatId: 'seat_A', actorId: 'A', approvedPayout: 150 }], payoutRollbacks: [{ success: true, transactionId: 'pr1', seatId: 'seat_A' }] } });
+  const ok = install({ status: 'payout-failed', escrowExtra: { payouts: [{ success: true, transactionId: 'p1', seatId: 'seat_A', actorId: 'A', approvedPayout: 150 }], payoutRollbacks: [{ success: true, transactionId: 'pr1', seatId: 'seat_A', actorId: 'A', amount: -150 }] } });
   assert.equal((await Svc.refundSession(ok, 'cancelled')).ok, true);
 });
 
@@ -345,6 +345,163 @@ await check('18. concurrent refunds of the same session in one client do not int
   assert.equal(second.ok, false);
   assert.match(String(second.error), /in progress/i);
   assert.equal(refundCalls('A').length, 1); assert.equal(refundCalls('B').length, 1);
+});
+
+/* ---------------------------------------------------------------------------------------------- */
+/* review correction 1: refund / payout evidence must belong to the debit being evaluated              */
+/* ---------------------------------------------------------------------------------------------- */
+const patchStored = (fn) => { const w = stored(); fn(w.escrow.credits, w); world.sessions = [w]; };
+const statusOf = (key) => stored().escrow.credits.refundLedger?.[key]?.status;
+
+await check('C1-R1a. a legacy success recorded for a DIFFERENT actor on the same seat is not ignored: the entry needs review and nothing is refunded', async () => {
+  const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_A', actorId: 'A_previous', seatId: 'seat_A', amount: 100 }] } });
+  patchStored((c) => { c.entries = [c.entries[0]]; });
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0, 'no credit adjustment on conflicting evidence');
+  assert.equal(r.ok, false);
+  assert.notEqual(stored().escrow.credits.status, 'refunded');
+  assert.equal(r.indeterminate, true);
+});
+
+await check('C1-R1b. two distinct debits on one seat cannot both be certified refunded by one legacy success record', async () => {
+  const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_1', actorId: 'A', seatId: 'seat_A', amount: 100 }] } });
+  patchStored((c) => { c.entries = [{ ...c.entries[0], transactionId: 'dtx_A1' }, { ...c.entries[0], transactionId: 'dtx_A2' }]; });
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0, 'ambiguous evidence: neither debit is refunded again');
+  assert.notEqual(stored().escrow.credits.status, 'refunded', 'the session is NOT certified refunded');
+  assert.equal(r.ok, false);
+});
+
+await check('C1-R1b2. with an explicit debit id the success belongs to exactly one of two debits on a seat; the other is refunded once', async () => {
+  const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_1', actorId: 'A', seatId: 'seat_A', amount: 100, debitTransactionId: 'dtx_A1' }] } });
+  patchStored((c) => { c.entries = [{ ...c.entries[0], transactionId: 'dtx_A1' }, { ...c.entries[0], transactionId: 'dtx_A2' }]; });
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(refundCalls('A').length, 1, 'only the unrefunded debit is refunded');
+  assert.equal(refundCalls('A')[0].audit.refundOfTransactionId, 'dtx_A2');
+  assert.equal(r.ok, true);
+});
+
+await check('C1-R1c. a legacy refund naming a DIFFERENT debit id cannot satisfy this entry (orphan or foreign id ⇒ review, no credit movement)', async () => {
+  const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_x', actorId: 'A', seatId: 'seat_A', amount: 100, debitTransactionId: 'dtx_UNKNOWN' }] } });
+  patchStored((c) => { c.entries = [c.entries[0]]; });
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0);
+  assert.equal(r.ok, false);
+  assert.notEqual(stored().escrow.credits.status, 'refunded');
+  // and a record that names ANOTHER entry's debit id does not satisfy this one
+  const s2 = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_B', actorId: 'A', seatId: 'seat_A', amount: 100, debitTransactionId: 'dtx_B' }] } });
+  const r2 = await Svc.refundSession(s2, 'retry');
+  assert.equal(refundCalls('A').length, 1, 'A\'s own debit has no evidence of its own, so it is refunded once');
+  assert.equal(refundCalls('B').length, 0, 'B\'s debit id appears on a record for another seat: contradictory evidence, so B is not refunded automatically');
+});
+
+await check('C1-R1d. a legacy record whose amount differs from the debit is not proof of that debit\'s refund (review)', async () => {
+  const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_A', actorId: 'A', seatId: 'seat_A', amount: 40 }] } });
+  patchStored((c) => { c.entries = [c.entries[0]]; });
+  await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0);
+  assert.notEqual(stored().escrow.credits.status, 'refunded');
+});
+
+for (const [label, mutate] of [
+  ['a different debit transaction id', (led) => { led.debitTransactionId = 'dtx_X'; }],
+  ['a different amount', (led) => { led.amount = 50; }],
+  ['a different actor', (led) => { led.actorId = 'someone_else'; }],
+  ['a different seat', (led) => { led.seatId = 'seat_Z'; }]
+]) {
+  await check(`C1-R1e. a refundLedger record with ${label} is refused (review), never skipped as refunded and never re-refunded`, async () => {
+    const s = install({ status: 'refund-failed' });
+    patchStored((c) => { c.entries = [c.entries[0]]; c.refundLedger = { dtx_A: { key: 'dtx_A', seatId: 'seat_A', actorId: 'A', amount: 100, debitTransactionId: 'dtx_A', status: 'refunded', refundTransactionId: 'rtx_old', attempts: [] } }; mutate(c.refundLedger.dtx_A); });
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0);
+    assert.notEqual(stored().escrow.credits.status, 'refunded');
+    assert.equal(r.ok, false);
+  });
+}
+
+await check('C1-R1f. an unambiguous legacy refund (single entry, same actor and amount, valid transaction id) is still recognised, with or without a debit id', async () => {
+  for (const extra of [{}, { debitTransactionId: 'dtx_A' }]) {
+    const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_A', actorId: 'A', seatId: 'seat_A', amount: 100, ...extra }] } });
+    patchStored((c) => { c.entries = [c.entries[0]]; });
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0, 'already refunded: skipped');
+    assert.equal(r.ok, true);
+    assert.equal(stored().escrow.credits.status, 'refunded');
+  }
+});
+
+await check('C1-R2a. a stale caller copy that says "not a credit wager" cannot cause a false successful skip: the stored session decides', async () => {
+  const s = install();
+  const stale = clone(s); stale.wagerProfile = { mode: 'none' }; stale.rulesMode = 'republic-senate';
+  const r = await Svc.refundSession(stale, 'retry');
+  assert.equal(r.skipped, undefined, 'not skipped');
+  assert.equal(refundCalls().length, 2, 'the stored credit wager is refunded');
+  assert.equal(r.ok, true);
+});
+
+await check('C1-R2b. a stale caller copy that says "credit wager" cannot enable a refund when the stored session is not a credit wager', async () => {
+  const s = install();
+  patchStored((c, w) => { w.wagerProfile = { mode: 'none' }; w.rulesMode = 'republic-senate'; });
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0);
+  assert.equal(r.ok, true);
+  assert.equal(r.skipped, true);
+});
+
+await check('C1-R2c. a missing stored session stays a refusal for a credit wager; a genuine non-credit game keeps its skip', async () => {
+  const s = install(); world.sessions = [];
+  const refused = await Svc.refundSession(s, 'x');
+  assert.equal(refused.ok, false); assert.equal(engine.calls.length, 0);
+  const none = { id: 'game9', rulesMode: 'republic-senate', wagerProfile: { mode: 'none' }, escrow: {}, seats: [] };
+  const skipped = await Svc.refundSession(none, 'x');
+  assert.equal(skipped.ok, true); assert.equal(skipped.skipped, true);
+});
+
+await check('C1-R3a. an unrelated payout rollback (a different payout, same seat) cannot establish that this payout was reversed', async () => {
+  const s = install({ status: 'payout-failed', escrowExtra: {
+    payouts: [{ success: true, transactionId: 'p1', seatId: 'seat_A', actorId: 'A', approvedPayout: 150 }],
+    payoutRollbacks: [{ success: true, transactionId: 'pr_other', seatId: 'seat_A', actorId: 'A', amount: -150, rollbackOfTransactionId: 'p_OTHER' }] } });
+  const r = await Svc.refundSession(s, 'x');
+  assert.equal(r.ok, false); assert.equal(engine.calls.length, 0);
+  assert.match(String(r.error), /payout/i);
+});
+
+await check('C1-R3b. a legacy-shaped rollback with the wrong amount or actor does not match; a matching one (seat, actor, amount) or an explicit-id one does; each rollback is used once', async () => {
+  const payout = { success: true, transactionId: 'p1', seatId: 'seat_A', actorId: 'A', approvedPayout: 150 };
+  for (const [rb, expectOk] of [
+    [{ success: true, transactionId: 'r', seatId: 'seat_A', actorId: 'A', amount: -100 }, false],
+    [{ success: true, transactionId: 'r', seatId: 'seat_A', actorId: 'B', amount: -150 }, false],
+    [{ success: true, transactionId: 'r', seatId: 'seat_A', actorId: 'A', amount: -150 }, true],
+    [{ success: true, transactionId: 'r', seatId: 'seat_A', actorId: 'A', amount: -150, rollbackOfTransactionId: 'p1' }, true]
+  ]) {
+    const s = install({ status: 'payout-failed', escrowExtra: { payouts: [payout], payoutRollbacks: [rb] } });
+    const r = await Svc.refundSession(s, 'x');
+    assert.equal(r.ok, expectOk, JSON.stringify(rb));
+  }
+  // two payouts of the same size on one seat, only ONE rollback: the second payout is unmatched
+  const two = install({ status: 'payout-failed', escrowExtra: { payouts: [payout, { ...payout, transactionId: 'p2' }], payoutRollbacks: [{ success: true, transactionId: 'r1', seatId: 'seat_A', actorId: 'A', amount: -150 }] } });
+  const r2 = await Svc.refundSession(two, 'x');
+  assert.equal(r2.ok, false); assert.equal(engine.calls.length, 0);
+});
+
+await check('C1-R3c. new payout rollbacks record WHICH payout they reverse (rollbackOfTransactionId)', async () => {
+  const s = install({ status: 'escrowed', escrowExtra: { payoutMode: 'table-credit-balances' } });
+  patchStored((c, w) => { w.gameState = { phase: 'complete' }; });
+  // seat_A cashout succeeds, seat_B cashout fails -> A's payout is rolled back
+  const origAdj = TransactionEngine.executeCreditAdjustment; let n = 0;
+  TransactionEngine.executeCreditAdjustment = async (ctx, o) => {
+    n++; engine.calls.push({ actorId: ctx.actor.id, amount: ctx.amount, context: ctx.transactionContext });
+    if (ctx.actor.id === 'B' && ctx.amount > 0) return { success: false, transactionId: 'pb_fail', error: 'payout refused' };
+    return { success: true, transactionId: `t${n}`, error: null };
+  };
+  const out = await Svc.settleTableCreditBalances(stored(), { balances: { seat_A: 50, seat_B: 50 }, reason: 'cashout' });
+  TransactionEngine.executeCreditAdjustment = origAdj;
+  const c = stored().escrow.credits;
+  assert.equal(c.status, 'payout-failed', JSON.stringify({ ok: out.ok, err: out.error }));
+  const payoutA = c.payouts.find((p) => p.seatId === 'seat_A');
+  const rb = c.payoutRollbacks.find((r) => r.seatId === 'seat_A');
+  assert.ok(payoutA?.transactionId && rb, 'payout A and its rollback were recorded');
+  assert.equal(rb.rollbackOfTransactionId, payoutA.transactionId);
 });
 
 /* ---------------------------------------------------------------------------------------------- */
