@@ -149,8 +149,16 @@ async function refundDebitEntries(session, entries = [], reason = 'Game escrow r
  * ------------------------------------------------------------------------------------------------------------------------------------------ */
 const refundsInFlight = new Set();
 
+/** The escrow debit's transaction id, or null when it is missing / null / empty / blank (an entry without one has no identifiable debit). */
+function debitIdOf(entry = {}) {
+  const id = entry?.transactionId;
+  if (id === undefined || id === null) return null;
+  const text = String(id).trim();
+  return text === '' ? null : text;
+}
+
 function refundEntryKey(entry = {}) {
-  return entry.transactionId ? String(entry.transactionId) : `seat:${entry.seatId}`;
+  return debitIdOf(entry) ?? `seat:${entry.seatId}`;
 }
 
 /** Strict identity: both sides must be present (non-empty) and equal. A missing value never matches. */
@@ -189,14 +197,19 @@ function deriveRefundStates(credits = {}) {
   const legacy = new Map(entries.map(entry => [entry, { attributed: [], conflict: null }]));
   const flag = (entry, reason) => { const slot = legacy.get(entry); slot.conflict ??= reason; };
   let globalConflict = null;
+  const hasSeat = (record) => record.seatId !== undefined && record.seatId !== null && String(record.seatId).trim() !== '';
   for (const record of history) {
     if (!record || typeof record !== 'object') continue;
-    const named = record.debitTransactionId ? String(record.debitTransactionId) : null;
+    const named = record.debitTransactionId !== undefined && record.debitTransactionId !== null && String(record.debitTransactionId).trim() !== '' ? String(record.debitTransactionId).trim() : null;
     const claimedSeat = entries.filter(entry => sameId(record.seatId, entry.seatId));
     const agrees = (entry) => sameId(record.seatId, entry.seatId) && sameId(record.actorId, entry.actorId) && sameAmount(record.amount, safeAmount(entry.amount));
     if (named) {
-      const owners = entries.filter(entry => entry.transactionId && String(entry.transactionId) === named);
-      if (!owners.length) { for (const entry of claimedSeat) flag(entry, 'refund-evidence-for-unknown-debit'); continue; }
+      const owners = entries.filter(entry => debitIdOf(entry) === named);
+      if (!owners.length) {
+        if (!claimedSeat.length && !hasSeat(record)) globalConflict ??= 'refund-evidence-unattributable';   // unknown debit AND no usable seat: attributable to nothing
+        for (const entry of claimedSeat) flag(entry, 'refund-evidence-for-unknown-debit');
+        continue;
+      }
       for (const owner of owners) {
         if (agrees(owner)) legacy.get(owner).attributed.push(record);
         else {
@@ -220,13 +233,16 @@ function deriveRefundStates(credits = {}) {
     const amount = safeAmount(entry.amount);
     const base = { key, entry, seatId: entry.seatId, actorId: entry.actorId ?? null, amount, debitTransactionId: entry.transactionId ?? null };
     if (keyCounts.get(key) > 1) return { ...base, status: 'review', reason: 'ambiguous-entry-identity' };
+    // An entry with no identifiable debit transaction can neither be refunded automatically nor have a refund ledger / history trusted for it:
+    // the synthetic `seat:` key is a lookup convenience, not an identity.
+    if (!debitIdOf(entry)) return { ...base, status: 'review', reason: 'escrow-entry-without-debit-transaction-id' };
 
     const led = ledger[key];
     if (led) {
       // A ledger record is evidence only for the debit it names: debit id, seat, actor and amount must ALL be present and agree with the entry.
       if (!sameId(led.seatId, entry.seatId)
         || !sameId(led.actorId, entry.actorId)
-        || (led.debitTransactionId ?? null) !== (entry.transactionId ?? null)
+        || !sameId(led.debitTransactionId, debitIdOf(entry))
         || !sameAmount(led.amount, amount)) return { ...base, status: 'review', reason: 'ledger-identity-mismatch', ledger: led };
       if (led.status === 'refunded') return led.refundTransactionId ? { ...base, status: 'refunded', refundTransactionId: led.refundTransactionId, ledger: led } : { ...base, status: 'review', reason: 'refunded-without-transaction-id', ledger: led };
       if (led.status === 'failed') return { ...base, status: 'failed', ledger: led };

@@ -511,6 +511,45 @@ await check('C2-R6c. one rollback still cannot reverse two payouts, even with ex
   assert.equal(r.ok, false); assert.equal(engine.calls.length, 0);
 });
 
+await check('C3-R7. a legacy record naming an UNKNOWN debit id with no usable seat is unattributable evidence: it must not vanish, every entry fails closed', async () => {
+  for (const seatId of [undefined, null, '']) {
+    const rec = { success: true, transactionId: 'old_x', actorId: 'A', amount: 100, debitTransactionId: 'dtx_UNKNOWN', seatId };
+    if (seatId === undefined) delete rec.seatId;
+    const s = install({ status: 'refund-failed', escrowExtra: { refunds: [rec] } });
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(refundCalls().length, 0, `seatId=${JSON.stringify(seatId)}: nothing refunded`);
+    assert.equal(r.ok, false);
+    assert.notEqual(stored().escrow.credits.status, 'refunded');
+    assert.deepEqual((r.unresolvedEntries ?? []).map((u) => u.seatId).sort(), ['seat_A', 'seat_B']);
+  }
+});
+
+for (const [label, patch] of [['missing', 'delete'], ['null', null], ['empty', ''], ['whitespace', '   ']]) {
+  for (const ledStatus of [null, 'failed', 'refunded']) {
+    await check(`C3-R8. an escrow entry whose debit transaction id is ${label} is never refunded or trusted as refunded (ledger: ${ledStatus ?? 'none'})`, async () => {
+      const s = install({ status: 'refund-failed' });
+      patchStored((c) => {
+        c.entries = [c.entries[0]];
+        if (patch === 'delete') delete c.entries[0].transactionId; else c.entries[0].transactionId = patch;
+        if (ledStatus) c.refundLedger = { 'seat:seat_A': { key: 'seat:seat_A', seatId: 'seat_A', actorId: 'A', amount: 100, debitTransactionId: patch === 'delete' ? null : patch, status: ledStatus, ...(ledStatus === 'refunded' ? { refundTransactionId: 'rtx_old' } : {}), attempts: [] } };
+      });
+      const r = await Svc.refundSession(s, 'retry');
+      assert.equal(engine.calls.length, 0, 'no automatic credit adjustment without an identifiable debit');
+      assert.equal(r.ok, false);
+      assert.notEqual(stored().escrow.credits.status, 'refunded', 'not certified refunded');
+      assert.equal(r.indeterminate, true);
+    });
+  }
+}
+
+await check('C3-R8b. an ID-less legacy refund history record is still honoured when the escrow entry itself HAS a valid debit id and attribution is unambiguous', async () => {
+  const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_A', actorId: 'A', seatId: 'seat_A', amount: 100 }] } });
+  patchStored((c) => { c.entries = [c.entries[0]]; });
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0); assert.equal(r.ok, true);
+  assert.equal(stored().escrow.credits.status, 'refunded');
+});
+
 await check('C1-R1d. a legacy record whose amount differs from the debit is not proof of that debit\'s refund (review)', async () => {
   const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_A', actorId: 'A', seatId: 'seat_A', amount: 40 }] } });
   patchStored((c) => { c.entries = [c.entries[0]]; });
