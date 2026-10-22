@@ -1381,6 +1381,7 @@ function transferStatusLabel(status = '') {
     : status === 'declined' ? 'Declined'
     : status === 'cancelled' ? 'Cancelled'
     : status === 'failed' ? 'Failed'
+    : status === 'indeterminate' ? 'Unresolved — GM Review Needed'
     : status === 'pendingGm' ? 'Awaiting GM Approval'
     : status === 'counterOffered' ? 'Counter Offer Pending'
     : status === 'counterPendingGm' ? 'Counter Awaiting GM Approval'
@@ -1389,6 +1390,23 @@ function transferStatusLabel(status = '') {
 
 function formatCredits(amount) {
   return `${Number(amount || 0).toLocaleString()} credits`;
+}
+
+/**
+ * TI4-C0/G16 — classify a TransactionEngine credit-movement failure and keep its evidence.
+ * `INDETERMINATE` when the engine reports `indeterminate` or `rollbackFailed` (the money's final state is not known — never display it as `failed`);
+ * `FAILED_COMPENSATED` when it reports `compensated`; otherwise `FAILED` (a plain refusal/failure with no unresolved flag). L1 evidence only.
+ */
+function creditMovementEvidence(result = {}) {
+  const r = (result && typeof result === 'object') ? result : {};
+  const outcome = (r.indeterminate === true || r.rollbackFailed === true) ? 'INDETERMINATE' : (r.compensated === true ? 'FAILED_COMPENSATED' : 'FAILED');
+  const pick = {};
+  for (const key of ['transactionId', 'debitTransactionId', 'failedCreditTransactionId', 'refundTransactionId', 'recovery', 'compensated', 'rollbackFailed', 'indeterminate', 'error', 'evidence']) {
+    if (r[key] !== undefined && r[key] !== null) pick[key] = r[key];
+  }
+  let evidence;
+  try { evidence = { ...JSON.parse(JSON.stringify(pick)), outcome, level: 'L1', recordedAt: nowIso() }; } catch { evidence = { outcome, level: 'L1', recordedAt: nowIso(), error: String(r.error ?? '') }; }
+  return evidence;
 }
 
 function parsePositiveCredits(amount) {
@@ -1989,14 +2007,16 @@ export class HolonetMessengerService {
         amountLabel: formatCredits(amount),
         memoPreview: compactMemo(transfer.memo),
         status: complete ? 'complete' : status,
-        statusLabel: complete ? (declined ? 'Partially Resolved' : 'Complete') : transferStatusLabel(status),
+        hasUnresolved: entries.some(entry => entry.status === 'indeterminate'),
+        statusLabel: complete ? (declined ? 'Partially Resolved' : 'Complete')
+          : (entries.some(entry => entry.status === 'indeterminate') ? transferStatusLabel('indeterminate') : transferStatusLabel(status)),
         ownShareAmount: Number(ownEntry?.amount || 0),
         ownShareLabel: ownEntry ? formatCredits(ownEntry.amount) : '',
         paidLabel: formatCredits(paid),
         remainingLabel: formatCredits(Math.max(0, amount - paid)),
         canPay: Boolean(ownEntry && ownEntry.status === 'pendingRecipient' && !isGm),
         canDeclineRequest: Boolean(ownEntry && ownEntry.status === 'pendingRecipient' && !isGm),
-        canCancel: Boolean((transfer.requesterRecipientId === participantId || isGm) && !complete),
+        canCancel: Boolean((transfer.requesterRecipientId === participantId || isGm) && !complete && !entries.some(entry => entry.status === 'indeterminate')),
         isResolved: complete
       };
     }
@@ -2016,7 +2036,7 @@ export class HolonetMessengerService {
       canDecline: isPendingRecipient && (isRecipient || isGm),
       canApprove: isPendingGm && isGm,
       canCancel: (isPendingRecipient || isPendingGm) && (isSender || isGm),
-      isResolved: ['complete', 'declined', 'cancelled', 'failed'].includes(status)
+      isResolved: ['complete', 'declined', 'cancelled', 'failed', 'indeterminate'].includes(status)
     };
   }
 
@@ -4118,7 +4138,9 @@ export class HolonetMessengerService {
     const entry = safeArray(transfer.entries).find(e => e.recipientId === currentId || (actor?.id && e.actorId === actor.id));
     if (!entry && !requesterIsGm) return false;
     if (action === 'decline-credit-request') {
-      if (!entry) return false;
+      // TI4-C0/G16: only a still-pending entry can be declined. An 'indeterminate' (unresolved credit movement), 'failed', 'complete' or already
+      // resolved entry is final here — declining it would rewrite the status and defeat the unresolved-evidence protection.
+      if (!entry || entry.status !== 'pendingRecipient') return false;
       entry.status = 'declined';
       entry.resolvedAt = nowIso();
       entry.resolvedBy = currentId;
@@ -4128,6 +4150,8 @@ export class HolonetMessengerService {
     }
     if (action === 'cancel-credit-request') {
       if (!requesterIsGm && currentId !== transfer.requesterRecipientId) return false;
+      // TI4-C0/G16: fail closed — a request with an unresolved (indeterminate) entry cannot be cancelled; cancelling would present it as resolved.
+      if (safeArray(transfer.entries).some(item => item?.status === 'indeterminate')) return false;
       transfer.status = 'cancelled';
       for (const item of safeArray(transfer.entries)) {
         if (item.status === 'pendingRecipient') item.status = 'cancelled';
@@ -4154,8 +4178,18 @@ export class HolonetMessengerService {
       audit: { source: 'holonet-credit-request', threadId: thread.id, requesterId, transferId: transfer.id, entryId: entry.id }
     }, { source: 'HolonetMessengerService.creditRequest', validate: true, rederive: true });
     if (!moved.success) {
-      entry.status = 'failed';
+      // TI4-C0/G16: an unresolved movement (indeterminate / rollbackFailed) is NOT a failed payment — the payer may still be debited. Keep the
+      // engine's evidence on the entry, use a distinct non-payable status, and never show it as 'failed'.
+      const evidence = creditMovementEvidence(moved);
+      entry.transferEvidence = evidence;
       entry.failureReason = moved.error || 'Credit request payment failed';
+      if (evidence.outcome === 'INDETERMINATE') {
+        entry.status = 'indeterminate';
+        await HolonetStorage.saveRecord(message);
+        await this._publishSystemMessage(thread, `Credit request payment could not be reconciled and needs GM review (the payer may still have been charged): ${entry.failureReason}`, { eventType: 'credit-request-indeterminate', transferId: transfer.id });
+        return false;
+      }
+      entry.status = 'failed';
       await HolonetStorage.saveRecord(message);
       await this._publishSystemMessage(thread, `Credit request payment failed: ${entry.failureReason}`, { eventType: 'credit-request-failed', transferId: transfer.id });
       return false;
@@ -5607,7 +5641,7 @@ export class HolonetMessengerService {
     const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     const currentId = senderRecipientId || currentRecipientId();
 
-    if (['complete', 'declined', 'cancelled', 'failed'].includes(transfer.status)) return false;
+    if (['complete', 'declined', 'cancelled', 'failed', 'indeterminate'].includes(transfer.status)) return false;
 
     if (action === 'decline-transfer') {
       if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
@@ -5665,7 +5699,7 @@ export class HolonetMessengerService {
           transactionContext: 'holonet-gm-grant',
           audit: { source: 'holonet-transfer', threadId: thread.id, requesterId, transferId: transfer.id }
         }, { source: 'HolonetMessengerService.creditTransferGrant', validate: true, rederive: true });
-        if (!grant.success) throw new Error(grant.error || 'Credit grant failed');
+        if (!grant.success) throw Object.assign(new Error(grant.error || 'Credit grant failed'), { creditMovement: grant });
       } else {
         const fromActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
         if (!fromActor) throw new Error('Sender actor not found');
@@ -5677,7 +5711,7 @@ export class HolonetMessengerService {
           transactionContext: 'holonet-credit-transfer',
           audit: { source: 'holonet-transfer', threadId: thread.id, requesterId, transferId: transfer.id }
         }, { source: 'HolonetMessengerService.creditTransfer', validate: true, rederive: true });
-        if (!moved.success) throw new Error(moved.error || 'Credit transfer failed');
+        if (!moved.success) throw Object.assign(new Error(moved.error || 'Credit transfer failed'), { creditMovement: moved });
       }
       transfer.status = 'complete';
       transfer.resolvedAt = nowIso();
@@ -5686,9 +5720,17 @@ export class HolonetMessengerService {
       await this._publishReceiptMessage(thread, { title: 'Credit Transfer Receipt', eventType: 'credit-transfer-receipt', amount: value, lines: [`From: ${transfer.fromLabel}`, `To: ${targetActor.name}`] });
       return true;
     } catch (err) {
-      transfer.status = 'failed';
+      // TI4-C0/G16: keep the engine's evidence; an unresolved movement is 'indeterminate' (terminal, GM review), never 'failed'.
+      const evidence = err?.creditMovement ? creditMovementEvidence(err.creditMovement) : null;
+      if (evidence) transfer.transferEvidence = evidence;
       transfer.failureReason = err.message;
       transfer.resolvedAt = nowIso();
+      if (evidence?.outcome === 'INDETERMINATE') {
+        transfer.status = 'indeterminate';
+        await this._publishSystemMessage(thread, `Credit transfer could not be reconciled and needs GM review (credits may have moved or been charged without completing): ${err.message}`, { eventType: 'credit-transfer-indeterminate', transferId: transfer.id });
+        return false;
+      }
+      transfer.status = 'failed';
       await this._publishSystemMessage(thread, `Credit transfer failed: ${err.message}`, { eventType: 'credit-transfer-failed', transferId: transfer.id });
       return false;
     }

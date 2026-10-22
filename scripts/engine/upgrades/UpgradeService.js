@@ -12,6 +12,7 @@ import { CustomizationWorkflow } from '/systems/foundryvtt-swse/scripts/engine/c
 import { DroidCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/droid-customization-engine.js';
 import { VehicleCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/vehicle-customization-engine.js';
 import { LedgerService } from '/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js';
+import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
@@ -664,15 +665,35 @@ export class UpgradeService {
     }
 
     if (item.isEmbedded && actor) {
-      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: item.id, 'system.installedUpgrades': nextInstalled }]);
+      // TI-2 (TX-01): the Item change and the charge are ONE commerce transaction (TransactionEngine owns lock, audit ledger and verified recovery).
+      // This used to write the Item first and charge afterwards, so a failed or interrupted charge left the upgrade installed and unpaid. A single
+      // plan is still applied in bucket order (credit SET, then Item UPDATE) rather than atomically; the engine establishes recovery first, restores
+      // (and reports honestly) when a later step fails, and verifies the charge. The Item write is verified here.
+      const result = await TransactionEngine.executeMutationTransaction({
+        actor,
+        mutationPlan: { update: { items: [{ _id: item.id, 'system.installedUpgrades': nextInstalled }] } },
+        cost: upgradeCost,
+        transactionContext: 'owned-customization',
+        audit: { itemId: item.id, itemName: item.name, upgradeKey: upgrade.key, upgradeName: upgrade.name, source: 'UpgradeService.applyUpgrade' },
+        // The Item write is verified INSIDE the transaction (review TI2-R1): if the plan resolved but the upgrade is not on the Item, the engine refunds the
+        // charge with one targeted write (or reports the outcome unresolved) instead of returning success.
+        verify: async (a) => {
+          const written = a.items.get(item.id)?.system?.installedUpgrades ?? [];
+          const landed = written.some((entry) => entry?.upgradeKey === upgrade.key) && written.length >= nextInstalled.length;
+          return landed ? { ok: true } : { ok: false, reason: `${upgrade.name} is not on the item after the update` };
+        }
+      }, { source: 'UpgradeService.applyUpgrade' });
+      if (!result?.success) {
+        throw new Error(result?.error || `Failed to install ${upgrade.name}`);
+      }
     } else {
+      // Unreachable through actor.items (which only holds embedded Items); retained unchanged for an unowned Item.
       // @mutation-exception: world-item - updating unowned item from world compendium
       await item.update({ 'system.installedUpgrades': nextInstalled });
-    }
-
-    if (upgradeCost > 0) {
-      const creditPlan = LedgerService.buildCreditDelta(actor, upgradeCost);
-      await ActorEngine.applyMutationPlan(actor, creditPlan);
+      if (upgradeCost > 0) {
+        const creditPlan = LedgerService.buildCreditDelta(actor, upgradeCost);
+        await ActorEngine.applyMutationPlan(actor, creditPlan);
+      }
     }
 
     return { success: true };

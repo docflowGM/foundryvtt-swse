@@ -269,8 +269,8 @@ function patchFollowerCreator() {
     return follower;
   };
 
-  FollowerCreator.updateFollowerFromMutation = async function patchedUpdateFollowerFromMutation(follower, mutation) {
-    const success = await originalUpdate(follower, mutation);
+  FollowerCreator.updateFollowerFromMutation = async function patchedUpdateFollowerFromMutation(follower, mutation, ...rest) {
+    const success = await originalUpdate(follower, mutation, ...rest);
     if (success) await materializeFollowerSpecies(follower, mutation);
     return success;
   };

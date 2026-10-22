@@ -19,7 +19,7 @@
  * │  StoreEngine (THIS FILE)            │
  * │  - getInventory()                   │
  * │  - canPurchase()                    │
- * │  - purchase() [ATOMIC]              │
+ * │  - purchase() [VERIFIED, NOT ATOMIC]│
  * └──────────────┬──────────────────────┘
  *                │
  *      ┌─────────┼─────────┐
@@ -29,7 +29,8 @@
  *
  * Design Principles (Phase 4 Consolidation):
  * 1. Single Authority: StoreEngine is the ONLY public store API
- * 2. Atomic Transactions: purchase() uses snapshot rollback for all-or-nothing
+ * 2. Verified Transactions: purchase() delegates to TransactionEngine, which establishes recovery first, restores and VERIFIES on failure, and reports
+ *    rollbackFailed / indeterminate when it cannot (Foundry has no multi-document atomicity)
  * 3. Pre-Validation: All plans validated BEFORE any credit deduction
  * 4. Price Caching: Prices frozen at transaction start
  * 5. No Concurrent Purchases: Per-actor locking prevents race conditions
@@ -42,7 +43,7 @@
  * Public API:
  *   - getInventory(options)       : Load from compendiums + apply pricing
  *   - canPurchase(context)        : Validate actor eligibility
- *   - purchase(context)           : Execute atomic transaction [CONSOLIDATED]
+ *   - purchase(context)           : Execute a verified commerce transaction [CONSOLIDATED]
  */
 
 import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/index.js";
@@ -274,15 +275,17 @@ export class StoreEngine {
   }
 
   /**
-   * Execute atomic purchase transaction
+   * Execute a verified purchase transaction (not multi-document atomic — see below)
    * Changes:
    *   - Deduct credits from actor
    *   - Grant items (if itemGrantCallback provided)
    *   - Emit audit log
    *
-   * ATOMIC: Either fully succeeds or fully fails. No partial state.
+   * NOT atomic across documents (Foundry has none): the commerce transaction establishes recovery first, restores and verifies on failure, and
+   * reports `rollbackFailed` / `indeterminate` when it cannot (TI-2). Stock is held for those unresolved outcomes.
    * OWNERSHIP ENFORCED: Only actor owner can complete purchases
-   * IDEMPOTENT: Session-level duplicate guard prevents double-grants
+   * DUPLICATES: a second CONCURRENT checkout for the same actor and context is refused by the TransactionEngine lock (process-local, one client).
+   * There is no operation id: a deliberate repeat of the same cart is a new purchase, and a retry after an uncertain outcome is not recognized.
    *
    * @param {Object} context
    * @param {Actor} context.actor - purchasing actor (required)
@@ -316,6 +319,7 @@ export class StoreEngine {
 
     freezePricing();
     let inventoryConsumed = null;
+    let committed = null;   // set the moment TransactionEngine reports the purchase committed: nothing after that may undo it
     try {
       const freshActor = game.actors.get(actor.id);
       if (!freshActor) return { success: false, error: 'Actor no longer exists.', transactionId: null };
@@ -391,7 +395,11 @@ export class StoreEngine {
       });
 
       if (!result.success) {
-        if (inventoryConsumed?.consumed?.length) {
+        // TI-2 (TX-10): stock is given back only when the purchase is known NOT to exist (refused before any write, verified rollback, or a plain failure
+        // such as the commerce lock). An `indeterminate` outcome (the charge could not be verified) or a failed rollback means the items may have been
+        // granted: returning the stock too could double-count it, so it is held and the unresolved outcome is passed to the caller.
+        const purchaseMayExist = result.indeterminate === true || result.rollbackFailed === true;
+        if (inventoryConsumed?.consumed?.length && !purchaseMayExist) {
           await restoreInventoryPolicyQuantities(inventoryConsumed.consumed);
         }
         logger().error('StoreEngine.purchase: TransactionEngine rejected purchase', {
@@ -399,38 +407,52 @@ export class StoreEngine {
           error: result.error,
           transactionId: result.transactionId
         });
-        return result;
+        return purchaseMayExist ? { ...result, stock: inventoryConsumed, stockHeld: true } : result;
       }
 
-      logger().info('StoreEngine: Purchase completed', {
-        transactionId: result.transactionId,
-        actor: actor.id,
-        itemCount: items.length,
-        costDeducted: totalCost,
-        context: resolvedContext
-      });
-
-      Hooks.callAll?.('swseStoreTransactionComplete', {
-        transaction: {
-          id: result.transactionId,
+      committed = result;
+      // TI-2 (review TI2-R2): everything below is post-commit PRESENTATION. A failure here must never release stock or report the purchase as failed.
+      let presentationError = null;
+      try {
+        logger().info('StoreEngine: Purchase completed', {
           transactionId: result.transactionId,
-          buyerId: freshActor.id,
-          buyerName: freshActor.name,
-          itemName: items.map(item => item.name).filter(Boolean).join(', ') || 'Store items',
+          actor: actor.id,
           itemCount: items.length,
-          price: totalCost,
-          total: totalCost,
-          timestamp: Date.now(),
-          context: resolvedContext,
-          success: true
-        },
-        buyer: freshActor,
-        seller: null,
-        success: true
-      });
+          costDeducted: totalCost,
+          context: resolvedContext
+        });
 
-      return { ...result, stock: inventoryConsumed };
+        Hooks.callAll?.('swseStoreTransactionComplete', {
+          transaction: {
+            id: result.transactionId,
+            transactionId: result.transactionId,
+            buyerId: freshActor.id,
+            buyerName: freshActor.name,
+            itemName: items.map(item => item.name).filter(Boolean).join(', ') || 'Store items',
+            itemCount: items.length,
+            price: totalCost,
+            total: totalCost,
+            timestamp: Date.now(),
+            context: resolvedContext,
+            success: true
+          },
+          buyer: freshActor,
+          seller: null,
+          success: true
+        });
+
+      } catch (postCommitError) {
+        presentationError = postCommitError?.message ?? String(postCommitError);
+        logger().error('StoreEngine.purchase: post-commit step failed; the purchase is committed and is NOT undone', { actor: actor.id, transactionId: result.transactionId, error: presentationError });
+      }
+
+      return { ...result, stock: inventoryConsumed, ...(presentationError ? { presentationError } : {}) };
     } catch (err) {
+      if (committed) {
+        // Defensive: any throw after the commit (including the lines above this guard) still reports the committed purchase, with stock kept.
+        logger().error('StoreEngine.purchase: error after the purchase committed; reporting it as committed', { actor: actor?.id, transactionId: committed.transactionId, error: err?.message });
+        return { ...committed, stock: inventoryConsumed, presentationError: err?.message ?? String(err) };
+      }
       if (inventoryConsumed?.consumed?.length) {
         try {
           await restoreInventoryPolicyQuantities(inventoryConsumed.consumed);

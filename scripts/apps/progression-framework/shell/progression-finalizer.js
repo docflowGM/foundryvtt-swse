@@ -421,14 +421,14 @@ export class ProgressionFinalizer {
       });
 
       // ONLY NOW: Apply mutations through ActorEngine.
-      // ActorEngine.applyMutationPlan runs transactionally (see _applyMutationPlan):
-      // on failure it rolls the actor back to its pre-plan snapshot and deletes any
-      // CREATE-bucket actors, so a failed finalize should leave the actor unchanged.
-      // Only if that rollback itself fails is error.partialMutationPossible set.
+      // ActorEngine.applyMutationPlan runs transactionally (see _applyMutationPlan): on failure it attempts to roll the actor back to its
+      // pre-plan snapshot and to delete any CREATE-bucket actors, and it REPORTS whether that rollback was verified (TI4-C0/G06). A failed
+      // finalize is only known to have left the actor unchanged when result.rollbackOutcome === 'FAILED_COMPENSATED'; when the rollback
+      // could not be verified the result is `indeterminate: true` with `partialMutationPossible: true` and the actor may be partially changed.
       const result = await this._applyMutationPlan(actor, finalMutationPlan);
 
       if (!result.success) {
-        // ActorEngine failed and (best-effort) rolled back — surface the error.
+        // ActorEngine failed; the result says whether the rollback was verified (rollbackOutcome) or is indeterminate — surface it as is.
         swseLogger.error('[ProgressionFinalizer] ActorEngine failed during finalization', {
           error: result.error,
           actorId: actor.id,
@@ -447,6 +447,8 @@ export class ProgressionFinalizer {
           });
           return {
             success: false,
+            // TI-3: the plan above was APPLIED (and is not rolled back); only the post-apply audit disagrees. Callers must not treat this as "nothing happened".
+            committed: true,
             error: `Level-up finalization audit failed: ${postAudit.errors.join('; ')}`,
             audit: postAudit,
           };
@@ -467,7 +469,7 @@ export class ProgressionFinalizer {
 
       this._emitLevelUpComplete(actor, sessionState, options);
 
-      return { success: true, result: { actorId: actor.id } };
+      return { success: true, committed: true, result: { actorId: actor.id }, ...(result.postApplyIncomplete ? { postApplyIncomplete: true, postApplyWarnings: result.postApplyWarnings, postApplyRepair: result.postApplyRepair } : {}) };
     } catch (error) {
       swseLogger.error('[ProgressionFinalizer] Finalization aborted (no mutations applied)', error);
       return {
@@ -560,6 +562,8 @@ export class ProgressionFinalizer {
 
       return {
         success: true,
+        committed: true,
+        ...(result.postApplyIncomplete ? { postApplyIncomplete: true, postApplyWarnings: result.postApplyWarnings, postApplyRepair: result.postApplyRepair } : {}),
         result: { actorId: actor.id, domain, stepId },
         message: this._singleStepSuccessMessage(domain, mutationPlan),
         sheetAnchor: this.singleStepSheetAnchorForDomain(domain),
@@ -3600,31 +3604,58 @@ export class ProgressionFinalizer {
     return matches.slice(0, Math.max(0, Number(count) || 0)).map((item) => item.id).filter(Boolean);
   }
 
+  /**
+   * Synchronize the persisted starship-maneuver suite (`system.starshipManeuverSuite`: the active suite the sheet and the maneuver step read) with the maneuvers
+   * a progression plan granted / removed. IDEMPOTENT: the result is a set derived from the actor's own items, and nothing is written when the persisted
+   * suite already equals it, so repeating it never duplicates a maneuver and never touches anything but these two fields.
+   * @returns {Promise<{changed: boolean}>}
+   */
   static async _syncPostApplyState(actor, mutationPlan) {
     const engine = this._resolveActorEngine();
     const starshipManeuverNames = mutationPlan?.metadata?.postApply?.starshipManeuverNames || [];
     const removeIds = new Set((mutationPlan?.metadata?.postApply?.starshipManeuverRemoveItemIds || []).map((id) => String(id)));
-    if (!engine?.updateActor || (!starshipManeuverNames.length && !removeIds.size)) return;
+    if (!engine?.updateActor || (!starshipManeuverNames.length && !removeIds.size)) return { changed: false };
 
     const suite = actor.system?.starshipManeuverSuite || { maneuvers: [] };
-    const existing = new Set(Array.isArray(suite.maneuvers) ? suite.maneuvers.filter((id) => !removeIds.has(String(id))) : []);
+    const current = Array.isArray(suite.maneuvers) ? suite.maneuvers.map((id) => String(id)) : [];
+    const existing = new Set(current.filter((id) => !removeIds.has(id)));
     const matchingIds = actor.items
       .filter((item) => item.type === 'maneuver' && starshipManeuverNames.includes(item.name))
       .map((item) => item.id)
       .filter(Boolean);
+    for (const id of matchingIds) existing.add(String(id));
 
-    let changed = removeIds.size > 0;
-    for (const id of matchingIds) {
-      if (existing.has(id)) continue;
-      existing.add(id);
-      changed = true;
-    }
+    const next = Array.from(existing);
+    const nextMax = Math.max(Number(suite.max || 0), existing.size);
+    const unchanged = next.length === current.length && next.every((id, i) => id === current[i]) && nextMax === Number(suite.max || 0);
+    if (unchanged) return { changed: false };
 
-    if (changed) {
-      await engine.updateActor(actor, {
-        'system.starshipManeuverSuite.maneuvers': Array.from(existing),
-        'system.starshipManeuverSuite.max': Math.max(Number(suite.max || 0), existing.size),
-      }, { source: 'ProgressionFinalizer._syncPostApplyState' });
+    await engine.updateActor(actor, {
+      'system.starshipManeuverSuite.maneuvers': next,
+      'system.starshipManeuverSuite.max': nextMax,
+    }, { source: 'ProgressionFinalizer._syncPostApplyState' });
+    return { changed: true };
+  }
+
+  /**
+   * TI-3 (review TI3-R3): repair ONLY the persisted maneuver-suite state after a finalization reported `postApplyIncomplete`. It takes the `repair` payload
+   * that result carried and re-runs the idempotent suite synchronization — it never re-applies the mutation plan, so no feat, talent, attribute, HP or other
+   * level-up grant is replayed and nothing is spent twice. Safe to call repeatedly.
+   * @param {Actor} actor
+   * @param {{starshipManeuverNames?: string[], starshipManeuverRemoveItemIds?: string[]}} repair
+   * @returns {Promise<{success: boolean, changed?: boolean, error?: string}>}
+   */
+  static async resyncPostApplyState(actor, repair = {}) {
+    if (!actor) return { success: false, error: 'No actor provided' };
+    try {
+      const { changed } = await this._syncPostApplyState(actor, { metadata: { postApply: {
+        starshipManeuverNames: repair?.starshipManeuverNames || [],
+        starshipManeuverRemoveItemIds: repair?.starshipManeuverRemoveItemIds || [],
+      } } });
+      return { success: true, changed };
+    } catch (error) {
+      swseLogger.error('[ProgressionFinalizer] Maneuver-suite re-synchronization failed', error);
+      return { success: false, error: error?.message ?? String(error) };
     }
   }
 
@@ -3664,6 +3695,9 @@ export class ProgressionFinalizer {
   }
 
   static async _applyMutationPlan(actor, mutationPlan) {
+    // TI-3 (TX-09 sub-gap): two different outcomes used to share one `catch`. A throw from the plan itself means the transactional apply failed (and ActorEngine
+    // attempted a rollback whose verification it reports — see the catch below). A throw from the post-apply bookkeeping AFTER a successful plan means the plan IS applied and is NOT rolled back; reporting
+    // that as `{ success:false }` invites the player to finalize again.
     try {
       const engine = this._resolveActorEngine();
       if (!engine?.applyMutationPlan) {
@@ -3678,12 +3712,43 @@ export class ProgressionFinalizer {
         // never leave a half-applied character.
         transactional: true,
       });
-      await this._syncPostApplyState(actor, mutationPlan);
-      return { success: true, result: { actorId: actor.id } };
     } catch (error) {
       swseLogger.error('[ProgressionFinalizer] Mutation plan application failed', error);
-      return { success: false, error: error.message };
+      // TI4-C0/G06: ActorEngine attaches machine-readable rollback evidence to a transactional failure. A rollback it could NOT verify is not an
+      // ordinary retryable failure: keep the evidence and say so in the message the existing UI already shows. No sync runs and nothing is retried.
+      const rollback = error?.rollback ?? null;
+      if (!rollback) return { success: false, error: error.message };
+      const base = { success: false, error: error.message, rollbackOutcome: rollback.outcome, rollback };
+      if (rollback.outcome === 'FAILED_COMPENSATED') return base;
+      return {
+        ...base,
+        indeterminate: true,
+        partialMutationPossible: true,
+        error: `${error.message} — the rollback could not be verified, so the character may be partially modified. Do not finalize again until the character has been checked.`,
+      };
     }
+
+    // The plan is committed from here on.
+    const postApplyWarnings = [];
+    let postApplyRepair = null;
+    try {
+      await this._syncPostApplyState(actor, mutationPlan);
+    } catch (syncError) {
+      swseLogger.error('[ProgressionFinalizer] Post-apply state sync failed AFTER the mutation plan was applied; the plan is committed and NOT rolled back', syncError);
+      // The maneuver suite is PERSISTED character state, not presentation: the finalization is committed but mechanically INCOMPLETE until it is repaired.
+      postApplyRepair = {
+        starshipManeuverNames: [...(mutationPlan?.metadata?.postApply?.starshipManeuverNames || [])],
+        starshipManeuverRemoveItemIds: [...(mutationPlan?.metadata?.postApply?.starshipManeuverRemoveItemIds || [])],
+      };
+      postApplyWarnings.push({ step: 'post-apply-sync', field: 'system.starshipManeuverSuite', error: syncError?.message ?? String(syncError), repair: 'ProgressionFinalizer.resyncPostApplyState' });
+      ui?.notifications?.warn?.('Your changes were applied, but your starship maneuver suite could not be updated. Do not finalize again; the suite needs to be re-synchronized (ProgressionFinalizer.resyncPostApplyState).');
+    }
+    return {
+      success: true,
+      committed: true,
+      result: { actorId: actor.id },
+      ...(postApplyWarnings.length ? { postApplyIncomplete: true, postApplyWarnings, postApplyRepair } : {})
+    };
   }
 
 }

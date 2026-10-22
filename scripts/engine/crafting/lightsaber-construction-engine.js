@@ -610,11 +610,10 @@ export class LightsaberConstructionEngine {
 
       // Step 9: ATOMIC MUTATION - Only on success
       try {
-        // Build ONE transactional plan so credit deduction and item creation
-        // succeed or fail together. Previously these were two separate calls:
-        // if item creation failed after the credit debit, the actor lost credits
-        // and received no lightsaber. applyMutationPlan({ transactional: true })
-        // snapshots the actor and rolls back every leg if any step fails.
+        // Build ONE transactional plan so the credit deduction and the item creation are attempted together (previously two separate calls: a
+        // failure after the debit lost credits and granted no lightsaber). applyMutationPlan({ transactional: true }) snapshots the actor and
+        // attempts to roll back every leg if a step fails, and REPORTS whether that rollback was verified (TI4-C0/G06): the thrown error carries
+        // `rollback` / `rollbackOutcome`. A failure is only known to be clean when the outcome is FAILED_COMPENSATED; otherwise it is INDETERMINATE.
         const creditPlan = LedgerService.buildCreditDelta(actor, totalCost);
 
         const newWeapon = this.#createBuiltLightsaber(
@@ -667,13 +666,42 @@ export class LightsaberConstructionEngine {
         };
       } catch (err) {
         SWSELogger.error("Construction mutation failed:", err);
-        return { success: false, reason: "mutation_failed" };
+        // TI4-C0/G06: keep the ORIGINAL roll and report an unverified rollback as indeterminate. Nothing here re-rolls, re-charges or retries.
+        return this.mutationFailureResult(err, { finalDc, rollTotal, modifier, rollRaw, checkMode, cost: totalCost });
       }
 
     } catch (err) {
       SWSELogger.error("attemptConstruction failed:", err);
       return { success: false, reason: "internal_error" };
     }
+  }
+
+  /**
+   * TI4-C0/G06 — map a failed transactional construction mutation to the engine's result shape.
+   *
+   * The existing reason code (`mutation_failed`) is kept. When ActorEngine could not VERIFY its rollback (`rollbackOutcome` INDETERMINATE) the
+   * result is marked `indeterminate` and carries the original Use the Force result, so a caller shows an uncertain outcome instead of "no item was
+   * created and credits were not deducted" and never needs to roll again. This never re-rolls, re-charges, re-applies or retries.
+   *
+   * @param {Error} err - the error thrown by ActorEngine.applyMutationPlan({ transactional: true })
+   * @param {{finalDc, rollTotal, modifier, rollRaw, checkMode, cost}} roll - the already-made check and the attempted cost
+   */
+  static mutationFailureResult(err, roll = {}) {
+    const rollback = err?.rollback ?? null;
+    if (!rollback) return { success: false, reason: "mutation_failed" };
+    const base = { success: false, reason: "mutation_failed", rollbackOutcome: rollback.outcome, rollback };
+    if (rollback.outcome === 'FAILED_COMPENSATED') return base;
+    return {
+      ...base,
+      indeterminate: true,
+      partialMutationPossible: true,
+      finalDc: roll.finalDc,
+      rollTotal: roll.rollTotal,
+      modifier: roll.modifier,
+      rollRaw: roll.rollRaw,
+      checkMode: roll.checkMode,
+      attemptedCost: roll.cost
+    };
   }
 
   static #summarizeOption(item) {
