@@ -46,7 +46,7 @@ Evidence level: **L1** (offline, single client, real `GameCreditEscrowService` +
 | `rollbackFailed` / `indeterminate` / engine threw / attempt interrupted (intent without outcome) | skip; session stays `refund-failed`, `indeterminate:true` |
 | malformed record, success without id, ledger/identity mismatch, ambiguous entry identity | skip (`review`); session not `refunded` |
 
-## 5. Tests — `tests/ti4c0-g22-wager-refund-replay.test.mjs` (22 checks at first submission, 38 after correction 1, 56 after correction 2, 70 after correction 3)
+## 5. Tests — `tests/ti4c0-g22-wager-refund-replay.test.mjs` (22 checks at first submission, 38 after correction 1, 56 after correction 2, 70 after correction 3, 77 after correction 4)
 
 **Fail-before** (base head): 6 of 22 passed; the over-refund is shown by observed credits and call counts (retry after partial failure refunds A twice; stale copy; preparation refund repeated; unresolved outcomes retried or not flagged; no per-entry evidence; no payout guard; no concurrency guard). **After:** 22/22.
 Coverage: both entries once with evidence; partial failure; retry skips A and completes B; further calls (including the stale object) move nothing; stale caller copy; transaction ids and history preserved; `rollbackFailed` / `indeterminate` / thrown / malformed not retried and not marked refunded; legacy missing/malformed/ambiguous evidence fails closed and legacy successes are recognised; missing Actor; persistence failure after movement (stops, id surfaced, not repeated later); intent-write failure moves nothing; final status requires positive completion; preparation refunds not duplicated (prepare path A refunded, B failed, C failed leg → later refund only retries B once); `failed` stays non-refundable; return-shape compatibility incl. `payout-failed` with a definitive payout failure; unresolved payout activity blocks refund; missing session fails closed; concurrent call refused.
@@ -91,6 +91,27 @@ Effect on G22: `refundSession` classifies a plain `success:false` as `failed` (d
 - **R8.** `refundEntryKey()` fell back to `seat:<seatId>`, and the ledger comparison accepted `null === null` for the debit identity, so an escrow entry with no debit transaction id could be trusted as refunded/failed or refunded automatically. An entry whose `transactionId` is missing, null, empty or blank (`debitIdOf`) is now `review` (`escrow-entry-without-debit-transaction-id`) before any ledger or history is consulted: no automatic credit adjustment and no trusted ledger. The ledger debit comparison is strict (`sameId`). An id-less *legacy history record* is still honoured when the escrow entry itself has a valid debit id and attribution is unambiguous (`C3-R8b`).
 - **Tests:** 14 added (70 total). **Fail-before** on `fa9bc2f`: 57/70 passed, 13 failed (R7 unknown-debit/no-seat; R8 missing/null/empty/whitespace id × no ledger / failed / refunded). **After:** 70/70. Mutation checks (each reverted, all detected): unknown debit + no seat ignored → 2 failures; id-less entry check removed → 5; whitespace id usable (no trim) → 5; empty-string id usable → 4. Rolling suite 391 passed / 0 failed (5 documented exclusions); syntax 2884 files; `validate-partials` and `git diff --check` clean; every `node tools/…` guard in `rolling-system-validation.yml` passes locally (the feat-inventory guard rewrites `docs/audits/generated/feat-inventory-report.*` as a side effect; those were reverted and are not part of this change).
 - **Dependency:** the `TransactionEngine.executeCreditAdjustment` failure contract (§5b) is being corrected in a separate branch/PR from `main`; it is not part of G22.
+
+## 5d. Review correction 4 — a ledger never bypasses the refund history
+
+`deriveRefundStates` returned the ledger's status as soon as a valid `refundLedger` record existed, before the legacy `refunds[]` history was evaluated. A ledger saying `failed` therefore overrode a recorded successful refund of the same debit (a retry would credit the actor a second time), and R4/R5/R7 conflicts or unattributable history were bypassed whenever a ledger existed.
+
+The history state for each debit is now computed first, with or without a ledger, and reconciled with the ledger. No new ledger or mechanism; `TransactionEngine` untouched.
+
+| ledger | history for the same debit | result |
+| --- | --- | --- |
+| any | conflict / unattributable / malformed | `review` |
+| `failed` | none, or definitive failure(s) | `failed` (retryable, unchanged) |
+| `failed` | success, or unresolved (`rollbackFailed` / `indeterminate`) | `review` |
+| `refunded` | none, or a success with the **same** refund transaction id | `refunded` (unchanged) |
+| `refunded` | success with a different refund id, or only failures / unresolved | `review` |
+| `indeterminate` / `attempting` | none or unresolved | `indeterminate` (unchanged) |
+| `indeterminate` / `attempting` | success | `review` |
+
+Records written by `refundSession` itself (ledger + an appended history record per attempt, in one upsert) agree with this table, so the normal fail-then-retry path is unaffected (`C4-g`).
+
+- **Tests:** 7 added (77 total). **Fail-before** on `8abb6be`: 72/77 passed, 5 failed (C4-a: ledger `failed` + recorded success ⇒ a second refund is issued and the balance goes **1000 → 1100**; C4-b: unattributable / conflicting history bypassed by a ledger; C4-c: ledger `failed` + unresolved or malformed history retried; C4-d: ledger `refunded` with a different or missing success; C4-e: unresolved ledger + success not flagged `review`). **After:** 77/77. Mutation checks (each reverted, all detected): ledger bypasses history entirely → 6 failures; failed ledger + history success tolerated → 3; history conflict does not override ledger → 3; different refund id accepted → 2; refunded ledger without a history success accepted → 2; failed ledger + unresolved history accepted → 2.
+- Rolling suite 391 passed / 0 failed (5 documented exclusions); syntax 2884 files; `validate-partials` and `git diff --check` clean; every `node tools/…` guard in `rolling-system-validation.yml` passes locally (feat-inventory guard output reverted, not part of the diff).
 
 ## 6. Verification
 

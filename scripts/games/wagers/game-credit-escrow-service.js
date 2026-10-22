@@ -237,31 +237,49 @@ function deriveRefundStates(credits = {}) {
     // the synthetic `seat:` key is a lookup convenience, not an identity.
     if (!debitIdOf(entry)) return { ...base, status: 'review', reason: 'escrow-entry-without-debit-transaction-id' };
 
-    const led = ledger[key];
-    if (led) {
-      // A ledger record is evidence only for the debit it names: debit id, seat, actor and amount must ALL be present and agree with the entry.
-      if (!sameId(led.seatId, entry.seatId)
-        || !sameId(led.actorId, entry.actorId)
-        || !sameId(led.debitTransactionId, debitIdOf(entry))
-        || !sameAmount(led.amount, amount)) return { ...base, status: 'review', reason: 'ledger-identity-mismatch', ledger: led };
-      if (led.status === 'refunded') return led.refundTransactionId ? { ...base, status: 'refunded', refundTransactionId: led.refundTransactionId, ledger: led } : { ...base, status: 'review', reason: 'refunded-without-transaction-id', ledger: led };
-      if (led.status === 'failed') return { ...base, status: 'failed', ledger: led };
-      if (led.status === 'indeterminate') return { ...base, status: 'indeterminate', reason: 'unresolved-refund-outcome', ledger: led };
-      if (led.status === 'attempting') return { ...base, status: 'indeterminate', reason: 'interrupted-attempt', ledger: led };
-      return { ...base, status: 'review', reason: 'unknown-ledger-status', ledger: led };
-    }
-
-    // Legacy history (no ledger): evidence attributed record by record in `legacy` below (computed once for all entries).
+    // Legacy refund-history state for THIS debit (attributed record by record in `legacy` above). Computed whether or not a ledger exists:
+    // a ledger never bypasses conflicting, unattributable or contradictory history.
     const { attributed, conflict: entryConflict } = legacy.get(entry);
-    const conflict = entryConflict ?? globalConflict;
-    if (conflict) return { ...base, status: 'review', reason: conflict };
+    const historyConflict = entryConflict ?? globalConflict;
     const classes = attributed.map(classifyRefundRecord);
     const successes = attributed.filter((_record, index) => classes[index] === 'refunded');
-    if (successes.length) return { ...base, status: 'refunded', refundTransactionId: successes[0].transactionId, duplicateRefunds: successes.length > 1 ? successes.length : 0 };
-    if (classes.includes('indeterminate')) return { ...base, status: 'indeterminate', reason: 'unresolved-refund-outcome' };
-    if (classes.includes('review')) return { ...base, status: 'review', reason: 'missing-or-malformed-refund-evidence' };
-    if (attributed.length) return { ...base, status: 'failed' };
-    return { ...base, status: 'pending' };
+    let history;                                    // { status, refundTransactionId?, duplicateRefunds?, reason? }
+    if (historyConflict) history = { status: 'review', reason: historyConflict };
+    else if (successes.length) history = { status: 'refunded', refundTransactionId: successes[0].transactionId, duplicateRefunds: successes.length > 1 ? successes.length : 0 };
+    else if (classes.includes('indeterminate')) history = { status: 'indeterminate', reason: 'unresolved-refund-outcome' };
+    else if (classes.includes('review')) history = { status: 'review', reason: 'missing-or-malformed-refund-evidence' };
+    else history = { status: attributed.length ? 'failed' : 'pending' };
+
+    const led = ledger[key];
+    if (!led) return { ...base, ...history };
+
+    // A ledger record is evidence only for the debit it names: debit id, seat, actor and amount must ALL be present and agree with the entry.
+    if (!sameId(led.seatId, entry.seatId)
+      || !sameId(led.actorId, entry.actorId)
+      || !sameId(led.debitTransactionId, debitIdOf(entry))
+      || !sameAmount(led.amount, amount)) return { ...base, status: 'review', reason: 'ledger-identity-mismatch', ledger: led };
+    if (!['refunded', 'failed', 'indeterminate', 'attempting'].includes(led.status)) return { ...base, status: 'review', reason: 'unknown-ledger-status', ledger: led };
+    if (led.status === 'refunded' && !led.refundTransactionId) return { ...base, status: 'review', reason: 'refunded-without-transaction-id', ledger: led };
+
+    // Ledger and history must agree. Any contradiction is `review`: never an automatic retry and never a refunded certification.
+    //   history conflict / malformed           -> review (the history cannot be trusted either way)
+    //   ledger refunded : history must be empty or contain that same refund (a different, or no, success is contradictory)
+    //   ledger failed   : history must be empty or definitively failed (a success or an unresolved attempt means credits may have moved)
+    //   ledger unresolved (indeterminate / attempting): history must not show a success
+    const contradiction = (reason) => ({ ...base, status: 'review', reason, ledger: led });
+    if (history.status === 'review') return contradiction(`ledger-history-conflict:${history.reason}`);
+    if (led.status === 'refunded') {
+      if (history.status === 'refunded' && !successes.some(record => String(record.transactionId) === String(led.refundTransactionId))) return contradiction('ledger-history-refund-transaction-mismatch');
+      if (history.status === 'failed' || history.status === 'indeterminate') return contradiction('ledger-refunded-but-history-has-no-success');
+      return { ...base, status: 'refunded', refundTransactionId: led.refundTransactionId, ledger: led };
+    }
+    if (history.status === 'refunded') return contradiction(`ledger-${led.status}-but-history-shows-refunded`);
+    if (led.status === 'failed') {
+      if (history.status === 'indeterminate') return contradiction('ledger-failed-but-history-unresolved');
+      return { ...base, status: 'failed', ledger: led };
+    }
+    if (led.status === 'indeterminate') return { ...base, status: 'indeterminate', reason: 'unresolved-refund-outcome', ledger: led };
+    return { ...base, status: 'indeterminate', reason: 'interrupted-attempt', ledger: led };
   });
 }
 

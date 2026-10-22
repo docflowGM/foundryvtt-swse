@@ -550,6 +550,95 @@ await check('C3-R8b. an ID-less legacy refund history record is still honoured w
   assert.equal(stored().escrow.credits.status, 'refunded');
 });
 
+/* ---- correction 4: a refund ledger must agree with the legacy refund history; contradictions fail closed ---- */
+const ledgerA = (status, extra = {}) => ({ key: 'dtx_A', seatId: 'seat_A', actorId: 'A', amount: 100, debitTransactionId: 'dtx_A', status, attempts: [], ...extra });
+const histA = (over = {}) => ({ success: true, transactionId: 'old_A', actorId: 'A', seatId: 'seat_A', amount: 100, debitTransactionId: 'dtx_A', ...over });
+const setupC4 = (led, history) => { const s = install({ status: 'refund-failed', escrowExtra: { refunds: history } }); patchStored((c) => { c.entries = [c.entries[0]]; c.refundLedger = led ? { dtx_A: led } : undefined; }); return s; };
+
+await check('C4-a. ledger says FAILED but history proves the debit WAS refunded ⇒ review, and credits are NOT moved a second time (actual duplicate movement: 1000 → 1100 without the fix)', async () => {
+  for (const withId of [true, false]) {
+    const s = setupC4(ledgerA('failed'), [histA(withId ? {} : { debitTransactionId: undefined })]);
+    engine.credits.A = 1000;                                     // the refund the history records DID move credits: the actor is already whole
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.credits.A, 1000, `the actor is not credited a second time (debit id ${withId ? 'named' : 'implicit'}; balance ${engine.credits.A}, expected 1000)`);
+    assert.equal(refundCalls().length, 0, 'no automatic credit adjustment');
+    assert.equal(r.ok, false); assert.equal(r.indeterminate, true);
+    assert.notEqual(stored().escrow.credits.status, 'refunded', 'not certified refunded on contradictory records');
+  }
+});
+
+await check('C4-b. a ledger entry does not bypass unattributable or conflicting history (R7 / R4 / R5 evidence) ⇒ review, no credit movement', async () => {
+  for (const [label, hist] of [
+    ['unknown debit id, no seat', { success: true, transactionId: 'old_x', actorId: 'A', amount: 100, debitTransactionId: 'dtx_UNKNOWN' }],
+    ['names this debit but records another seat', histA({ seatId: 'seat_B' })],
+    ['names this debit but another actor', histA({ actorId: 'Z' })],
+    ['names this debit but another amount', histA({ amount: 40 })],
+    ['neither a debit id nor a seat', { success: true, transactionId: 'old_x', actorId: 'A', amount: 100 }]
+  ]) {
+    for (const status of ['failed', 'refunded']) {
+      const s = setupC4(ledgerA(status, status === 'refunded' ? { refundTransactionId: 'rtx_old' } : {}), [hist]);
+      const r = await Svc.refundSession(s, 'retry');
+      assert.equal(engine.calls.length, 0, `${label} / ledger ${status}`);
+      assert.equal(r.ok, false, `${label} / ledger ${status}`);
+      assert.notEqual(stored().escrow.credits.status, 'refunded', `${label} / ledger ${status}`);
+    }
+  }
+});
+
+await check('C4-c. ledger FAILED + history INDETERMINATE or MALFORMED for the same debit ⇒ review (never an automatic retry)', async () => {
+  for (const hist of [histA({ success: false, rollbackFailed: true, transactionId: 'old_A' }), histA({ success: false, indeterminate: true }), histA({ transactionId: undefined })]) {
+    const s = setupC4(ledgerA('failed'), [hist]);
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0, JSON.stringify(hist)); assert.equal(r.ok, false);
+  }
+});
+
+await check('C4-d. ledger REFUNDED must agree with history: a different refund transaction id, or history with no success, is contradictory ⇒ review', async () => {
+  for (const hist of [[histA({ transactionId: 'old_DIFFERENT' })], [histA({ success: false, transactionId: 'old_A', error: 'refused' })]]) {
+    const s = setupC4(ledgerA('refunded', { refundTransactionId: 'rtx_old' }), hist);
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0); assert.equal(r.ok, false);
+    assert.notEqual(stored().escrow.credits.status, 'refunded');
+  }
+});
+
+await check('C4-e. ledger INDETERMINATE / ATTEMPTING + history success ⇒ review (contradictory), never refunded and never retried', async () => {
+  for (const status of ['indeterminate', 'attempting']) {
+    const s = setupC4(ledgerA(status), [histA()]);
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0, status); assert.equal(r.ok, false);
+    assert.notEqual(stored().escrow.credits.status, 'refunded');
+    assert.deepEqual((r.unresolvedEntries ?? []).map((u) => u.status), ['review'], `${status}: contradictory records are review, not a trusted unresolved state`);
+  }
+});
+
+await check('C4-f. agreeing ledger and history keep their normal behaviour: failed+failed ⇒ retried once; refunded+same success ⇒ skipped; indeterminate/attempting alone ⇒ unresolved; ledger with no history ⇒ trusted', async () => {
+  let s = setupC4(ledgerA('failed'), [histA({ success: false, transactionId: 'old_A', error: 'refused' })]);
+  let r = await Svc.refundSession(s, 'retry');
+  assert.equal(refundCalls('A').length, 1); assert.equal(r.ok, true); assert.equal(engine.credits.A, 1000);
+  s = setupC4(ledgerA('refunded', { refundTransactionId: 'old_A' }), [histA()]);
+  r = await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0); assert.equal(r.ok, true); assert.equal(stored().escrow.credits.status, 'refunded');
+  for (const status of ['indeterminate', 'attempting']) {
+    s = setupC4(ledgerA(status), []);
+    r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0, status); assert.equal(r.ok, false); assert.equal(r.indeterminate, true);
+  }
+  s = setupC4(ledgerA('failed'), []);
+  r = await Svc.refundSession(s, 'retry');
+  assert.equal(refundCalls('A').length, 1, 'a failed ledger with no history is retryable'); assert.equal(r.ok, true);
+  s = setupC4(ledgerA('refunded', { refundTransactionId: 'rtx_old' }), []);
+  r = await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0); assert.equal(r.ok, true);
+});
+
+await check('C4-g. history written by refundSession itself stays consistent with its ledger across a fail-then-retry (no false review)', async () => {
+  const s = install(); engine.script.B = ['fail', 'fail', 'ok'];
+  await Svc.refundSession(s, 'a'); await Svc.refundSession(stored(), 'b'); const r = await Svc.refundSession(stored(), 'c');
+  assert.equal(r.ok, true); assert.equal(refundCalls('A').length, 1); assert.equal(refundCalls('B').length, 3);
+  assert.equal(engine.credits.A, 1000); assert.equal(engine.credits.B, 1000);
+});
+
 await check('C1-R1d. a legacy record whose amount differs from the debit is not proof of that debit\'s refund (review)', async () => {
   const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_A', actorId: 'A', seatId: 'seat_A', amount: 40 }] } });
   patchStored((c) => { c.entries = [c.entries[0]]; });
