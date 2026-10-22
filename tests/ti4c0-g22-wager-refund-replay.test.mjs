@@ -391,8 +391,124 @@ await check('C1-R1c. a legacy refund naming a DIFFERENT debit id cannot satisfy 
   // and a record that names ANOTHER entry's debit id does not satisfy this one
   const s2 = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_B', actorId: 'A', seatId: 'seat_A', amount: 100, debitTransactionId: 'dtx_B' }] } });
   const r2 = await Svc.refundSession(s2, 'retry');
-  assert.equal(refundCalls('A').length, 1, 'A\'s own debit has no evidence of its own, so it is refunded once');
-  assert.equal(refundCalls('B').length, 0, 'B\'s debit id appears on a record for another seat: contradictory evidence, so B is not refunded automatically');
+  assert.equal(refundCalls().length, 0, 'contradictory cross-seat evidence: NEITHER affected entry (seat A, which the record names, nor seat B, whose debit it names) is refunded automatically');
+  assert.equal(r2.ok, false);
+  assert.notEqual(stored().escrow.credits.status, 'refunded');
+});
+
+await check('C2-R4a. a refund record on seat A naming seat B\'s debit is conflicting evidence for BOTH seats: neither is refunded, neither is certified refunded', async () => {
+  const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_x', actorId: 'A', seatId: 'seat_A', amount: 100, debitTransactionId: 'dtx_B' }] } });
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(refundCalls().length, 0);
+  assert.equal(r.ok, false); assert.equal(r.indeterminate, true);
+  const reviewed = (r.unresolvedEntries ?? []).map((u) => u.seatId).sort();
+  assert.deepEqual(reviewed, ['seat_A', 'seat_B']);
+  assert.notEqual(stored().escrow.credits.status, 'refunded');
+});
+
+await check('C2-R4b. legitimate explicit identities on two debits of the SAME seat still attribute correctly (each refunded exactly once)', async () => {
+  const s = install({ status: 'refund-failed', escrowExtra: { refunds: [
+    { success: true, transactionId: 'old_1', actorId: 'A', seatId: 'seat_A', amount: 100, debitTransactionId: 'dtx_A1' },
+    { success: true, transactionId: 'old_2', actorId: 'A', seatId: 'seat_A', amount: 100, debitTransactionId: 'dtx_A2' }] } });
+  patchStored((c) => { c.entries = [{ ...c.entries[0], transactionId: 'dtx_A1' }, { ...c.entries[0], transactionId: 'dtx_A2' }]; });
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0);
+  assert.equal(r.ok, true);
+  assert.equal(stored().escrow.credits.status, 'refunded');
+});
+
+await check('C2-R4c. a record with neither a usable debit id nor a seat is unattributable: it blocks automatic refunds', async () => {
+  const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_x', actorId: 'A', amount: 100 }] } });
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(refundCalls().length, 0); assert.equal(r.ok, false);
+  assert.notEqual(stored().escrow.credits.status, 'refunded');
+});
+
+for (const [label, drop] of [['actorId', 'actorId'], ['amount', 'amount'], ['seatId', 'seatId']]) {
+  for (const named of [false, true]) {
+    await check(`C2-R5a. a legacy SUCCESS with missing ${label}${named ? ' (debit id named)' : ''} does not certify the refund and does not allow a retry`, async () => {
+      const rec = { success: true, transactionId: 'old_A', actorId: 'A', seatId: 'seat_A', amount: 100, ...(named ? { debitTransactionId: 'dtx_A' } : {}) };
+      delete rec[drop];
+      const s = install({ status: 'refund-failed', escrowExtra: { refunds: [rec] } });
+      patchStored((c) => { c.entries = [c.entries[0]]; });
+      const r = await Svc.refundSession(s, 'retry');
+      assert.equal(engine.calls.length, 0, 'no credit adjustment');
+      assert.equal(r.ok, false);
+      assert.notEqual(stored().escrow.credits.status, 'refunded');
+    });
+  }
+}
+
+await check('C2-R5b. a legacy FAILED record with missing identity cannot enable a retry (it may be an unattributed indeterminate attempt)', async () => {
+  for (const drop of ['actorId', 'amount']) {
+    const rec = { success: false, transactionId: 'old_A', error: 'Credit adjustment refused', actorId: 'A', seatId: 'seat_A', amount: 100 };
+    delete rec[drop];
+    const s = install({ status: 'refund-failed', escrowExtra: { refunds: [rec] } });
+    patchStored((c) => { c.entries = [c.entries[0]]; });
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0, `missing ${drop}`); assert.equal(r.ok, false);
+  }
+});
+
+await check('C2-R5c. a legacy record with a mismatched actor, amount or seat (debit id named) is conflicting evidence, never proof', async () => {
+  for (const patch of [{ actorId: 'Z' }, { amount: 55 }, { seatId: 'seat_Z' }]) {
+    const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_A', actorId: 'A', seatId: 'seat_A', amount: 100, debitTransactionId: 'dtx_A', ...patch }] } });
+    patchStored((c) => { c.entries = [c.entries[0]]; });
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0, JSON.stringify(patch)); assert.equal(r.ok, false);
+    assert.notEqual(stored().escrow.credits.status, 'refunded');
+  }
+});
+
+for (const drop of ['actorId', 'amount', 'seatId', 'debitTransactionId']) {
+  await check(`C2-R5d. a refundLedger record missing ${drop} is refused (review), not skipped as refunded and not re-refunded`, async () => {
+    const s = install({ status: 'refund-failed' });
+    patchStored((c) => { c.entries = [c.entries[0]]; const led = { key: 'dtx_A', seatId: 'seat_A', actorId: 'A', amount: 100, debitTransactionId: 'dtx_A', status: 'refunded', refundTransactionId: 'rtx_old', attempts: [] }; delete led[drop]; c.refundLedger = { dtx_A: led }; });
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0); assert.equal(r.ok, false);
+    assert.notEqual(stored().escrow.credits.status, 'refunded');
+  });
+}
+
+await check('C2-R6a. an explicit rollbackOfTransactionId is not enough: wrong actor, wrong amount, missing actor, missing amount or wrong seat does not reverse the payout', async () => {
+  const payout = { success: true, transactionId: 'p1', seatId: 'seat_A', actorId: 'A', approvedPayout: 150 };
+  const good = { success: true, transactionId: 'r', seatId: 'seat_A', actorId: 'A', amount: -150, rollbackOfTransactionId: 'p1' };
+  for (const [label, rb, expectOk] of [
+    ['complete', good, true],
+    ['wrong actor', { ...good, actorId: 'B' }, false],
+    ['wrong amount', { ...good, amount: -100 }, false],
+    ['positive amount', { ...good, amount: 150 }, false],
+    ['missing actor', (() => { const x = { ...good }; delete x.actorId; return x; })(), false],
+    ['missing amount', (() => { const x = { ...good }; delete x.amount; return x; })(), false],
+    ['wrong seat', { ...good, seatId: 'seat_B' }, false]
+  ]) {
+    const s = install({ status: 'payout-failed', escrowExtra: { payouts: [payout], payoutRollbacks: [rb] } });
+    const r = await Svc.refundSession(s, 'x');
+    assert.equal(r.ok, expectOk, label);
+    if (!expectOk) assert.equal(engine.calls.length, 0, label);
+  }
+});
+
+await check('C2-R6b. legacy (id-less) rollback evidence needs actor AND amount AND seat: a missing actor or amount does not reverse the payout', async () => {
+  const payout = { success: true, transactionId: 'p1', seatId: 'seat_A', actorId: 'A', approvedPayout: 150 };
+  const good = { success: true, transactionId: 'r', seatId: 'seat_A', actorId: 'A', amount: -150 };
+  for (const [label, rb, expectOk] of [
+    ['complete', good, true],
+    ['missing actor', (() => { const x = { ...good }; delete x.actorId; return x; })(), false],
+    ['missing amount', (() => { const x = { ...good }; delete x.amount; return x; })(), false]
+  ]) {
+    const s = install({ status: 'payout-failed', escrowExtra: { payouts: [payout], payoutRollbacks: [rb] } });
+    const r = await Svc.refundSession(s, 'x');
+    assert.equal(r.ok, expectOk, label);
+  }
+});
+
+await check('C2-R6c. one rollback still cannot reverse two payouts, even with explicit ids (one-rollback-per-payout)', async () => {
+  const p = { success: true, seatId: 'seat_A', actorId: 'A', approvedPayout: 150 };
+  const s = install({ status: 'payout-failed', escrowExtra: { payouts: [{ ...p, transactionId: 'p1' }, { ...p, transactionId: 'p2' }],
+    payoutRollbacks: [{ success: true, transactionId: 'r1', seatId: 'seat_A', actorId: 'A', amount: -150, rollbackOfTransactionId: 'p1' }] } });
+  const r = await Svc.refundSession(s, 'x');
+  assert.equal(r.ok, false); assert.equal(engine.calls.length, 0);
 });
 
 await check('C1-R1d. a legacy record whose amount differs from the debit is not proof of that debit\'s refund (review)', async () => {

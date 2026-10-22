@@ -153,6 +153,16 @@ function refundEntryKey(entry = {}) {
   return entry.transactionId ? String(entry.transactionId) : `seat:${entry.seatId}`;
 }
 
+/** Strict identity: both sides must be present (non-empty) and equal. A missing value never matches. */
+function sameId(a, b) {
+  return a !== undefined && a !== null && a !== '' && b !== undefined && b !== null && b !== '' && String(a) === String(b);
+}
+
+/** Strict amount: the recorded amount must be present, positive and equal. A missing amount never matches. */
+function sameAmount(recorded, expected) {
+  return recorded !== undefined && recorded !== null && recorded !== '' && expected > 0 && safeAmount(recorded) === expected;
+}
+
 function classifyRefundRecord(record) {
   if (!record || typeof record !== 'object' || Array.isArray(record) || typeof record.success !== 'boolean') return 'review';
   if (record.success === true) return record.transactionId ? 'refunded' : 'review';
@@ -165,12 +175,44 @@ function deriveRefundStates(credits = {}) {
   const history = Array.isArray(credits.refunds) ? credits.refunds : [];
   const ledger = credits.refundLedger && typeof credits.refundLedger === 'object' ? credits.refundLedger : {};
   const keyCounts = new Map();
-  const seatCounts = new Map();
-  const debitIds = new Set();
   for (const entry of entries) {
     keyCounts.set(refundEntryKey(entry), (keyCounts.get(refundEntryKey(entry)) || 0) + 1);
-    seatCounts.set(entry.seatId, (seatCounts.get(entry.seatId) || 0) + 1);
-    if (entry.transactionId) debitIds.add(String(entry.transactionId));
+  }
+
+  // Legacy refund-history attribution. A seat is NOT an identity, and every identity field must be PRESENT and agree (nothing is manufactured):
+  //   - a record naming a debit id belongs only to the entry with that id, and only if its seat, actor and amount agree with that entry;
+  //     a disagreeing record is conflicting evidence for that entry AND for the seat(s) the record itself claims; a named id matching no entry is
+  //     conflicting evidence for the seat it claims;
+  //   - a record without a debit id is attributable only when its seat has exactly one escrow entry and actor and amount agree;
+  //   - a record with neither a debit id nor a seat cannot be attributed to anything: every entry fails closed.
+  // A conflict sends the affected entries to review: it is never ignored as "no refund attempted", and it applies to failures as well as successes.
+  const legacy = new Map(entries.map(entry => [entry, { attributed: [], conflict: null }]));
+  const flag = (entry, reason) => { const slot = legacy.get(entry); slot.conflict ??= reason; };
+  let globalConflict = null;
+  for (const record of history) {
+    if (!record || typeof record !== 'object') continue;
+    const named = record.debitTransactionId ? String(record.debitTransactionId) : null;
+    const claimedSeat = entries.filter(entry => sameId(record.seatId, entry.seatId));
+    const agrees = (entry) => sameId(record.seatId, entry.seatId) && sameId(record.actorId, entry.actorId) && sameAmount(record.amount, safeAmount(entry.amount));
+    if (named) {
+      const owners = entries.filter(entry => entry.transactionId && String(entry.transactionId) === named);
+      if (!owners.length) { for (const entry of claimedSeat) flag(entry, 'refund-evidence-for-unknown-debit'); continue; }
+      for (const owner of owners) {
+        if (agrees(owner)) legacy.get(owner).attributed.push(record);
+        else {
+          flag(owner, 'refund-evidence-identity-conflict');
+          for (const entry of claimedSeat) if (entry !== owner) flag(entry, 'refund-evidence-names-another-debit');
+        }
+      }
+      continue;
+    }
+    if (!claimedSeat.length) {
+      if (record.seatId === undefined || record.seatId === null || record.seatId === '') globalConflict ??= 'refund-evidence-unattributable';
+      continue;                                    // a record for a seat with no escrow entry here is not this session's debit evidence
+    }
+    if (claimedSeat.length !== 1) { for (const entry of claimedSeat) flag(entry, 'refund-evidence-not-attributable-to-one-debit'); continue; }
+    if (agrees(claimedSeat[0])) legacy.get(claimedSeat[0]).attributed.push(record);
+    else flag(claimedSeat[0], 'refund-evidence-identity-conflict');
   }
 
   return entries.map(entry => {
@@ -181,11 +223,11 @@ function deriveRefundStates(credits = {}) {
 
     const led = ledger[key];
     if (led) {
-      // A ledger record is evidence only for the debit it names: debit id, seat, actor and amount must all agree with the entry.
-      if (led.seatId !== entry.seatId
-        || (led.actorId && entry.actorId && led.actorId !== entry.actorId)
+      // A ledger record is evidence only for the debit it names: debit id, seat, actor and amount must ALL be present and agree with the entry.
+      if (!sameId(led.seatId, entry.seatId)
+        || !sameId(led.actorId, entry.actorId)
         || (led.debitTransactionId ?? null) !== (entry.transactionId ?? null)
-        || safeAmount(led.amount) !== amount) return { ...base, status: 'review', reason: 'ledger-identity-mismatch', ledger: led };
+        || !sameAmount(led.amount, amount)) return { ...base, status: 'review', reason: 'ledger-identity-mismatch', ledger: led };
       if (led.status === 'refunded') return led.refundTransactionId ? { ...base, status: 'refunded', refundTransactionId: led.refundTransactionId, ledger: led } : { ...base, status: 'review', reason: 'refunded-without-transaction-id', ledger: led };
       if (led.status === 'failed') return { ...base, status: 'failed', ledger: led };
       if (led.status === 'indeterminate') return { ...base, status: 'indeterminate', reason: 'unresolved-refund-outcome', ledger: led };
@@ -193,31 +235,9 @@ function deriveRefundStates(credits = {}) {
       return { ...base, status: 'review', reason: 'unknown-ledger-status', ledger: led };
     }
 
-    // Legacy history (no ledger). A seat is NOT an identity: a record counts for this debit only if it can be attributed to it unambiguously.
-    //   - a record naming a debit id: it belongs to the entry with that id (a foreign id that matches no entry is unattributable evidence: review);
-    //   - a record without one: attributable only when the seat has exactly one escrow entry AND actor and amount agree with it.
-    // Any record on this seat that is in conflict (or unattributable) sends the entry to review — it is never ignored as "no refund attempted".
-    const attributed = [];
-    let conflict = null;
-    for (const record of history) {
-      if (!record || typeof record !== 'object') continue;
-      const named = record.debitTransactionId ? String(record.debitTransactionId) : null;
-      if (named) {
-        if (entry.transactionId && named === String(entry.transactionId)) {
-          if (record.seatId !== entry.seatId
-            || (record.actorId && entry.actorId && record.actorId !== entry.actorId)
-            || (record.amount !== undefined && record.amount !== null && safeAmount(record.amount) !== amount)) conflict ??= 'refund-evidence-identity-conflict';
-          else attributed.push(record);
-        } else if (!debitIds.has(named) && record.seatId === entry.seatId) {
-          conflict ??= 'refund-evidence-for-unknown-debit';
-        }
-        continue;                                    // names another existing entry's debit: it is that entry's evidence
-      }
-      if (record.seatId !== entry.seatId) continue;
-      if (seatCounts.get(entry.seatId) !== 1) { conflict ??= 'refund-evidence-not-attributable-to-one-debit'; continue; }
-      if ((record.actorId && entry.actorId && record.actorId !== entry.actorId) || (record.amount !== undefined && record.amount !== null && safeAmount(record.amount) !== amount)) { conflict ??= 'refund-evidence-identity-conflict'; continue; }
-      attributed.push(record);
-    }
+    // Legacy history (no ledger): evidence attributed record by record in `legacy` below (computed once for all entries).
+    const { attributed, conflict: entryConflict } = legacy.get(entry);
+    const conflict = entryConflict ?? globalConflict;
     if (conflict) return { ...base, status: 'review', reason: conflict };
     const classes = attributed.map(classifyRefundRecord);
     const successes = attributed.filter((_record, index) => classes[index] === 'refunded');
@@ -240,19 +260,21 @@ function payoutRefundBlockers(credits = {}) {
   const payouts = Array.isArray(credits.payouts) ? credits.payouts : [];
   const rollbacks = Array.isArray(credits.payoutRollbacks) ? credits.payoutRollbacks : [];
   // A payout counts as reversed only by a SUCCESSFUL rollback that can be matched to THAT payout, each rollback used once:
-  //   - a rollback that names the payout it reverses (`rollbackOfTransactionId`) matches only that payout;
-  //   - an older rollback without it matches only when seat, actor and amount (-approvedPayout) all agree.
+  //   - a rollback that names the payout it reverses (`rollbackOfTransactionId`) matches only that payout, and only when seat, actor and amount (-approvedPayout) also agree;
+  //   - an older rollback without it matches only when seat, actor and amount all agree (a missing actor or amount never matches).
   // A reversal of another payout on the same seat is not proof; anything unmatched blocks the refund.
   const available = rollbacks.filter(rollback => rollback && rollback.success === true);
   const paid = payouts.filter(entry => entry?.success === true);
   const unmatched = [];
   const take = (predicate) => { const index = available.findIndex(predicate); if (index < 0) return false; available.splice(index, 1); return true; };
-  const pending = paid.filter(entry => !take(rollback => rollback.rollbackOfTransactionId && entry.transactionId && String(rollback.rollbackOfTransactionId) === String(entry.transactionId) && rollback.seatId === entry.seatId));
-  for (const entry of pending) {
+  // Every identity must be present and agree: payout id (explicit) or none (legacy), seat, actor, and the reversal amount (-approvedPayout).
+  const reverses = (rollback, entry) => {
     const expected = safeAmount(entry.approvedPayout ?? entry.amount);
-    const matched = take(rollback => !rollback.rollbackOfTransactionId && rollback.seatId === entry.seatId
-      && (!rollback.actorId || !entry.actorId || rollback.actorId === entry.actorId) && expected > 0 && Number(rollback.amount) === -expected);
-    if (!matched) unmatched.push(entry);
+    return rollback.seatId !== undefined && rollback.seatId === entry.seatId && sameId(rollback.actorId, entry.actorId) && expected > 0 && Number(rollback.amount) === -expected;
+  };
+  const pending = paid.filter(entry => !take(rollback => rollback.rollbackOfTransactionId && entry.transactionId && String(rollback.rollbackOfTransactionId) === String(entry.transactionId) && reverses(rollback, entry)));
+  for (const entry of pending) {
+    if (!take(rollback => !rollback.rollbackOfTransactionId && reverses(rollback, entry))) unmatched.push(entry);
   }
   for (const entry of unmatched) blockers.push(`the payout to ${entry.seatId} is not recorded as rolled back`);
   for (const entry of payouts) {
