@@ -1,6 +1,6 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js';
-import { buildFullAttackSequence, collectPlanAnswers, FULL_ATTACK_PACKAGES, getEquippedWeapons, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { buildFullAttackSequence, collectPlanAnswers, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
 import { attackSelectionOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
@@ -163,7 +163,7 @@ function weaponBranch(item) {
 }
 
 function equippedWeaponForSpec(actor, spec = {}) {
-  const equipped = getEquippedWeapons(actor);
+  const equipped = getReadiedWeaponSelection(actor);
   const weapons = [equipped.primary, equipped.offhand]
     .filter(Boolean)
     .filter((weapon, index, list) => list.findIndex(other => other?.id === weapon?.id) === index);
@@ -208,7 +208,7 @@ function fallbackMultiAttackPlan(actor, spec, weapon) {
     legal: !!weapon && count > 0,
     packageType: spec.packageType,
     actionType: spec.actionType ?? 'full-round',
-    warnings: weapon ? [] : ['No weapon equipped. Equip a weapon before using this attack.'],
+    warnings: weapon ? [] : ['No ready weapon. Ready one weapon (or choose which ready weapon to use) before using this attack.'],
     attacks: Array.from({ length: count }, (_, index) => ({
       weapon,
       label: `${weapon?.name ?? 'Weapon'} — Attack ${index + 1}`,
@@ -228,7 +228,7 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
     return;
   }
 
-  const equipped = getEquippedWeapons(actor);
+  const equipped = getReadiedWeaponSelection(actor);
   const planAnswers = await collectPlanAnswers(equipped.primary, {});
   let plan = buildFullAttackSequence(actor, { requestedPackage: spec.packageType, primaryWeapon: equipped.primary, answers: planAnswers });
   if (!plan?.legal) plan = fallbackMultiAttackPlan(actor, spec, equipped.primary);

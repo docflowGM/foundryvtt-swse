@@ -172,6 +172,9 @@ export class ModifierEngine {
         item?.system?.readied ?? '',
         item?.system?.equippable?.equipped ?? '',
         item?.flags?.swse?.equipped ?? '',
+        item?.system?.weaponPosture ?? '',
+        JSON.stringify(item?.system?.weaponOccupancy ?? ''),
+        JSON.stringify(item?.flags?.swse?.fireState?.wielded ?? ''),
         item?.system?.activated ?? item?.system?.active ?? '',
         item?.system?.quantity ?? '',
         item?.system?.uses?.value ?? item?.system?.ammo?.value ?? ''

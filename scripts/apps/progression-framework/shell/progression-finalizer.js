@@ -2976,7 +2976,6 @@ export class ProgressionFinalizer {
     itemData.name = itemData.name || 'Lightsaber';
     itemData.type = itemData.type || 'weapon';
     itemData.system = foundry.utils.mergeObject(itemData.system || {}, {
-      equipped: true,
       carried: true,
       category: 'lightsaber',
       subcategory: 'lightsaber',
@@ -2987,10 +2986,6 @@ export class ProgressionFinalizer {
       weaponCategory: itemData.system?.weaponCategory || 'melee',
       weaponType: itemData.system?.weaponType || 'melee',
       rangeProfile: 'melee',
-      equippable: {
-        equipped: true,
-        slot: 'hand',
-      },
       traits: [...new Set([...(Array.isArray(itemData.system?.traits) ? itemData.system.traits : []), 'Lightsaber'])],
       properties: [...new Set([...(Array.isArray(itemData.system?.properties) ? itemData.system.properties : []), 'Lightsaber'])],
     }, { inplace: false, recursive: true, overwrite: true });
@@ -3003,14 +2998,12 @@ export class ProgressionFinalizer {
           countIndex: 0,
         },
         classStarterEquipment: true,
-        autoEquipped: true,
         sourceClass: 'Jedi',
         isLightsaber: true,
       },
       'foundryvtt-swse': {
         isLightsaber: true,
         classStarterEquipment: true,
-        autoEquipped: true,
         sourceClass: 'Jedi',
       },
     }, { inplace: false, recursive: true });
@@ -3094,7 +3087,6 @@ export class ProgressionFinalizer {
         range: 'Melee',
         weight: 1,
         cost: 12000,
-        equipped: true,
         description: '<p>The elegant weapon of the Jedi and Sith. A blade of pure energy capable of cutting through nearly anything.</p>',
         properties: ['Lightsaber', 'Critical 19-20', 'Exotic', 'Armor-Piercing'],
         ammunition: { type: 'none', current: 0, max: 0 },
@@ -3110,7 +3102,6 @@ export class ProgressionFinalizer {
           attack: { ability: 'str', bonus: 0 },
           damage: { dice: '2d8', bonus: 0, type: 'energy', ability: 'str' },
         },
-        equippable: { equipped: true, slot: 'hand' },
         rangeProfile: 'melee',
         weaponType: 'melee',
         traits: ['Lightsaber', 'Critical 19-20', 'Exotic', 'Armor-Piercing'],

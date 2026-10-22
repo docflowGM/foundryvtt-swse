@@ -23,7 +23,9 @@ const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/i
 const { FireStateStore: FireStateStoreRef } = await import('/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
@@ -75,7 +77,7 @@ function installHarness({ econAllowed = true } = {}) {
   RollEngine.safeRoll = async (f) => { spent.rolls += 1; return { total: 15, formula: f, dice: [{ results: [{ result: 12 }] }] }; };
   SWSEChat.postRoll = async (p) => { posted.push(p); return {}; };
   AmmoSystem.spendForWorkflow = async () => { spent.ammo += 1; return { success: true, spent: false }; };
-  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } };
+  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
   ActionEconomyConsumption.spend = async (actor, type) => { if (!econAllowed) return { allowed: false, permitted: false, rollback: async () => {} }; spent.actions.push(type); return { allowed: true, committed: true, rollback: async () => { spent.actions.pop(); } }; };
 }
 const restoreHarness = () => { RollEngine.safeRoll = origs.RE; SWSEChat.postRoll = origs.post; AmmoSystem.spendForWorkflow = origs.spendAmmo; ActorEngine.updateOwnedItems = origs.upd; ActionEconomyConsumption.spend = origs.econ; AmmoSystem.consumeAmmunition = origs.consume; AmmoSystem.isTrackingEnabled = origs.track; globalThis.game = undefined; };
@@ -240,21 +242,27 @@ try {
   reset(); assert.equal(await attack(a1, w1, { profileId: 'two-handed-base-override', wieldedHands: 1 }), null, 'one-handed: refused'); assert.equal(spent.rolls, 0);
   assert.ok(notes.warn.some((m) => /wielding/.test(m)));
   const w2 = canon(LH); const a2 = makeActor({ items: [w2] });
+  ownAndReady(a2, w2); const gripBefore = state(w2).wielded;   // the coordinator-owned grip the readiness fixture established
   reset(); assert.ok(await attack(a2, w2, { profileId: 'two-handed-base-override', wieldedHands: 2 }), 'two-handed: allowed');
   assert.deepEqual([wfOf().attackShape.wieldedHands, wfOf().attackShape.forgoDoubleStrength, wfOf().weaponForm.profileId], [2, true, 'two-handed-base-override'], 'hands and the choice persist in the workflow');
-  assert.equal(state(w2).wielded, 'two-handed', 'the owned weapon remembers the hands the player chose');
+  assert.equal(state(w2).wielded, gripBefore, 'E4-C1 WP5: attacking never records or changes the grip on the Item; the hands choice is coordinator-owned (FireStateStore only plans it)');
   // Phase 5D-I-D-B2: the hands are unresolved (so the requirement is asked) only where the weapon's size class does not decide them. For a Large wielder the
   // Long-Handle Lightsaber (Large) is one-handed class; for a Medium wielder it is two-handed class (Core Rulebook p.120), so both hands are already established.
   const w3 = canon(LH); const a3 = makeActor({ items: [w3], size: 'large' }); const asked = ask(async () => true);
-  reset(); assert.ok(await attack(a3, w3, { profileId: 'two-handed-base-override' })); assert.deepEqual(asked, ['requirement:wielding:two-handed']);
+  // E4-C1 WP5-C1: a READY weapon's grip is established by the coordinator-owned record, so the hands are never asked at attack time. A profile that needs
+  // other hands than the established grip is refused until the coordinator re-grips the weapon (not an attack-time prompt).
+  reset(); assert.equal(await attack(a3, w3, { profileId: 'two-handed-base-override' }), null, 'established one-handed grip: the two-handed profile is refused'); assert.deepEqual(asked, [], 'nothing is asked');
+  w3.system = { ...w3.system, weaponOccupancy: { schemaVersion: 1, purpose: 'wield', appendageIds: ['natural-arm-1', 'natural-arm-2'] } }; w3.flags.swse.fireState = { ...w3.flags.swse.fireState, wielded: 'two-handed' };
+  reset(); assert.ok(await attack(a3, w3, { profileId: 'two-handed-base-override' }), 'after the coordinator re-grips two-handed the profile is legal'); assert.deepEqual(asked, [], 'still nothing asked');
   const w3m = canon(LH); const a3m = makeActor({ items: [w3m] }); const askedM = ask(async () => true);
   reset(); assert.ok(await attack(a3m, w3m, { profileId: 'two-handed-base-override' })); assert.deepEqual(askedM, [], 'a Large weapon is two-handed for a Medium wielder: nothing to ask'); assert.equal(wfOf().attackShape.wieldedHands, 2);
   void asked;
-  rt.setSpecialPromptProvider(async () => false); const w4 = canon(LH); reset(); assert.equal(await attack(makeActor({ items: [w4], size: 'large' }), w4, { profileId: 'two-handed-base-override' }), null, '"no" refuses'); rt.setSpecialPromptProvider(null);
+  rt.setSpecialPromptProvider(async () => true); const w4 = canon(LH); reset(); assert.equal(await attack(makeActor({ items: [w4], size: 'large' }), w4, { profileId: 'two-handed-base-override' }), null, 'a prompt provider cannot override the established grip'); rt.setSpecialPromptProvider(null);
   // the damage roll uses the carried hands (not the Item's current state): changing the owned state later changes nothing
   reset(); const w5 = canon(LH); const a5 = makeActor({ items: [w5] }); a5.system.attributes.str = ab(4);
   assert.ok(await attack(a5, w5, { profileId: 'two-handed-base-override', wieldedHands: 2 })); const wf5 = wfOf();
-  await FS.setWielding(a5, w5, 'one-handed');
+  assert.equal(FS.setWielding, undefined, 'FireStateStore has no grip writer (WP5)');
+  w5.flags.swse.fireState = { ...(w5.flags.swse.fireState ?? {}), v: 1, wielded: 'one-handed' }; // the Item's current state changes by another path (coordinator)
   formulas.length = 0; assert.ok(await rollDamage(a5, w5, { combatContext: wf5, workflowContext: wf5, suppressChat: true, target: target() }));
   assert.equal(formulas[0], '2d10 + 7', '2d10 base + half level 3 + a SINGLE Strength +4, from the carried (forgo) choice -- not re-derived from the changed Item');
   // wielding constraints (siblings): Garrote requires two hands, lightfoils cannot be wielded two-handed
@@ -381,16 +389,13 @@ try {
   assert.equal(OS.currentMachineState(sm, m1, null).state, 'normal', 'no combat clock: nothing is invented'); assert.equal(OS.currentMachineState(sm, { ...m1, combatId: 'other' }, { combatId: 'c1', round: 1 }).state, 'normal', 'a position from another combat is not inherited');
   assert.deepEqual(OS.machineTransitionAllowed(sm, 'normal', 'overcharge'), { allowed: true, transition: sm.transitions[0] }); assert.deepEqual(OS.machineTransitionAllowed(sm, 'burnout', 'overcharge'), { allowed: false, reason: 'locked' });
   assert.equal(OS.machineTransitionAllowed(sm, 'overcharge', 'normal').allowed, false, 'only forced transitions lead out of overcharge'); assert.equal(OS.machineTransitionAllowed(sm, 'normal', 'burnout').allowed, false);
+  // E4-C1 WP5-C1 (data gap): the canonical Retrosaber record carries no size (baseSize null), so its grip can never be verified and it is never READIED;
+  // the attack gate refuses it before a swift is paid or any state is persisted. The live state-machine assertions (swift dial-up, overcharge, burnout lock,
+  // normal) are acceptance debt (data/audits/equipment-acceptance-debt.json, DATA-GAP/retrosaber-canonical-size) until the size is supplied from a source.
   const rs = canon(RS); const R = makeActor({ items: [rs] });
-  setRound(1); reset(); assert.ok(await attack(R, rs, { profileId: 'overcharge' })); assert.equal(swifts(), 1, '28: dial-up pays the swift action'); assert.deepEqual(state(rs).machine, { state: 'overcharge', since: 1, combatId: 'c1' });
-  setRound(2); reset(); assert.ok(await attack(R, rs, {})); assert.equal(swifts(), 0, 'round 2: still overcharged, no repayment'); assert.equal(wfOf().weaponForm.profileId, 'overcharge', 'the owned state decides the profile');
-  setRound(2); reset(); assert.equal(await attack(R, rs, { profileId: 'normal' }), null, 'cannot attack with the normal base while overcharged'); assert.ok(notes.warn.some((m) => /overcharge state/.test(m)));
-  setRound(3); reset(); assert.ok(await attack(R, rs, {})); assert.equal(wfOf().weaponForm.profileId, 'burnout', '29: round 3 the weapon is in burnout (2d4)'); assert.deepEqual(spent.actions, []);
-  setRound(3); reset(); assert.equal(await attack(R, rs, { profileId: 'overcharge' }), null, 'burnout locks the dial-up'); assert.equal(spent.rolls, 0); assert.equal(swifts(), 0); assert.ok(notes.warn.some((m) => /locked/.test(m)));
-  setRound(4); reset(); assert.ok(await attack(R, rs, {})); assert.equal(wfOf().weaponForm.profileId, 'normal', 'round 4: normal again');
-  setRound(4); reset(); assert.ok(await attack(R, rs, { profileId: 'overcharge' })); assert.equal(swifts(), 1, 'and it can be dialled up again'); assert.deepEqual(state(rs).machine, { state: 'overcharge', since: 4, combatId: 'c1' });
-  setRound(null); const rs2 = canon(RS); reset(); assert.ok(await attack(makeActor({ items: [rs2] }), rs2, { profileId: 'overcharge' })); assert.equal(state(rs2).machine, undefined, 'out of combat nothing is persisted');
-  ok('Retrosaber: the certified state machine runs on the combat clock -- swift dial-up, overcharge through the wielder\'s next turn, a locked burnout round, then normal; damage still from the canonical profiles; nothing persisted out of combat');
+  setRound(1); reset(); assert.equal(await attack(R, rs, { profileId: 'overcharge' }), null, 'the Retrosaber is refused by the attack gate'); assert.equal(swifts(), 0); assert.equal(spent.rolls, 0);
+  assert.equal(state(rs).machine, undefined, 'a refused attack persists no machine state'); setRound(null);
+  ok('Retrosaber: the certified state machine data is asserted purely; live attacks are refused by the gate (no canonical size) and pay and persist nothing');
 }
 
 // ======================================================================================================================================
@@ -524,7 +529,8 @@ try {
 // ======================================================================================================================================
 {
   const w = legacy(); const A = makeActor({ items: [w] }); reset();
-  assert.ok(await attack(A, w, { attackOfOpportunity: true }), 'a legacy weapon keeps the legacy attack path');
+  // E4-C1 WP5-C1: an uncertified homebrew weapon is refused by the attack gate (open domain-design item); no I-B state is invented either way
+  assert.equal(await attack(A, w, { attackOfOpportunity: true }), null, 'an uncertified legacy weapon is refused by the gate'); assert.equal(spent.rolls, 0);
   assert.equal(Object.keys(state(w)).length, 0, 'no owned I-B state is invented for a legacy weapon');
   const droid = makeActor({ type: 'droid', items: [] }); assert.ok(droid);
   const mA = manifestIA.buildManifest(); assert.deepEqual(mA.problems, []); assert.equal(mA.counters.I_A_UNCLASSIFIED_KEYS, 0);

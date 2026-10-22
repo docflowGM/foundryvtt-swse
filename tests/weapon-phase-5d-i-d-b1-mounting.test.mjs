@@ -23,7 +23,9 @@ const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/i
 const { FireStateStore: FireStateStoreRef } = await import('/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
@@ -36,6 +38,8 @@ const ser = await import('/systems/foundryvtt-swse/scripts/engine/combat/workflo
 const { buildCensus, OUT_JSON } = await import('../tools/census-weapon-fire-state-area-selectors.mjs');
 const { registry, registryData } = await import('./helpers/weapon-runtime-fixture.mjs');
 rt.setSharedWeaponAuthorityRegistry(registry);
+const { installReadinessEnvironment, readyAllDirected } = await import('./helpers/ready-weapon-fixture.mjs');
+await installReadinessEnvironment();
 
 let step = 0;
 const ok = (label) => { step += 1; console.log(`  [${step}] ${label} OK`); };
@@ -54,11 +58,12 @@ const optionFeat = (name, optionId) => mk('feat', name, { system: { abilityMeta:
 const PROF = ['Weapon Proficiency (Pistols)', 'Weapon Proficiency (Rifles)', 'Weapon Proficiency (Simple Weapons)', 'Weapon Proficiency (Heavy Weapons)', 'Weapon Proficiency (Advanced Melee Weapons)'].map((n) => mk('feat', n));
 const canon = (k, system = {}, extra = {}) => ({ id: `w${++uid}-${k}`, name: 'Renamed Thing', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: k } } }, system: { damage: '9d9', damageType: 'sonic', equipped: true, ...system }, ...extra });
 const legacy = (system = {}, name = 'Homebrew') => ({ id: `hb${++uid}`, name, type: 'weapon', flags: {}, system: { weaponCategory: 'ranged', damage: '2d6', damageType: 'energy', equipped: true, proficient: true, ...system } });
-const makeActor = ({ feats = [], items = [], level = 6, type = 'character', size = 'medium' } = {}) => {
+const makeActor = (o = {}) => readyAllDirected(makeActorRaw(o));
+const makeActorRaw = ({ feats = [], items = [], level = 6, type = 'character', size = 'medium' } = {}) => {
   const actor = {
     id: 'a1', name: 'Tester', type, flags: { swse: {} }, effects: [], getFlag() { return undefined; }, getRollData() { return {}; },
     items: col([...PROF, ...feats, ...items]),
-    system: { bab: 6, level, size, attributes: { str: ab(0), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, derived: {}, forcePoints: { value: 1, max: 5 }, weaponProficiencies: ['pistols', 'rifles', 'simple', 'heavy-weapons', 'advanced-melee'] },
+    system: { species: 'Human', bab: 6, level, size, attributes: { str: ab(0), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, derived: {}, forcePoints: { value: 1, max: 5 }, weaponProficiencies: ['pistols', 'rifles', 'simple', 'heavy-weapons', 'advanced-melee'] },
   };
   for (const w of items) w.actor = actor;
   return actor;
@@ -75,7 +80,7 @@ function installHarness({ econAllowed = true } = {}) {
   RollEngine.safeRoll = async (f) => { spent.rolls += 1; return { total: 15, formula: f, dice: [{ results: [{ result: 12 }] }] }; };
   SWSEChat.postRoll = async (p) => { posted.push(p); return {}; };
   AmmoSystem.spendForWorkflow = async () => { spent.ammo += 1; return { success: true, spent: false }; };
-  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } };
+  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
   ActionEconomyConsumption.spend = async (actor, type) => { if (!econAllowed) return { allowed: false, permitted: false, rollback: async () => {} }; spent.actions.push(type); return { allowed: true, committed: true, rollback: async () => { spent.actions.pop(); } }; };
 }
 const restoreHarness = () => { RollEngine.safeRoll = origs.RE; SWSEChat.postRoll = origs.post; AmmoSystem.spendForWorkflow = origs.spendAmmo; ActorEngine.updateOwnedItems = origs.upd; ActionEconomyConsumption.spend = origs.econ; AmmoSystem.consumeAmmunition = origs.consume; AmmoSystem.isTrackingEnabled = origs.track; globalThis.game = undefined; };
@@ -136,7 +141,8 @@ const useRealAmmo = () => { AmmoSystem.spendForWorkflow = origs.spendAmmo; AmmoS
 const noRealAmmo = () => { AmmoSystem.isTrackingEnabled = origs.track; };
 const ammoOf = (w) => w.system.ammunition.current;
 const { mountRuleOf, hostEligibility } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/host-mount.js');
-const readState = (w) => w.flags?.swse?.fireState ?? null;
+// the coordinator-owned grip (`wielded`) comes from the readiness fixture and is not part of the operating state these assertions are about (E4-C1 WP5)
+const readState = (w) => { const f = w.flags?.swse?.fireState; if (!f) return null; const { wielded, ...rest } = f; return Object.keys(rest).every((k) => k === 'v') ? null : rest; };
 const rolling = (total, calls = []) => async (a, skill, opts) => { calls.push({ skill, opts }); return total === null ? null : { total }; };
 const code = async (fn) => { try { await fn(); return null; } catch (e) { return e.code ?? e.message; } };
 
@@ -238,13 +244,20 @@ try {
     reset(); assert.ok(await attack(A, micro, {}), 'default (standalone) is legal');
     // recorded eligible host: allowed
     await FireStateStoreRef.mountOnHost(A, micro, rifle, { skillRoller: rolling(20) });
-    reset(); assert.ok(await attack(A, micro, opt), `${label}: recorded eligible host -> allowed`);
-    reset(); assert.ok(await attack(A, micro, {}), 'the owned mounted configuration applies by default and is legal');
+    // E4-C1 WP5-C1: a launcher mounted on a host weapon is HOST-MOUNTED equipment; mounted/worn certification is deferred, so its readiness is indeterminate
+    // and the attack gate refuses it (acceptance debt: EQ-003/host-mounted-attack-execution). The mount ARRANGEMENT legality (previewReadiness) is still asserted.
+    reset(); assert.equal(await attack(A, micro, opt), null, `${label}: recorded eligible host -> mount legality satisfied, but host-mounted attacks await certification`);
+    assert.ok(!FireStateStoreRef.previewReadiness(A, micro, rt.resolveAttackWeaponRuntime(micro, opt), opt).blockers.some((b) => /mount-host/.test(b.reason)), 'no mount blocker remains');
+    reset(); assert.equal(await attack(A, micro, {}), null, 'the owned mounted configuration is likewise refused by the gate');
     // the recorded host is removed
     A.items = col(A.items.filter((i) => i.id !== rifle.id));
     reset(); assert.equal(await attack(A, micro, opt), null, `${label}: recorded host removed -> refused`); assert.equal(spent.rolls + spent.ammo + spent.actions.length, 0);
     reset(); assert.equal(await attack(A, micro, {}), null, 'and the owned mounted state is refused too');
-    reset(); assert.ok(await attack(A, micro, { configurationId: 'standalone' }), 'standalone remains available after the host is gone');
+    // E4-C1 WP5-C1: readiness is about the weapon's OWNED configuration (a recorded host keeps it host-mounted), not an attack option; once the owner
+    // unmounts it (an owned-state change) the standalone form is legal again.
+    reset(); assert.equal(await attack(A, micro, { configurationId: 'standalone' }), null, 'a stale recorded host keeps the launcher host-mounted until it is unmounted');
+    assert.equal((await FireStateStoreRef.unmountFromHost(A, micro)).ok, true);
+    reset(); assert.ok(await attack(A, micro, { configurationId: 'standalone' }), 'standalone remains available once the launcher is unmounted');
   }
   // a recorded host that has become ineligible (forged / stale state: points at a pistol) is refused
   { const [A, micro, , pistol] = mkL(); await FireStateStoreRef.setLoadedPayload(A, micro, 'weapon-frag-grenade');
@@ -284,7 +297,8 @@ try {
     const r = await FireStateStoreRef.mountOnHost(A, fresh, rifle, { skillRoller: rolling(20) });
     assert.equal(r.ok, false); assert.equal(r.reason, 'persist-failed'); assert.equal(readState(fresh), null, 'not falsely mounted');
     // ordinary combat-state writes keep their best-effort behaviour
-    assert.equal((await FireStateStoreRef.setWielding(A, fresh, 'two-handed')).ok, true);
+    assert.equal(FireStateStoreRef.setWielding, undefined, 'the grip is coordinator-owned: FireStateStore has no wielding writer (WP5)');
+    assert.equal((await FireStateStoreRef.setConfiguration(A, fresh, 'standalone')).ok, true);
   } finally { ActorEngine.updateOwnedItems = realUpd; console.warn = warn; }
   assert.equal((await FireStateStoreRef.unmountFromHost(A, micro)).ok, true); assert.equal(readState(micro).mountedHostId, null);
   ok('unmount (direct and via setConfiguration) requires the owning actor; a rejected write is reported as persist-failed with no falsely confirmed state; ordinary combat-state writes stay best-effort');
@@ -347,10 +361,12 @@ try {
   reinstall();
   const micro = owned('weapon-micro-grenade-launcher'), rifle = owned('weapon-blaster-rifle');
   const A = makeActor({ items: [micro, rifle] });
-  const before = await bonusOf(A, micro, { loadedIdentityKey: 'weapon-frag-grenade' });
+  // E4-C1 WP5-C1: compare the attack composition itself (a host-mounted launcher cannot pass the execution gate until mounted certification)
+  const compBonus = async () => (await computeFinalAttackComposition(A, micro, { loadedIdentityKey: 'weapon-frag-grenade' })).atkBonus;
+  const before = await compBonus();
   const dBefore = rt.resolveCanonicalDamage(micro, { weaponForm: { identityKey: 'weapon-micro-grenade-launcher', profileId: 'primary', loadedIdentityKey: 'weapon-frag-grenade' } }).base;
   await FireStateStoreRef.mountOnHost(A, micro, rifle, { skillRoller: rolling(20) });
-  const after = await bonusOf(A, micro, { loadedIdentityKey: 'weapon-frag-grenade' });
+  const after = await compBonus();
   const dAfter = rt.resolveCanonicalDamage(micro, { weaponForm: { identityKey: 'weapon-micro-grenade-launcher', profileId: 'primary', loadedIdentityKey: 'weapon-frag-grenade' } }).base;
   assert.equal(after, before, 'mounting changes no attack bonus'); assert.equal(dAfter, dBefore, 'nor the payload damage (the -2 dice adjustment is intact)');
   assert.ok(typeof before === 'number');

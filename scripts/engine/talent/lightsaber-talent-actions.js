@@ -6,7 +6,7 @@ import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { accruedPenalty, withRecordedUse, withCreditedBackUse } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/reaction-rules.js";
-import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveReactionWeapon, selectedReactionModifiers, canonicalLightsaberGroupOf } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js";
 
@@ -353,8 +353,8 @@ export class LightsaberTalentActions {
       ui?.notifications?.warn?.('Lightsaber Defense talent required.');
       return null;
     }
-    // the lightsaber must actually be drawn AND ignited (canonical group first; the legacy name test only for a weapon with no canonical identity)
-    const readySaber = weaponOptions(actor).some((w) => ['weapon', 'lightsaber'].includes(String(w?.type ?? '').toLowerCase()) && isLightsaberLike(w, String(w?.name ?? '')) && isItemEquipped(w, actor) && isItemActivated(w));
+    // the lightsaber must actually be READIED (effective posture) AND ignited -- posture and activation are separate facts (canonical group first; the legacy name test only for a weapon with no canonical identity)
+    const readySaber = weaponOptions(actor).some((w) => ['weapon', 'lightsaber'].includes(String(w?.type ?? '').toLowerCase()) && isLightsaberLike(w, String(w?.name ?? '')) && isWeaponReadied(actor, w) && isItemActivated(w));
     if (!readySaber) {
       ui?.notifications?.warn?.('Lightsaber Defense requires a drawn and ignited lightsaber.');
       return null;

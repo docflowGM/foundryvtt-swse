@@ -15,7 +15,7 @@ import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-
 import { collectKnownForceSecrets, collectKnownForceTechniques } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 import { buildActorItemIndex } from "./actor-item-index.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
-import { isItemEquipped as canonicalIsItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { getReadiedWeapons } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -119,15 +119,6 @@ const RESOURCE_TICK_CAP = 100;
 function safeNumber(value, fallback = 0) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
-}
-
-// Math Integrity Freeze, Attack Bonus round 6: delegated to the shared
-// equipped/wielded-state authority (scripts/items/weapon-branch-resolver.js,
-// promoted from this file's own prior copy) so target-conditioned combat
-// modifiers (e.g. Heart of the Guardian) answer the same question this
-// sheet-mirroring pass does, from one place.
-function isItemEquipped(item, actor = null) {
-  return canonicalIsItemEquipped(item, actor);
 }
 
 function firstDefined(...values) {
@@ -438,12 +429,14 @@ function normalizeAttackEntry(attack = {}, actor = null) {
 }
 
 function mirrorAttacks(actor, system) {
-  const weapons = (actor?.items ?? []).filter(i => isAttackItem(i));
+  // The attack list is the actor's READY weapons only (effective READIED, verified by the shared combat-readiness interface). Any failure to
+  // verify yields no attacks (fail closed); natural/integrated weapons stay out until their identity is certified (WP7).
+  let ready = [];
+  try { ready = getReadiedWeapons(actor); } catch { ready = []; }
+  const weapons = ready.filter(i => isAttackItem(i));
   const list = [];
 
   for (const w of weapons) {
-    // Include equipped/readied/activated weapons, lightsabers, true natural weapons, and integrated droid weapons.
-    if (!isItemEquipped(w, actor)) continue;
 
     const data = w.system ?? {};
     const resources = buildResourcesFromItem(w, RESOURCE_TICK_CAP);

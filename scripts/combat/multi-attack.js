@@ -17,6 +17,7 @@ import { shapeOfWeapon, canonicalProficiencyOf, doubleWeaponEnds, attackSelectio
 import { askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { featChoiceSelectors, featChoiceMatchesShape, normalizeToken, sequenceConstraintViolation, groupTokenFromChoice } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
 import { featKeyOf, canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { getReadiedWeapons } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 
 /**
  * Weapon groups for Double/Triple Attack feats
@@ -292,62 +293,57 @@ export function getDualWeaponPenalty(dwmLevel) {
 }
 
 /**
- * Check if actor has a specific weapon equipped for off-hand
+ * The actor's READY weapons for a Full Attack (E4-C1 WP5). Readiness is the canonical equipment-state answer (effective READIED: verified
+ * occupancy, canonical grip, no unresolved transaction, identity certified) read live through the shared combat-readiness interface; the
+ * legacy `equipped` flag, `isOffhand` / `slot` markers, activation flags and Item order decide nothing.
+ *
+ * One ready weapon is the primary (a double weapon counts as both primary and off-hand). Two or more ready weapons are NEVER assigned to
+ * hands by inference: `selectionRequired` names the ready weapons and the caller must choose the primary / off-hand explicitly.
+ *
  * @param {Actor} actor - The actor
- * @returns {Item|null} The off-hand weapon or null
+ * @param {object} [deps] readiness test seams
+ * @returns {{primary: Item|null, offhand: Item|null, isDoubleWeapon: boolean, ready: Item[], selectionRequired: {reason: string, itemIds: string[]}|null}}
  */
-export function getOffhandWeapon(actor) {
-  // Look for weapons marked as off-hand or secondary
-  for (const item of actor.items) {
-    if (item.type !== 'weapon') {continue;}
-    if (!item.system?.equipped) {continue;}
-
-    if (item.system?.isOffhand || item.system?.slot === 'offhand') {
-      return item;
-    }
+export function getReadiedWeaponSelection(actor, deps = {}) {
+  const ready = getReadiedWeapons(actor, deps);
+  const out = { primary: null, offhand: null, isDoubleWeapon: false, ready, selectionRequired: null };
+  if (ready.length === 0) return out;
+  if (ready.length > 1) {
+    out.selectionRequired = { reason: 'multiple-ready-weapons', itemIds: ready.map((w) => w.id) };
+    return out;
   }
-
-  return null;
+  out.primary = ready[0];
+  if (isDoubleWeapon(out.primary)) {
+    out.isDoubleWeapon = true;
+    // a double weapon counts as both primary and off-hand
+    out.offhand = out.primary;
+  }
+  return out;
 }
 
 /**
- * Get equipped weapons for full attack
- * @param {Actor} actor - The actor
- * @returns {Object} { primary: Item, offhand: Item|null, isDoubleWeapon: boolean }
+ * Resolve the primary / off-hand for an attack sequence from explicit caller choices and the READY weapons. An explicit choice must itself be
+ * a READY weapon; nothing is inferred when several weapons are ready.
+ * @returns {{primary: Item|null, offhand: Item|null, isDoubleWeapon: boolean, warnings: string[]}}
  */
-export function getEquippedWeapons(actor) {
-  const equipped = {
-    primary: null,
-    offhand: null,
-    isDoubleWeapon: false
-  };
-
-  const equippedWeapons = actor.items.filter(i =>
-    i.type === 'weapon' && i.system?.equipped
-  );
-
-  if (equippedWeapons.length === 0) {
-    return equipped;
+function resolveSequenceWeapons(actor, options = {}) {
+  const sel = getReadiedWeaponSelection(actor, options.readinessDeps);
+  const warnings = [];
+  const isReady = (w) => !!w && sel.ready.some((r) => r.id === w.id);
+  let primary = null;
+  if (options.primaryWeapon) {
+    if (isReady(options.primaryWeapon)) primary = options.primaryWeapon;
+    else warnings.push(`${options.primaryWeapon.name ?? 'The selected primary weapon'} is not ready (it is not verified as READIED).`);
+  } else if (sel.selectionRequired) {
+    warnings.push('More than one weapon is ready; choose the primary weapon (and the off-hand weapon) explicitly.');
+  } else primary = sel.primary;
+  const isDouble = !!primary && isDoubleWeapon(primary);
+  let offhand = null;
+  if (options.offhandWeapon) {
+    if (isReady(options.offhandWeapon) && options.offhandWeapon.id !== primary?.id) offhand = options.offhandWeapon;
+    else warnings.push(`${options.offhandWeapon.name ?? 'The selected off-hand weapon'} is not a separate ready weapon.`);
   }
-
-  // Find primary weapon (not marked as offhand)
-  equipped.primary = equippedWeapons.find(w => !w.system?.isOffhand) || equippedWeapons[0];
-
-  // Check if primary is a double weapon
-  if (equipped.primary && isDoubleWeapon(equipped.primary)) {
-    equipped.isDoubleWeapon = true;
-    // Double weapon counts as both primary and offhand
-    equipped.offhand = equipped.primary;
-  } else {
-    // Look for separate offhand weapon
-    equipped.offhand = equippedWeapons.find(w => w.system?.isOffhand)
-      // Phase 5D-F: a canonical weapon that is structurally eligible as a second weapon (worn, hands stay free) is the off-hand
-      // when none is designated -- no feat or name involved
-      ?? equippedWeapons.find(w => w.id !== equipped.primary?.id && shapeOfWeapon(w).dualWield?.eligibleAsSecondWeapon === true)
-      ?? equippedWeapons.find(w => (w.id !== equipped.primary?.id && equippedWeapons.length > 1));
-  }
-
-  return equipped;
+  return { primary, offhand: isDouble ? null : offhand, isDoubleWeapon: isDouble, warnings };
 }
 
 // ============================================================================
@@ -511,12 +507,13 @@ export function buildFullAttackSequence(actor, options = {}) {
   }
 
   // Resolve weapons
-  const equipped = getEquippedWeapons(actor);
-  const primaryWeapon = options.primaryWeapon ?? equipped.primary;
-  const offhandWeapon = options.offhandWeapon ?? (equipped.isDoubleWeapon ? null : equipped.offhand);
+  const equipped = resolveSequenceWeapons(actor, options);
+  const primaryWeapon = equipped.primary;
+  const offhandWeapon = equipped.offhand;
+  result.warnings.push(...equipped.warnings);
 
   if (!primaryWeapon) {
-    result.warnings.push('No weapon equipped. Equip a weapon before using Full Attack.');
+    result.warnings.push('No ready weapon. Ready a weapon (verified READIED) before using Full Attack.');
     return result;
   }
 
@@ -636,7 +633,7 @@ export function buildFullAttackSequence(actor, options = {}) {
   // ── Two-Weapon Attack ─────────────────────────────────────────────────────
   if (pkg === FULL_ATTACK_PACKAGES.TWO_WEAPON) {
     if (!offhandWeapon || offhandWeapon.id === primaryWeapon.id) {
-      result.warnings.push('Two-Weapon Attack requires two separate equipped weapons.');
+      result.warnings.push('Two-Weapon Attack requires two separate ready weapons.');
       return result;
     }
 
@@ -691,10 +688,10 @@ export function buildFullAttackSequence(actor, options = {}) {
 
   // ── Double-Weapon Attack ──────────────────────────────────────────────────
   if (pkg === FULL_ATTACK_PACKAGES.DOUBLE_WEAPON) {
-    const doubleWep = equipped.isDoubleWeapon ? equipped.primary : primaryWeapon;
+    const doubleWep = equipped.isDoubleWeapon ? primaryWeapon : primaryWeapon;
     const dwSel = selectionOptions(options, 'primary');
     if (!doubleWep || !isDoubleWeapon(doubleWep, dwSel)) {
-      result.warnings.push('Double-Weapon Attack requires a double weapon to be equipped.');
+      result.warnings.push('Double-Weapon Attack requires a ready double weapon.');
       return result;
     }
     // canonical double weapon: each END is its own canonical form (profile-level ends, or host-configuration ends that resolve as
@@ -964,8 +961,7 @@ export default {
   getTripleAttackGroups,
   getDualWeaponMasteryLevel,
   getDualWeaponPenalty,
-  getOffhandWeapon,
-  getEquippedWeapons,
+  getReadiedWeaponSelection,
   getMultiattackReduction,
   buildFullAttackSequence,
   calculateFullAttackConfig,
@@ -990,12 +986,12 @@ export default {
  * @returns {Promise<Object|null>} The sequence from buildFullAttackSequence, or null
  */
 export async function showFullAttackDialog(actor, options = {}) {
-  const equipped = getEquippedWeapons(actor);
-  const primaryWeapon = options.primaryWeapon ?? equipped.primary;
-  const offhandWeapon = options.offhandWeapon ?? (equipped.isDoubleWeapon ? null : equipped.offhand);
+  const equipped = resolveSequenceWeapons(actor, options);
+  const primaryWeapon = equipped.primary;
+  const offhandWeapon = equipped.offhand;
 
   if (!primaryWeapon) {
-    ui.notifications.warn('No weapon equipped for Full Attack.');
+    ui.notifications.warn(equipped.warnings[0] ?? 'No ready weapon for Full Attack.');
     return null;
   }
 

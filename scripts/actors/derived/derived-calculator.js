@@ -122,6 +122,9 @@ export class DerivedCalculator {
         item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
         item?.system?.quantity ?? '',
         item?.system?.equipped ?? item?.system?.isEquipped ?? '',
+        item?.system?.weaponPosture ?? '',
+        JSON.stringify(item?.system?.weaponOccupancy ?? ''),
+        JSON.stringify(item?.flags?.swse?.fireState?.wielded ?? ''),
         item?.system?.uses?.value ?? item?.system?.ammo?.value ?? ''
       ].join(':'))
       .sort()

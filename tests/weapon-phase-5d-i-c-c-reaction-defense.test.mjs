@@ -23,7 +23,9 @@ const chatPosted = [];
 globalThis.ChatMessage = { getSpeaker: () => ({}), create: async (d) => { chatPosted.push(d); return {}; } };
 
 const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
 const { RollEngine } = await import('/systems/foundryvtt-swse/scripts/engine/roll-engine.js');
 const { AmmoSystem } = await import('/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js');
@@ -56,6 +58,8 @@ const manifestICC = await import('../tools/census-weapon-phase-5d-i-c-c-inputs.m
 const { I_C_C_ROWS, I_C_C_BASELINE } = await import('../tools/lib/weapon-phase-5d-i-c-c-ledger.mjs');
 import { spawnSync } from 'node:child_process';
 rt.setSharedWeaponAuthorityRegistry(registry);
+const { installReadinessEnvironment, readyAllDirected } = await import('./helpers/ready-weapon-fixture.mjs');
+await installReadinessEnvironment();
 
 let step = 0;
 const ok = (label) => { step += 1; console.log(`  [${step}] ${label} OK`); };
@@ -72,11 +76,12 @@ const LS_PROF = canonFeat('weapon-proficiency-lightsabers', 'Wpn Prof LS');
 const canon = (k, system = {}, extra = {}) => ({ id: `w${++uid}-${k}`, name: 'Renamed Thing', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: k } } }, system: { damage: '9d9', damageType: 'sonic', equipped: true, ...system }, ...extra });
 const withAmmo = (k, max = 100, system = {}) => canon(k, { ammunition: { current: max, max }, ...system });
 let actorSeq = 0;
-const makeActor = ({ id = null, feats = [], items = [], level = 6, type = 'character', size = 'medium', grapple = 8, str = 0 } = {}) => {
+const makeActor = (o = {}) => readyAllDirected(makeActorRaw(o));
+const makeActorRaw = ({ id = null, feats = [], items = [], level = 6, type = 'character', size = 'medium', grapple = 8, str = 0 } = {}) => {
   const actor = {
     id: id ?? `a${++actorSeq}`, name: `Actor${actorSeq}`, type, flags: { swse: {} }, effects: [], getFlag() { return undefined; }, getRollData() { return {}; },
     items: col([...PROF, LS_PROF, ...feats, ...items]),
-    system: { bab: 6, level, size, attributes: { str: ab(str), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, hp: { value: 40, max: 40 }, conditionTrack: { current: 0 },
+    system: { species: 'Human', bab: 6, level, size, attributes: { str: ab(str), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, hp: { value: 40, max: 40 }, conditionTrack: { current: 0 },
       derived: { speed: { total: 6 }, defenses: { reflex: { total: 12 }, fortitude: { total: 12 }, will: { total: 10 } } }, forcePoints: { value: 1, max: 5 },
       weaponProficiencies: ['pistols', 'rifles', 'simple', 'heavy-weapons', 'advanced-melee', 'lightsabers'] },
     __grapple: grapple,
@@ -110,7 +115,7 @@ const install = () => {
   SWSEChat.postRoll = async (p) => { posted.push(p); return {}; };
   AmmoSystem.spendForWorkflow = async () => { spent.ammo += 1; return { success: true, spent: false }; };
   AmmoSystem.consumeAmmunition = async (a, w, n) => ({ success: true, newAmmo: 50 - n, previousAmmo: 50 });
-  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } };
+  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
   ActionEconomyConsumption.spend = async (actor, type) => { spent.actions.push(type); return { allowed: true, committed: true, rollback: async () => { spent.actions.pop(); } }; };
   ActorEngine.createEmbeddedDocuments = async (actor, name, data) => { const made = data.map((d) => ({ id: `ge${++uid}`, ...JSON.parse(JSON.stringify(d)), statuses: new Set(), disabled: false })); actor.effects.push(...made); return made; };
   ActorEngine.deleteEmbeddedDocuments = async (actor, name, ids) => { actor.effects = actor.effects.filter((e) => !ids.includes(e.id)); return ids; };
@@ -223,7 +228,7 @@ const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflec
   assert.equal(RR.accruedPenalty({ uses: 2 }), 10); assert.equal(RR.accruedPenalty({ increments: [2, 5] }), 7); assert.deepEqual(RR.withRecordedUse({ uses: 2 }, 2), { increments: [5, 5, 2], uses: 3 });
   assert.deepEqual(RR.withCreditedBackUse({ increments: [2, 2, 5] }), { increments: [2, 2], uses: 2 });
   const w = ls('lightsaber-chassis-crossguard'); const E = reactor({ weapons: [w] }); await block(E);
-  assert.deepEqual(Object.keys(w.flags.swse), ['canonicalWeapon']); assert.ok(E.__flags['swse.blockDeflectUseState']);
+  assert.deepEqual(Object.keys(w.flags.swse), ['canonicalWeapon', 'fireState'], 'only the identity and the coordinator-owned grip fixture; no counter is written to the weapon'); assert.deepEqual(w.flags.swse.fireState, { v: 1, wielded: 'one-handed' }); assert.ok(E.__flags['swse.blockDeflectUseState']);
   ok('the Block / Deflect counter stays with the actor flag (legacy records priced at 5 per use); no counter is written to a weapon');
 }
 
@@ -295,7 +300,7 @@ const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflec
 // E. DUAL-PHASE (passive contextual defense)                                                                             [points 20-24]
 // ======================================================================================================================================
 {
-  const target = (setting) => { const t = mkT({ reflex: 12 }); const dp = ls('lightsaber-chassis-dual-phase'); if (setting) dp.flags.swse.fireState = { v: 1, settingProfile: setting }; t.items = col([dp]); return t; };
+  const target = (setting) => { const t = mkT({ reflex: 12 }); const dp = ls('lightsaber-chassis-dual-phase'); t.system.species = 'Human'; t.items = col([dp]); readyAllDirected(t); if (setting) dp.flags.swse.fireState = { ...dp.flags.swse.fireState, v: 1, settingProfile: setting }; return t; };
   const shooter = withAmmo('weapon-blaster-pistol', 50); const A = makeActor({ items: [shooter] }); noAsk();
   const dcOf = async (t, extra = {}) => { reset(); const r = await rollAttack(A, shooter, { target: t, suppressChat: false, rangeBand: 'short', ...extra }); assert.ok(r); return posted.find((p) => p.context?.workflowContext).context.dc; };
   world(A);
@@ -304,7 +309,7 @@ const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflec
   assert.equal(await dcOf(ext, { adjacent: true }), 10); ok('extended blade + adjacent attacker: -2 Reflex Defense');
   assert.equal(await dcOf(ext, { adjacent: false }), 12); assert.equal(await dcOf(ext, { distance: 'near' }), 12); ok('extended blade + non-adjacent attacker: no penalty');
   assert.equal(ext.system.derived.defenses.reflex.total, 12); ok('the stored Reflex Defense is never changed (the penalty exists only in that attack\'s defense value)');
-  ext.items[0].flags.swse.fireState = { v: 1, settingProfile: 'default' }; assert.equal(await dcOf(ext, { adjacent: true }), 12); ok('switching back to the default setting removes the penalty');
+  ext.items[0].flags.swse.fireState = { ...ext.items[0].flags.swse.fireState, v: 1, settingProfile: 'default' }; assert.equal(await dcOf(ext, { adjacent: true }), 12); ok('switching back to the default setting removes the penalty');
   // unobserved adjacency: asked once, an unanswered fact is never read as adjacent
   const ext2 = target('extended'); let asked = ask(async (q) => (/passive-defense/.test(q.id) ? true : null)); assert.equal(await dcOf(ext2), 10); assert.ok(asked.some((id) => /passive-defense:adjacent/.test(id)));
   ask(async () => null); assert.equal(await dcOf(ext2), 12); noAsk();
@@ -355,7 +360,7 @@ const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflec
 // ======================================================================================================================================
 {
   const shooter = withAmmo('weapon-blaster-pistol', 50); const A = makeActor({ items: [shooter] }); noAsk();
-  const holder = (...keys) => { const t = mkT({ reflex: 12 }); t.items = col(keys.map((k) => ls(k))); return t; };
+  const holder = (...keys) => { const t = mkT({ reflex: 12 }); t.system.species = 'Human'; t.items = col(keys.map((k) => ls(k))); return readyAllDirected(t); };
   const atk = async (t, extra = {}) => { reset(); const r = await rollAttack(A, shooter, { target: t, suppressChat: false, rangeBand: 'short', ...extra }); return { r, dc: posted.find((p) => p.context?.workflowContext)?.context.dc }; };
   world(A);
   let o = await atk(holder('weapon-lightsaber'), { maneuver: 'disarm' }); assert.ok(o.r); assert.equal(o.dc, 12); ok('ordinary held weapon: a disarm attack is unchanged');
@@ -363,16 +368,23 @@ const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflec
   assert.equal((await atk(holder('weapon-dlt-20a-longblaster'))).dc, 12); ok('the +1 equipment bonus applies only against a disarm attack (a normal attack sees 12) and is typed equipment');
   const eq = holder('weapon-dlt-20a-longblaster'); eq.system.derived.modifiers = { breakdown: { 'defense.reflex': { applied: [{ type: 'equipment', value: 1 }] } } };
   assert.equal((await atk(eq, { maneuver: 'disarm' })).dc, 12); ok('equipment stacking respected: an equipment bonus to Reflex already applying leaves the weapon\'s +1 worth 0');
+  // E4-C1 WP5 (decision EQ-003): worn weapons (gloves, knuckle weapons) have no certified hand semantics, so the readiness chain never verifies them
+  // READIED. The categorical disarm protection belongs to a weapon the target verifiably has in hand; an unverified worn weapon is not one, so the
+  // protection is withheld (fail closed) until worn-weapon certification is ruled on. The declarations themselves are unchanged and asserted below.
   const gloves = holder('unmapped::Combat Gloves'); o = await atk(gloves, { maneuver: 'disarm' });
-  assert.equal(o.r, null); assert.ok(notes.warn.some((m) => /cannot be disarmed/.test(m))); ok('Combat Gloves cannot be disarmed: the disarm attack is refused');
+  assert.ok(o.r, 'worn gloves are not a verified held weapon: no ready weapon to protect'); ok('worn Combat Gloves are not READIED (EQ-003): the disarm protection is withheld rather than inferred from a legacy flag');
+  assert.equal(RR.disarmProtection(RR.reactionDeclarationOf(registry.getByIdentityKey('unmapped::Combat Gloves'))).immune, true); ok('the Combat Gloves declaration still states categorical disarm immunity (data unchanged)');
+  for (const k of ['unmapped::Shockboxing Gloves', 'unmapped::Stunning Gauntlet', 'unmapped::Vibroknucklers']) assert.equal(RR.disarmProtection(RR.reactionDeclarationOf(registry.getByIdentityKey(k))).immune, true, k);
+  // a protected weapon that IS verifiably READIED keeps its categorical protection
+  const knuck = holder('unmapped::Vibroknucklers'); o = await atk(knuck, { maneuver: 'disarm' });
+  assert.equal(o.r, null); assert.ok(notes.warn.some((m) => /cannot be disarmed/.test(m))); ok('READIED Vibroknucklers cannot be disarmed: the disarm attack is refused');
   assert.equal(spent.ammo, 0); assert.deepEqual(spent.actions, []); assert.equal(formulas.length, 0); assert.equal(posted.length, 0); ok('a categorically illegal disarm spends nothing: no ammunition, no action, no roll, no card');
-  for (const k of ['unmapped::Shockboxing Gloves', 'unmapped::Stunning Gauntlet', 'unmapped::Vibroknucklers']) assert.equal((await atk(holder(k), { maneuver: 'disarm' })).r, null, k);
   assert.ok((await atk(gloves)).r, 'a non-disarm attack against the gloves is unaffected');
   // 41: cannotBeDropped is the same categorical protection against a combat-forced drop; the item is never touched (no inventory write)
   const dropOnly = RR.reactionDeclarationOf({ identityKey: 'x', operation: { cannotBeDropped: true } }); assert.deepEqual([RR.disarmProtection(dropOnly).immune, RR.disarmProtection(dropOnly).immuneReason], [true, 'cannot-be-dropped']);
   ok('cannotBeDropped protects against the combat-forced drop exactly like cannotBeDisarmed');
   // 42: mixed holder, item unspecified: asked once per protected weapon; named item: no question
-  const mixed = holder('unmapped::Combat Gloves', 'weapon-lightsaber'); const bladeId = mixed.items.find((i) => i.flags.swse.canonicalWeapon.identityKey === 'weapon-lightsaber').id; const gloveId = mixed.items.find((i) => i.flags.swse.canonicalWeapon.identityKey === 'unmapped::Combat Gloves').id;
+  const mixed = holder('unmapped::Vibroknucklers', 'weapon-lightsaber'); const bladeId = mixed.items.find((i) => i.flags.swse.canonicalWeapon.identityKey === 'weapon-lightsaber').id; const gloveId = mixed.items.find((i) => i.flags.swse.canonicalWeapon.identityKey === 'unmapped::Vibroknucklers').id;
   let asked = ask(async () => true); assert.equal((await atk(mixed, { maneuver: 'disarm' })).r, null); assert.equal(asked.length, 1);
   asked = ask(async () => false); assert.ok((await atk(mixed, { maneuver: 'disarm' })).r); noAsk();
   assert.ok((await atk(mixed, { maneuver: 'disarm', disarmItemId: bladeId })).r); assert.equal((await atk(mixed, { maneuver: 'disarm', disarmItemId: gloveId })).r, null);
@@ -412,7 +424,7 @@ const block = (a) => LTA.promptBlock(a); const deflect = (a) => LTA.promptDeflec
   const out = await applyRec(x.rec, x.t, msg); assert.equal(out.applied[0].result.returned, true); assert.equal(out.applied[0].result.weaponId, dk.id);
   ok('no feat is needed (the wielder owns no return ability): the weapon-native rule fires');
   assert.equal(A.getFlag?.('swse', 'blockDeflectUseState'), undefined); assert.deepEqual(spent.actions, []); ok('no reaction is consumed and no action is spent');
-  const again = await applyRec(x.rec, x.t, msg); assert.equal(again.skipped[0].reason, 'already-applied'); assert.equal(dk.system.equipped, true);
+  const again = await applyRec(x.rec, x.t, msg); assert.equal(again.skipped[0].reason, 'already-applied'); assert.equal(dk.system.weaponPosture, 'READIED');
   ok('the return fires once per card (receipt); the owned weapon is neither removed nor unequipped');
   const melee = await throwAt(10, 'melee'); assert.equal(melee.rec, undefined);
   // 52-54: return distinctions

@@ -23,7 +23,9 @@ const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/i
 const { FireStateStore: FireStateStoreRef } = await import('/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
@@ -75,7 +77,7 @@ function installHarness({ econAllowed = true } = {}) {
   RollEngine.safeRoll = async (f) => { spent.rolls += 1; return { total: 15, formula: f, dice: [{ results: [{ result: 12 }] }] }; };
   SWSEChat.postRoll = async (p) => { posted.push(p); return {}; };
   AmmoSystem.spendForWorkflow = async () => { spent.ammo += 1; return { success: true, spent: false }; };
-  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } };
+  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
   ActionEconomyConsumption.spend = async (actor, type) => { if (!econAllowed) return { allowed: false, permitted: false, rollback: async () => {} }; spent.actions.push(type); return { allowed: true, committed: true, rollback: async () => { spent.actions.pop(); } }; };
 }
 const restoreHarness = () => { RollEngine.safeRoll = origs.RE; SWSEChat.postRoll = origs.post; AmmoSystem.spendForWorkflow = origs.spendAmmo; ActorEngine.updateOwnedItems = origs.upd; ActionEconomyConsumption.spend = origs.econ; AmmoSystem.consumeAmmunition = origs.consume; AmmoSystem.isTrackingEnabled = origs.track; globalThis.game = undefined; };
@@ -143,7 +145,7 @@ const withAmmo = (k, max = 100) => canon(k, { ammunition: { current: max, max } 
     const dice = (w, opts = {}) => resolveDamageComposition(A, w, { weaponForm: { identityKey: w.flags.swse.canonicalWeapon.identityKey, profileId: 'primary' }, combatOptions: opts }).dice.extraWeaponDice ?? 0;
     const tempOf = (w) => rt.resolveAttackShapeFor ? null : null;
     // 8: an ordinary Bryar attack is untouched -- 1 shot, no extra die, no state written
-    reset(); assert.ok(await attack(A, P, {})); assert.equal(spent.ammo, 1); assert.equal(P.flags.swse.fireState, undefined);
+    reset(); assert.ok(await attack(A, P, {})); assert.equal(spent.ammo, 1); assert.deepEqual(Object.keys(P.flags.swse.fireState ?? {}).filter((k) => k !== 'v' && k !== 'wielded'), [], 'no fire state written');
     setRound(2); reset(); assert.ok(await attack(A, P, {})); assert.equal(spent.ammo, 1, 'ordinary attack while in combat still costs one shot');
     assert.equal(dice(P), 0);
     ok('ordinary Bryar attack (in and out of combat) is unchanged: one shot, no extra die');
@@ -189,7 +191,7 @@ const withAmmo = (k, max = 100) => canon(k, { ammunition: { current: max, max } 
     // economy refusal: nothing written
     restoreHarness(); installHarness({ econAllowed: false }); setRound(2); reset();
     const fresh = withAmmo('weapon-bryar-rifle', 50); const B = makeActor({ items: [fresh] });
-    r = await FireStateStoreRef.primePreparedAttack(B, fresh, rt.resolveAttackWeaponRuntime(fresh, {}), {}); assert.deepEqual([r.ok, r.reason], [false, 'action-unavailable']); assert.equal(fresh.flags.swse?.fireState, undefined);
+    r = await FireStateStoreRef.primePreparedAttack(B, fresh, rt.resolveAttackWeaponRuntime(fresh, {}), {}); assert.deepEqual([r.ok, r.reason], [false, 'action-unavailable']); assert.deepEqual(Object.keys(fresh.flags?.swse?.fireState ?? {}).filter((k) => k !== 'v' && k !== 'wielded'), []);
     ok('illegal prepared attacks (multi-shot ability, too little ammunition, unprimed assertion, unpayable priming) spend and write nothing');
   } finally { restoreHarness(); }
 }
@@ -201,7 +203,7 @@ const withAmmo = (k, max = 100) => canon(k, { ammunition: { current: max, max } 
   const formulas = [];
   const stub = async (f) => { formulas.push(f); return { total: 16, formula: f, dice: [{ results: [{ result: 12 }] }] }; };
   const o1 = SWSERoll._safeRoll, o2 = globalThis.SWSE;
-  const run = async (A, w, extra = {}) => { reset(); formulas.length = 0; return SWSERoll.rollAutofire(A, w, { targets: [target()], skipFP: true, ...extra }); };
+  const run = async (A, w, extra = {}) => { reset(); formulas.length = 0; return SWSERoll.rollAutofire(A, ownAndReady(A, w), { targets: [target()], skipFP: true, ...extra }); };
   installHarness(); setRound(null);
   SWSERoll._safeRoll = stub; globalThis.SWSE = { ...(globalThis.SWSE ?? {}), RollEngine: { safeRoll: stub } };
   AmmoSystem.consumeAmmunition = async (a, w, n) => ({ success: true, newAmmo: 50 - n, previousAmmo: 50 });

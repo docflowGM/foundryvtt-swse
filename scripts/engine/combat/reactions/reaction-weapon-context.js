@@ -6,23 +6,25 @@
 // the held item can be disarmed. It rolls nothing and posts nothing; the callers keep the existing roll / chat / counter authorities.
 import { getSharedWeaponAuthorityRegistry, resolveCanonicalIdentity, resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js";
 import { reactionDeclarationOf, reactionEligibility, reactionModifiers, reactionSignature, adjacentReflexPenalty, disarmProtection } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/reaction-rules.js";
-import { isItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { getReadiedWeapons } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { askSpecialQuestion } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
 
 const idOf = (a) => a?.id ?? a?._id ?? null;
 
-/** the actor's equipped weapons that carry a canonical identity AND a reaction / defense declaration; `legacyCount` counts equipped weapons with no canonical identity */
+/** the actor's READY weapons that carry a canonical identity AND a reaction / defense declaration; `legacyCount` counts equipped weapons with no canonical identity */
 export function equippedReactionWeapons(actor) {
   const registry = getSharedWeaponAuthorityRegistry();
   const out = [];
   let legacyCount = 0, canonicalCount = 0, stowedReactionCount = 0;
+  // READY = effective READIED through the shared combat-readiness interface (an EQUIPPED, activated or merely flagged weapon is not ready)
+  const readyIds = new Set(getReadiedWeapons(actor).map((w) => w.id));
   for (const item of Array.from(actor?.items ?? [])) {
     if (item?.type !== 'weapon') continue;
     let id = null;
     try { id = registry ? resolveCanonicalIdentity(item, registry) : null; } catch (_err) { id = null; }
-    if (!isItemEquipped(item, actor)) {
+    if (!readyIds.has(item.id)) {
       // an owned but stowed canonical reaction weapon: the actor is not a legacy actor, it simply has nothing drawn
       if (id?.kind === 'canonical') {
         const e = reactionDeclarationOf(registry.getByIdentityKey(id.identityKey))?.eligibility;

@@ -2325,6 +2325,15 @@ export class SWSEV2ActorSheetBase extends
     }
   }
 
+  /**
+   * Spend an action through the action-economy consumption authority (the one attacks and FireStateStore use) and keep its rollback handle, which
+   * `_applyActionEconomy` (a boolean) cannot return. Use it where a later failure must give the action back. Resolves `{ allowed, permitted, rollback }`.
+   */
+  async _spendActionEconomy(actionType, metadata = {}) {
+    const { ActionEconomyConsumption } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js");
+    return ActionEconomyConsumption.spend(this.actor, actionType, metadata, { notify: true });
+  }
+
   async _applyActionEconomy(actionType, metadata = {}) {
     if (!game?.combat) return true;
 

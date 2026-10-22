@@ -3883,6 +3883,7 @@ const forcePoints = [];
             const result = await InventoryEngine.toggleWeaponReadied(this.actor, itemId);
             if (!result?.ok) {
               if (result?.reason === "deactivate-before-stowing") ui?.notifications?.warn?.(`${item.name}: deactivate the lightsaber before stowing it.`);
+              else if (result?.message) ui?.notifications?.warn?.(`${item.name}: ${result.message}`);
               break;
             }
             await this.requestSurfaceRender({ reason: "weapon-readiness-change" });
@@ -3891,7 +3892,7 @@ const forcePoints = [];
           case "draw-and-ignite-lightsaber": {
             const result = await InventoryEngine.drawAndActivateLightsaber(this.actor, itemId);
             if (!result?.ok) {
-              ui?.notifications?.warn?.(`${item.name}: unable to draw and ignite.`);
+              ui?.notifications?.warn?.(`${item.name}: ${result?.message ?? "unable to draw and ignite."}`);
               break;
             }
             await this.requestSurfaceRender({ reason: "weapon-draw-and-ignite" });
@@ -6938,18 +6939,28 @@ const forcePoints = [];
     }
 
     const actionType = this._deriveCombatActionEconomyType(actionData);
-    const allowed = await this._applyActionEconomy(actionType, {
+    // the action economy's own consumption authority (the one attacks and FireStateStore use) returns a rollback handle, which the sheet's local
+    // _applyActionEconomy does not; a reload that could not be recorded gives its action back
+    const spend = await this._spendActionEconomy(actionType, {
       source: options?.source ?? context?.source?.invocation ?? 'reload',
       actionId,
       actionName: actionData?.name ?? 'Reload',
       combatContext: context
     });
-    if (!allowed) return null;
+    if (spend?.allowed === false || spend?.permitted === false) return null;
 
     let result;
-    if (trackingOn) result = await AmmoSystem.reloadWeapon(this.actor, weapon);
-    else { await FireStateStore.clearReload(this.actor, weapon); result = { success: true, message: `${weapon.name} reloaded` }; }
+    try {
+      if (trackingOn) result = await AmmoSystem.reloadWeapon(this.actor, weapon);
+      else {
+        const cleared = await FireStateStore.clearReload(this.actor, weapon);
+        result = cleared?.outcome === 'failed'
+          ? { success: false, message: `${weapon.name}: the reload could not be recorded.` }   // the awaiting-reload fact is still stored; never report a reload that was not recorded
+          : { success: true, message: `${weapon.name} reloaded` };
+      }
+    } catch (err) { result = { success: false, message: String(err?.message ?? err) }; }
     if (result?.success === false) {
+      await spend?.rollback?.();   // undoes only this reload's own expenditure; if it cannot, the economy authority tells the player (spend.rollbackStatus)
       ui?.notifications?.error?.(result.message || 'Reload failed.');
       return null;
     }

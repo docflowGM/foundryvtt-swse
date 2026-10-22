@@ -87,6 +87,38 @@ async function resolveModules() {
   };
 }
 
+/**
+ * Rollback that undoes ONLY the expenditure it made, and reports exactly what happened. `Persistence.undoLast` pops whatever history entry is
+ * last, so another action recorded in the meantime would be undone instead (and this one left in place). Every spend therefore stamps a unique
+ * `spendId` into its own history entry. The rollback resolves a strict boolean and records `handle.rollbackStatus`:
+ *   'refunded'    true  — this spend's entry was the last one, was undone, and is verifiably gone from the history
+ *   'superseded'  false — another action was recorded after it; NOTHING was changed (the later action is untouched, this one stays spent)
+ *   'failed'      false — the undo did not complete or did not remove this spend's entry; nothing is claimed
+ * A second call after 'refunded' does nothing (false, status stays 'refunded'). Whenever the action stays spent the player is told once, because a
+ * caller that rolled back must never proceed as though the action had been restored.
+ */
+function newSpendId() { return `spend-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`; }
+function ownRollback(handle, Persistence, actor, combatId, spendId, { notify = true, label = 'The' } = {}) {
+  const stillSpent = (status) => {
+    handle.rollbackStatus = status;
+    if (notify) ui?.notifications?.warn?.(`${label} action could not be refunded automatically (${status === 'superseded' ? 'another action was recorded since' : 'the undo did not complete'}). Please correct the action tracker by hand.`);
+    return false;
+  };
+  return async () => {
+    if (handle.rollbackStatus === 'refunded') return false;   // already refunded: never undo twice
+    if (typeof Persistence.undoLast !== 'function' || typeof Persistence.getTurnState !== 'function') return stillSpent('failed');
+    const history = Persistence.getTurnState(actor, combatId)?.history;
+    const last = Array.isArray(history) ? history[history.length - 1] : null;
+    if (!last || last.metadata?.spendId !== spendId) return stillSpent(Array.isArray(history) && history.some((h) => h?.metadata?.spendId === spendId) ? 'superseded' : 'failed');
+    const undone = await Persistence.undoLast(actor, combatId);   // no await between the check above and undoLast's own read
+    const after = Persistence.getTurnState(actor, combatId)?.history;
+    const gone = Array.isArray(after) && !after.some((h) => h?.metadata?.spendId === spendId);
+    if (undone?.allowed !== true || !gone) return stillSpent('failed');   // never claim a refund the history does not show
+    handle.rollbackStatus = 'refunded';
+    return true;
+  };
+}
+
 function actorInCombat(actor, combat = game?.combat) {
   if (!actor || !combat) return false;
   return Boolean(combat.combatants?.find?.(c => c.actor?.id === actor.id || c.actor?._id === actor.id));
@@ -150,25 +182,17 @@ export class ActionEconomyConsumption {
         return { allowed: false, permitted: false, committed: false, actionType: normalizedType, engineResult, policyResult, rollback: async () => false };
       }
       if (engineResult.allowed && typeof Persistence.spendReaction === 'function') {
-        const reactionResult = await Persistence.spendReaction(actor, combatId, { ...metadata, actionType: normalizedType });
+        const spendId = newSpendId();
+        const reactionResult = await Persistence.spendReaction(actor, combatId, { ...metadata, actionType: normalizedType, spendId });
         const normalizedReactionResult = normalizeEngineResult(reactionResult, { reaction: 0 });
         if (normalizedReactionResult.allowed === false) {
           notifyPolicy(policyResult, normalizedReactionResult, normalizedType, options);
           return { allowed: false, permitted: false, committed: false, actionType: normalizedType, engineResult: normalizedReactionResult, policyResult, rollback: async () => false };
         }
         Hooks.callAll?.('swse.actionEconomySpent', { actor, actionType: normalizedType, metadata, source: 'ActionEconomyConsumption' });
-        return {
-          allowed: true,
-          permitted: true,
-          committed: true,
-          actionType: normalizedType,
-          engineResult: normalizedReactionResult,
-          policyResult,
-          rollback: async () => {
-            if (typeof Persistence.undoLast !== 'function') return false;
-            return await Persistence.undoLast(actor, combatId);
-          }
-        };
+        const handle = { allowed: true, permitted: true, committed: true, actionType: normalizedType, engineResult: normalizedReactionResult, policyResult, rollbackStatus: 'none' };
+        handle.rollback = ownRollback(handle, Persistence, actor, combatId, spendId, { notify: options.notify !== false, label: labelActionType(normalizedType) });
+        return handle;
       }
       return { allowed: true, permitted: true, committed: false, actionType: normalizedType, engineResult, policyResult, rollback: async () => false };
     }
@@ -188,25 +212,16 @@ export class ActionEconomyConsumption {
     }
 
     if (engineResult?.allowed !== false) {
+      const spendId = newSpendId();
       if (typeof Persistence.commitConsumption === 'function') {
-        await Persistence.commitConsumption(actor, combatId, engineResult, { ...metadata, actionType: normalizedType, cost });
+        await Persistence.commitConsumption(actor, combatId, engineResult, { ...metadata, actionType: normalizedType, cost, spendId });
       } else if (typeof Persistence.setTurnState === 'function') {
         await Persistence.setTurnState(actor, combatId, engineResult.turnState ?? engineResult);
       }
       Hooks.callAll?.('swse.actionEconomySpent', { actor, actionType: normalizedType, metadata, source: 'ActionEconomyConsumption' });
-      return {
-        allowed: true,
-        permitted: true,
-        committed: true,
-        actionType: normalizedType,
-        cost,
-        engineResult,
-        policyResult,
-        rollback: async () => {
-          if (typeof Persistence.undoLast !== 'function') return false;
-          return await Persistence.undoLast(actor, combatId);
-        }
-      };
+      const handle = { allowed: true, permitted: true, committed: true, actionType: normalizedType, cost, engineResult, policyResult, rollbackStatus: 'none' };
+      handle.rollback = ownRollback(handle, Persistence, actor, combatId, spendId, { notify: options.notify !== false, label: labelActionType(normalizedType) });
+      return handle;
     }
 
     // Loose/no enforcement may permit an over-spend for table flow, but should

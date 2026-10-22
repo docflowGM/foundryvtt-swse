@@ -23,7 +23,9 @@ const chatPosted = [];
 globalThis.ChatMessage = { getSpeaker: () => ({}), create: async (d) => { chatPosted.push(d); return {}; } };
 
 const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
 const { RollEngine } = await import('/systems/foundryvtt-swse/scripts/engine/roll-engine.js');
 const { AmmoSystem } = await import('/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js');
@@ -48,6 +50,8 @@ const manifestIB = await import('../tools/census-weapon-phase-5d-i-b-inputs.mjs'
 const manifestIA = await import('../tools/census-weapon-phase-5d-i-a-inputs.mjs');
 const { I_C_B_ROWS, I_C_B_BASELINE } = await import('../tools/lib/weapon-phase-5d-i-c-b-ledger.mjs');
 rt.setSharedWeaponAuthorityRegistry(registry);
+const { installReadinessEnvironment, readyAllDirected } = await import('./helpers/ready-weapon-fixture.mjs');
+await installReadinessEnvironment();
 
 let step = 0;
 const ok = (label) => { step += 1; console.log(`  [${step}] ${label} OK`); };
@@ -64,11 +68,12 @@ const LS_PROF = canonFeat('weapon-proficiency-lightsabers', 'Wpn Prof LS');
 const canon = (k, system = {}, extra = {}) => ({ id: `w${++uid}-${k}`, name: 'Renamed Thing', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: k } } }, system: { damage: '9d9', damageType: 'sonic', equipped: true, ...system }, ...extra });
 const withAmmo = (k, max = 100, system = {}) => canon(k, { ammunition: { current: max, max }, ...system });
 let actorSeq = 0;
-const makeActor = ({ id = null, feats = [], items = [], level = 6, type = 'character', size = 'medium', grapple = 8, str = 0 } = {}) => {
+const makeActor = (o = {}) => readyAllDirected(makeActorRaw(o));
+const makeActorRaw = ({ id = null, feats = [], items = [], level = 6, type = 'character', size = 'medium', grapple = 8, str = 0 } = {}) => {
   const actor = {
     id: id ?? `a${++actorSeq}`, name: `Actor${actorSeq}`, type, flags: { swse: {} }, effects: [], getFlag() { return undefined; }, getRollData() { return {}; },
     items: col([...PROF, LS_PROF, ...feats, ...items]),
-    system: { bab: 6, level, size, attributes: { str: ab(str), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, hp: { value: 40, max: 40 }, conditionTrack: { current: 0 },
+    system: { species: 'Human', bab: 6, level, size, attributes: { str: ab(str), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, hp: { value: 40, max: 40 }, conditionTrack: { current: 0 },
       derived: { speed: { total: 6 }, defenses: { reflex: { total: 12 }, fortitude: { total: 12 }, will: { total: 10 } } }, forcePoints: { value: 1, max: 5 },
       weaponProficiencies: ['pistols', 'rifles', 'simple', 'heavy-weapons', 'advanced-melee', 'lightsabers'] },
     __grapple: grapple,
@@ -102,7 +107,7 @@ const install = () => {
   SWSEChat.postRoll = async (p) => { posted.push(p); return {}; };
   AmmoSystem.spendForWorkflow = async () => { spent.ammo += 1; return { success: true, spent: false }; };
   AmmoSystem.consumeAmmunition = async (a, w, n) => ({ success: true, newAmmo: 50 - n, previousAmmo: 50 });
-  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } };
+  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
   ActionEconomyConsumption.spend = async (actor, type) => { spent.actions.push(type); return { allowed: true, committed: true, rollback: async () => { spent.actions.pop(); } }; };
   ActorEngine.createEmbeddedDocuments = async (actor, name, data) => { const made = data.map((d) => ({ id: `ge${++uid}`, ...JSON.parse(JSON.stringify(d)), statuses: new Set(), disabled: false })); actor.effects.push(...made); return made; };
   ActorEngine.deleteEmbeddedDocuments = async (actor, name, ids) => { actor.effects = actor.effects.filter((e) => !ids.includes(e.id)); return ids; };
@@ -303,7 +308,7 @@ try {
   ok('recurring whip damage fires only at the held target\'s end of turn, once per round (replayed event skipped), again the next round');
 
   // 19: the control cannot outlive its source weapon or controller: an unequipped / deleted whip ends the control and deals no damage
-  reset(); dice.map['2d4'] = 5; w.system.equipped = false;
+  reset(); dice.map['2d4'] = 5; Object.assign(w.system, { weaponPosture: 'STOWED', weaponOccupancy: { schemaVersion: 1, purpose: null, appendageIds: [] } });
   const gone = await turnEvent('end', T, [A, T], 4);
   assert.equal(gone.fired.length, 0); assert.deepEqual(gone.ended.map((e) => e.reason), ['weapon-removed']); assert.equal(stateOf(T), null); assert.equal(damage.length, 0);
   const w2 = withAmmo('lightsaber-chassis-lightwhip'); const A2 = makeActor({ items: [w2] }); const T3 = mkT(); world(A2, T3);
@@ -545,7 +550,8 @@ try {
 // F. ELECTRONET / NET / STOKHLI SPRAY STICK                                                                           [points 53-57]
 // ======================================================================================================================================
 {
-  const net = canon('weapon-net'); const en = withAmmo('weapon-electronet'); const gl = withAmmo('weapon-grenade-launcher'); const A = makeActor({ items: [net, en, gl] }); const T = mkT(); world(A, T); noAsk();
+  // E4-C1 WP5: only the launcher is READIED (the ammunition and the thrown net are not held)
+  const net = canon('weapon-net', { equipped: false }); const en = withAmmo('weapon-electronet', 100, { equipped: false }); const gl = withAmmo('weapon-grenade-launcher'); const A = makeActor({ items: [net, en, gl] }); const T = mkT(); world(A, T); noAsk();
   // 53: Net: ranged grab; Pin / Trip allowed, Crush / Throw disallowed; Acrobatics 15 / Strength 20; effect-only card; a hit grabs
   const dn = declOf('weapon-net'); assert.deepEqual([dn.grab.ranged, dn.maneuvers.allowed.sort(), dn.maneuvers.prohibited.sort(), dn.escape.map((e) => `${e.method}:${e.dc}`).sort()], [true, ['pin', 'trip'], ['crush', 'throw'], ['acrobatics:15', 'strength:20']]);
   const hit = await attackWith(A, net, T, { rangeBand: 'short' }); assert.equal(hit.r.isHit, true);
@@ -752,6 +758,7 @@ try {
     ['object-size-unobserved', 'falling-object-size-not-in-table', 'falling-object-size-not-in-table', 'falling-object-table-uncertified']);
   ok('the falling-object authority is a pure size lookup that refuses what it cannot certify (unobserved size, missing size, malformed formula, no table)');
 
+  // E4-C1 WP5-C1: the beam is verified READIED in its tripod configuration (owned `mounted` state, two hands), so maintenance behaves as published.
   // 81: maintenance: at the START of the controller\'s turn an opposed grapple check; a lost check releases the object; only the controller\'s start; once per round
   const M = mkT({ size: 'large', grapple: 5 }); world(A, M); await applyFx(acq.special, M, { attacker: A, weapon: beam }); assert.equal(stateOf(M), 'grabbed');
   assert.equal((await turnEvent('start', M, [A, M], 1)).ended.length, 0); assert.equal((await turnEvent('end', A, [A, M], 1)).ended.length, 0);

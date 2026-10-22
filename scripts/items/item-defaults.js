@@ -157,6 +157,8 @@ function normalizeSynergies(value) {
   })).filter((entry) => entry.name || entry.bonus);
 }
 
+const WEAPON_EQUIPMENT_STATE_KEYS = Object.freeze(['weaponPosture', 'weaponOccupancy', 'equipped', 'dualWielded', 'wieldedTwoHanded']);
+
 export const BLANK_ITEM_DEFAULTS = Object.freeze({
   weapon: {
     damage: '1d8',
@@ -173,7 +175,8 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     weight: 1,
     cost: 0,
     value: 0,
-    equipped: false,
+    weaponPosture: 'STOWED',
+    weaponOccupancy: { schemaVersion: 1, purpose: null, appendageIds: [] },
     integrated: false,
     description: '',
     properties: [],
@@ -202,8 +205,6 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     criticalMultiplier: 'x2',
     specialEffects: '',
     autofire: false,
-    dualWielded: false,
-    wieldedTwoHanded: false,
     activated: false,
     vehicleMount: {
       mountKey: '',
@@ -573,6 +574,12 @@ export function normalizeItemSystem(type, currentSystem = {}, submittedSystem = 
     // real pre-merge current/submitted split this function already has in
     // scope, so it can tell deliberate intent apart from stale carryover.
     normalizeWeaponForWrite(currentSystem, submittedSystem, merged);
+    // E4-C1 WP1: weapon posture and occupancy are written only by the equipment-state coordinator. An item-sheet submit never changes them, and
+    // the blank-item defaults are never filled into an existing owned record: an absent or malformed record stays absent (it is not a STOWED weapon).
+    for (const key of WEAPON_EQUIPMENT_STATE_KEYS) {
+      if (Object.prototype.hasOwnProperty.call(currentSystem ?? {}, key)) merged[key] = clone(currentSystem[key]);
+      else delete merged[key];
+    }
     // Math Integrity Freeze, Batch 2B correction: the item editor exposes
     // all six ability keys for attackAttribute (SWSE has feats/talents that
     // legitimately use CON/INT/WIS/CHA with a weapon, not just STR/DEX) --
@@ -659,8 +666,6 @@ export function sanitizeItemSheetUpdate(item, submittedData = {}, form = null) {
     'system.equipped',
     'system.integrated',
     'system.autofire',
-    'system.dualWielded',
-    'system.wieldedTwoHanded',
     'system.armorProficiency',
     'system.activated',
     'system.sizeIncreaseApplied',

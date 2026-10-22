@@ -19,7 +19,9 @@ globalThis.ChatMessage = globalThis.ChatMessage ?? { getSpeaker: () => ({}), cre
 
 const { buildRollConfigModel, buildAttackFormPanel } = await import('/systems/foundryvtt-swse/scripts/rolls/roll-config.js');
 const { resolveAttackBonus } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { computeFinalAttackComposition, rollAttack } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { computeFinalAttackComposition, rollAttack: rollAttackRaw } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { getWeaponAttackAbility } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js');
 const { sanitizeItemSheetUpdate } = await import('/systems/foundryvtt-swse/scripts/items/item-defaults.js');
 const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');

@@ -599,9 +599,12 @@
         "current": 0,
         "max": 0
       },
-      "equipped": false,
-      "dualWielded": false,
-      "wieldedTwoHanded": false,
+      "weaponPosture": "STOWED",
+      "weaponOccupancy": {
+        "schemaVersion": 1,
+        "purpose": null,
+        "appendageIds": []
+      },
       "weight": 0,
       "gearTemplate": "",
       "gearTemplateSecondary": "",

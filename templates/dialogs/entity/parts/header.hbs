@@ -109,7 +109,8 @@
           </div>
           {{/if}}
 
-          {{#if (or (eq item.type "weapon") (eq item.type "armor") (eq item.type "equipment"))}}
+          {{!-- Weapon posture is changed only through the equipment-state coordinator, never by this form. --}}
+          {{#if (or (eq item.type "armor") (eq item.type "equipment"))}}
           <div class="form-field form-field--checkbox">
             <label>
               <input type="checkbox" name="system.equipped" {{#if system.equipped}}checked{{/if}} />

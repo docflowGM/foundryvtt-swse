@@ -182,7 +182,7 @@ export class LightsaberLightSync {
    * Call this during system init
    */
   static registerAutoSyncHooks() {
-    // Hook: Item updated (weapon state, equipped, flags, blade color)
+    // Hook: Item updated (activation, weapon posture/occupancy, flags, blade color). This is a visual CONSUMER of item state, never a posture writer.
     Hooks.on("preUpdateItem", (item, changes) => {
       if (!item.isEmbedded) return;
 
@@ -193,8 +193,8 @@ export class LightsaberLightSync {
       const relevantFields = [
         "system.activated",
         "system.active",
-        "system.equipped",
-        "system.equippable.equipped",
+        "system.weaponPosture",
+        "system.weaponOccupancy",
         "flags.swse.emitLight",
         "flags.swse.bladeColor",
         "flags.foundryvtt-swse.emitLight",

@@ -11,6 +11,7 @@
  */
 
 import { ModifierType } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
+import { isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 
 export const SWSE_EFFECT_FLAG_SCOPE = 'foundryvtt-swse';
 export const SWSE_EFFECT_INTENT_KEY = 'effectIntent';
@@ -883,7 +884,14 @@ function itemApplies(item = null, application = 'always') {
   if (application === 'always') return true;
   if (application === 'carried') return true;
   if (application === 'manual') return true;
-  if (application === 'equipped') return system.equipped === true || system.integrated === true;
+  if (application === 'equipped') {
+    // A weapon's effects apply only while the weapon is verified READIED (shared combat-readiness interface); activation is a separate
+    // 'activated' application. Armor/shield/equipment keep their worn-state flags.
+    if (item.type === 'weapon') {
+      try { return item.actor ? isWeaponReadied(item.actor, item) : false; } catch { return false; }
+    }
+    return system.equipped === true || system.integrated === true;
+  }
   if (application === 'activated') return system.activated === true || system.active === true;
   return true;
 }
