@@ -1,0 +1,67 @@
+TI-0 reproduction report
+main  : 4392c90dc324a0474e9ca470c514f4ec1a8fcc37
+equip : 961f4bc035b78b7dd124b6ba8edb63655a43baf5
+== TX-01 legacy upgrade install order
+   tree: /home/user/wt-ti0
+REPRODUCED      TX-01  the upgrade is written to the Item BEFORE the credit write; when the credit write fails the call throws but the upgrade stays installed and unpaid
+                 evidence: write order=ITEM-WRITE -> CREDIT-WRITE; installedUpgrades=1; credits=1000/1000; error="simulated credit write failure"
+REPRODUCED      TX-01b  a retry after the failed attempt installs a second copy and charges once (no operation identity). CAVEAT: the real eligibility catalog was stubbed; whether it would offer an already-installed upgrade again is NOT established here
+                 evidence: installedUpgrades=2; credits=500 (two installs, one 500 charge)
+== TX-03 action rollback identity
+   tree: /home/user/wt-ti0
+REPRODUCED      TX-03  refunding A after B was recorded undoes B and leaves A spent
+                 evidence: before {"standard":0,"move":1,"swift":0} -> after rollback(A) {"standard":0,"move":1,"swift":1}; rollback(A) returned a truthy object; rollbackStatus=(none)
+REPRODUCED      TX-03b  the rollback result claims success although the refunded action is still spent
+                 evidence: A still spent: true
+== TX-04 Force Point spend / refund
+   tree: /home/user/wt-ti0
+REPRODUCED      TX-04a  a refund that FAILED is reported as rolledBack:true while the Force Point stays spent
+                 evidence: receipt.rolledBack=true; balance=2 (started 3); writes attempted=2
+REPRODUCED      TX-04b  a spent BONUS point is refunded to the normal pool (clamped at the maximum): the bonus point is NOT restored and nothing is gained
+                 evidence: bonus points left=0 (had 1); normal=5/5 (already at max, so the refund was clamped away)
+== TX-07 ActorEngine.applyMutationPlan (real implementation)
+   tree: /home/user/wt-ti0
+REPRODUCED      TX-07a  default applyMutationPlan: the SET (credits 900) stays applied when the later embedded UPDATE fails (no compensation; the error is thrown)
+                 evidence: error="simulated embedded-document failure"; credits=900
+REPRODUCED      TX-07b  transactional:true restores the WHOLE actor: credits are reverted (good) but an unrelated concurrent change (hp 20->5) is silently reverted too
+                 evidence: credits=1000 (restored); hp=20 (concurrent change lost)
+== TX-08 store / customization transaction recovery
+   tree: /home/user/wt-ti0
+REPRODUCED      TX-08a  when the snapshot cannot be created the transaction STILL mutates; a later failure leaves the actor charged with no recovery and no indication
+                 evidence: result={"success":false,"error":"late failure after the credit write"}; credits 1000 -> 900
+REPRODUCED      TX-08b  restoreSnapshot() returned false (not restored) yet the engine logs "Rollback successful" and returns the ORIGINAL error with no rollback-failed signal
+                 evidence: logged "Rollback successful": true; result.error="late failure after the credit write"; credits now 900 (charged, not restored)
+REPRODUCED      TX-08c  credits are written as an absolute value (1000-100=900) computed before the write: a concurrent +500 is overwritten (final 900, correct is 1400)
+                 evidence: plan.set['system.credits']=900; final credits=900
+== TX-11 follower mutation transaction contract
+   tree: /home/user/wt-ti0
+REPRODUCED      TX-11a  a commit() that RETURNS { ok:false } counts as success (only a thrown error is a failure)
+                 evidence: result.ok=true; rolled back=[]
+REPRODUCED      TX-11b  a rollback() that RETURNS false (could not restore) is not recorded as a failed rollback
+                 evidence: rollbackFailed=false
+== TX-03 action rollback identity
+   tree: /home/user/wt-equipment
+NOT REPRODUCED  TX-03  refunding A after B was recorded undoes B and leaves A spent
+                 evidence: before {"standard":0,"move":1,"swift":0} -> after rollback(A) {"standard":0,"move":1,"swift":0}; rollback(A) returned false; rollbackStatus=superseded
+NOT REPRODUCED  TX-03b  the rollback result claims success although the refunded action is still spent
+                 evidence: A still spent: true
+== TX-05 / TX-06 equipment coordinator
+   tree: /home/user/wt-equipment
+REPRODUCED      TX-05  the process-local ledger is keyed by requestId alone: another ACTOR's operation reusing an id is refused as a conflict
+                 evidence: actor A first: COMMITTED; actor B same id: REQUEST_ID_CONFLICT; actor B item written: false
+NOT REPRODUCED  TX-05b  the ledger replays actor A's outcome for actor B (a cross-actor false replay)
+                 evidence: status=REQUEST_ID_CONFLICT
+REPRODUCED      TX-06 (economy-modules-unavailable)  a paid transition finalizes COMMITTED with spend:'not-required' although the authority reported a no-op (reason: economy-modules-unavailable)
+                 evidence: status=COMMITTED spend=not-required posture=READIED spend calls=1
+REPRODUCED      TX-06 (out-of-combat)  a paid transition finalizes COMMITTED with spend:'not-required' although the authority reported a no-op (reason: out-of-combat)
+                 evidence: status=COMMITTED spend=not-required posture=READIED spend calls=1
+== WP5-C3 Force Point transaction vs the real ActorEngine Force Point methods
+   tree: /home/user/wt-equipment
+NOT REPRODUCED  C3-real-1  REAL spend/gain: normal point spent (3->2), concurrent regain (->3), rollback gives back exactly one (->4)
+                 evidence: commit=true afterSpend=2 rollback=true final=4  [REPRODUCED here means the C3 transaction is WRONG against the real engine]
+NOT REPRODUCED  C3-real-2  REAL spend/gain: a spent BONUS point is restored by entry id (b1) and a concurrent grant (b2) is untouched; the normal pool is not touched
+                 evidence: commit=true bonusAfterSpend=(none) rollback=true bonusFinal=b2:1,b1:1 normal=4  [REPRODUCED here means the C3 transaction is WRONG]
+NOT REPRODUCED  C3-real-3  REAL spend/gain: a legacy value-only bonus pool is spent (2->1) and restored (->2)
+                 evidence: commit=true afterSpend=1 rollback=true final=2 normal=4  [REPRODUCED here means the C3 transaction is WRONG]
+NOT REPRODUCED  C3-real-4  REAL spend with no Force Point left: commit() reports failure (not a paid use)
+                 evidence: commit=false committed=false  [REPRODUCED here means a use was reported paid with nothing spent]
