@@ -330,26 +330,24 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     // Pending sale actions
     for (const btn of root.querySelectorAll('[data-action="accept-pending"]')) {
       btn.addEventListener('click', async (ev) => {
-        const saleIndex = Number(ev.currentTarget.dataset.index);
-        await this._resolvePendingSale(saleIndex, 'accept');
+        await this._resolvePendingSale(ev.currentTarget.dataset.requestId, 'accept');
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="deny-pending"]')) {
       btn.addEventListener('click', async (ev) => {
-        const saleIndex = Number(ev.currentTarget.dataset.index);
-        await this._resolvePendingSale(saleIndex, 'deny');
+        await this._resolvePendingSale(ev.currentTarget.dataset.requestId, 'deny');
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="set-amount-pending"]')) {
       btn.addEventListener('click', async (ev) => {
-        const saleIndex = Number(ev.currentTarget.dataset.index);
+        const requestId = ev.currentTarget.dataset.requestId;
         // Show inline editor (placeholder for now)
         const amount = await uiPrompt('Sale Amount', 'Enter sale amount (credits):', '');
         if (amount === null) {return;}
         if (amount) {
-          await this._resolvePendingSale(saleIndex, 'accept', normalizeCredits(amount));
+          await this._resolvePendingSale(requestId, 'accept', normalizeCredits(amount));
         }
       });
     }
@@ -404,73 +402,23 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     }
   }
 
-  async _resolvePendingSale(index, action, customAmount = null) {
-    const pendingSales = SettingsHelper.getArray('pendingSales', []);
-    const request = pendingSales[index];
-    if (!request) {
-      ui.notifications.error('Pending sale request not found.');
-      return;
+  /**
+   * TI4-C0/G24: a pending sale is addressed by its stable request id (never by its rendered array position, which goes stale when the queue changes)
+   * and resolved by the canonical GMStoreOperationsService, which owns the decision, the TransactionEngine sale and the queue update.
+   * A missing, blank, non-string or ambiguous identity resolves nothing.
+   */
+  async _resolvePendingSale(requestId, action, customAmount = null) {
+    const id = typeof requestId === 'string' ? requestId.trim() : '';
+    if (!id) {
+      ui.notifications.error('Pending sale request could not be identified; nothing was changed.');
+      return { success: false, error: 'pending-sale-invalid-id' };
     }
-
-    if (action === 'deny') {
-      pendingSales.splice(index, 1);
-      await SettingsHelper.set('pendingSales', pendingSales);
-      const actor = game.actors.get(request.actorId);
-      Hooks.callAll?.('swseStoreSaleDenied', {
-        request,
-        actor,
-        decidedBy: game.user?.name ?? 'GM',
-        reason: 'Denied from legacy GM Store Dashboard'
-      });
-      this.render();
-      return;
-    }
-
-    const actor = game.actors.get(request.actorId);
-    const item = actor?.items?.get?.(request.itemId);
-    if (!actor || !item) {
-      ui.notifications.error('Cannot approve sale: actor or owned item no longer exists.');
-      return;
-    }
-
-    const salePrice = normalizeCredits(customAmount ?? request.requestedPrice ?? request.suggestedPrice ?? request.value ?? 0);
-    if (!(salePrice > 0)) {
-      ui.notifications.warn('Sale approval requires a credit amount greater than zero.');
-      return;
-    }
-
-    const result = await TransactionEngine.executeSaleTransaction({
-      actor,
-      itemId: request.itemId,
-      salePrice,
-      reason: action === 'accept' ? 'GM approved store sale' : 'GM counteroffer approved',
-      transactionContext: action === 'accept' ? 'store-sale-approval' : 'store-haggle-sale',
-      audit: {
-        requestId: request.id,
-        itemName: item.name || request.item,
-        itemNames: [item.name || request.item].filter(Boolean),
-        itemCount: 1,
-        basePrice: request.basePrice ?? request.itemData?.system?.price ?? null,
-        suggestedPrice: request.suggestedPrice ?? request.value ?? null,
-        approvedPrice: salePrice,
-        approvalMode: action,
-        source: 'Legacy GM Store Dashboard'
-      }
-    }, {
-      validate: true,
-      rederive: true,
-      source: 'GMStoreDashboard._resolvePendingSale'
-    });
-
-    if (!result.success) {
-      ui.notifications.error(`Failed to approve sale: ${result.error}`);
-      return;
-    }
-
-    pendingSales.splice(index, 1);
-    await SettingsHelper.set('pendingSales', pendingSales);
-    ui.notifications.info(`Approved sale of ${item.name} for ${salePrice.toLocaleString()} credits.`);
-    this.render();
+    const deny = action === 'deny';
+    return GMStoreOperationsService.resolvePendingSaleRequest(id, {
+      decision: deny ? 'deny' : 'approve',
+      amount: deny ? null : customAmount,
+      reason: deny ? 'Denied from legacy GM Store Dashboard' : ''
+    }, { render: () => this.render() });
   }
 
   /**
