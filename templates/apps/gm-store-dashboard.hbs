@@ -106,7 +106,7 @@
           </thead>
           <tbody>
             {{#each pendingSales}}
-              <tr data-index="{{@index}}">
+              <tr data-request-id="{{this.id}}">
                 <td>{{#formatDate this.timestamp}}{{/formatDate}}</td>
                 <td>{{this.actor}}</td>
                 <td>{{this.item}}</td>
@@ -118,9 +118,13 @@
                   {{/if}}
                 </td>
                 <td>
-                  <button class="action-btn swse-ui-button" data-action="accept-pending" data-index="{{@index}}">Approve</button>
-                  <button class="action-btn swse-ui-button" data-action="set-amount-pending" data-index="{{@index}}">Set Amount</button>
-                  <button class="action-btn swse-ui-button danger" data-action="deny-pending" data-index="{{@index}}">Deny</button>
+                  {{#if this.id}}
+                  <button class="action-btn swse-ui-button" data-action="accept-pending" data-request-id="{{this.id}}">Approve</button>
+                  <button class="action-btn swse-ui-button" data-action="set-amount-pending" data-request-id="{{this.id}}">Set Amount</button>
+                  <button class="action-btn swse-ui-button danger" data-action="deny-pending" data-request-id="{{this.id}}">Deny</button>
+                  {{else}}
+                  <span class="no-price" title="This request has no stable id, so it cannot be resolved safely from here.">Unidentifiable request</span>
+                  {{/if}}
                 </td>
               </tr>
             {{/each}}

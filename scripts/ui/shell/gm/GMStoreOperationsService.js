@@ -18,9 +18,38 @@ export class GMStoreOperationsService {
    * Approve, counteroffer, or deny a pending player sale request.
    */
   static async resolvePendingSaleRequest(requestId, options = {}, context = {}) {
+    // TI4-C0/G24: a request is identified ONLY by its stable id. A blank id never matches an id-less request, a duplicated id is ambiguous (neither
+    // request is resolved), and a request already being resolved is not resolved a second time concurrently. There is no positional fallback.
+    const id = (typeof requestId === 'string' || typeof requestId === 'number') ? String(requestId) : '';
+    if (!id.trim()) {
+      ui?.notifications?.error?.('Pending sale request could not be identified; nothing was changed.');
+      return { success: false, error: 'pending-sale-invalid-id' };
+    }
+    if (this._pendingSalesInFlight.has(id)) {
+      ui?.notifications?.warn?.('This pending sale is already being resolved.');
+      return { success: false, error: 'pending-sale-in-progress' };
+    }
+    this._pendingSalesInFlight.add(id);
+    try {
+      return await this._resolvePendingSaleRequestById(id, options, context);
+    } finally {
+      this._pendingSalesInFlight.delete(id);
+    }
+  }
+
+  static _pendingSalesInFlight = new Set();
+
+  static async _resolvePendingSaleRequestById(requestId, options = {}, context = {}) {
     const { decision = 'approve', amount = null, reason = '' } = options;
     const pendingSales = SettingsHelper.getArray('pendingSales', []);
-    const index = pendingSales.findIndex(request => String(request?.id || '') === String(requestId || ''));
+    const matches = [];
+    pendingSales.forEach((request, position) => { if (request?.id !== undefined && request?.id !== null && String(request.id) === requestId) matches.push(position); });
+
+    if (matches.length > 1) {
+      ui?.notifications?.error?.('More than one pending sale shares this request id; nothing was changed.');
+      return { success: false, error: 'pending-sale-ambiguous-id' };
+    }
+    const index = matches.length === 1 ? matches[0] : -1;
 
     if (index < 0) {
       ui?.notifications?.error?.('Pending sale request not found.');
