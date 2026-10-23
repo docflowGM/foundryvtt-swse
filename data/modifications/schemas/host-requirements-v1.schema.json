@@ -1,0 +1,591 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "swse.modification.host-requirements/1",
+ "title": "SWSE modification host requirements (D-005 T4c, offline static contract)",
+ "description": "Structured host requirements for the 35 D-005 typed definitions. Static contract only: not a host evaluator, not a runtime rule source. Authority: docs/audits/d-005-t4c-owner-decisions.md. The dependency-free validator tools/lib/host-requirements.mjs is the executable authority. The validator checks this file for structural parity (closed shapes, required keys, predicate branches, enumerations, the 35-record bound) and checks the sidecar against it with a restricted checker that fails closed on unsupported keywords. Semantic rules that JSON Schema cannot express are enforced only by the validator: operator/group/fact scope, owner-decision resolution, D005 source linkage, registry scope, the frozen approved-mapping oracle, canonical serialization and the independent integrity pin.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema",
+  "revision",
+  "records"
+ ],
+ "properties": {
+  "schema": {
+   "const": "swse.modification.host-requirements/1"
+  },
+  "revision": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$",
+   "description": "SHA-256 of the canonical serialization of `records` only; must equal the independently pinned value in the validator."
+  },
+  "records": {
+   "type": "array",
+   "minItems": 35,
+   "maxItems": 35,
+   "items": {
+    "$ref": "#/$defs/record"
+   }
+  }
+ },
+ "$defs": {
+  "group": {
+   "enum": [
+    "install",
+    "use",
+    "payload"
+   ]
+  },
+  "typedDomain": {
+   "enum": [
+    "equipment",
+    "weapon",
+    "armor"
+   ]
+  },
+  "operator": {
+   "enum": [
+    "bool.equals",
+    "enum.in",
+    "enum.intersects",
+    "int.explicit",
+    "size.not_larger",
+    "size.smaller_by_at_least",
+    "weight.sum_lt",
+    "count.at_most",
+    "compat.evidenced"
+   ]
+  },
+  "fact": {
+   "enum": [
+    "item.type",
+    "host.powerSourceTypes",
+    "host.intelligenceScore",
+    "host.droidStatus",
+    "host.oneHandedHandheld",
+    "host.functionRestrictable",
+    "host.remotelyActivatableFunction",
+    "use.attunedGauntletForHost",
+    "host.sizeCategory",
+    "addedItem.sizeCategory",
+    "payload.sizeCategory",
+    "host.weightKg",
+    "payload.weightKg",
+    "payload.items"
+   ]
+  },
+  "size": {
+   "enum": [
+    "Fine",
+    "Diminutive",
+    "Tiny",
+    "Small",
+    "Medium",
+    "Large",
+    "Huge",
+    "Gargantuan",
+    "Colossal"
+   ]
+  },
+  "check": {
+   "enum": [
+    "canConcealCheater",
+    "canFitElectrograppleHandle",
+    "canAccommodateHiddenCompartment",
+    "canCarryPayload",
+    "addedComponentQualifiesAsEquipment",
+    "addedComponentPhysicalFit"
+   ]
+  },
+  "authorityKind": {
+   "enum": [
+    "PUBLISHED_RULE",
+    "OWNER_ENGINEERING_CHECK"
+   ]
+  },
+  "domainVerdict": {
+   "enum": [
+    "SUPPORTED",
+    "CONDITIONALLY_SUPPORTED"
+   ]
+  },
+  "stackingFact": {
+   "enum": [
+    "NOT_SPECIFIED_BY_SOURCE",
+    "EXPLICITLY_REPEATABLE",
+    "ADVANCED_REPLACES_BASIC_NO_STACKING"
+   ]
+  },
+  "diagnosticCode": {
+   "description": "The 32 approved runtime diagnostic codes (owner-decisions record section 5.1). Reserved for the future T4d diagnostic layer; not used by any static record. Distinct from the validator HRV_* codes and from the G3 framework reason codes.",
+   "enum": [
+    "HOST_FACT_MISSING",
+    "HOST_FACT_UNTRUSTED",
+    "HOST_POWER_SOURCE_UNKNOWN",
+    "HOST_POWER_SOURCE_UNSUPPORTED",
+    "HOST_INTELLIGENCE_MISSING",
+    "HOST_IS_DROID",
+    "HOST_DROID_STATUS_UNKNOWN",
+    "HOST_ONE_HANDED_UNKNOWN",
+    "HOST_NOT_ONE_HANDED",
+    "HOST_ACTIVATION_UNKNOWN",
+    "HOST_RESTRICTABILITY_UNKNOWN",
+    "HOST_PHYSICAL_FIT_UNKNOWN",
+    "HOST_ADDED_ITEM_MISSING",
+    "HOST_SIZE_UNKNOWN",
+    "PAYLOAD_NOT_SMALLER",
+    "HOST_WEIGHT_UNKNOWN",
+    "PAYLOAD_WEIGHT_UNKNOWN",
+    "PAYLOAD_WEIGHT_LIMIT_EXCEEDED",
+    "HOST_CONTRACT_VERSION_UNTRUSTED",
+    "HOST_PREDICATE_UNSUPPORTED",
+    "HOST_DOMAIN_MISMATCH",
+    "HOST_EVIDENCE_CONTRADICTORY",
+    "HOST_PROVENANCE_INVALID",
+    "HOST_PROVENANCE_STALE",
+    "HOST_NOT_RESTRICTABLE",
+    "HOST_NOT_ACTIVATABLE",
+    "HOST_PHYSICAL_FIT_DISPROVEN",
+    "HOST_ADDED_ITEM_LARGER",
+    "PAYLOAD_SIZE_UNKNOWN",
+    "HOST_INTELLIGENCE_SCORE_ABSENT",
+    "PAYLOAD_ITEM_COUNT_EXCEEDED",
+    "HOST_ATTUNED_GAUNTLET_UNAVAILABLE"
+   ]
+  },
+  "ownerDecisionId": {
+   "type": "string",
+   "pattern": "^T4C-[DF][0-9]{2}$"
+  },
+  "typedDefinitionId": {
+   "type": "string",
+   "pattern": "^[a-z0-9-]+::(equipment|weapon|armor)$"
+  },
+  "specId": {
+   "type": "string",
+   "pattern": "^D005::[a-z0-9-]+::(equipment|weapon|armor)$"
+  },
+  "publishedRuleAuthority": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "kind",
+    "sourceSpecId",
+    "printedPage"
+   ],
+   "properties": {
+    "kind": {
+     "const": "PUBLISHED_RULE"
+    },
+    "sourceSpecId": {
+     "$ref": "#/$defs/specId"
+    },
+    "printedPage": {
+     "type": "integer"
+    }
+   }
+  },
+  "engineeringAuthority": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "kind",
+    "ownerRulingIds"
+   ],
+   "properties": {
+    "kind": {
+     "const": "OWNER_ENGINEERING_CHECK"
+    },
+    "ownerRulingIds": {
+     "type": "array",
+     "minItems": 1,
+     "uniqueItems": true,
+     "items": {
+      "$ref": "#/$defs/ownerDecisionId"
+     }
+    }
+   }
+  },
+  "predicate": {
+   "description": "Closed discriminated union on `op`. Group, fact, operand and scope restrictions are enforced by the validator (OPERATOR_GROUPS, FACTS, COMPATIBILITY_CHECKS). Explicit `unknown`, null or a non-boolean can never be a predicate value.",
+   "oneOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "op",
+      "fact",
+      "value",
+      "authority"
+     ],
+     "properties": {
+      "op": {
+       "const": "bool.equals"
+      },
+      "fact": {
+       "$ref": "#/$defs/fact"
+      },
+      "value": {
+       "type": "boolean"
+      },
+      "authority": {
+       "$ref": "#/$defs/publishedRuleAuthority"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "op",
+      "fact",
+      "allowed",
+      "authority"
+     ],
+     "properties": {
+      "op": {
+       "const": "enum.in"
+      },
+      "fact": {
+       "$ref": "#/$defs/fact"
+      },
+      "allowed": {
+       "type": "array",
+       "minItems": 1,
+       "uniqueItems": true,
+       "items": {
+        "type": "string"
+       }
+      },
+      "authority": {
+       "$ref": "#/$defs/publishedRuleAuthority"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "op",
+      "fact",
+      "allowed",
+      "authority"
+     ],
+     "properties": {
+      "op": {
+       "const": "enum.intersects"
+      },
+      "fact": {
+       "$ref": "#/$defs/fact"
+      },
+      "allowed": {
+       "type": "array",
+       "minItems": 1,
+       "uniqueItems": true,
+       "items": {
+        "type": "string"
+       }
+      },
+      "authority": {
+       "$ref": "#/$defs/publishedRuleAuthority"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "op",
+      "fact",
+      "authority"
+     ],
+     "properties": {
+      "op": {
+       "const": "int.explicit"
+      },
+      "fact": {
+       "$ref": "#/$defs/fact"
+      },
+      "authority": {
+       "$ref": "#/$defs/publishedRuleAuthority"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "op",
+      "left",
+      "right",
+      "authority"
+     ],
+     "properties": {
+      "op": {
+       "const": "size.not_larger"
+      },
+      "left": {
+       "$ref": "#/$defs/fact"
+      },
+      "right": {
+       "$ref": "#/$defs/fact"
+      },
+      "authority": {
+       "$ref": "#/$defs/publishedRuleAuthority"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "op",
+      "left",
+      "right",
+      "steps",
+      "authority"
+     ],
+     "properties": {
+      "op": {
+       "const": "size.smaller_by_at_least"
+      },
+      "left": {
+       "$ref": "#/$defs/fact"
+      },
+      "right": {
+       "$ref": "#/$defs/fact"
+      },
+      "steps": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "authority": {
+       "$ref": "#/$defs/publishedRuleAuthority"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "op",
+      "items",
+      "limit",
+      "authority"
+     ],
+     "properties": {
+      "op": {
+       "const": "weight.sum_lt"
+      },
+      "items": {
+       "$ref": "#/$defs/fact"
+      },
+      "limit": {
+       "$ref": "#/$defs/fact"
+      },
+      "authority": {
+       "$ref": "#/$defs/publishedRuleAuthority"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "op",
+      "collection",
+      "max",
+      "authority"
+     ],
+     "properties": {
+      "op": {
+       "const": "count.at_most"
+      },
+      "collection": {
+       "$ref": "#/$defs/fact"
+      },
+      "max": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "authority": {
+       "$ref": "#/$defs/publishedRuleAuthority"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "op",
+      "check",
+      "authority",
+      "evidenceMethod"
+     ],
+     "properties": {
+      "op": {
+       "const": "compat.evidenced"
+      },
+      "check": {
+       "$ref": "#/$defs/check"
+      },
+      "authority": {
+       "$ref": "#/$defs/publishedRuleAuthority"
+      },
+      "evidenceMethod": {
+       "$ref": "#/$defs/engineeringAuthority"
+      }
+     }
+    }
+   ]
+  },
+  "record": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "typedDefinitionId",
+    "upgradeLabel",
+    "domain",
+    "sourceSpecId",
+    "source",
+    "domainVerdict",
+    "installRequirements",
+    "noAdditionalHostPrerequisite",
+    "useRequirements",
+    "payloadRequirements",
+    "effectReferences",
+    "stacking"
+   ],
+   "properties": {
+    "typedDefinitionId": {
+     "$ref": "#/$defs/typedDefinitionId"
+    },
+    "upgradeLabel": {
+     "type": "string",
+     "minLength": 1,
+     "description": "Display label only; never an identity."
+    },
+    "domain": {
+     "$ref": "#/$defs/typedDomain"
+    },
+    "sourceSpecId": {
+     "$ref": "#/$defs/specId"
+    },
+    "source": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "bookId",
+      "printedPage"
+     ],
+     "properties": {
+      "bookId": {
+       "const": "scum-and-villainy"
+      },
+      "printedPage": {
+       "type": "integer"
+      },
+      "continuesOnPage": {
+       "type": "integer"
+      }
+     }
+    },
+    "domainVerdict": {
+     "$ref": "#/$defs/domainVerdict"
+    },
+    "installRequirements": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/predicate"
+     }
+    },
+    "noAdditionalHostPrerequisite": {
+     "oneOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "declared",
+        "statement",
+        "sourceSpecId",
+        "printedPage"
+       ],
+       "properties": {
+        "declared": {
+         "const": true
+        },
+        "statement": {
+         "const": "No additional host prerequisite is stated by the published source."
+        },
+        "sourceSpecId": {
+         "$ref": "#/$defs/specId"
+        },
+        "printedPage": {
+         "type": "integer"
+        }
+       }
+      }
+     ],
+     "description": "Non-null exactly when installRequirements is empty. Not domain certification, installation permission or selectability."
+    },
+    "useRequirements": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/predicate"
+     }
+    },
+    "payloadRequirements": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/predicate"
+     }
+    },
+    "effectReferences": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "label",
+       "sourceSpecId"
+      ],
+      "properties": {
+       "label": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z ,;()'.-]*$"
+       },
+       "sourceSpecId": {
+        "$ref": "#/$defs/specId"
+       }
+      }
+     },
+     "description": "Non-executable source links and neutral labels only; never an installation predicate."
+    },
+    "stacking": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "fact",
+      "maxPerHost",
+      "sourceSpecId"
+     ],
+     "properties": {
+      "fact": {
+       "$ref": "#/$defs/stackingFact"
+      },
+      "maxPerHost": {
+       "type": "null",
+       "description": "null is not a grant of unlimited installation."
+      },
+      "sourceSpecId": {
+       "$ref": "#/$defs/specId"
+      }
+     }
+    }
+   }
+  }
+ }
+}

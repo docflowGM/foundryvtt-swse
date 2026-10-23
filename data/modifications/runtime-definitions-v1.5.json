@@ -29,8 +29,8 @@
    ]
   },
   "inputs": {
-   "statusLedgerSha256": "0c05f1a498911daa8588e9a99a264f55711bfe737a38b7456b6ee0222438b35b",
-   "specificationRecordsSha256": "6340618662e7f1aa6f444cb47071f2b9bab8631517b49a37dec4bd5eb12139a4"
+   "statusLedgerSha256": "8540b281dc7ad78edcb34a3651e69efa4199719e39baf388af8ceecc5580e964",
+   "specificationRecordsSha256": "9b56d3b3107e253f642c94562dadac5b2bb65561dfdb26d153d7bb99bc678e45"
   },
   "counts": {
    "records": 186,
@@ -40,7 +40,7 @@
    "certifiedSlotCosts": 84,
    "runtimeSelectable": 0
   },
-  "recordsSha256": "e4a9973bd3d49f90d86b38be065725d8bedd747f9bd2db99a94a12485f0e2b3b",
+  "recordsSha256": "02348237c5f6501756fb74a8184cf4c613063f6288d2e290b98c02f91725ed0a",
   "notice": "Generated. Do not edit. Research-only unless a typed domain definition is runtimeSelectable. Integrity is anchored outside this file (G8)."
  },
  "records": [
@@ -161,15 +161,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -317,15 +315,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -411,15 +407,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -505,15 +499,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -722,15 +714,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -878,15 +868,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -972,15 +960,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1128,15 +1114,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1222,15 +1206,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1316,15 +1298,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1472,15 +1452,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1566,15 +1544,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1660,15 +1636,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1816,15 +1790,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -1972,15 +1944,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2128,15 +2098,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2222,15 +2190,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2316,15 +2282,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2472,15 +2436,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2566,15 +2528,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2660,15 +2620,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2816,15 +2774,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -2910,15 +2866,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3004,15 +2958,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3160,15 +3112,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3254,15 +3204,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3348,15 +3296,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3504,15 +3450,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3598,15 +3542,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3692,15 +3634,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3848,15 +3788,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -3942,15 +3880,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -4098,15 +4034,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -4192,15 +4126,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {
@@ -4286,15 +4218,13 @@
         "deferred": []
        },
        "hostPrerequisites": {
-        "SOURCE_VERIFIED": false,
+        "SOURCE_VERIFIED": true,
         "DATA_RECONCILED": true,
         "MECHANIC_SPECIFIED": false,
         "IMPLEMENTED": false,
         "OFFLINE_TESTED": false,
         "FOUNDRY_TESTED": false,
-        "pendingSource": [
-         "D-005"
-        ],
+        "pendingSource": [],
         "deferred": []
        },
        "executableEffect": {

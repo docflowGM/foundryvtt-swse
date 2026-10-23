@@ -129,10 +129,10 @@ check('lightsaber pools never certify as general slot costs', () => {
   assert.equal(l.length, 44);
   for (const d of l) { assert.equal(d.slotCost.certification.certified, false); assert.equal(d.accounting.eligible, false); }
 });
-check('Table 2-3 universal rows (35 pairs) stay blocked', () => {
-  const pending = allDomains.filter((d) => d.status.components.hostPrerequisites.pendingSource.includes('D-005'));
-  assert.equal(pending.length, 35);
-  for (const d of pending) assert.equal(d.accounting.eligible, false);
+check('Table 2-3 universal rows (35 pairs): D-005 source question lifted, but the rows stay non-accounting and non-selectable', () => {
+  const host = allDomains.filter((d) => d.status.components.hostPrerequisites.SOURCE_VERIFIED);
+  assert.equal(host.length, 35);
+  for (const d of host) { assert.deepEqual(d.status.components.hostPrerequisites.pendingSource, []); assert.equal(d.accounting.eligible, false); }
 });
 check('three page-verified fixed costs are uncertified (no attestation exists)', () => {
   for (const id of ['gaw-ion-shielding-cybernetic-prosthesis', 'goi-componentization-basic', 'goi-componentization-deluxe']) {
@@ -216,7 +216,7 @@ const liftedRegister = (...ids) => {
   for (const id of ids) reg.set(id, { ...reg.get(id), lift: { source: 'fixture', evidence: 'fixture' }, liftValid: true });
   return reg;
 };
-const specifiedParents = new Set(base.specs.records.map((x) => x.typedDefinitionId.split('::')[0]));
+const specifiedParents = new Set(base.specs.records.filter((x) => x.component === 'installProcedure').map((x) => x.typedDefinitionId.split('::')[0]));
 const scopedParents = new Set([...specifiedParents, 'sv-retractable-stock', 'goi-componentization-basic', 'goi-componentization-deluxe', 'reb-excellent-kit-purchased-quality', 'legacy-biotech-host-template', 'legacy-weapon-template-antiquated', 'legacy-weapon-template-refitted']);
 check('selectability is per typed domain: the same complete record passes for one domain and fails for another (unit)', () => {
   const rec = {
@@ -267,13 +267,13 @@ check('REGRESSION: removing the D-013 blocker from the ledger while D-013 is ope
   assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), codes(r).join());
 });
 check('REGRESSION: every scoped open register entry must keep its full ledger scope', () => {
-  for (const [id, drop] of [['D-013', null], ['D-014', null], ['D-004', null], ['D-005', null], ['D-006', null], ['D-010', null], ['D-011', null]]) {
+  for (const [id, drop] of [['D-013', null], ['D-014', null], ['D-004', null], ['D-006', null], ['D-010', null], ['D-011', null]]) {
     const whole = derive(withLedger((l) => { l.blockers = l.blockers.filter((b) => b.register !== id); }));
     assert.ok(codes(whole).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} whole removal`);
     void drop;
   }
   // partial removal: drop one typed id from each explicit list
-  for (const id of ['D-004', 'D-005', 'D-006', 'D-010', 'D-011', 'D-014']) {
+  for (const id of ['D-004', 'D-006', 'D-010', 'D-011', 'D-014']) {
     const r = derive(withLedger((l) => { const b = l.blockers.find((x) => x.register === id); b.typedDefinitionIds = b.typedDefinitionIds.slice(1); if (!b.typedDefinitionIds.length) l.blockers = l.blockers.filter((x) => x !== b); }));
     assert.ok(codes(r).includes('BLOCKER_REMOVED_WHILE_REGISTER_OPEN'), `${id} partial removal`);
   }
@@ -418,13 +418,18 @@ check('generator input is read-only: no source file other than the runtime outpu
   const after = ['data/audits/modification-rolling-authority-v1.5.json', 'data/audits/modification-rolling-authority-v1.5.manifest.json', LEDGER_PATH, SPECS_PATH, 'docs/audits/swse-rules-decisions-pending.md'].map((p) => sha256(fs.readFileSync(path.join(ROOT, p))));
   assert.deepEqual(after, before);
 });
-check('register parsing: D-001..D-015 classified; D-006 and D-014 deferred; only D-001 and D-015 lifted; one D-013 partial lift', () => {
+check('register parsing: D-001..D-015 classified; D-006 and D-014 deferred; only D-001, D-005 and D-015 lifted; one D-013 partial lift', () => {
   const reg = parseRegister(readText('docs/audits/swse-rules-decisions-pending.md'));
   assert.equal(reg.size, 15);
   const deferred = new Set(['D-006', 'D-014']);
   for (const [id, t] of reg) assert.deepEqual(t.classifications, [deferred.has(id) ? 'DEFERRED_RULES_REVIEW' : 'PENDING_SOURCE_VERIFICATION'], id);
   for (const [id, t] of reg) {
     if (id === 'D-001') { assert.equal(t.liftValid, true); assert.ok(t.lift.source.includes('page 39') && t.lift.evidence.includes('d-001-install-remove-pdf-verification.md')); }
+    else if (id === 'D-005') {
+      assert.equal(t.liftValid, true);
+      assert.equal(t.lift.source, 'Scum and Villainy printed pages 40-42 (Table 2-3 and Universal Upgrades descriptions)');
+      assert.ok(t.lift.evidence.includes('d-005-universal-upgrade-host-text-transcription.md') && t.lift.evidence.includes('d-005-t2-implementation-plan.md'));
+    }
     else if (id === 'D-015') {
       assert.equal(t.liftValid, true);
       assert.ok(t.lift.source.includes('Core Rulebook printed pages 60 and 68-70') && t.lift.source.includes('Scum and Villainy printed pages 37-41'));
@@ -447,7 +452,7 @@ check('D-001 is lifted: a ledger that still blocks it is rejected, and the 156 n
   assert.equal(d13.length + allDomains.filter((d) => d.status.components.installProcedure.SOURCE_VERIFIED).length, 232);
 });
 check('page-39 specification records: exact provenance and governance', () => {
-  const recs = base.specs.records;
+  const recs = base.specs.records.filter((x) => x.component === 'installProcedure');
   assert.equal(recs.length, 76);
   for (const r of recs) {
     assert.equal(r.component, 'installProcedure'); assert.equal(r.basis, 'PUBLISHED_UNAMBIGUOUS'); assert.equal(r.verification, 'SOURCE_VERIFIED'); assert.equal(r.coverage, 'PUBLISHED_FACTS');
@@ -575,7 +580,7 @@ check('baseline preserved after the guard: counts unchanged, nothing selectable'
 const REGISTER_TEXT = readText('docs/audits/swse-rules-decisions-pending.md');
 /** Parses the real register after inserting extra rows directly after an entry's Ledger scope row. */
 const registerWith = (id, ...rows) => parseRegister(REGISTER_TEXT.replace(new RegExp(`(## ${id} — [\\s\\S]*?\\| Ledger scope \\|[^\\n]*\\n)`), `$1${rows.join('\n')}\n`));
-const governedIds = base.specs.records.map((x) => x.typedDefinitionId);
+const governedIds = base.specs.records.filter((x) => x.component === 'installProcedure').map((x) => x.typedDefinitionId);
 const governedPick = governedIds.find((id) => { const d = allDomains.find((x) => x.typedDefinitionId === id); return d.accounting.eligible && d.candidate && records.find((r) => r.definitionId === id.split('::')[0]).price.kind === 'credits'; });
 const kotorParents = [...new Set(allDomains.filter((d) => d.typedDefinitionId.startsWith('kotor-accessory-')).map((d) => d.typedDefinitionId.split('::')[0]))];
 const typedOf = (parents) => allDomains.filter((d) => parents.includes(d.typedDefinitionId.split('::')[0])).map((d) => d.typedDefinitionId);
@@ -729,6 +734,108 @@ check('CORRECTION 2: every lift and partial-lift row must cite an existing repos
 });
 check('baseline preserved after the review corrections', () => {
   assert.deepEqual(committed.header.counts, { records: 186, typedDefinitions: 232, eligibleCandidates: 231, accountingEligiblePairs: 49, certifiedSlotCosts: 84, runtimeSelectable: 0 });
+});
+
+// ---- D-005 T2/T3: 35 PUBLISHED_FACTS hostPrerequisites records (source facts only; D-005 source question lifted in T3) ----
+const hostRecs = base.specs.records.filter((x) => x.component === 'hostPrerequisites');
+const d005Scope = hostRecs.map((x) => x.typedDefinitionId); // the D-005 scope is now carried by the register scope pin, not the (removed) ledger blocker
+const installRecs = base.specs.records.filter((x) => x.component === 'installProcedure');
+const hostRecFor = (typedId) => hostRecs.find((x) => x.typedDefinitionId === typedId);
+
+check('D-005 T2: exactly 35 host-prerequisite fact records equal the D-005 ledger scope; 76 install records are unchanged; 111 in total', () => {
+  assert.equal(d005Scope.length, 35);
+  assert.equal(hostRecs.length, 35);
+  assert.deepEqual([...hostRecs.map((x) => x.typedDefinitionId)].sort(), [...d005Scope].sort());
+  assert.equal(new Set(hostRecs.map((x) => x.specId)).size, 35, 'unique specIds');
+  for (const r of hostRecs) assert.equal(r.specId, `D005::${r.typedDefinitionId}`);
+  assert.equal(new Set(hostRecs.map((x) => x.typedDefinitionId.split('::')[0])).size, 15, '15 universal-upgrade parents');
+  assert.equal(installRecs.length, 76);
+  assert.equal(base.specs.records.length, 111);
+  assert.equal(base.specs.registryVersion, '1.5');
+  // the original 76 records are byte-for-byte what they were before T2 (canonical hash of the unchanged set)
+  assert.equal(sha256(canonicalJson(installRecs)), 'dce3f1354ec0daa37d01766e5a9634ac7d1fcce3d7e819bc69193074ab8a67c7');
+});
+check('D-005 T2: every host record is a PUBLISHED_FACTS record with the approved publication metadata and states it is not an evaluator', () => {
+  const pages = { 'sv-cheater': 40, 'sv-cloaked': 40, 'sv-silverplate': 42, 'sv-spring-loaded': 42, 'sv-storage-capacity': 42 };
+  for (const r of hostRecs) {
+    const parent = r.typedDefinitionId.split('::')[0];
+    assert.equal(r.coverage, 'PUBLISHED_FACTS'); assert.equal(r.basis, 'PUBLISHED_UNAMBIGUOUS'); assert.equal(r.verification, 'SOURCE_VERIFIED');
+    assert.equal(r.publication.bookId, 'scum-and-villainy'); assert.equal(r.publication.title, 'Scum and Villainy');
+    assert.equal(r.publication.printedPage, pages[parent] ?? 41, r.specId);
+    assert.ok(r.publication.tableOrSection.includes('Table 2-3 (printed p. 40)'), r.specId);
+    assert.ok(r.evidence.includes('74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399') && r.evidence.includes('d-005-universal-upgrade-host-text-transcription.md'), r.specId);
+    assert.ok(/verifies published host rules only/.test(r.behavior) && /does not establish that a specific owned item satisfies the rules/.test(r.behavior) && /does not certify a COMPLETE_MECHANIC/.test(r.behavior) && /does not define a host evaluator or executor/.test(r.behavior) && /does not lift register D-005/.test(r.behavior), r.specId);
+    assert.ok(/Host finding:/.test(r.behavior) && /Functional prerequisites:/.test(r.behavior) && /Conditional effects:/.test(r.behavior) && /Stacking, repeatability, maximum per host:/.test(r.behavior) && /domain verdict (SUPPORTED|CONDITIONALLY SUPPORTED)\./.test(r.behavior), r.specId);
+    assert.ok(/No separate page-image hash is required/.test(r.evidence), `${r.specId}: rendered-page hashes are not required and none is invented`);
+  }
+  // Secret Compartment: printedPage 41 with the continuation on p. 42 documented in tableOrSection and evidence
+  for (const dom of ['weapon', 'armor', 'equipment']) {
+    const r = hostRecFor(`sv-secret-compartment::${dom}`);
+    assert.equal(r.publication.printedPage, 41);
+    assert.ok(/continues on printed p\. 42/.test(r.publication.tableOrSection) && /continuation on p\. 42/.test(r.evidence));
+  }
+});
+check('D-005 T2: stacking facts are exactly the approved ones; no default or invented maximum; registry stacking values untouched', () => {
+  for (const dom of ['weapon', 'armor', 'equipment']) {
+    const b = hostRecFor(`sv-extra-power-source::${dom}`).behavior;
+    assert.ok(b.includes('EXPLICITLY REPEATABLE') && b.includes('No numerical maximum is printed'), dom);
+  }
+  const memAdv = hostRecFor('sv-memory-upgrade-advanced::equipment').behavior;
+  assert.ok(/benefits DO NOT STACK/.test(memAdv) && /advanced replaces basic/.test(memAdv));
+  assert.ok(/does not expressly require a basic upgrade to be purchased first/.test(memAdv) && /does not establish a universal maximum of one/.test(memAdv), 'no basic-first prerequisite and no universal maximum of one is asserted');
+  for (const r of hostRecs) {
+    const parent = r.typedDefinitionId.split('::')[0];
+    // a positive claim of a maximum (a negated statement such as "does not establish a universal maximum of one" is allowed)
+    assert.ok(!/(?<!not establish a universal )maximum of (one|1|\d)|one per host|only one\b/i.test(r.behavior), `${r.specId}: no invented maximum`);
+    if (parent === 'sv-extra-power-source') continue;
+    assert.ok(r.behavior.includes('NOT SPECIFIED BY SOURCE'), `${r.specId}: silence is stated as NOT SPECIFIED BY SOURCE`);
+  }
+  for (const id of new Set(d005Scope.map((i) => i.split('::')[0]))) {
+    const e = registry.definitions.find((d) => d.id === id).eligibility;
+    assert.equal(e.stackingPolicy, 'UNVERIFIED', id); assert.equal(e.maxPerHost, null, id);
+  }
+});
+check('D-005 T2: the generated runtime shows SOURCE_VERIFIED host facts for exactly the 35 and nothing stronger', () => {
+  const inScope = new Set(d005Scope);
+  let verified = 0;
+  for (const d of allDomains) {
+    const c = d.status.components.hostPrerequisites;
+    assert.equal(c.SOURCE_VERIFIED, inScope.has(d.typedDefinitionId), d.typedDefinitionId);
+    if (!c.SOURCE_VERIFIED) continue;
+    verified += 1;
+    assert.equal(c.MECHANIC_SPECIFIED, false); assert.equal(c.IMPLEMENTED, false); assert.equal(c.OFFLINE_TESTED, false); assert.equal(c.FOUNDRY_TESTED, false);
+    assert.deepEqual(c.pendingSource, [], `${d.typedDefinitionId}: D-005 source question lifted (source-only)`);
+    assert.equal(d.applicability.hostRequirementsSpecified, false);
+    assert.equal(d.applicability.hostEligibility, 'not_established');
+    assert.equal(d.applicability.hostEvaluator, null);
+  }
+  assert.equal(verified, 35);
+  assert.equal(committed.header.counts.runtimeSelectable, 0);
+});
+check('D-005 T3: a COMPLETE_MECHANIC host record is not refused by D-005 any more, yet the host requirement is still not specified and nothing becomes selectable', () => {
+  const r = derive(withSpecs(spec({ specId: 'X-HOST-1', typedDefinitionId: d005Scope[0], component: 'hostPrerequisites', coverage: 'COMPLETE_MECHANIC' })));
+  assert.ok(!codes(r).includes('SPEC_WHILE_BLOCKER_OPEN'), codes(r).join());
+  assert.equal(committed.header.counts.runtimeSelectable, 0);
+});
+check('D-005 T3: a ledger blocker cannot be reintroduced, and a lift row missing source= or evidence= (or absent) is invalid', () => {
+  const reintroduced = derive(withLedger((l) => { l.blockers.push({ register: 'D-005', classification: 'PENDING_SOURCE_VERIFICATION', component: 'hostPrerequisites', typedDefinitionIds: d005Scope }); }));
+  assert.equal(reintroduced.runtime, null);
+  assert.ok(codes(reintroduced).includes('BLOCKER_FOR_LIFTED_REGISTER_ENTRY'), codes(reintroduced).join());
+  const ev = 'evidence=docs/audits/d-005-universal-upgrade-host-text-transcription.md and docs/audits/d-005-t2-implementation-plan.md';
+  const src = 'source=Scum and Villainy printed pages 40-42 (Table 2-3 and Universal Upgrades descriptions)';
+  const withLiftRow = (v) => parseRegister(REGISTER_TEXT.replace(/^\| Blocker lifted \| source=Scum and Villainy printed pages 40-42[^\n]*\n/m, `| Blocker lifted | ${v} |\n`));
+  assert.equal(withLiftRow(`${src}; ${ev}`).get('D-005').liftValid, true, 'control: source + evidence is valid');
+  assert.equal(withLiftRow(src).get('D-005').liftValid, false, 'source without evidence');
+  assert.equal(withLiftRow(ev).get('D-005').liftValid, false, 'evidence without source');
+  assert.equal(parseRegister(REGISTER_TEXT.replace(/^\| Blocker lifted \| source=Scum and Villainy printed pages 40-42[^\n]*\n/m, '')).get('D-005').liftValid, false, 'no lift row');
+});
+check('D-005 T3: a selectable entry for a host-fact-verified definition is still refused (host requirements not mechanically specified, install not specified)', () => {
+  const id = d005Scope[0];
+  const r = derive(withLedger((l) => l.selectable.push({ typedDefinitionId: id, approvalRef: 'x', reviewedBy: 'x', evidence: ['x'], hostEvaluation: { evaluator: 'g3-eval', offlineTests: ['t'] } })));
+  assert.equal(r.runtime, null);
+  const unmet = r.failures.find((f) => f.code === 'SELECTABLE_CONDITIONS_UNMET').detail.unmet;
+  assert.ok(!unmet.includes('1:hostPrerequisites'), 'D-005 lifted: host facts are source-verified and unblocked');
+  assert.ok(unmet.includes('2:hostRequirementsSpecified') && unmet.includes('3:installProcedure'), unmet.join());
 });
 
 console.log(`modification-runtime-generator: ${checks} checks OK`);

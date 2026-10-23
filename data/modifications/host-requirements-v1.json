@@ -1,0 +1,1494 @@
+{
+ "schema": "swse.modification.host-requirements/1",
+ "revision": "b5f8c7aab8cc5409ab0d24d0a033189ba6542f3c665da659a0c75a151dcf76b8",
+ "records": [
+  {
+   "typedDefinitionId": "sv-cheater::equipment",
+   "upgradeLabel": "Cheater",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-cheater::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 40
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "compat.evidenced",
+     "check": "canConcealCheater",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-cheater::equipment",
+      "printedPage": 40
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Cheating and concealment effects depend on the device and the circumstances of use",
+     "sourceSpecId": "D005::sv-cheater::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-cheater::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-cloaked::armor",
+   "upgradeLabel": "Cloaked",
+   "domain": "armor",
+   "sourceSpecId": "D005::sv-cloaked::armor",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 40
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-cloaked::armor",
+    "printedPage": 40
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Signature, sound and appearance effects differ by host type",
+     "sourceSpecId": "D005::sv-cloaked::armor"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-cloaked::armor"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-cloaked::equipment",
+   "upgradeLabel": "Cloaked",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-cloaked::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 40
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-cloaked::equipment",
+    "printedPage": 40
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Signature, sound and appearance effects differ by host type",
+     "sourceSpecId": "D005::sv-cloaked::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-cloaked::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-cloaked::weapon",
+   "upgradeLabel": "Cloaked",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-cloaked::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 40
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-cloaked::weapon",
+    "printedPage": 40
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Signature, sound and appearance effects differ by host type",
+     "sourceSpecId": "D005::sv-cloaked::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-cloaked::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-dual-gear::equipment",
+   "upgradeLabel": "Dual Gear",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-dual-gear::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "size.not_larger",
+     "left": "addedItem.sizeCategory",
+     "right": "host.sizeCategory",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-dual-gear::equipment",
+      "printedPage": 41
+     }
+    },
+    {
+     "op": "compat.evidenced",
+     "check": "addedComponentQualifiesAsEquipment",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-dual-gear::equipment",
+      "printedPage": 41
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05",
+       "T4C-F09"
+      ]
+     }
+    },
+    {
+     "op": "compat.evidenced",
+     "check": "addedComponentPhysicalFit",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-dual-gear::equipment",
+      "printedPage": 41
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05",
+       "T4C-F09"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Combined-function and simultaneous-use effects, and added-item price",
+     "sourceSpecId": "D005::sv-dual-gear::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-dual-gear::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-electrograpple-handle::equipment",
+   "upgradeLabel": "Electrograpple Handle",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-electrograpple-handle::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "compat.evidenced",
+     "check": "canFitElectrograppleHandle",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-electrograpple-handle::equipment",
+      "printedPage": 41
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "use.attunedGauntletForHost",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-electrograpple-handle::equipment",
+      "printedPage": 41
+     }
+    }
+   ],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Retrieval and restrained-equipment effects",
+     "sourceSpecId": "D005::sv-electrograpple-handle::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-electrograpple-handle::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-electrograpple-handle::weapon",
+   "upgradeLabel": "Electrograpple Handle",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-electrograpple-handle::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "compat.evidenced",
+     "check": "canFitElectrograppleHandle",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-electrograpple-handle::weapon",
+      "printedPage": 41
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "use.attunedGauntletForHost",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-electrograpple-handle::weapon",
+      "printedPage": 41
+     }
+    }
+   ],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Retrieval and restrained-equipment effects",
+     "sourceSpecId": "D005::sv-electrograpple-handle::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-electrograpple-handle::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-environmental-sealing::armor",
+   "upgradeLabel": "Environmental Sealing",
+   "domain": "armor",
+   "sourceSpecId": "D005::sv-environmental-sealing::armor",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-environmental-sealing::armor",
+    "printedPage": 41
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Item-level environmental protection effects",
+     "sourceSpecId": "D005::sv-environmental-sealing::armor"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-environmental-sealing::armor"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-environmental-sealing::equipment",
+   "upgradeLabel": "Environmental Sealing",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-environmental-sealing::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-environmental-sealing::equipment",
+    "printedPage": 41
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Item-level environmental protection effects",
+     "sourceSpecId": "D005::sv-environmental-sealing::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-environmental-sealing::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-environmental-sealing::weapon",
+   "upgradeLabel": "Environmental Sealing",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-environmental-sealing::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-environmental-sealing::weapon",
+    "printedPage": 41
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Item-level environmental protection effects",
+     "sourceSpecId": "D005::sv-environmental-sealing::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-environmental-sealing::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-extra-power-source::armor",
+   "upgradeLabel": "Extra Power Source",
+   "domain": "armor",
+   "sourceSpecId": "D005::sv-extra-power-source::armor",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "enum.intersects",
+     "fact": "host.powerSourceTypes",
+     "allowed": [
+      "energy-cell",
+      "power-pack"
+     ],
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-extra-power-source::armor",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Additional power supply effect",
+     "sourceSpecId": "D005::sv-extra-power-source::armor"
+    }
+   ],
+   "stacking": {
+    "fact": "EXPLICITLY_REPEATABLE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-extra-power-source::armor"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-extra-power-source::equipment",
+   "upgradeLabel": "Extra Power Source",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-extra-power-source::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "enum.intersects",
+     "fact": "host.powerSourceTypes",
+     "allowed": [
+      "energy-cell",
+      "power-pack"
+     ],
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-extra-power-source::equipment",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Additional power supply effect",
+     "sourceSpecId": "D005::sv-extra-power-source::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "EXPLICITLY_REPEATABLE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-extra-power-source::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-extra-power-source::weapon",
+   "upgradeLabel": "Extra Power Source",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-extra-power-source::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "enum.intersects",
+     "fact": "host.powerSourceTypes",
+     "allowed": [
+      "energy-cell",
+      "power-pack"
+     ],
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-extra-power-source::weapon",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Additional power supply effect",
+     "sourceSpecId": "D005::sv-extra-power-source::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "EXPLICITLY_REPEATABLE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-extra-power-source::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-memory-upgrade-advanced::equipment",
+   "upgradeLabel": "Memory Upgrade, Advanced",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-memory-upgrade-advanced::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "int.explicit",
+     "fact": "host.intelligenceScore",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-memory-upgrade-advanced::equipment",
+      "printedPage": 41
+     }
+    },
+    {
+     "op": "enum.in",
+     "fact": "host.droidStatus",
+     "allowed": [
+      "nondroid"
+     ],
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-memory-upgrade-advanced::equipment",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Intelligence and data-storage effects that replace the basic version",
+     "sourceSpecId": "D005::sv-memory-upgrade-advanced::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "ADVANCED_REPLACES_BASIC_NO_STACKING",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-memory-upgrade-advanced::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-memory-upgrade::equipment",
+   "upgradeLabel": "Memory Upgrade",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-memory-upgrade::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "int.explicit",
+     "fact": "host.intelligenceScore",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-memory-upgrade::equipment",
+      "printedPage": 41
+     }
+    },
+    {
+     "op": "enum.in",
+     "fact": "host.droidStatus",
+     "allowed": [
+      "nondroid"
+     ],
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-memory-upgrade::equipment",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Intelligence and data-storage effects",
+     "sourceSpecId": "D005::sv-memory-upgrade::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "ADVANCED_REPLACES_BASIC_NO_STACKING",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-memory-upgrade::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-miniaturized::armor",
+   "upgradeLabel": "Miniaturized",
+   "domain": "armor",
+   "sourceSpecId": "D005::sv-miniaturized::armor",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-miniaturized::armor",
+    "printedPage": 41
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Weight and size effects, and the melee-weapon damage consequence",
+     "sourceSpecId": "D005::sv-miniaturized::armor"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-miniaturized::armor"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-miniaturized::equipment",
+   "upgradeLabel": "Miniaturized",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-miniaturized::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-miniaturized::equipment",
+    "printedPage": 41
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Weight and size effects, and the melee-weapon damage consequence",
+     "sourceSpecId": "D005::sv-miniaturized::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-miniaturized::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-miniaturized::weapon",
+   "upgradeLabel": "Miniaturized",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-miniaturized::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-miniaturized::weapon",
+    "printedPage": 41
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Weight and size effects, and the melee-weapon damage consequence",
+     "sourceSpecId": "D005::sv-miniaturized::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-miniaturized::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-recognition-system::armor",
+   "upgradeLabel": "Recognition System",
+   "domain": "armor",
+   "sourceSpecId": "D005::sv-recognition-system::armor",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "host.functionRestrictable",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-recognition-system::armor",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Authorized-user restriction, bypass and owner-deactivation effects",
+     "sourceSpecId": "D005::sv-recognition-system::armor"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-recognition-system::armor"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-recognition-system::equipment",
+   "upgradeLabel": "Recognition System",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-recognition-system::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "host.functionRestrictable",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-recognition-system::equipment",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Authorized-user restriction, bypass and owner-deactivation effects",
+     "sourceSpecId": "D005::sv-recognition-system::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-recognition-system::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-recognition-system::weapon",
+   "upgradeLabel": "Recognition System",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-recognition-system::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "host.functionRestrictable",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-recognition-system::weapon",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Authorized-user restriction, bypass and owner-deactivation effects",
+     "sourceSpecId": "D005::sv-recognition-system::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-recognition-system::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-remote-activation::armor",
+   "upgradeLabel": "Remote Activation",
+   "domain": "armor",
+   "sourceSpecId": "D005::sv-remote-activation::armor",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "host.remotelyActivatableFunction",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-remote-activation::armor",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Remote signal, action and security effects",
+     "sourceSpecId": "D005::sv-remote-activation::armor"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-remote-activation::armor"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-remote-activation::equipment",
+   "upgradeLabel": "Remote Activation",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-remote-activation::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "host.remotelyActivatableFunction",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-remote-activation::equipment",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Remote signal, action and security effects",
+     "sourceSpecId": "D005::sv-remote-activation::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-remote-activation::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-remote-activation::weapon",
+   "upgradeLabel": "Remote Activation",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-remote-activation::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "host.remotelyActivatableFunction",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-remote-activation::weapon",
+      "printedPage": 41
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Remote signal, action and security effects",
+     "sourceSpecId": "D005::sv-remote-activation::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-remote-activation::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-secret-compartment::armor",
+   "upgradeLabel": "Secret Compartment",
+   "domain": "armor",
+   "sourceSpecId": "D005::sv-secret-compartment::armor",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41,
+    "continuesOnPage": 42
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "compat.evidenced",
+     "check": "canAccommodateHiddenCompartment",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-secret-compartment::armor",
+      "printedPage": 41
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [
+    {
+     "op": "size.smaller_by_at_least",
+     "left": "payload.sizeCategory",
+     "right": "host.sizeCategory",
+     "steps": 1,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-secret-compartment::armor",
+      "printedPage": 41
+     }
+    },
+    {
+     "op": "count.at_most",
+     "collection": "payload.items",
+     "max": 1,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-secret-compartment::armor",
+      "printedPage": 41
+     }
+    }
+   ],
+   "effectReferences": [
+    {
+     "label": "Concealment and detection effects",
+     "sourceSpecId": "D005::sv-secret-compartment::armor"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-secret-compartment::armor"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-secret-compartment::equipment",
+   "upgradeLabel": "Secret Compartment",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-secret-compartment::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41,
+    "continuesOnPage": 42
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "compat.evidenced",
+     "check": "canAccommodateHiddenCompartment",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-secret-compartment::equipment",
+      "printedPage": 41
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [
+    {
+     "op": "size.smaller_by_at_least",
+     "left": "payload.sizeCategory",
+     "right": "host.sizeCategory",
+     "steps": 1,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-secret-compartment::equipment",
+      "printedPage": 41
+     }
+    },
+    {
+     "op": "count.at_most",
+     "collection": "payload.items",
+     "max": 1,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-secret-compartment::equipment",
+      "printedPage": 41
+     }
+    }
+   ],
+   "effectReferences": [
+    {
+     "label": "Concealment and detection effects",
+     "sourceSpecId": "D005::sv-secret-compartment::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-secret-compartment::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-secret-compartment::weapon",
+   "upgradeLabel": "Secret Compartment",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-secret-compartment::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 41,
+    "continuesOnPage": 42
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "compat.evidenced",
+     "check": "canAccommodateHiddenCompartment",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-secret-compartment::weapon",
+      "printedPage": 41
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [
+    {
+     "op": "size.smaller_by_at_least",
+     "left": "payload.sizeCategory",
+     "right": "host.sizeCategory",
+     "steps": 1,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-secret-compartment::weapon",
+      "printedPage": 41
+     }
+    },
+    {
+     "op": "count.at_most",
+     "collection": "payload.items",
+     "max": 1,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-secret-compartment::weapon",
+      "printedPage": 41
+     }
+    }
+   ],
+   "effectReferences": [
+    {
+     "label": "Concealment and detection effects",
+     "sourceSpecId": "D005::sv-secret-compartment::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-secret-compartment::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-silverplate::armor",
+   "upgradeLabel": "Silverplate",
+   "domain": "armor",
+   "sourceSpecId": "D005::sv-silverplate::armor",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 42
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-silverplate::armor",
+    "printedPage": 42
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Object protection and related effects; outside host-eligibility scope, see the source record",
+     "sourceSpecId": "D005::sv-silverplate::armor"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-silverplate::armor"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-silverplate::equipment",
+   "upgradeLabel": "Silverplate",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-silverplate::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 42
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-silverplate::equipment",
+    "printedPage": 42
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Object protection and related effects; outside host-eligibility scope, see the source record",
+     "sourceSpecId": "D005::sv-silverplate::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-silverplate::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-silverplate::weapon",
+   "upgradeLabel": "Silverplate",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-silverplate::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 42
+   },
+   "domainVerdict": "SUPPORTED",
+   "installRequirements": [],
+   "noAdditionalHostPrerequisite": {
+    "declared": true,
+    "statement": "No additional host prerequisite is stated by the published source.",
+    "sourceSpecId": "D005::sv-silverplate::weapon",
+    "printedPage": 42
+   },
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Object protection and related effects; outside host-eligibility scope, see the source record",
+     "sourceSpecId": "D005::sv-silverplate::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-silverplate::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-spring-loaded::equipment",
+   "upgradeLabel": "Spring Loaded",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-spring-loaded::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 42
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "host.oneHandedHandheld",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-spring-loaded::equipment",
+      "printedPage": 42
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Presentation and drawing effects; outside host-eligibility scope, see the source record",
+     "sourceSpecId": "D005::sv-spring-loaded::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-spring-loaded::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-spring-loaded::weapon",
+   "upgradeLabel": "Spring Loaded",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-spring-loaded::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 42
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "bool.equals",
+     "fact": "host.oneHandedHandheld",
+     "value": true,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-spring-loaded::weapon",
+      "printedPage": 42
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [],
+   "effectReferences": [
+    {
+     "label": "Presentation and drawing effects; outside host-eligibility scope, see the source record",
+     "sourceSpecId": "D005::sv-spring-loaded::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-spring-loaded::weapon"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-storage-capacity::armor",
+   "upgradeLabel": "Storage Capacity",
+   "domain": "armor",
+   "sourceSpecId": "D005::sv-storage-capacity::armor",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 42
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "compat.evidenced",
+     "check": "canCarryPayload",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-storage-capacity::armor",
+      "printedPage": 42
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [
+    {
+     "op": "size.smaller_by_at_least",
+     "left": "payload.sizeCategory",
+     "right": "host.sizeCategory",
+     "steps": 1,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-storage-capacity::armor",
+      "printedPage": 42
+     }
+    },
+    {
+     "op": "weight.sum_lt",
+     "items": "payload.weightKg",
+     "limit": "host.weightKg",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-storage-capacity::armor",
+      "printedPage": 42
+     }
+    }
+   ],
+   "effectReferences": [
+    {
+     "label": "Compartment and storage effects",
+     "sourceSpecId": "D005::sv-storage-capacity::armor"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-storage-capacity::armor"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-storage-capacity::equipment",
+   "upgradeLabel": "Storage Capacity",
+   "domain": "equipment",
+   "sourceSpecId": "D005::sv-storage-capacity::equipment",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 42
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "compat.evidenced",
+     "check": "canCarryPayload",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-storage-capacity::equipment",
+      "printedPage": 42
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [
+    {
+     "op": "size.smaller_by_at_least",
+     "left": "payload.sizeCategory",
+     "right": "host.sizeCategory",
+     "steps": 1,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-storage-capacity::equipment",
+      "printedPage": 42
+     }
+    },
+    {
+     "op": "weight.sum_lt",
+     "items": "payload.weightKg",
+     "limit": "host.weightKg",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-storage-capacity::equipment",
+      "printedPage": 42
+     }
+    }
+   ],
+   "effectReferences": [
+    {
+     "label": "Compartment and storage effects",
+     "sourceSpecId": "D005::sv-storage-capacity::equipment"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-storage-capacity::equipment"
+   }
+  },
+  {
+   "typedDefinitionId": "sv-storage-capacity::weapon",
+   "upgradeLabel": "Storage Capacity",
+   "domain": "weapon",
+   "sourceSpecId": "D005::sv-storage-capacity::weapon",
+   "source": {
+    "bookId": "scum-and-villainy",
+    "printedPage": 42
+   },
+   "domainVerdict": "CONDITIONALLY_SUPPORTED",
+   "installRequirements": [
+    {
+     "op": "compat.evidenced",
+     "check": "canCarryPayload",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-storage-capacity::weapon",
+      "printedPage": 42
+     },
+     "evidenceMethod": {
+      "kind": "OWNER_ENGINEERING_CHECK",
+      "ownerRulingIds": [
+       "T4C-D05"
+      ]
+     }
+    }
+   ],
+   "noAdditionalHostPrerequisite": null,
+   "useRequirements": [],
+   "payloadRequirements": [
+    {
+     "op": "size.smaller_by_at_least",
+     "left": "payload.sizeCategory",
+     "right": "host.sizeCategory",
+     "steps": 1,
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-storage-capacity::weapon",
+      "printedPage": 42
+     }
+    },
+    {
+     "op": "weight.sum_lt",
+     "items": "payload.weightKg",
+     "limit": "host.weightKg",
+     "authority": {
+      "kind": "PUBLISHED_RULE",
+      "sourceSpecId": "D005::sv-storage-capacity::weapon",
+      "printedPage": 42
+     }
+    }
+   ],
+   "effectReferences": [
+    {
+     "label": "Compartment and storage effects",
+     "sourceSpecId": "D005::sv-storage-capacity::weapon"
+    }
+   ],
+   "stacking": {
+    "fact": "NOT_SPECIFIED_BY_SOURCE",
+    "maxPerHost": null,
+    "sourceSpecId": "D005::sv-storage-capacity::weapon"
+   }
+  }
+ ]
+}
